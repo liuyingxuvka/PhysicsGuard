@@ -1,15 +1,15 @@
 ---
 name: physicsguard-ai-debugging
-description: Use PhysicsGuard for AI-guided low-fidelity audits of engineering simulation results, especially MATLAB/Simulink, GT-SUITE, Modelica-like, Python, or other physical simulation workflows where Codex needs to map exported signals into PhysicsGuard YAML, run coarse-to-fine residual checks, rank suspicious blocks, diagnose unit/sign/map/control/physics mismatches, and recommend the next variables or parameters to inspect. Use when the user asks to evaluate, debug, modify, sanity-check, fault-diagnose, or progressively localize bugs in physical simulation models without building a commercial-tool adapter or high-fidelity replacement.
+description: Use PhysicsGuard for AI-guided low-fidelity audits and model-building blueprints for engineering simulation workflows, especially MATLAB/Simulink, GT-SUITE, Modelica-like, Python, or other physical simulation systems. Use when Codex needs to map exported signals into PhysicsGuard YAML, run coarse-to-fine residual checks, rank suspicious blocks, diagnose unit/sign/map/control/physics mismatches, recommend the next variables or parameters to inspect, or progressively build a PhysicsGuard-validated candidate model that can later be translated into MATLAB/Simulink scripts or other official target-model interfaces. Do not use this as a commercial-tool adapter, reverse-engineering workflow, or high-fidelity solver replacement.
 ---
 
 # PhysicsGuard AI Debugging
 
 ## Purpose
 
-Use PhysicsGuard as a transparent audit layer for complex engineering simulations. Do not try to reproduce a full Simulink, GT-SUITE, Modelica, FMI, Amesim, MATLAB, Python, or commercial model. Build low-fidelity residual checks, evaluate mapped external results, rank suspicious blocks, and ask for the next useful signals.
+Use PhysicsGuard as a transparent audit and blueprint layer for complex engineering simulations. Do not try to reproduce a full Simulink, GT-SUITE, Modelica, FMI, Amesim, MATLAB, Python, or commercial model from hidden internals. Build low-fidelity residual checks, evaluate mapped external results, rank suspicious blocks, ask for the next useful signals, and when requested, use the validated low-fidelity hierarchy as a blueprint for generating a candidate target model through official scripting interfaces.
 
-## Default Workflow
+## Workflow A: Audit External Results
 
 1. Clarify the visible failure: wrong final value, unstable response, impossible pressure/flow/power/heat/current/voltage, bad efficiency, or inconsistent control logic.
 2. Build or choose the coarsest useful PhysicsGuard audit YAML.
@@ -31,14 +31,30 @@ Use compare mode only when a solved low-fidelity reference is intentionally usef
 python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty
 ```
 
+## Workflow B: Build A Candidate Model From A PhysicsGuard Blueprint
+
+Use this when the user wants AI to construct a new model, not merely inspect an existing result.
+
+1. Start at the lowest useful fidelity: aggregate balances, simple component relations, and explicit interfaces.
+2. Define the target fidelity for each block before refining it.
+3. Build and validate each block in PhysicsGuard first.
+4. Generate a candidate target-model implementation only after the block passes its PhysicsGuard checks.
+5. For MATLAB/Simulink, prefer MATLAB script generation through documented APIs such as `new_system`, `add_block`, `set_param`, and `add_line`.
+6. Run the generated candidate model, map its outputs back into PhysicsGuard, and compare residuals.
+7. Refine one block at a time until the assembled candidate model is good enough for the user's purpose.
+
+Treat generated target models as candidate engineering models, not recovered copies of an existing commercial model. Load `references/model-generation.md` before writing a full model-generation plan or MATLAB/Simulink script.
+
 ## Hard Boundaries
 
 - Do not add or imply a GT-SUITE, Simulink, MATLAB, Modelica, FMI, CSV, Amesim, or commercial-tool adapter unless explicitly requested.
 - Do not reverse engineer commercial model internals.
+- Do not claim the generated target model is equivalent to a commercial or high-fidelity model.
 - Do not add high-fidelity solvers, automatic repair, or natural-language report generation.
 - Do not use assumptions as solver-tunable variables.
 - Do not silently invent signal mappings, units, or parameters.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
+- For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.
 
 ## When To Create A New PhysicsGuard Relation
 
@@ -59,3 +75,4 @@ Load `references/bug-playbooks.md` when choosing the next hypothesis. It covers 
 
 Load `references/protocol.md` when writing or reviewing a full AI debugging plan.
 
+Load `references/model-generation.md` when turning a PhysicsGuard hierarchy into a candidate MATLAB/Simulink or other target-model implementation plan.
