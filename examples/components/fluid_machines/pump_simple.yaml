@@ -1,0 +1,18 @@
+system_name: component_pump_simple
+components:
+  - id: pump
+    type: PumpSimpleModule
+    parameters:
+      rho_kg_m3: 1000.0
+boundaries:
+  - variable: pump.p_in_Pa
+    value: 100000.0
+  - variable: pump.p_out_Pa
+    value: 200000.0
+  - variable: pump.m_dot_kg_s
+    value: 1.0
+  - variable: pump.efficiency
+    value: 0.8
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

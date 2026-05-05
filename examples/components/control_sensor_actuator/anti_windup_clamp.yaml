@@ -1,0 +1,10 @@
+system_name: component_anti_windup_clamp
+components:
+  - id: aw
+    type: AntiWindupClampModule
+    parameters: {integral_lower: -10.0, integral_upper: 10.0, output_lower: 0.0, output_upper: 1.0}
+boundaries:
+  - {variable: aw.integral_state, value: 0.0}
+  - {variable: aw.output_unsaturated, value: 0.5}
+  - {variable: aw.output_saturated, value: 0.5}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

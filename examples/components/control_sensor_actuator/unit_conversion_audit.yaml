@@ -1,0 +1,9 @@
+system_name: component_unit_conversion_audit
+components:
+  - id: conv
+    type: UnitConversionAuditModule
+    parameters: {factor: 100000.0, offset: 0.0, source_unit: bar, target_unit: Pa, residual_scale: 1.0}
+boundaries:
+  - {variable: conv.source_value, value: 2.0}
+  - {variable: conv.target_value, value: 200000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

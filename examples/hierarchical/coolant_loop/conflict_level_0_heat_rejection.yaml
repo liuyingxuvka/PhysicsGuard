@@ -1,0 +1,60 @@
+audit_name: coolant_loop_conflict_level_0_heat_rejection
+system:
+  system_name: coolant_loop_conflict_level_0_heat_rejection
+  components:
+  - id: heat_source
+    type: DummyResidualModule
+    parameters:
+      target: 10000.0
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 10000.0
+      scale: 10000.0
+      unit: W
+  - id: heat_rejected
+    type: DummyResidualModule
+    parameters:
+      target: 5000.0
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 5000.0
+      scale: 5000.0
+      unit: W
+  - id: thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - heat_source.x
+      heat_out_variables:
+      - heat_rejected.x
+      residual_scale_W: 1000.0
+  boundaries:
+  - variable: heat_source.x
+    value: 10000.0
+    scale: 1.0e-06
+  - variable: heat_rejected.x
+    value: 5000.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: coolant_loop
+    level: 0
+    components:
+    - heat_source
+    - heat_rejected
+    - thermal_balance
+    refinement_template_ids:
+    - coolant_loop/level_1_components
+  refinement_rules:
+  - id: refine_coolant_loop
+    block_id: coolant_loop
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - coolant_loop/level_1_components
+    rationale: Coarse heat rejection balance failed.
+    priority: 10

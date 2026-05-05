@@ -1,0 +1,10 @@
+system_name: component_wheel_torque_force
+components:
+  - id: wheel
+    type: WheelTorqueForceModule
+    parameters: {}
+boundaries:
+  - {variable: wheel.wheel_torque_Nm, value: 300.0}
+  - {variable: wheel.wheel_radius_m, value: 0.3}
+  - {variable: wheel.longitudinal_force_N, value: 1000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

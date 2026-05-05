@@ -1,0 +1,24 @@
+system_name: foundation_compressible_isentropic_compressor_power
+components:
+  - id: comp
+    type: CompressibleIsentropicCompressorPowerModule
+    parameters:
+      cp_J_kgK: 1000.0
+      gamma: 1.4
+      efficiency: 0.7
+boundaries:
+  - variable: comp.p_in_Pa
+    value: 100000.0
+    unit: Pa
+  - variable: comp.p_out_Pa
+    value: 200000.0
+    unit: Pa
+  - variable: comp.T_in_K
+    value: 300.0
+    unit: K
+  - variable: comp.m_dot_kg_s
+    value: 0.1
+    unit: kg/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

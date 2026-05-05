@@ -1,0 +1,19 @@
+system_name: foundation_mass_balance_rate
+components:
+  - id: inlet
+    type: DummyResidualModule
+    parameters:
+      target: 1.0
+  - id: outlet
+    type: DummyResidualModule
+    parameters:
+      target: 1.0
+  - id: balance
+    type: MassBalanceRateModule
+    parameters:
+      input_variables: [inlet.x]
+      output_variables: [outlet.x]
+      residual_scale_kg_s: 0.01
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

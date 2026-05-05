@@ -1,0 +1,12 @@
+system_name: component_fc_anode_hydrogen_supply
+components:
+  - id: anode
+    type: FuelCellAnodeHydrogenSupplyModule
+    parameters: {n_cells: 400.0}
+boundaries:
+  - {variable: anode.current_A, value: 100.0}
+  - {variable: anode.n_dot_H2_consumed_mol_s, value: 0.2072846}
+  - {variable: anode.hydrogen_stoichiometry, value: 1.5}
+  - {variable: anode.n_dot_H2_feed_mol_s, value: 0.3109269}
+  - {variable: anode.m_dot_H2_feed_kg_s, value: 0.0006268}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,10 @@
+system_name: component_battery_soc_step
+components:
+  - id: bat
+    type: BatterySOCStepModule
+    parameters: {capacity_C: 100000.0, dt_s: 10.0}
+boundaries:
+  - {variable: bat.SOC_previous, value: 0.8}
+  - {variable: bat.current_A, value: 10.0}
+  - {variable: bat.SOC_current, value: 0.799}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,26 @@
+system_name: foundation_conflict_mass_balance
+components:
+  - id: inlet
+    type: DummyResidualModule
+    parameters:
+      target: 1.0
+  - id: outlet
+    type: DummyResidualModule
+    parameters:
+      target: 0.0
+  - id: balance
+    type: MassBalanceRateModule
+    parameters:
+      input_variables: [inlet.x]
+      output_variables: [outlet.x]
+      residual_scale_kg_s: 0.01
+boundaries:
+  - variable: inlet.x
+    value: 1.0
+    scale: 0.001
+  - variable: outlet.x
+    value: 0.0
+    scale: 0.001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

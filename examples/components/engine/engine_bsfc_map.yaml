@@ -1,0 +1,31 @@
+system_name: component_engine_bsfc_map
+components:
+  - id: eng
+    type: EngineBSFCMapModule
+    parameters:
+      speed_points_rad_s: [0.0, 200.0]
+      torque_points_Nm: [0.0, 200.0]
+      bsfc_values_kg_J:
+        - [0.00000002, 0.00000002]
+        - [0.00000002, 0.00000002]
+      speed_lower_bound: 0.0
+      speed_upper_bound: 200.0
+      speed_initial_guess: 100.0
+      speed_scale: 100.0
+      torque_lower_bound: 0.0
+      torque_upper_bound: 200.0
+      torque_initial_guess: 100.0
+      torque_scale: 100.0
+      brake_power_initial_guess: 10000.0
+      fuel_m_dot_initial_guess: 0.0002
+      bsfc_initial_guess: 0.00000002
+boundaries:
+  - variable: eng.speed_rad_s
+    value: 100.0
+    scale: 0.1
+  - variable: eng.torque_Nm
+    value: 100.0
+    scale: 0.1
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

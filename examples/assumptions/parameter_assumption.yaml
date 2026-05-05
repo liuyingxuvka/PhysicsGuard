@@ -1,0 +1,31 @@
+system_name: assumption_parameter_fill
+description: Demonstrates filling a missing required parameter through an explicit assumption card.
+components:
+  - id: conductor
+    type: ThermalConductorModule
+    parameters:
+      residual_scale_W: 1000.0
+boundaries:
+  - variable: conductor.T_a_K
+    value: 320.0
+    scale: 1.0
+  - variable: conductor.T_b_K
+    value: 300.0
+    scale: 1.0
+  - variable: conductor.Q_dot_W
+    value: 1000.0
+    scale: 100.0
+assumptions:
+  - id: assume_conductor_G
+    target_type: parameter
+    target: conductor.G_W_K
+    value: 50.0
+    unit: W/K
+    reason: Thermal conductance is not provided; use coarse audit estimate.
+    source: engineering_default
+    impact: low
+    review_required: true
+solver:
+  method: least_squares
+  max_iterations: 40
+  audit_threshold: 1.0

@@ -1,0 +1,15 @@
+system_name: control_discrete_integrator
+components:
+  - id: integ
+    type: DiscreteIntegratorModule
+    parameters:
+      dt_s: 0.5
+      gain: 2.0
+boundaries:
+  - variable: integ.state_previous
+    value: 1.0
+  - variable: integ.input
+    value: 3.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

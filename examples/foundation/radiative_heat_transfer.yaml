@@ -1,0 +1,17 @@
+system_name: foundation_radiative_heat_transfer
+components:
+  - id: rad
+    type: RadiativeHeatTransferModule
+    parameters:
+      emissivity: 1.0
+      area_m2: 1.0
+boundaries:
+  - variable: rad.T_hot_K
+    value: 400.0
+    unit: K
+  - variable: rad.T_cold_K
+    value: 300.0
+    unit: K
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

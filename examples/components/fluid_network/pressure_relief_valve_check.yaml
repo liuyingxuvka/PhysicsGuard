@@ -1,0 +1,10 @@
+system_name: component_pressure_relief_valve_check
+components:
+  - id: relief
+    type: PressureReliefValveCheckModule
+    parameters: {}
+boundaries:
+  - {variable: relief.p_upstream_Pa, value: 100000.0}
+  - {variable: relief.p_set_Pa, value: 120000.0}
+  - {variable: relief.m_dot_relief_kg_s, value: 0.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

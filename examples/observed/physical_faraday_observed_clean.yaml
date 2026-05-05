@@ -1,0 +1,13 @@
+observation_name: physical_faraday_observed_clean
+description: Observed Faraday-rate values consistent with the low-fidelity relation.
+variables:
+  faraday.current_A:
+    value: 100.0
+    unit: A
+    source: example
+  faraday.n_dot_mol_s:
+    value: 0.20728539313235117
+    unit: mol/s
+    source: example
+metadata:
+  example_type: observed_clean

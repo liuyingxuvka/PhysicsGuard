@@ -1,0 +1,13 @@
+system_name: foundation_mass_molar_flow_conversion
+components:
+  - id: conv
+    type: MassMolarFlowConversionModule
+    parameters:
+      molar_mass_kg_mol: 0.002
+boundaries:
+  - variable: conv.n_dot_mol_s
+    value: 2.0
+    unit: mol/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,15 @@
+system_name: foundation_stack_chemical_efficiency
+components:
+  - id: eff
+    type: StackChemicalEfficiencyModule
+    parameters: {}
+boundaries:
+  - variable: eff.P_stack_W
+    value: 500.0
+    unit: W
+  - variable: eff.P_chemical_W
+    value: 1000.0
+    unit: W
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

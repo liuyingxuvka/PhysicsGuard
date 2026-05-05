@@ -1,0 +1,11 @@
+system_name: component_engine_volumetric_efficiency
+components:
+  - id: ve
+    type: EngineVolumetricEfficiencyModule
+    parameters: {displacement_m3_per_rev: 0.002}
+boundaries:
+  - {variable: ve.speed_rev_s, value: 50.0}
+  - {variable: ve.rho_air_kg_m3, value: 1.2}
+  - {variable: ve.volumetric_efficiency, value: 0.8}
+  - {variable: ve.m_dot_air_kg_s, value: 0.096}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,25 @@
+system_name: control_conflict_pid_algebraic
+components:
+  - id: pid
+    type: PIDAlgebraicModule
+    parameters:
+      Kp: 2.0
+      Ki: 0.5
+      Kd: 0.1
+      bias: 1.0
+boundaries:
+  - variable: pid.error
+    value: 3.0
+    scale: 0.001
+  - variable: pid.integral_error
+    value: 4.0
+    scale: 0.001
+  - variable: pid.derivative_error
+    value: 5.0
+    scale: 0.001
+  - variable: pid.output
+    value: 30.0
+    scale: 0.001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

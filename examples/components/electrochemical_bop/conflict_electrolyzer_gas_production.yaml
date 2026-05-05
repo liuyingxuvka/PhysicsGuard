@@ -1,0 +1,12 @@
+system_name: component_conflict_electrolyzer_gas_production
+components:
+  - id: gas
+    type: ElectrolyzerGasProductionModule
+    parameters: {n_cells: 400.0, residual_scale_mol_s: 0.001}
+boundaries:
+  - {variable: gas.current_A, value: 100.0, scale: 0.000000001}
+  - {variable: gas.n_dot_H2_mol_s, value: 1.0, scale: 0.000000001}
+  - {variable: gas.n_dot_O2_mol_s, value: 0.1036423, scale: 0.000000001}
+  - {variable: gas.m_dot_H2_kg_s, value: 0.0004179, scale: 0.000000001}
+  - {variable: gas.m_dot_O2_kg_s, value: 0.0033164, scale: 0.000000001}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

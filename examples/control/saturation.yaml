@@ -1,0 +1,13 @@
+system_name: control_saturation
+components:
+  - id: sat
+    type: SaturationModule
+    parameters:
+      lower: 0.0
+      upper: 1.0
+boundaries:
+  - variable: sat.u
+    value: 2.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

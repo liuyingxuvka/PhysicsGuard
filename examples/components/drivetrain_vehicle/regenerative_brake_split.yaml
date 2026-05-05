@@ -1,0 +1,11 @@
+system_name: component_regenerative_brake_split
+components:
+  - id: rb
+    type: RegenerativeBrakeSplitModule
+    parameters: {}
+boundaries:
+  - {variable: rb.brake_power_total_W, value: 10000.0}
+  - {variable: rb.regen_fraction, value: 0.4}
+  - {variable: rb.regen_power_W, value: 4000.0}
+  - {variable: rb.friction_brake_power_W, value: 6000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

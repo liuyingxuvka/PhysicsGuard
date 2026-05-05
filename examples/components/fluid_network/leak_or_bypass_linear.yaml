@@ -1,0 +1,10 @@
+system_name: component_leak_or_bypass_linear
+components:
+  - id: leak
+    type: LeakOrBypassLinearModule
+    parameters: {conductance_kg_s_Pa: 0.000001}
+boundaries:
+  - {variable: leak.p_upstream_Pa, value: 120000.0}
+  - {variable: leak.p_downstream_Pa, value: 100000.0}
+  - {variable: leak.m_dot_kg_s, value: 0.02}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

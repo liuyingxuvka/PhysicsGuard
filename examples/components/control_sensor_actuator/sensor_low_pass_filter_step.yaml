@@ -1,0 +1,10 @@
+system_name: component_sensor_low_pass_filter_step
+components:
+  - id: sensor
+    type: SensorLowPassFilterStepModule
+    parameters: {tau_s: 2.0, dt_s: 1.0}
+boundaries:
+  - {variable: sensor.true_value_current, value: 10.0}
+  - {variable: sensor.measured_previous, value: 6.0}
+  - {variable: sensor.measured_current, value: 8.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

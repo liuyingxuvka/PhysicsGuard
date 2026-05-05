@@ -1,0 +1,23 @@
+system_name: foundation_conflict_air_oxygen_molar_flow
+components:
+  - id: air
+    type: AirOxygenMolarFlowModule
+    parameters:
+      oxygen_mole_fraction: 0.21
+      molar_mass_air_kg_mol: 0.0289652
+boundaries:
+  - variable: air.n_dot_O2_mol_s
+    value: 0.1
+    unit: mol/s
+    scale: 0.000001
+  - variable: air.n_dot_air_mol_s
+    value: 0.1
+    unit: mol/s
+    scale: 0.000001
+  - variable: air.m_dot_air_kg_s
+    value: 0.00289652
+    unit: kg/s
+    scale: 0.000001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

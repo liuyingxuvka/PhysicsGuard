@@ -1,0 +1,11 @@
+system_name: component_lumped_liquid_volume_step
+components:
+  - id: tank
+    type: LumpedLiquidVolumeStepModule
+    parameters: {dt_s: 2.0}
+boundaries:
+  - {variable: tank.mass_previous_kg, value: 10.0}
+  - {variable: tank.m_dot_in_kg_s, value: 0.2}
+  - {variable: tank.m_dot_out_kg_s, value: 0.1}
+  - {variable: tank.mass_current_kg, value: 10.2}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

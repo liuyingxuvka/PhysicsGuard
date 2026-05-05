@@ -1,0 +1,16 @@
+system_name: foundation_ambient_heat_loss
+components:
+  - id: loss
+    type: AmbientHeatLossModule
+    parameters:
+      UA_W_K: 100.0
+boundaries:
+  - variable: loss.T_body_K
+    value: 330.0
+    unit: K
+  - variable: loss.T_ambient_K
+    value: 300.0
+    unit: K
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,13 @@
+system_name: foundation_rotational_inertia_torque
+components:
+  - id: rot
+    type: RotationalInertiaTorqueModule
+    parameters:
+      inertia_kg_m2: 2.0
+boundaries:
+  - variable: rot.angular_acceleration_rad_s2
+    value: 10.0
+    unit: rad/s^2
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

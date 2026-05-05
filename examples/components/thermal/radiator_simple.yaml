@@ -1,0 +1,19 @@
+system_name: component_radiator_simple
+components:
+  - id: rad
+    type: RadiatorSimpleModule
+    parameters:
+      cp_coolant_J_kgK: 1000.0
+      UA_W_K: 333.3333333333333
+boundaries:
+  - variable: rad.m_dot_coolant_kg_s
+    value: 1.0
+  - variable: rad.T_coolant_in_K
+    value: 330.0
+  - variable: rad.T_coolant_out_K
+    value: 320.0
+  - variable: rad.T_air_in_K
+    value: 300.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

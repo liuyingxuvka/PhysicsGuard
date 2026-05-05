@@ -1,0 +1,13 @@
+system_name: component_fc_system_efficiency
+components:
+  - id: sys
+    type: FuelCellSystemEfficiencyModule
+    parameters: {}
+boundaries:
+  - {variable: sys.P_stack_W, value: 28000.0}
+  - {variable: sys.P_aux_W, value: 3000.0}
+  - {variable: sys.P_net_W, value: 25000.0}
+  - {variable: sys.m_dot_H2_kg_s, value: 0.001}
+  - {variable: sys.LHV_H2_J_kg, value: 120000000.0}
+  - {variable: sys.efficiency, value: 0.2083333333}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

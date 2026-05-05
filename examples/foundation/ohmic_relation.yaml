@@ -1,0 +1,13 @@
+system_name: foundation_ohmic_relation
+components:
+  - id: resistor
+    type: OhmicRelationModule
+    parameters:
+      resistance_ohm: 0.1
+boundaries:
+  - variable: resistor.current_A
+    value: 100.0
+    unit: A
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

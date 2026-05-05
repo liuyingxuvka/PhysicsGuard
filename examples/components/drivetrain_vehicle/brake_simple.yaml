@@ -1,0 +1,10 @@
+system_name: component_brake_simple
+components:
+  - id: brake
+    type: BrakeSimpleModule
+    parameters: {}
+boundaries:
+  - {variable: brake.brake_force_N, value: 1000.0}
+  - {variable: brake.vehicle_speed_m_s, value: 20.0}
+  - {variable: brake.brake_power_W, value: 20000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

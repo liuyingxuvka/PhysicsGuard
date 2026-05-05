@@ -1,0 +1,12 @@
+system_name: component_conflict_fc_cathode_air_supply
+components:
+  - id: cathode
+    type: FuelCellCathodeAirSupplyModule
+    parameters: {n_cells: 400.0, residual_scale_mol_s: 0.001}
+boundaries:
+  - {variable: cathode.current_A, value: 100.0, scale: 0.000000001}
+  - {variable: cathode.n_dot_O2_consumed_mol_s, value: 0.5, scale: 0.000000001}
+  - {variable: cathode.oxygen_stoichiometry, value: 2.0, scale: 0.000000001}
+  - {variable: cathode.n_dot_air_feed_mol_s, value: 0.9870695, scale: 0.000000001}
+  - {variable: cathode.m_dot_air_feed_kg_s, value: 0.0285882, scale: 0.000000001}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

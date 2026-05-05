@@ -1,0 +1,13 @@
+system_name: component_flow_merge_temperature
+components:
+  - id: merge
+    type: FlowMergeTemperatureModule
+    parameters: {}
+boundaries:
+  - {variable: merge.m_dot_1_kg_s, value: 0.4}
+  - {variable: merge.T_1_K, value: 300.0}
+  - {variable: merge.m_dot_2_kg_s, value: 0.6}
+  - {variable: merge.T_2_K, value: 320.0}
+  - {variable: merge.m_dot_out_kg_s, value: 1.0}
+  - {variable: merge.T_out_K, value: 312.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

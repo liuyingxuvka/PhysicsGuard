@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments and local tooling
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Local/private operational data
+kb/
+docs/flowguard_adoption_log.md
+.flowguard/adoption_log.jsonl
+
+# Local MATLAB/Simulink experiment artifacts
+examples/hierarchical/simulink_f14_experiment/models/
+examples/hierarchical/simulink_f14_experiment/outputs/
+examples/hierarchical/simulink_f14_experiment/generated/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

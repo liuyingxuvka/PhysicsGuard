@@ -1,0 +1,14 @@
+system_name: foundation_mole_fraction_flow
+components:
+  - id: mix
+    type: MoleFractionFlowModule
+    parameters: {}
+boundaries:
+  - variable: mix.total_n_dot_mol_s
+    value: 10.0
+    unit: mol/s
+  - variable: mix.mole_fraction
+    value: 0.21
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

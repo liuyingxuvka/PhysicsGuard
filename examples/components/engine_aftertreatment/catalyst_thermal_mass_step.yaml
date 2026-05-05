@@ -1,0 +1,11 @@
+system_name: component_catalyst_thermal_mass_step
+components:
+  - id: cat
+    type: CatalystThermalMassStepModule
+    parameters: {C_J_K: 1000.0, dt_s: 1.0}
+boundaries:
+  - {variable: cat.T_previous_K, value: 700.0}
+  - {variable: cat.Q_exhaust_in_W, value: 2000.0}
+  - {variable: cat.Q_loss_W, value: 1000.0}
+  - {variable: cat.T_current_K, value: 701.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

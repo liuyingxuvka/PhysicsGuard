@@ -1,0 +1,13 @@
+system_name: foundation_tank_level_volume
+components:
+  - id: tank
+    type: TankLevelVolumeModule
+    parameters:
+      area_m2: 3.0
+boundaries:
+  - variable: tank.level_m
+    value: 2.0
+    unit: m
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,13 @@
+system_name: component_radiator_fan_simple
+components:
+  - id: fan
+    type: RadiatorFanSimpleModule
+    parameters:
+      max_air_m_dot_kg_s: 2.0
+      max_fan_power_W: 1000.0
+boundaries:
+  - variable: fan.fan_command
+    value: 0.5
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

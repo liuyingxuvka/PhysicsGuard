@@ -1,0 +1,37 @@
+audit_name: pid_actuator_level_0_control_error
+system:
+  system_name: pid_actuator_level_0_control_error
+  components:
+  - id: err
+    type: ControlErrorModule
+    parameters: {}
+  boundaries:
+  - variable: err.setpoint
+    value: 10.0
+    scale: 1.0e-06
+  - variable: err.measurement
+    value: 8.0
+    scale: 1.0e-06
+  - variable: err.error
+    value: 2.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: control_loop
+    level: 0
+    components:
+    - err
+    refinement_template_ids:
+    - pid_actuator_loop/level_1_controller_actuator_sensor
+  refinement_rules:
+  - id: refine_control_loop
+    block_id: control_loop
+    trigger_diagnostic_keys:
+    - control_error_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - pid_actuator_loop/level_1_controller_actuator_sensor
+    priority: 10

@@ -1,0 +1,36 @@
+system_name: component_conflict_fuel_cell_stack_balance
+components:
+  - id: fc
+    type: FuelCellStackBalanceModule
+    parameters:
+      n_cells: 400.0
+      E_thermoneutral_V: 1.48
+      faradaic_efficiency: 1.0
+boundaries:
+  - variable: fc.current_A
+    value: 100.0
+    scale: 0.001
+  - variable: fc.V_cell_V
+    value: 0.7
+    scale: 0.001
+  - variable: fc.V_stack_V
+    value: 280.0
+    scale: 0.001
+  - variable: fc.P_stack_W
+    value: 28000.0
+    scale: 0.001
+  - variable: fc.n_dot_H2_consumed_mol_s
+    value: 0.01
+    scale: 0.000001
+  - variable: fc.n_dot_O2_consumed_mol_s
+    value: 0.01
+    scale: 0.000001
+  - variable: fc.n_dot_H2O_produced_mol_s
+    value: 0.01
+    scale: 0.000001
+  - variable: fc.Q_heat_W
+    value: 31200.0
+    scale: 0.001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,21 @@
+system_name: foundation_pump_hydraulic_power
+components:
+  - id: pump
+    type: PumpHydraulicPowerModule
+    parameters:
+      rho_kg_m3: 1000.0
+      efficiency: 0.8
+      P_initial_guess: 125.0
+boundaries:
+  - variable: pump.p_in_Pa
+    value: 100000.0
+    unit: Pa
+  - variable: pump.p_out_Pa
+    value: 200000.0
+    unit: Pa
+  - variable: pump.m_dot_kg_s
+    value: 1.0
+    unit: kg/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

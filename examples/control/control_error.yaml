@@ -1,0 +1,13 @@
+system_name: control_error
+components:
+  - id: err
+    type: ControlErrorModule
+    parameters: {}
+boundaries:
+  - variable: err.setpoint
+    value: 10.0
+  - variable: err.measurement
+    value: 7.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

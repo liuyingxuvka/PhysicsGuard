@@ -1,0 +1,19 @@
+system_name: component_intercooler_simple
+components:
+  - id: ic
+    type: IntercoolerSimpleModule
+    parameters:
+      cp_gas_J_kgK: 1000.0
+      UA_W_K: 571.4285714285714
+boundaries:
+  - variable: ic.m_dot_gas_kg_s
+    value: 1.0
+  - variable: ic.T_gas_in_K
+    value: 370.0
+  - variable: ic.T_gas_out_K
+    value: 330.0
+  - variable: ic.T_coolant_or_ambient_K
+    value: 300.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,5 @@
+"""Physical constants used by low-fidelity audit modules."""
+
+FARADAY_CONSTANT = 96485.33212
+STEFAN_BOLTZMANN_CONSTANT = 5.670374419e-8
+UNIVERSAL_GAS_CONSTANT = 8.314462618

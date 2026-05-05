@@ -1,0 +1,114 @@
+audit_name: fuel_cell_level_2_cathode_air_path
+system:
+  system_name: fuel_cell_level_2_cathode_air_path
+  components:
+  - id: comp
+    type: CompressorSimpleModule
+    parameters:
+      cp_J_kgK: 1000.0
+      gamma: 1.4
+  - id: ic
+    type: IntercoolerSimpleModule
+    parameters:
+      cp_gas_J_kgK: 1000.0
+      UA_W_K: 571.4285714285714
+  - id: hum
+    type: HumidifierEffectivenessModule
+    parameters:
+      effectiveness: 0.5
+  - id: valve
+    type: ThrottleValveSimpleModule
+    parameters:
+      CdA_max_m2: 3.162277660168379e-05
+      rho_kg_m3: 1000.0
+  - id: cathode_balance
+    type: AggregateSpeciesBalanceModule
+    parameters:
+      species_in_variables:
+      - hum.water_transfer_kg_s
+      species_out_variables:
+      - hum.water_transfer_kg_s
+      residual_scale_mol_s: 0.001
+      species_name: water_proxy
+  boundaries:
+  - variable: comp.p_in_Pa
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: comp.p_out_Pa
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: comp.T_in_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: comp.m_dot_kg_s
+    value: 0.1
+    scale: 1.0e-06
+  - variable: comp.efficiency
+    value: 0.7
+    scale: 1.0e-06
+  - variable: ic.m_dot_gas_kg_s
+    value: 1.0
+    scale: 1.0e-06
+  - variable: ic.T_gas_in_K
+    value: 370.0
+    scale: 1.0e-06
+  - variable: ic.T_gas_out_K
+    value: 330.0
+    scale: 1.0e-06
+  - variable: ic.T_coolant_or_ambient_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: hum.m_dot_dry_air_kg_s
+    value: 1.0
+    scale: 1.0e-06
+  - variable: hum.humidity_ratio_in_kg_kg
+    value: 0.01
+    scale: 1.0e-06
+  - variable: hum.humidity_ratio_target_kg_kg
+    value: 0.03
+    scale: 1.0e-06
+  - variable: valve.p_upstream_Pa
+    value: 120000.0
+    scale: 1.0e-06
+  - variable: valve.p_downstream_Pa
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: valve.opening
+    value: 0.5
+    scale: 1.0e-06
+  - variable: valve.m_dot_kg_s
+    value: 0.1
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: cathode_air_path
+    name: Cathode air path
+    level: 0
+  - id: compressor
+    level: 1
+    parent_id: cathode_air_path
+    components:
+    - comp
+  - id: intercooler
+    level: 1
+    parent_id: cathode_air_path
+    components:
+    - ic
+  - id: humidifier
+    level: 1
+    parent_id: cathode_air_path
+    components:
+    - hum
+  - id: exhaust_valve
+    level: 1
+    parent_id: cathode_air_path
+    components:
+    - valve
+  - id: cathode_balance
+    level: 1
+    parent_id: cathode_air_path
+    components:
+    - cathode_balance

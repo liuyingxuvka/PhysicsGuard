@@ -1,0 +1,12 @@
+system_name: component_battery_ocv_map
+components:
+  - id: ocv
+    type: BatteryOCVMapModule
+    parameters:
+      SOC_points: [0.0, 1.0]
+      OCV_points_V: [300.0, 400.0]
+      extrapolation: hold
+boundaries:
+  - {variable: ocv.SOC, value: 0.5}
+  - {variable: ocv.OCV_V, value: 350.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

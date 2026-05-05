@@ -1,0 +1,11 @@
+system_name: component_engine_exhaust_heat_flow
+components:
+  - id: exh
+    type: EngineExhaustHeatFlowModule
+    parameters: {}
+boundaries:
+  - {variable: exh.m_dot_exhaust_kg_s, value: 0.1}
+  - {variable: exh.T_exhaust_K, value: 800.0}
+  - {variable: exh.T_ref_K, value: 300.0}
+  - {variable: exh.Q_exhaust_W, value: 55000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

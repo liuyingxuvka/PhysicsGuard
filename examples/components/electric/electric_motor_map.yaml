@@ -1,0 +1,31 @@
+system_name: component_electric_motor_map
+components:
+  - id: motor
+    type: ElectricMotorMapModule
+    parameters:
+      torque_points: [0.0, 60.0]
+      omega_points: [0.0, 200.0]
+      efficiency_values:
+        - [0.8, 0.85]
+        - [0.85, 0.9]
+      torque_lower_bound: 0.0
+      torque_upper_bound: 60.0
+      torque_initial_guess: 30.0
+      torque_scale: 10.0
+      omega_lower_bound: 0.0
+      omega_upper_bound: 200.0
+      omega_initial_guess: 100.0
+      omega_scale: 100.0
+      efficiency_initial_guess: 0.85
+      mechanical_power_initial_guess: 3000.0
+      electrical_power_initial_guess: 3529.4117647058824
+boundaries:
+  - variable: motor.torque_Nm
+    value: 30.0
+    scale: 0.1
+  - variable: motor.omega_rad_s
+    value: 100.0
+    scale: 0.1
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

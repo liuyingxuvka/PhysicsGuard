@@ -1,0 +1,15 @@
+system_name: foundation_relative_humidity
+components:
+  - id: rh
+    type: RelativeHumidityFromPartialPressureModule
+    parameters: {}
+boundaries:
+  - variable: rh.p_vapor_Pa
+    value: 1000.0
+    unit: Pa
+  - variable: rh.p_saturation_Pa
+    value: 2000.0
+    unit: Pa
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

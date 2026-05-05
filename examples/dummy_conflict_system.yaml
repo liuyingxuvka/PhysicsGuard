@@ -1,0 +1,24 @@
+system_name: dummy_conflict_system
+description: Dummy framework test system with an intentional non-physical conflict.
+components:
+  - id: a
+    type: DummyResidualModule
+    parameters:
+      target: 5.0
+      lower_bound: -100.0
+      upper_bound: 100.0
+      initial_guess: 0.0
+      scale: 1.0
+      unit: "1"
+boundaries:
+  - variable: a.x
+    value: 10.0
+    unit: "1"
+    scale: 1.0
+    description: Conflicts with the dummy target.
+solver:
+  method: least_squares
+  max_iterations: 30
+  audit_threshold: 1.0
+  tolerance: 1.0e-8
+  verbose: false

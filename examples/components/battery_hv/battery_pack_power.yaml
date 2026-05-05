@@ -1,0 +1,10 @@
+system_name: component_battery_pack_power
+components:
+  - id: pack
+    type: BatteryPackPowerModule
+    parameters: {}
+boundaries:
+  - {variable: pack.terminal_voltage_V, value: 350.0}
+  - {variable: pack.current_A, value: 10.0}
+  - {variable: pack.power_W, value: 3500.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,79 @@
+audit_name: observed_pitch_feedback_level_0
+description: Direct observed-value hierarchical audit for a mapped controller feedback signal.
+system:
+  system_name: observed_pitch_feedback_level_0
+  description: >
+    Low-fidelity audit template for an externally observed controller feedback relation.
+    This file does not parse or import a Simulink model; observed values are supplied
+    separately through ObservedValuesSpec.
+  components:
+    - id: controller_q_gain
+      type: LinearRelationModule
+      parameters:
+        a: 0.8156
+        b: 0.0
+        residual_scale: 0.1
+        x_lower_bound: -10.0
+        x_upper_bound: 10.0
+        x_initial_guess: 2.0
+        x_scale: 1.0
+        x_unit: rad/s
+        y_lower_bound: -10.0
+        y_upper_bound: 10.0
+        y_initial_guess: 1.6312
+        y_scale: 1.0
+        y_unit: controller command contribution
+  solver:
+    method: least_squares
+    max_iterations: 30
+    audit_threshold: 1.0
+    tolerance: 1.0e-8
+    verbose: false
+hierarchy:
+  blocks:
+    - id: f14_flight_control
+      name: F14-style flight-control loop
+      level: 0
+      components: []
+      refinement_template_ids:
+        - observed_debugging/pitch_feedback_level_0
+      metadata:
+        purpose: coarse external-signal audit example
+    - id: pitch_rate_feedback
+      name: Pitch-rate feedback path
+      level: 1
+      parent_id: f14_flight_control
+      components:
+        - controller_q_gain
+      required_variables:
+        - controller_q_gain.x
+        - controller_q_gain.y
+      required_parameters:
+        - controller_q_gain.a
+      refinement_template_ids:
+        - observed_debugging/manual_signal_mapping_review
+      metadata:
+        expected_relation: controller_q_gain.y = 0.8156 * controller_q_gain.x
+        external_signal_mapping_is_ai_or_user_supplied: true
+  refinement_rules:
+    - id: inspect_pitch_rate_feedback_mapping_or_gain
+      block_id: pitch_rate_feedback
+      trigger_diagnostic_keys:
+        - linear_relation_mismatch
+      score_threshold: 1.0
+      next_template_ids:
+        - observed_debugging/manual_signal_mapping_review
+      next_required_variables:
+        - actual feedback gain block input
+        - actual feedback gain block output
+        - sign convention around feedback summation
+      next_required_parameters:
+        - actual feedback gain parameter
+      rationale: >
+        The mapped feedback output is inconsistent with the nominal sign/gain relation;
+        review signal mapping, sign convention, gain value, and unit conversion.
+      priority: 20
+metadata:
+  example_type: hierarchical_observed_debugging
+  adapter_status: none
+  intended_use: AI-guided external signal audit after a user or AI maps signals to variables.

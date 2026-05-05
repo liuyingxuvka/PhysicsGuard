@@ -1,0 +1,36 @@
+system_name: component_conflict_electrolyzer_stack_balance
+components:
+  - id: el
+    type: ElectrolyzerStackBalanceModule
+    parameters:
+      n_cells: 400.0
+      E_thermoneutral_V: 1.48
+      faradaic_efficiency: 1.0
+boundaries:
+  - variable: el.current_A
+    value: 100.0
+    scale: 0.001
+  - variable: el.V_cell_V
+    value: 1.8
+    scale: 0.001
+  - variable: el.V_stack_V
+    value: 720.0
+    scale: 0.001
+  - variable: el.P_stack_W
+    value: 72000.0
+    scale: 0.001
+  - variable: el.n_dot_H2_produced_mol_s
+    value: 0.01
+    scale: 0.000001
+  - variable: el.n_dot_O2_produced_mol_s
+    value: 0.01
+    scale: 0.000001
+  - variable: el.n_dot_H2O_consumed_mol_s
+    value: 0.01
+    scale: 0.000001
+  - variable: el.Q_heat_W
+    value: 12800.0
+    scale: 0.001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

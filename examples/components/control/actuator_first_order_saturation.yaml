@@ -1,0 +1,17 @@
+system_name: component_actuator_first_order_saturation
+components:
+  - id: act
+    type: ActuatorFirstOrderSaturationModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+      lower: 0.0
+      upper: 1.0
+boundaries:
+  - variable: act.command
+    value: 2.0
+  - variable: act.actual_previous
+    value: 0.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,10 @@
+system_name: component_duct_segment_simple
+components:
+  - id: duct
+    type: DuctSegmentSimpleModule
+    parameters: {rho_kg_m3: 1.2, area_m2: 0.1, K_total: 2.0}
+boundaries:
+  - {variable: duct.p_in_Pa, value: 100120.0}
+  - {variable: duct.p_out_Pa, value: 100000.0}
+  - {variable: duct.m_dot_kg_s, value: 1.2}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

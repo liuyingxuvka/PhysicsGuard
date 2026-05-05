@@ -1,0 +1,10 @@
+system_name: component_actuator_position_feedback
+components:
+  - id: act
+    type: ActuatorPositionFeedbackModule
+    parameters: {command_to_position_gain: 2.0, feedback_gain: 0.5, feedback_offset: 1.0}
+boundaries:
+  - {variable: act.command, value: 3.0}
+  - {variable: act.actual_position, value: 6.0}
+  - {variable: act.feedback_position, value: 4.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

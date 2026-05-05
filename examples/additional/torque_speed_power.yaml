@@ -1,0 +1,15 @@
+system_name: additional_torque_speed_power
+components:
+  - id: mech
+    type: TorqueSpeedPowerModule
+    parameters: {}
+boundaries:
+  - variable: mech.torque_Nm
+    value: 10.0
+    unit: N*m
+  - variable: mech.omega_rad_s
+    value: 100.0
+    unit: rad/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

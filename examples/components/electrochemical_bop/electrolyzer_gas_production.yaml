@@ -1,0 +1,12 @@
+system_name: component_electrolyzer_gas_production
+components:
+  - id: gas
+    type: ElectrolyzerGasProductionModule
+    parameters: {n_cells: 400.0}
+boundaries:
+  - {variable: gas.current_A, value: 100.0}
+  - {variable: gas.n_dot_H2_mol_s, value: 0.2072846}
+  - {variable: gas.n_dot_O2_mol_s, value: 0.1036423}
+  - {variable: gas.m_dot_H2_kg_s, value: 0.0004179}
+  - {variable: gas.m_dot_O2_kg_s, value: 0.0033164}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

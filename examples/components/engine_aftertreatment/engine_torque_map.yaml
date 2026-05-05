@@ -1,0 +1,19 @@
+system_name: component_engine_torque_map
+components:
+  - id: eng
+    type: EngineTorqueMapModule
+    parameters:
+      speed_points_rad_s: [0.0, 200.0]
+      load_points: [0.0, 1.0]
+      torque_values_Nm:
+        - [0.0, 0.0]
+        - [100.0, 200.0]
+      extrapolation: hold
+      speed_lower_bound: 0.0
+      speed_upper_bound: 200.0
+      speed_initial_guess: 100.0
+boundaries:
+  - {variable: eng.speed_rad_s, value: 100.0}
+  - {variable: eng.load_command, value: 0.5}
+  - {variable: eng.torque_Nm, value: 75.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

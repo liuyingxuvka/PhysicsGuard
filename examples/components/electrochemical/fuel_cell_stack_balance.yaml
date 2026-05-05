@@ -1,0 +1,16 @@
+system_name: component_fuel_cell_stack_balance
+components:
+  - id: fc
+    type: FuelCellStackBalanceModule
+    parameters:
+      n_cells: 400.0
+      E_thermoneutral_V: 1.48
+      faradaic_efficiency: 1.0
+boundaries:
+  - variable: fc.current_A
+    value: 100.0
+  - variable: fc.V_cell_V
+    value: 0.7
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

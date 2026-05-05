@@ -1,0 +1,11 @@
+system_name: component_thermal_mass_step
+components:
+  - id: mass
+    type: ThermalMassStepModule
+    parameters: {C_J_K: 1000.0, dt_s: 1.0}
+boundaries:
+  - {variable: mass.T_previous_K, value: 300.0}
+  - {variable: mass.Q_in_W, value: 2000.0}
+  - {variable: mass.Q_out_W, value: 1000.0}
+  - {variable: mass.T_current_K, value: 301.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

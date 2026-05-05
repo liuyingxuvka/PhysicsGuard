@@ -1,0 +1,16 @@
+system_name: foundation_rotating_machine_affinity
+components:
+  - id: aff
+    type: RotatingMachineAffinityModule
+    parameters:
+      nominal_speed_rad_s: 100.0
+      nominal_m_dot_kg_s: 1.0
+      nominal_delta_p_Pa: 100000.0
+      nominal_P_shaft_W: 1000.0
+boundaries:
+  - variable: aff.speed_rad_s
+    value: 50.0
+    unit: rad/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

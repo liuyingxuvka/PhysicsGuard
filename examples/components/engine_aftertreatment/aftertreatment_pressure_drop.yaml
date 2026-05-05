@@ -1,0 +1,10 @@
+system_name: component_aftertreatment_pressure_drop
+components:
+  - id: aft
+    type: AftertreatmentPressureDropModule
+    parameters: {K_Pa_per_kg2_s2: 1000.0}
+boundaries:
+  - {variable: aft.p_in_Pa, value: 100010.0}
+  - {variable: aft.p_out_Pa, value: 100000.0}
+  - {variable: aft.m_dot_exhaust_kg_s, value: 0.1}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "physicsguard"
+version = "0.1.0"
+description = "Core schema and residual-audit framework contracts for PhysicsGuard."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+keywords = ["physics", "simulation", "diagnostics", "residuals", "simulink", "gt-suite", "ai-debugging"]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pydantic>=2.6",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+physicsguard = "physicsguard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,13 @@
+system_name: foundation_viscous_damper_force
+components:
+  - id: damper
+    type: ViscousDamperForceModule
+    parameters:
+      damping_N_s_m: 50.0
+boundaries:
+  - variable: damper.velocity_m_s
+    value: 2.0
+    unit: m/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

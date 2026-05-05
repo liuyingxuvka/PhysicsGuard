@@ -1,0 +1,18 @@
+system_name: component_lookup_table_2d
+components:
+  - id: map
+    type: LookupTable2DModule
+    parameters:
+      x_points: [0.0, 1.0]
+      y_points: [0.0, 1.0]
+      z_values:
+        - [0.0, 1.0]
+        - [1.0, 2.0]
+boundaries:
+  - variable: map.x
+    value: 0.5
+  - variable: map.y
+    value: 0.5
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,14 @@
+system_name: foundation_water_production_faraday
+components:
+  - id: water
+    type: WaterProductionFaradayModule
+    parameters:
+      n_cells: 400.0
+      faradaic_efficiency: 1.0
+boundaries:
+  - variable: water.current_A
+    value: 100.0
+    unit: A
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

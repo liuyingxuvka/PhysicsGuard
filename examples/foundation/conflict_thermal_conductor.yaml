@@ -1,0 +1,24 @@
+system_name: foundation_conflict_thermal_conductor
+components:
+  - id: cond
+    type: ThermalConductorModule
+    parameters:
+      G_W_K: 50.0
+      residual_scale_W: 100.0
+      Q_dot_initial_guess: 0.0
+boundaries:
+  - variable: cond.T_a_K
+    value: 320.0
+    unit: K
+    scale: 0.01
+  - variable: cond.T_b_K
+    value: 300.0
+    unit: K
+    scale: 0.01
+  - variable: cond.Q_dot_W
+    value: 0.0
+    unit: W
+    scale: 1.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

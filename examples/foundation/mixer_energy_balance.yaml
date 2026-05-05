@@ -1,0 +1,48 @@
+system_name: foundation_mixer_energy_balance
+components:
+  - id: m1
+    type: DummyResidualModule
+    parameters:
+      target: 1.0
+  - id: m2
+    type: DummyResidualModule
+    parameters:
+      target: 1.0
+  - id: t1
+    type: DummyResidualModule
+    parameters:
+      target: 300.0
+      lower_bound: 200.0
+      upper_bound: 1000.0
+      initial_guess: 290.0
+      scale: 10.0
+  - id: t2
+    type: DummyResidualModule
+    parameters:
+      target: 320.0
+      lower_bound: 200.0
+      upper_bound: 1000.0
+      initial_guess: 310.0
+      scale: 10.0
+  - id: mout
+    type: DummyResidualModule
+    parameters:
+      target: 2.0
+  - id: tout
+    type: DummyResidualModule
+    parameters:
+      target: 310.0
+      lower_bound: 200.0
+      upper_bound: 1000.0
+      initial_guess: 300.0
+      scale: 10.0
+  - id: mixer
+    type: MixerEnergyBalanceModule
+    parameters:
+      inlet_m_dot_variables: [m1.x, m2.x]
+      inlet_T_variables: [t1.x, t2.x]
+      outlet_m_dot_variable: mout.x
+      outlet_T_variable: tout.x
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

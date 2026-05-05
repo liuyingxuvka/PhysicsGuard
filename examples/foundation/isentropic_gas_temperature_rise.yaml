@@ -1,0 +1,20 @@
+system_name: foundation_isentropic_gas_temperature_rise
+components:
+  - id: rise
+    type: IsentropicGasTemperatureRiseModule
+    parameters:
+      gamma: 1.4
+      efficiency: 0.7
+boundaries:
+  - variable: rise.p_in_Pa
+    value: 100000.0
+    unit: Pa
+  - variable: rise.p_out_Pa
+    value: 200000.0
+    unit: Pa
+  - variable: rise.T_in_K
+    value: 300.0
+    unit: K
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

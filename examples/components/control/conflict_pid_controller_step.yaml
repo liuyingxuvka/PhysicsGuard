@@ -1,0 +1,41 @@
+system_name: component_conflict_pid_controller_step
+components:
+  - id: pid
+    type: PIDControllerStepModule
+    parameters:
+      Kp: 2.0
+      Ki: 0.5
+      Kd: 0.1
+      bias: 1.0
+      dt_s: 0.5
+boundaries:
+  - variable: pid.setpoint
+    value: 10.0
+    scale: 0.001
+  - variable: pid.measurement
+    value: 7.0
+    scale: 0.001
+  - variable: pid.error
+    value: 3.0
+    scale: 0.001
+  - variable: pid.error_previous
+    value: 2.0
+    scale: 0.001
+  - variable: pid.integral_previous
+    value: 1.0
+    scale: 0.001
+  - variable: pid.integral_current
+    value: 2.5
+    scale: 0.001
+  - variable: pid.derivative_error
+    value: 2.0
+    scale: 0.001
+  - variable: pid.output_unsaturated
+    value: 8.45
+    scale: 0.001
+  - variable: pid.output
+    value: 30.0
+    scale: 0.001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

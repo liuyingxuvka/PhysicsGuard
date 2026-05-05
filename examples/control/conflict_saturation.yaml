@@ -1,0 +1,18 @@
+system_name: control_conflict_saturation
+components:
+  - id: sat
+    type: SaturationModule
+    parameters:
+      lower: 0.0
+      upper: 1.0
+      residual_scale: 0.1
+boundaries:
+  - variable: sat.u
+    value: 2.0
+    scale: 0.001
+  - variable: sat.y
+    value: 2.0
+    scale: 0.001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

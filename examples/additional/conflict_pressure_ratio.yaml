@@ -1,0 +1,21 @@
+system_name: additional_conflict_pressure_ratio
+components:
+  - id: pr
+    type: PressureRatioModule
+    parameters:
+      residual_scale: 0.1
+boundaries:
+  - variable: pr.p_in_Pa
+    value: 100000.0
+    unit: Pa
+    scale: 1.0
+  - variable: pr.p_out_Pa
+    value: 200000.0
+    unit: Pa
+    scale: 1.0
+  - variable: pr.pressure_ratio
+    value: 3.0
+    scale: 0.001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

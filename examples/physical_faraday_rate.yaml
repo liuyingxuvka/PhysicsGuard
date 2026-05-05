@@ -1,0 +1,19 @@
+system_name: physical_faraday_rate
+description: Low-fidelity Faraday-rate audit example.
+components:
+  - id: faraday
+    type: ElectrochemicalFaradayRateModule
+    parameters:
+      n_cells: 400.0
+      electrons_per_mole: 2.0
+      faradaic_efficiency: 1.0
+      residual_scale_mol_s: 0.001
+boundaries:
+  - variable: faraday.current_A
+    value: 100.0
+    unit: A
+solver:
+  method: least_squares
+  max_iterations: 30
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

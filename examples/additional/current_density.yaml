@@ -1,0 +1,13 @@
+system_name: additional_current_density
+components:
+  - id: cd
+    type: CurrentDensityModule
+    parameters:
+      active_area_m2: 0.1
+boundaries:
+  - variable: cd.current_A
+    value: 100.0
+    unit: A
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

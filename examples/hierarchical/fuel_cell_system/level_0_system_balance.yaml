@@ -1,0 +1,163 @@
+audit_name: fuel_cell_level_0_system_balance
+description: Level 0 coarse fuel-cell system balance audit.
+system:
+  system_name: fuel_cell_level_0_system_balance
+  components:
+  - id: h2_power
+    type: DummyResidualModule
+    parameters:
+      target: 50000.0
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 50000.0
+      scale: 50000.0
+      unit: W
+  - id: net_power
+    type: DummyResidualModule
+    parameters:
+      target: 25000.0
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 25000.0
+      scale: 25000.0
+      unit: W
+  - id: aux_power
+    type: DummyResidualModule
+    parameters:
+      target: 5000.0
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 5000.0
+      scale: 5000.0
+      unit: W
+  - id: stack_heat
+    type: DummyResidualModule
+    parameters:
+      target: 20000.0
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 20000.0
+      scale: 20000.0
+      unit: W
+  - id: heat_rejected
+    type: DummyResidualModule
+    parameters:
+      target: 20000.0
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 20000.0
+      scale: 20000.0
+      unit: W
+  - id: efficiency
+    type: DummyResidualModule
+    parameters:
+      target: 0.5
+      lower_bound: -1000000000.0
+      upper_bound: 1000000000.0
+      initial_guess: 0.5
+      scale: 1.0
+  - id: power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - h2_power.x
+      load_power_variables:
+      - net_power.x
+      - heat_rejected.x
+      loss_power_variables:
+      - aux_power.x
+      residual_scale_W: 1000.0
+  - id: thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - stack_heat.x
+      heat_out_variables:
+      - heat_rejected.x
+      residual_scale_W: 1000.0
+  - id: overall_efficiency
+    type: AggregateEfficiencyModule
+    parameters:
+      useful_output_power_variable: net_power.x
+      input_power_variable: h2_power.x
+      efficiency_variable: efficiency.x
+      residual_scale: 0.01
+  boundaries:
+  - variable: h2_power.x
+    value: 50000.0
+    scale: 1.0e-06
+  - variable: net_power.x
+    value: 25000.0
+    scale: 1.0e-06
+  - variable: aux_power.x
+    value: 5000.0
+    scale: 1.0e-06
+  - variable: stack_heat.x
+    value: 20000.0
+    scale: 1.0e-06
+  - variable: heat_rejected.x
+    value: 20000.0
+    scale: 1.0e-06
+  - variable: efficiency.x
+    value: 0.5
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: fc_system
+    name: Fuel-cell system
+    level: 0
+    components:
+    - h2_power
+    - net_power
+    - aux_power
+    - stack_heat
+    - heat_rejected
+    - efficiency
+    - power_balance
+    - thermal_balance
+    - overall_efficiency
+    tags:
+    - fuel_cell
+    - level_0
+    - system_balance
+    required_variables:
+    - h2_power.x
+    - net_power.x
+    - aux_power.x
+    - stack_heat.x
+    - heat_rejected.x
+    - efficiency.x
+    refinement_template_ids:
+    - fuel_cell_system/level_1_major_subsystems
+    - fuel_cell_system/level_2_cathode_air_path
+    - fuel_cell_system/level_2_cooling_loop
+  refinement_rules:
+  - id: refine_fc_system_balance
+    block_id: fc_system
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - aggregate_efficiency_mismatch
+    - aggregate_thermal_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - fuel_cell_system/level_1_major_subsystems
+    - fuel_cell_system/level_2_cathode_air_path
+    - fuel_cell_system/level_2_cooling_loop
+    next_required_variables:
+    - stack.P_stack_W
+    - cathode.n_dot_air_feed_mol_s
+    - cool.Q_stack_heat_W
+    next_required_parameters:
+    - stack.n_cells
+    - cathode.n_cells
+    rationale: System-level power, heat, or efficiency residual is high; refine major
+      subsystems.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  future_observed_mode: not_implemented_yet

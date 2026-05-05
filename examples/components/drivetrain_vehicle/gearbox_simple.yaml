@@ -1,0 +1,12 @@
+system_name: component_gearbox_simple
+components:
+  - id: gb
+    type: GearboxSimpleModule
+    parameters: {gear_ratio: 2.0}
+boundaries:
+  - {variable: gb.omega_in_rad_s, value: 100.0}
+  - {variable: gb.torque_in_Nm, value: 50.0}
+  - {variable: gb.efficiency, value: 0.9}
+  - {variable: gb.omega_out_rad_s, value: 50.0}
+  - {variable: gb.torque_out_Nm, value: 90.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

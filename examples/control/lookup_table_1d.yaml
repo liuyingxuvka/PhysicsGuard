@@ -1,0 +1,13 @@
+system_name: control_lookup_table_1d
+components:
+  - id: table
+    type: LookupTable1DModule
+    parameters:
+      x_points: [0.0, 1.0, 2.0]
+      y_points: [0.0, 10.0, 20.0]
+boundaries:
+  - variable: table.x
+    value: 1.5
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

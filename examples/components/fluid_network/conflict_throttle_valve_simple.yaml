@@ -1,0 +1,11 @@
+system_name: component_conflict_throttle_valve_simple
+components:
+  - id: valve
+    type: ThrottleValveSimpleModule
+    parameters: {CdA_max_m2: 0.001, rho_kg_m3: 1000.0, residual_scale_kg2_s2: 0.000001}
+boundaries:
+  - {variable: valve.p_upstream_Pa, value: 120000.0, scale: 0.000000001}
+  - {variable: valve.p_downstream_Pa, value: 100000.0, scale: 0.000000001}
+  - {variable: valve.opening, value: 0.5, scale: 0.000000001}
+  - {variable: valve.m_dot_kg_s, value: 0.3, scale: 0.000000001}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

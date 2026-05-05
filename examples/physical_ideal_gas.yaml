@@ -1,0 +1,20 @@
+system_name: physical_ideal_gas
+description: Low-fidelity ideal gas state audit example.
+components:
+  - id: gas
+    type: IdealGasStateModule
+    parameters:
+      volume_m3: 0.01
+      residual_scale_J: 100.0
+boundaries:
+  - variable: gas.T_K
+    value: 300.0
+    unit: K
+  - variable: gas.n_mol
+    value: 1.0
+    unit: mol
+solver:
+  method: least_squares
+  max_iterations: 30
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

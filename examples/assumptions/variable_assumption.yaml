@@ -1,0 +1,32 @@
+system_name: assumption_variable_coolant
+description: Demonstrates an active variable assumption as a visible fixed-value residual.
+components:
+  - id: coolant
+    type: CoolantHeatBalanceModule
+    parameters:
+      cp_J_kgK: 4180.0
+      residual_scale_W: 1000.0
+boundaries:
+  - variable: coolant.m_dot_kg_s
+    value: 0.1
+    scale: 0.01
+  - variable: coolant.T_out_K
+    value: 310.0
+    scale: 1.0
+  - variable: coolant.Q_dot_W
+    value: 4180.0
+    scale: 100.0
+assumptions:
+  - id: assume_coolant_inlet_temperature
+    target_type: variable
+    target: coolant.T_in_K
+    value: 300.0
+    unit: K
+    reason: Coolant inlet temperature is not available in the current signal set.
+    source: missing_signal
+    impact: high
+    review_required: true
+solver:
+  method: least_squares
+  max_iterations: 40
+  audit_threshold: 1.0

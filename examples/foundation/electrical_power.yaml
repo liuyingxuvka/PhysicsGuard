@@ -1,0 +1,16 @@
+system_name: foundation_electrical_power
+components:
+  - id: elec
+    type: ElectricalPowerModule
+    parameters:
+      P_initial_guess: 4000.0
+boundaries:
+  - variable: elec.V_V
+    value: 400.0
+    unit: V
+  - variable: elec.current_A
+    value: 10.0
+    unit: A
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

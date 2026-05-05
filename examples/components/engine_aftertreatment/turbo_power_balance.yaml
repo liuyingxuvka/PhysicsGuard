@@ -1,0 +1,10 @@
+system_name: component_turbo_power_balance
+components:
+  - id: turbo
+    type: TurboPowerBalanceModule
+    parameters: {}
+boundaries:
+  - {variable: turbo.P_turbine_W, value: 10000.0}
+  - {variable: turbo.mechanical_efficiency, value: 0.9}
+  - {variable: turbo.P_compressor_W, value: 9000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

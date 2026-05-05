@@ -1,0 +1,19 @@
+system_name: component_dcdc_converter_simple
+components:
+  - id: dcdc
+    type: DCDCConverterSimpleModule
+    parameters: {}
+boundaries:
+  - variable: dcdc.V_in_V
+    value: 400.0
+  - variable: dcdc.I_in_A
+    value: 10.0
+  - variable: dcdc.V_out_V
+    value: 200.0
+  - variable: dcdc.I_out_A
+    value: 18.0
+  - variable: dcdc.efficiency
+    value: 0.9
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

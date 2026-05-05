@@ -1,0 +1,19 @@
+system_name: component_electric_motor_simple
+components:
+  - id: motor
+    type: ElectricMotorSimpleModule
+    parameters: {}
+boundaries:
+  - variable: motor.voltage_V
+    value: 400.0
+  - variable: motor.current_A
+    value: 10.0
+  - variable: motor.torque_Nm
+    value: 30.0
+  - variable: motor.omega_rad_s
+    value: 100.0
+  - variable: motor.efficiency
+    value: 0.75
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

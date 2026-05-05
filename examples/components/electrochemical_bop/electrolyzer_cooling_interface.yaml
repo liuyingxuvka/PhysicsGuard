@@ -1,0 +1,11 @@
+system_name: component_electrolyzer_cooling_interface
+components:
+  - id: cool
+    type: ElectrolyzerCoolingInterfaceModule
+    parameters: {}
+boundaries:
+  - {variable: cool.Q_stack_heat_W, value: 4180.0}
+  - {variable: cool.m_dot_coolant_kg_s, value: 0.1}
+  - {variable: cool.T_coolant_in_K, value: 300.0}
+  - {variable: cool.T_coolant_out_K, value: 310.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

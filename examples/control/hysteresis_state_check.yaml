@@ -1,0 +1,15 @@
+system_name: control_hysteresis_state_check
+components:
+  - id: hyst
+    type: HysteresisStateCheckModule
+    parameters:
+      low_threshold: 4.0
+      high_threshold: 6.0
+boundaries:
+  - variable: hyst.input
+    value: 7.0
+  - variable: hyst.state
+    value: 1.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

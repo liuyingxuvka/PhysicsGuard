@@ -1,0 +1,19 @@
+system_name: component_engine_simple_efficiency
+components:
+  - id: eng
+    type: EngineSimpleEfficiencyModule
+    parameters: {}
+boundaries:
+  - variable: eng.fuel_m_dot_kg_s
+    value: 0.001
+  - variable: eng.LHV_J_kg
+    value: 50000000.0
+  - variable: eng.thermal_efficiency
+    value: 0.2
+  - variable: eng.torque_Nm
+    value: 100.0
+  - variable: eng.omega_rad_s
+    value: 100.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

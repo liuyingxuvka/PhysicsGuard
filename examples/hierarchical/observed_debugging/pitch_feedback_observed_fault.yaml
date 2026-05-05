@@ -1,0 +1,15 @@
+observation_name: pitch_feedback_observed_fault
+description: Faulted externally observed values with reversed feedback sign.
+variables:
+  controller_q_gain.x:
+    value: 2.0
+    unit: rad/s
+    source: mapped_external_signal
+  controller_q_gain.y:
+    value: -1.6312
+    unit: controller command contribution
+    source: mapped_external_signal
+metadata:
+  external_model_family: simulink_like
+  adapter_status: none
+  injected_fault: reversed feedback sign or wrong signal mapping

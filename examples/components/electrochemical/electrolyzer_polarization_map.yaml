@@ -1,0 +1,13 @@
+system_name: component_electrolyzer_polarization_map
+components:
+  - id: elmap
+    type: ElectrolyzerPolarizationMapModule
+    parameters:
+      current_density_points_A_m2: [0.0, 2000.0]
+      V_cell_points_V: [1.5, 1.9]
+boundaries:
+  - variable: elmap.current_density_A_m2
+    value: 1000.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

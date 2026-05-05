@@ -1,0 +1,10 @@
+system_name: component_charger_simple
+components:
+  - id: charger
+    type: ChargerSimpleModule
+    parameters: {}
+boundaries:
+  - {variable: charger.P_grid_W, value: 10000.0}
+  - {variable: charger.efficiency, value: 0.9}
+  - {variable: charger.P_battery_W, value: 9000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,21 @@
+system_name: component_compressor_simple
+components:
+  - id: comp
+    type: CompressorSimpleModule
+    parameters:
+      cp_J_kgK: 1000.0
+      gamma: 1.4
+boundaries:
+  - variable: comp.p_in_Pa
+    value: 100000.0
+  - variable: comp.p_out_Pa
+    value: 200000.0
+  - variable: comp.T_in_K
+    value: 300.0
+  - variable: comp.m_dot_kg_s
+    value: 0.1
+  - variable: comp.efficiency
+    value: 0.7
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

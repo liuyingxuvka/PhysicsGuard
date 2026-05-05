@@ -1,0 +1,19 @@
+system_name: foundation_tank_volume_rate
+components:
+  - id: tank
+    type: TankVolumeRateModule
+    parameters:
+      dt_s: 10.0
+boundaries:
+  - variable: tank.volume_previous_m3
+    value: 1.0
+    unit: m^3
+  - variable: tank.V_dot_in_m3_s
+    value: 0.1
+    unit: m^3/s
+  - variable: tank.V_dot_out_m3_s
+    value: 0.02
+    unit: m^3/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

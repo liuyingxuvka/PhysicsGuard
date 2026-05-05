@@ -1,0 +1,13 @@
+system_name: foundation_thermal_capacitance_rate
+components:
+  - id: cap
+    type: ThermalCapacitanceRateModule
+    parameters:
+      C_J_K: 500.0
+boundaries:
+  - variable: cap.dT_dt_K_s
+    value: 2.0
+    unit: K/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

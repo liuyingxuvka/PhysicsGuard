@@ -1,0 +1,22 @@
+system_name: component_gain_scheduled_pid
+components:
+  - id: pid
+    type: GainScheduledPIDModule
+    parameters:
+      schedule_points: [0.0, 1.0]
+      Kp_points: [1.0, 2.0]
+      Ki_points: [0.1, 0.2]
+      Kd_points: [0.0, 0.1]
+      schedule_variable_lower_bound: 0.0
+      schedule_variable_upper_bound: 1.0
+      schedule_variable_initial_guess: 0.5
+      extrapolation: hold
+boundaries:
+  - {variable: pid.schedule_variable, value: 0.5}
+  - {variable: pid.setpoint, value: 10.0}
+  - {variable: pid.measurement, value: 8.0}
+  - {variable: pid.error, value: 2.0}
+  - {variable: pid.integral_error, value: 1.0}
+  - {variable: pid.derivative_error, value: 0.5}
+  - {variable: pid.output, value: 3.225}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

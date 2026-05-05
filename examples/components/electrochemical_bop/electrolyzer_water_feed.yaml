@@ -1,0 +1,10 @@
+system_name: component_electrolyzer_water_feed
+components:
+  - id: water
+    type: ElectrolyzerWaterFeedModule
+    parameters: {n_cells: 400.0}
+boundaries:
+  - {variable: water.current_A, value: 100.0}
+  - {variable: water.n_dot_H2O_consumed_mol_s, value: 0.2072846}
+  - {variable: water.m_dot_H2O_consumed_kg_s, value: 0.0037343}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

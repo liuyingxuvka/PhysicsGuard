@@ -1,0 +1,13 @@
+system_name: additional_cell_stack_voltage
+components:
+  - id: stack
+    type: CellVoltageStackVoltageModule
+    parameters:
+      n_cells: 400.0
+boundaries:
+  - variable: stack.V_cell_V
+    value: 0.7
+    unit: V
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

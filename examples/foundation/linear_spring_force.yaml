@@ -1,0 +1,13 @@
+system_name: foundation_linear_spring_force
+components:
+  - id: spring
+    type: LinearSpringForceModule
+    parameters:
+      stiffness_N_m: 1000.0
+boundaries:
+  - variable: spring.displacement_m
+    value: 0.01
+    unit: m
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

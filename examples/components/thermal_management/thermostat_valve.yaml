@@ -1,0 +1,9 @@
+system_name: component_thermostat_valve
+components:
+  - id: thermo
+    type: ThermostatValveModule
+    parameters: {T_begin_open_K: 350.0, T_full_open_K: 370.0}
+boundaries:
+  - {variable: thermo.T_control_K, value: 360.0}
+  - {variable: thermo.opening, value: 0.5}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

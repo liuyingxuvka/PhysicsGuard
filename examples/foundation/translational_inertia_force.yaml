@@ -1,0 +1,13 @@
+system_name: foundation_translational_inertia_force
+components:
+  - id: inertia
+    type: TranslationalInertiaForceModule
+    parameters:
+      mass_kg: 10.0
+boundaries:
+  - variable: inertia.acceleration_m_s2
+    value: 3.0
+    unit: m/s^2
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

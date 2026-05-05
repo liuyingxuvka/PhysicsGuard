@@ -1,0 +1,12 @@
+system_name: component_battery_internal_resistance
+components:
+  - id: bat
+    type: BatteryInternalResistanceModule
+    parameters: {}
+boundaries:
+  - {variable: bat.OCV_V, value: 350.0}
+  - {variable: bat.current_A, value: 10.0}
+  - {variable: bat.R_ohm, value: 0.1}
+  - {variable: bat.terminal_voltage_V, value: 349.0}
+  - {variable: bat.heat_generation_W, value: 10.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

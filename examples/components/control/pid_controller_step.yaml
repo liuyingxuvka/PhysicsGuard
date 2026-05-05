@@ -1,0 +1,22 @@
+system_name: component_pid_controller_step
+components:
+  - id: pid
+    type: PIDControllerStepModule
+    parameters:
+      Kp: 2.0
+      Ki: 0.5
+      Kd: 0.1
+      bias: 1.0
+      dt_s: 0.5
+boundaries:
+  - variable: pid.setpoint
+    value: 10.0
+  - variable: pid.measurement
+    value: 7.0
+  - variable: pid.error_previous
+    value: 2.0
+  - variable: pid.integral_previous
+    value: 1.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,25 @@
+system_name: component_conflict_humidifier_effectiveness
+components:
+  - id: hum
+    type: HumidifierEffectivenessModule
+    parameters:
+      effectiveness: 0.5
+boundaries:
+  - variable: hum.m_dot_dry_air_kg_s
+    value: 1.0
+    scale: 0.000001
+  - variable: hum.humidity_ratio_in_kg_kg
+    value: 0.01
+    scale: 0.000001
+  - variable: hum.humidity_ratio_target_kg_kg
+    value: 0.03
+    scale: 0.000001
+  - variable: hum.humidity_ratio_out_kg_kg
+    value: 0.05
+    scale: 0.000001
+  - variable: hum.water_transfer_kg_s
+    value: 0.04
+    scale: 0.000001
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

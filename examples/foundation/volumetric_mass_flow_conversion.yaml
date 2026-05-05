@@ -1,0 +1,13 @@
+system_name: foundation_volumetric_mass_flow_conversion
+components:
+  - id: flow
+    type: VolumetricMassFlowConversionModule
+    parameters:
+      rho_kg_m3: 1000.0
+boundaries:
+  - variable: flow.V_dot_m3_s
+    value: 0.01
+    unit: m^3/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

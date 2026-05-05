@@ -1,0 +1,16 @@
+system_name: control_rate_limiter_violation
+components:
+  - id: rate
+    type: RateLimiterModule
+    parameters:
+      dt_s: 1.0
+      rising_rate_limit: 1.0
+      falling_rate_limit: -1.0
+boundaries:
+  - variable: rate.y_previous
+    value: 0.0
+  - variable: rate.y_current
+    value: 10.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

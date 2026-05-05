@@ -1,0 +1,14 @@
+system_name: component_egr_mixing
+components:
+  - id: egr
+    type: EGRMixingModule
+    parameters: {}
+boundaries:
+  - {variable: egr.m_dot_fresh_air_kg_s, value: 0.08}
+  - {variable: egr.T_fresh_air_K, value: 300.0}
+  - {variable: egr.m_dot_egr_kg_s, value: 0.02}
+  - {variable: egr.T_egr_K, value: 700.0}
+  - {variable: egr.m_dot_mixed_kg_s, value: 0.1}
+  - {variable: egr.T_mixed_K, value: 380.0}
+  - {variable: egr.egr_fraction, value: 0.2}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

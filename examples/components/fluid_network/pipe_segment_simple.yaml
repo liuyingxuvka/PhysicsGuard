@@ -1,0 +1,10 @@
+system_name: component_pipe_segment_simple
+components:
+  - id: pipe
+    type: PipeSegmentSimpleModule
+    parameters: {rho_kg_m3: 1000.0, diameter_m: 0.1, length_m: 10.0, friction_factor: 0.02, K_minor: 1.0}
+boundaries:
+  - {variable: pipe.p_in_Pa, value: 101800.0}
+  - {variable: pipe.p_out_Pa, value: 100000.0}
+  - {variable: pipe.m_dot_kg_s, value: 1.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

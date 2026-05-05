@@ -1,0 +1,16 @@
+system_name: foundation_thermal_conductor
+components:
+  - id: cond
+    type: ThermalConductorModule
+    parameters:
+      G_W_K: 50.0
+boundaries:
+  - variable: cond.T_a_K
+    value: 320.0
+    unit: K
+  - variable: cond.T_b_K
+    value: 300.0
+    unit: K
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,14 @@
+system_name: control_threshold_state_check
+components:
+  - id: th
+    type: ThresholdStateCheckModule
+    parameters:
+      threshold: 5.0
+boundaries:
+  - variable: th.input
+    value: 6.0
+  - variable: th.state
+    value: 1.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

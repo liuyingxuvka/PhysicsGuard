@@ -1,0 +1,13 @@
+system_name: component_fuel_cell_polarization_map
+components:
+  - id: fcmap
+    type: FuelCellPolarizationMapModule
+    parameters:
+      current_density_points_A_m2: [0.0, 2000.0]
+      V_cell_points_V: [0.9, 0.7]
+boundaries:
+  - variable: fcmap.current_density_A_m2
+    value: 1000.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

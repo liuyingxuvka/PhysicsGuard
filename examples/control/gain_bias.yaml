@@ -1,0 +1,13 @@
+system_name: control_gain_bias
+components:
+  - id: gain
+    type: GainBiasModule
+    parameters:
+      gain: 2.0
+      bias: 1.0
+boundaries:
+  - variable: gain.x
+    value: 2.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,36 @@
+system_name: generic_audit_system
+description: Generic non-physical framework validation audit.
+components:
+  - id: rel
+    type: LinearRelationModule
+    parameters:
+      a: 2.0
+      b: 1.0
+      x_lower_bound: -10.0
+      x_upper_bound: 10.0
+      x_initial_guess: 0.0
+      x_scale: 1.0
+      y_lower_bound: -20.0
+      y_upper_bound: 20.0
+      y_initial_guess: 0.0
+      y_scale: 1.0
+      residual_scale: 1.0
+  - id: sum
+    type: ConservationSumModule
+    parameters:
+      input_variables:
+        - rel.y
+      output_variables: []
+      target: 5.0
+      residual_scale: 1.0
+boundaries:
+  - variable: rel.x
+    value: 2.0
+    scale: 1.0
+    description: Generic input anchor for framework validation.
+solver:
+  method: least_squares
+  max_iterations: 30
+  audit_threshold: 1.0
+  tolerance: 1.0e-8
+  verbose: false

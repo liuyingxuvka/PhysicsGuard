@@ -1,0 +1,15 @@
+system_name: foundation_humidity_ratio
+components:
+  - id: hr
+    type: HumidityRatioFromPartialPressureModule
+    parameters: {}
+boundaries:
+  - variable: hr.p_total_Pa
+    value: 101325.0
+    unit: Pa
+  - variable: hr.p_vapor_Pa
+    value: 2000.0
+    unit: Pa
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

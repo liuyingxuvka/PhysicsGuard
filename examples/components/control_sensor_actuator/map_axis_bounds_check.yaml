@@ -1,0 +1,14 @@
+system_name: component_map_axis_bounds_check
+components:
+  - id: sig
+    type: DummyResidualModule
+    parameters: {target: 0.5}
+  - id: bounds
+    type: MapAxisBoundsCheckModule
+    parameters:
+      variables: [sig.x]
+      lower_bounds: [0.0]
+      upper_bounds: [1.0]
+boundaries:
+  - {variable: sig.x, value: 0.5}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

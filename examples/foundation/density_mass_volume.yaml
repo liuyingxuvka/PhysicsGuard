@@ -1,0 +1,15 @@
+system_name: foundation_density_mass_volume
+components:
+  - id: bulk
+    type: DensityMassVolumeModule
+    parameters: {}
+boundaries:
+  - variable: bulk.rho_kg_m3
+    value: 1000.0
+    unit: kg/m^3
+  - variable: bulk.volume_m3
+    value: 0.1
+    unit: m^3
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,33 @@
+system_name: assumption_proposed_not_applied
+description: Demonstrates that proposed assumptions are reported but not applied.
+components:
+  - id: conductor
+    type: ThermalConductorModule
+    parameters:
+      G_W_K: 50.0
+      residual_scale_W: 1000.0
+boundaries:
+  - variable: conductor.T_a_K
+    value: 320.0
+    scale: 1.0
+  - variable: conductor.T_b_K
+    value: 300.0
+    scale: 1.0
+  - variable: conductor.Q_dot_W
+    value: 1000.0
+    scale: 100.0
+assumptions:
+  - id: propose_conductor_G
+    target_type: parameter
+    target: conductor.G_W_K
+    value: 60.0
+    unit: W/K
+    reason: Possible thermal conductance default, but not confirmed.
+    source: ai_proposed
+    impact: high
+    status: proposed
+    review_required: true
+solver:
+  method: least_squares
+  max_iterations: 40
+  audit_threshold: 1.0

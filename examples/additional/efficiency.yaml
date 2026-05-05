@@ -1,0 +1,15 @@
+system_name: additional_efficiency
+components:
+  - id: eff
+    type: EfficiencyModule
+    parameters: {}
+boundaries:
+  - variable: eff.input_power_W
+    value: 1000.0
+    unit: W
+  - variable: eff.useful_output_power_W
+    value: 800.0
+    unit: W
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

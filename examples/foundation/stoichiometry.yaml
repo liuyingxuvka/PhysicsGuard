@@ -1,0 +1,15 @@
+system_name: foundation_stoichiometry
+components:
+  - id: stoich
+    type: StoichiometryModule
+    parameters:
+      stoichiometry: 2.0
+      feed_initial_guess: 0.2
+      consumed_initial_guess: 0.1
+boundaries:
+  - variable: stoich.n_dot_consumed_mol_s
+    value: 0.1
+    unit: mol/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

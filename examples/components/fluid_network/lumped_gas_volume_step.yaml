@@ -1,0 +1,12 @@
+system_name: component_lumped_gas_volume_step
+components:
+  - id: gas
+    type: LumpedGasVolumeStepModule
+    parameters: {volume_m3: 1.0, dt_s: 1.0}
+boundaries:
+  - {variable: gas.p_previous_Pa, value: 100000.0}
+  - {variable: gas.T_K, value: 300.0}
+  - {variable: gas.n_dot_in_mol_s, value: 1.0}
+  - {variable: gas.n_dot_out_mol_s, value: 0.5}
+  - {variable: gas.p_current_Pa, value: 101247.1693927}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

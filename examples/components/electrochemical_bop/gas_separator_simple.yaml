@@ -1,0 +1,12 @@
+system_name: component_gas_separator_simple
+components:
+  - id: sep
+    type: GasSeparatorSimpleModule
+    parameters: {}
+boundaries:
+  - {variable: sep.m_dot_in_kg_s, value: 1.0}
+  - {variable: sep.gas_mass_fraction_in, value: 0.2}
+  - {variable: sep.separation_efficiency, value: 0.5}
+  - {variable: sep.m_dot_gas_out_kg_s, value: 0.1}
+  - {variable: sep.m_dot_liquid_out_kg_s, value: 0.9}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

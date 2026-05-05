@@ -1,0 +1,12 @@
+system_name: component_cold_plate_simple
+components:
+  - id: plate
+    type: ColdPlateSimpleModule
+    parameters: {UA_W_K: 209.0}
+boundaries:
+  - {variable: plate.m_dot_coolant_kg_s, value: 0.1}
+  - {variable: plate.T_coolant_in_K, value: 300.0}
+  - {variable: plate.T_coolant_out_K, value: 310.0}
+  - {variable: plate.T_surface_K, value: 320.0}
+  - {variable: plate.Q_removed_W, value: 4180.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

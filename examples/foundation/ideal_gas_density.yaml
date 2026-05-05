@@ -1,0 +1,16 @@
+system_name: foundation_ideal_gas_density
+components:
+  - id: gas
+    type: IdealGasDensityModule
+    parameters:
+      molar_mass_kg_mol: 0.0289652
+boundaries:
+  - variable: gas.p_Pa
+    value: 101325.0
+    unit: Pa
+  - variable: gas.T_K
+    value: 300.0
+    unit: K
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

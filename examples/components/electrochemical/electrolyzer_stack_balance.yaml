@@ -1,0 +1,16 @@
+system_name: component_electrolyzer_stack_balance
+components:
+  - id: el
+    type: ElectrolyzerStackBalanceModule
+    parameters:
+      n_cells: 400.0
+      E_thermoneutral_V: 1.48
+      faradaic_efficiency: 1.0
+boundaries:
+  - variable: el.current_A
+    value: 100.0
+  - variable: el.V_cell_V
+    value: 1.8
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

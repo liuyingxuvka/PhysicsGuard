@@ -1,0 +1,11 @@
+system_name: component_flow_split
+components:
+  - id: split
+    type: FlowSplitModule
+    parameters: {}
+boundaries:
+  - {variable: split.m_dot_in_kg_s, value: 1.0}
+  - {variable: split.split_fraction, value: 0.4}
+  - {variable: split.m_dot_out_1_kg_s, value: 0.4}
+  - {variable: split.m_dot_out_2_kg_s, value: 0.6}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

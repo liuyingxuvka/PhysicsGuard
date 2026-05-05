@@ -1,0 +1,9 @@
+system_name: component_signal_delay_step
+components:
+  - id: delay
+    type: SignalDelayStepModule
+    parameters: {}
+boundaries:
+  - {variable: delay.input_previous, value: 3.0}
+  - {variable: delay.output_current, value: 3.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,15 @@
+system_name: control_boolean_switch
+components:
+  - id: sw
+    type: BooleanSwitchModule
+    parameters: {}
+boundaries:
+  - variable: sw.condition
+    value: 1.0
+  - variable: sw.true_value
+    value: 10.0
+  - variable: sw.false_value
+    value: -5.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

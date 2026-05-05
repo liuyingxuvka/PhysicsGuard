@@ -1,0 +1,13 @@
+system_name: foundation_chemical_power_lhv
+components:
+  - id: chem
+    type: ChemicalPowerLHVModule
+    parameters:
+      LHV_J_kg: 120000000.0
+boundaries:
+  - variable: chem.m_dot_fuel_kg_s
+    value: 0.001
+    unit: kg/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

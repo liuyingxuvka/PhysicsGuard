@@ -1,0 +1,128 @@
+audit_name: pid_actuator_level_1_controller_actuator_sensor
+system:
+  system_name: pid_actuator_level_1_controller_actuator_sensor
+  components:
+  - id: pid
+    type: PIDControllerStepModule
+    parameters:
+      Kp: 2.0
+      Ki: 0.5
+      Kd: 0.1
+      dt_s: 1.0
+      output_lower: 0.0
+      output_upper: 10.0
+  - id: act
+    type: ActuatorFirstOrderSaturationModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+      lower: 0.0
+      upper: 10.0
+  - id: sensor
+    type: SensorLowPassFilterStepModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+  - id: fb
+    type: ActuatorPositionFeedbackModule
+    parameters:
+      command_to_position_gain: 1.0
+      feedback_gain: 1.0
+  boundaries:
+  - variable: pid.setpoint
+    value: 10.0
+    scale: 1.0e-06
+  - variable: pid.measurement
+    value: 8.0
+    scale: 1.0e-06
+  - variable: pid.error
+    value: 2.0
+    scale: 1.0e-06
+  - variable: pid.error_previous
+    value: 1.0
+    scale: 1.0e-06
+  - variable: pid.integral_previous
+    value: 3.0
+    scale: 1.0e-06
+  - variable: pid.integral_current
+    value: 5.0
+    scale: 1.0e-06
+  - variable: pid.derivative_error
+    value: 1.0
+    scale: 1.0e-06
+  - variable: pid.output_unsaturated
+    value: 6.6
+    scale: 1.0e-06
+  - variable: pid.output
+    value: 6.6
+    scale: 1.0e-06
+  - variable: act.command
+    value: 6.6
+    scale: 1.0e-06
+  - variable: act.actual_previous
+    value: 4.0
+    scale: 1.0e-06
+  - variable: act.actual_current
+    value: 5.3
+    scale: 1.0e-06
+  - variable: sensor.true_value_current
+    value: 5.3
+    scale: 1.0e-06
+  - variable: sensor.measured_previous
+    value: 5.0
+    scale: 1.0e-06
+  - variable: sensor.measured_current
+    value: 5.15
+    scale: 1.0e-06
+  - variable: fb.command
+    value: 5.3
+    scale: 1.0e-06
+  - variable: fb.actual_position
+    value: 5.3
+    scale: 1.0e-06
+  - variable: fb.feedback_position
+    value: 5.3
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: control_loop
+    level: 0
+  - id: controller
+    level: 1
+    parent_id: control_loop
+    components:
+    - pid
+  - id: actuator
+    level: 1
+    parent_id: control_loop
+    components:
+    - act
+    - fb
+    refinement_template_ids:
+    - pid_actuator_loop/actuator_feedback_detail
+  - id: sensor
+    level: 1
+    parent_id: control_loop
+    components:
+    - sensor
+  - id: plant_proxy
+    level: 1
+    parent_id: control_loop
+  refinement_rules:
+  - id: refine_actuator_feedback
+    block_id: actuator
+    trigger_diagnostic_keys:
+    - actuator_feedback_position_mismatch
+    - actuator_command_position_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - pid_actuator_loop/actuator_feedback_detail
+    next_required_variables:
+    - fb.command
+    - fb.actual_position
+    - fb.feedback_position
+    rationale: Actuator feedback consistency failed.
+    priority: 20

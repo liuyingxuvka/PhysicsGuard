@@ -1,0 +1,15 @@
+system_name: control_first_order_lag
+components:
+  - id: lag
+    type: FirstOrderLagModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+boundaries:
+  - variable: lag.u_current
+    value: 10.0
+  - variable: lag.y_previous
+    value: 0.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

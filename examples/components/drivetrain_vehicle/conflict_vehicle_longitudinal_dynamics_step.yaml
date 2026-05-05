@@ -1,0 +1,12 @@
+system_name: component_conflict_vehicle_longitudinal_dynamics_step
+components:
+  - id: veh
+    type: VehicleLongitudinalDynamicsStepModule
+    parameters: {mass_kg: 1000.0, dt_s: 1.0, residual_scale_m_s: 0.01}
+boundaries:
+  - {variable: veh.speed_previous_m_s, value: 20.0, scale: 0.000000001}
+  - {variable: veh.drive_force_N, value: 1000.0, scale: 0.000000001}
+  - {variable: veh.brake_force_N, value: 0.0, scale: 0.000000001}
+  - {variable: veh.road_load_force_N, value: 500.0, scale: 0.000000001}
+  - {variable: veh.speed_current_m_s, value: 25.0, scale: 0.000000001}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

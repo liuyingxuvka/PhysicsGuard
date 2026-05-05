@@ -1,0 +1,30 @@
+system_name: foundation_heat_exchanger_effectiveness
+components:
+  - id: hx
+    type: HeatExchangerEffectivenessModule
+    parameters:
+      cp_hot_J_kgK: 1000.0
+      cp_cold_J_kgK: 1000.0
+      effectiveness: 0.5
+boundaries:
+  - variable: hx.m_dot_hot_kg_s
+    value: 1.0
+    unit: kg/s
+  - variable: hx.T_hot_in_K
+    value: 350.0
+    unit: K
+  - variable: hx.T_hot_out_K
+    value: 325.0
+    unit: K
+  - variable: hx.m_dot_cold_kg_s
+    value: 2.0
+    unit: kg/s
+  - variable: hx.T_cold_in_K
+    value: 300.0
+    unit: K
+  - variable: hx.T_cold_out_K
+    value: 312.5
+    unit: K
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

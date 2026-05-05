@@ -1,0 +1,126 @@
+audit_name: fuel_cell_level_2_cooling_loop
+system:
+  system_name: fuel_cell_level_2_cooling_loop
+  components:
+  - id: cool
+    type: FuelCellCoolantInterfaceModule
+    parameters: {}
+  - id: pump
+    type: PumpSimpleModule
+    parameters:
+      rho_kg_m3: 1000.0
+  - id: rad
+    type: RadiatorSimpleModule
+    parameters:
+      cp_coolant_J_kgK: 1000.0
+      UA_W_K: 333.3333333333333
+  - id: mass
+    type: ThermalMassStepModule
+    parameters:
+      C_J_K: 1000.0
+      dt_s: 1.0
+  - id: valve
+    type: ThreeWayValveMixingModule
+    parameters: {}
+  boundaries:
+  - variable: cool.Q_stack_heat_W
+    value: 4180.0
+    scale: 1.0e-06
+  - variable: cool.m_dot_coolant_kg_s
+    value: 0.1
+    scale: 1.0e-06
+  - variable: cool.T_coolant_in_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: cool.T_coolant_out_K
+    value: 310.0
+    scale: 1.0e-06
+  - variable: pump.p_in_Pa
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: pump.p_out_Pa
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: pump.m_dot_kg_s
+    value: 1.0
+    scale: 1.0e-06
+  - variable: pump.efficiency
+    value: 0.8
+    scale: 1.0e-06
+  - variable: rad.m_dot_coolant_kg_s
+    value: 1.0
+    scale: 1.0e-06
+  - variable: rad.T_coolant_in_K
+    value: 330.0
+    scale: 1.0e-06
+  - variable: rad.T_coolant_out_K
+    value: 320.0
+    scale: 1.0e-06
+  - variable: rad.T_air_in_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: mass.T_previous_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: mass.Q_in_W
+    value: 2000.0
+    scale: 1.0e-06
+  - variable: mass.Q_out_W
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: mass.T_current_K
+    value: 301.0
+    scale: 1.0e-06
+  - variable: valve.m_dot_out_kg_s
+    value: 1.0
+    scale: 1.0e-06
+  - variable: valve.split_fraction
+    value: 0.4
+    scale: 1.0e-06
+  - variable: valve.m_dot_in_1_kg_s
+    value: 0.4
+    scale: 1.0e-06
+  - variable: valve.T_in_1_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: valve.m_dot_in_2_kg_s
+    value: 0.6
+    scale: 1.0e-06
+  - variable: valve.T_in_2_K
+    value: 320.0
+    scale: 1.0e-06
+  - variable: valve.T_out_K
+    value: 312.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: cooling_loop
+    level: 0
+  - id: stack_heat_interface
+    level: 1
+    parent_id: cooling_loop
+    components:
+    - cool
+  - id: pump
+    level: 1
+    parent_id: cooling_loop
+    components:
+    - pump
+  - id: radiator
+    level: 1
+    parent_id: cooling_loop
+    components:
+    - rad
+  - id: thermal_mass
+    level: 1
+    parent_id: cooling_loop
+    components:
+    - mass
+  - id: bypass_or_valve
+    level: 1
+    parent_id: cooling_loop
+    components:
+    - valve

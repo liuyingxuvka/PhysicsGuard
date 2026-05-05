@@ -1,0 +1,11 @@
+system_name: component_sample_and_hold
+components:
+  - id: sh
+    type: SampleAndHoldModule
+    parameters: {}
+boundaries:
+  - {variable: sh.input_current, value: 10.0}
+  - {variable: sh.output_previous, value: 7.0}
+  - {variable: sh.hold_flag, value: 1.0}
+  - {variable: sh.output_current, value: 7.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

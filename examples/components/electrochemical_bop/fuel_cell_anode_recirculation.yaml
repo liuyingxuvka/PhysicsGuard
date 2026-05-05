@@ -1,0 +1,10 @@
+system_name: component_fc_anode_recirculation
+components:
+  - id: recirc
+    type: FuelCellAnodeRecirculationModule
+    parameters: {}
+boundaries:
+  - {variable: recirc.m_dot_fresh_H2_kg_s, value: 0.001}
+  - {variable: recirc.recirculation_ratio, value: 2.0}
+  - {variable: recirc.m_dot_recirculation_kg_s, value: 0.002}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

@@ -1,0 +1,15 @@
+system_name: foundation_water_vapor_mole_fraction
+components:
+  - id: vap
+    type: WaterVaporMoleFractionModule
+    parameters: {}
+boundaries:
+  - variable: vap.p_total_Pa
+    value: 101325.0
+    unit: Pa
+  - variable: vap.p_vapor_Pa
+    value: 2000.0
+    unit: Pa
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

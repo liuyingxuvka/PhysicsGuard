@@ -1,0 +1,15 @@
+system_name: additional_pressure_ratio
+components:
+  - id: pr
+    type: PressureRatioModule
+    parameters: {}
+boundaries:
+  - variable: pr.p_in_Pa
+    value: 100000.0
+    unit: Pa
+  - variable: pr.p_out_Pa
+    value: 200000.0
+    unit: Pa
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,20 @@
+system_name: foundation_incompressible_pressure_drop
+components:
+  - id: restriction
+    type: IncompressiblePressureDropModule
+    parameters:
+      K: 2.0
+      rho_kg_m3: 1000.0
+      area_m2: 0.01
+      residual_scale_Pa: 1.0
+      p_in_initial_guess: 100010.0
+boundaries:
+  - variable: restriction.p_out_Pa
+    value: 100000.0
+    unit: Pa
+  - variable: restriction.m_dot_kg_s
+    value: 1.0
+    unit: kg/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

@@ -1,0 +1,9 @@
+system_name: component_actuator_dead_zone
+components:
+  - id: act
+    type: ActuatorDeadZoneModule
+    parameters: {dead_zone: 0.1, gain: 2.0}
+boundaries:
+  - {variable: act.command, value: 0.4}
+  - {variable: act.output, value: 0.6}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

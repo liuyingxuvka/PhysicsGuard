@@ -1,0 +1,13 @@
+system_name: component_map_monotonicity_check
+components:
+  - id: d
+    type: DummyResidualModule
+    parameters: {target: 0.0}
+  - id: mono
+    type: MapMonotonicityCheckModule
+    parameters:
+      values: [1.0, 2.0, 3.0]
+      expected: increasing
+boundaries:
+  - {variable: d.x, value: 0.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

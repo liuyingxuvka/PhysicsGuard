@@ -1,0 +1,17 @@
+system_name: foundation_convection
+components:
+  - id: conv
+    type: ConvectiveHeatTransferModule
+    parameters:
+      h_W_m2K: 100.0
+      area_m2: 0.5
+boundaries:
+  - variable: conv.T_surface_K
+    value: 330.0
+    unit: K
+  - variable: conv.T_fluid_K
+    value: 300.0
+    unit: K
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

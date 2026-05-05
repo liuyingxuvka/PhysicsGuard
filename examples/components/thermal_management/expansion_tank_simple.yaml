@@ -1,0 +1,10 @@
+system_name: component_expansion_tank_simple
+components:
+  - id: tank
+    type: ExpansionTankSimpleModule
+    parameters: {}
+boundaries:
+  - {variable: tank.volume_total_m3, value: 1.0}
+  - {variable: tank.fill_fraction, value: 0.5}
+  - {variable: tank.volume_liquid_m3, value: 0.5}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

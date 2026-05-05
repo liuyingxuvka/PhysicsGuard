@@ -1,0 +1,13 @@
+system_name: component_inverter_simple
+components:
+  - id: inv
+    type: InverterSimpleModule
+    parameters: {}
+boundaries:
+  - variable: inv.P_dc_W
+    value: 4000.0
+  - variable: inv.efficiency
+    value: 0.9
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

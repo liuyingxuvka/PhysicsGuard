@@ -1,0 +1,10 @@
+system_name: component_chiller_simple
+components:
+  - id: chiller
+    type: ChillerSimpleModule
+    parameters: {}
+boundaries:
+  - {variable: chiller.P_electric_W, value: 1000.0}
+  - {variable: chiller.COP, value: 5.0}
+  - {variable: chiller.Q_cooling_W, value: 5000.0}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

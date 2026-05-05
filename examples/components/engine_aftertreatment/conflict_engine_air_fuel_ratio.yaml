@@ -1,0 +1,10 @@
+system_name: component_conflict_engine_air_fuel_ratio
+components:
+  - id: afr
+    type: EngineAirFuelRatioModule
+    parameters: {residual_scale: 0.1}
+boundaries:
+  - {variable: afr.m_dot_air_kg_s, value: 0.1, scale: 0.000000001}
+  - {variable: afr.m_dot_fuel_kg_s, value: 0.005, scale: 0.000000001}
+  - {variable: afr.AFR, value: 10.0, scale: 0.000000001}
+solver: {tolerance: 1.0e-8, audit_threshold: 1.0}

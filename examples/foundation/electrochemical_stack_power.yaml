@@ -1,0 +1,17 @@
+system_name: foundation_electrochemical_stack_power
+components:
+  - id: stack
+    type: ElectrochemicalStackPowerModule
+    parameters:
+      n_cells: 400.0
+      P_initial_guess: 28000.0
+boundaries:
+  - variable: stack.V_cell_V
+    value: 0.7
+    unit: V
+  - variable: stack.current_A
+    value: 100.0
+    unit: A
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

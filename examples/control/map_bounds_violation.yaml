@@ -1,0 +1,16 @@
+system_name: control_map_bounds_violation
+components:
+  - id: signal
+    type: DummyResidualModule
+    parameters:
+      target: 2.0
+  - id: bounds
+    type: MapBoundsCheckModule
+    parameters:
+      variable: signal.x
+      lower: 0.0
+      upper: 1.0
+      residual_scale: 1.0
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0

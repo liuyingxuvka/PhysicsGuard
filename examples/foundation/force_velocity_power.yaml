@@ -1,0 +1,15 @@
+system_name: foundation_force_velocity_power
+components:
+  - id: mech
+    type: ForceVelocityPowerModule
+    parameters: {}
+boundaries:
+  - variable: mech.force_N
+    value: 100.0
+    unit: N
+  - variable: mech.velocity_m_s
+    value: 2.0
+    unit: m/s
+solver:
+  tolerance: 1.0e-8
+  audit_threshold: 1.0
