@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-**Version:** v0.1.1  
+**Version:** v0.1.2  
 **Language note:** English comes first; the second half is a full Chinese mirror.  
 **中文说明：** 英文在前，后半部分是完整中文镜像。
 
@@ -99,13 +99,20 @@ The observed debugging example represents a mapped controller feedback signal. T
 
 ## Install The Codex Skill Locally
 
-This repository includes a Codex skill source folder:
+The simplest install path is to give this GitHub repository URL to your AI agent and ask it to install the included Codex skill:
+
+```text
+Please install the PhysicsGuard Codex skill from https://github.com/liuyingxuvka/physicsguard-core.
+The skill folder is skill/physicsguard-ai-debugging.
+```
+
+The repository includes the skill source folder here:
 
 ```text
 skill/physicsguard-ai-debugging/
 ```
 
-Install it into your local Codex skills directory:
+If you want to do it manually, copy it into your local Codex skills directory:
 
 ```powershell
 Copy-Item -Recurse skill\physicsguard-ai-debugging $env:USERPROFILE\.codex\skills\physicsguard-ai-debugging
@@ -142,7 +149,7 @@ python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
 
 ## Library Coverage
 
-PhysicsGuard v0.1.1 includes low-fidelity modules for:
+PhysicsGuard v0.1.2 includes low-fidelity modules for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, threshold checks, delay, sample-and-hold, and actuator/sensor relations;
@@ -179,7 +186,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-**版本：** v0.1.1
+**版本：** v0.1.2
 
 PhysicsGuard 是一个 Python 核心库加 Codex skill，用来让 AI 辅助调试物理仿真结果，并围绕物理仿真工作流搭建候选模型。它帮助 AI 构建低保真审计模型，检查外部仿真导出的信号，排序最可疑的系统块，推荐下一步应该查看哪些信号或参数，并把验证过的 PhysicsGuard 分层模型作为候选模型的蓝图。
 
@@ -266,13 +273,20 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 
 ## 安装本地 Codex Skill
 
-仓库里包含 Codex skill 源文件：
+最简单的方法是把这个 GitHub 仓库地址交给你的 AI agent，然后让它安装里面的 Codex skill：
+
+```text
+Please install the PhysicsGuard Codex skill from https://github.com/liuyingxuvka/physicsguard-core.
+The skill folder is skill/physicsguard-ai-debugging.
+```
+
+仓库里也包含 skill 源文件：
 
 ```text
 skill/physicsguard-ai-debugging/
 ```
 
-安装到本机 Codex skill 目录：
+如果你想手动安装，可以把它复制到本机 Codex skill 目录：
 
 ```powershell
 Copy-Item -Recurse skill\physicsguard-ai-debugging $env:USERPROFILE\.codex\skills\physicsguard-ai-debugging
@@ -309,7 +323,7 @@ python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
 
 ## 模块覆盖
 
-PhysicsGuard v0.1.1 包含低保真模块：
+PhysicsGuard v0.1.2 包含低保真模块：
 
 - 总体功率、热、质量、物种和电气母线守恒；
 - 控制误差、PID、饱和、迟滞、阈值、延迟、sample-and-hold、执行器和传感器关系；

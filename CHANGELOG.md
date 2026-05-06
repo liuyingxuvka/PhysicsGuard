@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.2 - 2026-05-06
+
+README presentation update.
+
+- Replaced the generated diagram-style README hero with a text-to-image concept hero.
+- Simplified skill installation guidance: users can give the GitHub repository URL to their AI agent and ask it to install `skill/physicsguard-ai-debugging`.
+
 ## v0.1.1 - 2026-05-06
 
 Documentation and skill workflow update.

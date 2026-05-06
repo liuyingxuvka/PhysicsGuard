@@ -1,6 +1,6 @@
-Create a bright wide GitHub README concept hero image for PhysicsGuard.
-Style: clean semi-realistic software-product workflow visual, light technical background, polished cards, blue/green/gold accents, modern engineering audit mood.
-Visual meaning: external physical simulation results from MATLAB/Simulink, GT-SUITE, Modelica-like tools, and Python flow into observed signal cards, while target-model goals can also flow into a PhysicsGuard residual blueprint; the blueprint produces suspicious blocks, next debug steps, or validated candidate model pieces.
-Make the purpose obvious: PhysicsGuard helps AI agents audit mapped simulation results and build candidate models from explicit low-fidelity physical blueprints without replacing the original solver.
-Composition: wide banner, left-to-right workflow, large readable stages, dimensional cards, luminous connectors, no dark room, no humanoid robot, no commercial logos.
-Avoid: claiming direct adapter support, clutter, watermark, unreadable text, private local paths.
+Create a bright wide GitHub README concept hero image for PhysicsGuard, a Python core and Codex skill for AI-guided physical simulation auditing and model-building blueprints.
+Style: premium art-directed conceptual workflow visual, semi-realistic 3D product-object render, clean light studio background, brushed metal and translucent acrylic engineering modules, fiber-optic signal paths, soft shadows, polished technical product aesthetic.
+Visual meaning: on the left, abstract physical simulation systems from MATLAB/Simulink, GT-SUITE, Modelica-like tools, and Python are represented as elegant engineering modules and signal streams; in the center, a luminous PhysicsGuard verification core made of layered residual-check gates and hierarchical blocks; on the right, two outputs: suspicious subsystem diagnostics and validated candidate model blocks that can be assembled into a Simulink/MATLAB-style model.
+Make the purpose obvious without relying on text: AI agents audit mapped simulation results, find physical inconsistencies, and progressively build candidate models from low-fidelity blueprints.
+Composition: wide 1600x620 banner, airy left-to-right looped workflow, large clear stages connected by luminous paths, dimensional objects instead of flat boxes, no humanoid robot, no dark room, no wall of screens, no commercial logos.
+Avoid: flat flowchart, hand-drawn diagram, generic dashboard, clutter, cartoon style, anime, watermark, unreadable text, long paragraphs, private local paths.
