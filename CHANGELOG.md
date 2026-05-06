@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.3 - 2026-05-06
+
+Repository naming update.
+
+- Renamed the public GitHub repository from `physicsguard-core` to `PhysicsGuard`.
+- Updated README skill-install guidance to use the new repository URL.
+
 ## v0.1.2 - 2026-05-06
 
 README presentation update.
