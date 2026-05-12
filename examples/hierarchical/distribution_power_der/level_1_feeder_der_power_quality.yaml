@@ -1,0 +1,376 @@
+audit_name: distribution_power_der_level_1_feeder_der_power_quality
+description: Level 1 distribution feeder and DER audit for substation power factor, feeder sections, DER metering, aggregate P/Q balance, and voltage range.
+system:
+  system_name: distribution_power_der_level_1_feeder_der_power_quality
+  components:
+  - id: substation_active_import
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 100000.0, scale: 100000.0, external_signal: mapped_substation_active_import, mapping_confidence: template}
+  - id: substation_reactive_import
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 45000.0, scale: 10000.0, external_signal: mapped_substation_reactive_import, mapping_confidence: template}
+  - id: substation_apparent_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: VA, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 109658.6, scale: 100000.0, external_signal: mapped_substation_apparent_power, mapping_confidence: template}
+  - id: substation_power_factor
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.9119211808284986, scale: 0.1, external_signal: mapped_substation_power_factor, mapping_confidence: template}
+  - id: substation_voltage_pu
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: pu, lower_bound: 0.0, upper_bound: 2.0, initial_guess: 1.02, scale: 0.1, external_signal: mapped_substation_voltage_pu, mapping_confidence: template}
+  - id: section_a_load_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 70000.0, scale: 10000.0, external_signal: mapped_section_a_load_active, mapping_confidence: template}
+  - id: section_a_load_reactive
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 30000.0, scale: 10000.0, external_signal: mapped_section_a_load_reactive, mapping_confidence: template}
+  - id: section_a_line_loss_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_section_a_line_loss_active, mapping_confidence: template}
+  - id: section_a_line_reactive_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_section_a_line_reactive_loss, mapping_confidence: template}
+  - id: section_a_downstream_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 45000.0, scale: 10000.0, external_signal: mapped_section_a_downstream_active, mapping_confidence: template}
+  - id: section_a_downstream_reactive
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 19000.0, scale: 10000.0, external_signal: mapped_section_a_downstream_reactive, mapping_confidence: template}
+  - id: section_a_min_voltage_pu
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: pu, lower_bound: 0.0, upper_bound: 2.0, initial_guess: 0.98, scale: 0.1, external_signal: mapped_section_a_min_voltage_pu, mapping_confidence: template}
+  - id: section_b_load_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 50000.0, scale: 10000.0, external_signal: mapped_section_b_load_active, mapping_confidence: template}
+  - id: section_b_load_reactive
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 18000.0, scale: 10000.0, external_signal: mapped_section_b_load_reactive, mapping_confidence: template}
+  - id: section_b_line_loss_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_section_b_line_loss_active, mapping_confidence: template}
+  - id: section_b_line_reactive_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_section_b_line_reactive_loss, mapping_confidence: template}
+  - id: section_b_min_voltage_pu
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: pu, lower_bound: 0.0, upper_bound: 2.0, initial_guess: 0.96, scale: 0.1, external_signal: mapped_section_b_min_voltage_pu, mapping_confidence: template}
+  - id: section_a_der_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 20000.0, scale: 10000.0, external_signal: mapped_section_a_der_active, mapping_confidence: template}
+  - id: section_a_der_reactive_support
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_section_a_der_reactive_support, mapping_confidence: template}
+  - id: section_b_storage_discharge_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 10000.0, scale: 10000.0, external_signal: mapped_section_b_storage_discharge_active, mapping_confidence: template}
+  - id: pv_export_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 20000.0, scale: 10000.0, external_signal: mapped_pv_export_active, mapping_confidence: template}
+  - id: battery_discharge_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 10000.0, scale: 10000.0, external_signal: mapped_battery_discharge_active, mapping_confidence: template}
+  - id: der_metered_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 30000.0, scale: 10000.0, external_signal: mapped_der_metered_active, mapping_confidence: template}
+  - id: total_load_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 120000.0, scale: 100000.0, external_signal: mapped_total_load_active, mapping_confidence: template}
+  - id: total_load_reactive
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: var, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 48000.0, scale: 10000.0, external_signal: mapped_total_load_reactive, mapping_confidence: template}
+  - id: total_line_loss_active
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 10000.0, scale: 10000.0, external_signal: mapped_total_line_loss_active, mapping_confidence: template}
+  - id: feeder_load_apparent
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: VA, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 129244.0, scale: 100000.0, external_signal: mapped_feeder_load_apparent_power, mapping_confidence: template}
+  - id: feeder_load_power_factor
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.9284763702763764, scale: 0.1, external_signal: mapped_feeder_load_power_factor, mapping_confidence: template}
+  - id: feeder_min_voltage_pu
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: pu, lower_bound: 0.0, upper_bound: 2.0, initial_guess: 0.96, scale: 0.1, external_signal: mapped_feeder_min_voltage_pu, mapping_confidence: template}
+  - id: feeder_max_voltage_pu
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: pu, lower_bound: 0.0, upper_bound: 2.0, initial_guess: 1.02, scale: 0.1, external_signal: mapped_feeder_max_voltage_pu, mapping_confidence: template}
+  - id: substation_power_factor_check
+    type: RatioModule
+    parameters:
+      numerator_variable: substation_active_import.value
+      denominator_variable: substation_apparent_power.value
+      output_variable: substation_power_factor.value
+      residual_scale: 0.001
+  - id: substation_voltage_check
+    type: RangeCheckModule
+    parameters: {variable: substation_voltage_pu.value, lower_bound: 0.95, upper_bound: 1.05, residual_scale: 0.01, role: post_check}
+  - id: section_a_active_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [substation_active_import.value, section_a_der_active.value]
+      consumption_power_variables: [section_a_load_active.value, section_a_downstream_active.value]
+      loss_power_variables: [section_a_line_loss_active.value]
+      residual_scale_W: 100.0
+  - id: section_a_reactive_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [substation_reactive_import.value, section_a_der_reactive_support.value]
+      load_power_variables: [section_a_load_reactive.value, section_a_downstream_reactive.value]
+      loss_power_variables: [section_a_line_reactive_loss.value]
+      residual_scale_W: 100.0
+  - id: section_a_voltage_check
+    type: RangeCheckModule
+    parameters: {variable: section_a_min_voltage_pu.value, lower_bound: 0.95, upper_bound: 1.05, residual_scale: 0.01, role: post_check}
+  - id: section_b_active_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [section_a_downstream_active.value, section_b_storage_discharge_active.value]
+      consumption_power_variables: [section_b_load_active.value]
+      loss_power_variables: [section_b_line_loss_active.value]
+      residual_scale_W: 100.0
+  - id: section_b_reactive_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [section_a_downstream_reactive.value]
+      load_power_variables: [section_b_load_reactive.value]
+      loss_power_variables: [section_b_line_reactive_loss.value]
+      residual_scale_W: 100.0
+  - id: section_b_voltage_check
+    type: RangeCheckModule
+    parameters: {variable: section_b_min_voltage_pu.value, lower_bound: 0.95, upper_bound: 1.05, residual_scale: 0.01, role: post_check}
+  - id: der_source_meter_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [pv_export_active.value, battery_discharge_active.value]
+      consumption_power_variables: [der_metered_active.value]
+      residual_scale_W: 100.0
+  - id: der_to_feeder_total_relation
+    type: SumModule
+    parameters:
+      input_variables: [section_a_der_active.value, section_b_storage_discharge_active.value]
+      output_variable: der_metered_active.value
+      residual_scale: 100.0
+  - id: load_active_total_relation
+    type: SumModule
+    parameters:
+      input_variables: [section_a_load_active.value, section_b_load_active.value]
+      output_variable: total_load_active.value
+      residual_scale: 100.0
+  - id: load_reactive_total_relation
+    type: SumModule
+    parameters:
+      input_variables: [section_a_load_reactive.value, section_b_load_reactive.value]
+      output_variable: total_load_reactive.value
+      residual_scale: 100.0
+  - id: loss_active_total_relation
+    type: SumModule
+    parameters:
+      input_variables: [section_a_line_loss_active.value, section_b_line_loss_active.value]
+      output_variable: total_line_loss_active.value
+      residual_scale: 100.0
+  - id: feeder_total_active_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [substation_active_import.value, section_a_der_active.value, section_b_storage_discharge_active.value]
+      consumption_power_variables: [total_load_active.value]
+      loss_power_variables: [total_line_loss_active.value]
+      residual_scale_W: 100.0
+  - id: feeder_total_reactive_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [substation_reactive_import.value, section_a_der_reactive_support.value]
+      load_power_variables: [total_load_reactive.value]
+      loss_power_variables: [section_a_line_reactive_loss.value, section_b_line_reactive_loss.value]
+      residual_scale_W: 100.0
+  - id: feeder_load_power_factor_check
+    type: RatioModule
+    parameters:
+      numerator_variable: total_load_active.value
+      denominator_variable: feeder_load_apparent.value
+      output_variable: feeder_load_power_factor.value
+      residual_scale: 0.001
+  - id: feeder_min_voltage_check
+    type: RangeCheckModule
+    parameters: {variable: feeder_min_voltage_pu.value, lower_bound: 0.95, residual_scale: 0.01, role: post_check}
+  - id: feeder_max_voltage_check
+    type: RangeCheckModule
+    parameters: {variable: feeder_max_voltage_pu.value, upper_bound: 1.05, residual_scale: 0.01, role: post_check}
+  boundaries:
+  - {variable: substation_active_import.value, value: 100000.0, scale: 1.0e-06}
+  - {variable: substation_reactive_import.value, value: 45000.0, scale: 1.0e-06}
+  - {variable: substation_apparent_power.value, value: 109658.6, scale: 1.0e-06}
+  - {variable: substation_power_factor.value, value: 0.9119211808284986, scale: 1.0e-09}
+  - {variable: substation_voltage_pu.value, value: 1.02, scale: 1.0e-09}
+  - {variable: section_a_load_active.value, value: 70000.0, scale: 1.0e-06}
+  - {variable: section_a_load_reactive.value, value: 30000.0, scale: 1.0e-06}
+  - {variable: section_a_line_loss_active.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: section_a_line_reactive_loss.value, value: 1000.0, scale: 1.0e-06}
+  - {variable: section_a_downstream_active.value, value: 45000.0, scale: 1.0e-06}
+  - {variable: section_a_downstream_reactive.value, value: 19000.0, scale: 1.0e-06}
+  - {variable: section_a_min_voltage_pu.value, value: 0.98, scale: 1.0e-09}
+  - {variable: section_b_load_active.value, value: 50000.0, scale: 1.0e-06}
+  - {variable: section_b_load_reactive.value, value: 18000.0, scale: 1.0e-06}
+  - {variable: section_b_line_loss_active.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: section_b_line_reactive_loss.value, value: 1000.0, scale: 1.0e-06}
+  - {variable: section_b_min_voltage_pu.value, value: 0.96, scale: 1.0e-09}
+  - {variable: section_a_der_active.value, value: 20000.0, scale: 1.0e-06}
+  - {variable: section_a_der_reactive_support.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: section_b_storage_discharge_active.value, value: 10000.0, scale: 1.0e-06}
+  - {variable: pv_export_active.value, value: 20000.0, scale: 1.0e-06}
+  - {variable: battery_discharge_active.value, value: 10000.0, scale: 1.0e-06}
+  - {variable: der_metered_active.value, value: 30000.0, scale: 1.0e-06}
+  - {variable: total_load_active.value, value: 120000.0, scale: 1.0e-06}
+  - {variable: total_load_reactive.value, value: 48000.0, scale: 1.0e-06}
+  - {variable: total_line_loss_active.value, value: 10000.0, scale: 1.0e-06}
+  - {variable: feeder_load_apparent.value, value: 129244.0, scale: 1.0e-06}
+  - {variable: feeder_load_power_factor.value, value: 0.9284763702763764, scale: 1.0e-09}
+  - {variable: feeder_min_voltage_pu.value, value: 0.96, scale: 1.0e-09}
+  - {variable: feeder_max_voltage_pu.value, value: 1.02, scale: 1.0e-09}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: distribution_power_der
+    name: Distribution power and DER feeder
+    level: 0
+    tags: [distribution_power_der]
+  - id: substation_transformer
+    name: Substation transformer
+    level: 1
+    parent_id: distribution_power_der
+    components:
+    - substation_active_import
+    - substation_reactive_import
+    - substation_apparent_power
+    - substation_power_factor
+    - substation_voltage_pu
+    - substation_power_factor_check
+    - substation_voltage_check
+    tags: [substation, transformer, power_factor, voltage]
+  - id: feeder_section_a
+    name: Feeder section A
+    level: 1
+    parent_id: distribution_power_der
+    components:
+    - section_a_load_active
+    - section_a_load_reactive
+    - section_a_line_loss_active
+    - section_a_line_reactive_loss
+    - section_a_downstream_active
+    - section_a_downstream_reactive
+    - section_a_min_voltage_pu
+    - section_a_active_balance
+    - section_a_reactive_balance
+    - section_a_voltage_check
+    tags: [feeder_section, section_a, line_loss, voltage]
+  - id: feeder_section_b
+    name: Feeder section B
+    level: 1
+    parent_id: distribution_power_der
+    components:
+    - section_b_load_active
+    - section_b_load_reactive
+    - section_b_line_loss_active
+    - section_b_line_reactive_loss
+    - section_b_min_voltage_pu
+    - section_b_active_balance
+    - section_b_reactive_balance
+    - section_b_voltage_check
+    tags: [feeder_section, section_b, line_loss, voltage]
+  - id: der_interface
+    name: DER interface
+    level: 1
+    parent_id: distribution_power_der
+    components:
+    - section_a_der_active
+    - section_a_der_reactive_support
+    - section_b_storage_discharge_active
+    - pv_export_active
+    - battery_discharge_active
+    - der_metered_active
+    - der_source_meter_balance
+    - der_to_feeder_total_relation
+    tags: [der, pv, storage, metering]
+  - id: power_quality_voltage
+    name: Power quality and voltage summary
+    level: 1
+    parent_id: distribution_power_der
+    components:
+    - total_load_active
+    - total_load_reactive
+    - total_line_loss_active
+    - feeder_load_apparent
+    - feeder_load_power_factor
+    - feeder_min_voltage_pu
+    - feeder_max_voltage_pu
+    - load_active_total_relation
+    - load_reactive_total_relation
+    - loss_active_total_relation
+    - feeder_total_active_balance
+    - feeder_total_reactive_balance
+    - feeder_load_power_factor_check
+    - feeder_min_voltage_check
+    - feeder_max_voltage_check
+    tags: [power_quality, voltage, total_balance]
+  refinement_rules:
+  - id: refine_feeder_sections
+    block_id: feeder_section_a
+    trigger_diagnostic_keys:
+    - aggregate_electrical_bus_balance_mismatch
+    - aggregate_power_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids: [distribution_power_der/level_2_feeder_section_placeholder]
+    next_required_variables:
+    - feeder.section_current_A
+    - feeder.section_voltage_from_pu
+    - feeder.section_voltage_to_pu
+    - feeder.section_real_power_flow_W
+    next_required_parameters:
+    - feeder.section_base_voltage_V
+    - feeder.section_sign_convention
+    rationale: Feeder section residual is high; inspect section flow, load, DER injection, and loss mapping before adding line-impedance or load-flow detail.
+    priority: 20
+  - id: refine_der_interface
+    block_id: der_interface
+    trigger_diagnostic_keys:
+    - aggregate_electrical_bus_balance_mismatch
+    - sum_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: [distribution_power_der/level_2_der_interface_placeholder]
+    next_required_variables:
+    - der.pv_active_power_W
+    - der.storage_charge_power_W
+    - der.storage_discharge_power_W
+    - der.inverter_reactive_power_var
+    next_required_parameters:
+    - der.import_export_sign_convention
+    rationale: DER metering residual is high; inspect PV, storage, inverter support, and metering aggregation.
+    priority: 15
+  - id: refine_power_quality_voltage
+    block_id: power_quality_voltage
+    trigger_diagnostic_keys:
+    - ratio_relation_mismatch
+    - range_check_violation
+    - sum_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: [distribution_power_der/level_2_power_quality_voltage_placeholder]
+    next_required_variables:
+    - feeder.bus_voltage_pu
+    - feeder.phase_power_W
+    - feeder.phase_reactive_power_var
+    - feeder.apparent_power_VA
+    next_required_parameters:
+    - feeder.nominal_voltage_base
+    - feeder.allowed_voltage_range_pu
+    rationale: Power-quality or voltage residual is high; inspect P/Q/S basis, phase aggregation, voltage base, and min/max metering convention.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: distribution_power_der
+  assumptions:
+  - This is a snapshot feeder accounting audit, not an AC load-flow solver.
+  - P, Q, S, and power factor are checked as mapped scalar signals with explicit basis assumptions.
+  - Section losses are mapped or externally estimated values; no impedance or current-squared loss model is inferred here.
+  - Voltage range checks use mapped per-unit measurements and do not compute voltage drops.

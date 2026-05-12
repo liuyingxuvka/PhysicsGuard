@@ -1,0 +1,211 @@
+audit_name: wastewater_level_1_biological_clarifier
+description: Level 1 wastewater audit for activated-sludge oxygen accounting, clarification, and sludge recycle.
+system:
+  system_name: wastewater_level_1_biological_clarifier
+  components:
+  - id: aeration_oxygen_transfer
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.05, scale: 0.01, external_signal: mapped_aeration_oxygen_transfer, mapping_confidence: template}
+  - id: oxygen_for_bod
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.032, scale: 0.01, external_signal: mapped_oxygen_for_bod, mapping_confidence: template}
+  - id: oxygen_for_nitrification
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.012, scale: 0.01, external_signal: mapped_oxygen_for_nitrification, mapping_confidence: template}
+  - id: oxygen_residual_or_storage
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: -1.0, upper_bound: 1.0, initial_guess: 0.006, scale: 0.001, external_signal: mapped_do_storage_or_unaccounted_o2, mapping_confidence: template}
+  - id: reactor_cod_in
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.06, scale: 0.01, external_signal: mapped_reactor_cod_in, mapping_confidence: template}
+  - id: reactor_cod_effluent
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.012, scale: 0.01, external_signal: mapped_reactor_cod_out, mapping_confidence: template}
+  - id: reactor_cod_to_biomass
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.018, scale: 0.01, external_signal: mapped_cod_to_biomass, mapping_confidence: template}
+  - id: reactor_cod_oxidized
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.03, scale: 0.01, external_signal: mapped_cod_oxidized, mapping_confidence: template}
+  - id: clarifier_tss_in
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.04, scale: 0.01, external_signal: mapped_clarifier_tss_in, mapping_confidence: template}
+  - id: clarifier_tss_effluent
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.004, scale: 0.001, external_signal: mapped_effluent_tss, mapping_confidence: template}
+  - id: clarifier_tss_return
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.03, scale: 0.01, external_signal: mapped_return_sludge_tss, mapping_confidence: template}
+  - id: clarifier_tss_waste
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.006, scale: 0.001, external_signal: mapped_waste_sludge_tss, mapping_confidence: template}
+  - id: underflow_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 100.0, initial_guess: 0.42, scale: 0.1, external_signal: mapped_clarifier_underflow_mass_flow, mapping_confidence: template}
+  - id: return_sludge_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 100.0, initial_guess: 0.35, scale: 0.1, external_signal: mapped_return_activated_sludge_flow, mapping_confidence: template}
+  - id: waste_sludge_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 100.0, initial_guess: 0.07, scale: 0.1, external_signal: mapped_waste_activated_sludge_flow, mapping_confidence: template}
+  - id: aeration_blower_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 12000.0, scale: 10000.0, external_signal: mapped_blower_power, mapping_confidence: template}
+  - id: air_to_water_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 2500.0, scale: 1000.0, external_signal: mapped_oxygen_transfer_useful_power_equivalent, mapping_confidence: template}
+  - id: aeration_losses
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 9500.0, scale: 10000.0, external_signal: mapped_aeration_loss_or_unaccounted_power, mapping_confidence: template}
+  - id: reactor_oxygen_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [aeration_oxygen_transfer.value]
+      mass_out_variables: [oxygen_for_bod.value, oxygen_for_nitrification.value, oxygen_residual_or_storage.value]
+      residual_scale_kg_s: 0.001
+  - id: reactor_cod_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [reactor_cod_in.value]
+      mass_out_variables: [reactor_cod_effluent.value, reactor_cod_to_biomass.value, reactor_cod_oxidized.value]
+      residual_scale_kg_s: 0.001
+  - id: clarifier_solids_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [clarifier_tss_in.value]
+      mass_out_variables: [clarifier_tss_effluent.value, clarifier_tss_return.value, clarifier_tss_waste.value]
+      residual_scale_kg_s: 0.001
+  - id: sludge_recycle_split
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [underflow_flow.value]
+      mass_out_variables: [return_sludge_flow.value, waste_sludge_flow.value]
+      residual_scale_kg_s: 0.001
+  - id: aeration_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [aeration_blower_power.value]
+      load_power_variables: [air_to_water_power.value]
+      loss_power_variables: [aeration_losses.value]
+      residual_scale_W: 100.0
+  boundaries:
+  - {variable: aeration_oxygen_transfer.value, value: 0.05, scale: 1.0e-09}
+  - {variable: oxygen_for_bod.value, value: 0.032, scale: 1.0e-09}
+  - {variable: oxygen_for_nitrification.value, value: 0.012, scale: 1.0e-09}
+  - {variable: oxygen_residual_or_storage.value, value: 0.006, scale: 1.0e-09}
+  - {variable: reactor_cod_in.value, value: 0.06, scale: 1.0e-09}
+  - {variable: reactor_cod_effluent.value, value: 0.012, scale: 1.0e-09}
+  - {variable: reactor_cod_to_biomass.value, value: 0.018, scale: 1.0e-09}
+  - {variable: reactor_cod_oxidized.value, value: 0.03, scale: 1.0e-09}
+  - {variable: clarifier_tss_in.value, value: 0.04, scale: 1.0e-09}
+  - {variable: clarifier_tss_effluent.value, value: 0.004, scale: 1.0e-09}
+  - {variable: clarifier_tss_return.value, value: 0.03, scale: 1.0e-09}
+  - {variable: clarifier_tss_waste.value, value: 0.006, scale: 1.0e-09}
+  - {variable: underflow_flow.value, value: 0.42, scale: 1.0e-09}
+  - {variable: return_sludge_flow.value, value: 0.35, scale: 1.0e-09}
+  - {variable: waste_sludge_flow.value, value: 0.07, scale: 1.0e-09}
+  - {variable: aeration_blower_power.value, value: 12000.0, scale: 1.0e-06}
+  - {variable: air_to_water_power.value, value: 2500.0, scale: 1.0e-06}
+  - {variable: aeration_losses.value, value: 9500.0, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: wastewater_plant
+    name: Wastewater treatment plant
+    level: 0
+    tags: [wastewater, water_treatment]
+  - id: biological_reactor
+    name: Biological reactor
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - aeration_oxygen_transfer
+    - oxygen_for_bod
+    - oxygen_for_nitrification
+    - oxygen_residual_or_storage
+    - reactor_cod_in
+    - reactor_cod_effluent
+    - reactor_cod_to_biomass
+    - reactor_cod_oxidized
+    - reactor_oxygen_balance
+    - reactor_cod_balance
+    tags: [activated_sludge, oxygen_balance, cod_balance]
+    required_variables:
+    - aeration_oxygen_transfer.value
+    - oxygen_for_bod.value
+    - oxygen_for_nitrification.value
+    - reactor_cod_in.value
+    - reactor_cod_effluent.value
+  - id: secondary_clarifier
+    name: Secondary clarifier
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - clarifier_tss_in
+    - clarifier_tss_effluent
+    - clarifier_tss_return
+    - clarifier_tss_waste
+    - clarifier_solids_balance
+    tags: [clarifier, tss_balance]
+    required_variables:
+    - clarifier_tss_in.value
+    - clarifier_tss_effluent.value
+    - clarifier_tss_return.value
+  - id: sludge_recycle
+    name: Sludge recycle and wasting
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - underflow_flow
+    - return_sludge_flow
+    - waste_sludge_flow
+    - sludge_recycle_split
+    tags: [return_activated_sludge, waste_activated_sludge]
+  - id: aeration_energy
+    name: Aeration energy
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - aeration_blower_power
+    - air_to_water_power
+    - aeration_losses
+    - aeration_power_balance
+    tags: [aeration, energy_balance]
+  refinement_rules:
+  - id: refine_biological_reactor
+    block_id: biological_reactor
+    trigger_diagnostic_keys: [aggregate_mass_balance_mismatch]
+    score_threshold: 1.0
+    next_template_ids: [wastewater_treatment/level_2_asm_stoichiometry_placeholder]
+    next_required_variables:
+    - reactor.ammonia_load_kg_s
+    - reactor.nitrate_load_kg_s
+    - reactor.do_kg_s_or_mg_L
+    - reactor.biomass_production_kg_s
+    next_required_parameters:
+    - reactor.COD_basis
+    - reactor.oxygen_transfer_basis
+    rationale: Reactor COD or oxygen accounting residual is high; inspect ASM-style component mapping and oxygen demand terms before adding kinetics.
+    priority: 20
+  - id: refine_secondary_clarifier
+    block_id: secondary_clarifier
+    trigger_diagnostic_keys: [aggregate_mass_balance_mismatch]
+    score_threshold: 1.0
+    next_template_ids: [wastewater_treatment/level_2_clarifier_solids_placeholder]
+    next_required_variables:
+    - clarifier.underflow_tss_kg_s
+    - clarifier.effluent_tss_kg_s
+    - clarifier.sludge_blanket_or_capture_indicator
+    rationale: Clarifier solids residual is high; inspect TSS mappings, underflow/overflow split, and waste-sludge accounting.
+    priority: 15
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: wastewater_treatment
+  assumptions:
+  - This is an activated-sludge/clarifier audit template, not a dynamic ASM implementation.
+  - COD, TSS, and oxygen terms must be mapped onto consistent SI mass-flow bases before evaluation.
+  - Refinement templates are recommendations only and are not auto-executed.

@@ -52,6 +52,7 @@ def test_default_registry_includes_control_signal_modules() -> None:
         "RateLimiterModule",
         "FirstOrderLagModule",
         "SensorScaleOffsetModule",
+        "MappedSignalModule",
     }.issubset(registered)
 
 
@@ -264,6 +265,48 @@ def test_sensor_scale_offset_zero_residual() -> None:
 def test_sensor_scale_offset_invalid_parameter_fails() -> None:
     with pytest.raises(ValueError, match="residual_scale"):
         ResidualBuilder(one_module("SensorScaleOffsetModule", {"residual_scale": 0.0})).build_registry()
+
+
+def test_mapped_signal_declares_variable_without_residuals() -> None:
+    spec = one_module(
+        "MappedSignalModule",
+        {
+            "local_name": "cod_load_kg_s",
+            "unit": "kg/s",
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "initial_guess": 0.2,
+            "scale": 0.1,
+            "external_signal": "plant/COD_in",
+            "mapping_confidence": "medium",
+        },
+    )
+    builder = ResidualBuilder(spec)
+    registry = builder.build_registry()
+    records = builder.diagnostic_residual_records(registry.initial_vector())
+    metadata = builder.build_modules()[0].metadata()
+
+    variable = registry.get_record("m.cod_load_kg_s")
+    assert variable.unit == "kg/s"
+    assert variable.initial_guess == pytest.approx(0.2)
+    assert records == []
+    assert metadata["external_signal"] == "plant/COD_in"
+    assert metadata["mapping_confidence"] == "medium"
+
+
+def test_mapped_signal_invalid_variable_bounds_fail() -> None:
+    with pytest.raises(ValueError, match="lower_bound"):
+        ResidualBuilder(
+            one_module(
+                "MappedSignalModule",
+                {"lower_bound": 1.0, "upper_bound": 1.0, "initial_guess": 1.0},
+            )
+        ).build_registry()
+
+
+def test_mapped_signal_invalid_local_name_fails() -> None:
+    with pytest.raises(ValueError, match="local_name"):
+        ResidualBuilder(one_module("MappedSignalModule", {"local_name": "bad.name"})).build_registry()
 
 
 @pytest.mark.parametrize(

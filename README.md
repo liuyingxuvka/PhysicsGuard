@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-**Version:** v0.1.3  
+**Version:** v0.2.0
 **Language note:** English comes first; the second half is a full Chinese mirror.  
 **中文说明：** 英文在前，后半部分是完整中文镜像。
 
@@ -149,7 +149,7 @@ python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
 
 ## Library Coverage
 
-PhysicsGuard v0.1.3 includes low-fidelity modules for:
+PhysicsGuard v0.2.0 includes low-fidelity modules for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, threshold checks, delay, sample-and-hold, and actuator/sensor relations;
@@ -158,6 +158,8 @@ PhysicsGuard v0.1.3 includes low-fidelity modules for:
 - engineering components for fluid networks, thermal management, electrochemical BOP, battery/HV, drivetrain/vehicle, engine/aftertreatment, and control/sensor/actuator checks.
 
 All modules are low-fidelity audit relations. They are intended to detect obvious mismatch, not to simulate full hardware or commercial solver behavior.
+
+The repository also includes domain starter-pack guidance plus runnable hierarchy templates for wastewater, renewable microgrids, HVAC, power distribution, process industry, drainage, utilities, data centers, mobility, agriculture/food/bioprocess, and expanded scenarios such as cross-domain audit primitives, oil/gas, water supply, manufacturing, mining/metallurgy, combustion boiler/furnace, geothermal wells, cold-chain logistics, robotics/mechatronics, satellite thermal, and medical/bioprocess equipment. See `docs/domain_starter_packs.md` and the corresponding folders under `examples/hierarchical/`.
 
 ## Assumptions
 
@@ -170,6 +172,7 @@ src/physicsguard/                 Python package
 tests/                            Test suite
 examples/                         YAML examples
 docs/                             Workflow and schema documentation
+scripts/                          Repository maintenance scripts
 skill/physicsguard-ai-debugging/  Local Codex skill source
 assets/readme-hero/               README hero image assets
 ```
@@ -186,7 +189,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-**版本：** v0.1.3
+**版本：** v0.2.0
 
 PhysicsGuard 是一个 Python 核心库加 Codex skill，用来让 AI 辅助调试物理仿真结果，并围绕物理仿真工作流搭建候选模型。它帮助 AI 构建低保真审计模型，检查外部仿真导出的信号，排序最可疑的系统块，推荐下一步应该查看哪些信号或参数，并把验证过的 PhysicsGuard 分层模型作为候选模型的蓝图。
 
@@ -323,7 +326,7 @@ python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
 
 ## 模块覆盖
 
-PhysicsGuard v0.1.3 包含低保真模块：
+PhysicsGuard v0.2.0 包含低保真模块：
 
 - 总体功率、热、质量、物种和电气母线守恒；
 - 控制误差、PID、饱和、迟滞、阈值、延迟、sample-and-hold、执行器和传感器关系；
@@ -332,6 +335,8 @@ PhysicsGuard v0.1.3 包含低保真模块：
 - 流体网络、热管理、电化学 BOP、电池/HV、车辆/传动、发动机/后处理、控制/传感器/执行器工程组件。
 
 所有模块都是低保真审计关系。它们用于发现明显不一致，不用于完整模拟硬件或商业求解器。
+
+仓库也加入了行业 starter pack 指南，以及可运行的分层模板，覆盖污水处理、可再生能源微电网、建筑 HVAC、配电/DER、过程工业、雨洪/污水管网/排水系统、工业公用工程、数据中心/电子冷却、移动/交通扩展、农业/食品/生物过程，以及扩展场景：通用底层审计 primitives、油气、水务供水、制造、矿冶、燃烧锅炉/炉膛、地热井、冷链物流、机器人/机电、卫星热控和医疗/生物过程设备。详见 `docs/domain_starter_packs.md` 和 `examples/hierarchical/` 下的对应目录。
 
 ## 假设
 
@@ -344,6 +349,7 @@ src/physicsguard/                 Python 包
 tests/                            测试
 examples/                         YAML 示例
 docs/                             工作流和 schema 文档
+scripts/                          仓库维护脚本
 skill/physicsguard-ai-debugging/  本地 Codex skill 源文件
 assets/readme-hero/               README 顶部图像
 ```

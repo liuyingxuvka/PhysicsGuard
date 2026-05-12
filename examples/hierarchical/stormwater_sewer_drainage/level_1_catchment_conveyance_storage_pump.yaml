@@ -1,0 +1,368 @@
+audit_name: stormwater_sewer_drainage_level_1_catchment_conveyance_storage_pump
+description: Level 1 stormwater, sewer, and drainage audit for catchment runoff, sewer conveyance, detention storage, pump station, and pollutant-load accounting.
+system:
+  system_name: stormwater_sewer_drainage_level_1_catchment_conveyance_storage_pump
+  components:
+  - id: impervious_runoff_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 120.0, scale: 100.0, external_signal: mapped_impervious_runoff_mass_flow, mapping_confidence: template}
+  - id: pervious_runoff_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 80.0, scale: 100.0, external_signal: mapped_pervious_runoff_mass_flow, mapping_confidence: template}
+  - id: rainfall_runoff_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 200.0, scale: 100.0, external_signal: mapped_rainfall_runoff_mass_flow, mapping_confidence: template}
+  - id: inlet_capture_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 160.0, scale: 100.0, external_signal: mapped_inlet_capture_mass_flow, mapping_confidence: template}
+  - id: catchment_surface_storage_rate
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 40.0, scale: 10.0, external_signal: mapped_catchment_surface_storage_rate, mapping_confidence: template}
+  - id: sanitary_base_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 50.0, scale: 10.0, external_signal: mapped_sanitary_base_mass_flow, mapping_confidence: template}
+  - id: upstream_inflow_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 30.0, scale: 10.0, external_signal: mapped_upstream_inflow_mass_flow, mapping_confidence: template}
+  - id: sewer_conveyance_inflow_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 240.0, scale: 100.0, external_signal: mapped_sewer_conveyance_inflow_mass_flow, mapping_confidence: template}
+  - id: treatment_outflow_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 210.0, scale: 100.0, external_signal: mapped_treatment_outflow_mass_flow, mapping_confidence: template}
+  - id: controlled_overflow_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 20.0, scale: 10.0, external_signal: mapped_controlled_overflow_mass_flow, mapping_confidence: template}
+  - id: infiltration_to_groundwater_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 10.0, scale: 10.0, external_signal: mapped_infiltration_to_groundwater_mass_flow, mapping_confidence: template}
+  - id: sewer_storage_rate
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 0.0, scale: 10.0, external_signal: mapped_sewer_storage_rate, mapping_confidence: template}
+  - id: conveyance_overflow_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.08333333333333333, scale: 0.1, external_signal: mapped_conveyance_overflow_fraction, mapping_confidence: template}
+  - id: detention_inflow_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 60.0, scale: 10.0, external_signal: mapped_detention_inflow_mass_flow, mapping_confidence: template}
+  - id: detention_outflow_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 50.0, scale: 10.0, external_signal: mapped_detention_outflow_mass_flow, mapping_confidence: template}
+  - id: detention_overflow_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 5.0, scale: 1.0, external_signal: mapped_detention_overflow_mass_flow, mapping_confidence: template}
+  - id: detention_storage_accumulation_rate
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: -1000000000.0, upper_bound: 1000000000.0, initial_guess: 5.0, scale: 1.0, external_signal: mapped_detention_storage_accumulation_rate, mapping_confidence: template}
+  - id: detention_fill_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.55, scale: 0.1, external_signal: mapped_detention_fill_fraction, mapping_confidence: template}
+  - id: pump_station_electric_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 12000.0, scale: 10000.0, external_signal: mapped_pump_station_electric_power, mapping_confidence: template}
+  - id: pump_hydraulic_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 8000.0, scale: 1000.0, external_signal: mapped_pump_hydraulic_power, mapping_confidence: template}
+  - id: pump_loss_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 4000.0, scale: 1000.0, external_signal: mapped_pump_loss_power, mapping_confidence: template}
+  - id: wet_well_fill_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.6, scale: 0.1, external_signal: mapped_wet_well_fill_fraction, mapping_confidence: template}
+  - id: pump_running_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.8, scale: 0.1, external_signal: mapped_pump_running_fraction, mapping_confidence: template}
+  - id: pollutant_inflow_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.5, scale: 0.1, external_signal: mapped_pollutant_inflow_load, mapping_confidence: template}
+  - id: pollutant_treated_discharge_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.25, scale: 0.1, external_signal: mapped_pollutant_treated_discharge_load, mapping_confidence: template}
+  - id: pollutant_overflow_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.0625, scale: 0.01, external_signal: mapped_pollutant_overflow_load, mapping_confidence: template}
+  - id: pollutant_removed_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.125, scale: 0.1, external_signal: mapped_pollutant_removed_load, mapping_confidence: template}
+  - id: pollutant_storage_rate
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: -1000000.0, upper_bound: 1000000.0, initial_guess: 0.0625, scale: 0.01, external_signal: mapped_pollutant_storage_rate, mapping_confidence: template}
+  - id: runoff_partition_check
+    type: SumModule
+    parameters:
+      input_variables: [impervious_runoff_mass_flow.value, pervious_runoff_mass_flow.value]
+      output_variable: rainfall_runoff_mass_flow.value
+      residual_scale: 0.01
+  - id: catchment_capture_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [rainfall_runoff_mass_flow.value]
+      mass_out_variables: [inlet_capture_mass_flow.value]
+      mass_storage_rate_variable: catchment_surface_storage_rate.value
+      residual_scale_kg_s: 0.01
+  - id: sewer_conveyance_inflow_check
+    type: SumModule
+    parameters:
+      input_variables: [inlet_capture_mass_flow.value, sanitary_base_mass_flow.value, upstream_inflow_mass_flow.value]
+      output_variable: sewer_conveyance_inflow_mass_flow.value
+      residual_scale: 0.01
+  - id: sewer_conveyance_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [sewer_conveyance_inflow_mass_flow.value]
+      mass_out_variables: [treatment_outflow_mass_flow.value, controlled_overflow_mass_flow.value, infiltration_to_groundwater_mass_flow.value]
+      mass_storage_rate_variable: sewer_storage_rate.value
+      residual_scale_kg_s: 0.01
+  - id: conveyance_overflow_fraction_check
+    type: RatioModule
+    parameters:
+      numerator_variable: controlled_overflow_mass_flow.value
+      denominator_variable: sewer_conveyance_inflow_mass_flow.value
+      output_variable: conveyance_overflow_fraction.value
+      residual_scale: 0.001
+  - id: detention_storage_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [detention_inflow_mass_flow.value]
+      mass_out_variables: [detention_outflow_mass_flow.value, detention_overflow_mass_flow.value]
+      mass_storage_rate_variable: detention_storage_accumulation_rate.value
+      residual_scale_kg_s: 0.01
+  - id: detention_fill_range
+    type: RangeCheckModule
+    parameters: {variable: detention_fill_fraction.value, lower_bound: 0.0, upper_bound: 0.95, residual_scale: 0.01, role: post_check}
+  - id: pump_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [pump_station_electric_power.value]
+      load_power_variables: [pump_hydraulic_power.value]
+      loss_power_variables: [pump_loss_power.value]
+      residual_scale_W: 100.0
+  - id: wet_well_fill_range
+    type: RangeCheckModule
+    parameters: {variable: wet_well_fill_fraction.value, lower_bound: 0.0, upper_bound: 0.95, residual_scale: 0.01, role: post_check}
+  - id: pump_running_fraction_range
+    type: RangeCheckModule
+    parameters: {variable: pump_running_fraction.value, lower_bound: 0.0, upper_bound: 1.0, residual_scale: 0.01, role: post_check}
+  - id: pollutant_load_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [pollutant_inflow_load.value]
+      mass_out_variables: [pollutant_treated_discharge_load.value, pollutant_overflow_load.value, pollutant_removed_load.value]
+      mass_storage_rate_variable: pollutant_storage_rate.value
+      residual_scale_kg_s: 0.001
+  boundaries:
+  - {variable: impervious_runoff_mass_flow.value, value: 120.0, scale: 1.0e-06}
+  - {variable: pervious_runoff_mass_flow.value, value: 80.0, scale: 1.0e-06}
+  - {variable: rainfall_runoff_mass_flow.value, value: 200.0, scale: 1.0e-06}
+  - {variable: inlet_capture_mass_flow.value, value: 160.0, scale: 1.0e-06}
+  - {variable: catchment_surface_storage_rate.value, value: 40.0, scale: 1.0e-06}
+  - {variable: sanitary_base_mass_flow.value, value: 50.0, scale: 1.0e-06}
+  - {variable: upstream_inflow_mass_flow.value, value: 30.0, scale: 1.0e-06}
+  - {variable: sewer_conveyance_inflow_mass_flow.value, value: 240.0, scale: 1.0e-06}
+  - {variable: treatment_outflow_mass_flow.value, value: 210.0, scale: 1.0e-06}
+  - {variable: controlled_overflow_mass_flow.value, value: 20.0, scale: 1.0e-06}
+  - {variable: infiltration_to_groundwater_mass_flow.value, value: 10.0, scale: 1.0e-06}
+  - {variable: sewer_storage_rate.value, value: 0.0, scale: 1.0e-06}
+  - {variable: conveyance_overflow_fraction.value, value: 0.08333333333333333, scale: 1.0e-09}
+  - {variable: detention_inflow_mass_flow.value, value: 60.0, scale: 1.0e-06}
+  - {variable: detention_outflow_mass_flow.value, value: 50.0, scale: 1.0e-06}
+  - {variable: detention_overflow_mass_flow.value, value: 5.0, scale: 1.0e-06}
+  - {variable: detention_storage_accumulation_rate.value, value: 5.0, scale: 1.0e-06}
+  - {variable: detention_fill_fraction.value, value: 0.55, scale: 1.0e-09}
+  - {variable: pump_station_electric_power.value, value: 12000.0, scale: 1.0e-06}
+  - {variable: pump_hydraulic_power.value, value: 8000.0, scale: 1.0e-06}
+  - {variable: pump_loss_power.value, value: 4000.0, scale: 1.0e-06}
+  - {variable: wet_well_fill_fraction.value, value: 0.6, scale: 1.0e-09}
+  - {variable: pump_running_fraction.value, value: 0.8, scale: 1.0e-09}
+  - {variable: pollutant_inflow_load.value, value: 0.5, scale: 1.0e-09}
+  - {variable: pollutant_treated_discharge_load.value, value: 0.25, scale: 1.0e-09}
+  - {variable: pollutant_overflow_load.value, value: 0.0625, scale: 1.0e-09}
+  - {variable: pollutant_removed_load.value, value: 0.125, scale: 1.0e-09}
+  - {variable: pollutant_storage_rate.value, value: 0.0625, scale: 1.0e-09}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: stormwater_sewer_drainage
+    name: Stormwater, sewer, and drainage network
+    level: 0
+    tags: [stormwater, sewer, drainage]
+  - id: catchment_runoff
+    name: Catchment runoff and inlet capture
+    level: 1
+    parent_id: stormwater_sewer_drainage
+    components:
+    - impervious_runoff_mass_flow
+    - pervious_runoff_mass_flow
+    - rainfall_runoff_mass_flow
+    - inlet_capture_mass_flow
+    - catchment_surface_storage_rate
+    - runoff_partition_check
+    - catchment_capture_balance
+    tags: [catchment, runoff, inlet_capture, storage]
+    required_variables:
+    - impervious_runoff_mass_flow.value
+    - pervious_runoff_mass_flow.value
+    - inlet_capture_mass_flow.value
+    - catchment_surface_storage_rate.value
+  - id: sewer_conveyance
+    name: Sewer conveyance and overflow
+    level: 1
+    parent_id: stormwater_sewer_drainage
+    components:
+    - sanitary_base_mass_flow
+    - upstream_inflow_mass_flow
+    - sewer_conveyance_inflow_mass_flow
+    - treatment_outflow_mass_flow
+    - controlled_overflow_mass_flow
+    - infiltration_to_groundwater_mass_flow
+    - sewer_storage_rate
+    - conveyance_overflow_fraction
+    - sewer_conveyance_inflow_check
+    - sewer_conveyance_balance
+    - conveyance_overflow_fraction_check
+    tags: [sewer, conveyance, overflow, infiltration]
+    required_variables:
+    - sewer_conveyance_inflow_mass_flow.value
+    - treatment_outflow_mass_flow.value
+    - controlled_overflow_mass_flow.value
+    - sewer_storage_rate.value
+  - id: detention_storage
+    name: Detention and storage
+    level: 1
+    parent_id: stormwater_sewer_drainage
+    components:
+    - detention_inflow_mass_flow
+    - detention_outflow_mass_flow
+    - detention_overflow_mass_flow
+    - detention_storage_accumulation_rate
+    - detention_fill_fraction
+    - detention_storage_balance
+    - detention_fill_range
+    tags: [detention, storage, overflow]
+  - id: pump_station
+    name: Pump station
+    level: 1
+    parent_id: stormwater_sewer_drainage
+    components:
+    - pump_station_electric_power
+    - pump_hydraulic_power
+    - pump_loss_power
+    - wet_well_fill_fraction
+    - pump_running_fraction
+    - pump_power_balance
+    - wet_well_fill_range
+    - pump_running_fraction_range
+    tags: [pump_station, power, wet_well]
+  - id: pollutant_load
+    name: Pollutant load accounting
+    level: 1
+    parent_id: stormwater_sewer_drainage
+    components:
+    - pollutant_inflow_load
+    - pollutant_treated_discharge_load
+    - pollutant_overflow_load
+    - pollutant_removed_load
+    - pollutant_storage_rate
+    - pollutant_load_balance
+    tags: [pollutant_load, water_quality, accounting]
+  refinement_rules:
+  - id: refine_catchment_runoff
+    block_id: catchment_runoff
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - sum_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: [stormwater_sewer_drainage/level_2_catchment_runoff_placeholder]
+    next_required_variables:
+    - catchment.rainfall_intensity_kg_s
+    - catchment.impervious_runoff_kg_s
+    - catchment.pervious_runoff_kg_s
+    - catchment.inlet_capture_kg_s
+    next_required_parameters:
+    - runoff_mass_flow_basis
+    - inlet_capture_boundary
+    rationale: Catchment residual is high; inspect mapped runoff partition and inlet capture before adding rainfall-runoff response or hydrologic routing.
+    priority: 25
+  - id: refine_sewer_conveyance
+    block_id: sewer_conveyance
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - sum_relation_mismatch
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: [stormwater_sewer_drainage/level_2_sewer_conveyance_placeholder]
+    next_required_variables:
+    - sewer.inlet_capture_kg_s
+    - sewer.treatment_outflow_kg_s
+    - sewer.overflow_kg_s
+    - sewer.infiltration_kg_s
+    - sewer.storage_rate_kg_s
+    next_required_parameters:
+    - overflow_metering_boundary
+    - storage_accumulation_sign_convention
+    rationale: Sewer residual is high; inspect conveyance inflow, overflow, infiltration, and storage mapping before adding hydraulic network equations.
+    priority: 20
+  - id: refine_detention_storage
+    block_id: detention_storage
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: [stormwater_sewer_drainage/level_2_detention_storage_placeholder]
+    next_required_variables:
+    - storage.inflow_kg_s
+    - storage.outflow_kg_s
+    - storage.overflow_kg_s
+    - storage.level_m
+    - storage.volume_m3
+    next_required_parameters:
+    - storage_accumulation_sign_convention
+    - fill_fraction_basis
+    rationale: Storage residual is high; inspect storage level, inflow, outflow, overflow, and accumulation convention before adding routing.
+    priority: 15
+  - id: refine_pump_station
+    block_id: pump_station
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: [stormwater_sewer_drainage/level_2_pump_station_placeholder]
+    next_required_variables:
+    - pump.electric_power_W
+    - pump.hydraulic_power_W
+    - pump.flow_kg_s
+    - wet_well.fill_fraction
+    next_required_parameters:
+    - pump_power_meter_grouping
+    - wet_well_level_basis
+    rationale: Pump-station residual is high; inspect meter grouping, hydraulic-power estimate, wet-well fill, and run status before adding pump curves.
+    priority: 10
+  - id: refine_pollutant_load
+    block_id: pollutant_load
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids: [stormwater_sewer_drainage/level_2_pollutant_load_placeholder]
+    next_required_variables:
+    - pollutant.inflow_load_kg_s
+    - pollutant.treated_discharge_load_kg_s
+    - pollutant.overflow_load_kg_s
+    - pollutant.removed_load_kg_s
+    next_required_parameters:
+    - pollutant_load_basis
+    - concentration_flow_pairing
+    rationale: Pollutant-load residual is high; inspect load mapping and concentration-flow pairing before adding water-quality process logic.
+    priority: 5
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: stormwater_sewer_drainage
+  assumptions:
+  - This template checks steady snapshot accounting only and does not implement rainfall-runoff, SWMM, Saint-Venant, Muskingum, pump-curve, or water-quality kinetics.
+  - Water quantities are mapped as kg/s, and any volume-to-mass conversion must be explicit before mapping.
+  - Overflow, infiltration, and storage accumulation signs are caller-supplied conventions documented by the template metadata.
+  - Pump-station checks are aggregate power and range sanity checks, not hydraulic performance models.
+  - Pollutant-load checks are kg/s load accounting and do not infer concentration dynamics or first-flush behavior.

@@ -1,0 +1,200 @@
+audit_name: wastewater_conflict_level_0_cod_loss
+description: Level 0 wastewater audit with an intentionally missing COD sink.
+system:
+  system_name: wastewater_conflict_level_0_cod_loss
+  components:
+  - id: influent_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 100.0, initial_guess: 1.2, scale: 1.0, external_signal: mapped_influent_mass_flow, mapping_confidence: template}
+  - id: effluent_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 100.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_effluent_mass_flow, mapping_confidence: template}
+  - id: waste_sludge_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 100.0, initial_guess: 0.18, scale: 0.1, external_signal: mapped_waste_sludge_mass_flow, mapping_confidence: template}
+  - id: gas_vent_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.02, scale: 0.01, external_signal: mapped_gas_vent_mass_flow, mapping_confidence: template}
+  - id: cod_in
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.06, scale: 0.01, external_signal: mapped_influent_cod_load, mapping_confidence: template}
+  - id: cod_effluent
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.01, scale: 0.01, external_signal: mapped_effluent_cod_load, mapping_confidence: template}
+  - id: cod_to_sludge
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.02, scale: 0.01, external_signal: mapped_cod_to_waste_sludge, mapping_confidence: template}
+  - id: cod_oxidized
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.03, scale: 0.01, external_signal: mapped_cod_oxidized_or_biogas_equivalent, mapping_confidence: template}
+  - id: tn_in
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.004, scale: 0.001, external_signal: mapped_influent_total_nitrogen_load, mapping_confidence: template}
+  - id: tn_effluent
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.001, scale: 0.001, external_signal: mapped_effluent_total_nitrogen_load, mapping_confidence: template}
+  - id: tn_to_sludge
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.001, scale: 0.001, external_signal: mapped_nitrogen_to_sludge, mapping_confidence: template}
+  - id: tn_denitrified
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.002, scale: 0.001, external_signal: mapped_denitrified_nitrogen_equivalent, mapping_confidence: template}
+  - id: oxygen_transferred
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.045, scale: 0.01, external_signal: mapped_aeration_oxygen_transfer, mapping_confidence: template}
+  - id: oxygen_for_carbon
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.03, scale: 0.01, external_signal: mapped_oxygen_for_carbon_oxidation, mapping_confidence: template}
+  - id: oxygen_for_nitrification
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.01, scale: 0.01, external_signal: mapped_oxygen_for_nitrification, mapping_confidence: template}
+  - id: oxygen_excess
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 10.0, initial_guess: 0.005, scale: 0.001, external_signal: mapped_residual_or_unaccounted_oxygen, mapping_confidence: template}
+  - id: grid_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 15000.0, scale: 10000.0, external_signal: mapped_plant_grid_power, mapping_confidence: template}
+  - id: aeration_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 10000.0, scale: 10000.0, external_signal: mapped_aeration_power, mapping_confidence: template}
+  - id: pumping_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 3000.0, scale: 1000.0, external_signal: mapped_pumping_power, mapping_confidence: template}
+  - id: mixing_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_mixing_power, mapping_confidence: template}
+  - id: other_loss_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_other_or_unaccounted_power, mapping_confidence: template}
+  - id: plant_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [influent_flow.value]
+      mass_out_variables: [effluent_flow.value, waste_sludge_flow.value, gas_vent_flow.value]
+      residual_scale_kg_s: 0.01
+  - id: cod_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [cod_in.value]
+      mass_out_variables: [cod_effluent.value, cod_to_sludge.value, cod_oxidized.value]
+      residual_scale_kg_s: 0.001
+  - id: nitrogen_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [tn_in.value]
+      mass_out_variables: [tn_effluent.value, tn_to_sludge.value, tn_denitrified.value]
+      residual_scale_kg_s: 0.0001
+  - id: oxygen_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [oxygen_transferred.value]
+      mass_out_variables: [oxygen_for_carbon.value, oxygen_for_nitrification.value, oxygen_excess.value]
+      residual_scale_kg_s: 0.001
+  - id: electrical_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [grid_power.value]
+      consumption_power_variables: [aeration_power.value, pumping_power.value, mixing_power.value]
+      loss_power_variables: [other_loss_power.value]
+      residual_scale_W: 100.0
+  boundaries:
+  - {variable: influent_flow.value, value: 1.2, scale: 1.0e-09}
+  - {variable: effluent_flow.value, value: 1.0, scale: 1.0e-09}
+  - {variable: waste_sludge_flow.value, value: 0.18, scale: 1.0e-09}
+  - {variable: gas_vent_flow.value, value: 0.02, scale: 1.0e-09}
+  - {variable: cod_in.value, value: 0.06, scale: 1.0e-09}
+  - {variable: cod_effluent.value, value: 0.01, scale: 1.0e-09}
+  - {variable: cod_to_sludge.value, value: 0.02, scale: 1.0e-09}
+  - {variable: cod_oxidized.value, value: 0.02, scale: 1.0e-09}
+  - {variable: tn_in.value, value: 0.004, scale: 1.0e-09}
+  - {variable: tn_effluent.value, value: 0.001, scale: 1.0e-09}
+  - {variable: tn_to_sludge.value, value: 0.001, scale: 1.0e-09}
+  - {variable: tn_denitrified.value, value: 0.002, scale: 1.0e-09}
+  - {variable: oxygen_transferred.value, value: 0.045, scale: 1.0e-09}
+  - {variable: oxygen_for_carbon.value, value: 0.03, scale: 1.0e-09}
+  - {variable: oxygen_for_nitrification.value, value: 0.01, scale: 1.0e-09}
+  - {variable: oxygen_excess.value, value: 0.005, scale: 1.0e-09}
+  - {variable: grid_power.value, value: 15000.0, scale: 1.0e-06}
+  - {variable: aeration_power.value, value: 10000.0, scale: 1.0e-06}
+  - {variable: pumping_power.value, value: 3000.0, scale: 1.0e-06}
+  - {variable: mixing_power.value, value: 1000.0, scale: 1.0e-06}
+  - {variable: other_loss_power.value, value: 1000.0, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: wastewater_plant
+    name: Wastewater treatment plant
+    level: 0
+    components:
+    - influent_flow
+    - effluent_flow
+    - waste_sludge_flow
+    - gas_vent_flow
+    - cod_in
+    - cod_effluent
+    - cod_to_sludge
+    - cod_oxidized
+    - tn_in
+    - tn_effluent
+    - tn_to_sludge
+    - tn_denitrified
+    - oxygen_transferred
+    - oxygen_for_carbon
+    - oxygen_for_nitrification
+    - oxygen_excess
+    - grid_power
+    - aeration_power
+    - pumping_power
+    - mixing_power
+    - other_loss_power
+    - plant_mass_balance
+    - cod_balance
+    - nitrogen_balance
+    - oxygen_balance
+    - electrical_balance
+    tags: [wastewater, water_treatment, level_0, mass_balance, energy_balance]
+    required_variables:
+    - influent_flow.value
+    - effluent_flow.value
+    - waste_sludge_flow.value
+    - cod_in.value
+    - cod_effluent.value
+    - tn_in.value
+    - tn_effluent.value
+    - oxygen_transferred.value
+    - grid_power.value
+    refinement_template_ids:
+    - wastewater_treatment/level_1_biological_clarifier
+  refinement_rules:
+  - id: refine_wastewater_level_0_balance
+    block_id: wastewater_plant
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_electrical_bus_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - wastewater_treatment/level_1_biological_clarifier
+    next_required_variables:
+    - aeration.oxygen_transferred_kg_s
+    - reactor.oxygen_demand_kg_s
+    - clarifier.solids_in_kg_s
+    - clarifier.solids_effluent_kg_s
+    - sludge.return_flow_kg_s
+    next_required_parameters:
+    - plant.signal_mapping_confidence
+    - plant.COD_basis
+    - plant.TN_basis
+    rationale: Coarse wastewater balance residual is high; refine biological treatment, clarification, sludge recycle, and signal mapping.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: wastewater_treatment
+  assumptions:
+  - All mapped load rates are already in SI units.
+  - COD and nitrogen balances are coarse audit balances, not ASM kinetics.
+  - Gas and oxidation terms are user-provided accounting terms, not inferred by PhysicsGuard.
+  intentional_conflict: COD accounting is short by 0.01 kg/s so the Level 0 balance should fail.

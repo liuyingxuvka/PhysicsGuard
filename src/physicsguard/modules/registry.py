@@ -200,6 +200,7 @@ def default_module_registry() -> ModuleRegistry:
     )
     from physicsguard.modules.signal import (
         GainBiasModule,
+        MappedSignalModule,
         ProductModule,
         RatioModule,
         SensorScaleOffsetModule,
@@ -421,6 +422,10 @@ def default_module_registry() -> ModuleRegistry:
     registry.register(
         "SensorScaleOffsetModule",
         lambda component_id, parameters: SensorScaleOffsetModule(component_id, parameters),
+    )
+    registry.register(
+        "MappedSignalModule",
+        lambda component_id, parameters: MappedSignalModule(component_id, parameters),
     )
     registry.register(
         "LookupTable1DModule",

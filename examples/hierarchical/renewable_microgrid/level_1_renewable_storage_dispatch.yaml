@@ -1,0 +1,274 @@
+audit_name: renewable_microgrid_level_1_renewable_storage_dispatch
+description: Level 1 renewable microgrid audit for PV envelope, wind curtailment, battery charging, grid interchange, and site-load balance.
+system:
+  system_name: renewable_microgrid_level_1_renewable_storage_dispatch
+  components:
+  - id: pv_irradiance
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W/m2, lower_bound: 0.0, upper_bound: 1500.0, initial_guess: 800.0, scale: 100.0, external_signal: mapped_plane_of_array_irradiance, mapping_confidence: template}
+  - id: pv_area
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: m2, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 250.0, scale: 100.0, external_signal: mapped_pv_array_area, mapping_confidence: template}
+  - id: pv_solar_input
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 200000.0, scale: 100000.0, external_signal: mapped_pv_solar_input_power, mapping_confidence: template}
+  - id: pv_dc_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 40000.0, scale: 10000.0, external_signal: mapped_pv_dc_power, mapping_confidence: template}
+  - id: pv_efficiency
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.2, scale: 0.1, external_signal: mapped_pv_snapshot_efficiency, mapping_confidence: template}
+  - id: pv_ac_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 38000.0, scale: 10000.0, external_signal: mapped_pv_ac_power, mapping_confidence: template}
+  - id: pv_inverter_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 2000.0, scale: 1000.0, external_signal: mapped_pv_inverter_loss, mapping_confidence: template}
+  - id: wind_available_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 27000.0, scale: 10000.0, external_signal: mapped_wind_available_power, mapping_confidence: template}
+  - id: wind_ac_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 25000.0, scale: 10000.0, external_signal: mapped_wind_ac_power, mapping_confidence: template}
+  - id: wind_loss_or_curtailment
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 2000.0, scale: 1000.0, external_signal: mapped_wind_loss_or_curtailment, mapping_confidence: template}
+  - id: battery_charge_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 3000.0, scale: 1000.0, external_signal: mapped_battery_charge_power, mapping_confidence: template}
+  - id: battery_loss_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 300.0, scale: 100.0, external_signal: mapped_battery_charge_loss_power, mapping_confidence: template}
+  - id: battery_storage_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: -100000000.0, upper_bound: 100000000.0, initial_guess: 2700.0, scale: 1000.0, external_signal: mapped_battery_energy_storage_rate, mapping_confidence: template}
+  - id: battery_energy_current
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: J, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 180000000.0, scale: 100000000.0, external_signal: mapped_battery_energy_current, mapping_confidence: template}
+  - id: battery_capacity
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: J, lower_bound: 1.0, upper_bound: 10000000000.0, initial_guess: 360000000.0, scale: 100000000.0, external_signal: mapped_battery_energy_capacity, mapping_confidence: template}
+  - id: battery_soc
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.5, scale: 0.1, external_signal: mapped_battery_soc, mapping_confidence: template}
+  - id: grid_import_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 2000.0, scale: 1000.0, external_signal: mapped_grid_import_power, mapping_confidence: template}
+  - id: grid_export_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_grid_export_power, mapping_confidence: template}
+  - id: site_load_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 60000.0, scale: 10000.0, external_signal: mapped_site_load_power, mapping_confidence: template}
+  - id: renewable_curtailment_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_renewable_curtailment, mapping_confidence: template}
+  - id: pv_solar_input_relation
+    type: ProductModule
+    parameters:
+      x1_variable: pv_irradiance.value
+      x2_variable: pv_area.value
+      output_variable: pv_solar_input.value
+      residual_scale: 100.0
+  - id: pv_conversion_efficiency
+    type: AggregateEfficiencyModule
+    parameters:
+      useful_output_power_variable: pv_dc_power.value
+      input_power_variable: pv_solar_input.value
+      efficiency_variable: pv_efficiency.value
+      residual_scale: 0.01
+  - id: pv_inverter_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [pv_dc_power.value]
+      load_power_variables: [pv_ac_power.value]
+      loss_power_variables: [pv_inverter_loss.value]
+      residual_scale_W: 100.0
+  - id: wind_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [wind_available_power.value]
+      load_power_variables: [wind_ac_power.value]
+      loss_power_variables: [wind_loss_or_curtailment.value]
+      residual_scale_W: 100.0
+  - id: battery_charge_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [battery_charge_power.value]
+      loss_power_variables: [battery_loss_power.value]
+      storage_power_variables: [battery_storage_power.value]
+      residual_scale_W: 100.0
+  - id: battery_soc_relation
+    type: RatioModule
+    parameters:
+      numerator_variable: battery_energy_current.value
+      denominator_variable: battery_capacity.value
+      output_variable: battery_soc.value
+      residual_scale: 0.01
+  - id: microgrid_bus_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [pv_ac_power.value, wind_ac_power.value, grid_import_power.value]
+      consumption_power_variables: [site_load_power.value, battery_charge_power.value, grid_export_power.value]
+      loss_power_variables: [renewable_curtailment_power.value]
+      residual_scale_W: 100.0
+  boundaries:
+  - {variable: pv_irradiance.value, value: 800.0, scale: 1.0e-06}
+  - {variable: pv_area.value, value: 250.0, scale: 1.0e-06}
+  - {variable: pv_solar_input.value, value: 200000.0, scale: 1.0e-06}
+  - {variable: pv_dc_power.value, value: 40000.0, scale: 1.0e-06}
+  - {variable: pv_efficiency.value, value: 0.2, scale: 1.0e-09}
+  - {variable: pv_ac_power.value, value: 38000.0, scale: 1.0e-06}
+  - {variable: pv_inverter_loss.value, value: 2000.0, scale: 1.0e-06}
+  - {variable: wind_available_power.value, value: 27000.0, scale: 1.0e-06}
+  - {variable: wind_ac_power.value, value: 25000.0, scale: 1.0e-06}
+  - {variable: wind_loss_or_curtailment.value, value: 2000.0, scale: 1.0e-06}
+  - {variable: battery_charge_power.value, value: 3000.0, scale: 1.0e-06}
+  - {variable: battery_loss_power.value, value: 300.0, scale: 1.0e-06}
+  - {variable: battery_storage_power.value, value: 2700.0, scale: 1.0e-06}
+  - {variable: battery_energy_current.value, value: 180000000.0, scale: 1.0e-03}
+  - {variable: battery_capacity.value, value: 360000000.0, scale: 1.0e-03}
+  - {variable: battery_soc.value, value: 0.5, scale: 1.0e-09}
+  - {variable: grid_import_power.value, value: 2000.0, scale: 1.0e-06}
+  - {variable: grid_export_power.value, value: 1000.0, scale: 1.0e-06}
+  - {variable: site_load_power.value, value: 60000.0, scale: 1.0e-06}
+  - {variable: renewable_curtailment_power.value, value: 1000.0, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: renewable_microgrid
+    name: Renewable microgrid
+    level: 0
+    tags: [renewable_microgrid]
+  - id: pv_system
+    name: PV array and inverter
+    level: 1
+    parent_id: renewable_microgrid
+    components:
+    - pv_irradiance
+    - pv_area
+    - pv_solar_input
+    - pv_dc_power
+    - pv_efficiency
+    - pv_ac_power
+    - pv_inverter_loss
+    - pv_solar_input_relation
+    - pv_conversion_efficiency
+    - pv_inverter_balance
+    tags: [pv, solar, inverter]
+    required_variables:
+    - pv_irradiance.value
+    - pv_area.value
+    - pv_solar_input.value
+    - pv_dc_power.value
+    - pv_ac_power.value
+  - id: wind_system
+    name: Wind generation
+    level: 1
+    parent_id: renewable_microgrid
+    components:
+    - wind_available_power
+    - wind_ac_power
+    - wind_loss_or_curtailment
+    - wind_power_balance
+    tags: [wind, curtailment]
+    required_variables:
+    - wind_available_power.value
+    - wind_ac_power.value
+  - id: battery_storage
+    name: Battery storage
+    level: 1
+    parent_id: renewable_microgrid
+    components:
+    - battery_charge_power
+    - battery_loss_power
+    - battery_storage_power
+    - battery_energy_current
+    - battery_capacity
+    - battery_soc
+    - battery_charge_balance
+    - battery_soc_relation
+    tags: [battery, storage, soc]
+    required_variables:
+    - battery_charge_power.value
+    - battery_energy_current.value
+    - battery_capacity.value
+    - battery_soc.value
+  - id: grid_interconnect
+    name: Grid interconnect
+    level: 1
+    parent_id: renewable_microgrid
+    components:
+    - grid_import_power
+    - grid_export_power
+    tags: [grid, import_export]
+  - id: load_dispatch
+    name: Load dispatch
+    level: 1
+    parent_id: renewable_microgrid
+    components:
+    - site_load_power
+    - renewable_curtailment_power
+    - microgrid_bus_balance
+    tags: [load, dispatch, curtailment]
+  refinement_rules:
+  - id: refine_pv_system
+    block_id: pv_system
+    trigger_diagnostic_keys:
+    - product_relation_mismatch
+    - aggregate_efficiency_mismatch
+    - aggregate_power_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids: [renewable_microgrid/level_2_pv_weather_inverter_placeholder]
+    next_required_variables:
+    - pv.module_temperature_K
+    - pv.dc_voltage_V
+    - pv.dc_current_A
+    - pv.inverter_ac_power_W
+    next_required_parameters:
+    - pv.area_basis
+    - pv.temperature_derate_basis
+    rationale: PV envelope residual is high; inspect irradiance, area, DC power, inverter losses, and temperature derate before adding detailed PV physics.
+    priority: 20
+  - id: refine_battery_storage
+    block_id: battery_storage
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: [renewable_microgrid/level_2_battery_soc_placeholder]
+    next_required_variables:
+    - battery.energy_previous_J
+    - battery.energy_current_J
+    - battery.charge_power_W
+    - battery.discharge_power_W
+    - battery.loss_power_W
+    next_required_parameters:
+    - battery.dt_s
+    - battery.sign_convention
+    rationale: Battery power or SOC residual is high; inspect energy-state mapping and charge/discharge sign convention.
+    priority: 15
+  - id: refine_load_dispatch
+    block_id: load_dispatch
+    trigger_diagnostic_keys: [aggregate_electrical_bus_balance_mismatch]
+    score_threshold: 1.0
+    next_template_ids: [renewable_microgrid/level_2_dispatch_metering_placeholder]
+    next_required_variables:
+    - site.critical_load_power_W
+    - site.flexible_load_power_W
+    - grid.import_power_W
+    - grid.export_power_W
+    rationale: Microgrid bus residual is high; inspect load metering, export/import convention, storage power, and curtailment accounting.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: renewable_microgrid
+  assumptions:
+  - PV solar input is a simple irradiance times area audit, not a full PV performance model.
+  - Wind available power is a user-provided envelope or power-curve output, not inferred from wind speed here.
+  - Battery storage power uses a snapshot charge-power accounting convention; time-series SOC checks should be a later template.
+  - This template does not replace AC load-flow or dispatch optimization.

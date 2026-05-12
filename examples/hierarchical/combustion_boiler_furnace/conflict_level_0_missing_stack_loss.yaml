@@ -1,0 +1,267 @@
+audit_name: combustion_boiler_furnace_conflict_missing_stack_loss
+description: Level 0 combustion audit with intentionally missing stack heat loss.
+system:
+  system_name: combustion_boiler_furnace_conflict_missing_stack_loss
+  components:
+  - id: fuel_thermal_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2000000.0
+      scale: 200000.0
+      external_signal: mapped_fuel_thermal_power
+      mapping_confidence: template
+  - id: useful_steam_heat_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1600000.0
+      scale: 160000.0
+      external_signal: mapped_useful_steam_heat_power
+      mapping_confidence: template
+  - id: stack_heat_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 300000.0
+      scale: 30000.0
+      external_signal: mapped_stack_heat_loss
+      mapping_confidence: template
+  - id: casing_heat_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100000.0
+      scale: 10000.0
+      external_signal: mapped_casing_heat_loss
+      mapping_confidence: template
+  - id: boiler_useful_heat_fraction
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.8
+      scale: 1.0
+      external_signal: mapped_boiler_useful_heat_fraction
+      mapping_confidence: template
+  - id: boiler_heat_accounting_thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - fuel_thermal_power.value
+      heat_out_variables:
+      - useful_steam_heat_power.value
+      - stack_heat_loss.value
+      - casing_heat_loss.value
+      residual_scale_W: 100.0
+  - id: boiler_heat_accounting_ratio_check
+    type: RatioModule
+    parameters:
+      numerator_variable: useful_steam_heat_power.value
+      denominator_variable: fuel_thermal_power.value
+      output_variable: boiler_useful_heat_fraction.value
+      residual_scale: 0.01
+  - id: air_fuel_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 10.5
+      scale: 10.5
+      external_signal: mapped_air_fuel_mass_flow
+      mapping_confidence: template
+  - id: flue_gas_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 10.0
+      scale: 10.0
+      external_signal: mapped_flue_gas_mass_flow
+      mapping_confidence: template
+  - id: ash_purge_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.5
+      scale: 1.0
+      external_signal: mapped_ash_purge_mass_flow
+      mapping_confidence: template
+  - id: air_flue_mass_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - air_fuel_mass_flow.value
+      mass_out_variables:
+      - flue_gas_mass_flow.value
+      - ash_purge_mass_flow.value
+      residual_scale_kg_s: 0.01
+  - id: draft_fan_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 50000.0
+      scale: 5000.0
+      external_signal: mapped_draft_fan_electric_power
+      mapping_confidence: template
+  - id: air_movement_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 40000.0
+      scale: 4000.0
+      external_signal: mapped_air_movement_power
+      mapping_confidence: template
+  - id: fan_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 10000.0
+      scale: 1000.0
+      external_signal: mapped_fan_loss_power
+      mapping_confidence: template
+  - id: draft_fan_power_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - draft_fan_electric_power.value
+      load_power_variables:
+      - air_movement_power.value
+      - fan_loss_power.value
+      residual_scale_W: 100.0
+  boundaries:
+  - variable: fuel_thermal_power.value
+    value: 2000000.0
+    scale: 1.0e-06
+  - variable: useful_steam_heat_power.value
+    value: 1600000.0
+    scale: 1.0e-06
+  - variable: stack_heat_loss.value
+    value: 0.0
+    scale: 1.0e-09
+  - variable: casing_heat_loss.value
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: boiler_useful_heat_fraction.value
+    value: 0.8
+    scale: 1.0e-09
+  - variable: air_fuel_mass_flow.value
+    value: 10.5
+    scale: 1.0e-06
+  - variable: flue_gas_mass_flow.value
+    value: 10.0
+    scale: 1.0e-06
+  - variable: ash_purge_mass_flow.value
+    value: 0.5
+    scale: 1.0e-06
+  - variable: draft_fan_electric_power.value
+    value: 50000.0
+    scale: 1.0e-06
+  - variable: air_movement_power.value
+    value: 40000.0
+    scale: 1.0e-06
+  - variable: fan_loss_power.value
+    value: 10000.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: combustion_boiler_furnace
+    name: Combustion boiler and furnace
+    level: 0
+    components:
+    - fuel_thermal_power
+    - useful_steam_heat_power
+    - stack_heat_loss
+    - casing_heat_loss
+    - boiler_useful_heat_fraction
+    - boiler_heat_accounting_thermal_balance
+    - boiler_heat_accounting_ratio_check
+    - air_fuel_mass_flow
+    - flue_gas_mass_flow
+    - ash_purge_mass_flow
+    - air_flue_mass_accounting_mass_balance
+    - draft_fan_electric_power
+    - air_movement_power
+    - fan_loss_power
+    - draft_fan_power_power_balance
+    tags:
+    - combustion_boiler_furnace
+    - level_0
+    - combustion
+    - boiler
+    - furnace
+    required_variables:
+    - fuel_thermal_power.value
+    refinement_template_ids:
+    - combustion_boiler_furnace/level_1_fuel_air_heat_draft_balance
+  refinement_rules:
+  - id: refine_combustion_boiler_furnace_level_0
+    block_id: combustion_boiler_furnace
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_power_balance_mismatch
+    - aggregate_thermal_balance_mismatch
+    - range_check_violation
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - combustion_boiler_furnace/level_1_fuel_air_heat_draft_balance
+    next_required_variables:
+    - fuel.heat_input_W
+    - steam.useful_heat_W
+    - stack.loss_W
+    - air.flow_kg_s
+    next_required_parameters:
+    - fuel_lhv_basis
+    - stack_loss_boundary
+    - air_flue_metering
+    rationale: Coarse combustion residual is high; refine heat, air/flue, and draft
+      power before adding combustion detail.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: combustion_boiler_furnace
+  assumptions:
+  - This conflict intentionally maps stack heat loss to zero.
+  - Fuel heat and air/flue terms are mapped accounting signals; no combustion kinetics,
+    emissions chemistry, or burner model is inferred.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.

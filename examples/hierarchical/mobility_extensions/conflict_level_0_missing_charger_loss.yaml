@@ -1,0 +1,196 @@
+audit_name: mobility_extensions_conflict_level_0_missing_charger_loss
+description: Level 0 mobility-extension audit with intentionally missing charger loss to exercise refinement recommendations.
+system:
+  system_name: mobility_extensions_conflict_level_0_missing_charger_loss
+  components:
+  - id: charger_grid_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 500000.0, scale: 100000.0, external_signal: mapped_charger_grid_power, mapping_confidence: template}
+  - id: battery_charge_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 450000.0, scale: 100000.0, external_signal: mapped_battery_charge_power, mapping_confidence: template}
+  - id: charger_loss_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 0.0, scale: 10000.0, external_signal: mapped_charger_loss_power, mapping_confidence: template}
+  - id: charging_efficiency
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.9, scale: 0.1, external_signal: mapped_charging_efficiency, mapping_confidence: template}
+  - id: rail_substation_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 800000.0, scale: 100000.0, external_signal: mapped_rail_substation_power, mapping_confidence: template}
+  - id: rail_traction_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 700000.0, scale: 100000.0, external_signal: mapped_rail_traction_power, mapping_confidence: template}
+  - id: rail_auxiliary_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 50000.0, scale: 10000.0, external_signal: mapped_rail_auxiliary_power, mapping_confidence: template}
+  - id: rail_distribution_loss_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 50000.0, scale: 10000.0, external_signal: mapped_rail_distribution_loss_power, mapping_confidence: template}
+  - id: marine_fuel_energy_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 2000000.0, scale: 1000000.0, external_signal: mapped_marine_fuel_energy_power, mapping_confidence: template}
+  - id: marine_propulsion_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 1500000.0, scale: 1000000.0, external_signal: mapped_marine_propulsion_power, mapping_confidence: template}
+  - id: marine_hotel_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 300000.0, scale: 100000.0, external_signal: mapped_marine_hotel_power, mapping_confidence: template}
+  - id: marine_waste_heat_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 200000.0, scale: 100000.0, external_signal: mapped_marine_waste_heat_power, mapping_confidence: template}
+  - id: aircraft_fuel_energy_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 3000000.0, scale: 1000000.0, external_signal: mapped_aircraft_fuel_energy_power, mapping_confidence: template}
+  - id: aircraft_propulsive_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 2400000.0, scale: 1000000.0, external_signal: mapped_aircraft_propulsive_power, mapping_confidence: template}
+  - id: aircraft_auxiliary_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 200000.0, scale: 100000.0, external_signal: mapped_aircraft_auxiliary_power, mapping_confidence: template}
+  - id: aircraft_waste_heat_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 400000.0, scale: 100000.0, external_signal: mapped_aircraft_waste_heat_power, mapping_confidence: template}
+  - id: hydraulic_pump_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 300000.0, scale: 100000.0, external_signal: mapped_hydraulic_pump_power, mapping_confidence: template}
+  - id: hydraulic_actuator_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 240000.0, scale: 100000.0, external_signal: mapped_hydraulic_actuator_power, mapping_confidence: template}
+  - id: hydraulic_loss_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 10000000000.0, initial_guess: 60000.0, scale: 10000.0, external_signal: mapped_hydraulic_loss_power, mapping_confidence: template}
+  - id: charger_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [charger_grid_power.value]
+      load_power_variables: [battery_charge_power.value, charger_loss_power.value]
+      residual_scale_W: 100.0
+  - id: charging_efficiency_check
+    type: RatioModule
+    parameters:
+      numerator_variable: battery_charge_power.value
+      denominator_variable: charger_grid_power.value
+      output_variable: charging_efficiency.value
+      residual_scale: 0.01
+  - id: rail_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [rail_substation_power.value]
+      load_power_variables: [rail_traction_power.value, rail_auxiliary_power.value, rail_distribution_loss_power.value]
+      residual_scale_W: 100.0
+  - id: marine_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [marine_fuel_energy_power.value]
+      load_power_variables: [marine_propulsion_power.value, marine_hotel_power.value, marine_waste_heat_power.value]
+      residual_scale_W: 100.0
+  - id: aircraft_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [aircraft_fuel_energy_power.value]
+      load_power_variables: [aircraft_propulsive_power.value, aircraft_auxiliary_power.value, aircraft_waste_heat_power.value]
+      residual_scale_W: 100.0
+  - id: hydraulic_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [hydraulic_pump_power.value]
+      load_power_variables: [hydraulic_actuator_power.value, hydraulic_loss_power.value]
+      residual_scale_W: 100.0
+  boundaries:
+  - {variable: charger_grid_power.value, value: 500000.0, scale: 1.0e-06}
+  - {variable: battery_charge_power.value, value: 450000.0, scale: 1.0e-06}
+  - {variable: charger_loss_power.value, value: 0.0, scale: 1.0e-09}
+  - {variable: charging_efficiency.value, value: 0.9, scale: 1.0e-09}
+  - {variable: rail_substation_power.value, value: 800000.0, scale: 1.0e-06}
+  - {variable: rail_traction_power.value, value: 700000.0, scale: 1.0e-06}
+  - {variable: rail_auxiliary_power.value, value: 50000.0, scale: 1.0e-06}
+  - {variable: rail_distribution_loss_power.value, value: 50000.0, scale: 1.0e-06}
+  - {variable: marine_fuel_energy_power.value, value: 2000000.0, scale: 1.0e-06}
+  - {variable: marine_propulsion_power.value, value: 1500000.0, scale: 1.0e-06}
+  - {variable: marine_hotel_power.value, value: 300000.0, scale: 1.0e-06}
+  - {variable: marine_waste_heat_power.value, value: 200000.0, scale: 1.0e-06}
+  - {variable: aircraft_fuel_energy_power.value, value: 3000000.0, scale: 1.0e-06}
+  - {variable: aircraft_propulsive_power.value, value: 2400000.0, scale: 1.0e-06}
+  - {variable: aircraft_auxiliary_power.value, value: 200000.0, scale: 1.0e-06}
+  - {variable: aircraft_waste_heat_power.value, value: 400000.0, scale: 1.0e-06}
+  - {variable: hydraulic_pump_power.value, value: 300000.0, scale: 1.0e-06}
+  - {variable: hydraulic_actuator_power.value, value: 240000.0, scale: 1.0e-06}
+  - {variable: hydraulic_loss_power.value, value: 60000.0, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: mobility_extensions
+    name: Mobility extensions
+    level: 0
+    components:
+    - charger_grid_power
+    - battery_charge_power
+    - charger_loss_power
+    - charging_efficiency
+    - rail_substation_power
+    - rail_traction_power
+    - rail_auxiliary_power
+    - rail_distribution_loss_power
+    - marine_fuel_energy_power
+    - marine_propulsion_power
+    - marine_hotel_power
+    - marine_waste_heat_power
+    - aircraft_fuel_energy_power
+    - aircraft_propulsive_power
+    - aircraft_auxiliary_power
+    - aircraft_waste_heat_power
+    - hydraulic_pump_power
+    - hydraulic_actuator_power
+    - hydraulic_loss_power
+    - charger_power_balance
+    - charging_efficiency_check
+    - rail_power_balance
+    - marine_power_balance
+    - aircraft_power_balance
+    - hydraulic_power_balance
+    tags: [mobility, level_0, charging, rail, marine, aviation, offroad_hydraulics]
+    required_variables:
+    - charger_grid_power.value
+    - battery_charge_power.value
+    - rail_substation_power.value
+    - marine_fuel_energy_power.value
+    - aircraft_fuel_energy_power.value
+    - hydraulic_pump_power.value
+    refinement_template_ids:
+    - mobility_extensions/level_1_charging_rail_marine_aviation_offroad
+  refinement_rules:
+  - id: refine_mobility_extensions_level_0
+    block_id: mobility_extensions
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - mobility_extensions/level_1_charging_rail_marine_aviation_offroad
+    next_required_variables:
+    - charging.grid_power_W
+    - charging.battery_power_W
+    - rail.substation_power_W
+    - marine.fuel_energy_power_W
+    - aircraft.fuel_energy_power_W
+    - hydraulics.pump_power_W
+    next_required_parameters:
+    - charger_meter_boundary
+    - rail_meter_grouping
+    - marine_power_basis
+    - aviation_power_basis
+    - hydraulic_power_boundary
+    rationale: Coarse mobility residual is high; refine into charging, rail, marine, aviation, and off-road hydraulic checks before adding vehicle dynamics, route simulation, propulsion maps, or detailed hydraulic models.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: mobility_extensions
+  assumptions:
+  - This conflict intentionally maps charger loss to zero to represent an omitted charging loss term.
+  - This is a steady snapshot power-accounting audit over mapped SI signals, not a vehicle, train, ship, aircraft, charging-network, or hydraulic-system simulator.
+  - Fuel-energy, grid, traction, propulsive, auxiliary, waste-heat, and hydraulic powers are positive watt magnitudes with caller-supplied boundaries.

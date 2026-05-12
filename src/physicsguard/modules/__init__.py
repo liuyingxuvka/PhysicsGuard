@@ -8,6 +8,7 @@ __all__ = [
     "ConservationSumModule",
     "DummyResidualModule",
     "LinearRelationModule",
+    "MappedSignalModule",
     "ModuleRegistry",
     "RangeCheckModule",
     "default_module_registry",
@@ -31,4 +32,8 @@ def __getattr__(name: str):
             "LinearRelationModule": LinearRelationModule,
             "RangeCheckModule": RangeCheckModule,
         }[name]
+    if name == "MappedSignalModule":
+        from physicsguard.modules.signal import MappedSignalModule
+
+        return MappedSignalModule
     raise AttributeError(name)

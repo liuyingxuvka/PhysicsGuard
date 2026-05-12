@@ -1,0 +1,151 @@
+audit_name: building_hvac_conflict_level_0_unmet_cooling_load
+description: Level 0 building HVAC audit with an intentionally unmet zone cooling load.
+system:
+  system_name: building_hvac_conflict_level_0_unmet_cooling_load
+  components:
+  - id: envelope_heat_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 12000.0, scale: 10000.0, external_signal: mapped_envelope_heat_gain, mapping_confidence: template}
+  - id: internal_heat_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 8000.0, scale: 10000.0, external_signal: mapped_internal_heat_gain, mapping_confidence: template}
+  - id: ventilation_heat_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_ventilation_heat_gain, mapping_confidence: template}
+  - id: cooling_coil_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 25000.0, scale: 10000.0, external_signal: mapped_cooling_coil_load, mapping_confidence: template}
+  - id: chiller_cooling_output
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 25000.0, scale: 10000.0, external_signal: mapped_chiller_evaporator_cooling, mapping_confidence: template}
+  - id: chiller_electric_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 8000.0, scale: 1000.0, external_signal: mapped_chiller_electric_power, mapping_confidence: template}
+  - id: condenser_heat_rejection
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 33000.0, scale: 10000.0, external_signal: mapped_condenser_heat_rejection, mapping_confidence: template}
+  - id: chiller_cop
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 20.0, initial_guess: 3.125, scale: 1.0, external_signal: mapped_chiller_cop, mapping_confidence: template}
+  - id: grid_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 12000.0, scale: 10000.0, external_signal: mapped_building_hvac_grid_power, mapping_confidence: template}
+  - id: supply_fan_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 2000.0, scale: 1000.0, external_signal: mapped_supply_fan_power, mapping_confidence: template}
+  - id: chilled_water_pump_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_chilled_water_pump_power, mapping_confidence: template}
+  - id: condenser_pump_tower_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 800.0, scale: 1000.0, external_signal: mapped_condenser_pump_tower_power, mapping_confidence: template}
+  - id: controls_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 200.0, scale: 100.0, external_signal: mapped_controls_or_other_hvac_power, mapping_confidence: template}
+  - id: zone_cooling_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [envelope_heat_gain.value, internal_heat_gain.value, ventilation_heat_gain.value]
+      heat_out_variables: [cooling_coil_load.value]
+      residual_scale_W: 100.0
+  - id: chiller_heat_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [chiller_cooling_output.value, chiller_electric_power.value]
+      heat_out_variables: [condenser_heat_rejection.value]
+      residual_scale_W: 100.0
+  - id: chiller_cop_check
+    type: AggregateEfficiencyModule
+    parameters:
+      useful_output_power_variable: chiller_cooling_output.value
+      input_power_variable: chiller_electric_power.value
+      efficiency_variable: chiller_cop.value
+      residual_scale: 0.01
+  - id: hvac_electrical_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [grid_power.value]
+      consumption_power_variables: [chiller_electric_power.value, supply_fan_power.value, chilled_water_pump_power.value, condenser_pump_tower_power.value, controls_power.value]
+      residual_scale_W: 100.0
+  boundaries:
+  - {variable: envelope_heat_gain.value, value: 12000.0, scale: 1.0e-06}
+  - {variable: internal_heat_gain.value, value: 8000.0, scale: 1.0e-06}
+  - {variable: ventilation_heat_gain.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: cooling_coil_load.value, value: 22000.0, scale: 1.0e-06}
+  - {variable: chiller_cooling_output.value, value: 25000.0, scale: 1.0e-06}
+  - {variable: chiller_electric_power.value, value: 8000.0, scale: 1.0e-06}
+  - {variable: condenser_heat_rejection.value, value: 33000.0, scale: 1.0e-06}
+  - {variable: chiller_cop.value, value: 3.125, scale: 1.0e-09}
+  - {variable: grid_power.value, value: 12000.0, scale: 1.0e-06}
+  - {variable: supply_fan_power.value, value: 2000.0, scale: 1.0e-06}
+  - {variable: chilled_water_pump_power.value, value: 1000.0, scale: 1.0e-06}
+  - {variable: condenser_pump_tower_power.value, value: 800.0, scale: 1.0e-06}
+  - {variable: controls_power.value, value: 200.0, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: building_hvac
+    name: Building HVAC plant
+    level: 0
+    components:
+    - envelope_heat_gain
+    - internal_heat_gain
+    - ventilation_heat_gain
+    - cooling_coil_load
+    - chiller_cooling_output
+    - chiller_electric_power
+    - condenser_heat_rejection
+    - chiller_cop
+    - grid_power
+    - supply_fan_power
+    - chilled_water_pump_power
+    - condenser_pump_tower_power
+    - controls_power
+    - zone_cooling_balance
+    - chiller_heat_balance
+    - chiller_cop_check
+    - hvac_electrical_balance
+    tags: [building_hvac, level_0, cooling_load, chiller, electrical_balance]
+    required_variables:
+    - envelope_heat_gain.value
+    - internal_heat_gain.value
+    - ventilation_heat_gain.value
+    - cooling_coil_load.value
+    - chiller_cooling_output.value
+    - chiller_electric_power.value
+    - grid_power.value
+    refinement_template_ids:
+    - building_hvac/level_1_hvac_plant_loop
+  refinement_rules:
+  - id: refine_building_hvac_level_0
+    block_id: building_hvac
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    - aggregate_efficiency_mismatch
+    - aggregate_electrical_bus_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - building_hvac/level_1_hvac_plant_loop
+    next_required_variables:
+    - zone.cooling_coil_load_W
+    - chiller.evaporator_cooling_W
+    - chiller.electric_power_W
+    - condenser.heat_rejection_W
+    - fans.supply_fan_power_W
+    next_required_parameters:
+    - building.cooling_load_sign_convention
+    - chiller.COP_basis
+    rationale: Coarse HVAC balance residual is high; refine zone load, chilled-water loop, chiller/condenser, fans, pumps, and electrical metering.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: building_hvac
+  assumptions:
+  - Cooling load, heat rejection, and electrical power values are mapped as positive SI watt magnitudes with explicit roles.
+  - COP is checked as useful cooling divided by electric input; this is not a detailed chiller performance model.
+  - This template checks snapshot accounting, not EnergyPlus-style thermal simulation.
+  intentional_conflict: Cooling coil load is 3000 W below the mapped envelope, internal, and ventilation heat gains.

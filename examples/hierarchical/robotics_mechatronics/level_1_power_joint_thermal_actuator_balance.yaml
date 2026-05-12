@@ -1,0 +1,344 @@
+audit_name: robotics_mechatronics_level_1
+description: Level 0 coarse robotics/mechatronics audit for DC-bus power, joint heat,
+  and actuator air use.
+system:
+  system_name: robotics_mechatronics_level_1
+  components:
+  - id: dc_bus_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 10000.0
+      scale: 1000.0
+      external_signal: mapped_dc_bus_power
+      mapping_confidence: template
+  - id: motor_mechanical_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 7000.0
+      scale: 700.0
+      external_signal: mapped_motor_mechanical_power
+      mapping_confidence: template
+  - id: drive_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2000.0
+      scale: 200.0
+      external_signal: mapped_drive_loss_power
+      mapping_confidence: template
+  - id: controller_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1000.0
+      scale: 100.0
+      external_signal: mapped_controller_power
+      mapping_confidence: template
+  - id: motor_mechanical_fraction
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.7
+      scale: 1.0
+      external_signal: mapped_motor_mechanical_fraction
+      mapping_confidence: template
+  - id: robot_power_chain_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - dc_bus_power.value
+      load_power_variables:
+      - motor_mechanical_power.value
+      - drive_loss_power.value
+      - controller_power.value
+      residual_scale_W: 100.0
+  - id: robot_power_chain_ratio_check
+    type: RatioModule
+    parameters:
+      numerator_variable: motor_mechanical_power.value
+      denominator_variable: dc_bus_power.value
+      output_variable: motor_mechanical_fraction.value
+      residual_scale: 0.01
+  - id: motor_heat_generation
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2000.0
+      scale: 200.0
+      external_signal: mapped_motor_heat_generation
+      mapping_confidence: template
+  - id: joint_coolant_heat
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1500.0
+      scale: 150.0
+      external_signal: mapped_joint_coolant_heat
+      mapping_confidence: template
+  - id: joint_casing_heat_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 500.0
+      scale: 50.0
+      external_signal: mapped_joint_casing_heat_loss
+      mapping_confidence: template
+  - id: joint_temperature
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: K
+      lower_bound: 200.0
+      upper_bound: 500.0
+      initial_guess: 320.0
+      scale: 1.0
+      external_signal: mapped_joint_temperature
+      mapping_confidence: template
+  - id: joint_thermal_accounting_thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - motor_heat_generation.value
+      heat_out_variables:
+      - joint_coolant_heat.value
+      - joint_casing_heat_loss.value
+      residual_scale_W: 100.0
+  - id: joint_temperature_range
+    type: RangeCheckModule
+    parameters:
+      variable: joint_temperature.value
+      lower_bound: 250.0
+      upper_bound: 370.0
+      residual_scale: 1.0
+      role: post_check
+  - id: compressed_air_supply_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1.0
+      scale: 1.0
+      external_signal: mapped_compressed_air_supply_mass_flow
+      mapping_confidence: template
+  - id: actuator_air_use_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.8
+      scale: 1.0
+      external_signal: mapped_actuator_air_use_mass_flow
+      mapping_confidence: template
+  - id: pneumatic_leak_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.2
+      scale: 1.0
+      external_signal: mapped_pneumatic_leak_mass_flow
+      mapping_confidence: template
+  - id: pneumatic_actuator_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - compressed_air_supply_mass_flow.value
+      mass_out_variables:
+      - actuator_air_use_mass_flow.value
+      - pneumatic_leak_mass_flow.value
+      residual_scale_kg_s: 0.01
+  boundaries:
+  - variable: dc_bus_power.value
+    value: 10000.0
+    scale: 1.0e-06
+  - variable: motor_mechanical_power.value
+    value: 7000.0
+    scale: 1.0e-06
+  - variable: drive_loss_power.value
+    value: 2000.0
+    scale: 1.0e-06
+  - variable: controller_power.value
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: motor_mechanical_fraction.value
+    value: 0.7
+    scale: 1.0e-09
+  - variable: motor_heat_generation.value
+    value: 2000.0
+    scale: 1.0e-06
+  - variable: joint_coolant_heat.value
+    value: 1500.0
+    scale: 1.0e-06
+  - variable: joint_casing_heat_loss.value
+    value: 500.0
+    scale: 1.0e-06
+  - variable: joint_temperature.value
+    value: 320.0
+    scale: 1.0e-06
+  - variable: compressed_air_supply_mass_flow.value
+    value: 1.0
+    scale: 1.0e-06
+  - variable: actuator_air_use_mass_flow.value
+    value: 0.8
+    scale: 1.0e-06
+  - variable: pneumatic_leak_mass_flow.value
+    value: 0.2
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: robotics_mechatronics
+    name: Robotics and mechatronics
+    level: 0
+    tags:
+    - robotics_mechatronics
+  - id: robot_power_chain
+    name: Robot power chain
+    level: 1
+    parent_id: robotics_mechatronics
+    components:
+    - dc_bus_power
+    - motor_mechanical_power
+    - drive_loss_power
+    - controller_power
+    - motor_mechanical_fraction
+    - robot_power_chain_power_balance
+    - robot_power_chain_ratio_check
+    tags:
+    - power_chain
+    - motor
+    required_variables:
+    - dc_bus_power.value
+  - id: joint_thermal_accounting
+    name: Joint thermal accounting
+    level: 1
+    parent_id: robotics_mechatronics
+    components:
+    - motor_heat_generation
+    - joint_coolant_heat
+    - joint_casing_heat_loss
+    - joint_temperature
+    - joint_thermal_accounting_thermal_balance
+    - joint_temperature_range
+    tags:
+    - joint
+    - thermal
+    required_variables:
+    - motor_heat_generation.value
+  - id: pneumatic_actuator_accounting
+    name: Pneumatic actuator accounting
+    level: 1
+    parent_id: robotics_mechatronics
+    components:
+    - compressed_air_supply_mass_flow
+    - actuator_air_use_mass_flow
+    - pneumatic_leak_mass_flow
+    - pneumatic_actuator_accounting_mass_balance
+    tags:
+    - pneumatic
+    - actuator
+    required_variables:
+    - compressed_air_supply_mass_flow.value
+  refinement_rules:
+  - id: refine_robot_power_chain
+    block_id: robot_power_chain
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - robotics_mechatronics/level_2_robot_power_chain_placeholder
+    next_required_variables:
+    - dc_bus_power.value
+    - motor_mechanical_power.value
+    - drive_loss_power.value
+    - controller_power.value
+    next_required_parameters: &id001
+    - dc_bus_meter_boundary
+    - drive_loss_basis
+    - joint_heat_boundary
+    rationale: Power-chain residual is high; inspect DC-bus, motor, drive-loss, and
+      controller boundaries before adding motor maps.
+    priority: 10
+  - id: refine_joint_thermal_accounting
+    block_id: joint_thermal_accounting
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - robotics_mechatronics/level_2_joint_thermal_accounting_placeholder
+    next_required_variables:
+    - motor_heat_generation.value
+    - joint_coolant_heat.value
+    - joint_casing_heat_loss.value
+    next_required_parameters: *id001
+    rationale: Joint thermal residual is high; inspect heat-generation and cooling
+      boundaries before adding thermal detail.
+    priority: 10
+  - id: refine_pneumatic_actuator_accounting
+    block_id: pneumatic_actuator_accounting
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - robotics_mechatronics/level_2_pneumatic_actuator_accounting_placeholder
+    next_required_variables:
+    - compressed_air_supply_mass_flow.value
+    - actuator_air_use_mass_flow.value
+    - pneumatic_leak_mass_flow.value
+    next_required_parameters: *id001
+    rationale: Actuator air residual is high; inspect leak and actuator-use boundaries
+      before adding pneumatic dynamics.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: robotics_mechatronics
+  assumptions:
+  - Robot power, heat, and actuator flow are mapped accounting terms; no robot dynamics,
+    kinematics, contact model, or motor map is inferred.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.

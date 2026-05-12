@@ -1,0 +1,315 @@
+audit_name: process_industry_level_1_reactor_separator_utility
+description: Level 1 process-industry audit for reactor conversion, separator split, heat-exchange utility, and rotating-equipment sanity checks.
+system:
+  system_name: process_industry_level_1_reactor_separator_utility
+  components:
+  - id: reactor_feed_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 10.0, scale: 10.0, external_signal: mapped_reactor_feed_mass_flow, mapping_confidence: template}
+  - id: reactor_product_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 10.0, scale: 10.0, external_signal: mapped_reactor_product_mass_flow, mapping_confidence: template}
+  - id: reactor_feed_A_molar_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: mol/s, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 100.0, scale: 100.0, external_signal: mapped_reactor_feed_A_molar_flow, mapping_confidence: template}
+  - id: reactor_unreacted_A_molar_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: mol/s, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 20.0, scale: 10.0, external_signal: mapped_reactor_unreacted_A_molar_flow, mapping_confidence: template}
+  - id: reactor_reacted_A_molar_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: mol/s, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 80.0, scale: 100.0, external_signal: mapped_reactor_reacted_A_molar_flow, mapping_confidence: template}
+  - id: reactor_conversion_A
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.8, scale: 0.1, external_signal: mapped_reactor_conversion_A, mapping_confidence: template}
+  - id: separator_feed_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 10.0, scale: 10.0, external_signal: mapped_separator_feed_mass_flow, mapping_confidence: template}
+  - id: separator_product_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 8.0, scale: 10.0, external_signal: mapped_separator_product_mass_flow, mapping_confidence: template}
+  - id: separator_purge_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_separator_purge_mass_flow, mapping_confidence: template}
+  - id: separator_waste_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_separator_waste_mass_flow, mapping_confidence: template}
+  - id: separator_product_split_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.8, scale: 0.1, external_signal: mapped_separator_product_split_fraction, mapping_confidence: template}
+  - id: separator_purge_split_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.1, scale: 0.1, external_signal: mapped_separator_purge_split_fraction, mapping_confidence: template}
+  - id: reactor_heat_release
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 50000.0, scale: 10000.0, external_signal: mapped_reactor_heat_release, mapping_confidence: template}
+  - id: cooling_duty
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 45000.0, scale: 10000.0, external_signal: mapped_cooling_duty, mapping_confidence: template}
+  - id: ambient_heat_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_ambient_heat_loss, mapping_confidence: template}
+  - id: utility_electric_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 15000.0, scale: 10000.0, external_signal: mapped_utility_electric_power, mapping_confidence: template}
+  - id: pump_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 4000.0, scale: 1000.0, external_signal: mapped_pump_power, mapping_confidence: template}
+  - id: compressor_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 9000.0, scale: 1000.0, external_signal: mapped_compressor_power, mapping_confidence: template}
+  - id: agitator_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 2000.0, scale: 1000.0, external_signal: mapped_agitator_power, mapping_confidence: template}
+  - id: pump_efficiency
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.7, scale: 0.1, external_signal: mapped_pump_efficiency, mapping_confidence: template}
+  - id: compressor_pressure_ratio
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 1.0, upper_bound: 100.0, initial_guess: 2.5, scale: 1.0, external_signal: mapped_compressor_pressure_ratio, mapping_confidence: template}
+  - id: control_valve_opening
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.6, scale: 0.1, external_signal: mapped_control_valve_opening, mapping_confidence: template}
+  - id: reactor_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [reactor_feed_mass_flow.value]
+      mass_out_variables: [reactor_product_mass_flow.value]
+      residual_scale_kg_s: 0.01
+  - id: reactor_A_balance
+    type: AggregateSpeciesBalanceModule
+    parameters:
+      species_in_variables: [reactor_feed_A_molar_flow.value]
+      species_out_variables: [reactor_unreacted_A_molar_flow.value]
+      species_consumption_variables: [reactor_reacted_A_molar_flow.value]
+      residual_scale_mol_s: 0.1
+      species_name: A
+  - id: reactor_conversion_check
+    type: RatioModule
+    parameters:
+      numerator_variable: reactor_reacted_A_molar_flow.value
+      denominator_variable: reactor_feed_A_molar_flow.value
+      output_variable: reactor_conversion_A.value
+      residual_scale: 0.001
+  - id: reactor_to_separator_mass_handoff
+    type: SumModule
+    parameters:
+      input_variables: [reactor_product_mass_flow.value]
+      output_variable: separator_feed_mass_flow.value
+      residual_scale: 0.01
+  - id: separator_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [separator_feed_mass_flow.value]
+      mass_out_variables: [separator_product_mass_flow.value, separator_purge_mass_flow.value, separator_waste_mass_flow.value]
+      residual_scale_kg_s: 0.01
+  - id: separator_product_split_check
+    type: RatioModule
+    parameters:
+      numerator_variable: separator_product_mass_flow.value
+      denominator_variable: separator_feed_mass_flow.value
+      output_variable: separator_product_split_fraction.value
+      residual_scale: 0.001
+  - id: separator_purge_split_check
+    type: RatioModule
+    parameters:
+      numerator_variable: separator_purge_mass_flow.value
+      denominator_variable: separator_feed_mass_flow.value
+      output_variable: separator_purge_split_fraction.value
+      residual_scale: 0.001
+  - id: heat_exchange_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [reactor_heat_release.value]
+      heat_out_variables: [cooling_duty.value, ambient_heat_loss.value]
+      residual_scale_W: 100.0
+  - id: rotating_utility_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [utility_electric_power.value]
+      load_power_variables: [pump_power.value, compressor_power.value, agitator_power.value]
+      residual_scale_W: 100.0
+  - id: pump_efficiency_range
+    type: RangeCheckModule
+    parameters: {variable: pump_efficiency.value, lower_bound: 0.05, upper_bound: 1.0, residual_scale: 0.01, role: post_check}
+  - id: compressor_pressure_ratio_range
+    type: RangeCheckModule
+    parameters: {variable: compressor_pressure_ratio.value, lower_bound: 1.0, upper_bound: 20.0, residual_scale: 0.1, role: post_check}
+  - id: control_valve_opening_range
+    type: RangeCheckModule
+    parameters: {variable: control_valve_opening.value, lower_bound: 0.0, upper_bound: 1.0, residual_scale: 0.01, role: post_check}
+  boundaries:
+  - {variable: reactor_feed_mass_flow.value, value: 10.0, scale: 1.0e-06}
+  - {variable: reactor_product_mass_flow.value, value: 10.0, scale: 1.0e-06}
+  - {variable: reactor_feed_A_molar_flow.value, value: 100.0, scale: 1.0e-06}
+  - {variable: reactor_unreacted_A_molar_flow.value, value: 20.0, scale: 1.0e-06}
+  - {variable: reactor_reacted_A_molar_flow.value, value: 80.0, scale: 1.0e-06}
+  - {variable: reactor_conversion_A.value, value: 0.8, scale: 1.0e-09}
+  - {variable: separator_feed_mass_flow.value, value: 10.0, scale: 1.0e-06}
+  - {variable: separator_product_mass_flow.value, value: 8.0, scale: 1.0e-06}
+  - {variable: separator_purge_mass_flow.value, value: 1.0, scale: 1.0e-06}
+  - {variable: separator_waste_mass_flow.value, value: 1.0, scale: 1.0e-06}
+  - {variable: separator_product_split_fraction.value, value: 0.8, scale: 1.0e-09}
+  - {variable: separator_purge_split_fraction.value, value: 0.1, scale: 1.0e-09}
+  - {variable: reactor_heat_release.value, value: 50000.0, scale: 1.0e-06}
+  - {variable: cooling_duty.value, value: 45000.0, scale: 1.0e-06}
+  - {variable: ambient_heat_loss.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: utility_electric_power.value, value: 15000.0, scale: 1.0e-06}
+  - {variable: pump_power.value, value: 4000.0, scale: 1.0e-06}
+  - {variable: compressor_power.value, value: 9000.0, scale: 1.0e-06}
+  - {variable: agitator_power.value, value: 2000.0, scale: 1.0e-06}
+  - {variable: pump_efficiency.value, value: 0.7, scale: 1.0e-09}
+  - {variable: compressor_pressure_ratio.value, value: 2.5, scale: 1.0e-09}
+  - {variable: control_valve_opening.value, value: 0.6, scale: 1.0e-09}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: process_industry
+    name: Process-industry unit operations
+    level: 0
+    tags: [process_industry]
+  - id: reactor_conversion
+    name: Reactor conversion
+    level: 1
+    parent_id: process_industry
+    components:
+    - reactor_feed_mass_flow
+    - reactor_product_mass_flow
+    - reactor_feed_A_molar_flow
+    - reactor_unreacted_A_molar_flow
+    - reactor_reacted_A_molar_flow
+    - reactor_conversion_A
+    - reactor_mass_balance
+    - reactor_A_balance
+    - reactor_conversion_check
+    tags: [reactor, conversion, species_balance]
+    required_variables:
+    - reactor_feed_A_molar_flow.value
+    - reactor_unreacted_A_molar_flow.value
+    - reactor_reacted_A_molar_flow.value
+    - reactor_conversion_A.value
+  - id: separator_split
+    name: Separator split
+    level: 1
+    parent_id: process_industry
+    components:
+    - separator_feed_mass_flow
+    - separator_product_mass_flow
+    - separator_purge_mass_flow
+    - separator_waste_mass_flow
+    - separator_product_split_fraction
+    - separator_purge_split_fraction
+    - reactor_to_separator_mass_handoff
+    - separator_mass_balance
+    - separator_product_split_check
+    - separator_purge_split_check
+    tags: [separator, split, mass_balance]
+    required_variables:
+    - separator_feed_mass_flow.value
+    - separator_product_mass_flow.value
+    - separator_product_split_fraction.value
+  - id: heat_exchange_utility
+    name: Heat exchange and utility
+    level: 1
+    parent_id: process_industry
+    components:
+    - reactor_heat_release
+    - cooling_duty
+    - ambient_heat_loss
+    - heat_exchange_balance
+    tags: [heat_exchanger, utility, heat_duty]
+  - id: rotating_equipment
+    name: Rotating equipment and valve sanity
+    level: 1
+    parent_id: process_industry
+    components:
+    - utility_electric_power
+    - pump_power
+    - compressor_power
+    - agitator_power
+    - pump_efficiency
+    - compressor_pressure_ratio
+    - control_valve_opening
+    - rotating_utility_power_balance
+    - pump_efficiency_range
+    - compressor_pressure_ratio_range
+    - control_valve_opening_range
+    tags: [pump, compressor, valve, utility_power]
+  refinement_rules:
+  - id: refine_reactor_conversion
+    block_id: reactor_conversion
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_species_balance_mismatch
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: [process_industry/level_2_reactor_conversion_placeholder]
+    next_required_variables:
+    - reactor.temperature_K
+    - reactor.pressure_Pa
+    - reactor.feed_composition
+    - reactor.product_composition
+    next_required_parameters:
+    - reactor.conversion_basis
+    - reactor.stoichiometry_basis
+    rationale: Reactor residual is high; inspect feed/product composition, conversion basis, and stoichiometry before adding kinetics.
+    priority: 20
+  - id: refine_separator_split
+    block_id: separator_split
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - sum_relation_mismatch
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: [process_industry/level_2_separator_split_placeholder]
+    next_required_variables:
+    - separator.feed_mass_kg_s
+    - separator.product_mass_kg_s
+    - separator.purge_mass_kg_s
+    - separator.waste_mass_kg_s
+    next_required_parameters:
+    - separator.split_basis
+    rationale: Separator residual is high; inspect stream mapping and split basis before adding phase-equilibrium or property detail.
+    priority: 15
+  - id: refine_heat_exchange_utility
+    block_id: heat_exchange_utility
+    trigger_diagnostic_keys: [aggregate_thermal_balance_mismatch]
+    score_threshold: 1.0
+    next_template_ids: [process_industry/level_2_heat_exchange_utility_placeholder]
+    next_required_variables:
+    - exchanger.hot_in_temperature_K
+    - exchanger.hot_out_temperature_K
+    - exchanger.cold_in_temperature_K
+    - exchanger.cold_out_temperature_K
+    - exchanger.cooling_duty_W
+    next_required_parameters:
+    - exchanger.heat_duty_sign_convention
+    rationale: Heat-duty residual is high; inspect heat-release, cooling-duty, and loss mapping before adding heat-exchanger effectiveness or property packages.
+    priority: 10
+  - id: refine_rotating_equipment
+    block_id: rotating_equipment
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: [process_industry/level_2_rotating_equipment_placeholder]
+    next_required_variables:
+    - pump.delta_pressure_Pa
+    - pump.flow_kg_s
+    - compressor.pressure_ratio
+    - valve.opening_fraction
+    next_required_parameters:
+    - rotating.power_meter_grouping
+    rationale: Rotating-equipment residual is high; inspect utility metering, pump/compressor powers, pressure ratio, and valve opening before adding maps.
+    priority: 5
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: process_industry
+  assumptions:
+  - This template checks snapshot accounting only and does not implement reaction kinetics, property packages, phase equilibrium, or detailed equipment maps.
+  - Separator split fractions are simple mapped ratios over mass flow.
+  - Heat-exchange duty is a lumped positive-W balance with explicit sign convention.
+  - Pump, compressor, and valve checks are utility-meter and range sanity checks, not component-performance models.

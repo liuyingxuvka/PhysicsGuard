@@ -1,0 +1,262 @@
+audit_name: building_hvac_level_1_plant_loop
+description: Level 1 building HVAC audit for zone load, chilled-water loop, chiller/condenser, air handler, plant electrical power, and district-energy interface.
+system:
+  system_name: building_hvac_level_1_plant_loop
+  components:
+  - id: zone_envelope_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 12000.0, scale: 10000.0, external_signal: mapped_zone_envelope_heat_gain, mapping_confidence: template}
+  - id: zone_internal_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 8000.0, scale: 10000.0, external_signal: mapped_zone_internal_heat_gain, mapping_confidence: template}
+  - id: zone_ventilation_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_zone_ventilation_heat_gain, mapping_confidence: template}
+  - id: zone_cooling_coil_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 25000.0, scale: 10000.0, external_signal: mapped_zone_cooling_coil_load, mapping_confidence: template}
+  - id: chilled_water_distribution_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_chilled_water_distribution_heat_gain, mapping_confidence: template}
+  - id: chiller_evaporator_cooling
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 26000.0, scale: 10000.0, external_signal: mapped_chiller_evaporator_cooling, mapping_confidence: template}
+  - id: chiller_electric_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 8000.0, scale: 1000.0, external_signal: mapped_chiller_electric_power, mapping_confidence: template}
+  - id: condenser_heat_rejection
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 34000.0, scale: 10000.0, external_signal: mapped_condenser_heat_rejection, mapping_confidence: template}
+  - id: chiller_cop
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 20.0, initial_guess: 3.25, scale: 1.0, external_signal: mapped_chiller_cop, mapping_confidence: template}
+  - id: cooling_tower_rejection
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 34000.0, scale: 10000.0, external_signal: mapped_cooling_tower_heat_rejection, mapping_confidence: template}
+  - id: supply_fan_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 2000.0, scale: 1000.0, external_signal: mapped_supply_fan_power, mapping_confidence: template}
+  - id: fan_heat_to_air
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 2000.0, scale: 1000.0, external_signal: mapped_fan_heat_to_supply_air, mapping_confidence: template}
+  - id: chilled_water_pump_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 1000.0, scale: 1000.0, external_signal: mapped_chilled_water_pump_power, mapping_confidence: template}
+  - id: condenser_pump_tower_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 800.0, scale: 1000.0, external_signal: mapped_condenser_pump_tower_power, mapping_confidence: template}
+  - id: controls_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 200.0, scale: 100.0, external_signal: mapped_controls_or_other_hvac_power, mapping_confidence: template}
+  - id: grid_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 12000.0, scale: 10000.0, external_signal: mapped_building_hvac_grid_power, mapping_confidence: template}
+  - id: district_chilled_water_import
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_district_chilled_water_import, mapping_confidence: template}
+  - id: district_cooling_to_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 4800.0, scale: 1000.0, external_signal: mapped_district_cooling_to_load, mapping_confidence: template}
+  - id: district_distribution_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 200.0, scale: 100.0, external_signal: mapped_district_distribution_loss, mapping_confidence: template}
+  - id: zone_cooling_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [zone_envelope_gain.value, zone_internal_gain.value, zone_ventilation_gain.value]
+      heat_out_variables: [zone_cooling_coil_load.value]
+      residual_scale_W: 100.0
+  - id: chilled_water_loop_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [zone_cooling_coil_load.value, chilled_water_distribution_gain.value]
+      heat_out_variables: [chiller_evaporator_cooling.value]
+      residual_scale_W: 100.0
+  - id: chiller_condenser_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [chiller_evaporator_cooling.value, chiller_electric_power.value]
+      heat_out_variables: [condenser_heat_rejection.value]
+      residual_scale_W: 100.0
+  - id: chiller_cop_check
+    type: AggregateEfficiencyModule
+    parameters:
+      useful_output_power_variable: chiller_evaporator_cooling.value
+      input_power_variable: chiller_electric_power.value
+      efficiency_variable: chiller_cop.value
+      residual_scale: 0.01
+  - id: condenser_loop_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [condenser_heat_rejection.value]
+      heat_out_variables: [cooling_tower_rejection.value]
+      residual_scale_W: 100.0
+  - id: fan_heat_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [supply_fan_power.value]
+      load_power_variables: [fan_heat_to_air.value]
+      residual_scale_W: 100.0
+  - id: plant_electrical_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables: [grid_power.value]
+      consumption_power_variables: [chiller_electric_power.value, supply_fan_power.value, chilled_water_pump_power.value, condenser_pump_tower_power.value, controls_power.value]
+      residual_scale_W: 100.0
+  - id: district_energy_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [district_chilled_water_import.value]
+      heat_out_variables: [district_cooling_to_load.value, district_distribution_loss.value]
+      residual_scale_W: 100.0
+  boundaries:
+  - {variable: zone_envelope_gain.value, value: 12000.0, scale: 1.0e-06}
+  - {variable: zone_internal_gain.value, value: 8000.0, scale: 1.0e-06}
+  - {variable: zone_ventilation_gain.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: zone_cooling_coil_load.value, value: 25000.0, scale: 1.0e-06}
+  - {variable: chilled_water_distribution_gain.value, value: 1000.0, scale: 1.0e-06}
+  - {variable: chiller_evaporator_cooling.value, value: 26000.0, scale: 1.0e-06}
+  - {variable: chiller_electric_power.value, value: 8000.0, scale: 1.0e-06}
+  - {variable: condenser_heat_rejection.value, value: 34000.0, scale: 1.0e-06}
+  - {variable: chiller_cop.value, value: 3.25, scale: 1.0e-09}
+  - {variable: cooling_tower_rejection.value, value: 34000.0, scale: 1.0e-06}
+  - {variable: supply_fan_power.value, value: 2000.0, scale: 1.0e-06}
+  - {variable: fan_heat_to_air.value, value: 2000.0, scale: 1.0e-06}
+  - {variable: chilled_water_pump_power.value, value: 1000.0, scale: 1.0e-06}
+  - {variable: condenser_pump_tower_power.value, value: 800.0, scale: 1.0e-06}
+  - {variable: controls_power.value, value: 200.0, scale: 1.0e-06}
+  - {variable: grid_power.value, value: 12000.0, scale: 1.0e-06}
+  - {variable: district_chilled_water_import.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: district_cooling_to_load.value, value: 4800.0, scale: 1.0e-06}
+  - {variable: district_distribution_loss.value, value: 200.0, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: building_hvac
+    name: Building HVAC plant
+    level: 0
+    tags: [building_hvac]
+  - id: zone_loads
+    name: Zone cooling load
+    level: 1
+    parent_id: building_hvac
+    components:
+    - zone_envelope_gain
+    - zone_internal_gain
+    - zone_ventilation_gain
+    - zone_cooling_coil_load
+    - zone_cooling_balance
+    tags: [zone, cooling_load]
+    required_variables:
+    - zone_envelope_gain.value
+    - zone_internal_gain.value
+    - zone_ventilation_gain.value
+    - zone_cooling_coil_load.value
+  - id: chilled_water_loop
+    name: Chilled-water loop
+    level: 1
+    parent_id: building_hvac
+    components:
+    - chilled_water_distribution_gain
+    - chiller_evaporator_cooling
+    - chilled_water_loop_balance
+    tags: [chilled_water, distribution]
+  - id: chiller_condenser
+    name: Chiller and condenser
+    level: 1
+    parent_id: building_hvac
+    components:
+    - chiller_electric_power
+    - condenser_heat_rejection
+    - chiller_cop
+    - cooling_tower_rejection
+    - chiller_condenser_balance
+    - chiller_cop_check
+    - condenser_loop_balance
+    tags: [chiller, condenser, cooling_tower, cop]
+  - id: air_handler
+    name: Air handler
+    level: 1
+    parent_id: building_hvac
+    components:
+    - supply_fan_power
+    - fan_heat_to_air
+    - fan_heat_balance
+    tags: [ahu, fan]
+  - id: plant_electrical
+    name: Plant electrical
+    level: 1
+    parent_id: building_hvac
+    components:
+    - chilled_water_pump_power
+    - condenser_pump_tower_power
+    - controls_power
+    - grid_power
+    - plant_electrical_balance
+    tags: [electrical, pumps, controls]
+  - id: district_energy_interface
+    name: District chilled-water interface
+    level: 1
+    parent_id: building_hvac
+    components:
+    - district_chilled_water_import
+    - district_cooling_to_load
+    - district_distribution_loss
+    - district_energy_balance
+    tags: [district_energy, chilled_water]
+  refinement_rules:
+  - id: refine_zone_loads
+    block_id: zone_loads
+    trigger_diagnostic_keys: [aggregate_thermal_balance_mismatch]
+    score_threshold: 1.0
+    next_template_ids: [building_hvac/level_2_zone_load_placeholder]
+    next_required_variables:
+    - zone.outdoor_air_flow_kg_s
+    - zone.supply_air_temperature_K
+    - zone.return_air_temperature_K
+    - zone.envelope_UA_W_K
+    next_required_parameters:
+    - zone.cooling_load_sign_convention
+    rationale: Zone cooling residual is high; inspect envelope, internal gains, ventilation, and coil load mapping before adding detailed zone physics.
+    priority: 20
+  - id: refine_chiller_condenser
+    block_id: chiller_condenser
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    - aggregate_efficiency_mismatch
+    score_threshold: 1.0
+    next_template_ids: [building_hvac/level_2_chiller_condenser_placeholder]
+    next_required_variables:
+    - chiller.evaporator_entering_temperature_K
+    - chiller.evaporator_leaving_temperature_K
+    - condenser.entering_temperature_K
+    - condenser.leaving_temperature_K
+    - chiller.electric_power_W
+    next_required_parameters:
+    - chiller.COP_basis
+    - condenser.heat_rejection_basis
+    rationale: Chiller or condenser residual is high; inspect COP basis, condenser heat rejection, and chilled/condenser water signal mappings.
+    priority: 15
+  - id: refine_plant_electrical
+    block_id: plant_electrical
+    trigger_diagnostic_keys: [aggregate_electrical_bus_balance_mismatch]
+    score_threshold: 1.0
+    next_template_ids: [building_hvac/level_2_plant_electrical_placeholder]
+    next_required_variables:
+    - plant.chiller_power_W
+    - plant.pump_power_W
+    - plant.fan_power_W
+    - plant.tower_power_W
+    rationale: HVAC electrical balance is high; inspect meter grouping and auxiliary loads.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: building_hvac
+  assumptions:
+  - This is a snapshot audit of load and plant accounting, not a building energy simulation.
+  - District chilled-water terms are optional accounting signals and do not imply a district network model.
+  - COP and heat-rejection checks use mapped values directly and do not infer chiller curves.

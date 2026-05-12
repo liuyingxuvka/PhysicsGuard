@@ -1,0 +1,244 @@
+audit_name: aerospace_satellite_thermal_conflict_missing_radiator_heat
+description: Level 0 satellite audit with intentionally missing radiator heat rejection.
+system:
+  system_name: aerospace_satellite_thermal_conflict_missing_radiator_heat
+  components:
+  - id: solar_array_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 5000.0
+      scale: 500.0
+      external_signal: mapped_solar_array_power
+      mapping_confidence: template
+  - id: payload_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2000.0
+      scale: 200.0
+      external_signal: mapped_payload_power
+      mapping_confidence: template
+  - id: avionics_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1000.0
+      scale: 100.0
+      external_signal: mapped_avionics_power
+      mapping_confidence: template
+  - id: battery_charge_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1000.0
+      scale: 100.0
+      external_signal: mapped_battery_charge_power
+      mapping_confidence: template
+  - id: power_conversion_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1000.0
+      scale: 100.0
+      external_signal: mapped_power_conversion_loss
+      mapping_confidence: template
+  - id: satellite_power_accounting_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - solar_array_power.value
+      load_power_variables:
+      - payload_power.value
+      - avionics_power.value
+      - battery_charge_power.value
+      - power_conversion_loss.value
+      residual_scale_W: 100.0
+  - id: electronics_heat_generation
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 3000.0
+      scale: 300.0
+      external_signal: mapped_electronics_heat_generation
+      mapping_confidence: template
+  - id: absorbed_solar_heat
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1000.0
+      scale: 100.0
+      external_signal: mapped_absorbed_solar_heat
+      mapping_confidence: template
+  - id: radiator_heat_rejection
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 3500.0
+      scale: 350.0
+      external_signal: mapped_radiator_heat_rejection
+      mapping_confidence: template
+  - id: thermal_storage_rate
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 500.0
+      scale: 50.0
+      external_signal: mapped_thermal_storage_rate
+      mapping_confidence: template
+  - id: bus_temperature
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: K
+      lower_bound: 200.0
+      upper_bound: 500.0
+      initial_guess: 295.0
+      scale: 1.0
+      external_signal: mapped_bus_temperature
+      mapping_confidence: template
+  - id: satellite_thermal_accounting_thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - electronics_heat_generation.value
+      - absorbed_solar_heat.value
+      heat_out_variables:
+      - radiator_heat_rejection.value
+      - thermal_storage_rate.value
+      residual_scale_W: 100.0
+  - id: bus_temperature_range
+    type: RangeCheckModule
+    parameters:
+      variable: bus_temperature.value
+      lower_bound: 250.0
+      upper_bound: 330.0
+      residual_scale: 1.0
+      role: post_check
+  boundaries:
+  - variable: solar_array_power.value
+    value: 5000.0
+    scale: 1.0e-06
+  - variable: payload_power.value
+    value: 2000.0
+    scale: 1.0e-06
+  - variable: avionics_power.value
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: battery_charge_power.value
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: power_conversion_loss.value
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: electronics_heat_generation.value
+    value: 3000.0
+    scale: 1.0e-06
+  - variable: absorbed_solar_heat.value
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: radiator_heat_rejection.value
+    value: 0.0
+    scale: 1.0e-09
+  - variable: thermal_storage_rate.value
+    value: 500.0
+    scale: 1.0e-06
+  - variable: bus_temperature.value
+    value: 295.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: aerospace_satellite_thermal
+    name: Aerospace satellite thermal
+    level: 0
+    components:
+    - solar_array_power
+    - payload_power
+    - avionics_power
+    - battery_charge_power
+    - power_conversion_loss
+    - satellite_power_accounting_power_balance
+    - electronics_heat_generation
+    - absorbed_solar_heat
+    - radiator_heat_rejection
+    - thermal_storage_rate
+    - bus_temperature
+    - satellite_thermal_accounting_thermal_balance
+    - bus_temperature_range
+    tags:
+    - aerospace_satellite_thermal
+    - level_0
+    - aerospace
+    - satellite
+    - thermal
+    required_variables:
+    - solar_array_power.value
+    refinement_template_ids:
+    - aerospace_satellite_thermal/level_1_satellite_power_thermal_storage_balance
+  refinement_rules:
+  - id: refine_aerospace_satellite_thermal_level_0
+    block_id: aerospace_satellite_thermal
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - aggregate_thermal_balance_mismatch
+    - range_check_violation
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - aerospace_satellite_thermal/level_1_satellite_power_thermal_storage_balance
+    next_required_variables:
+    - solar.power_W
+    - payload.power_W
+    - radiator.heat_W
+    - battery.charge_W
+    next_required_parameters:
+    - solar_power_boundary
+    - thermal_radiator_boundary
+    - battery_meter_grouping
+    rationale: Coarse satellite residual is high; refine power, thermal, and battery
+      storage checks before adding spacecraft detail.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: aerospace_satellite_thermal
+  assumptions:
+  - This conflict intentionally maps radiator heat rejection to zero.
+  - Satellite power and heat terms are mapped accounting signals; no orbital mechanics,
+    attitude, radiation environment, or spacecraft thermal solver is inferred.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.

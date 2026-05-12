@@ -1,0 +1,251 @@
+audit_name: geothermal_underground_wells_level_0
+description: Level 0 coarse geothermal audit for production/reinjection mass, thermal
+  extraction, and pump power.
+system:
+  system_name: geothermal_underground_wells_level_0
+  components:
+  - id: production_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 50.0
+      scale: 50.0
+      external_signal: mapped_production_mass_flow
+      mapping_confidence: template
+  - id: reinjection_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 49.0
+      scale: 49.0
+      external_signal: mapped_reinjection_mass_flow
+      mapping_confidence: template
+  - id: steam_brine_loss_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1.0
+      scale: 1.0
+      external_signal: mapped_steam_brine_loss_mass_flow
+      mapping_confidence: template
+  - id: well_mass_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - production_mass_flow.value
+      mass_out_variables:
+      - reinjection_mass_flow.value
+      - steam_brine_loss_mass_flow.value
+      residual_scale_kg_s: 0.01
+  - id: reservoir_heat_output
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1500000.0
+      scale: 150000.0
+      external_signal: mapped_reservoir_heat_output
+      mapping_confidence: template
+  - id: plant_heat_use
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1200000.0
+      scale: 120000.0
+      external_signal: mapped_plant_heat_use
+      mapping_confidence: template
+  - id: brine_heat_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 300000.0
+      scale: 30000.0
+      external_signal: mapped_brine_heat_loss
+      mapping_confidence: template
+  - id: thermal_use_fraction
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.8
+      scale: 1.0
+      external_signal: mapped_thermal_use_fraction
+      mapping_confidence: template
+  - id: geothermal_heat_accounting_thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - reservoir_heat_output.value
+      heat_out_variables:
+      - plant_heat_use.value
+      - brine_heat_loss.value
+      residual_scale_W: 100.0
+  - id: geothermal_heat_accounting_ratio_check
+    type: RatioModule
+    parameters:
+      numerator_variable: plant_heat_use.value
+      denominator_variable: reservoir_heat_output.value
+      output_variable: thermal_use_fraction.value
+      residual_scale: 0.01
+  - id: reinjection_pump_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100000.0
+      scale: 10000.0
+      external_signal: mapped_reinjection_pump_power
+      mapping_confidence: template
+  - id: injection_hydraulic_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 80000.0
+      scale: 8000.0
+      external_signal: mapped_injection_hydraulic_power
+      mapping_confidence: template
+  - id: reinjection_pump_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 20000.0
+      scale: 2000.0
+      external_signal: mapped_reinjection_pump_loss
+      mapping_confidence: template
+  - id: reinjection_pump_power_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - reinjection_pump_power.value
+      load_power_variables:
+      - injection_hydraulic_power.value
+      - reinjection_pump_loss.value
+      residual_scale_W: 100.0
+  boundaries:
+  - variable: production_mass_flow.value
+    value: 50.0
+    scale: 1.0e-06
+  - variable: reinjection_mass_flow.value
+    value: 49.0
+    scale: 1.0e-06
+  - variable: steam_brine_loss_mass_flow.value
+    value: 1.0
+    scale: 1.0e-06
+  - variable: reservoir_heat_output.value
+    value: 1500000.0
+    scale: 1.0e-06
+  - variable: plant_heat_use.value
+    value: 1200000.0
+    scale: 1.0e-06
+  - variable: brine_heat_loss.value
+    value: 300000.0
+    scale: 1.0e-06
+  - variable: thermal_use_fraction.value
+    value: 0.8
+    scale: 1.0e-09
+  - variable: reinjection_pump_power.value
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: injection_hydraulic_power.value
+    value: 80000.0
+    scale: 1.0e-06
+  - variable: reinjection_pump_loss.value
+    value: 20000.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: geothermal_underground_wells
+    name: Geothermal underground wells
+    level: 0
+    components:
+    - production_mass_flow
+    - reinjection_mass_flow
+    - steam_brine_loss_mass_flow
+    - well_mass_accounting_mass_balance
+    - reservoir_heat_output
+    - plant_heat_use
+    - brine_heat_loss
+    - thermal_use_fraction
+    - geothermal_heat_accounting_thermal_balance
+    - geothermal_heat_accounting_ratio_check
+    - reinjection_pump_power
+    - injection_hydraulic_power
+    - reinjection_pump_loss
+    - reinjection_pump_power_power_balance
+    tags:
+    - geothermal_underground_wells
+    - level_0
+    - geothermal
+    - wells
+    - thermal
+    required_variables:
+    - production_mass_flow.value
+    refinement_template_ids:
+    - geothermal_underground_wells/level_1_production_reinjection_heat_balance
+  refinement_rules:
+  - id: refine_geothermal_underground_wells_level_0
+    block_id: geothermal_underground_wells
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_power_balance_mismatch
+    - aggregate_thermal_balance_mismatch
+    - range_check_violation
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - geothermal_underground_wells/level_1_production_reinjection_heat_balance
+    next_required_variables:
+    - well.production_kg_s
+    - reinjection.flow_kg_s
+    - thermal.output_W
+    - pump.power_W
+    next_required_parameters:
+    - well_flow_boundary
+    - heat_extraction_basis
+    - reinjection_metering
+    rationale: Coarse geothermal residual is high; refine production, reinjection,
+      heat extraction, and pump checks before adding subsurface detail.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: geothermal_underground_wells
+  assumptions:
+  - Well flows and heat extraction are mapped accounting terms; no reservoir simulator,
+    wellbore model, or geochemistry is inferred.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.

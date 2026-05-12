@@ -1,0 +1,262 @@
+audit_name: agriculture_food_bioprocess_conflict_level_0_missing_irrigation_drainage
+description: Level 0 agriculture, food, and bioprocess audit with intentionally missing irrigation drainage to exercise refinement recommendations.
+system:
+  system_name: agriculture_food_bioprocess_conflict_level_0_missing_irrigation_drainage
+  components:
+  - id: irrigation_supply_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 10.0, scale: 10.0, external_signal: mapped_irrigation_supply_mass_flow, mapping_confidence: template}
+  - id: crop_evapotranspiration_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 6.5, scale: 10.0, external_signal: mapped_crop_evapotranspiration_mass_flow, mapping_confidence: template}
+  - id: drainage_return_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.0, scale: 1.0, external_signal: mapped_drainage_return_mass_flow, mapping_confidence: template}
+  - id: crop_water_storage_rate
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: -1000000.0, upper_bound: 1000000.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_crop_water_storage_rate, mapping_confidence: template}
+  - id: drainage_return_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.25, scale: 0.1, external_signal: mapped_drainage_return_fraction, mapping_confidence: template}
+  - id: solar_heat_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 50000.0, scale: 10000.0, external_signal: mapped_solar_heat_gain, mapping_confidence: template}
+  - id: greenhouse_heating_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 20000.0, scale: 10000.0, external_signal: mapped_greenhouse_heating_power, mapping_confidence: template}
+  - id: greenhouse_transmission_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 45000.0, scale: 10000.0, external_signal: mapped_greenhouse_transmission_loss, mapping_confidence: template}
+  - id: greenhouse_ventilation_heat_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 25000.0, scale: 10000.0, external_signal: mapped_greenhouse_ventilation_heat_loss, mapping_confidence: template}
+  - id: co2_supply_molar_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: mol/s, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 2.0, scale: 1.0, external_signal: mapped_co2_supply_molar_flow, mapping_confidence: template}
+  - id: co2_plant_uptake_molar_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: mol/s, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 1.5, scale: 1.0, external_signal: mapped_co2_plant_uptake_molar_flow, mapping_confidence: template}
+  - id: co2_vent_loss_molar_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: mol/s, lower_bound: 0.0, upper_bound: 100000000.0, initial_guess: 0.5, scale: 0.1, external_signal: mapped_co2_vent_loss_molar_flow, mapping_confidence: template}
+  - id: fermentation_substrate_feed_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 4.0, scale: 1.0, external_signal: mapped_fermentation_substrate_feed_mass_flow, mapping_confidence: template}
+  - id: fermentation_product_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 3.0, scale: 1.0, external_signal: mapped_fermentation_product_mass_flow, mapping_confidence: template}
+  - id: fermentation_offgas_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.5, scale: 0.1, external_signal: mapped_fermentation_offgas_mass_flow, mapping_confidence: template}
+  - id: fermentation_biomass_purge_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.5, scale: 0.1, external_signal: mapped_fermentation_biomass_purge_mass_flow, mapping_confidence: template}
+  - id: dryer_heat_input
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 60000.0, scale: 10000.0, external_signal: mapped_dryer_heat_input, mapping_confidence: template}
+  - id: dryer_product_heat_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 45000.0, scale: 10000.0, external_signal: mapped_dryer_product_heat_loss, mapping_confidence: template}
+  - id: dryer_exhaust_heat_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 15000.0, scale: 10000.0, external_signal: mapped_dryer_exhaust_heat_loss, mapping_confidence: template}
+  - id: dryer_water_evaporation_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_dryer_water_evaporation_mass_flow, mapping_confidence: template}
+  - id: dryer_exhaust_water_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_dryer_exhaust_water_mass_flow, mapping_confidence: template}
+  - id: cold_room_cooling_capacity
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 30000.0, scale: 10000.0, external_signal: mapped_cold_room_cooling_capacity, mapping_confidence: template}
+  - id: cold_room_product_heat_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 15000.0, scale: 10000.0, external_signal: mapped_cold_room_product_heat_gain, mapping_confidence: template}
+  - id: cold_room_infiltration_heat_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 10000.0, scale: 10000.0, external_signal: mapped_cold_room_infiltration_heat_gain, mapping_confidence: template}
+  - id: cold_room_door_heat_gain
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 5000.0, scale: 1000.0, external_signal: mapped_cold_room_door_heat_gain, mapping_confidence: template}
+  - id: cold_room_temperature
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: K, lower_bound: 250.0, upper_bound: 330.0, initial_guess: 277.15, scale: 10.0, external_signal: mapped_cold_room_temperature, mapping_confidence: template}
+  - id: irrigation_water_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [irrigation_supply_mass_flow.value]
+      mass_out_variables: [crop_evapotranspiration_mass_flow.value, drainage_return_mass_flow.value]
+      mass_storage_rate_variable: crop_water_storage_rate.value
+      residual_scale_kg_s: 0.01
+  - id: drainage_fraction_check
+    type: RatioModule
+    parameters:
+      numerator_variable: drainage_return_mass_flow.value
+      denominator_variable: irrigation_supply_mass_flow.value
+      output_variable: drainage_return_fraction.value
+      residual_scale: 0.01
+  - id: greenhouse_heat_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [solar_heat_gain.value, greenhouse_heating_power.value]
+      heat_out_variables: [greenhouse_transmission_loss.value, greenhouse_ventilation_heat_loss.value]
+      residual_scale_W: 100.0
+  - id: greenhouse_co2_balance
+    type: AggregateSpeciesBalanceModule
+    parameters:
+      species_in_variables: [co2_supply_molar_flow.value]
+      species_out_variables: [co2_vent_loss_molar_flow.value]
+      species_consumption_variables: [co2_plant_uptake_molar_flow.value]
+      residual_scale_mol_s: 0.001
+      species_name: CO2
+  - id: fermentation_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [fermentation_substrate_feed_mass_flow.value]
+      mass_out_variables: [fermentation_product_mass_flow.value, fermentation_offgas_mass_flow.value, fermentation_biomass_purge_mass_flow.value]
+      residual_scale_kg_s: 0.01
+  - id: dryer_heat_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [dryer_heat_input.value]
+      heat_out_variables: [dryer_product_heat_loss.value, dryer_exhaust_heat_loss.value]
+      residual_scale_W: 100.0
+  - id: dryer_water_removal_check
+    type: SumModule
+    parameters:
+      input_variables: [dryer_water_evaporation_mass_flow.value]
+      output_variable: dryer_exhaust_water_mass_flow.value
+      residual_scale: 0.01
+  - id: cold_chain_heat_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [cold_room_cooling_capacity.value]
+      heat_out_variables: [cold_room_product_heat_gain.value, cold_room_infiltration_heat_gain.value, cold_room_door_heat_gain.value]
+      residual_scale_W: 100.0
+  - id: cold_room_temperature_range
+    type: RangeCheckModule
+    parameters: {variable: cold_room_temperature.value, lower_bound: 273.15, upper_bound: 283.15, residual_scale: 1.0, role: post_check}
+  boundaries:
+  - {variable: irrigation_supply_mass_flow.value, value: 10.0, scale: 1.0e-06}
+  - {variable: crop_evapotranspiration_mass_flow.value, value: 6.5, scale: 1.0e-06}
+  - {variable: drainage_return_mass_flow.value, value: 0.0, scale: 1.0e-09}
+  - {variable: crop_water_storage_rate.value, value: 1.0, scale: 1.0e-09}
+  - {variable: drainage_return_fraction.value, value: 0.25, scale: 1.0e-09}
+  - {variable: solar_heat_gain.value, value: 50000.0, scale: 1.0e-06}
+  - {variable: greenhouse_heating_power.value, value: 20000.0, scale: 1.0e-06}
+  - {variable: greenhouse_transmission_loss.value, value: 45000.0, scale: 1.0e-06}
+  - {variable: greenhouse_ventilation_heat_loss.value, value: 25000.0, scale: 1.0e-06}
+  - {variable: co2_supply_molar_flow.value, value: 2.0, scale: 1.0e-06}
+  - {variable: co2_plant_uptake_molar_flow.value, value: 1.5, scale: 1.0e-06}
+  - {variable: co2_vent_loss_molar_flow.value, value: 0.5, scale: 1.0e-09}
+  - {variable: fermentation_substrate_feed_mass_flow.value, value: 4.0, scale: 1.0e-06}
+  - {variable: fermentation_product_mass_flow.value, value: 3.0, scale: 1.0e-06}
+  - {variable: fermentation_offgas_mass_flow.value, value: 0.5, scale: 1.0e-09}
+  - {variable: fermentation_biomass_purge_mass_flow.value, value: 0.5, scale: 1.0e-09}
+  - {variable: dryer_heat_input.value, value: 60000.0, scale: 1.0e-06}
+  - {variable: dryer_product_heat_loss.value, value: 45000.0, scale: 1.0e-06}
+  - {variable: dryer_exhaust_heat_loss.value, value: 15000.0, scale: 1.0e-06}
+  - {variable: dryer_water_evaporation_mass_flow.value, value: 1.0, scale: 1.0e-06}
+  - {variable: dryer_exhaust_water_mass_flow.value, value: 1.0, scale: 1.0e-06}
+  - {variable: cold_room_cooling_capacity.value, value: 30000.0, scale: 1.0e-06}
+  - {variable: cold_room_product_heat_gain.value, value: 15000.0, scale: 1.0e-06}
+  - {variable: cold_room_infiltration_heat_gain.value, value: 10000.0, scale: 1.0e-06}
+  - {variable: cold_room_door_heat_gain.value, value: 5000.0, scale: 1.0e-06}
+  - {variable: cold_room_temperature.value, value: 277.15, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: agriculture_food_bioprocess
+    name: Agriculture, food, and bioprocess
+    level: 0
+    components:
+    - irrigation_supply_mass_flow
+    - crop_evapotranspiration_mass_flow
+    - drainage_return_mass_flow
+    - crop_water_storage_rate
+    - drainage_return_fraction
+    - solar_heat_gain
+    - greenhouse_heating_power
+    - greenhouse_transmission_loss
+    - greenhouse_ventilation_heat_loss
+    - co2_supply_molar_flow
+    - co2_plant_uptake_molar_flow
+    - co2_vent_loss_molar_flow
+    - fermentation_substrate_feed_mass_flow
+    - fermentation_product_mass_flow
+    - fermentation_offgas_mass_flow
+    - fermentation_biomass_purge_mass_flow
+    - dryer_heat_input
+    - dryer_product_heat_loss
+    - dryer_exhaust_heat_loss
+    - dryer_water_evaporation_mass_flow
+    - dryer_exhaust_water_mass_flow
+    - cold_room_cooling_capacity
+    - cold_room_product_heat_gain
+    - cold_room_infiltration_heat_gain
+    - cold_room_door_heat_gain
+    - cold_room_temperature
+    - irrigation_water_balance
+    - drainage_fraction_check
+    - greenhouse_heat_balance
+    - greenhouse_co2_balance
+    - fermentation_mass_balance
+    - dryer_heat_balance
+    - dryer_water_removal_check
+    - cold_chain_heat_balance
+    - cold_room_temperature_range
+    tags: [agriculture_food_bioprocess, level_0, greenhouse, irrigation, fermentation, drying, cold_chain]
+    required_variables:
+    - irrigation_supply_mass_flow.value
+    - crop_evapotranspiration_mass_flow.value
+    - greenhouse_heating_power.value
+    - co2_supply_molar_flow.value
+    - fermentation_substrate_feed_mass_flow.value
+    - dryer_heat_input.value
+    - cold_room_cooling_capacity.value
+    refinement_template_ids:
+    - agriculture_food_bioprocess/level_1_greenhouse_irrigation_fermentation_drying_cold_chain
+  refinement_rules:
+  - id: refine_agriculture_food_bioprocess_level_0
+    block_id: agriculture_food_bioprocess
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - ratio_relation_mismatch
+    - aggregate_thermal_balance_mismatch
+    - aggregate_species_balance_mismatch
+    - sum_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - agriculture_food_bioprocess/level_1_greenhouse_irrigation_fermentation_drying_cold_chain
+    next_required_variables:
+    - greenhouse.heat_gain_W
+    - greenhouse.heat_loss_W
+    - greenhouse.co2_supply_mol_s
+    - irrigation.supply_kg_s
+    - irrigation.drainage_kg_s
+    - fermenter.feed_kg_s
+    - dryer.evaporated_water_kg_s
+    - cold_chain.cooling_capacity_W
+    next_required_parameters:
+    - greenhouse_heat_boundary
+    - co2_balance_basis
+    - irrigation_drainage_boundary
+    - fermentation_mass_basis
+    - drying_water_basis
+    - cold_chain_heat_gain_boundary
+    rationale: Coarse agriculture/food/bioprocess residual is high; refine into greenhouse climate, irrigation water, CO2, fermentation, drying, and cold-chain checks before adding crop, microbial, drying-kinetics, or refrigeration-detail models.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: agriculture_food_bioprocess
+  assumptions:
+  - This conflict intentionally maps drainage to zero to represent an omitted irrigation return stream.
+  - This is a steady snapshot accounting audit over mapped SI signals, not a crop-growth, food-process, or bioreactor simulator.
+  - Irrigation, drainage, evapotranspiration, fermentation streams, and dryer water removal are mapped as kg/s with caller-supplied boundaries.
+  - Greenhouse, drying, and cold-chain duties are positive watt magnitudes with explicit sign convention.
+  - CO2 is checked as a coarse molar balance and does not infer plant uptake kinetics.

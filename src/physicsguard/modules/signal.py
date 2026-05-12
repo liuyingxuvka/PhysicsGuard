@@ -282,6 +282,60 @@ class SensorScaleOffsetModule(BaseModule):
         )
 
 
+class MappedSignalModule(BaseModule):
+    """Declare a mapped external signal for audit templates without adding a residual."""
+
+    def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
+        super().__init__(component_id, "MappedSignalModule", parameters)
+        self.local_name = _local_name(parameters.get("local_name", "value"), "local_name")
+        self.unit: Optional[str] = parameters.get("unit")
+        self.lower_bound = _finite_float(parameters.get("lower_bound", -1.0e9), "lower_bound")
+        self.upper_bound = _finite_float(parameters.get("upper_bound", 1.0e9), "upper_bound")
+        self.initial_guess = _finite_float(parameters.get("initial_guess", 0.0), "initial_guess")
+        self.scale = _positive_float(parameters.get("scale", 1.0), "scale")
+        if self.lower_bound >= self.upper_bound:
+            raise ValueError(f"{component_id}: lower_bound must be less than upper_bound")
+        if not self.lower_bound <= self.initial_guess <= self.upper_bound:
+            raise ValueError(f"{component_id}: initial_guess must be inside bounds")
+        self.external_signal: Optional[str] = parameters.get("external_signal")
+        self.mapping_confidence: Optional[str] = parameters.get("mapping_confidence")
+        self.description: Optional[str] = parameters.get("description")
+
+    def declare_variables(self) -> list[VariableRecord]:
+        return [
+            VariableRecord(
+                name=f"{self.component_id}.{self.local_name}",
+                unit=self.unit,
+                lower_bound=self.lower_bound,
+                upper_bound=self.upper_bound,
+                initial_guess=self.initial_guess,
+                scale=self.scale,
+                source_component=self.component_id,
+                local_name=self.local_name,
+            )
+        ]
+
+    def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
+        return []
+
+    def metadata(self) -> dict[str, Any]:
+        data = _metadata(
+            self,
+            "mapped_signal",
+            [
+                "declares one externally mapped audit variable",
+                "does not add residual equations",
+                "does not imply physical validity by itself",
+            ],
+        )
+        data["variable"] = f"{self.component_id}.{self.local_name}"
+        data["unit"] = self.unit
+        data["external_signal"] = self.external_signal
+        data["mapping_confidence"] = self.mapping_confidence
+        data["description"] = self.description
+        return data
+
+
 def _finite_float(value: Any, name: str) -> float:
     try:
         parsed = float(value)
@@ -393,6 +447,15 @@ def _required_variable_list(parameters: dict[str, Any], name: str) -> list[str]:
             raise ValueError(f"{name} entries must use component.variable format")
         variables.append(item)
     return variables
+
+
+def _local_name(value: Any, name: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{name} must be a nonempty string")
+    normalized = value.strip()
+    if "." in normalized or any(character.isspace() for character in normalized):
+        raise ValueError(f"{name} must be a local variable name without dots or whitespace")
+    return normalized
 
 
 def _metadata(module: BaseModule, domain: str, validity: list[str]) -> dict[str, Any]:

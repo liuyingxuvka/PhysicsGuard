@@ -1,0 +1,233 @@
+audit_name: industrial_utilities_conflict_level_0_missing_air_leak
+description: Level 0 industrial-utility conflict example with intentionally missing compressed-air leak flow.
+system:
+  system_name: industrial_utilities_conflict_level_0_missing_air_leak
+  components:
+  - id: boiler_steam_generation_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 20.0, scale: 10.0, external_signal: mapped_boiler_steam_generation_mass_flow, mapping_confidence: template}
+  - id: imported_steam_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 2.0, scale: 1.0, external_signal: mapped_imported_steam_mass_flow, mapping_confidence: template}
+  - id: process_steam_demand_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 18.0, scale: 10.0, external_signal: mapped_process_steam_demand_mass_flow, mapping_confidence: template}
+  - id: deaerator_steam_use_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 2.0, scale: 1.0, external_signal: mapped_deaerator_steam_use_mass_flow, mapping_confidence: template}
+  - id: steam_vent_loss_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_steam_vent_loss_mass_flow, mapping_confidence: template}
+  - id: exported_steam_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 1.0, scale: 1.0, external_signal: mapped_exported_steam_mass_flow, mapping_confidence: template}
+  - id: condensate_return_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 15.0, scale: 10.0, external_signal: mapped_condensate_return_mass_flow, mapping_confidence: template}
+  - id: makeup_water_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 5.0, scale: 10.0, external_signal: mapped_makeup_water_mass_flow, mapping_confidence: template}
+  - id: boiler_feedwater_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 20.0, scale: 10.0, external_signal: mapped_boiler_feedwater_mass_flow, mapping_confidence: template}
+  - id: condensate_return_fraction
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: null, lower_bound: 0.0, upper_bound: 1.0, initial_guess: 0.75, scale: 0.1, external_signal: mapped_condensate_return_fraction, mapping_confidence: template}
+  - id: compressed_air_generation_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 5.0, scale: 1.0, external_signal: mapped_compressed_air_generation_mass_flow, mapping_confidence: template}
+  - id: compressed_air_demand_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 4.5, scale: 1.0, external_signal: mapped_compressed_air_demand_mass_flow, mapping_confidence: template}
+  - id: compressed_air_leak_mass_flow
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: kg/s, lower_bound: 0.0, upper_bound: 1000000.0, initial_guess: 0.5, scale: 0.1, external_signal: mapped_compressed_air_leak_mass_flow, mapping_confidence: template}
+  - id: refrigeration_cooling_capacity
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 450000.0, scale: 100000.0, external_signal: mapped_refrigeration_cooling_capacity, mapping_confidence: template}
+  - id: chilled_water_process_load
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 400000.0, scale: 100000.0, external_signal: mapped_chilled_water_process_load, mapping_confidence: template}
+  - id: chilled_water_distribution_loss
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 50000.0, scale: 10000.0, external_signal: mapped_chilled_water_distribution_loss, mapping_confidence: template}
+  - id: process_heat_to_cooling_water
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 600000.0, scale: 100000.0, external_signal: mapped_process_heat_to_cooling_water, mapping_confidence: template}
+  - id: chiller_condenser_heat
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 600000.0, scale: 100000.0, external_signal: mapped_chiller_condenser_heat, mapping_confidence: template}
+  - id: cooling_water_heat_rejection
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 1200000.0, scale: 100000.0, external_signal: mapped_cooling_water_heat_rejection, mapping_confidence: template}
+  - id: utility_electric_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 300000.0, scale: 100000.0, external_signal: mapped_utility_electric_power, mapping_confidence: template}
+  - id: compressor_electric_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 100000.0, scale: 100000.0, external_signal: mapped_compressor_electric_power, mapping_confidence: template}
+  - id: chiller_electric_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 150000.0, scale: 100000.0, external_signal: mapped_chiller_electric_power, mapping_confidence: template}
+  - id: cooling_water_pump_fan_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 30000.0, scale: 10000.0, external_signal: mapped_cooling_water_pump_fan_power, mapping_confidence: template}
+  - id: boiler_auxiliary_power
+    type: MappedSignalModule
+    parameters: {local_name: value, unit: W, lower_bound: 0.0, upper_bound: 1000000000.0, initial_guess: 20000.0, scale: 10000.0, external_signal: mapped_boiler_auxiliary_power, mapping_confidence: template}
+  - id: steam_header_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [boiler_steam_generation_mass_flow.value, imported_steam_mass_flow.value]
+      mass_out_variables: [process_steam_demand_mass_flow.value, deaerator_steam_use_mass_flow.value, steam_vent_loss_mass_flow.value, exported_steam_mass_flow.value]
+      residual_scale_kg_s: 0.01
+  - id: boiler_feedwater_makeup_check
+    type: SumModule
+    parameters:
+      input_variables: [condensate_return_mass_flow.value, makeup_water_mass_flow.value]
+      output_variable: boiler_feedwater_mass_flow.value
+      residual_scale: 0.01
+  - id: condensate_return_fraction_check
+    type: RatioModule
+    parameters:
+      numerator_variable: condensate_return_mass_flow.value
+      denominator_variable: boiler_feedwater_mass_flow.value
+      output_variable: condensate_return_fraction.value
+      residual_scale: 0.001
+  - id: compressed_air_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables: [compressed_air_generation_mass_flow.value]
+      mass_out_variables: [compressed_air_demand_mass_flow.value, compressed_air_leak_mass_flow.value]
+      residual_scale_kg_s: 0.01
+  - id: refrigeration_service_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [refrigeration_cooling_capacity.value]
+      heat_out_variables: [chilled_water_process_load.value, chilled_water_distribution_loss.value]
+      residual_scale_W: 100.0
+  - id: cooling_water_heat_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables: [process_heat_to_cooling_water.value, chiller_condenser_heat.value]
+      heat_out_variables: [cooling_water_heat_rejection.value]
+      residual_scale_W: 100.0
+  - id: utility_electric_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables: [utility_electric_power.value]
+      load_power_variables: [compressor_electric_power.value, chiller_electric_power.value, cooling_water_pump_fan_power.value, boiler_auxiliary_power.value]
+      residual_scale_W: 100.0
+  boundaries:
+  - {variable: boiler_steam_generation_mass_flow.value, value: 20.0, scale: 1.0e-06}
+  - {variable: imported_steam_mass_flow.value, value: 2.0, scale: 1.0e-06}
+  - {variable: process_steam_demand_mass_flow.value, value: 18.0, scale: 1.0e-06}
+  - {variable: deaerator_steam_use_mass_flow.value, value: 2.0, scale: 1.0e-06}
+  - {variable: steam_vent_loss_mass_flow.value, value: 1.0, scale: 1.0e-06}
+  - {variable: exported_steam_mass_flow.value, value: 1.0, scale: 1.0e-06}
+  - {variable: condensate_return_mass_flow.value, value: 15.0, scale: 1.0e-06}
+  - {variable: makeup_water_mass_flow.value, value: 5.0, scale: 1.0e-06}
+  - {variable: boiler_feedwater_mass_flow.value, value: 20.0, scale: 1.0e-06}
+  - {variable: condensate_return_fraction.value, value: 0.75, scale: 1.0e-09}
+  - {variable: compressed_air_generation_mass_flow.value, value: 5.0, scale: 1.0e-06}
+  - {variable: compressed_air_demand_mass_flow.value, value: 4.5, scale: 1.0e-06}
+  - {variable: compressed_air_leak_mass_flow.value, value: 0.0, scale: 0.001}
+  - {variable: refrigeration_cooling_capacity.value, value: 450000.0, scale: 1.0e-06}
+  - {variable: chilled_water_process_load.value, value: 400000.0, scale: 1.0e-06}
+  - {variable: chilled_water_distribution_loss.value, value: 50000.0, scale: 1.0e-06}
+  - {variable: process_heat_to_cooling_water.value, value: 600000.0, scale: 1.0e-06}
+  - {variable: chiller_condenser_heat.value, value: 600000.0, scale: 1.0e-06}
+  - {variable: cooling_water_heat_rejection.value, value: 1200000.0, scale: 1.0e-06}
+  - {variable: utility_electric_power.value, value: 300000.0, scale: 1.0e-06}
+  - {variable: compressor_electric_power.value, value: 100000.0, scale: 1.0e-06}
+  - {variable: chiller_electric_power.value, value: 150000.0, scale: 1.0e-06}
+  - {variable: cooling_water_pump_fan_power.value, value: 30000.0, scale: 1.0e-06}
+  - {variable: boiler_auxiliary_power.value, value: 20000.0, scale: 1.0e-06}
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: industrial_utilities
+    name: Industrial utility hub
+    level: 0
+    components:
+    - boiler_steam_generation_mass_flow
+    - imported_steam_mass_flow
+    - process_steam_demand_mass_flow
+    - deaerator_steam_use_mass_flow
+    - steam_vent_loss_mass_flow
+    - exported_steam_mass_flow
+    - condensate_return_mass_flow
+    - makeup_water_mass_flow
+    - boiler_feedwater_mass_flow
+    - condensate_return_fraction
+    - compressed_air_generation_mass_flow
+    - compressed_air_demand_mass_flow
+    - compressed_air_leak_mass_flow
+    - refrigeration_cooling_capacity
+    - chilled_water_process_load
+    - chilled_water_distribution_loss
+    - process_heat_to_cooling_water
+    - chiller_condenser_heat
+    - cooling_water_heat_rejection
+    - utility_electric_power
+    - compressor_electric_power
+    - chiller_electric_power
+    - cooling_water_pump_fan_power
+    - boiler_auxiliary_power
+    - steam_header_mass_balance
+    - boiler_feedwater_makeup_check
+    - condensate_return_fraction_check
+    - compressed_air_mass_balance
+    - refrigeration_service_balance
+    - cooling_water_heat_balance
+    - utility_electric_power_balance
+    tags: [industrial_utilities, level_0, steam, condensate, compressed_air, refrigeration, cooling_water, utility_power]
+    required_variables:
+    - boiler_steam_generation_mass_flow.value
+    - process_steam_demand_mass_flow.value
+    - condensate_return_mass_flow.value
+    - compressed_air_generation_mass_flow.value
+    - refrigeration_cooling_capacity.value
+    - cooling_water_heat_rejection.value
+    - utility_electric_power.value
+    refinement_template_ids:
+    - industrial_utilities/level_1_steam_air_refrigeration_cooling_water
+  refinement_rules:
+  - id: refine_industrial_utilities_level_0
+    block_id: industrial_utilities
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_thermal_balance_mismatch
+    - aggregate_power_balance_mismatch
+    - ratio_relation_mismatch
+    - sum_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - industrial_utilities/level_1_steam_air_refrigeration_cooling_water
+    next_required_variables:
+    - steam.header_supply_kg_s
+    - steam.process_demand_kg_s
+    - condensate.return_kg_s
+    - air.compressor_output_kg_s
+    - refrigeration.cooling_capacity_W
+    - cooling_water.heat_rejection_W
+    next_required_parameters:
+    - steam_metering_boundary
+    - condensate_return_basis
+    - air_leak_boundary
+    - cooling_duty_sign_convention
+    rationale: Coarse utility-hub residual is high; refine into steam/condensate, compressed air, refrigeration, cooling-water, and utility-power checks before adding equipment maps or plant optimization.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: industrial_utilities
+  intentional_conflict: Compressed-air leak flow is mapped as zero even though the compressed-air balance requires 0.5 kg/s.
+  assumptions:
+  - This is a steady snapshot accounting audit over mapped SI signals, not a plant-wide utility optimizer.
+  - Steam and compressed air are represented as kg/s accounting streams with caller-supplied metering boundaries.
+  - Refrigeration and cooling-water duties are positive watt magnitudes with explicit sign convention.
+  - Electric power is an aggregate meter check and does not infer compressor, chiller, pump, fan, or boiler performance curves.

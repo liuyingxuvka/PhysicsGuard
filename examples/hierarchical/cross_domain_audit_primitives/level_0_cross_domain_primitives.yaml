@@ -1,0 +1,178 @@
+audit_name: cross_domain_audit_primitives_level_0
+description: Level 0 cross-domain primitive audit for explicit unit conversion, sensor
+  scale/offset, unmetered loss, and sampling-delay checks.
+system:
+  system_name: cross_domain_audit_primitives_level_0
+  components:
+  - id: temperature_c_to_k
+    type: UnitScaleModule
+    parameters:
+      factor: 1.0
+      offset: 273.15
+      source_unit: degC
+      target_unit: K
+      x_initial_guess: 25.0
+      y_initial_guess: 298.15
+      x_scale: 10.0
+      y_scale: 10.0
+      residual_scale: 0.01
+  - id: pressure_sensor_scale
+    type: SensorScaleOffsetModule
+    parameters:
+      scale_factor: 1.0
+      offset: 0.0
+      true_initial_guess: 200000.0
+      measured_initial_guess: 200000.0
+      true_scale: 100000.0
+      measured_scale: 100000.0
+      residual_scale: 100.0
+  - id: metered_source_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100000.0
+      scale: 10000.0
+      external_signal: mapped_metered_source_power
+      mapping_confidence: template
+  - id: metered_load_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 80000.0
+      scale: 8000.0
+      external_signal: mapped_metered_load_power
+      mapping_confidence: template
+  - id: unmetered_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 20000.0
+      scale: 2000.0
+      external_signal: mapped_unmetered_loss_power
+      mapping_confidence: template
+  - id: sample_delay
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.2
+      scale: 1.0
+      external_signal: mapped_sample_delay
+      mapping_confidence: template
+  - id: boundary_loss_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - metered_source_power.value
+      load_power_variables:
+      - metered_load_power.value
+      - unmetered_loss_power.value
+      residual_scale_W: 100.0
+  - id: sample_delay_range
+    type: RangeCheckModule
+    parameters:
+      variable: sample_delay.value
+      lower_bound: 0.0
+      upper_bound: 1.0
+      residual_scale: 0.1
+      role: post_check
+  boundaries:
+  - variable: temperature_c_to_k.x
+    value: 25.0
+    scale: 1.0e-06
+  - variable: temperature_c_to_k.y
+    value: 298.15
+    scale: 1.0e-06
+  - variable: pressure_sensor_scale.true_value
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: pressure_sensor_scale.measured_value
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: metered_source_power.value
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: metered_load_power.value
+    value: 80000.0
+    scale: 1.0e-06
+  - variable: unmetered_loss_power.value
+    value: 20000.0
+    scale: 1.0e-06
+  - variable: sample_delay.value
+    value: 0.2
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: cross_domain_audit_primitives
+    name: Cross-domain audit primitives
+    level: 0
+    components:
+    - temperature_c_to_k
+    - pressure_sensor_scale
+    - unmetered_loss_power
+    - sample_delay
+    - sample_delay_range
+    tags:
+    - cross_domain
+    - unit_conversion
+    - sensor
+    - loss
+    - time_alignment
+    required_variables:
+    - temperature_c_to_k.x
+    - temperature_c_to_k.y
+    - pressure_sensor_scale.true_value
+    refinement_template_ids:
+    - cross_domain_audit_primitives/level_1_units_sensors_boundary_time
+  refinement_rules:
+  - id: refine_cross_domain_audit_primitives_level_0
+    block_id: cross_domain_audit_primitives
+    trigger_diagnostic_keys:
+    - unit_scale_mismatch
+    - sensor_scale_offset_mismatch
+    - aggregate_power_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - cross_domain_audit_primitives/level_1_units_sensors_boundary_time
+    next_required_variables:
+    - unit.source_value
+    - unit.target_value
+    - sensor.true_value
+    - sensor.measured_value
+    - boundary.source_power_W
+    - timing.sample_delay_s
+    next_required_parameters:
+    - explicit_unit_factor_offset
+    - sensor_calibration_basis
+    - meter_grouping
+    - sample_alignment_basis
+    rationale: Primitive audit residual is high; refine unit, sensor, boundary, and
+      timing checks before adding domain-specific physics.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: cross_domain_audit_primitives
+  assumptions:
+  - This template demonstrates reusable low-fidelity audit primitives, not a domain
+    model.
+  - Unit conversion uses explicit caller-provided factor and offset; no hidden unit
+    table is applied.
+  - Sensor, boundary-loss, and timing checks are algebraic sanity checks for mapped
+    signals.

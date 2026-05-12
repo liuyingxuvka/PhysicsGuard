@@ -1,0 +1,288 @@
+audit_name: medical_bioprocess_equipment_level_1
+description: Level 0 coarse medical/bioprocess equipment audit for ventilator flow,
+  dialysis flow, sterilizer heat, and incubator temperature.
+system:
+  system_name: medical_bioprocess_equipment_level_1
+  components:
+  - id: ventilator_supply_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.1
+      scale: 1.0
+      external_signal: mapped_ventilator_supply_mass_flow
+      mapping_confidence: template
+  - id: patient_delivery_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.09
+      scale: 1.0
+      external_signal: mapped_patient_delivery_mass_flow
+      mapping_confidence: template
+  - id: ventilator_leak_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.01
+      scale: 1.0
+      external_signal: mapped_ventilator_leak_mass_flow
+      mapping_confidence: template
+  - id: ventilator_flow_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - ventilator_supply_mass_flow.value
+      mass_out_variables:
+      - patient_delivery_mass_flow.value
+      - ventilator_leak_mass_flow.value
+      residual_scale_kg_s: 0.01
+  - id: dialysate_inlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.2
+      scale: 1.0
+      external_signal: mapped_dialysate_inlet_mass_flow
+      mapping_confidence: template
+  - id: dialysate_outlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.2
+      scale: 1.0
+      external_signal: mapped_dialysate_outlet_mass_flow
+      mapping_confidence: template
+  - id: dialysis_fluid_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - dialysate_inlet_mass_flow.value
+      mass_out_variables:
+      - dialysate_outlet_mass_flow.value
+      residual_scale_kg_s: 0.01
+  - id: heater_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 500.0
+      scale: 50.0
+      external_signal: mapped_heater_power
+      mapping_confidence: template
+  - id: useful_chamber_heat
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 400.0
+      scale: 40.0
+      external_signal: mapped_useful_chamber_heat
+      mapping_confidence: template
+  - id: wall_heat_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100.0
+      scale: 10.0
+      external_signal: mapped_wall_heat_loss
+      mapping_confidence: template
+  - id: incubator_temperature
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: K
+      lower_bound: 200.0
+      upper_bound: 500.0
+      initial_guess: 310.0
+      scale: 1.0
+      external_signal: mapped_incubator_temperature
+      mapping_confidence: template
+  - id: sterilizer_incubator_thermal_thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - heater_power.value
+      heat_out_variables:
+      - useful_chamber_heat.value
+      - wall_heat_loss.value
+      residual_scale_W: 100.0
+  - id: incubator_temperature_range
+    type: RangeCheckModule
+    parameters:
+      variable: incubator_temperature.value
+      lower_bound: 290.0
+      upper_bound: 330.0
+      residual_scale: 1.0
+      role: post_check
+  boundaries:
+  - variable: ventilator_supply_mass_flow.value
+    value: 0.1
+    scale: 1.0e-06
+  - variable: patient_delivery_mass_flow.value
+    value: 0.09
+    scale: 1.0e-06
+  - variable: ventilator_leak_mass_flow.value
+    value: 0.01
+    scale: 1.0e-06
+  - variable: dialysate_inlet_mass_flow.value
+    value: 0.2
+    scale: 1.0e-06
+  - variable: dialysate_outlet_mass_flow.value
+    value: 0.2
+    scale: 1.0e-06
+  - variable: heater_power.value
+    value: 500.0
+    scale: 1.0e-06
+  - variable: useful_chamber_heat.value
+    value: 400.0
+    scale: 1.0e-06
+  - variable: wall_heat_loss.value
+    value: 100.0
+    scale: 1.0e-06
+  - variable: incubator_temperature.value
+    value: 310.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: medical_bioprocess_equipment
+    name: Medical and bioprocess equipment
+    level: 0
+    tags:
+    - medical_bioprocess_equipment
+  - id: ventilator_flow_accounting
+    name: Ventilator flow accounting
+    level: 1
+    parent_id: medical_bioprocess_equipment
+    components:
+    - ventilator_supply_mass_flow
+    - patient_delivery_mass_flow
+    - ventilator_leak_mass_flow
+    - ventilator_flow_accounting_mass_balance
+    tags:
+    - ventilator
+    - flow
+    required_variables:
+    - ventilator_supply_mass_flow.value
+  - id: dialysis_fluid_accounting
+    name: Dialysis fluid accounting
+    level: 1
+    parent_id: medical_bioprocess_equipment
+    components:
+    - dialysate_inlet_mass_flow
+    - dialysate_outlet_mass_flow
+    - dialysis_fluid_accounting_mass_balance
+    tags:
+    - dialysis
+    - flow
+    required_variables:
+    - dialysate_inlet_mass_flow.value
+  - id: sterilizer_incubator_thermal
+    name: Sterilizer and incubator thermal
+    level: 1
+    parent_id: medical_bioprocess_equipment
+    components:
+    - heater_power
+    - useful_chamber_heat
+    - wall_heat_loss
+    - incubator_temperature
+    - sterilizer_incubator_thermal_thermal_balance
+    - incubator_temperature_range
+    tags:
+    - thermal
+    - incubator
+    - sterilizer
+    required_variables:
+    - heater_power.value
+  refinement_rules:
+  - id: refine_ventilator_flow_accounting
+    block_id: ventilator_flow_accounting
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - medical_bioprocess_equipment/level_2_ventilator_flow_accounting_placeholder
+    next_required_variables:
+    - ventilator_supply_mass_flow.value
+    - patient_delivery_mass_flow.value
+    - ventilator_leak_mass_flow.value
+    next_required_parameters: &id001
+    - ventilator_flow_boundary
+    - dialysis_meter_boundary
+    - sterilizer_heat_boundary
+    rationale: Ventilator residual is high; inspect supply, delivered flow, and leak
+      boundary before adding device detail.
+    priority: 10
+  - id: refine_dialysis_fluid_accounting
+    block_id: dialysis_fluid_accounting
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - medical_bioprocess_equipment/level_2_dialysis_fluid_accounting_placeholder
+    next_required_variables:
+    - dialysate_inlet_mass_flow.value
+    - dialysate_outlet_mass_flow.value
+    next_required_parameters: *id001
+    rationale: Dialysis residual is high; inspect inlet/outlet metering before adding
+      device-specific transport detail.
+    priority: 10
+  - id: refine_sterilizer_incubator_thermal
+    block_id: sterilizer_incubator_thermal
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - medical_bioprocess_equipment/level_2_sterilizer_incubator_thermal_placeholder
+    next_required_variables:
+    - heater_power.value
+    - useful_chamber_heat.value
+    - wall_heat_loss.value
+    next_required_parameters: *id001
+    rationale: Thermal residual is high; inspect heater/chamber/loss and temperature
+      basis before adding device detail.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: medical_bioprocess_equipment
+  assumptions:
+  - Medical equipment templates are engineering signal audits only; they are not clinical
+    guidance, safety certification, or device-performance models.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.

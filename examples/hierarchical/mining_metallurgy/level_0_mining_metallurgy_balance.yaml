@@ -1,0 +1,250 @@
+audit_name: mining_metallurgy_level_0
+description: Level 0 coarse mining/metallurgy audit for ore balance, mill power, and
+  slurry water.
+system:
+  system_name: mining_metallurgy_level_0
+  components:
+  - id: ore_feed_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100.0
+      scale: 100.0
+      external_signal: mapped_ore_feed_mass_flow
+      mapping_confidence: template
+  - id: concentrate_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 30.0
+      scale: 30.0
+      external_signal: mapped_concentrate_mass_flow
+      mapping_confidence: template
+  - id: tailings_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 70.0
+      scale: 70.0
+      external_signal: mapped_tailings_mass_flow
+      mapping_confidence: template
+  - id: ore_mass_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - ore_feed_mass_flow.value
+      mass_out_variables:
+      - concentrate_mass_flow.value
+      - tailings_mass_flow.value
+      residual_scale_kg_s: 0.01
+  - id: mill_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 500000.0
+      scale: 50000.0
+      external_signal: mapped_mill_electric_power
+      mapping_confidence: template
+  - id: breakage_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 350000.0
+      scale: 35000.0
+      external_signal: mapped_breakage_power
+      mapping_confidence: template
+  - id: mill_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 150000.0
+      scale: 15000.0
+      external_signal: mapped_mill_loss_power
+      mapping_confidence: template
+  - id: mill_useful_power_fraction
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.7
+      scale: 1.0
+      external_signal: mapped_mill_useful_power_fraction
+      mapping_confidence: template
+  - id: mill_power_accounting_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - mill_electric_power.value
+      load_power_variables:
+      - breakage_power.value
+      - mill_loss_power.value
+      residual_scale_W: 100.0
+  - id: mill_power_accounting_ratio_check
+    type: RatioModule
+    parameters:
+      numerator_variable: breakage_power.value
+      denominator_variable: mill_electric_power.value
+      output_variable: mill_useful_power_fraction.value
+      residual_scale: 0.01
+  - id: process_water_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 80.0
+      scale: 80.0
+      external_signal: mapped_process_water_mass_flow
+      mapping_confidence: template
+  - id: concentrate_water_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 20.0
+      scale: 20.0
+      external_signal: mapped_concentrate_water_mass_flow
+      mapping_confidence: template
+  - id: tailings_water_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 60.0
+      scale: 60.0
+      external_signal: mapped_tailings_water_mass_flow
+      mapping_confidence: template
+  - id: slurry_water_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - process_water_mass_flow.value
+      mass_out_variables:
+      - concentrate_water_mass_flow.value
+      - tailings_water_mass_flow.value
+      residual_scale_kg_s: 0.01
+  boundaries:
+  - variable: ore_feed_mass_flow.value
+    value: 100.0
+    scale: 1.0e-06
+  - variable: concentrate_mass_flow.value
+    value: 30.0
+    scale: 1.0e-06
+  - variable: tailings_mass_flow.value
+    value: 70.0
+    scale: 1.0e-06
+  - variable: mill_electric_power.value
+    value: 500000.0
+    scale: 1.0e-06
+  - variable: breakage_power.value
+    value: 350000.0
+    scale: 1.0e-06
+  - variable: mill_loss_power.value
+    value: 150000.0
+    scale: 1.0e-06
+  - variable: mill_useful_power_fraction.value
+    value: 0.7
+    scale: 1.0e-09
+  - variable: process_water_mass_flow.value
+    value: 80.0
+    scale: 1.0e-06
+  - variable: concentrate_water_mass_flow.value
+    value: 20.0
+    scale: 1.0e-06
+  - variable: tailings_water_mass_flow.value
+    value: 60.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: mining_metallurgy
+    name: Mining and metallurgy
+    level: 0
+    components:
+    - ore_feed_mass_flow
+    - concentrate_mass_flow
+    - tailings_mass_flow
+    - ore_mass_accounting_mass_balance
+    - mill_electric_power
+    - breakage_power
+    - mill_loss_power
+    - mill_useful_power_fraction
+    - mill_power_accounting_power_balance
+    - mill_power_accounting_ratio_check
+    - process_water_mass_flow
+    - concentrate_water_mass_flow
+    - tailings_water_mass_flow
+    - slurry_water_accounting_mass_balance
+    tags:
+    - mining_metallurgy
+    - level_0
+    - mining
+    - metallurgy
+    - slurry
+    required_variables:
+    - ore_feed_mass_flow.value
+    refinement_template_ids:
+    - mining_metallurgy/level_1_ore_mill_slurry_balance
+  refinement_rules:
+  - id: refine_mining_metallurgy_level_0
+    block_id: mining_metallurgy
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_power_balance_mismatch
+    - range_check_violation
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - mining_metallurgy/level_1_ore_mill_slurry_balance
+    next_required_variables:
+    - ore.feed_kg_s
+    - concentrate.output_kg_s
+    - tailings.output_kg_s
+    - mill.power_W
+    next_required_parameters:
+    - ore_meter_boundary
+    - tailings_basis
+    - mill_power_grouping
+    rationale: Coarse mining residual is high; refine ore, mill power, and water accounting
+      before adding process-specific correlations.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: mining_metallurgy
+  assumptions:
+  - Ore, concentrate, tailings, and slurry water are accounting streams; no comminution
+    model, flotation kinetics, or metallurgical recovery model is inferred.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.

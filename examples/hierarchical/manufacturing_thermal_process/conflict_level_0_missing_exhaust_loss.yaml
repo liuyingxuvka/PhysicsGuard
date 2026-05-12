@@ -1,0 +1,267 @@
+audit_name: manufacturing_thermal_process_conflict_missing_exhaust_loss
+description: Level 0 manufacturing audit with intentionally missing exhaust heat loss.
+system:
+  system_name: manufacturing_thermal_process_conflict_missing_exhaust_loss
+  components:
+  - id: furnace_heat_input
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 1000000.0
+      scale: 100000.0
+      external_signal: mapped_furnace_heat_input
+      mapping_confidence: template
+  - id: product_heat_gain
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 700000.0
+      scale: 70000.0
+      external_signal: mapped_product_heat_gain
+      mapping_confidence: template
+  - id: exhaust_heat_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 200000.0
+      scale: 20000.0
+      external_signal: mapped_exhaust_heat_loss
+      mapping_confidence: template
+  - id: wall_heat_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100000.0
+      scale: 10000.0
+      external_signal: mapped_wall_heat_loss
+      mapping_confidence: template
+  - id: furnace_heat_accounting_thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - furnace_heat_input.value
+      heat_out_variables:
+      - product_heat_gain.value
+      - exhaust_heat_loss.value
+      - wall_heat_loss.value
+      residual_scale_W: 100.0
+  - id: line_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 200000.0
+      scale: 20000.0
+      external_signal: mapped_line_electric_power
+      mapping_confidence: template
+  - id: machine_drive_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 150000.0
+      scale: 15000.0
+      external_signal: mapped_machine_drive_power
+      mapping_confidence: template
+  - id: line_auxiliary_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 50000.0
+      scale: 5000.0
+      external_signal: mapped_line_auxiliary_power
+      mapping_confidence: template
+  - id: line_drive_fraction
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.75
+      scale: 1.0
+      external_signal: mapped_line_drive_fraction
+      mapping_confidence: template
+  - id: production_line_power_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - line_electric_power.value
+      load_power_variables:
+      - machine_drive_power.value
+      - line_auxiliary_power.value
+      residual_scale_W: 100.0
+  - id: production_line_power_ratio_check
+    type: RatioModule
+    parameters:
+      numerator_variable: machine_drive_power.value
+      denominator_variable: line_electric_power.value
+      output_variable: line_drive_fraction.value
+      residual_scale: 0.01
+  - id: raw_material_feed_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 50.0
+      scale: 50.0
+      external_signal: mapped_raw_material_feed_mass_flow
+      mapping_confidence: template
+  - id: finished_product_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 45.0
+      scale: 45.0
+      external_signal: mapped_finished_product_mass_flow
+      mapping_confidence: template
+  - id: scrap_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 5.0
+      scale: 5.0
+      external_signal: mapped_scrap_mass_flow
+      mapping_confidence: template
+  - id: material_yield_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - raw_material_feed_mass_flow.value
+      mass_out_variables:
+      - finished_product_mass_flow.value
+      - scrap_mass_flow.value
+      residual_scale_kg_s: 0.01
+  boundaries:
+  - variable: furnace_heat_input.value
+    value: 1000000.0
+    scale: 1.0e-06
+  - variable: product_heat_gain.value
+    value: 700000.0
+    scale: 1.0e-06
+  - variable: exhaust_heat_loss.value
+    value: 0.0
+    scale: 1.0e-09
+  - variable: wall_heat_loss.value
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: line_electric_power.value
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: machine_drive_power.value
+    value: 150000.0
+    scale: 1.0e-06
+  - variable: line_auxiliary_power.value
+    value: 50000.0
+    scale: 1.0e-06
+  - variable: line_drive_fraction.value
+    value: 0.75
+    scale: 1.0e-09
+  - variable: raw_material_feed_mass_flow.value
+    value: 50.0
+    scale: 1.0e-06
+  - variable: finished_product_mass_flow.value
+    value: 45.0
+    scale: 1.0e-06
+  - variable: scrap_mass_flow.value
+    value: 5.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+hierarchy:
+  blocks:
+  - id: manufacturing_thermal_process
+    name: Manufacturing thermal process
+    level: 0
+    components:
+    - furnace_heat_input
+    - product_heat_gain
+    - exhaust_heat_loss
+    - wall_heat_loss
+    - furnace_heat_accounting_thermal_balance
+    - line_electric_power
+    - machine_drive_power
+    - line_auxiliary_power
+    - line_drive_fraction
+    - production_line_power_power_balance
+    - production_line_power_ratio_check
+    - raw_material_feed_mass_flow
+    - finished_product_mass_flow
+    - scrap_mass_flow
+    - material_yield_accounting_mass_balance
+    tags:
+    - manufacturing_thermal_process
+    - level_0
+    - manufacturing
+    - furnace
+    - production_line
+    required_variables:
+    - furnace_heat_input.value
+    refinement_template_ids:
+    - manufacturing_thermal_process/level_1_furnace_line_material_balance
+  refinement_rules:
+  - id: refine_manufacturing_thermal_process_level_0
+    block_id: manufacturing_thermal_process
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_power_balance_mismatch
+    - aggregate_thermal_balance_mismatch
+    - range_check_violation
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - manufacturing_thermal_process/level_1_furnace_line_material_balance
+    next_required_variables:
+    - furnace.heat_input_W
+    - furnace.exhaust_loss_W
+    - line.power_W
+    - material.feed_kg_s
+    next_required_parameters:
+    - heat_duty_boundary
+    - line_meter_grouping
+    - material_scrap_basis
+    rationale: Coarse manufacturing residual is high; refine furnace, line power,
+      and material balance before adding process-specific detail.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 0
+  domain: manufacturing_thermal_process
+  assumptions:
+  - This conflict intentionally maps exhaust heat loss to zero.
+  - Thermal and material flows are snapshot accounting terms; no furnace CFD, kinetics,
+    process recipe, or equipment curve is inferred.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.
