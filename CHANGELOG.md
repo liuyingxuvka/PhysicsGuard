@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.1 - 2026-05-18
+
+Skill workflow header update.
+
+- Updated the `physicsguard-ai-debugging` Codex skill to require a short one-layer comment header on newly created PhysicsGuard YAML audits, hierarchy templates, observed snapshots, and candidate-model blueprints.
+- Documented that the header should stay comment-only unless a task already needs schema metadata for another reason.
+- Updated README skill guidance to mention the new header behavior.
+
 ## v0.2.0 - 2026-05-12
 
 Expanded low-fidelity starter-pack coverage.

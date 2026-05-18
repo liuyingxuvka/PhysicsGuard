@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-**Version:** v0.2.0
+**Version:** v0.2.1
 **Language note:** English comes first; the second half is a full Chinese mirror.  
 **中文说明：** 英文在前，后半部分是完整中文镜像。
 
@@ -130,6 +130,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 The skill tells Codex to use observed-value evaluation first, keep assumptions explicit, and request only the next useful signals instead of trying to model the whole external system.
 For model-building tasks, the skill tells Codex to validate the PhysicsGuard hierarchy first, then generate target-model scripts only for blocks with explicit interfaces, units, and assumptions.
+When the skill creates new PhysicsGuard YAML files, it now asks Codex to add a short comment header that states the file is a low-fidelity audit or blueprint and links back to the full PhysicsGuard workflow.
 
 ## Main CLI Modes
 
@@ -149,7 +150,7 @@ python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
 
 ## Library Coverage
 
-PhysicsGuard v0.2.0 includes low-fidelity modules for:
+PhysicsGuard v0.2.1 includes low-fidelity modules for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, threshold checks, delay, sample-and-hold, and actuator/sensor relations;
@@ -189,7 +190,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-**版本：** v0.2.0
+**版本：** v0.2.1
 
 PhysicsGuard 是一个 Python 核心库加 Codex skill，用来让 AI 辅助调试物理仿真结果，并围绕物理仿真工作流搭建候选模型。它帮助 AI 构建低保真审计模型，检查外部仿真导出的信号，排序最可疑的系统块，推荐下一步应该查看哪些信号或参数，并把验证过的 PhysicsGuard 分层模型作为候选模型的蓝图。
 
@@ -307,6 +308,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 这个 skill 会指导 Codex 优先使用 observed-value evaluation，显式记录假设，并且每轮只请求下一批最有用的信号，而不是试图一次性建完整外部模型。
 对于模型搭建任务，这个 skill 会要求 Codex 先验证 PhysicsGuard 分层蓝图，再只为接口、单位和假设都明确的 block 生成目标模型脚本。
+当这个 skill 新建 PhysicsGuard YAML 文件时，它现在会要求 Codex 在文件开头加入简短注释，说明该文件是低保真审计或蓝图，并链接回完整的 PhysicsGuard 工作流。
 
 ## 主要 CLI 模式
 
@@ -326,7 +328,7 @@ python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
 
 ## 模块覆盖
 
-PhysicsGuard v0.2.0 包含低保真模块：
+PhysicsGuard v0.2.1 包含低保真模块：
 
 - 总体功率、热、质量、物种和电气母线守恒；
 - 控制误差、PID、饱和、迟滞、阈值、延迟、sample-and-hold、执行器和传感器关系；
