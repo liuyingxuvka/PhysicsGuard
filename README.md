@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <strong>Low-fidelity residual audits for mapped physical-simulation signals and AI debugging plans.</strong>
+  <strong>Low-fidelity physical understanding, residual audits, and candidate-model blueprints for AI simulation debugging.</strong>
 </p>
 <!-- README HERO END -->
 
@@ -15,13 +15,28 @@
 **License:** MIT  
 **Language note:** English comes first; the second half is a full Chinese mirror.
 
-PhysicsGuard is a Python core and Codex skill for AI-guided debugging around physical simulation workflows. It starts from exported or user-mapped signals, builds low-fidelity residual and hierarchy audits, evaluates observed values directly, ranks suspicious blocks, exposes assumptions, and recommends the next signals or parameters to inspect.
+PhysicsGuard is a Python core and Codex skill for AI-guided debugging around physical simulation workflows. It helps an AI agent build a low-fidelity physical understanding map before it tries to debug or generate anything: visible symptom, subsystem hierarchy, interfaces, SI units, conservation relations, signal mappings, assumptions, and residual checks.
 
-It can also produce a model-building blueprint: after a low-fidelity hierarchy is validated, an AI agent can translate the checked interfaces, units, assumptions, and block relations into a separate candidate model through official APIs or user-owned editable templates. PhysicsGuard does **not** parse commercial tools, reverse engineer solver formats, replace the original solver, or claim high-fidelity equivalence. It checks mapped values against explicit residual equations.
+From that map, PhysicsGuard can evaluate exported or user-mapped values directly, rank suspicious blocks, expose assumptions, recommend the next signals or parameters to inspect, and produce a candidate-model blueprint. The generated model path stays separate: an AI agent may translate checked interfaces, units, assumptions, and block relations into official APIs or user-owned editable templates, then map the candidate outputs back into PhysicsGuard for residual checks.
+
+PhysicsGuard does **not** parse commercial tools, reverse engineer solver formats, replace the original solver, or claim high-fidelity equivalence. It checks mapped values against explicit low-fidelity residual equations and keeps the original engineering model as the source of truth.
+
+## What You Can Build And Check
+
+PhysicsGuard is not just a residual score table. It gives the AI a disciplined way to build physical understanding first, then use that understanding to choose the next debugging or model-building action.
+
+| Goal | Model-first output | What keeps it trustworthy | Boundary |
+| --- | --- | --- | --- |
+| Understand a simulation failure | A Level 0 physical map: visible symptom, subsystem boundary, expected conservation relation, key signals, SI units, assumptions, and first residuals | The map is written as YAML hierarchy/spec objects and can be inspected before more signals are exported | It is a low-fidelity audit map, not a replacement for the original solver |
+| Localize a likely bug | Hierarchy reports with `top_blocks`, `top_residuals`, assumption cards, and `recommended_refinements` | Observed values are substituted directly into explicit residual equations; suspicious blocks are ranked rather than guessed from prose | Block scores are diagnostic heuristics, not proof of the only possible fault |
+| Decide what to export next | A targeted signal/parameter request tied to the residual that failed | The report asks for the next useful variables, units, bounds, maps, or parameters instead of asking for the whole external model | Missing data stays explicit; PhysicsGuard should not invent mappings or assumptions |
+| Build a candidate model | A blueprint of interfaces, units, assumptions, block relations, examples, and refinement order | Each block can be validated against PhysicsGuard examples, observed data, or conflict cases before larger assembly | Candidate models are new engineering artifacts, not recovered commercial-model copies |
+| Keep AI physics honest | Active/proposed/rejected/high-impact Assumption Cards | Assumptions appear in diagnostic JSON and rejected/proposed assumptions are visible but not applied | Assumptions are not free optimization variables |
 
 ## Why It Is Worth Trying
 
-- It lets an AI agent debug from coarse signals first instead of trying to recreate an entire external simulation.
+- It lets an AI agent build a coarse physical map first instead of trying to recreate an entire external simulation.
+- It turns "something is physically wrong" into a localizable chain: symptom -> boundary -> residual -> suspicious block -> next signal or parameter.
 - It ranks suspicious blocks and residuals so the next export, signal check, or parameter review is targeted.
 - It makes assumptions visible through Assumption Cards instead of letting the agent silently invent missing physics.
 - It can turn a validated low-fidelity audit hierarchy into a blueprint for a separate candidate model without claiming to recover the original solver.
@@ -220,13 +235,28 @@ MIT License. See [LICENSE](LICENSE).
 **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`  
 **许可证：** MIT
 
-PhysicsGuard 是一个 Python 核心库和 Codex skill，用于 AI 辅助物理仿真调试。它从导出或用户映射好的信号出发，构建低保真 residual 和 hierarchy 审计，直接检查 observed values，排序可疑 block，暴露 assumption，并推荐下一步应该查看的信号或参数。
+PhysicsGuard 是一个 Python 核心库和 Codex skill，用于 AI 辅助物理仿真调试。它帮助 AI agent 在调试或生成模型之前，先搭出一个低保真的物理理解图：可见故障、子系统层级、接口、SI 单位、守恒关系、信号映射、假设和 residual 检查。
 
-它也可以产出模型搭建蓝图：当一个低保真 hierarchy 被验证后，AI agent 可以把其中已检查的接口、单位、假设和 block 关系，通过官方 API 或用户自己可编辑的模板翻译成独立候选模型。PhysicsGuard **不会**解析商业工具，**不会**逆向求解器格式，**不会**替代原始求解器，也**不会**声称高保真等价。它只把映射好的数值放进显式残差方程里检查。
+基于这张图，PhysicsGuard 可以直接检查导出或用户映射好的 observed values，排序可疑 block，暴露 assumption，推荐下一步应该查看的信号或参数，并产出候选模型蓝图。模型生成路径保持独立：AI agent 可以把已检查的接口、单位、假设和 block 关系，通过官方 API 或用户自己可编辑的模板翻译成独立候选模型，再把候选模型输出映射回 PhysicsGuard 做 residual 检查。
+
+PhysicsGuard **不会**解析商业工具，**不会**逆向求解器格式，**不会**替代原始求解器，也**不会**声称高保真等价。它只把映射好的数值放进显式低保真残差方程里检查，并把原始工程模型保留为真实来源。
+
+## 它能搭出并检查什么
+
+PhysicsGuard 的输出不是一张孤立的 residual 分数表，而是一条受约束的 AI 工作路径：先建立物理理解，再用这个理解选择下一步调试或模型搭建动作。
+
+| 目标 | 模型先行输出 | 什么让它可信 | 边界 |
+| --- | --- | --- | --- |
+| 理解一个仿真故障 | Level 0 物理图：可见 symptom、子系统边界、预期守恒关系、关键信号、SI 单位、assumption、第一批 residual | 这张图写成可检查的 YAML hierarchy/spec object，可以在继续导出信号前先被审阅 | 它是低保真审计图，不是原始求解器替代品 |
+| 定位可疑物理或信号错误 | 带有 `top_blocks`、`top_residuals`、assumption cards 和 `recommended_refinements` 的 hierarchy report | observed values 被直接代入显式 residual equation；可疑 block 是按残差排序，不是靠自然语言猜 | block score 是诊断启发式，不证明唯一故障原因 |
+| 决定下一批导出什么 | 与失败 residual 绑定的信号/参数请求 | 报告要求下一批有用变量、单位、bounds、maps 或参数，而不是要求整个外部模型 | 缺失数据保持显式；PhysicsGuard 不应该发明 mapping 或 assumption |
+| 搭建候选模型 | interface、unit、assumption、block relation、example、refinement order 蓝图 | 每个 block 可以先用 PhysicsGuard example、observed data 或 conflict case 验证，再组装更大系统 | 候选模型是新的工程 artifact，不是还原商业模型 |
+| 约束 AI 的物理假设 | active/proposed/rejected/high-impact Assumption Cards | assumption 出现在 diagnostic JSON；rejected/proposed assumption 可见但不被应用 | assumption 不是自由 optimization variable |
 
 ## 为什么值得一试
 
-- 它让 AI agent 先从粗粒度信号调试，而不是一上来就试图重建整个外部仿真。
+- 它让 AI agent 先搭粗粒度物理图，而不是一上来就试图重建整个外部仿真。
+- 它把“物理上不对劲”拆成可定位链条：symptom -> boundary -> residual -> suspicious block -> 下一批信号或参数。
 - 它会排序可疑 block 和 residual，让下一次导出信号、检查映射或审参数更有目标。
 - 它用 Assumption Cards 暴露假设，避免 agent 默默补物理假设。
 - 它可以把验证过的低保真审计 hierarchy 变成独立候选模型蓝图，同时不声称还原原始求解器。
@@ -303,7 +333,7 @@ python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty
 7. 用残差决定是细化、重连还是修正生成的 block。
 8. 只有 child block 通过相关检查后，才组装更大的 subsystem。
 
-## Assumption Cards
+## 假设卡片
 
 PhysicsGuard 使用显式 Assumption Cards。假设不是静默默认值：
 
