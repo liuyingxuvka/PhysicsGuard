@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: coolant loop level 0 cooling balance.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/coolant_loop/level_0_cooling_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: coolant_loop_level_0_cooling_balance
 system:
   system_name: coolant_loop_level_0_cooling_balance

@@ -1,3 +1,8 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Observed Faraday-rate values consistent with the low-fidelity relation.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 observation_name: physical_faraday_observed_clean
 description: Observed Faraday-rate values consistent with the low-fidelity relation.
 variables:

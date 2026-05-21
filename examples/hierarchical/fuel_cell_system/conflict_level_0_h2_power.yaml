@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 coarse fuel-cell system balance audit.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/fuel_cell_system/conflict_level_0_h2_power.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: fuel_cell_conflict_level_0_h2_power
 description: Level 0 coarse fuel-cell system balance audit.
 system:

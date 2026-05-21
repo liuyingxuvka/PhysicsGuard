@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 cross-domain primitive audit for explicit unit conversion, sensor scale/offset, unmetered loss, and sampling-delay checks.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/cross_domain_audit_primitives/level_0_cross_domain_primitives.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: cross_domain_audit_primitives_level_0
 description: Level 0 cross-domain primitive audit for explicit unit conversion, sensor
   scale/offset, unmetered loss, and sampling-delay checks.

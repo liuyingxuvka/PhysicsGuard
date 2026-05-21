@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: component signal delay step.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/components/control_sensor_actuator/signal_delay_step.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: component_signal_delay_step
 components:
   - id: delay

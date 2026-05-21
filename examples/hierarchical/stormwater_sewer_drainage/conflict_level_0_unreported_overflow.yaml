@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 stormwater, sewer, and drainage conflict example with intentionally under-reported overflow flow.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/stormwater_sewer_drainage/conflict_level_0_unreported_overflow.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: stormwater_sewer_drainage_conflict_level_0_unreported_overflow
 description: Level 0 stormwater, sewer, and drainage conflict example with intentionally under-reported overflow flow.
 system:

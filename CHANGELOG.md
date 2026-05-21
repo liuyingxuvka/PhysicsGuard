@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.2 - 2026-05-21
+
+Portable model-file provenance update.
+
+- Added portable YAML comment headers to committed PhysicsGuard audit examples, hierarchy templates, and observed snapshots.
+- Added a reusable header maintenance script plus tests to keep future committed example YAML files self-describing and parseable.
+- Updated skill, docs, README, package URLs, and generated starter-pack output so future YAML artifacts point back to the PhysicsGuard GitHub repository and preserve the low-fidelity SI-unit safety boundary.
+
 ## v0.2.1 - 2026-05-18
 
 Skill workflow header update.

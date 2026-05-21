@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 coarse medical/bioprocess equipment audit for ventilator flow, dialysis flow, sterilizer heat, and incubator temperature.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/medical_bioprocess_equipment/level_0_medical_bioprocess_equipment_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: medical_bioprocess_equipment_level_0
 description: Level 0 coarse medical/bioprocess equipment audit for ventilator flow,
   dialysis flow, sterilizer heat, and incubator temperature.

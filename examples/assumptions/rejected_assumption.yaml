@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: Demonstrates that rejected assumptions are reported but not applied.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/assumptions/rejected_assumption.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: assumption_rejected_not_applied
 description: Demonstrates that rejected assumptions are reported but not applied.
 components:

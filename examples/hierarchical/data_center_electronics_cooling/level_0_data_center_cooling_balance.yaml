@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 coarse data-center and electronics-cooling audit for IT power-to-heat, facility power, PUE, cooling heat balance, cooling COP, and supply-...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/data_center_electronics_cooling/level_0_data_center_cooling_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: data_center_electronics_cooling_level_0_balance
 description: Level 0 coarse data-center and electronics-cooling audit for IT power-to-heat, facility power, PUE, cooling heat balance, cooling COP, and supply-air temperature.
 system:

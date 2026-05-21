@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Cross-domain primitive audit with intentionally wrong converted temperature.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/cross_domain_audit_primitives/conflict_level_0_bad_temperature_offset.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: cross_domain_audit_primitives_conflict_bad_temperature_offset
 description: Cross-domain primitive audit with intentionally wrong converted temperature.
 hierarchy:

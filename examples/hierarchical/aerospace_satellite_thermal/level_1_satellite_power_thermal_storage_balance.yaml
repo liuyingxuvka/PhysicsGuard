@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 coarse aerospace/satellite audit for solar power, internal heat, radiator rejection, and battery charging.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/aerospace_satellite_thermal/level_1_satellite_power_thermal_storage_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: aerospace_satellite_thermal_level_1
 description: Level 0 coarse aerospace/satellite audit for solar power, internal heat,
   radiator rejection, and battery charging.

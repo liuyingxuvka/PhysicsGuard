@@ -3,6 +3,11 @@
 Hierarchical audit YAML wraps a normal PhysicsGuard `SystemSpec` with a `hierarchy` section.
 
 ```yaml
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Coarse whole-system fuel-cell audit.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run this_file.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: fuel_cell_system_level_0
 description: Coarse whole-system fuel-cell audit
 system:

@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: component turbo power balance.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/components/engine_aftertreatment/turbo_power_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: component_turbo_power_balance
 components:
   - id: turbo

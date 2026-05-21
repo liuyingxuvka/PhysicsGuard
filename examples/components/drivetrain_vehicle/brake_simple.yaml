@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: component brake simple.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/components/drivetrain_vehicle/brake_simple.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: component_brake_simple
 components:
   - id: brake

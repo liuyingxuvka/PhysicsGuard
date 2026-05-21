@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 1 data-center and electronics-cooling audit for IT heat, room cooling, cooling loop, cooling plant COP, and facility power-chain blocks.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/data_center_electronics_cooling/level_1_it_room_cooling_power_chain.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: data_center_electronics_cooling_level_1_it_room_cooling_power_chain
 description: Level 1 data-center and electronics-cooling audit for IT heat, room cooling, cooling loop, cooling plant COP, and facility power-chain blocks.
 system:

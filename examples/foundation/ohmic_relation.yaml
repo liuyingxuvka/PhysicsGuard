@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: foundation ohmic relation.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/foundation/ohmic_relation.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: foundation_ohmic_relation
 components:
   - id: resistor

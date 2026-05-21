@@ -44,7 +44,7 @@ A full model-generation pass should produce:
 - an observed-results mapping back to PhysicsGuard;
 - a residual report showing whether the generated model still matches the blueprint.
 
-New PhysicsGuard YAML files created during this pass should start with the standard PhysicsGuard comment header from the skill instructions, so later agents immediately see the intended use, full skill entry point, SI-unit expectation, and non-equivalence boundary.
+New PhysicsGuard YAML files created during this pass must start with the standard PhysicsGuard comment header from the skill instructions, including a file-specific `Purpose`, the public repository URL, a likely CLI use hint, the SI-unit expectation, and the non-equivalence boundary. Keep that context in YAML comments rather than adding schema metadata solely for provenance.
 
 ## Stop conditions
 

@@ -5,6 +5,8 @@ from typing import Any
 
 import yaml
 
+from portable_model_headers import header_for
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples" / "hierarchical"
@@ -256,7 +258,9 @@ def build_template(pack: dict[str, Any], *, conflict: bool = False, level: int =
 
 def write_yaml(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=False), encoding="utf-8")
+    rel_path = path.relative_to(ROOT)
+    body = yaml.safe_dump(data, sort_keys=False, allow_unicode=False)
+    path.write_text(header_for(rel_path, data) + body, encoding="utf-8")
 
 
 def v(var_id: str, unit: str | None, value: float, scale: float | None = None) -> dict[str, Any]:

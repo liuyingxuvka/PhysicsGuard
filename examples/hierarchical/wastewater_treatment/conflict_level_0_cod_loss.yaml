@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 wastewater audit with an intentionally missing COD sink.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/wastewater_treatment/conflict_level_0_cod_loss.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: wastewater_conflict_level_0_cod_loss
 description: Level 0 wastewater audit with an intentionally missing COD sink.
 system:

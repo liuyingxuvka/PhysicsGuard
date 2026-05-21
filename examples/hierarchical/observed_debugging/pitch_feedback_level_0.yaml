@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Direct observed-value hierarchical audit for a mapped controller feedback signal.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: observed_pitch_feedback_level_0
 description: Direct observed-value hierarchical audit for a mapped controller feedback signal.
 system:

@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 process-industry audit with an intentionally under-reported cooling duty.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/process_industry/conflict_level_0_missing_cooling_duty.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: process_industry_conflict_level_0_missing_cooling_duty
 description: Level 0 process-industry audit with an intentionally under-reported cooling duty.
 system:

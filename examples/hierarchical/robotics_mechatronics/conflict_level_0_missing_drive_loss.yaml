@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 robotics/mechatronics audit with intentionally missing drive loss.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/robotics_mechatronics/conflict_level_0_missing_drive_loss.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: robotics_mechatronics_conflict_missing_drive_loss
 description: Level 0 robotics/mechatronics audit with intentionally missing drive
   loss.

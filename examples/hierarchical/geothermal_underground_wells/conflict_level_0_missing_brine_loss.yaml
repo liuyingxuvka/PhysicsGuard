@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 geothermal audit with intentionally missing brine/steam loss.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/geothermal_underground_wells/conflict_level_0_missing_brine_loss.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: geothermal_underground_wells_conflict_missing_brine_loss
 description: Level 0 geothermal audit with intentionally missing brine/steam loss.
 system:

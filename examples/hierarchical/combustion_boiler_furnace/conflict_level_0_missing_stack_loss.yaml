@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 combustion audit with intentionally missing stack heat loss.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/combustion_boiler_furnace/conflict_level_0_missing_stack_loss.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: combustion_boiler_furnace_conflict_missing_stack_loss
 description: Level 0 combustion audit with intentionally missing stack heat loss.
 system:

@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: pid actuator conflict actuator feedback.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/pid_actuator_loop/conflict_actuator_feedback.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: pid_actuator_conflict_actuator_feedback
 system:
   system_name: pid_actuator_conflict_actuator_feedback

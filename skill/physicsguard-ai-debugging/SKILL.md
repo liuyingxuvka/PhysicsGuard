@@ -47,15 +47,14 @@ Treat generated target models as candidate engineering models, not recovered cop
 
 ## Required Header For New PhysicsGuard YAML
 
-When creating a new PhysicsGuard audit YAML, hierarchy template, observed snapshot, or candidate-model blueprint, put this one-layer comment header at the top of the file before the YAML content:
+When creating a new PhysicsGuard audit YAML, hierarchy template, observed snapshot, or candidate-model blueprint, put this one-layer comment header at the top of the file before the YAML content. Make the `Purpose` line specific to the file so the YAML stays understandable on a machine that does not have this skill installed:
 
 ```yaml
 # PhysicsGuard audit/model blueprint
-# This file is a low-fidelity residual audit or candidate-model blueprint for AI-guided engineering debugging.
-# Use it with the PhysicsGuard Codex skill for the full workflow:
-# https://github.com/liuyingxuvka/PhysicsGuard
-# Keep SI units, explicit assumptions, documented residuals, and clear signal mappings.
-# Do not treat this file as a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Purpose: Low-fidelity residual audit for <short model purpose>.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli <run|hierarchy run|hierarchy evaluate> ...
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 ```
 
 Keep the header as comments only. Do not add provenance metadata solely for this header unless the YAML schema or the user's task already needs metadata for another reason.

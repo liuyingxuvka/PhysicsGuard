@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 coarse water-supply audit for treatment outflow, distribution leakage, storage, and pump power.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/water_supply_network/level_0_water_supply_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: water_supply_network_level_0
 description: Level 0 coarse water-supply audit for treatment outflow, distribution
   leakage, storage, and pump power.

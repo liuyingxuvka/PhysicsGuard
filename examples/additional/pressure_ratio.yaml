@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: additional pressure ratio.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/additional/pressure_ratio.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: additional_pressure_ratio
 components:
   - id: pr

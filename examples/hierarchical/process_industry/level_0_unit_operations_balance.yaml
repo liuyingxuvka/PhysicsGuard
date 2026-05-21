@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 coarse process-industry audit for plant mass, species conversion, heat duty, and utility power accounting.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/process_industry/level_0_unit_operations_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: process_industry_level_0_unit_operations_balance
 description: Level 0 coarse process-industry audit for plant mass, species conversion, heat duty, and utility power accounting.
 system:

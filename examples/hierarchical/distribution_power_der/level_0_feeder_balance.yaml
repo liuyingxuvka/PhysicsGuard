@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 coarse distribution feeder and DER audit for active power, reactive power, load power factor, and voltage-range checks.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/distribution_power_der/level_0_feeder_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: distribution_power_der_level_0_feeder_balance
 description: Level 0 coarse distribution feeder and DER audit for active power, reactive power, load power factor, and voltage-range checks.
 system:

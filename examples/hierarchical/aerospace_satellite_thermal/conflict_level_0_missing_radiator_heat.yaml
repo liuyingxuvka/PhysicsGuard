@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 0 satellite audit with intentionally missing radiator heat rejection.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/aerospace_satellite_thermal/conflict_level_0_missing_radiator_heat.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: aerospace_satellite_thermal_conflict_missing_radiator_heat
 description: Level 0 satellite audit with intentionally missing radiator heat rejection.
 system:

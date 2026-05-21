@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "physicsguard"
-version = "0.2.1"
+version = "0.2.2"
 description = "Core schema and residual-audit framework contracts for PhysicsGuard."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,6 +24,11 @@ test = [
 
 [project.scripts]
 physicsguard = "physicsguard.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/liuyingxuvka/PhysicsGuard"
+Repository = "https://github.com/liuyingxuvka/PhysicsGuard"
+Issues = "https://github.com/liuyingxuvka/PhysicsGuard/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

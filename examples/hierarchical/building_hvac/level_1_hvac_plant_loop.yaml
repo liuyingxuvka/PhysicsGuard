@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 1 building HVAC audit for zone load, chilled-water loop, chiller/condenser, air handler, plant electrical power, and district-energy interface.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/building_hvac/level_1_hvac_plant_loop.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: building_hvac_level_1_plant_loop
 description: Level 1 building HVAC audit for zone load, chilled-water loop, chiller/condenser, air handler, plant electrical power, and district-energy interface.
 system:

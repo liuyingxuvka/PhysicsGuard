@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: Demonstrates an active variable assumption as a visible fixed-value residual.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/assumptions/variable_assumption.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: assumption_variable_coolant
 description: Demonstrates an active variable assumption as a visible fixed-value residual.
 components:

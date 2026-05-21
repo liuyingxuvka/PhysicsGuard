@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: component conflict electrolyzer stack balance.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/components/electrochemical/conflict_electrolyzer_stack_balance.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: component_conflict_electrolyzer_stack_balance
 components:
   - id: el

@@ -61,7 +61,10 @@ Add a new audit relation only when it is simple, explicit, low-fidelity, and dir
 
 Do not add detailed physics, external adapters, or commercial-tool behavior.
 
+## Portable YAML Headers
+
+Every retained PhysicsGuard audit YAML, hierarchy template, observed snapshot, or candidate-model blueprint should start with a short YAML comment header. The header must identify the file as a PhysicsGuard artifact, state the file-specific purpose, point to `https://github.com/liuyingxuvka/PhysicsGuard`, give a likely CLI use hint, and state the low-fidelity SI-unit boundary. Keep this as comments so it does not change schema validation.
+
 ## Interpreting Results
 
 `top_blocks` is the AI's next search direction, not proof. `confidence` is a data-sufficiency heuristic, not probability. `recommended_refinements` should drive the next signal request or next audit template. A high residual with low confidence usually means the AI should ask for more signals before accusing a specific parameter.
-

@@ -10,9 +10,9 @@
 </p>
 <!-- README HERO END -->
 
-**Version:** `v0.2.1`  
-**Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`  
-**License:** MIT  
+- **Version:** `v0.2.2`
+- **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
+- **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
 
 PhysicsGuard is a Python core and Codex skill for AI-guided debugging around physical simulation workflows. It helps an AI agent build a low-fidelity physical understanding map before it tries to debug or generate anything: visible symptom, subsystem hierarchy, interfaces, SI units, conservation relations, signal mappings, assumptions, and residual checks.
@@ -51,6 +51,10 @@ PhysicsGuard is a transparent audit layer with four pieces:
 - hierarchical reports that rank suspicious blocks, show assumption cards, and recommend the next useful refinement.
 
 The original engineering model remains the source of truth. PhysicsGuard is the AI-facing audit lens that helps decide where to look next before exporting more signals, refining a block, or building a candidate model.
+
+## Portable YAML Files
+
+Committed PhysicsGuard YAML audits, hierarchy templates, observed snapshots, and model-blueprint files start with a short comment header. The header states the file purpose, points back to `https://github.com/liuyingxuvka/PhysicsGuard`, gives a likely CLI entry point, and repeats the low-fidelity SI-unit safety boundary. This keeps copied model files understandable even on machines that do not have the Codex skill installed.
 
 ## The Core Contract
 
@@ -187,7 +191,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.2.1` includes low-fidelity audit relations for:
+PhysicsGuard `v0.2.2` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -231,9 +235,9 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-**版本：** `v0.2.1`  
-**运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`  
-**许可证：** MIT
+- **版本：** `v0.2.2`
+- **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
+- **许可证：** MIT
 
 PhysicsGuard 是一个 Python 核心库和 Codex skill，用于 AI 辅助物理仿真调试。它帮助 AI agent 在调试或生成模型之前，先搭出一个低保真的物理理解图：可见故障、子系统层级、接口、SI 单位、守恒关系、信号映射、假设和 residual 检查。
 
@@ -271,6 +275,10 @@ PhysicsGuard 是一个透明审计层，包含四个部分：
 - 可以排序可疑 block、显示 assumption cards 并推荐下一步 refinement 的分层报告。
 
 原始复杂工程模型仍然是真实来源。PhysicsGuard 是面向 AI 的审计视角，用来在继续导出信号、细化 block 或搭建候选模型之前判断下一步应该看哪里。
+
+## 可携带 YAML 文件
+
+仓库里保留的 PhysicsGuard YAML 审计、hierarchy 模板、observed snapshot 和候选模型蓝图文件，开头都会有一段很短的注释头。这个头会说明该文件的用途，指向 `https://github.com/liuyingxuvka/PhysicsGuard`，给出可能的 CLI 入口，并重复低保真、SI 单位和安全边界。这样文件被复制到没有安装 Codex skill 的机器上时，也能快速看懂它是什么、从哪里来、应该怎么用。
 
 ## 核心合同
 
@@ -407,7 +415,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.2.1` 包含这些低保真审计关系：
+PhysicsGuard `v0.2.2` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；

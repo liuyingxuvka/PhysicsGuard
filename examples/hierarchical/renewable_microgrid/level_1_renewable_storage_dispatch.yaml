@@ -1,3 +1,8 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Level 1 renewable microgrid audit for PV envelope, wind curtailment, battery charging, grid interchange, and site-load balance.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/renewable_microgrid/level_1_renewable_storage_dispatch.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: renewable_microgrid_level_1_renewable_storage_dispatch
 description: Level 1 renewable microgrid audit for PV envelope, wind curtailment, battery charging, grid interchange, and site-load balance.
 system:
