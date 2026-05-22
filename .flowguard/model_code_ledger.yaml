@@ -1,0 +1,233 @@
+ledger_version: 1
+project: PhysicsGuard
+updated_for_version: 0.2.3
+evidence_level: navigation
+purpose: >
+  Current ownership map from FlowGuard model responsibilities to PhysicsGuard
+  source symbols, tests, examples, boundaries, and validation commands. This
+  ledger helps future AI agents find the right implementation surface; it does
+  not prove runtime behavior or physical correctness by itself.
+entries:
+  - id: core.system_validation
+    model_file: .flowguard/physicsguard_core_model.py
+    model_blocks:
+      - ValidateSystem
+    responsibility: >
+      Validate user-supplied system, hierarchy, observation, and assumption
+      inputs before registry construction, residual assembly, or solving.
+    code_symbols:
+      - src/physicsguard/schema/system_spec.py::SystemSpec
+      - src/physicsguard/schema/hierarchy_spec.py::HierarchicalAuditSpec
+      - src/physicsguard/schema/observation_spec.py::ObservedValuesSpec
+      - src/physicsguard/schema/assumption_spec.py::AssumptionSpec
+      - src/physicsguard/io/yaml_loader.py::load_system_spec
+      - src/physicsguard/io/hierarchy_loader.py::load_hierarchical_audit_spec
+      - src/physicsguard/io/observation_loader.py::load_observed_values
+    tests:
+      - tests/test_system_spec.py
+      - tests/test_yaml_loader.py
+      - tests/test_hierarchy_spec.py
+      - tests/test_observation_spec.py
+      - tests/test_assumption_spec.py
+    examples:
+      - examples/dummy_system.yaml
+      - examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml
+      - examples/hierarchical/observed_debugging/pitch_feedback_observed_clean.yaml
+      - examples/assumptions/variable_assumption.yaml
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_core_checks.py
+        covers: FlowGuard validation branch coverage for schema and setup failures.
+      - command: python -m pytest tests/test_system_spec.py tests/test_yaml_loader.py tests/test_hierarchy_spec.py tests/test_observation_spec.py tests/test_assumption_spec.py
+        covers: Input schema and loader behavior.
+    boundaries:
+      - Invalid schema or malformed input must stop before solving.
+      - Diagnostics must remain JSON-serializable and AI-consumable.
+      - Observed values are assumed SI unless explicit conversion exists.
+    stale_when:
+      - A schema class, loader, or required validation branch is renamed, moved, or removed.
+      - New top-level input modes are added without validation ownership.
+
+  - id: core.registry_and_assumptions
+    model_file: .flowguard/physicsguard_core_model.py
+    model_blocks:
+      - BuildRegistry
+    responsibility: >
+      Build module and variable registries, apply explicit parameter assumptions,
+      reject assumptions as free variables, and preserve module-agnostic registry
+      construction.
+    code_symbols:
+      - src/physicsguard/core/residual.py::ResidualBuilder
+      - src/physicsguard/core/registry.py::VariableRegistry
+      - src/physicsguard/core/assumptions.py::AssumptionManager
+      - src/physicsguard/modules/registry.py::ModuleRegistry
+      - src/physicsguard/modules/registry.py::default_module_registry
+    tests:
+      - tests/test_residual_builder.py
+      - tests/test_variable_registry.py
+      - tests/test_assumption_manager.py
+      - tests/test_assumption_residuals.py
+    examples:
+      - examples/generic_audit_system.yaml
+      - examples/assumptions/parameter_assumption.yaml
+      - examples/assumptions/proposed_assumption.yaml
+      - examples/assumptions/rejected_assumption.yaml
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_core_checks.py
+        covers: Registry, assumption, and setup failure branches.
+      - command: python -m pytest tests/test_residual_builder.py tests/test_variable_registry.py tests/test_assumption_manager.py tests/test_assumption_residuals.py
+        covers: Registry construction, variable constraints, and explicit assumption behavior.
+    boundaries:
+      - All solver variables must have finite bounds, finite initial guesses, and positive finite scales.
+      - Proposed and rejected assumptions must be reported but not applied.
+      - Active parameter assumptions may fill or explicitly override parameters only under documented rules.
+    stale_when:
+      - Module registration moves away from ModuleRegistry.
+      - Assumption application order or free-variable behavior changes.
+
+  - id: core.residual_assembly
+    model_file: .flowguard/physicsguard_core_model.py
+    model_blocks:
+      - AssembleResiduals
+    responsibility: >
+      Assemble normalized residual records, select solver-participating residuals,
+      keep diagnostic-only post checks visible, and reject invalid residual vectors.
+    code_symbols:
+      - src/physicsguard/core/residual.py::ResidualBuilder
+      - src/physicsguard/core/residual.py::ResidualRecord
+      - src/physicsguard/core/registry.py::VariableRegistry
+    tests:
+      - tests/test_residual_builder.py
+      - tests/test_solver.py
+      - tests/test_diagnostics.py
+    examples:
+      - examples/generic_audit_system.yaml
+      - examples/generic_conflict_system.yaml
+      - examples/physical_conflict.yaml
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_core_checks.py
+        covers: Residual normalization, post_check selection, and setup failure branches.
+      - command: python -m pytest tests/test_residual_builder.py tests/test_solver.py tests/test_diagnostics.py
+        covers: Residual vector construction, solver participation, and diagnostics ranking.
+    boundaries:
+      - Residuals must be normalized before solving.
+      - post_check residuals remain diagnostic unless explicitly allowed as soft checks.
+      - Solver selection must not silently include invalid diagnostic-only checks.
+    stale_when:
+      - Residual roles, residual normalization, or solver vector selection semantics change.
+      - ResidualRecord fields are renamed or moved.
+
+  - id: core.solve_evaluate_compare
+    model_file: .flowguard/physicsguard_core_model.py
+    model_blocks:
+      - ExecuteMode
+    responsibility: >
+      Execute solve, observed-value evaluation, and reference comparison while
+      keeping optimizer convergence separate from audit plausibility and keeping
+      observed values non-mutating.
+    code_symbols:
+      - src/physicsguard/core/solver.py::BoundedSolver
+      - src/physicsguard/core/solver.py::SolverResult
+      - src/physicsguard/core/evaluator.py::AuditEvaluator
+      - src/physicsguard/core/evaluator.py::ObservedEvaluationResult
+      - src/physicsguard/core/evaluator.py::ComparisonResult
+      - src/physicsguard/cli.py::solve
+      - src/physicsguard/cli.py::evaluate
+      - src/physicsguard/cli.py::compare
+    tests:
+      - tests/test_solver.py
+      - tests/test_evaluator.py
+      - tests/test_cli.py
+    examples:
+      - examples/physical_coolant_heat_balance.yaml
+      - examples/observed/physical_coolant_observed_clean.yaml
+      - examples/observed/physical_coolant_observed_conflict.yaml
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_core_checks.py
+        covers: Solve, evaluate, compare, non-convergence, and audit-fail branches.
+      - command: python -m pytest tests/test_solver.py tests/test_evaluator.py tests/test_cli.py
+        covers: Solver results, observed evaluation, reference comparison, and CLI behavior.
+    boundaries:
+      - optimization_success is numerical optimizer convergence.
+      - audit_pass is residual-threshold plausibility.
+      - Observed evaluate mode substitutes external values directly and must not solve or move them.
+    stale_when:
+      - CLI mode routing changes.
+      - SolverResult, ObservedEvaluationResult, or ComparisonResult semantics change.
+
+  - id: core.hierarchy_modes
+    model_file: .flowguard/physicsguard_core_model.py
+    model_blocks:
+      - ExecuteMode
+      - GenerateDiagnostics
+    responsibility: >
+      Execute and report hierarchy run, plan, inspect, evaluate, and compare
+      modes without auto-refinement and without moving observed external values.
+    code_symbols:
+      - src/physicsguard/core/hierarchy.py::HierarchicalAuditRunner
+      - src/physicsguard/core/hierarchy.py::BlockIndex
+      - src/physicsguard/core/hierarchy.py::RecommendedRefinement
+      - src/physicsguard/cli.py::hierarchy_run
+      - src/physicsguard/cli.py::hierarchy_inspect
+      - src/physicsguard/cli.py::hierarchy_plan
+      - src/physicsguard/cli.py::hierarchy_evaluate
+      - src/physicsguard/cli.py::hierarchy_compare
+    tests:
+      - tests/test_hierarchy_runner.py
+      - tests/test_hierarchy_cli.py
+      - tests/test_hierarchy_block_index.py
+      - tests/test_hierarchy_refinement.py
+      - tests/test_hierarchy_scoring.py
+    examples:
+      - examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml
+      - examples/hierarchical/fuel_cell_system/conflict_level_0_h2_power.yaml
+      - examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml
+      - examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_core_checks.py
+        covers: Hierarchy run, plan, inspect, evaluate, compare, and diagnostics labels.
+      - command: python -m pytest tests/test_hierarchy_runner.py tests/test_hierarchy_cli.py tests/test_hierarchy_block_index.py tests/test_hierarchy_refinement.py tests/test_hierarchy_scoring.py
+        covers: Hierarchy execution, block ownership, scoring, refinement recommendations, and CLI behavior.
+    boundaries:
+      - hierarchy inspect validates structure without solving.
+      - hierarchy evaluate substitutes observed values without solving.
+      - hierarchy compare solves a low-fidelity reference and then evaluates observed values.
+      - Refinement rules recommend next templates but do not execute them automatically.
+    stale_when:
+      - A hierarchy mode is added, renamed, or changes solve/no-solve behavior.
+      - Block scoring, refinement, or observed hierarchy semantics change.
+
+  - id: core.diagnostics_reporting
+    model_file: .flowguard/physicsguard_core_model.py
+    model_blocks:
+      - GenerateDiagnostics
+    responsibility: >
+      Emit JSON-ready diagnostics only from valid solver, observed, comparison,
+      hierarchy, inspection, or setup-failure sources, including visible
+      assumptions and residual roles.
+    code_symbols:
+      - src/physicsguard/core/diagnostics.py::DiagnosticReporter
+      - src/physicsguard/core/diagnostics.py::DiagnosticReport
+      - src/physicsguard/core/diagnostics.py::ResidualDiagnostic
+      - src/physicsguard/core/assumptions.py::AssumptionSummary
+      - src/physicsguard/cli.py::main
+    tests:
+      - tests/test_diagnostics.py
+      - tests/test_assumption_diagnostics.py
+      - tests/test_assumption_cli.py
+      - tests/test_cli.py
+    examples:
+      - examples/dummy_system.yaml
+      - examples/generic_conflict_system.yaml
+      - examples/assumptions/variable_assumption.yaml
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_core_checks.py
+        covers: Diagnostics source ordering and assumption-reporting invariants.
+      - command: python -m pytest tests/test_diagnostics.py tests/test_assumption_diagnostics.py tests/test_assumption_cli.py tests/test_cli.py
+        covers: JSON diagnostics, warnings, assumption cards, and CLI output.
+    boundaries:
+      - Diagnostics must be JSON-serializable and suitable for AI consumption.
+      - Diagnostics must not imply audit pass just because the optimizer converged.
+      - Assumption cards must remain visible in diagnostic output.
+    stale_when:
+      - Diagnostic report fields, CLI output shape, or assumption-reporting semantics change.
+      - New execution modes emit diagnostics without being represented in the FlowGuard model.

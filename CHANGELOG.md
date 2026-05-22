@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.3 - 2026-05-22
+
+Model-code traceability update.
+
+- Added a FlowGuard model-code ledger that maps core lifecycle model blocks to source symbols, tests, examples, boundaries, stale-evidence conditions, and validation commands.
+- Added a ledger validation script plus tests so future AI agents can detect stale model-to-code references before making model-backed changes.
+- Documented the traceability workflow and release-time evidence expectations for model-backed PhysicsGuard maintenance.
+
 ## v0.2.2 - 2026-05-21
 
 Portable model-file provenance update.

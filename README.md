@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.2.2`
+- **Version:** `v0.2.3`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -55,6 +55,10 @@ The original engineering model remains the source of truth. PhysicsGuard is the 
 ## Portable YAML Files
 
 Committed PhysicsGuard YAML audits, hierarchy templates, observed snapshots, and model-blueprint files start with a short comment header. The header states the file purpose, points back to `https://github.com/liuyingxuvka/PhysicsGuard`, gives a likely CLI entry point, and repeats the low-fidelity SI-unit safety boundary. This keeps copied model files understandable even on machines that do not have the Codex skill installed.
+
+## Model-Code Traceability
+
+PhysicsGuard keeps a FlowGuard model-code ledger at `.flowguard/model_code_ledger.yaml`. It maps core model blocks to source symbols, tests, examples, boundaries, stale-evidence conditions, and validation commands so future AI agents can find the right code before changing model-backed behavior. The ledger is navigation and evidence indexing; runtime claims still require FlowGuard checks, pytest, and relevant CLI regressions.
 
 ## The Core Contract
 
@@ -191,7 +195,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.2.2` includes low-fidelity audit relations for:
+PhysicsGuard `v0.2.3` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -210,6 +214,7 @@ All modules are low-fidelity audit relations. They are intended to expose obviou
 - [Bug playbooks](docs/bug_playbooks.md)
 - [Domain starter packs](docs/domain_starter_packs.md)
 - [Module spec template](docs/module_spec_template.md)
+- [Model-code traceability](docs/model_code_traceability.md)
 
 ## Repository Map
 
@@ -218,6 +223,7 @@ src/physicsguard/                 Python package
 tests/                            Test suite
 examples/                         YAML examples and hierarchy templates
 docs/                             Workflow and schema documentation
+.flowguard/                       FlowGuard lifecycle models and traceability ledger
 scripts/                          Repository maintenance scripts
 skill/physicsguard-ai-debugging/  Local Codex skill source
 assets/readme-hero/               README hero image assets
@@ -235,7 +241,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.2.2`
+- **版本：** `v0.2.3`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -415,7 +421,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.2.2` 包含这些低保真审计关系：
+PhysicsGuard `v0.2.3` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；
@@ -434,6 +440,7 @@ PhysicsGuard `v0.2.2` 包含这些低保真审计关系：
 - [Bug playbooks](docs/bug_playbooks.md)
 - [Domain starter packs](docs/domain_starter_packs.md)
 - [Module spec template](docs/module_spec_template.md)
+- [Model-code traceability](docs/model_code_traceability.md)
 
 ## 仓库结构
 
@@ -442,6 +449,7 @@ src/physicsguard/                 Python package
 tests/                            测试
 examples/                         YAML 示例和 hierarchy templates
 docs/                             工作流和 schema 文档
+.flowguard/                       FlowGuard lifecycle models 和 traceability ledger
 scripts/                          仓库维护脚本
 skill/physicsguard-ai-debugging/  本地 Codex skill 源码
 assets/readme-hero/               README hero 图资产
