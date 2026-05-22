@@ -15,6 +15,21 @@ PhysicsGuard is a tool for AI-assisted engineering debugging. It is not expected
 
 Use `physicsguard hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty` when a solved low-fidelity reference is useful for ranking variable deviations. Use direct `hierarchy evaluate` when the external result itself is the evidence and PhysicsGuard must not move values.
 
+## Visual Audit Communication
+
+For non-trivial debugging, show one compact Mermaid diagram or table when it makes the physical audit path easier to understand. The diagram should be selected by intent, not by habit:
+
+- physical topology map for system boundaries, subsystems, interfaces, and mass, energy, heat, power, or signal flow;
+- residual localization overlay for `top_blocks`, `top_residuals`, normalized residuals, and pass/fail status;
+- observed signal mapping map for external signal names, PhysicsGuard variables, units, confidence, and review requirements;
+- assumption boundary overlay for active, proposed, and rejected assumptions and their affected variables, parameters, blocks, or residual checks;
+- coarse-to-fine refinement path for suspicious block, next template, required variables, required parameters, and rationale;
+- candidate model blueprint for validated low-fidelity blocks, interfaces, units, assumptions, examples, and target-model boundaries.
+
+Edges must keep their meaning clear. Do not mix physical flow, signal mapping, residual checks, assumptions, refinements, and required-signal dependencies into one unlabeled flowchart. Use formulae as local residual labels or companion table rows when the calculation matters.
+
+The visual is explanatory only. It does not replace `hierarchy evaluate`, `hierarchy compare`, FlowGuard checks, pytest, example regressions, or the machine-readable diagnostic report. If the visual could be mistaken for the topology of an external commercial model, state that it is only a low-fidelity PhysicsGuard audit map.
+
 ## What The AI May Do
 
 - Propose signal mappings from external model names to PhysicsGuard variables.

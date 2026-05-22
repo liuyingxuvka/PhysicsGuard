@@ -72,6 +72,23 @@ Rules return `RecommendedRefinement` objects with template ids, required variabl
 6. Run the next-level template for that block.
 7. Repeat until the issue is narrowed to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary.
 
+## Visualizing Hierarchical Audits
+
+For non-trivial hierarchy explanations, use a compact diagram or table after the relevant audit path is stable enough to explain. The default visual should be a low-fidelity physical audit map, not a recovered external-model topology.
+
+Choose the view by the relationship being explained:
+
+- physical topology: block hierarchy, subsystem boundaries, interfaces, and physical or signal flow;
+- residual localization: block tree plus failing residuals, normalized scores, top blocks, and pass/fail status;
+- observed signal mapping: external signal names mapped into PhysicsGuard variables, with units and mapping confidence;
+- assumption boundary: Assumption Cards attached to affected blocks, variables, parameters, or residual checks;
+- refinement path: suspicious parent block, recommended child template, required variables, required parameters, and rationale;
+- candidate blueprint: validated blocks, interfaces, units, assumptions, examples, and target-model generation boundary.
+
+When more than one relationship type is present, label edge meanings such as `flows_to`, `maps_to`, `checked_by`, `bounds`, `refines_to`, or `requires_signal`, or split the explanation into a diagram plus a short table. A residual equation can appear as a node label or table row, but the visual should still make the subsystem boundary and next debugging action clear.
+
+Diagrams are not validation evidence. Report validity still comes from the hierarchy JSON, FlowGuard checks, tests, CLI regressions, and release evidence.
+
 ## Observed-Value Hierarchy Mode
 
 `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty` loads a `HierarchicalAuditSpec` plus an `ObservedValuesSpec`, substitutes observed values directly into the residual system, and rolls residuals up by block. It does not solve a reference model and does not adjust observed values. The report metadata includes `mode: hierarchy_evaluate` and `solver_attempted: false`.

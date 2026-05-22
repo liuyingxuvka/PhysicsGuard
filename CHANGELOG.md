@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.0 - 2026-05-22
+
+Visual audit communication update.
+
+- Added a PhysicsGuard-specific diagram intent gate for non-trivial AI debugging, residual localization, signal mapping, assumption, refinement, and candidate-model blueprint conversations.
+- Documented the PhysicsGuard visual toolbox: physical topology maps, residual localization overlays, observed-signal mapping views, assumption boundary overlays, coarse-to-fine refinement paths, and candidate-model blueprints.
+- Clarified that visual diagrams explain the low-fidelity audit path but do not replace PhysicsGuard CLI reports, FlowGuard checks, pytest, example regressions, or release evidence.
+- Synced the installed local Codex skill guidance with the repository skill source.
+
 ## v0.2.3 - 2026-05-22
 
 Model-code traceability update.

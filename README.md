@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.2.3`
+- **Version:** `v0.3.0`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -38,6 +38,7 @@ PhysicsGuard is not just a residual score table. It gives the AI a disciplined w
 - It lets an AI agent build a coarse physical map first instead of trying to recreate an entire external simulation.
 - It turns "something is physically wrong" into a localizable chain: symptom -> boundary -> residual -> suspicious block -> next signal or parameter.
 - It ranks suspicious blocks and residuals so the next export, signal check, or parameter review is targeted.
+- It gives AI agents a visual audit language for topology, residual localization, signal mappings, assumptions, refinement paths, and candidate blueprints.
 - It makes assumptions visible through Assumption Cards instead of letting the agent silently invent missing physics.
 - It can turn a validated low-fidelity audit hierarchy into a blueprint for a separate candidate model without claiming to recover the original solver.
 
@@ -51,6 +52,19 @@ PhysicsGuard is a transparent audit layer with four pieces:
 - hierarchical reports that rank suspicious blocks, show assumption cards, and recommend the next useful refinement.
 
 The original engineering model remains the source of truth. PhysicsGuard is the AI-facing audit lens that helps decide where to look next before exporting more signals, refining a block, or building a candidate model.
+
+## Visual Audit Communication
+
+For non-trivial AI debugging conversations, PhysicsGuard agents should choose a compact Mermaid diagram or table by intent:
+
+- physical topology maps for boundaries, subsystems, interfaces, and mass, energy, heat, power, or signal flow;
+- residual localization overlays for `top_blocks`, `top_residuals`, normalized residuals, and pass/fail status;
+- observed signal mapping views for external signal names, PhysicsGuard variables, units, confidence, and review requirements;
+- assumption boundary overlays for active, proposed, and rejected assumptions and the variables, parameters, blocks, or residuals they affect;
+- coarse-to-fine refinement paths for suspicious blocks, deeper templates, required variables, required parameters, and rationale;
+- candidate-model blueprints for validated low-fidelity blocks, interfaces, units, assumptions, examples, and generation boundaries.
+
+The visual is an explanation layer, not validation evidence. PhysicsGuard still relies on explicit residual reports, FlowGuard checks, pytest, CLI regressions, and examples for release or correctness claims. Diagrams show low-fidelity audit topology only; they are not recovered commercial-model internals.
 
 ## Portable YAML Files
 
@@ -195,7 +209,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.2.3` includes low-fidelity audit relations for:
+PhysicsGuard `v0.3.0` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -241,7 +255,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.2.3`
+- **版本：** `v0.3.0`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -268,6 +282,7 @@ PhysicsGuard 的输出不是一张孤立的 residual 分数表，而是一条受
 - 它让 AI agent 先搭粗粒度物理图，而不是一上来就试图重建整个外部仿真。
 - 它把“物理上不对劲”拆成可定位链条：symptom -> boundary -> residual -> suspicious block -> 下一批信号或参数。
 - 它会排序可疑 block 和 residual，让下一次导出信号、检查映射或审参数更有目标。
+- 它给 AI agent 一套可视化审计语言，用来表达拓扑、残差定位、信号映射、假设、refinement 路径和候选模型蓝图。
 - 它用 Assumption Cards 暴露假设，避免 agent 默默补物理假设。
 - 它可以把验证过的低保真审计 hierarchy 变成独立候选模型蓝图，同时不声称还原原始求解器。
 
@@ -281,6 +296,19 @@ PhysicsGuard 是一个透明审计层，包含四个部分：
 - 可以排序可疑 block、显示 assumption cards 并推荐下一步 refinement 的分层报告。
 
 原始复杂工程模型仍然是真实来源。PhysicsGuard 是面向 AI 的审计视角，用来在继续导出信号、细化 block 或搭建候选模型之前判断下一步应该看哪里。
+
+## 可视化审计沟通
+
+在非平凡的 AI 调试对话里，PhysicsGuard agent 应该按意图选择一张紧凑 Mermaid 图或一个小表：
+
+- 物理拓扑图：展示边界、子系统、接口，以及 mass、energy、heat、power 或 signal flow；
+- residual localization overlay：展示 `top_blocks`、`top_residuals`、归一化 residual 和 pass/fail 状态；
+- observed signal mapping view：展示外部信号名、PhysicsGuard 变量、单位、confidence 和是否需要 review；
+- assumption boundary overlay：展示 active、proposed、rejected assumption 影响了哪些变量、参数、block 或 residual；
+- coarse-to-fine refinement path：展示可疑 block、下一层模板、required variables、required parameters 和 rationale；
+- candidate-model blueprint：展示已验证的低保真 block、接口、单位、assumption、examples 和生成边界。
+
+这类图只是解释层，不是验证证据。PhysicsGuard 的正确性和发布结论仍然依赖显式 residual report、FlowGuard checks、pytest、CLI regressions 和 examples。图里展示的是低保真审计拓扑，不是商业模型内部结构的还原。
 
 ## 可携带 YAML 文件
 
@@ -421,7 +449,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.2.3` 包含这些低保真审计关系：
+PhysicsGuard `v0.3.0` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；

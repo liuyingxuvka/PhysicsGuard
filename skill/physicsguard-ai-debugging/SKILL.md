@@ -9,6 +9,28 @@ description: Use PhysicsGuard for AI-guided low-fidelity audits and model-buildi
 
 Use PhysicsGuard as a transparent audit and blueprint layer for complex engineering simulations. Do not try to reproduce a full Simulink, GT-SUITE, Modelica, FMI, Amesim, MATLAB, Python, or commercial model from hidden internals. Build low-fidelity residual checks, evaluate mapped external results, rank suspicious blocks, ask for the next useful signals, and when requested, use the validated low-fidelity hierarchy as a blueprint for generating a candidate target model through official scripting interfaces.
 
+## Visual Audit Communication
+
+For non-trivial PhysicsGuard debugging, audit explanation, refinement, or candidate-model blueprint work, default to showing one compact Mermaid diagram or table once the physical-audit path is stable enough to explain. First run a PhysicsGuard diagram intent gate:
+
+- What relationship is being explained: physical topology, residual localization, observed signal mapping, assumption boundary, coarse-to-fine refinement, or candidate-model blueprint?
+- What do the edges mean: mass/energy/heat/power/signal flow, `maps_to`, `checked_by`, `bounds`, `refines_to`, or `requires_signal`?
+- Does the visual help the user see the suspicious block, evidence boundary, and next signal or parameter request?
+- Could the visual be mistaken for a recovered high-fidelity or commercial-tool topology?
+
+Choose from the PhysicsGuard visual toolbox:
+
+- Physical topology map: system boundary, subsystems, components, interfaces, and physical or signal flows.
+- Residual localization overlay: topology plus `top_blocks`, `top_residuals`, normalized residuals, `audit_pass` or `audit_fail`, and recommended next inspection.
+- Observed signal mapping map: external signal names mapped into PhysicsGuard variables, with units, confidence, and `review_required` where relevant.
+- Assumption boundary overlay: active, proposed, and rejected Assumption Cards attached to affected variables, parameters, blocks, or residual checks.
+- Coarse-to-fine refinement path: Level 0 or parent block to deeper template, required variables, required parameters, rationale, and stop/defer conditions.
+- Candidate model blueprint: validated low-fidelity blocks, interfaces, units, assumptions, examples, and target-model generation boundary.
+
+Do not flatten these modes into a generic flowchart. When a diagram mixes relationship types, label the edge semantics or pair the diagram with a small table. Formulae are useful as local residual labels or companion tables, but they should not replace the physical audit map unless the user's question is specifically about the equation.
+
+Diagrams and tables explain the audit route; they are not validation evidence. Validation claims must come from PhysicsGuard CLI output, FlowGuard checks, pytest, example regressions, or release evidence. Skip diagrams for tiny status answers, direct command results, or simple low-stakes explanations where a visual adds no clarity.
+
 ## Workflow A: Audit External Results
 
 1. Clarify the visible failure: wrong final value, unstable response, impossible pressure/flow/power/heat/current/voltage, bad efficiency, or inconsistent control logic.
@@ -21,9 +43,10 @@ Use PhysicsGuard as a transparent audit and blueprint layer for complex engineer
    ```
 
 5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `missing_required_variables`, and `missing_required_parameters`.
-6. Request or export only the next small set of signals/parameters needed by the suspicious block.
-7. Refine that block with a lower-level audit template.
-8. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition.
+6. Use a residual localization overlay or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+7. Request or export only the next small set of signals/parameters needed by the suspicious block.
+8. Refine that block with a lower-level audit template.
+9. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
@@ -38,10 +61,11 @@ Use this when the user wants AI to construct a new model, not merely inspect an 
 1. Start at the lowest useful fidelity: aggregate balances, simple component relations, and explicit interfaces.
 2. Define the target fidelity for each block before refining it.
 3. Build and validate each block in PhysicsGuard first.
-4. Generate a candidate target-model implementation only after the block passes its PhysicsGuard checks.
-5. For MATLAB/Simulink, prefer MATLAB script generation through documented APIs such as `new_system`, `add_block`, `set_param`, and `add_line`.
-6. Run the generated candidate model, map its outputs back into PhysicsGuard, and compare residuals.
-7. Refine one block at a time until the assembled candidate model is good enough for the user's purpose.
+4. Use a candidate blueprint view when it helps show validated blocks, interfaces, units, assumptions, examples, and target-model boundaries.
+5. Generate a candidate target-model implementation only after the block passes its PhysicsGuard checks.
+6. For MATLAB/Simulink, prefer MATLAB script generation through documented APIs such as `new_system`, `add_block`, `set_param`, and `add_line`.
+7. Run the generated candidate model, map its outputs back into PhysicsGuard, and compare residuals.
+8. Refine one block at a time until the assembled candidate model is good enough for the user's purpose.
 
 Treat generated target models as candidate engineering models, not recovered copies of an existing commercial model. Load `references/model-generation.md` before writing a full model-generation plan or MATLAB/Simulink script.
 
