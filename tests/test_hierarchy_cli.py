@@ -77,6 +77,8 @@ def test_hierarchy_plan_returns_recommendations_only() -> None:
     assert set(data) == {
         "top_blocks",
         "recommended_refinements",
+        "signal_mapping_ledger",
+        "bug_family_followups",
         "missing_required_variables",
         "missing_required_parameters",
         "warnings",

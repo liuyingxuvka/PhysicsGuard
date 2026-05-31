@@ -10,14 +10,14 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.3.0`
+- **Version:** `v0.3.1`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
 
 PhysicsGuard is a Python core and Codex skill for AI-guided debugging around physical simulation workflows. It helps an AI agent build a low-fidelity physical understanding map before it tries to debug or generate anything: visible symptom, subsystem hierarchy, interfaces, SI units, conservation relations, signal mappings, assumptions, and residual checks.
 
-From that map, PhysicsGuard can evaluate exported or user-mapped values directly, rank suspicious blocks, expose assumptions, recommend the next signals or parameters to inspect, and produce a candidate-model blueprint. The generated model path stays separate: an AI agent may translate checked interfaces, units, assumptions, and block relations into official APIs or user-owned editable templates, then map the candidate outputs back into PhysicsGuard for residual checks.
+From that map, PhysicsGuard can evaluate exported or user-mapped values directly, rank suspicious blocks, expose assumptions, recommend the next signals or parameters to inspect, and produce a candidate-model blueprint. Hierarchy observed reports now also include a `signal_mapping_ledger` and `bug_family_followups`, so each mapped variable can point back to its external signal, unit evidence, confidence/review state, and same-family checks such as sign, gain, unit conversion, or sibling balance issues. The generated model path stays separate: an AI agent may translate checked interfaces, units, assumptions, and block relations into official APIs or user-owned editable templates, then map the candidate outputs back into PhysicsGuard for residual checks.
 
 PhysicsGuard does **not** parse commercial tools, reverse engineer solver formats, replace the original solver, or claim high-fidelity equivalence. It checks mapped values against explicit low-fidelity residual equations and keeps the original engineering model as the source of truth.
 
@@ -164,7 +164,7 @@ Run an observed debugging hierarchy:
 python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
 ```
 
-That example represents a mapped controller feedback signal. The fault case has a reversed sign; PhysicsGuard ranks `pitch_rate_feedback` as the top suspicious block and recommends reviewing the actual gain, sign convention, and signal mapping.
+That example represents a mapped controller feedback signal. The fault case has a reversed sign; PhysicsGuard ranks `pitch_rate_feedback` as the top suspicious block, emits a signal-mapping ledger for the mapped variables, and recommends reviewing the actual gain, sign convention, mapping confidence, unit conversion, and related signal-chain mappings.
 
 ## Main CLI Modes
 
@@ -209,7 +209,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.3.0` includes low-fidelity audit relations for:
+PhysicsGuard `v0.3.1` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -255,13 +255,13 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.3.0`
+- **版本：** `v0.3.1`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
 PhysicsGuard 是一个 Python 核心库和 Codex skill，用于 AI 辅助物理仿真调试。它帮助 AI agent 在调试或生成模型之前，先搭出一个低保真的物理理解图：可见故障、子系统层级、接口、SI 单位、守恒关系、信号映射、假设和 residual 检查。
 
-基于这张图，PhysicsGuard 可以直接检查导出或用户映射好的 observed values，排序可疑 block，暴露 assumption，推荐下一步应该查看的信号或参数，并产出候选模型蓝图。模型生成路径保持独立：AI agent 可以把已检查的接口、单位、假设和 block 关系，通过官方 API 或用户自己可编辑的模板翻译成独立候选模型，再把候选模型输出映射回 PhysicsGuard 做 residual 检查。
+基于这张图，PhysicsGuard 可以直接检查导出或用户映射好的 observed values，排序可疑 block，暴露 assumption，推荐下一步应该查看的信号或参数，并产出候选模型蓝图。层级 observed 报告现在还会包含 `signal_mapping_ledger` 和 `bug_family_followups`，让每个映射变量指回外部信号、单位证据、置信度/复核状态，以及同类问题追查方向，比如符号、增益、单位转换或相邻平衡项。模型生成路径保持独立：AI agent 可以把已检查的接口、单位、假设和 block 关系，通过官方 API 或用户自己可编辑的模板翻译成独立候选模型，再把候选模型输出映射回 PhysicsGuard 做 residual 检查。
 
 PhysicsGuard **不会**解析商业工具，**不会**逆向求解器格式，**不会**替代原始求解器，也**不会**声称高保真等价。它只把映射好的数值放进显式低保真残差方程里检查，并把原始工程模型保留为真实来源。
 
@@ -449,7 +449,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.3.0` 包含这些低保真审计关系：
+PhysicsGuard `v0.3.1` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；

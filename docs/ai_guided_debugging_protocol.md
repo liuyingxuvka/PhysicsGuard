@@ -6,9 +6,9 @@ PhysicsGuard is a tool for AI-assisted engineering debugging. It is not expected
 
 1. Start with the user-visible failure: wrong final value, impossible pressure, excessive heat, bad power, unstable response, or similar.
 2. Build a Level 0 audit with coarse balances or simple signal relations.
-3. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings must be recorded in metadata or Assumption Cards.
+3. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings should use first-class mapping fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, conversion notes, or stale conditions.
 4. Run `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty`.
-5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, and `recommended_refinements`.
+5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, and `bug_family_followups`.
 6. Request or export only the next variables and parameters named by `recommended_refinements`.
 7. Create or choose the next-level audit template for the suspicious block.
 8. Repeat until the issue is localized to a subsystem, component, signal chain, map, unit conversion, parameter, or boundary condition.
@@ -21,7 +21,7 @@ For non-trivial debugging, show one compact Mermaid diagram or table when it mak
 
 - physical topology map for system boundaries, subsystems, interfaces, and mass, energy, heat, power, or signal flow;
 - residual localization overlay for `top_blocks`, `top_residuals`, normalized residuals, and pass/fail status;
-- observed signal mapping map for external signal names, PhysicsGuard variables, units, confidence, and review requirements;
+- observed signal mapping map for external signal names, PhysicsGuard variables, units, confidence, review requirements, stale mappings, and missing conversion evidence;
 - assumption boundary overlay for active, proposed, and rejected assumptions and their affected variables, parameters, blocks, or residual checks;
 - coarse-to-fine refinement path for suspicious block, next template, required variables, required parameters, and rationale;
 - candidate model blueprint for validated low-fidelity blocks, interfaces, units, assumptions, examples, and target-model boundaries.
@@ -59,6 +59,21 @@ metadata:
       external_signal: f14/Controller/Gain2_input
       confidence: medium
       review_required: true
+```
+
+Current `ObservedValuesSpec` files can also put these fields directly on each observed variable, which is preferred for new snapshots:
+
+```yaml
+variables:
+  controller_q_gain.x:
+    value: 2.0
+    unit: rad/s
+    external_signal: f14/Controller/Gain2_input
+    mapping_confidence: low
+    mapping_status: review_required
+    review_required: true
+    stale_when:
+      - source model was regenerated after this mapping
 ```
 
 When a mapping is uncertain enough to affect the diagnosis, use an Assumption Card or mark the mapping in metadata. Hidden mappings are not acceptable.

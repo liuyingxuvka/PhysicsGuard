@@ -93,6 +93,10 @@ Diagrams are not validation evidence. Report validity still comes from the hiera
 
 `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty` loads a `HierarchicalAuditSpec` plus an `ObservedValuesSpec`, substitutes observed values directly into the residual system, and rolls residuals up by block. It does not solve a reference model and does not adjust observed values. The report metadata includes `mode: hierarchy_evaluate` and `solver_attempted: false`.
 
+Observed values can optionally record first-class mapping evidence: `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_offset`, `conversion_note`, `mapped_at`, and `stale_when`. These fields produce a top-level `signal_mapping_ledger` in hierarchy reports. The ledger is an evidence and review index only; PhysicsGuard does not convert or rewrite observed values from it.
+
+When mapping evidence is weak or residuals point to a repeated failure pattern, hierarchy reports also include `bug_family_followups`. These records suggest same-family checks such as signal mapping, gain/sign direction, unit conversion, and conservation-balance siblings so the audit does not stop at the first suspicious variable.
+
 `physicsguard hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty` solves the low-fidelity reference first, then evaluates observed values and includes `top_variable_deviations`. This is useful when the AI wants both residual-based suspicious blocks and a reference-vs-observed variable ranking.
 
 This mode is meant for AI-guided external-model debugging: the AI or user maps external signals to PhysicsGuard variable names, and the report recommends the next small set of signals or parameters to inspect.

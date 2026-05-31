@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 import json
 import math
 from typing import Any, Iterable, Optional
@@ -14,6 +14,13 @@ from physicsguard.core.diagnostics import DiagnosticReporter, ResidualDiagnostic
 from physicsguard.core.evaluator import VariableDeviationDiagnostic
 from physicsguard.core.registry import VariableRegistry
 from physicsguard.core.residual import ResidualBuilder, ResidualRecord
+from physicsguard.core.signal_mapping import (
+    BugFamilyFollowUp,
+    SignalMappingRecord,
+    build_signal_mapping_ledger,
+    derive_bug_family_followups,
+    mapping_warnings,
+)
 from physicsguard.core.solver import BoundedSolver
 from physicsguard.schema.hierarchy_spec import (
     AuditBlockSpec,
@@ -89,6 +96,8 @@ class HierarchicalAuditReport:
     assumptions: AssumptionSummary
     warnings: list[str]
     metadata: dict[str, Any]
+    signal_mapping_ledger: list[SignalMappingRecord] = field(default_factory=list)
+    bug_family_followups: list[BugFamilyFollowUp] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -473,7 +482,7 @@ class HierarchicalAuditRunner:
             warnings.append("max observed normalized residual exceeds 10")
         assumption_summary = builder.assumption_summary()
         warnings.extend(assumption_summary.warnings)
-        return self._build_report(
+        report = self._build_report(
             builder=builder,
             all_records=diagnostic_records,
             optimization_success=True,
@@ -500,6 +509,7 @@ class HierarchicalAuditRunner:
             top_n_residuals=top_n_residuals,
             top_n_blocks=top_n_blocks,
         )
+        return _attach_signal_mapping_context(report, self.spec, observed, registry)
 
     def compare_observed(
         self,
@@ -724,10 +734,44 @@ def plan_from_report(report: HierarchicalAuditReport) -> dict[str, Any]:
     return {
         "top_blocks": [asdict(block) for block in report.top_blocks],
         "recommended_refinements": [asdict(item) for item in report.recommended_refinements],
+        "signal_mapping_ledger": [asdict(item) for item in report.signal_mapping_ledger],
+        "bug_family_followups": [asdict(item) for item in report.bug_family_followups],
         "missing_required_variables": report.missing_required_variables,
         "missing_required_parameters": report.missing_required_parameters,
         "warnings": report.warnings,
     }
+
+
+def _attach_signal_mapping_context(
+    report: HierarchicalAuditReport,
+    spec: HierarchicalAuditSpec,
+    observed: ObservedValuesSpec,
+    registry: VariableRegistry,
+) -> HierarchicalAuditReport:
+    block_index = BlockIndex(spec.hierarchy, spec.system)
+    ledger = build_signal_mapping_ledger(spec.system, observed, registry, block_lookup=block_index)
+    followups = derive_bug_family_followups(
+        top_blocks=report.top_blocks,
+        top_residuals=report.top_residuals,
+        mapping_records=ledger,
+    )
+    ledger_warnings = list(mapping_warnings(ledger))
+    metadata = {
+        **report.metadata,
+        "signal_mapping_summary": {
+            "mapped_variable_count": len(ledger),
+            "review_required_count": sum(1 for item in ledger if item.issue_codes),
+            "followup_count": len(followups),
+            "semantics": "mapping ledger records evidence and review state only; observed values are not converted or changed",
+        },
+    }
+    return replace(
+        report,
+        signal_mapping_ledger=list(ledger),
+        bug_family_followups=list(followups),
+        warnings=list(_dedupe([*report.warnings, *ledger_warnings])),
+        metadata=metadata,
+    )
 
 
 def _diagnostic_from_record(record: ResidualRecord) -> ResidualDiagnostic:

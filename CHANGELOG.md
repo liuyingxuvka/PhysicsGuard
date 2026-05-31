@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.1 - 2026-05-31
+
+Signal mapping ledger and bug-family follow-ups.
+
+- Added first-class observed signal mapping fields for external signal names, confidence, review status, explicit conversion evidence, mapped time, and stale conditions.
+- Added hierarchy report `signal_mapping_ledger` output so mapped external values point back to PhysicsGuard variables, expected units, observed units, confidence, review issues, and recommended actions.
+- Added deterministic `bug_family_followups` so one failed residual can route same-family checks such as signal mapping, gain/sign direction, unit conversion, and conservation-balance siblings.
+- Updated hierarchy planning and CLI JSON output to surface mapping ledgers and follow-ups without changing or converting observed values.
+
 ## v0.3.0 - 2026-05-22
 
 Visual audit communication update.

@@ -7,14 +7,27 @@ import sys
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.3.0"
+from physicsguard.core.signal_mapping import (
+    BugFamilyFollowUp,
+    SignalMappingRecord,
+    build_signal_mapping_ledger,
+    derive_bug_family_followups,
+    mapping_warnings,
+)
+
+__version__ = "0.3.1"
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
+    "BugFamilyFollowUp",
     "BoundHitDiagnostic",
     "DiagnosticReport",
     "DiagnosticReporter",
     "ResidualDiagnostic",
+    "SignalMappingRecord",
+    "build_signal_mapping_ledger",
+    "derive_bug_family_followups",
+    "mapping_warnings",
 ]
 
 _DIAGNOSTIC_EXPORTS = set(__all__)

@@ -6,9 +6,11 @@ Run PhysicsGuard as a coarse-to-fine diagnostic tool:
 2. Use Level 0 checks for whole-system plausibility.
 3. Use `hierarchy evaluate` for external observed results so the solver cannot move evidence.
 4. Rank suspicious blocks using `top_blocks`.
-5. Follow `recommended_refinements` to decide the next signals or parameters to request.
-6. Mark uncertain signal mappings in metadata or Assumption Cards.
-7. Refine only the suspicious block.
+5. Read `signal_mapping_ledger` for external signal names, unit evidence, confidence, review requirements, stale mappings, and missing conversions.
+6. Read `bug_family_followups` so sign/gain, unit-conversion, signal-mapping, or balance siblings are checked before the first failed residual is treated as fully localized.
+7. Follow `recommended_refinements` to decide the next signals or parameters to request.
+8. Mark uncertain signal mappings with per-variable observed fields when possible; metadata or Assumption Cards are fallback evidence.
+9. Refine only the suspicious block.
 
 Reports are machine-readable first. `optimization_success` is numerical status; `audit_pass` is residual-threshold plausibility. `confidence` is a heuristic, not probability.
 
@@ -21,4 +23,3 @@ Good next requests are small and targeted:
 - current/cell count/gas flows around one electrochemical stack.
 
 Do not use this workflow to imply equivalence with external solver internals.
-

@@ -22,7 +22,7 @@ Choose from the PhysicsGuard visual toolbox:
 
 - Physical topology map: system boundary, subsystems, components, interfaces, and physical or signal flows.
 - Residual localization overlay: topology plus `top_blocks`, `top_residuals`, normalized residuals, `audit_pass` or `audit_fail`, and recommended next inspection.
-- Observed signal mapping map: external signal names mapped into PhysicsGuard variables, with units, confidence, and `review_required` where relevant.
+- Observed signal mapping map: external signal names mapped into PhysicsGuard variables, with units, confidence, `review_required`, stale mapping notes, missing conversion evidence, and same-family follow-up checks where relevant.
 - Assumption boundary overlay: active, proposed, and rejected Assumption Cards attached to affected variables, parameters, blocks, or residual checks.
 - Coarse-to-fine refinement path: Level 0 or parent block to deeper template, required variables, required parameters, rationale, and stop/defer conditions.
 - Candidate model blueprint: validated low-fidelity blocks, interfaces, units, assumptions, examples, and target-model generation boundary.
@@ -35,18 +35,18 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 
 1. Clarify the visible failure: wrong final value, unstable response, impossible pressure/flow/power/heat/current/voltage, bad efficiency, or inconsistent control logic.
 2. Build or choose the coarsest useful PhysicsGuard audit YAML.
-3. Map external simulation signals into `ObservedValuesSpec`. AI may propose mappings, but uncertain mappings must be explicit in metadata or Assumption Cards.
+3. Map external simulation signals into `ObservedValuesSpec`. AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards are acceptable fallback evidence.
 4. Prefer direct observed evaluation:
 
    ```powershell
    python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
    ```
 
-5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `missing_required_variables`, and `missing_required_parameters`.
-6. Use a residual localization overlay or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
+6. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
 7. Request or export only the next small set of signals/parameters needed by the suspicious block.
 8. Refine that block with a lower-level audit template.
-9. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition.
+9. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
@@ -91,6 +91,7 @@ Keep the header as comments only. Do not add provenance metadata solely for this
 - Do not add high-fidelity solvers, automatic repair, or natural-language report generation.
 - Do not use assumptions as solver-tunable variables.
 - Do not silently invent signal mappings, units, or parameters.
+- Do not treat `signal_mapping_ledger` as a conversion engine. It records evidence and review state; observed values are still used exactly as supplied.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
 - For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.
 

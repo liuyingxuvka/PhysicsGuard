@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.2.3
+updated_for_version: 0.3.1
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -19,6 +19,7 @@ entries:
       - src/physicsguard/schema/system_spec.py::SystemSpec
       - src/physicsguard/schema/hierarchy_spec.py::HierarchicalAuditSpec
       - src/physicsguard/schema/observation_spec.py::ObservedValuesSpec
+      - src/physicsguard/schema/observation_spec.py::ObservedValueSpec
       - src/physicsguard/schema/assumption_spec.py::AssumptionSpec
       - src/physicsguard/io/yaml_loader.py::load_system_spec
       - src/physicsguard/io/hierarchy_loader.py::load_hierarchical_audit_spec
@@ -28,6 +29,7 @@ entries:
       - tests/test_yaml_loader.py
       - tests/test_hierarchy_spec.py
       - tests/test_observation_spec.py
+      - tests/test_signal_mapping_ledger.py
       - tests/test_assumption_spec.py
     examples:
       - examples/dummy_system.yaml
@@ -43,6 +45,7 @@ entries:
       - Invalid schema or malformed input must stop before solving.
       - Diagnostics must remain JSON-serializable and AI-consumable.
       - Observed values are assumed SI unless explicit conversion exists.
+      - Signal mapping fields record evidence and review state only; they must not mutate observed values.
     stale_when:
       - A schema class, loader, or required validation branch is renamed, moved, or removed.
       - New top-level input modes are added without validation ownership.
@@ -166,6 +169,10 @@ entries:
       - src/physicsguard/core/hierarchy.py::HierarchicalAuditRunner
       - src/physicsguard/core/hierarchy.py::BlockIndex
       - src/physicsguard/core/hierarchy.py::RecommendedRefinement
+      - src/physicsguard/core/signal_mapping.py::SignalMappingRecord
+      - src/physicsguard/core/signal_mapping.py::BugFamilyFollowUp
+      - src/physicsguard/core/signal_mapping.py::build_signal_mapping_ledger
+      - src/physicsguard/core/signal_mapping.py::derive_bug_family_followups
       - src/physicsguard/cli.py::hierarchy_run
       - src/physicsguard/cli.py::hierarchy_inspect
       - src/physicsguard/cli.py::hierarchy_plan
@@ -177,6 +184,7 @@ entries:
       - tests/test_hierarchy_block_index.py
       - tests/test_hierarchy_refinement.py
       - tests/test_hierarchy_scoring.py
+      - tests/test_signal_mapping_ledger.py
     examples:
       - examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml
       - examples/hierarchical/fuel_cell_system/conflict_level_0_h2_power.yaml
@@ -191,10 +199,12 @@ entries:
       - hierarchy inspect validates structure without solving.
       - hierarchy evaluate substitutes observed values without solving.
       - hierarchy compare solves a low-fidelity reference and then evaluates observed values.
+      - Signal mapping ledger and bug-family follow-ups are evidence-routing outputs; they do not convert values or auto-repair models.
       - Refinement rules recommend next templates but do not execute them automatically.
     stale_when:
       - A hierarchy mode is added, renamed, or changes solve/no-solve behavior.
       - Block scoring, refinement, or observed hierarchy semantics change.
+      - Signal mapping ledger or bug-family follow-up output changes.
 
   - id: core.diagnostics_reporting
     model_file: .flowguard/physicsguard_core_model.py
