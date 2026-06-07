@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.2 - 2026-06-07
+
+Guard closure maintenance upgrade.
+
+- Added a PhysicsGuard closure helper that runs hierarchy evaluation and
+  planning checks when audit and observed signal files are available.
+- Updated the PhysicsGuard skill so residual, signal-mapping, assumption,
+  boundary, and follow-up gaps produce explicit next actions before AI agents
+  can claim a debugging pass is complete.
+- Added OpenSpec and FlowGuard self-model evidence for the closure-report
+  maintenance path.
+
 ## v0.3.1 - 2026-05-31
 
 Signal mapping ledger and bug-family follow-ups.

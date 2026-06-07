@@ -54,6 +54,22 @@ Use compare mode only when a solved low-fidelity reference is intentionally usef
 python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty
 ```
 
+Before claiming the audit is localized or complete, run the closure helper when
+available:
+
+```powershell
+python %USERPROFILE%\\.codex\\skills\physicsguard-ai-debugging\scripts\physicsguard_closure_check.py --ledger <physicsguard-closure-ledger.json> --audit AUDIT.yaml --observed OBSERVED.yaml --json
+```
+
+The helper reads `audit_pass`, `top_blocks`, `top_residuals`,
+`recommended_refinements`, `signal_mapping_ledger`,
+`bug_family_followups`, `missing_required_variables`, and
+`missing_required_parameters`. If it returns `partial`, `blocked`, or
+`downgraded`, continue with the named next action: request the next required
+signals or parameters, review uncertain signal mappings, refine the suspicious
+block one level, inspect same-family unit/sign/map/balance follow-ups, rerun
+after observed snapshots change, or downgrade the localization claim.
+
 ## Workflow B: Build A Candidate Model From A PhysicsGuard Blueprint
 
 Use this when the user wants AI to construct a new model, not merely inspect an existing result.

@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.3.1`
+- **Version:** `v0.3.2`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -209,7 +209,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.3.1` includes low-fidelity audit relations for:
+PhysicsGuard `v0.3.2` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -255,7 +255,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.3.1`
+- **版本：** `v0.3.2`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -449,7 +449,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.3.1` 包含这些低保真审计关系：
+PhysicsGuard `v0.3.2` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；

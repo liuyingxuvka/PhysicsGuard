@@ -15,7 +15,7 @@ from physicsguard.core.signal_mapping import (
     mapping_warnings,
 )
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
