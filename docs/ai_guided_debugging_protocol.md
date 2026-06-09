@@ -1,17 +1,34 @@
 # AI-Guided PhysicsGuard Debugging Protocol
 
-PhysicsGuard is a tool for AI-assisted engineering debugging. It is not expected to understand every external model automatically, and it does not need to contain every possible physical module ahead of time. The intended workflow is iterative: an AI agent proposes a low-fidelity audit, maps available external signals into PhysicsGuard variables, evaluates residuals, and asks for the next small set of signals or parameters that would narrow the problem.
+PhysicsGuard is a tool for AI-assisted engineering debugging. It is not expected to understand every external model automatically, and it does not need to contain every possible physical module ahead of time. The intended workflow is iterative and evidence-gated: an AI agent checks the active project record, writes or reviews a model-understanding preflight, maps available external signals into PhysicsGuard variables, evaluates residuals, and asks for the next small set of signals or parameters that would narrow the problem.
+
+## Project And Intake Gates
+
+Before a non-trivial AI debugging claim, run or account for these gates:
+
+```powershell
+python -m physicsguard.cli project audit --pretty
+python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
+python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+python scripts/check_module_equation_ledger.py --json
+```
+
+The project audit identifies the repository, package version, workflow schema, local skill routes, and adoption log. The preflight records the visible symptom, physical boundary, unit basis, first audit level, assumptions, uncertain mappings, and stop conditions. The intake review records source-of-truth model context, mapped signals, unit/conversion evidence, confidence, stale conditions, and required reviews. The module ledger is a navigation index for low-fidelity module families; it is not physical proof.
 
 ## Core Loop
 
 1. Start with the user-visible failure: wrong final value, impossible pressure, excessive heat, bad power, unstable response, or similar.
-2. Build a Level 0 audit with coarse balances or simple signal relations.
-3. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings should use first-class mapping fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, conversion notes, or stale conditions.
-4. Run `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty`.
-5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, and `bug_family_followups`.
-6. Request or export only the next variables and parameters named by `recommended_refinements`.
-7. Create or choose the next-level audit template for the suspicious block.
-8. Repeat until the issue is localized to a subsystem, component, signal chain, map, unit conversion, parameter, or boundary condition.
+2. Check the project record with `physicsguard project audit`; adopt or upgrade the project record when it is missing or stale.
+3. Complete or review the model-understanding preflight before writing the first audit file.
+4. Build a Level 0 audit with coarse balances or simple signal relations.
+5. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings should use first-class mapping fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, conversion notes, or stale conditions.
+6. Review the external-model intake before treating residuals as fault-localization evidence.
+7. Run `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty`.
+8. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, and `bug_family_followups`.
+9. Request or export only the next variables and parameters named by `recommended_refinements`.
+10. Create or choose the next-level audit template for the suspicious block.
+11. Run closure checks or clearly downgrade the final claim when closure is partial, blocked, stale, skipped, or still has mapping-review gaps.
+12. Repeat until the issue is localized to a subsystem, component, signal chain, map, unit conversion, parameter, or boundary condition.
 
 Use `physicsguard hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty` when a solved low-fidelity reference is useful for ranking variable deviations. Use direct `hierarchy evaluate` when the external result itself is the evidence and PhysicsGuard must not move values.
 
@@ -90,6 +107,20 @@ Add a new audit relation only when it is simple, explicit, low-fidelity, and dir
 - coarse conservation relation.
 
 Do not add detailed physics, external adapters, or commercial-tool behavior.
+
+## Closure Rule
+
+Do not convert a suspicious-block ranking into a broad debugging success claim while any of these remain open:
+
+- `audit_pass` is false;
+- required variables or parameters are missing;
+- `recommended_refinements` remain unexecuted or intentionally skipped;
+- `signal_mapping_ledger` rows contain `review_required`, `low_confidence`, `missing_conversion`, or `stale_mapping`;
+- `bug_family_followups` point to same-family sign, gain, unit, map, or balance checks that have not been reviewed;
+- observed snapshots changed after the audit;
+- closure evidence records skipped checks.
+
+Use `skill/physicsguard-ai-debugging/scripts/physicsguard_closure_check.py` when audit and observed files are available. A partial, downgraded, blocked, stale, or skipped closure can still be useful, but the final wording must say exactly what remains unresolved.
 
 ## Portable YAML Headers
 

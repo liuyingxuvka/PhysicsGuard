@@ -1,0 +1,266 @@
+ledger_version: 1
+project: PhysicsGuard
+updated_for_version: 0.3.3
+evidence_level: navigation
+purpose: >
+  Machine-checkable map from representative PhysicsGuard audit module families
+  to low-fidelity equation summaries, SI-unit expectations, assumptions,
+  diagnostic keys, tests, examples, and stale-evidence triggers. This ledger
+  helps AI agents understand module intent; it is not proof of physical
+  correctness.
+entries:
+  - id: aggregate.balance_modules
+    module_types:
+      - AggregatePowerBalanceModule
+      - AggregateThermalBalanceModule
+      - AggregateMassBalanceModule
+      - AggregateElectricalBusBalanceModule
+    equation_summary: "source terms minus loads, losses, and storage terms should be near zero after normalization."
+    si_units:
+      - "Power and heat balances use W."
+      - "Mass balances use kg/s or kg depending on the template."
+    assumptions:
+      - "Signals are already mapped into compatible SI units."
+      - "Aggregate balance terms are low-fidelity accounting checks."
+    validity:
+      - "Useful for Level 0 and Level 1 localization, not detailed component simulation."
+    diagnostic_keys:
+      - aggregate_power_balance_mismatch
+      - aggregate_thermal_balance_mismatch
+      - aggregate_mass_balance_mismatch
+      - aggregate_electrical_bus_balance_mismatch
+    tests:
+      - tests/test_aggregate_modules.py
+      - tests/test_hierarchy_runner.py
+    examples:
+      - examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml
+      - examples/hierarchical/data_center_electronics_cooling/level_0_data_center_cooling_balance.yaml
+    stale_when:
+      - "Aggregate residual roles, diagnostic keys, or hierarchy block scoring changes."
+
+  - id: signal.mapping_and_unit_primitives
+    module_types:
+      - MappedSignalModule
+      - UnitScaleModule
+      - SensorScaleOffsetModule
+      - UnitConversionAuditModule
+    equation_summary: "mapped, scaled, or converted signal values should match the declared relation without mutating observed values."
+    si_units:
+      - "Target values must be stated in the PhysicsGuard variable unit."
+      - "Conversion audit modules use explicit user-provided factors and offsets."
+    assumptions:
+      - "Signal mapping confidence and stale conditions remain review metadata."
+      - "No hidden conversion table is applied."
+    validity:
+      - "Useful for unit, scale, sensor, and mapping audits."
+    diagnostic_keys:
+      - mapped_signal_boundary
+      - unit_scale_mismatch
+      - sensor_scale_offset_mismatch
+      - unit_conversion_mismatch
+    tests:
+      - tests/test_signal_mapping_ledger.py
+      - tests/test_control_signal_modules.py
+      - tests/test_component_control_sensor_actuator.py
+    examples:
+      - examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml
+      - examples/components/control_sensor_actuator/unit_conversion_audit.yaml
+    stale_when:
+      - "Observed mapping fields, conversion metadata, or signal ledger output changes."
+
+  - id: thermal.first_principles_helpers
+    module_types:
+      - ThermalConductorModule
+      - ConvectiveHeatTransferModule
+      - RadiativeHeatTransferModule
+      - ThermalCapacitanceRateModule
+      - CoolantHeatBalanceModule
+    equation_summary: "heat flow terms follow explicit low-fidelity algebraic heat-transfer or heat-balance relations."
+    si_units:
+      - "Temperature uses K."
+      - "Heat flow uses W."
+      - "Thermal conductance uses W/K or W/(m^2 K) where documented."
+    assumptions:
+      - "Coefficients are user-provided low-fidelity audit parameters."
+      - "No CFD or detailed thermal-fluid model is implied."
+    validity:
+      - "Useful for sanity checks around heat rejection, coolant, and thermal mass."
+    diagnostic_keys:
+      - thermal_conductor_mismatch
+      - convection_mismatch
+      - radiative_heat_transfer_mismatch
+      - thermal_capacitance_rate_mismatch
+      - coolant_heat_balance_mismatch
+    tests:
+      - tests/test_physical_thermal.py
+      - tests/test_physical_foundation_thermal.py
+    examples:
+      - examples/foundation/thermal_conductor.yaml
+      - examples/physical_coolant_heat_balance.yaml
+    stale_when:
+      - "Thermal residual equations, parameters, units, or diagnostic keys change."
+
+  - id: fluid.pressure_flow_helpers
+    module_types:
+      - IncompressiblePressureDropModule
+      - IncompressibleOrificeModule
+      - PumpHydraulicPowerModule
+      - PipeSegmentSimpleModule
+      - PumpSimpleModule
+    equation_summary: "flow, pressure-drop, and hydraulic-power residuals use simple algebraic relations with explicit density, area, or efficiency parameters."
+    si_units:
+      - "Pressure uses Pa."
+      - "Mass flow uses kg/s."
+      - "Volume flow uses m^3/s."
+      - "Power uses W."
+    assumptions:
+      - "Relations are low-fidelity audit checks and not detailed pump or network maps."
+    validity:
+      - "Useful for coarse pressure, flow, and pump sanity checks."
+    diagnostic_keys:
+      - incompressible_pressure_drop_mismatch
+      - incompressible_orifice_mismatch
+      - pump_hydraulic_power_mismatch
+      - pipe_segment_simple_mismatch
+      - pump_simple_mismatch
+    tests:
+      - tests/test_physical_foundation_fluid.py
+      - tests/test_component_fluid_machines.py
+      - tests/test_component_fluid_network.py
+    examples:
+      - examples/foundation/incompressible_pressure_drop.yaml
+      - examples/components/fluid_machines/pump_simple.yaml
+    stale_when:
+      - "Fluid module equations, map behavior, or extrapolation policy changes."
+
+  - id: electrical.power_helpers
+    module_types:
+      - ElectricalPowerModule
+      - OhmicRelationModule
+      - InverterSimpleModule
+      - DCDCConverterSimpleModule
+      - HVBusPowerBalanceModule
+    equation_summary: "electrical voltage, current, resistance, conversion, and bus power relations should close within normalized residual thresholds."
+    si_units:
+      - "Voltage uses V."
+      - "Current uses A."
+      - "Resistance uses ohm."
+      - "Power uses W."
+    assumptions:
+      - "Efficiency and sign conventions must be explicit."
+      - "No detailed power electronics switching model is implied."
+    validity:
+      - "Useful for power-chain and electrical bus audits."
+    diagnostic_keys:
+      - electrical_power_mismatch
+      - ohmic_relation_mismatch
+      - inverter_simple_mismatch
+      - dcdc_converter_simple_mismatch
+      - hv_bus_power_balance_mismatch
+    tests:
+      - tests/test_physical_foundation_electrical.py
+      - tests/test_component_electric.py
+      - tests/test_component_battery_hv.py
+    examples:
+      - examples/foundation/electrical_power.yaml
+      - examples/components/electric/inverter_simple.yaml
+    stale_when:
+      - "Electrical module sign convention, efficiency handling, or diagnostic keys change."
+
+  - id: control.single_step_helpers
+    module_types:
+      - ControlErrorModule
+      - SaturationModule
+      - RateLimiterModule
+      - PIDAlgebraicModule
+      - PIDControllerStepModule
+    equation_summary: "single-step control relations compare commands, measurements, limits, gains, and state updates without full time-series simulation."
+    si_units:
+      - "Control variables use explicitly declared signal units."
+      - "Time-step parameters use s where present."
+    assumptions:
+      - "Rate-limit and state checks are single-step diagnostics unless a time-series evaluator is explicitly requested."
+    validity:
+      - "Useful for sign, gain, saturation, clamp, and one-step controller audits."
+    diagnostic_keys:
+      - control_error_mismatch
+      - saturation_mismatch
+      - rate_limiter_violation
+      - pid_algebraic_mismatch
+      - pid_controller_step_mismatch
+    tests:
+      - tests/test_control_signal_modules.py
+      - tests/test_control_pid_helpers.py
+      - tests/test_component_control.py
+    examples:
+      - examples/control/control_error.yaml
+      - examples/components/control/pid_controller_step.yaml
+    stale_when:
+      - "Control residual roles, single-step semantics, or post-check policy changes."
+
+  - id: electrochemical.low_fidelity_helpers
+    module_types:
+      - ElectrochemicalFaradayRateModule
+      - ElectrochemicalStackPowerModule
+      - FuelCellStackBalanceModule
+      - ElectrolyzerStackBalanceModule
+      - FuelCellCathodeAirSupplyModule
+      - ElectrolyzerGasProductionModule
+    equation_summary: "Faraday, stack power, gas, water, and auxiliary balance checks use explicit low-fidelity electrochemical accounting relations."
+    si_units:
+      - "Current uses A."
+      - "Molar flow uses mol/s."
+      - "Power uses W."
+      - "Mass flow uses kg/s where applicable."
+    assumptions:
+      - "Cell count, Faraday constants, stoichiometry, and efficiencies are explicit parameters."
+      - "No full polarization physics is implied unless the map module explicitly documents it."
+    validity:
+      - "Useful for fuel-cell and electrolyzer sanity checks."
+    diagnostic_keys:
+      - electrochemical_faraday_rate_mismatch
+      - electrochemical_stack_power_mismatch
+      - fuel_cell_stack_balance_mismatch
+      - electrolyzer_stack_balance_mismatch
+      - fuel_cell_cathode_air_supply_mismatch
+      - electrolyzer_gas_production_mismatch
+    tests:
+      - tests/test_physical_electrochemical.py
+      - tests/test_component_electrochemical.py
+      - tests/test_component_electrochemical_bop.py
+    examples:
+      - examples/physical_faraday_rate.yaml
+      - examples/components/electrochemical/fuel_cell_stack_balance.yaml
+    stale_when:
+      - "Electrochemical equations, validity boundaries, or diagnostic keys change."
+
+  - id: map.lookup_helpers
+    module_types:
+      - LookupTable1DModule
+      - LookupTable2DModule
+      - EfficiencyMap2DModule
+      - MapAxisBoundsCheckModule
+      - MapMonotonicityCheckModule
+    equation_summary: "lookup and map checks compare declared map axes, interpolation outputs, bounds, and monotonicity behavior."
+    si_units:
+      - "Axis and output units must be documented by the user or module example."
+    assumptions:
+      - "Extrapolation behavior must be explicit."
+      - "Map checks do not reconstruct commercial calibration maps."
+    validity:
+      - "Useful for map axis, interpolation, bounds, and monotonicity audits."
+    diagnostic_keys:
+      - lookup_table_1d_mismatch
+      - lookup_table_2d_mismatch
+      - efficiency_map_2d_mismatch
+      - map_axis_bounds_check_mismatch
+      - map_monotonicity_check_mismatch
+    tests:
+      - tests/test_lookup_modules.py
+      - tests/test_component_maps.py
+      - tests/test_component_control_sensor_actuator.py
+    examples:
+      - examples/control/lookup_table_1d.yaml
+      - examples/components/maps/lookup_table_2d.yaml
+    stale_when:
+      - "Map axis validation, interpolation, or extrapolation behavior changes."

@@ -88,10 +88,23 @@ def check(args: argparse.Namespace) -> dict[str, Any]:
             findings.append(_finding(severity, field, f"PhysicsGuard reported {field}.", count=len(rows), rows=rows))
 
     signal_rows = _list(merged.get("signal_mapping_ledger"))
-    review_rows = [
-        row for row in signal_rows
-        if isinstance(row, dict) and str(row.get("review_required", "")).lower() in {"true", "yes", "1"}
-    ]
+    review_issue_codes = {
+        "review_required",
+        "low_confidence",
+        "missing_conversion",
+        "stale_mapping",
+    }
+    review_rows = []
+    for row in signal_rows:
+        if not isinstance(row, dict):
+            continue
+        issue_codes = row.get("issue_codes")
+        issue_set = {str(item) for item in issue_codes} if isinstance(issue_codes, list) else set()
+        if (
+            str(row.get("review_required", "")).lower() in {"true", "yes", "1"}
+            or bool(issue_set & review_issue_codes)
+        ):
+            review_rows.append(row)
     if review_rows:
         findings.append(_finding("warning", "signal_mapping_review_required", "Signal mappings still need review.", count=len(review_rows), rows=review_rows))
 
@@ -105,6 +118,8 @@ def check(args: argparse.Namespace) -> dict[str, Any]:
         findings.append(_finding("warning", "physicsguard_missing_inputs", "PhysicsGuard closure inputs are incomplete.", count=len(missing_inputs)))
     if stale_evidence:
         findings.append(_finding("error", "stale_physicsguard_evidence", "PhysicsGuard evidence is stale.", count=len(stale_evidence)))
+    if skipped_checks:
+        findings.append(_finding("warning", "skipped_physicsguard_checks", "PhysicsGuard closure has skipped checks.", count=len(skipped_checks)))
 
     hard = any(str(item.get("severity", "")).lower() in {"error", "blocker"} for item in findings)
     declared = str(ledger.get("closure_status", "")).lower()
@@ -128,6 +143,10 @@ def check(args: argparse.Namespace) -> dict[str, Any]:
         next_actions.append({"owner": "physicsguard-ai-debugging", "action": "inspect_same_family_unit_sign_map_or_balance_followups"})
     if stale_evidence:
         next_actions.append({"owner": "flowguard", "action": "rerun_physicsguard_after_observed_snapshot_change"})
+    if any(item.get("type") == "signal_mapping_review_required" for item in findings):
+        next_actions.append({"owner": "physicsguard-ai-debugging", "action": "review_signal_mapping_confidence_units_and_staleness"})
+    if skipped_checks:
+        next_actions.append({"owner": "physicsguard-ai-debugging", "action": "run_or_scope_skipped_physicsguard_checks"})
 
     return {
         "owner_guard": "physicsguard-ai-debugging",

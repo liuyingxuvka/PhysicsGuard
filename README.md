@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.3.2`
+- **Version:** `v0.3.3`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -74,6 +74,26 @@ Committed PhysicsGuard YAML audits, hierarchy templates, observed snapshots, and
 
 PhysicsGuard keeps a FlowGuard model-code ledger at `.flowguard/model_code_ledger.yaml`. It maps core model blocks to source symbols, tests, examples, boundaries, stale-evidence conditions, and validation commands so future AI agents can find the right code before changing model-backed behavior. The ledger is navigation and evidence indexing; runtime claims still require FlowGuard checks, pytest, and relevant CLI regressions.
 
+## AI Workflow Governance
+
+PhysicsGuard keeps a project workflow record at `.physicsguard/project.yaml` and a module/equation ledger at `.physicsguard/module_equation_ledger.yaml`. These files help an AI agent answer four practical questions before it makes a debugging claim:
+
+- Which PhysicsGuard repository, package version, and skill routes am I using?
+- What is the visible physical symptom, system boundary, unit basis, first audit level, and stop condition?
+- Which external signals were mapped into PhysicsGuard variables, and which mappings still need review?
+- Which low-fidelity module family, equation summary, tests, examples, and closure checks support this claim?
+
+The workflow commands are:
+
+```powershell
+python -m physicsguard.cli project audit --pretty
+python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
+python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+python scripts/check_module_equation_ledger.py --json
+```
+
+These checks do not prove the external model is correct. They keep the AI grounded in the current PhysicsGuard version, explicit physical boundaries, reviewable signal mappings, and fresh closure evidence.
+
 ## The Core Contract
 
 PhysicsGuard is strongest when the boundary is explicit:
@@ -104,19 +124,21 @@ Generated target models should be treated as candidate engineering models, not r
 
 ## Core Audit Workflow
 
-1. Start from a visible failure: wrong final value, unstable response, impossible heat rejection, broken stack balance, or suspicious subsystem behavior.
-2. Build a coarse Level 0 audit with simple balances, signal relations, units, and assumptions.
-3. Map external simulation results into `ObservedValuesSpec`.
-4. Run direct hierarchical evaluation:
+1. Run `python -m physicsguard.cli project audit --pretty` so the AI knows the active PhysicsGuard repository, package version, skill routes, and local adoption record.
+2. Complete or review a model-understanding preflight: visible failure, physical boundary, unit basis, subsystem blocks, known assumptions, uncertain mappings, and stop conditions.
+3. Build a coarse Level 0 audit with simple balances, signal relations, units, and assumptions.
+4. Map external simulation results into `ObservedValuesSpec` and review the external-model intake before making fault-localization claims.
+5. Run direct hierarchical evaluation:
 
 ```powershell
 python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
 ```
 
-5. Inspect `top_blocks`, `top_residuals`, assumptions, and `recommended_refinements`.
-6. Export only the next variables or parameters that the report actually asks for.
-7. Refine the suspicious block rather than modeling the entire external system.
-8. Repeat until the issue is localized to a subsystem, component, signal chain, map, parameter, unit conversion, or boundary condition.
+6. Inspect `top_blocks`, `top_residuals`, assumptions, `signal_mapping_ledger`, `bug_family_followups`, and `recommended_refinements`.
+7. Export only the next variables or parameters that the report actually asks for.
+8. Refine the suspicious block rather than modeling the entire external system.
+9. Before a final localization claim, run the closure helper or record why closure is partial, downgraded, blocked, stale, or skipped.
+10. Repeat until the issue is localized to a subsystem, component, signal chain, map, parameter, unit conversion, or boundary condition.
 
 Use compare mode only when you intentionally want a solved low-fidelity reference:
 
@@ -180,6 +202,11 @@ python -m physicsguard.cli hierarchy evaluate HIERARCHY.yaml OBSERVED.yaml --pre
 python -m physicsguard.cli hierarchy compare HIERARCHY.yaml OBSERVED.yaml --pretty
 
 python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
+
+python -m physicsguard.cli project audit --pretty
+python -m physicsguard.cli project adopt --pretty
+python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
+python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 ```
 
 ## Install The Codex Skill
@@ -195,6 +222,11 @@ Manual local copy:
 
 ```powershell
 Copy-Item -Recurse skill\physicsguard-ai-debugging $env:USERPROFILE\.codex\skills\physicsguard-ai-debugging
+Copy-Item -Recurse skill\physicsguard-project-adoption $env:USERPROFILE\.codex\skills\physicsguard-project-adoption
+Copy-Item -Recurse skill\physicsguard-model-understanding-preflight $env:USERPROFILE\.codex\skills\physicsguard-model-understanding-preflight
+Copy-Item -Recurse skill\physicsguard-signal-mapping-review $env:USERPROFILE\.codex\skills\physicsguard-signal-mapping-review
+Copy-Item -Recurse skill\physicsguard-audit-closure $env:USERPROFILE\.codex\skills\physicsguard-audit-closure
+Copy-Item -Recurse skill\physicsguard-candidate-model-blueprint $env:USERPROFILE\.codex\skills\physicsguard-candidate-model-blueprint
 ```
 
 After reload, use requests such as:
@@ -209,7 +241,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.3.2` includes low-fidelity audit relations for:
+PhysicsGuard `v0.3.3` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -228,6 +260,9 @@ All modules are low-fidelity audit relations. They are intended to expose obviou
 - [Bug playbooks](docs/bug_playbooks.md)
 - [Domain starter packs](docs/domain_starter_packs.md)
 - [Module spec template](docs/module_spec_template.md)
+- [Model-understanding preflight](docs/model_understanding_preflight.md)
+- [External-model intake](docs/external_model_intake.md)
+- [Module equation ledger](docs/module_equation_ledger.md)
 - [Model-code traceability](docs/model_code_traceability.md)
 
 ## Repository Map
@@ -238,8 +273,9 @@ tests/                            Test suite
 examples/                         YAML examples and hierarchy templates
 docs/                             Workflow and schema documentation
 .flowguard/                       FlowGuard lifecycle models and traceability ledger
+.physicsguard/                    PhysicsGuard project record and module/equation ledger
 scripts/                          Repository maintenance scripts
-skill/physicsguard-ai-debugging/  Local Codex skill source
+skill/                            Local Codex skill sources
 assets/readme-hero/               README hero image assets
 ```
 
@@ -255,7 +291,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.3.2`
+- **版本：** `v0.3.3`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -314,6 +350,26 @@ PhysicsGuard 是一个透明审计层，包含四个部分：
 
 仓库里保留的 PhysicsGuard YAML 审计、hierarchy 模板、observed snapshot 和候选模型蓝图文件，开头都会有一段很短的注释头。这个头会说明该文件的用途，指向 `https://github.com/liuyingxuvka/PhysicsGuard`，给出可能的 CLI 入口，并重复低保真、SI 单位和安全边界。这样文件被复制到没有安装 Codex skill 的机器上时，也能快速看懂它是什么、从哪里来、应该怎么用。
 
+## AI 工作流治理
+
+PhysicsGuard 现在会保留项目工作流记录 `.physicsguard/project.yaml`，以及模块/方程台账 `.physicsguard/module_equation_ledger.yaml`。这些文件帮助 AI agent 在下调试结论前先回答四个问题：
+
+- 我正在用哪个 PhysicsGuard 仓库、包版本和 skill 路线？
+- 可见物理症状、系统边界、单位基础、第一层审计和停止条件是什么？
+- 哪些外部信号被映射到了 PhysicsGuard 变量，哪些 mapping 还需要 review？
+- 这个结论依赖哪个低保真模块族、方程摘要、测试、示例和 closure 证据？
+
+常用治理命令：
+
+```powershell
+python -m physicsguard.cli project audit --pretty
+python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
+python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+python scripts/check_module_equation_ledger.py --json
+```
+
+这些检查不证明外部模型正确。它们的作用是让 AI 站在当前 PhysicsGuard 版本、明确物理边界、可复核信号映射和新鲜 closure 证据上说话。
+
 ## 核心合同
 
 PhysicsGuard 最适合边界明确的场景：
@@ -344,19 +400,21 @@ PhysicsGuard 不是 GT-SUITE、Simulink、Simscape、Modelica、Amesim、FMI、C
 
 ## 核心审计流程
 
-1. 从可见故障开始：最终值错误、响应发散、散热不可能、stack balance 断裂或某个子系统异常。
-2. 建一个粗粒度 Level 0 审计，只包含简单守恒、信号关系、单位和假设。
-3. 把外部仿真结果映射成 `ObservedValuesSpec`。
-4. 运行直接分层评估：
+1. 先运行 `python -m physicsguard.cli project audit --pretty`，让 AI 知道当前 PhysicsGuard 仓库、包版本、skill 路线和本地 adoption 记录。
+2. 完成或 review model-understanding preflight：可见故障、物理边界、单位基础、子系统 blocks、已知假设、不确定映射和停止条件。
+3. 建一个粗粒度 Level 0 审计，只包含简单守恒、信号关系、单位和假设。
+4. 把外部仿真结果映射成 `ObservedValuesSpec`，并在下故障定位结论前 review external-model intake。
+5. 运行直接分层评估：
 
 ```powershell
 python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
 ```
 
-5. 查看 `top_blocks`、`top_residuals`、assumptions 和 `recommended_refinements`。
-6. 只导出报告真正要求的下一批变量或参数。
-7. 只细化最可疑 block，而不是建模整个外部系统。
-8. 重复，直到问题收敛到子系统、组件、信号链、map、参数、单位转换或边界条件。
+6. 查看 `top_blocks`、`top_residuals`、assumptions、`signal_mapping_ledger`、`bug_family_followups` 和 `recommended_refinements`。
+7. 只导出报告真正要求的下一批变量或参数。
+8. 只细化最可疑 block，而不是建模整个外部系统。
+9. 在最终定位结论前运行 closure helper，或者记录为什么 closure 只能是 partial、downgraded、blocked、stale 或 skipped。
+10. 重复，直到问题收敛到子系统、组件、信号链、map、参数、单位转换或边界条件。
 
 只有当你确实需要一个低保真参考解时，才使用 compare mode：
 
@@ -420,6 +478,11 @@ python -m physicsguard.cli hierarchy evaluate HIERARCHY.yaml OBSERVED.yaml --pre
 python -m physicsguard.cli hierarchy compare HIERARCHY.yaml OBSERVED.yaml --pretty
 
 python -m physicsguard.cli assumptions inspect SYSTEM.yaml --pretty
+
+python -m physicsguard.cli project audit --pretty
+python -m physicsguard.cli project adopt --pretty
+python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
+python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 ```
 
 ## 安装 Codex Skill
@@ -435,6 +498,11 @@ The skill folder is skill/physicsguard-ai-debugging.
 
 ```powershell
 Copy-Item -Recurse skill\physicsguard-ai-debugging $env:USERPROFILE\.codex\skills\physicsguard-ai-debugging
+Copy-Item -Recurse skill\physicsguard-project-adoption $env:USERPROFILE\.codex\skills\physicsguard-project-adoption
+Copy-Item -Recurse skill\physicsguard-model-understanding-preflight $env:USERPROFILE\.codex\skills\physicsguard-model-understanding-preflight
+Copy-Item -Recurse skill\physicsguard-signal-mapping-review $env:USERPROFILE\.codex\skills\physicsguard-signal-mapping-review
+Copy-Item -Recurse skill\physicsguard-audit-closure $env:USERPROFILE\.codex\skills\physicsguard-audit-closure
+Copy-Item -Recurse skill\physicsguard-candidate-model-blueprint $env:USERPROFILE\.codex\skills\physicsguard-candidate-model-blueprint
 ```
 
 重载后可以这样请求：
@@ -449,7 +517,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.3.2` 包含这些低保真审计关系：
+PhysicsGuard `v0.3.3` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；
@@ -468,6 +536,9 @@ PhysicsGuard `v0.3.2` 包含这些低保真审计关系：
 - [Bug playbooks](docs/bug_playbooks.md)
 - [Domain starter packs](docs/domain_starter_packs.md)
 - [Module spec template](docs/module_spec_template.md)
+- [Model-understanding preflight](docs/model_understanding_preflight.md)
+- [External-model intake](docs/external_model_intake.md)
+- [Module equation ledger](docs/module_equation_ledger.md)
 - [Model-code traceability](docs/model_code_traceability.md)
 
 ## 仓库结构
@@ -478,8 +549,9 @@ tests/                            测试
 examples/                         YAML 示例和 hierarchy templates
 docs/                             工作流和 schema 文档
 .flowguard/                       FlowGuard lifecycle models 和 traceability ledger
+.physicsguard/                    PhysicsGuard project record 和 module/equation ledger
 scripts/                          仓库维护脚本
-skill/physicsguard-ai-debugging/  本地 Codex skill 源码
+skill/                            本地 Codex skill 源码
 assets/readme-hero/               README hero 图资产
 ```
 

@@ -64,13 +64,16 @@ Rules return `RecommendedRefinement` objects with template ids, required variabl
 
 ## Recommended Workflow
 
-1. Run a Level 0 whole-system hierarchical audit. For external model results, prefer `hierarchy evaluate` so observed values are not moved by a solver.
-2. Inspect `audit_pass`, `top_blocks`, and `top_residuals`.
-3. If the Level 0 score is acceptable, stop or accept coarse plausibility.
-4. If a block fails, inspect `recommended_refinements`.
-5. Export the required variables and parameters listed by the recommendation.
-6. Run the next-level template for that block.
-7. Repeat until the issue is narrowed to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary.
+1. Run `physicsguard project audit` so the AI has the active repository, package version, skill routes, and adoption record.
+2. Complete or review the model-understanding preflight before writing the first hierarchy.
+3. Run a Level 0 whole-system hierarchical audit. For external model results, prefer `hierarchy evaluate` so observed values are not moved by a solver.
+4. Review the external-model intake and signal mappings before treating residuals as fault-localization evidence.
+5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `signal_mapping_ledger`, `bug_family_followups`, and `recommended_refinements`.
+6. If the Level 0 score is acceptable and closure evidence is clean, stop or accept coarse plausibility within the stated boundary.
+7. If a block fails, export the required variables and parameters listed by the recommendation.
+8. Run the next-level template for that block.
+9. Repeat until the issue is narrowed to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary.
+10. Before a final localization claim, run closure checks or explicitly mark the claim partial, downgraded, blocked, stale, or skipped.
 
 ## Visualizing Hierarchical Audits
 
@@ -117,7 +120,6 @@ The coolant-loop examples under `examples/hierarchical/coolant_loop/` show a coa
 ## Future Work
 
 - Time-series evaluation: run residual checks over many time steps.
-- Signal/unit mapping: map external signal names to PhysicsGuard variables.
 - Adapter layer: generate `SystemSpec` or `ObservedValuesSpec` from external tools.
 - Design feasibility mode: estimate required flow, UA, power, efficiency, or other coarse quantities.
 - Automatic refinement execution: not implemented; current reports only recommend next templates.

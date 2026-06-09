@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.3 - 2026-06-08
+
+AI workflow governance upgrade.
+
+- Added PhysicsGuard project adoption/audit helpers and CLI commands so AI agents can identify the repository, package version, workflow schema, local skill routes, and adoption log before debugging.
+- Added model-understanding preflight and external-model intake templates, review commands, documentation, and tests for physical boundary, signal mapping, unit evidence, assumptions, and stop conditions.
+- Added a module/equation ledger plus checker so AI agents can navigate low-fidelity module families, documented equations, SI-unit expectations, tests, examples, and stale-evidence triggers.
+- Strengthened closure checks, FlowGuard workflow evidence, route-oriented local skill prompts, and installed-skill sync requirements before broad PhysicsGuard localization claims.
+
 ## v0.3.2 - 2026-06-07
 
 Guard closure maintenance upgrade.

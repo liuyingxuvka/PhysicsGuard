@@ -1,0 +1,30 @@
+# PhysicsGuard model-understanding preflight
+# Purpose: Capture low-fidelity physical understanding before interpreting residuals.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
+# Boundary: Planning evidence only; not residual validation, localization proof, or a recovered external-model topology.
+physicsguard_understanding:
+  visible_symptom: "Example symptom, such as unstable response or missing heat rejection."
+  external_model:
+    model_name: "example_external_model"
+    tool: "user-provided tool or model source"
+    model_version: "unknown"
+    source_of_truth: "Original external model remains authoritative."
+  physical_boundary: "System boundary checked by the first low-fidelity audit."
+  subsystem_blocks:
+    - id: whole_system
+      purpose: "Coarse Level 0 balance before detailed refinement."
+  conserved_quantities:
+    - power_W
+  key_interfaces:
+    - "source power -> loads and losses"
+  expected_units:
+    source_power: W
+    load_power: W
+  known_assumptions:
+    - "Observed values are already exported in SI units unless explicitly reviewed."
+  uncertain_mappings: []
+  first_audit_level: "Level 0 aggregate balance"
+  stop_conditions:
+    - "Stop before fault claims if mapping confidence is low."
+    - "Stop before high-fidelity or commercial solver equivalence claims."

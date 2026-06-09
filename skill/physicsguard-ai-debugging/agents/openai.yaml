@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard AI Debugging"
   short_description: "Audit simulation results and build candidate models from PhysicsGuard blueprints."
-  default_prompt: "Use PhysicsGuard to audit mapped simulation results, rank suspicious blocks, or build a validated candidate Simulink/MATLAB model blueprint."
+  default_prompt: "Use PhysicsGuard to check project adoption, capture model-understanding preflight, review signal mappings, run low-fidelity residual audits, and close scoped localization claims before building candidate model blueprints."

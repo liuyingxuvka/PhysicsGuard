@@ -27,6 +27,7 @@ Use the ledger before model-backed work, especially changes to:
 - solve, evaluate, compare, or hierarchy modes;
 - diagnostic JSON output;
 - assumptions and assumption reporting;
+- project adoption, model-understanding preflight, external-model intake, module/equation ledger, installed skill sync, or closure workflow;
 - release confidence claims involving FlowGuard evidence.
 
 For a future AI agent, the default workflow is:
@@ -50,7 +51,9 @@ For release work, run it with the usual model and test checks:
 ```powershell
 python -c "import flowguard; print(flowguard.SCHEMA_VERSION)"
 python .flowguard/run_physicsguard_core_checks.py
+python .flowguard/run_physicsguard_ai_workflow_checks.py
 python scripts/check_model_code_ledger.py
+python scripts/check_module_equation_ledger.py --json
 python -m pytest
 ```
 
@@ -81,6 +84,8 @@ Treat ledger evidence as stale when:
 - residual role, normalization, or diagnostic JSON semantics change;
 - assumption application or reporting changes;
 - new public behavior is added without a ledger entry;
+- project/preflight/intake/closure workflow behavior changes without updating the workflow ledger rows;
+- installed skill prompts or route folders change without a fresh skill-sync comparison;
 - peer-agent writes occur after validation.
 
 When in doubt, rerun the ledger check, FlowGuard model checks, and the focused tests named in the ledger entry.

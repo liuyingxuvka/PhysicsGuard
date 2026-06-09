@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.3.1
+updated_for_version: 0.3.3
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -241,3 +241,141 @@ entries:
     stale_when:
       - Diagnostic report fields, CLI output shape, or assumption-reporting semantics change.
       - New execution modes emit diagnostics without being represented in the FlowGuard model.
+
+  - id: workflow.project_adoption
+    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_blocks:
+      - AdoptProject
+    responsibility: >
+      Identify the active PhysicsGuard repository, package version, workflow
+      schema, local skill routes, adoption log, and project policy before
+      non-trivial AI debugging or localization claims.
+    code_symbols:
+      - src/physicsguard/workflow.py::project_record_payload
+      - src/physicsguard/workflow.py::adopt_project
+      - src/physicsguard/workflow.py::audit_project
+      - src/physicsguard/cli.py::project_command
+    tests:
+      - tests/test_workflow_governance.py
+    examples:
+      - .physicsguard/module_equation_ledger.yaml
+      - docs/physicsguard_adoption_log.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+        covers: Project-adoption gate before downstream AI workflow claims.
+      - command: python -m physicsguard.cli project audit --pretty
+        covers: Current repository adoption record.
+      - command: python -m pytest tests/test_workflow_governance.py
+        covers: Adopted, missing, and CLI project-record behavior.
+    boundaries:
+      - Project adoption is workflow evidence, not runtime physical-audit proof.
+      - Version mismatch warnings must not be treated as passed runtime evidence.
+      - The project record must point to the main skill and adoption log.
+    stale_when:
+      - Project record fields, policy keys, skill routes, or version semantics change.
+      - The repository moves or package metadata changes without refreshing adoption evidence.
+
+  - id: workflow.preflight_and_intake
+    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_blocks:
+      - ReviewPreflight
+      - ReviewIntake
+    responsibility: >
+      Review the model-understanding preflight and external-model intake so AI
+      agents record visible symptoms, boundaries, units, assumptions, source
+      model context, signal mappings, confidence, conversion evidence, stale
+      conditions, and required reviews before fault claims.
+    code_symbols:
+      - src/physicsguard/workflow.py::review_model_understanding_preflight
+      - src/physicsguard/workflow.py::review_external_model_intake
+      - src/physicsguard/cli.py::preflight_review
+      - src/physicsguard/cli.py::intake_review
+    tests:
+      - tests/test_workflow_governance.py
+    examples:
+      - templates/model_understanding_preflight.yaml
+      - templates/external_model_intake.yaml
+      - docs/model_understanding_preflight.md
+      - docs/external_model_intake.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+        covers: Preflight and intake gates before localization claims.
+      - command: python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
+        covers: Current model-understanding template.
+      - command: python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+        covers: Current external-model intake template.
+      - command: python -m pytest tests/test_workflow_governance.py
+        covers: Review pass/fail and CLI JSON output.
+    boundaries:
+      - Preflight and intake records are AI workflow governance; they do not prove external-model truth.
+      - Uncertain mappings must remain explicit until reviewed.
+      - Intake metadata must not mutate observed values or silently apply conversions.
+    stale_when:
+      - Preflight or intake required fields change.
+      - Signal mapping confidence, conversion, or stale-evidence semantics change.
+
+  - id: workflow.module_equation_ledger
+    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_blocks:
+      - CheckModuleLedger
+    responsibility: >
+      Keep a machine-checkable navigation map from representative PhysicsGuard
+      module families to low-fidelity equation summaries, SI-unit expectations,
+      assumptions, diagnostic keys, tests, examples, and stale-evidence triggers.
+    code_symbols:
+      - scripts/check_module_equation_ledger.py::validate_ledger
+    tests:
+      - tests/test_module_equation_ledger.py
+    examples:
+      - .physicsguard/module_equation_ledger.yaml
+      - docs/module_equation_ledger.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+        covers: Ledger freshness gate before AI workflow done claims.
+      - command: python scripts/check_module_equation_ledger.py --json
+        covers: Ledger fields, registered module types, tests, and examples.
+      - command: python -m pytest tests/test_module_equation_ledger.py
+        covers: Valid, missing-field, and unregistered-module cases.
+    boundaries:
+      - The ledger is navigation evidence, not physical correctness proof.
+      - Ledger entries are representative module-family coverage, not exhaustive model verification.
+      - Runtime claims still require PhysicsGuard reports, FlowGuard checks, tests, examples, and closure evidence.
+    stale_when:
+      - Module type names, diagnostic keys, examples, test files, or documented equations change.
+      - A new module family is added without an owning ledger row.
+
+  - id: workflow.skill_sync_and_closure
+    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_blocks:
+      - SyncSkills
+      - ReviewClosure
+    responsibility: >
+      Keep repository skill prompts and locally installed Codex skills aligned,
+      then gate final PhysicsGuard localization claims on audit, mapping,
+      refinement, bug-family, stale-evidence, and skipped-check closure signals.
+    code_symbols:
+      - skill/physicsguard-ai-debugging/scripts/physicsguard_closure_check.py::check
+      - skill/physicsguard-ai-debugging/scripts/physicsguard_closure_check.py::main
+    tests:
+      - tests/test_physicsguard_closure_helper.py
+    examples:
+      - skill/physicsguard-ai-debugging/SKILL.md
+      - skill/physicsguard-project-adoption/SKILL.md
+      - skill/physicsguard-model-understanding-preflight/SKILL.md
+      - skill/physicsguard-signal-mapping-review/SKILL.md
+      - skill/physicsguard-audit-closure/SKILL.md
+      - skill/physicsguard-candidate-model-blueprint/SKILL.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+        covers: Skill-sync and closure gates before done claims.
+      - command: python -m pytest tests/test_physicsguard_closure_helper.py
+        covers: Mapping review issue codes and skipped-check closure downgrade behavior.
+      - command: powershell installed skill file comparisons
+        covers: Local installed skill copies match repository skill sources.
+    boundaries:
+      - Closure helper output can be passed, partial, downgraded, blocked, or stale; only passed supports broad completion language.
+      - Skill sync does not replace runtime audit reports or tests.
+      - Closure findings must not imply commercial-model equivalence or high-fidelity proof.
+    stale_when:
+      - Skill prompts, subskill routes, closure statuses, or closure finding categories change.
+      - Installed skill copies differ from repository skill source after workflow changes.

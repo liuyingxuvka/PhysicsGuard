@@ -34,19 +34,39 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 ## Workflow A: Audit External Results
 
 1. Clarify the visible failure: wrong final value, unstable response, impossible pressure/flow/power/heat/current/voltage, bad efficiency, or inconsistent control logic.
-2. Build or choose the coarsest useful PhysicsGuard audit YAML.
-3. Map external simulation signals into `ObservedValuesSpec`. AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards are acceptable fallback evidence.
-4. Prefer direct observed evaluation:
+2. Check project adoption when working inside a repository:
+
+   ```powershell
+   python -m physicsguard.cli project audit --pretty
+   ```
+
+   If adoption is missing and setup is in scope, run `project adopt` or `project upgrade`. Project adoption is workflow evidence only.
+3. Create or review a model-understanding preflight before residual interpretation:
+
+   ```powershell
+   python -m physicsguard.cli preflight review PREFLIGHT.yaml --pretty
+   ```
+
+   The preflight must name the visible symptom, external model source of truth, physical boundary, subsystem blocks, conserved quantities, expected SI units, assumptions, uncertain mappings, first audit level, and stop conditions.
+4. Build or choose the coarsest useful PhysicsGuard audit YAML.
+5. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record:
+
+   ```powershell
+   python -m physicsguard.cli intake review INTAKE.yaml --pretty
+   ```
+
+   AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards are acceptable fallback evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
+6. Prefer direct observed evaluation:
 
    ```powershell
    python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
    ```
 
-5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
-6. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
-7. Request or export only the next small set of signals/parameters needed by the suspicious block.
-8. Refine that block with a lower-level audit template.
-9. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
+7. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
+8. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+9. Request or export only the next small set of signals/parameters needed by the suspicious block.
+10. Refine that block with a lower-level audit template.
+11. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
@@ -55,7 +75,8 @@ python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty
 ```
 
 Before claiming the audit is localized or complete, run the closure helper when
-available:
+available. A partial, blocked, downgraded, stale, skipped, or mapping-review
+closure must downgrade the final claim:
 
 ```powershell
 python %USERPROFILE%\\.codex\\skills\physicsguard-ai-debugging\scripts\physicsguard_closure_check.py --ledger <physicsguard-closure-ledger.json> --audit AUDIT.yaml --observed OBSERVED.yaml --json
@@ -64,11 +85,13 @@ python %USERPROFILE%\\.codex\\skills\physicsguard-ai-debugging\scripts\physicsgu
 The helper reads `audit_pass`, `top_blocks`, `top_residuals`,
 `recommended_refinements`, `signal_mapping_ledger`,
 `bug_family_followups`, `missing_required_variables`, and
-`missing_required_parameters`. If it returns `partial`, `blocked`, or
-`downgraded`, continue with the named next action: request the next required
-signals or parameters, review uncertain signal mappings, refine the suspicious
-block one level, inspect same-family unit/sign/map/balance follow-ups, rerun
-after observed snapshots change, or downgrade the localization claim.
+`missing_required_parameters`. It also treats review-required mapping issue
+codes, stale evidence, and skipped checks as closure evidence. If it returns
+`partial`, `blocked`, or `downgraded`, continue with the named next action:
+request the next required signals or parameters, review uncertain signal
+mappings, refine the suspicious block one level, inspect same-family
+unit/sign/map/balance follow-ups, rerun after observed snapshots change, run or
+scope skipped checks, or downgrade the localization claim.
 
 ## Workflow B: Build A Candidate Model From A PhysicsGuard Blueprint
 

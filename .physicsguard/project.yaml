@@ -1,0 +1,25 @@
+physicsguard:
+  repository: https://github.com/liuyingxuvka/PhysicsGuard
+  adopted_package_version: 0.3.3
+  schema_version: '1.0'
+  last_verified_at: '2026-06-09T04:52:11+00:00'
+  last_verified_by: PhysicsGuard project-adopt
+  rules_path: AGENTS.md
+paths:
+  adoption_log: docs/physicsguard_adoption_log.md
+  module_equation_ledger: .physicsguard/module_equation_ledger.yaml
+  main_skill: skill/physicsguard-ai-debugging/SKILL.md
+  installed_skill_root: ~/.codex/skills
+policy:
+  require_model_understanding_preflight: true
+  require_external_model_intake_for_observed_debugging: true
+  require_signal_mapping_review_before_fault_claims: true
+  require_closure_before_localization_claim: true
+  ledger_is_navigation_not_physics_proof: true
+skill_routes:
+- physicsguard-ai-debugging
+- physicsguard-project-adoption
+- physicsguard-model-understanding-preflight
+- physicsguard-signal-mapping-review
+- physicsguard-audit-closure
+- physicsguard-candidate-model-blueprint
