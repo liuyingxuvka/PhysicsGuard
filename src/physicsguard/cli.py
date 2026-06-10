@@ -8,14 +8,26 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
+import yaml
+
+from physicsguard.core.contract_diff import diff_test_file_contracts
+from physicsguard.core.data_file_manifest import generate_delimited_manifest, manifest_to_dict
 from physicsguard.core.diagnostics import DiagnosticReporter
 from physicsguard.core.evaluator import AuditEvaluator
 from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy, plan_from_report
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.solver import BoundedSolver
+from physicsguard.core.test_file_contract import (
+    check_test_file_contract,
+    check_test_file_parameter_coverage,
+    check_test_file_project_index,
+    inspect_test_file_contract,
+)
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
+from physicsguard.io.test_file_contract_loader import load_yaml_mapping
 from physicsguard.io.yaml_loader import load_system_spec
+from physicsguard.schema.test_file_contract import ExtractorProfileSpec, TestBenchProfileSpec
 from physicsguard.workflow import (
     adopt_project,
     audit_project,
@@ -159,6 +171,64 @@ def build_parser() -> argparse.ArgumentParser:
     )
     intake_review.add_argument("intake", type=Path, help="path to intake YAML")
     intake_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    testfile_parser = subparsers.add_parser(
+        "testfile",
+        help="testbench data-file contract commands",
+    )
+    testfile_subparsers = testfile_parser.add_subparsers(dest="testfile_command", required=True)
+    testfile_manifest = testfile_subparsers.add_parser(
+        "manifest",
+        help="generate a manifest from a CSV/TSV test data file",
+    )
+    testfile_manifest.add_argument("data_file", type=Path, help="path to CSV/TSV test data file")
+    testfile_manifest.add_argument("--profile", type=Path, help="testbench or extractor profile YAML")
+    testfile_manifest.add_argument("--out", type=Path, help="write manifest YAML to this path")
+    testfile_manifest.add_argument("--delimiter", help="CSV delimiter override")
+    testfile_manifest.add_argument("--encoding", help="file encoding override")
+    testfile_manifest.add_argument("--time-column", help="time column override")
+    testfile_manifest.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    testfile_inspect = testfile_subparsers.add_parser(
+        "inspect",
+        help="inspect a resolved test-file contract",
+    )
+    testfile_inspect.add_argument("contract", type=Path, help="path to TestFileContract YAML")
+    testfile_inspect.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    testfile_contract_check = testfile_subparsers.add_parser(
+        "contract-check",
+        help="check a test-file contract",
+    )
+    testfile_contract_check.add_argument("contract", type=Path, help="path to TestFileContract YAML")
+    testfile_contract_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    testfile_project_check = testfile_subparsers.add_parser(
+        "project-check",
+        help="check all test-file contracts referenced by a project index",
+    )
+    testfile_project_check.add_argument("index", type=Path, help="path to TestFileProjectIndex YAML")
+    testfile_project_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    testfile_diff = testfile_subparsers.add_parser(
+        "diff",
+        help="diff two resolved test-file contracts",
+    )
+    testfile_diff.add_argument("old_contract", type=Path, help="old TestFileContract YAML")
+    testfile_diff.add_argument("new_contract", type=Path, help="new TestFileContract YAML")
+    testfile_diff.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    coverage_parser = subparsers.add_parser(
+        "coverage",
+        help="parameter coverage contract commands",
+    )
+    coverage_subparsers = coverage_parser.add_subparsers(dest="coverage_command", required=True)
+    coverage_check_parser = coverage_subparsers.add_parser(
+        "check",
+        help="check parameter coverage for a test-file contract",
+    )
+    coverage_check_parser.add_argument("contract", type=Path, help="path to TestFileContract YAML")
+    coverage_check_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     return parser
 
 
@@ -264,6 +334,69 @@ def intake_review(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
+def testfile_manifest_command(
+    data_file: Path,
+    *,
+    profile_path: Path | None = None,
+    out: Path | None = None,
+    delimiter: str | None = None,
+    encoding: str | None = None,
+    time_column: str | None = None,
+    pretty: bool = False,
+) -> int:
+    profile = _load_manifest_profile(profile_path) if profile_path is not None else None
+    manifest = generate_delimited_manifest(
+        data_file,
+        profile=profile,
+        delimiter=delimiter,
+        encoding=encoding,
+        time_column=time_column,
+    )
+    output = manifest_to_dict(manifest)
+    if out is not None:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(yaml.safe_dump(output, sort_keys=False), encoding="utf-8")
+    else:
+        _print_json(output, pretty)
+    return 0
+
+
+def testfile_inspect_command(path: Path, pretty: bool = False) -> int:
+    _print_json(inspect_test_file_contract(path), pretty)
+    return 0
+
+
+def testfile_contract_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_test_file_contract(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def testfile_project_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_test_file_project_index(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def testfile_diff_command(old_contract: Path, new_contract: Path, pretty: bool = False) -> int:
+    report = diff_test_file_contracts(old_contract, new_contract)
+    _print_json(report.to_dict(), pretty)
+    return 0
+
+
+def coverage_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_test_file_parameter_coverage(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
+    data = load_yaml_mapping(path)
+    if "script" in data:
+        return ExtractorProfileSpec.model_validate(data)
+    return TestBenchProfileSpec.model_validate(data)
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -296,6 +429,28 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "intake":
             if args.intake_command == "review":
                 return intake_review(args.intake, args.pretty)
+        if args.command == "testfile":
+            if args.testfile_command == "manifest":
+                return testfile_manifest_command(
+                    args.data_file,
+                    profile_path=args.profile,
+                    out=args.out,
+                    delimiter=args.delimiter,
+                    encoding=args.encoding,
+                    time_column=args.time_column,
+                    pretty=args.pretty,
+                )
+            if args.testfile_command == "inspect":
+                return testfile_inspect_command(args.contract, args.pretty)
+            if args.testfile_command == "contract-check":
+                return testfile_contract_check_command(args.contract, args.pretty)
+            if args.testfile_command == "project-check":
+                return testfile_project_check_command(args.index, args.pretty)
+            if args.testfile_command == "diff":
+                return testfile_diff_command(args.old_contract, args.new_contract, args.pretty)
+        if args.command == "coverage":
+            if args.coverage_command == "check":
+                return coverage_check_command(args.contract, args.pretty)
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

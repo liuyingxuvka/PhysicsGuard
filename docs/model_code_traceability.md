@@ -28,6 +28,7 @@ Use the ledger before model-backed work, especially changes to:
 - diagnostic JSON output;
 - assumptions and assumption reporting;
 - project adoption, model-understanding preflight, external-model intake, module/equation ledger, installed skill sync, or closure workflow;
+- test-file contract manifests, coverage policies, evidence-backed mappings, model bindings, contract diffing, or project index checks;
 - release confidence claims involving FlowGuard evidence.
 
 For a future AI agent, the default workflow is:
@@ -52,6 +53,8 @@ For release work, run it with the usual model and test checks:
 python -c "import flowguard; print(flowguard.SCHEMA_VERSION)"
 python .flowguard/run_physicsguard_core_checks.py
 python .flowguard/run_physicsguard_ai_workflow_checks.py
+python .flowguard/run_physicsguard_test_file_contract_checks.py
+python .flowguard/run_physicsguard_test_file_contract_development_checks.py
 python scripts/check_model_code_ledger.py
 python scripts/check_module_equation_ledger.py --json
 python -m pytest

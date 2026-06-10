@@ -1,0 +1,18 @@
+profile_id: pump_loop_bench_v1
+bench_id: pump_loop_bench
+bench_version: v1
+time_column: time_s
+delimiter: ","
+encoding: utf-8
+field_units:
+  time_s: s
+  cmd_speed_rad_s: rad/s
+  flow_readback_kg_s: kg/s
+  valve_open: "1"
+expected_fields:
+  - time_s
+  - cmd_speed_rad_s
+  - flow_readback_kg_s
+  - valve_open
+metadata:
+  evidence_source: example fixture profile

@@ -1,0 +1,9 @@
+parameters:
+  - source_id: field:time_s
+    field_name: time_s
+    canonical_id: time_s
+    unit: s
+    required: true
+    description: Test file time basis.
+metadata:
+  coverage_boundary: one concrete test data file

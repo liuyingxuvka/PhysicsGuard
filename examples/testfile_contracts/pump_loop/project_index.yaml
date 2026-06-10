@@ -1,0 +1,10 @@
+project_id: pump_loop_contract_fixture_project
+test_files:
+  - contract: contracts/clean_contract.yaml
+    file_id: pump_loop_clean_2026_06_10
+    testbench_profile_id: pump_loop_bench_v1
+  - contract: contracts/multi_segment_contract.yaml
+    file_id: pump_loop_multi_segment_2026_06_10
+    testbench_profile_id: pump_loop_bench_v1
+metadata:
+  fixture: pump_loop

@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.3.3
+updated_for_version: 0.4.0
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -379,3 +379,112 @@ entries:
     stale_when:
       - Skill prompts, subskill routes, closure statuses, or closure finding categories change.
       - Installed skill copies differ from repository skill source after workflow changes.
+
+  - id: workflow.test_file_contract_route
+    model_file: .flowguard/physicsguard_test_file_contract_model.py
+    model_blocks:
+      - SelectTestFileRoute
+      - GenerateDataFileManifest
+      - VerifyManifestFreshness
+      - ResolveTestbenchProfile
+      - ResolveModelBinding
+      - BuildParameterCatalog
+      - ApplyRoleMatrix
+      - ResolveMappingEdges
+      - EnforceCoverageContract
+      - GateAnalysisClaim
+    responsibility: >
+      Govern the optional testbench/test-data file route so model-only
+      PhysicsGuard work is not burdened, while concrete test files require a
+      generated manifest, fresh extractor evidence, testbench profile, model
+      binding, complete catalog, role matrix, evidence-backed mappings, known
+      model targets, and a passing contract check before broad AI analysis
+      claims.
+    code_symbols:
+      - src/physicsguard/schema/data_file_manifest.py::DataFileManifestSpec
+      - src/physicsguard/schema/test_file_contract.py::TestFileContractSpec
+      - src/physicsguard/schema/test_file_contract.py::ModelBindingSpec
+      - src/physicsguard/schema/parameter_coverage.py::MappingEvidenceSpec
+      - src/physicsguard/core/data_file_manifest.py::generate_delimited_manifest
+      - src/physicsguard/core/data_file_manifest.py::field_signature_hash
+      - src/physicsguard/core/parameter_coverage.py::check_parameter_coverage
+      - src/physicsguard/core/test_file_contract.py::check_test_file_contract
+      - src/physicsguard/core/test_file_contract.py::check_test_file_parameter_coverage
+      - src/physicsguard/core/test_file_contract.py::check_test_file_project_index
+      - src/physicsguard/core/contract_diff.py::diff_test_file_contracts
+      - src/physicsguard/cli.py::testfile_contract_check_command
+      - src/physicsguard/cli.py::coverage_check_command
+    tests:
+      - tests/test_test_file_contract_schema.py
+      - tests/test_test_file_contract_core.py
+      - tests/test_test_file_contract_cli.py
+    examples:
+      - examples/testfile_contracts/pump_loop/contracts/clean_contract.yaml
+      - examples/testfile_contracts/pump_loop/data/clean_manifest.yaml
+      - examples/testfile_contracts/pump_loop/project_index.yaml
+      - templates/test_file_contract.yaml
+      - docs/test_file_contracts.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_test_file_contract_checks.py
+        covers: Optional route, manifest gate, evidence-backed mapping, model-gap, review-required, and contract-pass claim gates.
+      - command: python -m pytest tests/test_test_file_contract_schema.py tests/test_test_file_contract_core.py tests/test_test_file_contract_cli.py
+        covers: Schemas, manifest extraction, fail-closed coverage, CLI commands, and contract diffing.
+      - command: python -m physicsguard.cli testfile contract-check examples/testfile_contracts/pump_loop/contracts/clean_contract.yaml --pretty
+        covers: Clean file-level contract pass.
+      - command: python -m physicsguard.cli testfile project-check examples/testfile_contracts/pump_loop/project_index.yaml --pretty
+        covers: Multi-contract project index checks.
+    boundaries:
+      - Test-file contracts are optional for model-only PhysicsGuard work.
+      - A contract pass is coverage evidence, not physical correctness proof.
+      - AI mapping edges without evidence must not be treated as covered.
+      - Unknown model targets or uncovered fields require review, human evidence, or model extension.
+      - Observed values must not be converted or mutated by coverage checks.
+    stale_when:
+      - Manifest, contract, model-binding, catalog, role, mapping-edge, or coverage-policy schemas change.
+      - CLI command names or script entry points change.
+      - Mapping evidence, review-required, planned-child-model, or claim-gate semantics change.
+
+  - id: workflow.test_file_contract_development_process
+    model_file: .flowguard/physicsguard_test_file_contract_development_model.py
+    model_blocks:
+      - ValidateOpenSpec
+      - CheckFlowGuardModels
+      - ImplementArtifacts
+      - RunValidation
+      - SyncLocalInstall
+      - PrepareGitPublish
+      - CreateRelease
+    responsibility: >
+      Govern the staged delivery process for the test-file contract upgrade:
+      OpenSpec validation, executable FlowGuard models, implementation,
+      docs/examples/skills, current validation, local package and installed skill
+      sync, git publish readiness, and GitHub release creation.
+    code_symbols:
+      - .flowguard/physicsguard_test_file_contract_development_model.py::ValidateOpenSpec
+      - .flowguard/physicsguard_test_file_contract_development_model.py::CheckFlowGuardModels
+      - .flowguard/physicsguard_test_file_contract_development_model.py::SyncLocalInstall
+      - .flowguard/physicsguard_test_file_contract_development_model.py::CreateRelease
+      - scripts/check_installed_physicsguard_skills.py::check_installed_skills
+    tests:
+      - tests/test_installed_skill_sync.py
+      - tests/test_model_code_ledger.py
+    examples:
+      - openspec/changes/add-test-file-contract-system/proposal.md
+      - openspec/changes/add-test-file-contract-system/design.md
+      - openspec/changes/add-test-file-contract-system/tasks.md
+      - skill/physicsguard-test-file-contract-review/SKILL.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_test_file_contract_development_checks.py
+        covers: Development-process gates before release claims.
+      - command: openspec validate add-test-file-contract-system --strict
+        covers: Requirement/spec/task artifact validity.
+      - command: python scripts/check_installed_physicsguard_skills.py --json
+        covers: Repository skill source matches installed Codex skill copies.
+      - command: python scripts/check_model_code_ledger.py --json
+        covers: Model-code ledger freshness for FlowGuard-owned code and tests.
+    boundaries:
+      - A GitHub release must not be claimed before current tests, FlowGuard checks, and local skill/package sync.
+      - Background or stale validation output is not completion evidence.
+      - Peer-agent changes must be preserved and revalidated if they touch covered artifacts.
+    stale_when:
+      - OpenSpec artifacts, FlowGuard models, tests, scripts, skills, docs, version surfaces, local install sync, git publish, or release process changes.

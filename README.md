@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.3.3`
+- **Version:** `v0.4.0`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -93,6 +93,40 @@ python scripts/check_module_equation_ledger.py --json
 ```
 
 These checks do not prove the external model is correct. They keep the AI grounded in the current PhysicsGuard version, explicit physical boundaries, reviewable signal mappings, and fresh closure evidence.
+
+## Test File Contract Route
+
+For projects with concrete testbench data files, PhysicsGuard includes an
+optional file-contract route. It is a sibling workflow, not a requirement for
+model-only audits.
+
+The route creates one resolved contract per test data file:
+
+```text
+test data file -> DataFileManifest -> TestFileContract -> coverage/model-binding check
+```
+
+The manifest records script-generated file facts: hash, format, fields, row
+count, time range, sample rate, continuity, field types, units, and extractor
+identity. The contract then binds those fields to a testbench profile, model
+binding, parameter catalog, role matrix, and evidence-backed mapping edges.
+
+Use:
+
+```powershell
+python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
+python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
+python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
+python -m physicsguard.cli testfile project-check INDEX.yaml --pretty
+python -m physicsguard.cli testfile diff OLD_CONTRACT.yaml NEW_CONTRACT.yaml --pretty
+```
+
+AI-proposed field bindings must include evidence such as field names, labels,
+units, P&ID or testbench topology, code references, formulas, datasheets, or
+human-provided mapping records. Unknown field meaning, unknown targets, or model
+coverage gaps must remain explicit instead of being marked covered. A passing
+contract proves file coverage discipline only; physical correctness still needs
+residual reports and closure evidence.
 
 ## The Core Contract
 
@@ -241,7 +275,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.3.3` includes low-fidelity audit relations for:
+PhysicsGuard `v0.4.0` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -291,7 +325,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.3.3`
+- **版本：** `v0.4.0`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -369,6 +403,30 @@ python scripts/check_module_equation_ledger.py --json
 ```
 
 这些检查不证明外部模型正确。它们的作用是让 AI 站在当前 PhysicsGuard 版本、明确物理边界、可复核信号映射和新鲜 closure 证据上说话。
+
+## 测试文件合同路线
+
+对于带有具体测试台数据文件的项目，PhysicsGuard 现在有一条可选的测试文件合同路线。它是一条平行工作流，不是普通模型审计的必选项。
+
+这条路线的核心是每个测试数据文件都有一个 resolved contract：
+
+```text
+测试数据文件 -> DataFileManifest -> TestFileContract -> coverage/model-binding check
+```
+
+Manifest 由脚本生成，记录文件 hash、格式、字段、行数、时间范围、采样率、连续性、字段类型、单位和 extractor 身份。Contract 再把这些字段绑定到测试台 profile、模型 binding、参数 catalog、role matrix 和带证据的 mapping edges。
+
+常用命令：
+
+```powershell
+python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
+python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
+python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
+python -m physicsguard.cli testfile project-check INDEX.yaml --pretty
+python -m physicsguard.cli testfile diff OLD_CONTRACT.yaml NEW_CONTRACT.yaml --pretty
+```
+
+AI 提出的字段绑定必须留下证据，例如字段名、标签、单位、P&ID 或测试台拓扑、代码引用、公式、datasheet，或者人类提供的映射记录。如果 AI 不知道字段含义、目标变量，或者当前模型还不能覆盖这个字段，就必须显式标成 review-required、模型缺口或合同失败，不能假装 covered。合同通过只证明字段覆盖纪律，不证明物理正确；物理结论仍然要靠 residual report 和 closure 证据。
 
 ## 核心合同
 
@@ -517,7 +575,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.3.3` 包含这些低保真审计关系：
+PhysicsGuard `v0.4.0` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；

@@ -1,0 +1,13 @@
+profile_id: pump_loop_fixture_extractor
+script: physicsguard.core.data_file_manifest.generate_delimited_manifest
+format_kind: csv
+delimiter: ","
+encoding: utf-8
+time_column: time_s
+field_units:
+  time_s: s
+  cmd_speed_rad_s: rad/s
+  flow_readback_kg_s: kg/s
+  valve_open: "1"
+metadata:
+  evidence_source: example fixture extractor profile

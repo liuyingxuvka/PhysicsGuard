@@ -1,0 +1,16 @@
+profile_id: example_bench_v1
+bench_id: example_bench
+bench_version: v1
+time_column: time_s
+delimiter: ","
+encoding: utf-8
+field_units:
+  time_s: s
+expected_fields:
+  - time_s
+aliases:
+  - source_name: old_field_name
+    canonical_name: new_field_name
+    reason: documented rename between bench revisions
+metadata:
+  owner: replace_with_project_or_team

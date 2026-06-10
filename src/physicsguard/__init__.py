@@ -14,8 +14,18 @@ from physicsguard.core.signal_mapping import (
     derive_bug_family_followups,
     mapping_warnings,
 )
+from physicsguard.core.data_file_manifest import (
+    field_signature_hash,
+    generate_delimited_manifest,
+    sha256_file,
+)
+from physicsguard.core.test_file_contract import (
+    check_test_file_contract,
+    check_test_file_parameter_coverage,
+    check_test_file_project_index,
+)
 
-__version__ = "0.3.3"
+__version__ = "0.4.0"
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -26,8 +36,14 @@ __all__ = [
     "ResidualDiagnostic",
     "SignalMappingRecord",
     "build_signal_mapping_ledger",
+    "check_test_file_contract",
+    "check_test_file_parameter_coverage",
+    "check_test_file_project_index",
     "derive_bug_family_followups",
+    "field_signature_hash",
+    "generate_delimited_manifest",
     "mapping_warnings",
+    "sha256_file",
 ]
 
 _DIAGNOSTIC_EXPORTS = set(__all__)

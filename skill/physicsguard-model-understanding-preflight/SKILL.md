@@ -6,6 +6,9 @@ description: Use before PhysicsGuard audits of external models to capture visibl
 # PhysicsGuard Model Understanding Preflight
 
 Use this route before interpreting residuals for a non-trivial external model.
+If a concrete testbench data file is part of the work, record the file/bench
+boundary and route to `physicsguard-test-file-contract-review` before broad
+analysis claims.
 
 ## Workflow
 

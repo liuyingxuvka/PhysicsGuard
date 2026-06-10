@@ -9,6 +9,15 @@ from physicsguard.schema.module_spec import (
     VariableSpec,
 )
 from physicsguard.schema.assumption_spec import AssumptionDeckSpec, AssumptionSpec
+from physicsguard.schema.data_file_manifest import (
+    DataFileManifestSpec,
+    DataFormatSpec,
+    DataShapeSpec,
+    ExtractorEvidenceSpec,
+    FieldSummarySpec,
+    SourceFileSpec,
+    TimeBasisSpec,
+)
 from physicsguard.schema.hierarchy_spec import (
     AuditBlockSpec,
     BlockScoringSpec,
@@ -18,6 +27,16 @@ from physicsguard.schema.hierarchy_spec import (
     RefinementRuleSpec,
 )
 from physicsguard.schema.observation_spec import ObservedValueSpec, ObservedValuesSpec
+from physicsguard.schema.parameter_coverage import (
+    CoveragePolicySpec,
+    MappingEdgeSpec,
+    MappingEvidenceSpec,
+    ParameterCatalogEntrySpec,
+    ParameterCatalogSpec,
+    ParameterMappingEdgesSpec,
+    ParameterRoleMatrixSpec,
+    RoleAssignmentSpec,
+)
 from physicsguard.schema.system_spec import (
     BoundarySpec,
     ComponentInstanceSpec,
@@ -26,6 +45,17 @@ from physicsguard.schema.system_spec import (
     SolverSpec,
     SystemSpec,
     VariableOverrideSpec,
+)
+from physicsguard.schema.test_file_contract import (
+    DatasetSegmentSpec,
+    ExtractorProfileSpec,
+    FieldAliasSpec,
+    KnownDefectSpec,
+    ModelBindingSpec,
+    TestBenchProfileSpec,
+    TestFileContractSpec,
+    TestFileProjectIndexSpec,
+    TestFileReferenceSpec,
 )
 
 __all__ = [
@@ -37,19 +67,43 @@ __all__ = [
     "ComponentInstanceSpec",
     "ConfidenceScoringSpec",
     "ConnectionSpec",
+    "CoveragePolicySpec",
+    "DataFileManifestSpec",
+    "DataFormatSpec",
+    "DataShapeSpec",
+    "DatasetSegmentSpec",
     "DiagnosticHint",
+    "ExtractorEvidenceSpec",
+    "ExtractorProfileSpec",
+    "FieldAliasSpec",
+    "FieldSummarySpec",
     "HierarchicalAuditSpec",
     "HierarchySpec",
     "InputSpec",
+    "KnownDefectSpec",
+    "MappingEdgeSpec",
+    "MappingEvidenceSpec",
+    "ModelBindingSpec",
     "ModuleSpec",
     "ObservedValueSpec",
     "ObservedValuesSpec",
+    "ParameterCatalogEntrySpec",
+    "ParameterCatalogSpec",
+    "ParameterMappingEdgesSpec",
+    "ParameterRoleMatrixSpec",
     "ParameterSpec",
     "PortSpec",
     "RefinementRuleSpec",
     "ResidualSpec",
+    "RoleAssignmentSpec",
     "SolverSpec",
+    "SourceFileSpec",
     "SystemSpec",
+    "TestBenchProfileSpec",
+    "TestFileContractSpec",
+    "TestFileProjectIndexSpec",
+    "TestFileReferenceSpec",
+    "TimeBasisSpec",
     "VariableOverrideSpec",
     "VariableSpec",
 ]

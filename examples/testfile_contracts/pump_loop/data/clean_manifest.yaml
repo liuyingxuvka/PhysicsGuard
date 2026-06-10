@@ -1,0 +1,64 @@
+manifest_id: clean
+source_file:
+  path: clean.csv
+  content_hash: a187027e2b4251c607c72405051574034f0ec35b40dec26f8ad8d6b6a0a78a84
+  size_bytes: 110
+format:
+  kind: csv
+  delimiter: ','
+  encoding: utf-8
+  header_rows: 1
+  metadata: {}
+shape:
+  field_count: 4
+  row_count: 3
+  sample_count: 3
+time:
+  time_column: time_s
+  start_time: 0.0
+  end_time: 0.2
+  duration_s: 0.2
+  nominal_sample_rate_hz: 10.0
+  sampling_mode: time_series
+  continuity: continuous
+  gap_count: 0
+  metadata: {}
+fields:
+- name: time_s
+  data_type: float
+  unit: s
+  non_null_count: 3
+  null_count: 0
+  min_value: 0.0
+  max_value: 0.2
+  metadata: {}
+- name: cmd_speed_rad_s
+  data_type: float
+  unit: rad/s
+  non_null_count: 3
+  null_count: 0
+  min_value: 10.0
+  max_value: 11.0
+  metadata: {}
+- name: flow_readback_kg_s
+  data_type: float
+  unit: kg/s
+  non_null_count: 3
+  null_count: 0
+  min_value: 20.0
+  max_value: 22.0
+  metadata: {}
+- name: valve_open
+  data_type: boolean
+  unit: '1'
+  non_null_count: 3
+  null_count: 0
+  metadata: {}
+extractor:
+  script: physicsguard.core.data_file_manifest.generate_delimited_manifest
+  script_hash: f53564fd5877a36a762d5315948575cfe9d26afcbf6bdf412f7c32849148f47c
+  generated_at: '2026-06-10T03:55:09.481962+00:00'
+  version: '1'
+  metadata: {}
+field_signature_hash: 36de57a40eab854d8987b0cbc53325122bd6c7ade3c684581450ccb05ac4ef42
+metadata: {}

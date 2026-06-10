@@ -1,0 +1,53 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Test-file contract fixture using a generic relation to demonstrate parameter binding.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy inspect examples/testfile_contracts/pump_loop/model/pump_loop_hierarchy.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: pump_loop_contract_fixture
+description: >
+  Generic relation used only to demonstrate test-file field binding. The fixture
+  is not a real pump model and does not claim commercial-tool equivalence.
+system:
+  system_name: pump_loop_contract_fixture
+  description: Generic contract fixture for mapping testbench fields to model variables.
+  components:
+    - id: pump_signal_map
+      type: LinearRelationModule
+      parameters:
+        a: 2.0
+        b: 0.0
+        residual_scale: 1.0
+        x_lower_bound: 0.0
+        x_upper_bound: 100.0
+        x_initial_guess: 10.0
+        x_scale: 10.0
+        x_unit: rad/s
+        y_lower_bound: 0.0
+        y_upper_bound: 300.0
+        y_initial_guess: 20.0
+        y_scale: 20.0
+        y_unit: kg/s
+  solver:
+    method: least_squares
+    max_iterations: 30
+    audit_threshold: 1.0
+    tolerance: 1.0e-8
+    verbose: false
+hierarchy:
+  blocks:
+    - id: pump_loop
+      name: Pump loop contract fixture
+      level: 0
+      components:
+        - pump_signal_map
+      required_variables:
+        - pump_signal_map.x
+        - pump_signal_map.y
+      required_parameters:
+        - pump_signal_map.a
+      metadata:
+        fixture_only: true
+        relation: y = 2 * x
+metadata:
+  example_type: test_file_contract_fixture
+  physical_claim: none

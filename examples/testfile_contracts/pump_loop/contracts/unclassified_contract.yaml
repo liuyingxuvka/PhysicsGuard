@@ -1,0 +1,12 @@
+contract_id: pump_loop_unclassified_contract
+file_id: pump_loop_clean_unclassified_2026_06_10
+manifest: ../data/clean_manifest.yaml
+testbench_profile: ../profiles/pump_loop_testbench_profile.yaml
+extractor_profile: ../profiles/pump_loop_extractor_profile.yaml
+model_binding: ../bindings/pump_loop_model_binding.yaml
+parameter_catalog: ../catalogs/pump_loop_parameter_catalog.yaml
+role_matrix: ../coverage/unclassified_role_matrix.yaml
+mapping_edges: ../coverage/pump_loop_mapping_edges.yaml
+coverage_policy: ../coverage/pump_loop_coverage_policy.yaml
+metadata:
+  fixture: unclassified_should_fail

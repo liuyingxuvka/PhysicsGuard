@@ -1,0 +1,57 @@
+edges:
+  - id: edge:time_s:metadata
+    source_id: field:time_s
+    relation: time_basis_for
+    target_type: metadata
+    target: time_s
+    confidence: 1.0
+    evidence:
+      - evidence_type: field_name_match
+        source: pump_loop_testbench_profile.yaml
+        description: time_s is declared as the time column in the testbench profile.
+        confidence: 1.0
+  - id: edge:cmd_speed:model_x
+    source_id: field:cmd_speed_rad_s
+    relation: command_for
+    target_type: physics_variable
+    target: pump_signal_map.x
+    confidence: 0.9
+    unit_evidence: rad/s matches model variable unit.
+    evidence:
+      - evidence_type: field_name_match
+        source: pump_loop_testbench_profile.yaml
+        description: Field name uses cmd_speed and the profile unit is rad/s.
+        confidence: 0.85
+      - evidence_type: human_provided
+        source: example fixture author
+        description: Fixture intentionally maps commanded speed to pump_signal_map.x.
+        confidence: 0.95
+  - id: edge:flow:model_y
+    source_id: field:flow_readback_kg_s
+    relation: same_quantity_as
+    target_type: physics_variable
+    target: pump_signal_map.y
+    confidence: 0.9
+    unit_evidence: kg/s matches model variable unit.
+    evidence:
+      - evidence_type: field_name_match
+        source: pump_loop_testbench_profile.yaml
+        description: Field name uses flow_readback and the profile unit is kg/s.
+        confidence: 0.85
+      - evidence_type: human_provided
+        source: example fixture author
+        description: Fixture intentionally maps flow readback to pump_signal_map.y.
+        confidence: 0.95
+  - id: edge:valve:block_context
+    source_id: field:valve_open
+    relation: gates_mode_for
+    target_type: hierarchy_block
+    target: pump_loop
+    confidence: 0.8
+    evidence:
+      - evidence_type: label_match
+        source: pump_loop_testbench_profile.yaml
+        description: valve_open is a mode flag carried with the pump-loop fixture.
+        confidence: 0.8
+metadata:
+  fixture: pump_loop

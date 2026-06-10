@@ -1,0 +1,19 @@
+parameters:
+  - source_id: field:time_s
+    field_name: time_s
+    canonical_id: time_s
+    unit: s
+  - source_id: field:cmd_speed_rad_s
+    field_name: cmd_speed_rad_s
+    canonical_id: pump.commanded_speed
+    unit: rad/s
+  - source_id: field:flow_readback_kg_s
+    field_name: flow_readback_kg_s
+    canonical_id: pump.flow_readback
+    unit: kg/s
+  - source_id: field:valve_open
+    field_name: valve_open
+    canonical_id: pump.valve_open_flag
+    unit: "1"
+metadata:
+  fixture: renamed_field_contract_should_fail

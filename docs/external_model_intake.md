@@ -22,3 +22,17 @@ python -m physicsguard.cli intake review templates/external_model_intake.yaml --
 ## Claim Boundary
 
 When mappings are low-confidence, missing conversion notes, or marked review-required, PhysicsGuard should not claim the physical model is faulty yet. The next action is to review mapping, unit, sign, gain, timing, or neighboring balance signals.
+
+## Test Data Files
+
+If the external evidence is a concrete testbench data file, use a
+`TestFileContract` alongside intake review:
+
+```powershell
+python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
+python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
+```
+
+The contract accounts for every file field and records mapping evidence. Intake
+records source-of-truth context for the observed snapshot. Neither one converts
+or mutates observed values.

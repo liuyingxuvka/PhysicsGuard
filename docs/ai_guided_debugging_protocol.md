@@ -15,20 +15,35 @@ python scripts/check_module_equation_ledger.py --json
 
 The project audit identifies the repository, package version, workflow schema, local skill routes, and adoption log. The preflight records the visible symptom, physical boundary, unit basis, first audit level, assumptions, uncertain mappings, and stop conditions. The intake review records source-of-truth model context, mapped signals, unit/conversion evidence, confidence, stale conditions, and required reviews. The module ledger is a navigation index for low-fidelity module families; it is not physical proof.
 
+When the work includes a concrete testbench/test-data file, add the test-file
+contract gate before broad analysis:
+
+```powershell
+python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
+python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
+```
+
+Every file field must be cataloged, classified, disposed, and evidence-mapped.
+AI-proposed mappings without evidence must stay review-required or fail the
+contract.
+
 ## Core Loop
 
 1. Start with the user-visible failure: wrong final value, impossible pressure, excessive heat, bad power, unstable response, or similar.
 2. Check the project record with `physicsguard project audit`; adopt or upgrade the project record when it is missing or stale.
 3. Complete or review the model-understanding preflight before writing the first audit file.
 4. Build a Level 0 audit with coarse balances or simple signal relations.
-5. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings should use first-class mapping fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, conversion notes, or stale conditions.
-6. Review the external-model intake before treating residuals as fault-localization evidence.
-7. Run `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty`.
-8. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, and `bug_family_followups`.
-9. Request or export only the next variables and parameters named by `recommended_refinements`.
-10. Create or choose the next-level audit template for the suspicious block.
-11. Run closure checks or clearly downgrade the final claim when closure is partial, blocked, stale, skipped, or still has mapping-review gaps.
-12. Repeat until the issue is localized to a subsystem, component, signal chain, map, unit conversion, parameter, or boundary condition.
+5. If a concrete test data file is the source, generate or review its
+   `DataFileManifest` and `TestFileContract` before treating its fields as audit
+   evidence.
+6. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings should use first-class mapping fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, conversion notes, or stale conditions.
+7. Review the external-model intake before treating residuals as fault-localization evidence.
+8. Run `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty`.
+9. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, and `bug_family_followups`.
+10. Request or export only the next variables and parameters named by `recommended_refinements`.
+11. Create or choose the next-level audit template for the suspicious block.
+12. Run closure checks or clearly downgrade the final claim when closure is partial, blocked, stale, skipped, or still has mapping-review gaps.
+13. Repeat until the issue is localized to a subsystem, component, signal chain, map, unit conversion, parameter, or boundary condition.
 
 Use `physicsguard hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty` when a solved low-fidelity reference is useful for ranking variable deviations. Use direct `hierarchy evaluate` when the external result itself is the evidence and PhysicsGuard must not move values.
 
@@ -64,6 +79,8 @@ The visual is explanatory only. It does not replace `hierarchy evaluate`, `hiera
 - Do not claim a subtly plausible parameter is wrong unless residual evidence or user-provided targets make it suspicious.
 - Do not imply equivalence with GT-SUITE, Simulink, Simscape, Modelica, Amesim, FMI, PyBaMM, OpenFCST, or commercial model internals.
 - Do not auto-repair or rewrite the external model.
+- Do not mark test-file fields as covered without mapping evidence. Unknown
+  field meaning, unknown target, or missing model coverage must remain explicit.
 
 ## Practical Signal-Mapping Rule
 

@@ -90,6 +90,7 @@ def project_record_payload(root: Path) -> dict[str, Any]:
         "policy": {
             "require_model_understanding_preflight": True,
             "require_external_model_intake_for_observed_debugging": True,
+            "require_test_file_contract_for_test_data": True,
             "require_signal_mapping_review_before_fault_claims": True,
             "require_closure_before_localization_claim": True,
             "ledger_is_navigation_not_physics_proof": True,
@@ -98,6 +99,7 @@ def project_record_payload(root: Path) -> dict[str, Any]:
             "physicsguard-ai-debugging",
             "physicsguard-project-adoption",
             "physicsguard-model-understanding-preflight",
+            "physicsguard-test-file-contract-review",
             "physicsguard-signal-mapping-review",
             "physicsguard-audit-closure",
             "physicsguard-candidate-model-blueprint",
@@ -199,6 +201,7 @@ def audit_project(root: Path) -> dict[str, Any]:
         for key in (
             "require_model_understanding_preflight",
             "require_external_model_intake_for_observed_debugging",
+            "require_test_file_contract_for_test_data",
             "require_signal_mapping_review_before_fault_claims",
             "require_closure_before_localization_claim",
         ):

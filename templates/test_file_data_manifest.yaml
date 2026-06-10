@@ -1,0 +1,32 @@
+manifest_id: example_test_file_manifest
+source_file:
+  path: path/to/test_file.csv
+  content_hash: replace_with_sha256
+  size_bytes: 0
+format:
+  kind: csv
+  delimiter: ","
+  encoding: utf-8
+  header_rows: 1
+shape:
+  field_count: 0
+  row_count: 0
+  sample_count: 0
+time:
+  time_column: time_s
+  start_time: 0.0
+  end_time: 0.0
+  duration_s: 0.0
+  nominal_sample_rate_hz: null
+  sampling_mode: time_series
+  continuity: unknown
+fields: []
+extractor:
+  script: scripts/extract_test_file_manifest.py
+  script_hash: replace_with_sha256
+  config_hash: null
+  generated_at: replace_with_iso_timestamp
+  version: "1"
+field_signature_hash: replace_with_generated_hash
+metadata:
+  generated_by: script

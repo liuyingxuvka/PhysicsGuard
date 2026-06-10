@@ -34,39 +34,44 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 ## Workflow A: Audit External Results
 
 1. Clarify the visible failure: wrong final value, unstable response, impossible pressure/flow/power/heat/current/voltage, bad efficiency, or inconsistent control logic.
-2. Check project adoption when working inside a repository:
+2. If the work includes a concrete testbench/test-data file, first route through
+   `physicsguard-test-file-contract-review`. Generate or inspect the file
+   manifest, check the file-specific contract, and do not make broad AI analysis
+   claims until the contract passes. If there is no concrete test data file,
+   continue with the normal model-only or observed-snapshot route.
+3. Check project adoption when working inside a repository:
 
    ```powershell
    python -m physicsguard.cli project audit --pretty
    ```
 
    If adoption is missing and setup is in scope, run `project adopt` or `project upgrade`. Project adoption is workflow evidence only.
-3. Create or review a model-understanding preflight before residual interpretation:
+4. Create or review a model-understanding preflight before residual interpretation:
 
    ```powershell
    python -m physicsguard.cli preflight review PREFLIGHT.yaml --pretty
    ```
 
    The preflight must name the visible symptom, external model source of truth, physical boundary, subsystem blocks, conserved quantities, expected SI units, assumptions, uncertain mappings, first audit level, and stop conditions.
-4. Build or choose the coarsest useful PhysicsGuard audit YAML.
-5. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record:
+5. Build or choose the coarsest useful PhysicsGuard audit YAML.
+6. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record:
 
    ```powershell
    python -m physicsguard.cli intake review INTAKE.yaml --pretty
    ```
 
    AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards are acceptable fallback evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
-6. Prefer direct observed evaluation:
+7. Prefer direct observed evaluation:
 
    ```powershell
    python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
    ```
 
-7. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
-8. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
-9. Request or export only the next small set of signals/parameters needed by the suspicious block.
-10. Refine that block with a lower-level audit template.
-11. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
+8. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
+9. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+10. Request or export only the next small set of signals/parameters needed by the suspicious block.
+11. Refine that block with a lower-level audit template.
+12. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
@@ -130,6 +135,9 @@ Keep the header as comments only. Do not add provenance metadata solely for this
 - Do not add high-fidelity solvers, automatic repair, or natural-language report generation.
 - Do not use assumptions as solver-tunable variables.
 - Do not silently invent signal mappings, units, or parameters.
+- Do not mark test-file fields as covered without mapping evidence. Unknown
+  field meaning or unknown model binding must stay review-required, planned as a
+  model extension, or fail the contract.
 - Do not treat `signal_mapping_ledger` as a conversion engine. It records evidence and review state; observed values are still used exactly as supplied.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
 - For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.

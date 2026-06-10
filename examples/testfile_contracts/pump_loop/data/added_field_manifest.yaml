@@ -1,0 +1,71 @@
+manifest_id: added_field
+source_file:
+  path: added_field.csv
+  content_hash: 35595f9d06b5cf81c2d751b7f614f021454643dfdb0de2aecc37d0226e9ba4e7
+  size_bytes: 143
+format:
+  kind: csv
+  delimiter: ','
+  encoding: utf-8
+  header_rows: 1
+  metadata: {}
+shape:
+  field_count: 5
+  row_count: 3
+  sample_count: 3
+time:
+  time_column: time_s
+  start_time: 0.0
+  end_time: 0.2
+  duration_s: 0.2
+  nominal_sample_rate_hz: 10.0
+  sampling_mode: time_series
+  continuity: continuous
+  gap_count: 0
+  metadata: {}
+fields:
+- name: time_s
+  data_type: float
+  unit: s
+  non_null_count: 3
+  null_count: 0
+  min_value: 0.0
+  max_value: 0.2
+  metadata: {}
+- name: cmd_speed_rad_s
+  data_type: float
+  unit: rad/s
+  non_null_count: 3
+  null_count: 0
+  min_value: 10.0
+  max_value: 11.0
+  metadata: {}
+- name: flow_readback_kg_s
+  data_type: float
+  unit: kg/s
+  non_null_count: 3
+  null_count: 0
+  min_value: 20.0
+  max_value: 22.0
+  metadata: {}
+- name: valve_open
+  data_type: boolean
+  unit: '1'
+  non_null_count: 3
+  null_count: 0
+  metadata: {}
+- name: bearing_temp_K
+  data_type: float
+  non_null_count: 3
+  null_count: 0
+  min_value: 300.0
+  max_value: 300.4
+  metadata: {}
+extractor:
+  script: physicsguard.core.data_file_manifest.generate_delimited_manifest
+  script_hash: f53564fd5877a36a762d5315948575cfe9d26afcbf6bdf412f7c32849148f47c
+  generated_at: '2026-06-10T03:55:11.670828+00:00'
+  version: '1'
+  metadata: {}
+field_signature_hash: 1defe27ccf0bac3e2a758ea0d3e87664573d927b1194cda8faee75db29872da7
+metadata: {}

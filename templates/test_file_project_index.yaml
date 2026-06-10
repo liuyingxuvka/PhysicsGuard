@@ -1,0 +1,7 @@
+project_id: example_test_project
+test_files:
+  - contract: path/to/test_file_contract.yaml
+    file_id: example_bench_run_YYYYMMDD
+    testbench_profile_id: example_bench_v1
+metadata:
+  rule: use project-check to verify all file-level contracts

@@ -1,0 +1,26 @@
+roles:
+  - source_id: field:time_s
+    testbench_role: time_basis
+    physical_role: metadata
+    model_role: evaluation_index
+    coverage_status: covered
+  - source_id: field:cmd_speed_rad_s
+    testbench_role: command
+    physical_role: control_input
+    model_role: model_variable
+    owner_block_id: pump_loop
+    coverage_status: covered
+  - source_id: field:flow_readback_kg_s
+    testbench_role: measurement
+    physical_role: observed_output
+    model_role: model_variable
+    owner_block_id: pump_loop
+    coverage_status: covered
+  - source_id: field:valve_open
+    testbench_role: mode_flag
+    physical_role: control_state
+    model_role: hierarchy_block_context
+    owner_block_id: pump_loop
+    coverage_status: covered
+metadata:
+  fixture: pump_loop

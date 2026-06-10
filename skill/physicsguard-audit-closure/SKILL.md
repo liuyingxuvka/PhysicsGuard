@@ -14,5 +14,9 @@ python %USERPROFILE%\.codex\skills\physicsguard-ai-debugging\scripts\physicsguar
 ```
 
 Blocking or downgrading evidence includes failed audit, missing variables or parameters, review-required mappings, stale evidence, skipped checks, open refinements, and same-family follow-ups.
+For workflows that include concrete test data files, also treat missing,
+partial, stale, or failing test-file contracts as blocking or downgrading
+evidence. A residual report cannot make a broad claim from a file whose fields
+are not fully cataloged, classified, and evidence-mapped.
 
 Closure pass supports only a scoped low-fidelity claim inside the checked audit boundary.

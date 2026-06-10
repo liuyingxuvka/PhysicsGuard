@@ -1,0 +1,11 @@
+roles:
+  - source_id: field:time_s
+    testbench_role: time_basis
+    physical_role: metadata
+    model_role: evaluation_index
+    owner_block_id: null
+    verification_role: time_alignment
+    coverage_status: covered
+    reason: null
+metadata:
+  rule: every catalog entry needs exactly one role/disposition row

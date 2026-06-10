@@ -1,0 +1,9 @@
+profile_id: stale_fixture_extractor
+script: physicsguard.core.data_file_manifest.generate_delimited_manifest
+format_kind: csv
+delimiter: ","
+encoding: utf-8
+time_column: time_s
+metadata:
+  status: stale
+  reason: fixture for stale extractor detection

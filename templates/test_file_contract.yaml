@@ -1,0 +1,20 @@
+contract_id: example_test_file_contract
+file_id: example_bench_run_YYYYMMDD
+manifest: path/to/data_manifest.yaml
+manifest_hash: null
+testbench_profile: path/to/testbench_profile.yaml
+extractor_profile: path/to/extractor_profile.yaml
+model_binding: path/to/model_binding.yaml
+parameter_catalog: path/to/parameter_catalog.yaml
+role_matrix: path/to/parameter_role_matrix.yaml
+mapping_edges: path/to/parameter_mapping_edges.yaml
+coverage_policy: path/to/coverage_policy.yaml
+segments:
+  - segment_id: full_file
+    row_range: null
+    time_range: null
+    mode: full_file
+    audit_participation: true
+known_defects: []
+metadata:
+  rule: one resolved contract per concrete test data file

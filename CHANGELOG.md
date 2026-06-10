@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.4.0 - 2026-06-10
+
+Test file contract system.
+
+- Added optional per-file testbench data contracts with generated `DataFileManifest`, model binding, parameter catalog, role matrix, evidence-backed mapping edges, coverage policy, project index, and contract diffing.
+- Added `physicsguard testfile ...` and `physicsguard coverage check` CLI commands plus CI-friendly scripts for manifest extraction, contract checks, coverage checks, and installed skill sync checks.
+- Added a dedicated `physicsguard-test-file-contract-review` Codex route and updated existing PhysicsGuard skills so concrete test data files require contract evidence while model-only workflows stay lightweight.
+- Added FlowGuard models for both the test-file AI workflow and the development/release process, including gates for mapping evidence, model gaps, local install sync, and GitHub release readiness.
+
 ## v0.3.3 - 2026-06-08
 
 AI workflow governance upgrade.

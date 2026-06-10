@@ -1,0 +1,10 @@
+binding_id: pump_loop_fixture_binding
+hierarchy_file: ../model/pump_loop_hierarchy.yaml
+physicsguard_version: 0.4.0
+expected_variables:
+  - pump_signal_map.x
+  - pump_signal_map.y
+compatible_testbench_profiles:
+  - pump_loop_bench_v1
+metadata:
+  evidence_source: example fixture model binding

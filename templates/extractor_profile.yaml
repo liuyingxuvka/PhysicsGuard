@@ -1,0 +1,12 @@
+profile_id: example_extractor_v1
+script: scripts/extract_test_file_manifest.py
+script_hash: replace_with_sha256
+config_hash: null
+format_kind: csv
+delimiter: ","
+encoding: utf-8
+time_column: time_s
+field_units:
+  time_s: s
+metadata:
+  status: active

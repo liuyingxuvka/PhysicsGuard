@@ -1,0 +1,12 @@
+contract_id: pump_loop_added_field_contract
+file_id: pump_loop_added_field_2026_06_10
+manifest: ../data/added_field_manifest.yaml
+testbench_profile: ../profiles/pump_loop_testbench_profile.yaml
+extractor_profile: ../profiles/pump_loop_extractor_profile.yaml
+model_binding: ../bindings/pump_loop_model_binding.yaml
+parameter_catalog: ../catalogs/added_field_missing_catalog.yaml
+role_matrix: ../coverage/pump_loop_role_matrix.yaml
+mapping_edges: ../coverage/pump_loop_mapping_edges.yaml
+coverage_policy: ../coverage/pump_loop_coverage_policy.yaml
+metadata:
+  fixture: added_field_should_fail

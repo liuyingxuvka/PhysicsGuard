@@ -67,13 +67,16 @@ Rules return `RecommendedRefinement` objects with template ids, required variabl
 1. Run `physicsguard project audit` so the AI has the active repository, package version, skill routes, and adoption record.
 2. Complete or review the model-understanding preflight before writing the first hierarchy.
 3. Run a Level 0 whole-system hierarchical audit. For external model results, prefer `hierarchy evaluate` so observed values are not moved by a solver.
-4. Review the external-model intake and signal mappings before treating residuals as fault-localization evidence.
-5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `signal_mapping_ledger`, `bug_family_followups`, and `recommended_refinements`.
-6. If the Level 0 score is acceptable and closure evidence is clean, stop or accept coarse plausibility within the stated boundary.
-7. If a block fails, export the required variables and parameters listed by the recommendation.
-8. Run the next-level template for that block.
-9. Repeat until the issue is narrowed to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary.
-10. Before a final localization claim, run closure checks or explicitly mark the claim partial, downgraded, blocked, stale, or skipped.
+4. If the source is a concrete testbench data file, run the file's
+   `TestFileContract` and parameter coverage checks before treating all file
+   columns as audit evidence.
+5. Review the external-model intake and signal mappings before treating residuals as fault-localization evidence.
+6. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `signal_mapping_ledger`, `bug_family_followups`, and `recommended_refinements`.
+7. If the Level 0 score is acceptable and closure evidence is clean, stop or accept coarse plausibility within the stated boundary.
+8. If a block fails, export the required variables and parameters listed by the recommendation.
+9. Run the next-level template for that block.
+10. Repeat until the issue is narrowed to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary.
+11. Before a final localization claim, run closure checks or explicitly mark the claim partial, downgraded, blocked, stale, or skipped.
 
 ## Visualizing Hierarchical Audits
 
@@ -97,6 +100,10 @@ Diagrams are not validation evidence. Report validity still comes from the hiera
 `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty` loads a `HierarchicalAuditSpec` plus an `ObservedValuesSpec`, substitutes observed values directly into the residual system, and rolls residuals up by block. It does not solve a reference model and does not adjust observed values. The report metadata includes `mode: hierarchy_evaluate` and `solver_attempted: false`.
 
 Observed values can optionally record first-class mapping evidence: `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_offset`, `conversion_note`, `mapped_at`, and `stale_when`. These fields produce a top-level `signal_mapping_ledger` in hierarchy reports. The ledger is an evidence and review index only; PhysicsGuard does not convert or rewrite observed values from it.
+
+For large test data files, prefer `TestFileContract` mapping edges before
+creating observed snapshots. The contract checks every file field, while the
+observed snapshot usually contains only the variables selected for one audit.
 
 When mapping evidence is weak or residuals point to a repeated failure pattern, hierarchy reports also include `bug_family_followups`. These records suggest same-family checks such as signal mapping, gain/sign direction, unit conversion, and conservation-balance siblings so the audit does not stop at the first suspicious variable.
 

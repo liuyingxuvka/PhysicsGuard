@@ -1,0 +1,15 @@
+binding_id: example_model_binding
+hierarchy_file: path/to/hierarchy.yaml
+hierarchy_hash: replace_with_sha256
+physicsguard_version: replace_with_current_version
+expected_variables: []
+expected_parameters: []
+compatible_testbench_profiles:
+  - example_bench_v1
+compatible_manifest_signatures: []
+stale_when:
+  - hierarchy_file changes
+  - expected_variables change
+  - field_signature_hash changes
+metadata:
+  owner: replace_with_project_or_team

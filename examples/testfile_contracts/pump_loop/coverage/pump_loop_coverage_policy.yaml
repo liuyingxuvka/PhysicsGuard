@@ -1,0 +1,10 @@
+require_all_manifest_fields: true
+allow_review_required: false
+allow_unmapped_planned: true
+fail_on_stale: true
+fail_on_duplicate_active_mappings: true
+require_mapping_for_covered_roles: true
+require_mapping_evidence: true
+minimum_mapping_confidence: 0.6
+metadata:
+  claim_boundary: full file coverage required before broad AI analysis

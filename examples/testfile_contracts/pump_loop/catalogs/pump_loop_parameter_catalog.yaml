@@ -1,0 +1,23 @@
+parameters:
+  - source_id: field:time_s
+    field_name: time_s
+    canonical_id: time_s
+    unit: s
+    description: Test file time basis.
+  - source_id: field:cmd_speed_rad_s
+    field_name: cmd_speed_rad_s
+    canonical_id: pump.commanded_speed
+    unit: rad/s
+    description: Commanded speed field from testbench output.
+  - source_id: field:flow_readback_kg_s
+    field_name: flow_readback_kg_s
+    canonical_id: pump.flow_readback
+    unit: kg/s
+    description: Flow readback field from testbench measurement.
+  - source_id: field:valve_open
+    field_name: valve_open
+    canonical_id: pump.valve_open_flag
+    unit: "1"
+    description: Boolean valve-open flag carried with the test data.
+metadata:
+  fixture: pump_loop

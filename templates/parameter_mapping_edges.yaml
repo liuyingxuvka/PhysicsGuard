@@ -1,0 +1,19 @@
+edges:
+  - id: edge:time_s:metadata
+    source_id: field:time_s
+    relation: time_basis_for
+    target_type: metadata
+    target: time_s
+    confidence: 1.0
+    unit_evidence: s from testbench profile
+    evidence:
+      - evidence_type: field_name_match
+        source: testbench_profile.yaml
+        description: The profile declares time_s as the time column.
+        anchor: field_units.time_s
+        confidence: 1.0
+    stale_when:
+      - testbench profile changes
+    review_required: false
+metadata:
+  rule: AI-created mappings without evidence must stay review_required
