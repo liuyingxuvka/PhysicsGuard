@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.5.0 - 2026-06-11
+
+Model-dataset validation workflow.
+
+- Added logical dataset records and symmetric relation indexes so large raw test files can stay in place while project metadata tracks file representations, same-run relationships, and redundant sensors.
+- Added model-dataset validation plans and reports with direct no-fit residual checks, physical envelopes, redundant-sensor consistency, conservative bounded calibration, holdout validation, and confidence feedback.
+- Added model-library indexes for reusable low-fidelity model assets backed by validation report evidence without storing raw datasets.
+- Added `physicsguard dataset ...`, `physicsguard validation run`, and `physicsguard model-library check` CLI commands plus FlowGuard models, docs, templates, examples, tests, and Codex skill routes.
+
 ## v0.4.0 - 2026-06-10
 
 Test file contract system.

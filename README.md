@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.4.0`
+- **Version:** `v0.5.0`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -127,6 +127,32 @@ human-provided mapping records. Unknown field meaning, unknown targets, or model
 coverage gaps must remain explicit instead of being marked covered. A passing
 contract proves file coverage discipline only; physical correctness still needs
 residual reports and closure evidence.
+
+## Model-Dataset Validation And Reuse
+
+After a test-file contract passes, PhysicsGuard can validate the low-fidelity
+model against the contracted dataset boundary:
+
+```text
+contract pass -> direct validation -> optional bounded calibration -> holdout validation -> confidence feedback
+```
+
+Use:
+
+```powershell
+python -m physicsguard.cli dataset logical-check DATASET.yaml --pretty
+python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
+python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
+python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
+```
+
+The first calibration backend is deliberately conservative: no Adam or SPSA in
+this version. `coarse_grid_then_least_squares` only chooses a small bounded
+starting point before least squares. Calibration may adjust only explicit
+bounded parameters, never observed values, and `optimization_success` is
+reported separately from validation pass. Model-library entries store model and
+validation-report references; they do not store large raw datasets or prove
+validity outside the checked boundary.
 
 ## The Core Contract
 
@@ -275,7 +301,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.4.0` includes low-fidelity audit relations for:
+PhysicsGuard `v0.5.0` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -325,7 +351,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.4.0`
+- **版本：** `v0.5.0`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -427,6 +453,25 @@ python -m physicsguard.cli testfile diff OLD_CONTRACT.yaml NEW_CONTRACT.yaml --p
 ```
 
 AI 提出的字段绑定必须留下证据，例如字段名、标签、单位、P&ID 或测试台拓扑、代码引用、公式、datasheet，或者人类提供的映射记录。如果 AI 不知道字段含义、目标变量，或者当前模型还不能覆盖这个字段，就必须显式标成 review-required、模型缺口或合同失败，不能假装 covered。合同通过只证明字段覆盖纪律，不证明物理正确；物理结论仍然要靠 residual report 和 closure 证据。
+
+## 模型-数据校验和复用
+
+测试文件合同通过之后，PhysicsGuard 可以继续检查低保真模型和这批测试数据是否一致：
+
+```text
+合同通过 -> 直接不拟合校验 -> 可选有界校准 -> holdout 再校验 -> 置信度反馈
+```
+
+常用命令：
+
+```powershell
+python -m physicsguard.cli dataset logical-check DATASET.yaml --pretty
+python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
+python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
+python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
+```
+
+第一版校准刻意保守：不实现 Adam 或 SPSA。`coarse_grid_then_least_squares` 只是在边界内选一个很粗的初始点，再交给 least squares。校准只允许显式列出的有界参数被小规模调整，不能修改观测值。`optimization_success` 只表示优化器收敛，不等于 validation pass。模型复用库只保存模型和验证报告引用，不保存大型原始数据，也不证明模型在未验证边界外有效。
 
 ## 核心合同
 
@@ -575,7 +620,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.4.0` 包含这些低保真审计关系：
+PhysicsGuard `v0.5.0` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；

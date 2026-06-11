@@ -24,8 +24,11 @@ from physicsguard.core.test_file_contract import (
     check_test_file_parameter_coverage,
     check_test_file_project_index,
 )
+from physicsguard.core.dataset_identity import check_logical_dataset_record, check_test_file_relation_index
+from physicsguard.core.model_dataset_validation import validate_model_dataset
+from physicsguard.core.model_library import check_model_library_index
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -39,11 +42,15 @@ __all__ = [
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
     "check_test_file_project_index",
+    "check_logical_dataset_record",
+    "check_model_library_index",
+    "check_test_file_relation_index",
     "derive_bug_family_followups",
     "field_signature_hash",
     "generate_delimited_manifest",
     "mapping_warnings",
     "sha256_file",
+    "validate_model_dataset",
 ]
 
 _DIAGNOSTIC_EXPORTS = set(__all__)

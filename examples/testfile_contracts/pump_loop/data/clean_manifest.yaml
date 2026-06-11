@@ -1,3 +1,8 @@
+# PhysicsGuard data-file manifest
+# Purpose: clean manifest.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: reference from a PhysicsGuard test-file contract
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 manifest_id: clean
 source_file:
   path: clean.csv

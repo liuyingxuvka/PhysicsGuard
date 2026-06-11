@@ -1,0 +1,17 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: pump loop calibration train.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: pump_loop_calibration_train
+variables:
+  pump_signal_map.x:
+    value: 10.0
+    unit: rad/s
+    source: field:cmd_speed_rad_s
+  pump_signal_map.y:
+    value: 30.0
+    unit: kg/s
+    source: field:flow_readback_kg_s
+metadata:
+  fixture: calibration_train

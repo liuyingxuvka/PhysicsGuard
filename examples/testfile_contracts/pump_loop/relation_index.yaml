@@ -1,0 +1,19 @@
+# PhysicsGuard test-file relation index
+# Purpose: relation index.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli dataset relation-check examples/testfile_contracts/pump_loop/relation_index.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+project_id: pump_loop_contract_fixture_project
+logical_datasets:
+  - datasets/clean_logical_dataset.yaml
+relations:
+  - relation_id: pump_loop_clean_same_test
+    relation_type: same_test_run
+    members:
+      - datasets/clean_logical_dataset.yaml
+      - datasets/clean_logical_dataset.yaml
+    evidence:
+      - fixture self relation for relation-index smoke coverage
+metadata:
+  fixture: pump_loop
+  rule: relation index is symmetric and does not create parent-child contracts

@@ -1,3 +1,8 @@
+# PhysicsGuard test-file project index
+# Purpose: project index.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli testfile project-check examples/testfile_contracts/pump_loop/project_index.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 project_id: pump_loop_contract_fixture_project
 test_files:
   - contract: contracts/clean_contract.yaml

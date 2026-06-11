@@ -1,5 +1,11 @@
+# PhysicsGuard test-file contract
+# Purpose: clean contract.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli testfile contract-check examples/testfile_contracts/pump_loop/contracts/clean_contract.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 contract_id: pump_loop_clean_contract
 file_id: pump_loop_clean_2026_06_10
+logical_dataset: ../datasets/clean_logical_dataset.yaml
 manifest: ../data/clean_manifest.yaml
 testbench_profile: ../profiles/pump_loop_testbench_profile.yaml
 extractor_profile: ../profiles/pump_loop_extractor_profile.yaml

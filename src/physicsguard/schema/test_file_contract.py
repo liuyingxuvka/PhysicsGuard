@@ -202,6 +202,7 @@ class TestFileContractSpec(BaseModel):
 
     contract_id: str
     file_id: str
+    logical_dataset: Optional[str] = None
     manifest: DataFileManifestSpec | str
     manifest_hash: Optional[str] = None
     testbench_profile: Optional[TestBenchProfileSpec | str] = None
@@ -220,10 +221,10 @@ class TestFileContractSpec(BaseModel):
     def _ids_not_empty(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
 
-    @field_validator("manifest_hash")
+    @field_validator("logical_dataset", "manifest_hash")
     @classmethod
-    def _manifest_hash_not_empty(cls, value: Optional[str]) -> Optional[str]:
-        return ensure_non_empty(value, "manifest_hash") if value is not None else value
+    def _optional_strings_not_empty(cls, value: Optional[str], info) -> Optional[str]:
+        return ensure_non_empty(value, info.field_name) if value is not None else value
 
     @model_validator(mode="after")
     def _contract_valid(self) -> "TestFileContractSpec":
@@ -244,6 +245,7 @@ class TestFileReferenceSpec(BaseModel):
 
     contract: str
     file_id: Optional[str] = None
+    logical_dataset_id: Optional[str] = None
     testbench_profile_id: Optional[str] = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 

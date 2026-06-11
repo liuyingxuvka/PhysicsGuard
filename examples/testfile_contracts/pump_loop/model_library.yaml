@@ -1,0 +1,18 @@
+# PhysicsGuard model library index
+# Purpose: model library.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli model-library check examples/testfile_contracts/pump_loop/model_library.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+library_id: pump_loop_fixture_library
+entries:
+  - model_id: pump_loop_contract_fixture
+    model_file: model/pump_loop_hierarchy.yaml
+    compatible_testbench_profiles:
+      - pump_loop_bench_v1
+    validation_reports:
+      - validation/clean_validation_plan.yaml
+    reuse_status: partial
+    known_limits:
+      - fixture only; not a real pump model
+metadata:
+  fixture: pump_loop

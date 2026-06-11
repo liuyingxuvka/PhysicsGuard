@@ -19,4 +19,13 @@ partial, stale, or failing test-file contracts as blocking or downgrading
 evidence. A residual report cannot make a broad claim from a file whose fields
 are not fully cataloged, classified, and evidence-mapped.
 
+For workflows that validate a model against contracted test data, also read the
+model-dataset validation report. Missing, partial, failed, stale, or blocked
+validation reports downgrade or block broad model-data consistency claims. Treat
+`optimization_success` as numerical optimizer evidence only; it is not
+`audit_pass`, holdout pass, or final validation pass. Parameter-at-bound
+warnings, low validation confidence, failed physical envelopes, redundant-sensor
+mismatches, and review-required confidence updates must remain visible in the
+final claim boundary.
+
 Closure pass supports only a scoped low-fidelity claim inside the checked audit boundary.

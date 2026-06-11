@@ -82,3 +82,37 @@ def test_cli_coverage_project_and_diff_commands() -> None:
     assert json.loads(coverage.stdout)["status"] == "pass"
     assert json.loads(project.stdout)["status"] == "pass"
     assert json.loads(diff.stdout)["status"] == "changed"
+
+
+def test_cli_dataset_validation_and_model_library_commands() -> None:
+    logical = run_cli(
+        "dataset",
+        "logical-check",
+        str(PUMP / "datasets" / "clean_logical_dataset.yaml"),
+        "--pretty",
+    )
+    relation = run_cli(
+        "dataset",
+        "relation-check",
+        str(PUMP / "relation_index.yaml"),
+        "--pretty",
+    )
+    validation = run_cli(
+        "validation",
+        "run",
+        str(PUMP / "validation" / "clean_validation_plan.yaml"),
+        "--pretty",
+    )
+    library = run_cli(
+        "model-library",
+        "check",
+        str(PUMP / "model_library.yaml"),
+        "--pretty",
+    )
+
+    assert logical.returncode == 0, logical.stderr
+    assert relation.returncode == 0, relation.stderr
+    assert validation.returncode == 0, validation.stderr
+    assert library.returncode == 0, library.stderr
+    assert json.loads(logical.stdout)["status"] == "pass"
+    assert json.loads(validation.stdout)["status"] == "pass"

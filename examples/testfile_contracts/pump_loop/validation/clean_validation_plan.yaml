@@ -1,0 +1,41 @@
+# PhysicsGuard model-dataset validation plan
+# Purpose: clean validation plan.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli validation run examples/testfile_contracts/pump_loop/validation/clean_validation_plan.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+validation_id: pump_loop_clean_validation
+audit_file: ../model/pump_loop_hierarchy.yaml
+observed_file: ../observed/clean_observed.yaml
+contracts:
+  - contract: ../contracts/clean_contract.yaml
+    required_status: pass
+variable_roles:
+  - source_id: field:cmd_speed_rad_s
+    target: pump_signal_map.x
+    validation_role: model_input
+    use_policy: preferred
+    mapping_confidence: 0.9
+    measurement_confidence: 0.8
+  - source_id: field:flow_readback_kg_s
+    target: pump_signal_map.y
+    validation_role: validation_output
+    use_policy: holdout_only
+    mapping_confidence: 0.9
+    measurement_confidence: 0.8
+physical_envelopes:
+  - target: pump_signal_map.x
+    lower: 0.0
+    upper: 100.0
+    unit: rad/s
+    severity: warning
+  - target: pump_signal_map.y
+    lower: 0.0
+    upper: 300.0
+    unit: kg/s
+    severity: warning
+redundant_sensor_checks: []
+calibration:
+  enabled: false
+  method: none
+metadata:
+  fixture: clean

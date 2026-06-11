@@ -1,0 +1,19 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: pump loop clean observed.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: pump_loop_clean_observed
+variables:
+  pump_signal_map.x:
+    value: 10.0
+    unit: rad/s
+    source: field:cmd_speed_rad_s
+    mapping_confidence: 0.9
+  pump_signal_map.y:
+    value: 20.0
+    unit: kg/s
+    source: field:flow_readback_kg_s
+    mapping_confidence: 0.9
+metadata:
+  fixture: clean

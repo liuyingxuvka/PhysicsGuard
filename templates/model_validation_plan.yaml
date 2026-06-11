@@ -1,0 +1,36 @@
+validation_id: example_validation
+audit_file: path/to/hierarchy.yaml
+observed_file: path/to/observed.yaml
+contracts:
+  - contract: path/to/test_file_contract.yaml
+    required_status: pass
+variable_roles:
+  - source_id: field:cmd_speed_rad_s
+    target: pump_signal_map.x
+    validation_role: model_input
+    use_policy: preferred
+    mapping_confidence: 0.9
+    measurement_confidence: 0.8
+  - source_id: field:flow_readback_kg_s
+    target: pump_signal_map.y
+    validation_role: validation_output
+    use_policy: holdout_only
+    mapping_confidence: 0.9
+    measurement_confidence: 0.8
+physical_envelopes:
+  - target: pump_signal_map.x
+    lower: 0.0
+    upper: 100.0
+    unit: rad/s
+    severity: warning
+  - target: pump_signal_map.y
+    lower: 0.0
+    upper: 300.0
+    unit: kg/s
+    severity: warning
+redundant_sensor_checks: []
+calibration:
+  enabled: false
+  method: none
+metadata:
+  boundary: low-fidelity validation only

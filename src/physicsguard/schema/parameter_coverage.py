@@ -18,6 +18,33 @@ CoverageStatus = Literal[
     "unmapped",
     "missing",
 ]
+ValidationRole = Literal[
+    "unknown",
+    "model_input",
+    "calibration_candidate",
+    "validation_output",
+    "diagnostic_check",
+    "redundant_measurement",
+    "fallback_measurement",
+    "check_only",
+]
+UsePolicy = Literal[
+    "unspecified",
+    "preferred",
+    "fallback",
+    "cross_check",
+    "exclude_from_fit",
+    "holdout_only",
+]
+DataQualityStatus = Literal[
+    "unknown",
+    "good",
+    "noisy",
+    "missing",
+    "drift_suspected",
+    "out_of_range",
+    "review_required",
+]
 MappingTargetType = Literal[
     "physics_variable",
     "model_variable",
@@ -102,6 +129,10 @@ class RoleAssignmentSpec(BaseModel):
     coverage_status: CoverageStatus
     owner_block_id: Optional[str] = None
     verification_role: Optional[str] = None
+    validation_role: ValidationRole = "unknown"
+    use_policy: UsePolicy = "unspecified"
+    measurement_confidence: Optional[float] = None
+    data_quality_status: DataQualityStatus = "unknown"
     reason: Optional[str] = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -109,6 +140,13 @@ class RoleAssignmentSpec(BaseModel):
     @classmethod
     def _required_strings(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
+
+    @field_validator("measurement_confidence")
+    @classmethod
+    def _measurement_confidence_valid(cls, value: Optional[float]) -> Optional[float]:
+        if value is not None and not 0 <= value <= 1:
+            raise ValueError("measurement_confidence must be between 0 and 1")
+        return value
 
     @model_validator(mode="after")
     def _role_consistent(self) -> "RoleAssignmentSpec":
@@ -263,6 +301,7 @@ def _ensure_json_serializable(value: Any, field_name: str) -> None:
 __all__ = [
     "CoveragePolicySpec",
     "CoverageStatus",
+    "DataQualityStatus",
     "MappingEdgeSpec",
     "MappingEvidenceSpec",
     "MappingEvidenceType",
@@ -272,4 +311,6 @@ __all__ = [
     "ParameterMappingEdgesSpec",
     "ParameterRoleMatrixSpec",
     "RoleAssignmentSpec",
+    "UsePolicy",
+    "ValidationRole",
 ]

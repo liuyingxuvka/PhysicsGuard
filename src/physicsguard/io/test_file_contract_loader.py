@@ -9,6 +9,9 @@ import yaml
 from pydantic import BaseModel, ValidationError
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
+from physicsguard.schema.dataset_identity import LogicalDatasetRecordSpec, TestFileRelationIndexSpec
+from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
+from physicsguard.schema.model_library import ModelLibraryIndexSpec
 from physicsguard.schema.parameter_coverage import (
     CoveragePolicySpec,
     ParameterCatalogSpec,
@@ -55,6 +58,22 @@ def load_data_file_manifest(path: str | Path) -> DataFileManifestSpec:
     return load_spec(path, DataFileManifestSpec)
 
 
+def load_logical_dataset_record(path: str | Path) -> LogicalDatasetRecordSpec:
+    return load_spec(path, LogicalDatasetRecordSpec)
+
+
+def load_test_file_relation_index(path: str | Path) -> TestFileRelationIndexSpec:
+    return load_spec(path, TestFileRelationIndexSpec)
+
+
+def load_model_validation_plan(path: str | Path) -> ModelValidationPlanSpec:
+    return load_spec(path, ModelValidationPlanSpec)
+
+
+def load_model_library_index(path: str | Path) -> ModelLibraryIndexSpec:
+    return load_spec(path, ModelLibraryIndexSpec)
+
+
 def load_testbench_profile(path: str | Path) -> TestBenchProfileSpec:
     return load_spec(path, TestBenchProfileSpec)
 
@@ -95,13 +114,17 @@ __all__ = [
     "load_coverage_policy",
     "load_data_file_manifest",
     "load_extractor_profile",
+    "load_logical_dataset_record",
     "load_model_binding",
+    "load_model_library_index",
+    "load_model_validation_plan",
     "load_parameter_catalog",
     "load_parameter_mapping_edges",
     "load_parameter_role_matrix",
     "load_spec",
     "load_test_file_contract",
     "load_test_file_project_index",
+    "load_test_file_relation_index",
     "load_testbench_profile",
     "load_yaml_mapping",
 ]

@@ -1,3 +1,8 @@
+# PhysicsGuard testbench profile
+# Purpose: pump loop testbench profile.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: reference from a PhysicsGuard test-file contract
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 profile_id: pump_loop_bench_v1
 bench_id: pump_loop_bench
 bench_version: v1

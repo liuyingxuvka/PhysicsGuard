@@ -12,9 +12,15 @@ import yaml
 
 from physicsguard.core.contract_diff import diff_test_file_contracts
 from physicsguard.core.data_file_manifest import generate_delimited_manifest, manifest_to_dict
+from physicsguard.core.dataset_identity import (
+    check_logical_dataset_record,
+    check_test_file_relation_index,
+)
 from physicsguard.core.diagnostics import DiagnosticReporter
 from physicsguard.core.evaluator import AuditEvaluator
 from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy, plan_from_report
+from physicsguard.core.model_dataset_validation import validate_model_dataset
+from physicsguard.core.model_library import check_model_library_index
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.solver import BoundedSolver
 from physicsguard.core.test_file_contract import (
@@ -229,6 +235,51 @@ def build_parser() -> argparse.ArgumentParser:
     )
     coverage_check_parser.add_argument("contract", type=Path, help="path to TestFileContract YAML")
     coverage_check_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    dataset_parser = subparsers.add_parser(
+        "dataset",
+        help="logical test dataset identity commands",
+    )
+    dataset_subparsers = dataset_parser.add_subparsers(dest="dataset_command", required=True)
+    dataset_logical_check = dataset_subparsers.add_parser(
+        "logical-check",
+        help="check a logical dataset record",
+    )
+    dataset_logical_check.add_argument("record", type=Path, help="path to LogicalDatasetRecord YAML")
+    dataset_logical_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    dataset_relation_check = dataset_subparsers.add_parser(
+        "relation-check",
+        help="check a test-file relation index",
+    )
+    dataset_relation_check.add_argument("index", type=Path, help="path to TestFileRelationIndex YAML")
+    dataset_relation_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    validation_parser = subparsers.add_parser(
+        "validation",
+        help="model-dataset validation commands",
+    )
+    validation_subparsers = validation_parser.add_subparsers(dest="validation_command", required=True)
+    validation_run = validation_subparsers.add_parser(
+        "run",
+        help="run a model-dataset validation plan",
+    )
+    validation_run.add_argument("plan", type=Path, help="path to ModelValidationPlan YAML")
+    validation_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    model_library_parser = subparsers.add_parser(
+        "model-library",
+        help="model library index commands",
+    )
+    model_library_subparsers = model_library_parser.add_subparsers(
+        dest="model_library_command",
+        required=True,
+    )
+    model_library_check = model_library_subparsers.add_parser(
+        "check",
+        help="check a model library index",
+    )
+    model_library_check.add_argument("index", type=Path, help="path to ModelLibraryIndex YAML")
+    model_library_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     return parser
 
 
@@ -390,6 +441,30 @@ def coverage_check_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
+def dataset_logical_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_logical_dataset_record(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def dataset_relation_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_test_file_relation_index(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def validation_run_command(path: Path, pretty: bool = False) -> int:
+    report = validate_model_dataset(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def model_library_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_model_library_index(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
     data = load_yaml_mapping(path)
     if "script" in data:
@@ -451,6 +526,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "coverage":
             if args.coverage_command == "check":
                 return coverage_check_command(args.contract, args.pretty)
+        if args.command == "dataset":
+            if args.dataset_command == "logical-check":
+                return dataset_logical_check_command(args.record, args.pretty)
+            if args.dataset_command == "relation-check":
+                return dataset_relation_check_command(args.index, args.pretty)
+        if args.command == "validation":
+            if args.validation_command == "run":
+                return validation_run_command(args.plan, args.pretty)
+        if args.command == "model-library":
+            if args.model_library_command == "check":
+                return model_library_check_command(args.index, args.pretty)
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

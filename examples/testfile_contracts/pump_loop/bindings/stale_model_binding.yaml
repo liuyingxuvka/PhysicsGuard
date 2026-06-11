@@ -1,3 +1,8 @@
+# PhysicsGuard test-file model binding
+# Purpose: stale model binding.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: reference from a PhysicsGuard test-file contract
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 binding_id: pump_loop_stale_fixture_binding
 hierarchy_file: ../model/pump_loop_hierarchy.yaml
 physicsguard_version: 0.4.0

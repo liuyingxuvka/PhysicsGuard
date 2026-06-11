@@ -1,3 +1,8 @@
+# PhysicsGuard test-file contract
+# Purpose: unclassified contract.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli testfile contract-check examples/testfile_contracts/pump_loop/contracts/unclassified_contract.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 contract_id: pump_loop_unclassified_contract
 file_id: pump_loop_clean_unclassified_2026_06_10
 manifest: ../data/clean_manifest.yaml

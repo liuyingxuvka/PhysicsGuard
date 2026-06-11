@@ -1,3 +1,8 @@
+# PhysicsGuard test-file contract
+# Purpose: added field contract.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli testfile contract-check examples/testfile_contracts/pump_loop/contracts/added_field_contract.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 contract_id: pump_loop_added_field_contract
 file_id: pump_loop_added_field_2026_06_10
 manifest: ../data/added_field_manifest.yaml

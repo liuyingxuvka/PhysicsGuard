@@ -1,0 +1,17 @@
+# PhysicsGuard logical dataset record
+# Purpose: clean logical dataset.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli dataset logical-check examples/testfile_contracts/pump_loop/datasets/clean_logical_dataset.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+logical_dataset_id: pump_loop_clean_dataset
+representation_manifests:
+  - manifest: ../data/clean_manifest.yaml
+    representation_id: clean_csv
+testbench_profile_id: pump_loop_bench_v1
+relation_group_ids:
+  - pump_loop_clean_run
+raw_data_policy:
+  do_not_move_raw_data: true
+  source_path_is_reference_only: true
+metadata:
+  fixture: clean

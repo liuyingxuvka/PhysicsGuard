@@ -1,0 +1,15 @@
+logical_dataset_id: example_run_001_sensor_a
+representation_manifests:
+  - manifest: path/to/data_manifest.yaml
+    representation_id: csv_export
+    content_hash: null
+testbench_profile_id: example_bench_v1
+relation_group_ids:
+  - example_run_001
+semantic_signature_hash: null
+value_fingerprint_hash: null
+raw_data_policy:
+  do_not_move_raw_data: true
+  source_path_is_reference_only: true
+metadata:
+  note: raw test data stays at the referenced source path

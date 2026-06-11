@@ -1,6 +1,11 @@
+# PhysicsGuard test-file model binding
+# Purpose: pump loop model binding.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: reference from a PhysicsGuard test-file contract
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 binding_id: pump_loop_fixture_binding
 hierarchy_file: ../model/pump_loop_hierarchy.yaml
-physicsguard_version: 0.4.0
+physicsguard_version: 0.5.0
 expected_variables:
   - pump_signal_map.x
   - pump_signal_map.y

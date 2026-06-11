@@ -1,7 +1,7 @@
 # PhysicsGuard hierarchical audit/model blueprint
-# Purpose: Test-file contract fixture using a generic relation to demonstrate parameter binding.
+# Purpose: Generic relation used only to demonstrate test-file field binding. The fixture is not a real pump model and does not claim commercial-tool...
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: python -m physicsguard.cli hierarchy inspect examples/testfile_contracts/pump_loop/model/pump_loop_hierarchy.yaml --pretty
+# Use with: python -m physicsguard.cli hierarchy run examples/testfile_contracts/pump_loop/model/pump_loop_hierarchy.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: pump_loop_contract_fixture
 description: >

@@ -15,6 +15,8 @@ __all__ = [
     "VariableDeviationDiagnostic",
     "VariableRegistry",
     "check_parameter_coverage",
+    "check_logical_dataset_record",
+    "check_model_library_index",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
     "check_test_file_project_index",
@@ -23,6 +25,7 @@ __all__ = [
     "generate_delimited_manifest",
     "inspect_test_file_contract",
     "sha256_file",
+    "validate_model_dataset",
 ]
 
 
@@ -73,6 +76,24 @@ def __getattr__(name: str):
             "check_test_file_project_index": check_test_file_project_index,
             "inspect_test_file_contract": inspect_test_file_contract,
         }[name]
+    if name in {"check_logical_dataset_record", "check_test_file_relation_index"}:
+        from physicsguard.core.dataset_identity import (
+            check_logical_dataset_record,
+            check_test_file_relation_index,
+        )
+
+        return {
+            "check_logical_dataset_record": check_logical_dataset_record,
+            "check_test_file_relation_index": check_test_file_relation_index,
+        }[name]
+    if name == "validate_model_dataset":
+        from physicsguard.core.model_dataset_validation import validate_model_dataset
+
+        return validate_model_dataset
+    if name == "check_model_library_index":
+        from physicsguard.core.model_library import check_model_library_index
+
+        return check_model_library_index
     if name in {
         "AuditEvaluator",
         "ComparisonResult",

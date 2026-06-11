@@ -1,0 +1,14 @@
+artifact_kind: model_dataset_validation
+validation_id: example_validation
+status: partial
+direct_validation:
+  audit_pass: false
+  max_abs_normalized_residual: 2.0
+calibration:
+  enabled: false
+  method: none
+confidence_updates: []
+safe_claim: validation evidence is partial; review findings before broad analysis claims
+unsafe_claim_boundary: not high-fidelity proof and not commercial-model equivalence
+next_actions:
+  - inspect top residuals before trusting model-data consistency

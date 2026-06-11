@@ -1,3 +1,8 @@
+# PhysicsGuard test-file extractor profile
+# Purpose: stale extractor profile.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: reference from a PhysicsGuard test-file contract
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 profile_id: stale_fixture_extractor
 script: physicsguard.core.data_file_manifest.generate_delimited_manifest
 format_kind: csv

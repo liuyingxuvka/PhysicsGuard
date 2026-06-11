@@ -1,0 +1,23 @@
+project_id: example_project
+logical_datasets:
+  - datasets/example_run_001_sensor_a.yaml
+  - datasets/example_run_001_sensor_b.yaml
+relations:
+  - relation_id: run_001_same_test
+    relation_type: same_test_run
+    members:
+      - datasets/example_run_001_sensor_a.yaml
+      - datasets/example_run_001_sensor_b.yaml
+    evidence:
+      - same testbench run id supplied by user
+  - relation_id: coolant_temp_redundant_sensors
+    relation_type: redundant_sensor
+    members:
+      - field:sensor_a_temp
+      - field:sensor_b_temp
+    target: coolant.temperature_K
+    confidence: 0.7
+    evidence:
+      - both fields are declared as coolant temperature sensors
+metadata:
+  rule: relations are symmetric and do not create parent-child contracts
