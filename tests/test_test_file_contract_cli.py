@@ -138,3 +138,17 @@ def test_cli_project_evidence_commands() -> None:
     map_data = json.loads(project_map.stdout)
     assert map_data["coverage_summary"]["unresolved_binding_gap_count"] == 0
     assert "pump_signal_map.x" in map_data["coverage_summary"]["tested_model_targets"]
+
+
+def test_cli_project_closure_command() -> None:
+    result = run_cli(
+        "project",
+        "closure",
+        str(PUMP / "project_closure_plan.yaml"),
+        "--pretty",
+    )
+
+    assert result.returncode == 0, result.stderr
+    data = json.loads(result.stdout)
+    assert data["artifact_kind"] == "physicsguard_project_closure_report"
+    assert data["closure_status"] == "passed"

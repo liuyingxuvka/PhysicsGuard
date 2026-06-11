@@ -1,0 +1,67 @@
+# PhysicsGuard database catalog
+# Purpose: Example cross-project catalog that references one project evidence registry. It is intentionally generic and does not encode a domain-specific taxonomy.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli database check examples/database_catalog/database_catalog.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+
+catalog_id: fixture_database_catalog
+catalog_name: Fixture database catalog
+schema_version: "1.0"
+physicsguard_version: "0.7.0"
+created_at: "2026-06-11T00:00:00Z"
+updated_at: "2026-06-11T00:00:00Z"
+description: >
+  Example cross-project catalog that references one project evidence registry.
+  It is intentionally generic and does not encode a domain-specific taxonomy.
+catalog_roots:
+  - ..
+projects:
+  - project_id: pump_loop_fixture_project
+    project_name: Pump loop fixture project
+    project_evidence_registry: ../testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml
+    project_status: active
+    domain_tags:
+      - fixture-domain
+    system_tags:
+      - low-fidelity-fixture-system
+    subsystem_tags:
+      - signal-map-fixture
+    component_tags:
+      - pump-loop-fixture
+    test_object_tags:
+      - contract-fixture
+    testbench_tags:
+      - pump-loop-bench-v1
+    measurement_tags:
+      - pump.commanded_speed
+      - pump.flow_readback
+    run_period_summary: Clean fixture run from 0.0s to 3.0s
+    location_summary: Repository fixture workspace
+    has_test_data: true
+    has_model: true
+    has_validation: true
+    has_model_library_entry: true
+    confidence_summary:
+      source_state: medium
+      mapping_state: medium
+      data_quality_state: medium
+      validation_state: partial
+      reuse_state: partial
+      catalog_freshness: current
+      review_state: ai_registered
+    last_scanned_at: "2026-06-11T00:00:00Z"
+model_library_indexes:
+  - library_id: pump_loop_fixture_model_library
+    path: ../testfile_contracts/pump_loop/model_library.yaml
+    registered_at: "2026-06-11T00:00:00Z"
+    status: active
+tag_dictionary:
+  aliases: {}
+  descriptions:
+    fixture-domain: Generic fixture tag used only for repository examples.
+policies:
+  require_project_registry_for_cross_project_claims: true
+  require_gap_check_before_query_claims: true
+  require_explicit_scope_before_comparison: true
+  forbid_raw_data_payloads: true
+metadata: {}

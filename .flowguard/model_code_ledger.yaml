@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.6.0
+updated_for_version: 0.7.0
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -618,3 +618,103 @@ entries:
       - Blocking evidence gaps prevent validation pass or validated model reuse claims.
     stale_when:
       - Project evidence schema, CLI command names, gap severity, binding expectation, project map, validation bundle, model-library reuse, or skill-route semantics change.
+
+  - id: workflow.project_closure_gate
+    model_file: .flowguard/physicsguard_project_closure_model.py
+    model_blocks:
+      - RunProjectAudit
+      - RunEvidenceGate
+      - RunDownstreamChecks
+      - FinalizeClosure
+    responsibility: >
+      Aggregate current project audit, evidence registry, evidence gap, evidence
+      map, test-file contract, model-dataset validation, model-library, and
+      optional hierarchy closure evidence into the strongest safe project-level
+      claim. Keep evidence maps as navigation only and block broad claims when
+      required checks are skipped or blocking gaps remain.
+    code_symbols:
+      - src/physicsguard/schema/project_closure.py::ProjectClosurePlanSpec
+      - src/physicsguard/schema/project_closure.py::ProjectClosureReportSpec
+      - src/physicsguard/core/project_closure.py::run_project_closure
+      - src/physicsguard/io/test_file_contract_loader.py::load_project_closure_plan
+      - src/physicsguard/cli.py::project_closure_command
+    tests:
+      - tests/test_project_closure.py
+      - tests/test_test_file_contract_cli.py
+    examples:
+      - examples/testfile_contracts/pump_loop/project_closure_plan.yaml
+      - templates/project_closure_plan.yaml
+      - templates/project_closure_report.yaml
+      - docs/project_closure_gate.md
+      - docs/project_evidence_registry.md
+      - skill/physicsguard-audit-closure/SKILL.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_project_closure_checks.py
+        covers: Closure pass, map-not-proof, blocking evidence gaps, review downgrades, skipped required checks, and downstream blockers.
+      - command: python -m pytest tests/test_project_closure.py tests/test_test_file_contract_cli.py
+        covers: Closure schema/core/CLI behavior over pump-loop examples and bad-case mutations.
+      - command: python -m physicsguard.cli project closure examples/testfile_contracts/pump_loop/project_closure_plan.yaml --pretty
+        covers: End-to-end pump-loop project closure.
+    boundaries:
+      - Project closure is current-run claim-readiness evidence, not a permanent registry field.
+      - Project evidence maps are navigation only and cannot prove validation by themselves.
+      - Blocking evidence gaps, failed required route checks, or skipped required checks block broad claims.
+      - Review gaps downgrade or limit claims and must remain visible.
+    stale_when:
+      - Closure plan/report schema, project audit policy, evidence gap severity, validation/model-library status semantics, or final claim wording changes.
+
+  - id: workflow.database_catalog
+    model_file: .flowguard/physicsguard_database_catalog_model.py
+    model_blocks:
+      - FindCatalog
+      - RegisterProjectReferences
+      - LoadProjectRegistries
+      - BuildCrossProjectIndexes
+      - RunCatalogGapCheck
+      - BuildDatabaseMap
+      - GateQueryOrComparison
+    responsibility: >
+      Govern the database-level catalog map so AI agents can find many
+      projects, project evidence registries, model-library indexes, generic
+      tags, tested quantities, model targets, validation state, and catalog
+      gaps without copying raw datasets or overclaiming cross-project
+      comparability.
+    code_symbols:
+      - src/physicsguard/schema/database_catalog.py::DatabaseCatalogSpec
+      - src/physicsguard/schema/database_catalog.py::CatalogProjectRecordSpec
+      - src/physicsguard/schema/database_catalog.py::DatabaseMapReportSpec
+      - src/physicsguard/schema/database_catalog.py::DatabaseQueryReportSpec
+      - src/physicsguard/core/database_catalog.py::check_database_catalog
+      - src/physicsguard/core/database_catalog.py::scan_database_catalog_candidates
+      - src/physicsguard/core/database_catalog.py::refresh_database_catalog
+      - src/physicsguard/core/database_catalog.py::check_database_catalog_gaps
+      - src/physicsguard/core/database_catalog.py::build_database_map
+      - src/physicsguard/core/database_catalog.py::query_database_catalog
+      - src/physicsguard/cli.py::database_check_command
+      - src/physicsguard/cli.py::database_gap_check_command
+      - src/physicsguard/cli.py::database_map_command
+      - src/physicsguard/cli.py::database_query_command
+    tests:
+      - tests/test_database_catalog.py
+    examples:
+      - examples/database_catalog/database_catalog.yaml
+      - templates/database_catalog.yaml
+      - templates/database_catalog_gap_report.yaml
+      - templates/database_map_report.yaml
+      - docs/database_catalog.md
+      - skill/physicsguard-database-catalog/SKILL.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_database_catalog_checks.py
+        covers: Catalog discovery, project references, registry loading, index building, gap-check, database map, query/reuse/comparison gates, raw-data payload block, and comparison-scope block.
+      - command: python -m pytest tests/test_database_catalog.py
+        covers: Catalog schema/core, scan, refresh, gap propagation, map/query reports, raw-data guard, and CLI routing.
+      - command: python -m physicsguard.cli database map examples/database_catalog/database_catalog.yaml --pretty
+        covers: Fixture database AI onboarding map.
+    boundaries:
+      - Database catalogs are cross-project navigation maps, not validation or comparison proof.
+      - Catalogs reference project evidence registries and model-library indexes; they do not copy raw datasets.
+      - Generic tags are user/AI supplied and must not become hardcoded domain taxonomies.
+      - Blocking database or project evidence gaps prevent broad database-level validation, reuse, or comparison claims.
+      - Cross-project comparison requires explicit scope and project-level evidence review.
+    stale_when:
+      - Database catalog schema, CLI command names, project evidence map projection, model-library reference behavior, query semantics, gap severity, or skill-route semantics change.

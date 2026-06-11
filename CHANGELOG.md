@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.7.0 - 2026-06-11
+
+Database catalog and cross-project AI map.
+
+- Added database catalog schemas, checks, read-only refresh, gap reports, maps, and safe query filters across project evidence registries and model-library indexes.
+- Added `physicsguard database check`, `scan`, `refresh`, `gap-check`, `map`, and `query` CLI commands for cross-project navigation without copying raw datasets.
+- Added templates, a fixture database catalog example, documentation, tests, FlowGuard governance, and a new `physicsguard-database-catalog` Codex skill route.
+- Updated existing PhysicsGuard skills so multi-project, historical-test, reusable-model discovery, and cross-project comparison questions start from the database catalog map and keep catalog gaps visible.
+- Added project closure plans and `physicsguard project closure PLAN.yaml --pretty` so AI agents can aggregate project audit, evidence, contract, validation, model-library, and optional hierarchy closure evidence before broad final claims.
+- Added project closure templates, pump-loop closure examples, tests, FlowGuard governance, and skill prompt gates so evidence maps remain navigation only and final project claims require current closure evidence.
+
 ## v0.6.0 - 2026-06-11
 
 Project evidence registry and AI onboarding map.

@@ -124,3 +124,21 @@ evidence_bundle_id: pump_loop_validation_bundle_001
 The registry does not replace file-specific test contracts, residual validation
 reports, or model-library evidence. It connects them so AI agents can see what
 exists, what is covered, and what still needs evidence.
+
+## Project Closure Handoff
+
+Use project closure for final project-level claims:
+
+```powershell
+python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
+```
+
+The closure report aggregates the project audit, evidence registry check,
+evidence gap-check, evidence map generation, test-file contracts,
+model-dataset validation, model-library checks, and optional hierarchy closure
+inputs. It then reports whether the claim is `passed`, `partial`,
+`downgraded`, or `blocked`.
+
+An evidence map is still only an onboarding view. If gap-check has blocking
+gaps, required checks are skipped, validation fails, or model-library reuse is
+not backed by the declared evidence bundle, project closure must not pass.

@@ -9,6 +9,11 @@ Use this route after model-dataset validation reports exist. The model library
 is an evidence index, not a raw-data database and not proof of universal model
 validity.
 
+For cross-project discovery, historical search, or "which projects/models have
+we tested before" questions, use `physicsguard-database-catalog` first. The
+database catalog may reference model-library indexes, but model libraries do
+not replace the database map.
+
 ## Workflow
 
 1. Create or update a model library index:
@@ -37,6 +42,15 @@ validity.
 4. When evidence registry and bundle references exist, run or trust the
    `model-library check` gap gate. Blocking project evidence gaps prevent
    validated reuse; review gaps must remain visible.
+5. For `validated` reuse or broad reuse-readiness claims, include the model
+   library in a project closure plan and run:
+
+   ```powershell
+   python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
+   ```
+
+   The closure report must be passed before broad reuse claims. Partial or
+   downgraded closure means only limited reuse wording is safe.
 
 ## Safe Claim Boundary
 

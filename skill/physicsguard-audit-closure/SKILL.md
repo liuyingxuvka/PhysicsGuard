@@ -7,6 +7,17 @@ description: Use before claiming PhysicsGuard localized a fault or completed an 
 
 Use this route before final localization or completion claims.
 
+For project-level completion, validation, reuse, or localization claims, prefer
+the project closure gate first:
+
+```powershell
+python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
+```
+
+Do not treat a project evidence map as proof. The map is navigation; the
+project closure report decides whether current route evidence supports a
+`passed`, `partial`, `downgraded`, or `blocked` claim.
+
 Run:
 
 ```powershell
@@ -24,6 +35,10 @@ Missing project profile basics, unregistered important files, unresolved
 blocking evidence gaps, missing binding summaries, unreviewed physical
 parameter bindings, or test-field binding expectations without bindings or
 exemptions downgrade or block broad claims.
+If a project closure report exists, carry its `closure_status`, `safe_claim`,
+`unsafe_claim_boundary`, skipped checks, and next actions into the final answer.
+If no report exists for a broad project claim, run it or explicitly downgrade
+the claim.
 
 For workflows that validate a model against contracted test data, also read the
 model-dataset validation report. Missing, partial, failed, stale, or blocked
@@ -34,4 +49,10 @@ warnings, low validation confidence, failed physical envelopes, redundant-sensor
 mismatches, and review-required confidence updates must remain visible in the
 final claim boundary.
 
-Closure pass supports only a scoped low-fidelity claim inside the checked audit boundary.
+For database-level or cross-project claims, also read the database catalog map
+and gap report. Missing project registries, stale catalog summaries, propagated
+project evidence blocking gaps, or unknown comparison scope block broad
+historical, reuse, or direct-comparison conclusions.
+
+Closure pass supports only a scoped low-fidelity claim inside the checked audit
+or project closure boundary.

@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+__version__ = "0.7.0"
+
 from physicsguard.core.signal_mapping import (
     BugFamilyFollowUp,
     SignalMappingRecord,
@@ -19,6 +21,14 @@ from physicsguard.core.data_file_manifest import (
     generate_delimited_manifest,
     sha256_file,
 )
+from physicsguard.core.database_catalog import (
+    build_database_map,
+    check_database_catalog,
+    check_database_catalog_gaps,
+    query_database_catalog,
+    refresh_database_catalog,
+    scan_database_catalog_candidates,
+)
 from physicsguard.core.test_file_contract import (
     check_test_file_contract,
     check_test_file_parameter_coverage,
@@ -27,6 +37,7 @@ from physicsguard.core.test_file_contract import (
 from physicsguard.core.dataset_identity import check_logical_dataset_record, check_test_file_relation_index
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.model_library import check_model_library_index
+from physicsguard.core.project_closure import run_project_closure
 from physicsguard.core.project_evidence import (
     build_project_evidence_map,
     check_evidence_bundle,
@@ -34,8 +45,6 @@ from physicsguard.core.project_evidence import (
     check_project_evidence_registry,
     scan_project_evidence_candidates,
 )
-
-__version__ = "0.6.0"
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -45,8 +54,11 @@ __all__ = [
     "DiagnosticReporter",
     "ResidualDiagnostic",
     "SignalMappingRecord",
+    "build_database_map",
     "build_signal_mapping_ledger",
     "build_project_evidence_map",
+    "check_database_catalog",
+    "check_database_catalog_gaps",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
     "check_test_file_project_index",
@@ -60,7 +72,11 @@ __all__ = [
     "field_signature_hash",
     "generate_delimited_manifest",
     "mapping_warnings",
+    "query_database_catalog",
+    "refresh_database_catalog",
+    "run_project_closure",
     "sha256_file",
+    "scan_database_catalog_candidates",
     "scan_project_evidence_candidates",
     "validate_model_dataset",
 ]

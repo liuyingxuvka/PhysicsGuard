@@ -10,6 +10,14 @@ from typing import Sequence
 
 import yaml
 
+from physicsguard.core.database_catalog import (
+    build_database_map,
+    check_database_catalog,
+    check_database_catalog_gaps,
+    query_database_catalog,
+    refresh_database_catalog,
+    scan_database_catalog_candidates,
+)
 from physicsguard.core.contract_diff import diff_test_file_contracts
 from physicsguard.core.data_file_manifest import generate_delimited_manifest, manifest_to_dict
 from physicsguard.core.dataset_identity import (
@@ -21,6 +29,7 @@ from physicsguard.core.evaluator import AuditEvaluator
 from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy, plan_from_report
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.model_library import check_model_library_index
+from physicsguard.core.project_closure import run_project_closure
 from physicsguard.core.project_evidence import (
     build_project_evidence_map,
     check_evidence_bundle,
@@ -160,6 +169,12 @@ def build_parser() -> argparse.ArgumentParser:
         )
         command_parser.add_argument("--root", type=Path, default=Path("."), help="project root")
         command_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    project_closure = project_subparsers.add_parser(
+        "closure",
+        help="run project-level closure readiness checks",
+    )
+    project_closure.add_argument("plan", type=Path, help="path to ProjectClosurePlan YAML")
+    project_closure.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     preflight_parser = subparsers.add_parser(
         "preflight",
@@ -326,6 +341,56 @@ def build_parser() -> argparse.ArgumentParser:
     )
     evidence_map.add_argument("registry", type=Path, help="path to ProjectEvidenceRegistry YAML")
     evidence_map.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    database_parser = subparsers.add_parser(
+        "database",
+        help="database-level project catalog commands",
+    )
+    database_subparsers = database_parser.add_subparsers(dest="database_command", required=True)
+    database_check = database_subparsers.add_parser(
+        "check",
+        help="check a database catalog",
+    )
+    database_check.add_argument("catalog", type=Path, help="path to DatabaseCatalog YAML")
+    database_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_scan = database_subparsers.add_parser(
+        "scan",
+        help="scan a tree for project registries and model libraries",
+    )
+    database_scan.add_argument("root", type=Path, help="database root or folder to scan")
+    database_scan.add_argument("--catalog", type=Path, help="optional DatabaseCatalog YAML")
+    database_scan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_refresh = database_subparsers.add_parser(
+        "refresh",
+        help="derive read-only project summaries from a database catalog",
+    )
+    database_refresh.add_argument("catalog", type=Path, help="path to DatabaseCatalog YAML")
+    database_refresh.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_gap = database_subparsers.add_parser(
+        "gap-check",
+        help="check database-level evidence gaps",
+    )
+    database_gap.add_argument("catalog", type=Path, help="path to DatabaseCatalog YAML")
+    database_gap.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_map = database_subparsers.add_parser(
+        "map",
+        help="build an AI-readable database map",
+    )
+    database_map.add_argument("catalog", type=Path, help="path to DatabaseCatalog YAML")
+    database_map.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_query = database_subparsers.add_parser(
+        "query",
+        help="query a database catalog map safely",
+    )
+    database_query.add_argument("catalog", type=Path, help="path to DatabaseCatalog YAML")
+    database_query.add_argument("--tag", help="match any generic project tag")
+    database_query.add_argument("--quantity", help="match a tested canonical quantity")
+    database_query.add_argument("--component", help="match a component tag")
+    database_query.add_argument("--model-target", help="match a model target")
+    database_query.add_argument("--has-validation", choices=("true", "false"), help="filter by validation presence")
+    database_query.add_argument("--has-test-data", choices=("true", "false"), help="filter by test-data presence")
+    database_query.add_argument("--project-status", help="filter by project status")
+    database_query.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     return parser
 
 
@@ -417,6 +482,12 @@ def project_command(command: str, root: Path, pretty: bool = False) -> int:
         output = adopt_project(root, action=command)
     _print_json(output, pretty)
     return 0 if output.get("ok", output.get("status") in {"pass", "pass_with_gaps"}) else 1
+
+
+def project_closure_command(path: Path, pretty: bool = False) -> int:
+    report = run_project_closure(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
 
 
 def preflight_review(path: Path, pretty: bool = False) -> int:
@@ -541,6 +612,68 @@ def evidence_map_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
+def database_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_database_catalog(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_scan_command(root: Path, catalog: Path | None = None, pretty: bool = False) -> int:
+    report = scan_database_catalog_candidates(root, catalog)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_refresh_command(path: Path, pretty: bool = False) -> int:
+    report = refresh_database_catalog(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_gap_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_database_catalog_gaps(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_map_command(path: Path, pretty: bool = False) -> int:
+    report = build_database_map(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_query_command(
+    path: Path,
+    *,
+    tag: str | None = None,
+    quantity: str | None = None,
+    component: str | None = None,
+    model_target: str | None = None,
+    has_validation: str | None = None,
+    has_test_data: str | None = None,
+    project_status: str | None = None,
+    pretty: bool = False,
+) -> int:
+    report = query_database_catalog(
+        path,
+        tag=tag,
+        quantity=quantity,
+        component=component,
+        model_target=model_target,
+        has_validation=_parse_bool(has_validation),
+        has_test_data=_parse_bool(has_test_data),
+        project_status=project_status,
+    )
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def _parse_bool(value: str | None) -> bool | None:
+    if value is None:
+        return None
+    return value == "true"
+
+
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
     data = load_yaml_mapping(path)
     if "script" in data:
@@ -573,6 +706,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.assumptions_command == "inspect":
                 return assumptions_inspect(args.system, args.pretty)
         if args.command == "project":
+            if args.project_command == "closure":
+                return project_closure_command(args.plan, args.pretty)
             return project_command(args.project_command, args.root, args.pretty)
         if args.command == "preflight":
             if args.preflight_command == "review":
@@ -624,6 +759,29 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return evidence_bundle_check_command(args.registry, args.bundle_id, args.pretty)
             if args.evidence_command == "map":
                 return evidence_map_command(args.registry, args.pretty)
+        if args.command == "database":
+            if args.database_command == "check":
+                return database_check_command(args.catalog, args.pretty)
+            if args.database_command == "scan":
+                return database_scan_command(args.root, args.catalog, args.pretty)
+            if args.database_command == "refresh":
+                return database_refresh_command(args.catalog, args.pretty)
+            if args.database_command == "gap-check":
+                return database_gap_check_command(args.catalog, args.pretty)
+            if args.database_command == "map":
+                return database_map_command(args.catalog, args.pretty)
+            if args.database_command == "query":
+                return database_query_command(
+                    args.catalog,
+                    tag=args.tag,
+                    quantity=args.quantity,
+                    component=args.component,
+                    model_target=args.model_target,
+                    has_validation=args.has_validation,
+                    has_test_data=args.has_test_data,
+                    project_status=args.project_status,
+                    pretty=args.pretty,
+                )
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

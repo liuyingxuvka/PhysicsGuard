@@ -1,0 +1,15 @@
+artifact_kind: database_catalog_gap_report
+status: pass
+ok: true
+catalog_id: example_database_catalog
+blocking_gaps: []
+review_gaps: []
+optional_gaps: []
+findings: []
+summary:
+  blocking_gap_count: 0
+  review_gap_count: 0
+  optional_gap_count: 0
+  semantics: >
+    Blocking database gaps prevent broad database-level validation, reuse, or
+    comparison claims; review gaps remain visible for scoped search.

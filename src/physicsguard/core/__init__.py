@@ -15,7 +15,10 @@ __all__ = [
     "VariableDeviationDiagnostic",
     "VariableRegistry",
     "check_parameter_coverage",
+    "build_database_map",
     "build_project_evidence_map",
+    "check_database_catalog",
+    "check_database_catalog_gaps",
     "check_logical_dataset_record",
     "check_model_library_index",
     "check_evidence_bundle",
@@ -28,6 +31,10 @@ __all__ = [
     "field_signature_hash",
     "generate_delimited_manifest",
     "inspect_test_file_contract",
+    "query_database_catalog",
+    "refresh_database_catalog",
+    "run_project_closure",
+    "scan_database_catalog_candidates",
     "scan_project_evidence_candidates",
     "sha256_file",
     "validate_model_dataset",
@@ -99,6 +106,35 @@ def __getattr__(name: str):
         from physicsguard.core.model_library import check_model_library_index
 
         return check_model_library_index
+    if name == "run_project_closure":
+        from physicsguard.core.project_closure import run_project_closure
+
+        return run_project_closure
+    if name in {
+        "build_database_map",
+        "check_database_catalog",
+        "check_database_catalog_gaps",
+        "query_database_catalog",
+        "refresh_database_catalog",
+        "scan_database_catalog_candidates",
+    }:
+        from physicsguard.core.database_catalog import (
+            build_database_map,
+            check_database_catalog,
+            check_database_catalog_gaps,
+            query_database_catalog,
+            refresh_database_catalog,
+            scan_database_catalog_candidates,
+        )
+
+        return {
+            "build_database_map": build_database_map,
+            "check_database_catalog": check_database_catalog,
+            "check_database_catalog_gaps": check_database_catalog_gaps,
+            "query_database_catalog": query_database_catalog,
+            "refresh_database_catalog": refresh_database_catalog,
+            "scan_database_catalog_candidates": scan_database_catalog_candidates,
+        }[name]
     if name in {
         "check_evidence_bundle",
         "check_evidence_gaps",

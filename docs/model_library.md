@@ -7,6 +7,10 @@ They store model paths, hashes, compatible testbench profiles, validation report
 references, known limits, and reuse status. They do not store large raw test
 data and do not claim validity outside recorded validation boundaries.
 
+For cross-project or historical discovery, use the database catalog. The
+database catalog may reference model-library indexes, but the model library
+remains the owner of model-reuse evidence and known limits.
+
 ## Command
 
 ```powershell

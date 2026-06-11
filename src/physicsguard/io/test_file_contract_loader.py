@@ -9,6 +9,7 @@ import yaml
 from pydantic import BaseModel, ValidationError
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
+from physicsguard.schema.database_catalog import DatabaseCatalogSpec
 from physicsguard.schema.dataset_identity import LogicalDatasetRecordSpec, TestFileRelationIndexSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
 from physicsguard.schema.model_library import ModelLibraryIndexSpec
@@ -18,6 +19,7 @@ from physicsguard.schema.parameter_coverage import (
     ParameterMappingEdgesSpec,
     ParameterRoleMatrixSpec,
 )
+from physicsguard.schema.project_closure import ProjectClosurePlanSpec
 from physicsguard.schema.test_file_contract import (
     ExtractorProfileSpec,
     ModelBindingSpec,
@@ -59,6 +61,10 @@ def load_data_file_manifest(path: str | Path) -> DataFileManifestSpec:
     return load_spec(path, DataFileManifestSpec)
 
 
+def load_database_catalog(path: str | Path) -> DatabaseCatalogSpec:
+    return load_spec(path, DatabaseCatalogSpec)
+
+
 def load_logical_dataset_record(path: str | Path) -> LogicalDatasetRecordSpec:
     return load_spec(path, LogicalDatasetRecordSpec)
 
@@ -77,6 +83,10 @@ def load_model_library_index(path: str | Path) -> ModelLibraryIndexSpec:
 
 def load_project_evidence_registry(path: str | Path) -> ProjectEvidenceRegistrySpec:
     return load_spec(path, ProjectEvidenceRegistrySpec)
+
+
+def load_project_closure_plan(path: str | Path) -> ProjectClosurePlanSpec:
+    return load_spec(path, ProjectClosurePlanSpec)
 
 
 def load_testbench_profile(path: str | Path) -> TestBenchProfileSpec:
@@ -118,6 +128,7 @@ def load_test_file_project_index(path: str | Path) -> TestFileProjectIndexSpec:
 __all__ = [
     "load_coverage_policy",
     "load_data_file_manifest",
+    "load_database_catalog",
     "load_extractor_profile",
     "load_logical_dataset_record",
     "load_model_binding",
@@ -126,6 +137,7 @@ __all__ = [
     "load_parameter_catalog",
     "load_parameter_mapping_edges",
     "load_parameter_role_matrix",
+    "load_project_closure_plan",
     "load_project_evidence_registry",
     "load_spec",
     "load_test_file_contract",

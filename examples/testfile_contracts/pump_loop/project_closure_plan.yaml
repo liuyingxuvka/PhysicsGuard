@@ -1,0 +1,32 @@
+# PhysicsGuard project closure plan
+# Purpose: pump-loop fixture project closure.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli project closure examples/testfile_contracts/pump_loop/project_closure_plan.yaml --pretty
+# Boundary: Fixture validation-readiness gate only; not a real pump validation.
+closure_id: pump_loop_fixture_closure
+claim_scope: validation_ready
+project_root: ../../..
+evidence_registry: evidence/project_evidence_registry.yaml
+evidence_bundle_ids:
+  - pump_loop_validation_bundle_001
+test_contracts:
+  - contracts/clean_contract.yaml
+validation_plans:
+  - validation/clean_validation_plan.yaml
+model_library_indexes:
+  - model_library.yaml
+audit_pairs: []
+required_checks:
+  project_audit: true
+  evidence_check: true
+  evidence_gap_check: true
+  evidence_map: true
+  test_contracts: true
+  validation: true
+  model_library: true
+  hierarchy_closure: false
+allow_review_gaps: true
+allow_optional_gaps: true
+allow_skipped_required_checks: false
+metadata:
+  fixture: pump_loop

@@ -32,6 +32,20 @@ Use this route before non-trivial PhysicsGuard debugging or model-building work 
    or multi-file evidence, also route through
    `physicsguard-project-evidence-registry` so the AI can inspect the project
    profile, file map, binding expectations, evidence bundles, and open gaps.
+6. If the user asks for multi-project history, reusable model discovery,
+   database-level maps, or cross-project comparison, route through
+   `physicsguard-database-catalog` before answering. Project adoption only
+   says the current repository has a workflow record; it does not index the
+   surrounding database.
+7. If the user asks whether the project is ready, complete, validated,
+   reusable, or safe for handoff, run or inspect project closure:
+
+   ```powershell
+   python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
+   ```
+
+   Adoption pass only says the workflow record exists; it is not project
+   readiness.
 
 ## Claim Boundary
 

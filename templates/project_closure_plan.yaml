@@ -1,0 +1,31 @@
+# PhysicsGuard project closure plan
+# Purpose: Declare the evidence and checks required before a project-level AI claim.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli project closure path/to/project_closure_plan.yaml --pretty
+# Boundary: Final claim-readiness gate only; not validation proof by itself.
+closure_id: example_project_closure
+claim_scope: validation_ready
+project_root: .
+evidence_registry: evidence/project_evidence_registry.yaml
+evidence_bundle_ids:
+  - example_validation_bundle
+test_contracts:
+  - contracts/example_contract.yaml
+validation_plans:
+  - validation/example_validation_plan.yaml
+model_library_indexes: []
+audit_pairs: []
+required_checks:
+  project_audit: true
+  evidence_check: true
+  evidence_gap_check: true
+  evidence_map: true
+  test_contracts: true
+  validation: true
+  model_library: false
+  hierarchy_closure: false
+allow_review_gaps: true
+allow_optional_gaps: true
+allow_skipped_required_checks: false
+metadata:
+  example: true

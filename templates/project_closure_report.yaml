@@ -1,0 +1,35 @@
+# PhysicsGuard project closure report
+# Purpose: Example output shape from project closure.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli project closure path/to/project_closure_plan.yaml --pretty
+# Boundary: Current-run claim-readiness evidence only; stale after relevant files change.
+artifact_kind: physicsguard_project_closure_report
+closure_id: example_project_closure
+claim_scope: validation_ready
+closure_status: partial
+ok: false
+checked_inputs:
+  - check: evidence_gap_check
+    path: evidence/project_evidence_registry.yaml
+    bundle_id: example_validation_bundle
+blocking_findings: []
+review_findings:
+  - severity: warning
+    type: project_profile_location_unknown
+    message: project run location is still unknown
+    source: project_evidence
+    target: project_locations
+    details: {}
+optional_findings: []
+skipped_checks: []
+safe_claim: validation_ready evidence is partial; only scoped progress claims are supported.
+unsafe_claim_boundary: Do not claim validation readiness beyond checked evidence bundles and validation reports.
+next_actions:
+  - keep review project evidence gaps visible or resolve them
+summary:
+  checked_input_count: 1
+  blocking_finding_count: 0
+  review_finding_count: 1
+  optional_finding_count: 0
+  skipped_check_count: 0
+  semantics: project closure is current-run claim readiness evidence

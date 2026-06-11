@@ -35,6 +35,10 @@ def tracked_example_yaml_files(root: Path) -> list[Path]:
 
 
 def artifact_kind(data: dict[str, Any]) -> str:
+    if "catalog_id" in data and "projects" in data:
+        return "database catalog"
+    if "registry_id" in data and "project_profile" in data and "artifacts" in data:
+        return "project evidence registry"
     if "logical_dataset_id" in data:
         return "logical dataset record"
     if "validation_id" in data and "audit_file" in data:
@@ -88,6 +92,10 @@ def purpose_for(path: Path, data: dict[str, Any]) -> str:
 
 def use_hint(path: Path, data: dict[str, Any]) -> str:
     rel = path.as_posix()
+    if "catalog_id" in data and "projects" in data:
+        return f"python -m physicsguard.cli database check {rel} --pretty"
+    if "registry_id" in data and "project_profile" in data and "artifacts" in data:
+        return f"python -m physicsguard.cli evidence check {rel} --pretty"
     if "logical_dataset_id" in data:
         return f"python -m physicsguard.cli dataset logical-check {rel} --pretty"
     if "validation_id" in data and "audit_file" in data:

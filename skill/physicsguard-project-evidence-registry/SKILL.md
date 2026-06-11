@@ -26,6 +26,8 @@ the model, and which gaps still need work.
 - The Project Evidence Map is an onboarding/navigation artifact. It is not
   validation proof.
 - Blocking evidence gaps prevent validation pass or validated reuse claims.
+- If this project is listed in a database catalog, refresh or flag the catalog
+  after project evidence changes so multi-project maps do not become stale.
 
 ## Workflow
 
@@ -60,6 +62,15 @@ the model, and which gaps still need work.
 
 10. Before broad claims, resolve blocking gaps. For review/optional gaps, keep
     them visible in the final claim boundary.
+11. For project completion, validation readiness, validated reuse, or
+    localization readiness, hand off to project closure:
+
+    ```powershell
+    python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
+    ```
+
+    The evidence map remains onboarding/navigation only. The closure report is
+    the final claim-readiness gate.
 
 ## AI Onboarding Map
 
@@ -82,4 +93,17 @@ python -m physicsguard.cli evidence scan PROJECT_OR_FOLDER --registry EVIDENCE.y
 python -m physicsguard.cli evidence gap-check EVIDENCE.yaml --pretty
 python -m physicsguard.cli evidence bundle-check EVIDENCE.yaml BUNDLE_ID --pretty
 python -m physicsguard.cli evidence map EVIDENCE.yaml --pretty
+```
+
+For final project claims, follow with:
+
+```powershell
+python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
+```
+
+If a database catalog owns this project, follow with:
+
+```powershell
+python -m physicsguard.cli database refresh CATALOG.yaml --pretty
+python -m physicsguard.cli database gap-check CATALOG.yaml --pretty
 ```
