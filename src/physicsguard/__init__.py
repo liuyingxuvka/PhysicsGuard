@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 from physicsguard.core.signal_mapping import (
     BugFamilyFollowUp,
@@ -22,11 +22,19 @@ from physicsguard.core.data_file_manifest import (
     sha256_file,
 )
 from physicsguard.core.database_catalog import (
+    admit_database_project,
+    archive_database_project,
+    audit_database_maintenance,
     build_database_map,
     check_database_catalog,
     check_database_catalog_gaps,
+    check_database_model_template_index,
+    check_database_policy,
+    initialize_database_root,
+    plan_database_project_intake,
     query_database_catalog,
     refresh_database_catalog,
+    render_database_handoff,
     scan_database_catalog_candidates,
 )
 from physicsguard.core.test_file_contract import (
@@ -54,11 +62,16 @@ __all__ = [
     "DiagnosticReporter",
     "ResidualDiagnostic",
     "SignalMappingRecord",
+    "admit_database_project",
+    "archive_database_project",
+    "audit_database_maintenance",
     "build_database_map",
     "build_signal_mapping_ledger",
     "build_project_evidence_map",
     "check_database_catalog",
     "check_database_catalog_gaps",
+    "check_database_model_template_index",
+    "check_database_policy",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
     "check_test_file_project_index",
@@ -72,8 +85,11 @@ __all__ = [
     "field_signature_hash",
     "generate_delimited_manifest",
     "mapping_warnings",
+    "initialize_database_root",
+    "plan_database_project_intake",
     "query_database_catalog",
     "refresh_database_catalog",
+    "render_database_handoff",
     "run_project_closure",
     "sha256_file",
     "scan_database_catalog_candidates",

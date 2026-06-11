@@ -1,6 +1,6 @@
 physicsguard:
   repository: https://github.com/liuyingxuvka/PhysicsGuard
-  adopted_package_version: 0.7.0
+  adopted_package_version: 0.8.0
   schema_version: '1.0'
   last_verified_at: '2026-06-11T00:00:00+00:00'
   last_verified_by: PhysicsGuard project-adopt
@@ -16,6 +16,10 @@ policy:
   require_test_file_contract_for_test_data: true
   require_project_evidence_registry_for_project_maps: true
   require_database_catalog_for_multi_project_queries: true
+  require_explicit_database_lifecycle_for_local_databases: true
+  require_database_project_intake_for_catalog_admission: true
+  require_database_maintenance_audit_for_database_handoff: true
+  require_database_history_for_lifecycle_writes: true
   require_project_registry_reference_for_catalog_projects: true
   database_catalog_must_not_store_raw_data: true
   require_catalog_gap_check_before_cross_project_claims: true
@@ -34,6 +38,9 @@ skill_routes:
 - physicsguard-test-file-contract-review
 - physicsguard-project-evidence-registry
 - physicsguard-database-catalog
+- physicsguard-database-adoption
+- physicsguard-database-project-intake
+- physicsguard-database-maintenance
 - physicsguard-model-dataset-validation
 - physicsguard-signal-mapping-review
 - physicsguard-audit-closure

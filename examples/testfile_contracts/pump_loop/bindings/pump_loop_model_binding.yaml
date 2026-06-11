@@ -5,7 +5,7 @@
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 binding_id: pump_loop_fixture_binding
 hierarchy_file: ../model/pump_loop_hierarchy.yaml
-physicsguard_version: 0.7.0
+physicsguard_version: 0.8.0
 expected_variables:
   - pump_signal_map.x
   - pump_signal_map.y

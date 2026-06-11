@@ -1,13 +1,12 @@
 # PhysicsGuard database catalog
-# Purpose: Example cross-project catalog that references one project evidence registry. It is intentionally generic and does not encode a domain-specific taxonomy.
+# Purpose: Example cross-project catalog that references one project evidence registry. It is intentionally generic and does not encode a domain-specific...
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli database check examples/database_catalog/database_catalog.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
-
 catalog_id: fixture_database_catalog
 catalog_name: Fixture database catalog
 schema_version: "1.0"
-physicsguard_version: "0.7.0"
+physicsguard_version: "0.8.0"
 created_at: "2026-06-11T00:00:00Z"
 updated_at: "2026-06-11T00:00:00Z"
 description: >
@@ -15,11 +14,39 @@ description: >
   It is intentionally generic and does not encode a domain-specific taxonomy.
 catalog_roots:
   - ..
+lifecycle_artifacts:
+  database_readme: DATABASE_README.md
+  database_status: DATABASE_STATUS.md
+  database_policy: database_policy.yaml
+  database_catalog: database_catalog.yaml
+  database_history: database_history.jsonl
+  database_maintenance_report: database_maintenance_report.yaml
+  model_template_index: model_template_index.yaml
+database_policy: database_policy.yaml
+database_history: database_history.jsonl
+database_maintenance_report: database_maintenance_report.yaml
+model_template_index: model_template_index.yaml
 projects:
   - project_id: pump_loop_fixture_project
     project_name: Pump loop fixture project
     project_evidence_registry: ../testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml
     project_status: active
+    lifecycle_state: active_registered
+    admission:
+      requested_state: active_registered
+      project_root: ../testfile_contracts/pump_loop
+      project_adoption_record: null
+      project_adoption_missing_reason: Repository fixture project does not carry a separate project adoption record.
+      project_evidence_registry: ../testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml
+      evidence_gap_status: pass
+      validation_evidence:
+        - ../testfile_contracts/pump_loop/validation_plan.yaml
+      model_library_evidence:
+        - ../testfile_contracts/pump_loop/model_library.yaml
+      admitted_at: "2026-06-11T00:00:00Z"
+      admitted_by: PhysicsGuard fixture
+      admission_reason: Fixture project used for database catalog regression tests.
+      review_state: ai_registered
     domain_tags:
       - fixture-domain
     system_tags:

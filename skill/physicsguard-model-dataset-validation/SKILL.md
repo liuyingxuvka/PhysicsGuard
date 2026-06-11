@@ -47,7 +47,9 @@ partial, stale, or review-required contracts.
    optional gaps must stay visible in the claim boundary.
 6. If the validated project is listed in a database catalog, refresh or flag the
    database catalog after validation so cross-project maps can show the current
-   validation state and remaining gaps.
+   validation state and remaining gaps. For an explicit database root, follow
+   with `physicsguard-database-maintenance` and refresh the handoff files after
+   validation status changes.
 7. For final project validation-readiness claims, include the validation plan in
    a project closure plan and run:
 

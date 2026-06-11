@@ -11,11 +11,19 @@ from typing import Sequence
 import yaml
 
 from physicsguard.core.database_catalog import (
+    admit_database_project,
+    archive_database_project,
+    audit_database_maintenance,
     build_database_map,
     check_database_catalog,
     check_database_catalog_gaps,
+    check_database_model_template_index,
+    check_database_policy,
+    initialize_database_root,
+    plan_database_project_intake,
     query_database_catalog,
     refresh_database_catalog,
+    render_database_handoff,
     scan_database_catalog_candidates,
 )
 from physicsguard.core.contract_diff import diff_test_file_contracts
@@ -347,6 +355,90 @@ def build_parser() -> argparse.ArgumentParser:
         help="database-level project catalog commands",
     )
     database_subparsers = database_parser.add_subparsers(dest="database_command", required=True)
+    database_init = database_subparsers.add_parser(
+        "init",
+        help="initialize an explicit local PhysicsGuard database root",
+    )
+    database_init.add_argument("root", type=Path, help="database root to initialize")
+    database_init.add_argument("--database-id", default="local_physicsguard_database", help="database id")
+    database_init.add_argument("--database-name", help="human-readable database name")
+    database_init.add_argument("--apply", action="store_true", help="write files; otherwise dry-run")
+    database_init.add_argument("--overwrite", action="store_true", help="overwrite existing database lifecycle files")
+    database_init.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_policy_check = database_subparsers.add_parser(
+        "policy-check",
+        help="check a database policy file",
+    )
+    database_policy_check.add_argument("policy", type=Path, help="path to DatabasePolicy YAML")
+    database_policy_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_intake_plan = database_subparsers.add_parser(
+        "intake-plan",
+        help="plan adding or updating one project in an explicit database",
+    )
+    database_intake_plan.add_argument("database_root", type=Path, help="database root")
+    database_intake_plan.add_argument("project_root", type=Path, help="project root to register")
+    database_intake_plan.add_argument("--catalog", type=Path, help="database catalog path")
+    database_intake_plan.add_argument("--project-id", help="override project id")
+    database_intake_plan.add_argument(
+        "--requested-state",
+        default="candidate",
+        choices=(
+            "candidate",
+            "placeholder",
+            "active_registered",
+            "active_validated",
+            "active_reusable",
+            "blocked",
+        ),
+        help="requested lifecycle state for the project",
+    )
+    database_intake_plan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_admit = database_subparsers.add_parser(
+        "admit",
+        help="apply a reviewed database project intake plan",
+    )
+    database_admit.add_argument("intake_plan", type=Path, help="path to DatabaseProjectIntakePlan YAML")
+    database_admit.add_argument("--apply", action="store_true", help="write catalog/history; otherwise dry-run")
+    database_admit.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_audit = database_subparsers.add_parser(
+        "audit",
+        help="run database lifecycle maintenance checks",
+    )
+    database_audit.add_argument("database_root", type=Path, help="database root")
+    database_audit.add_argument("--catalog", type=Path, help="database catalog path")
+    database_audit.add_argument("--policy", type=Path, help="database policy path")
+    database_audit.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_archive = database_subparsers.add_parser(
+        "archive",
+        help="archive, deprecate, supersede, or reject a project record",
+    )
+    database_archive.add_argument("catalog", type=Path, help="path to DatabaseCatalog YAML")
+    database_archive.add_argument("project_id", help="project id")
+    database_archive.add_argument("--reason", required=True, help="archive/deprecation/supersession reason")
+    database_archive.add_argument(
+        "--archive-state",
+        default="archived",
+        choices=("archived", "deprecated", "superseded", "rejected"),
+        help="target inactive lifecycle state",
+    )
+    database_archive.add_argument("--superseded-by-project-id", help="replacement project id for superseded records")
+    database_archive.add_argument("--apply", action="store_true", help="write catalog/history; otherwise dry-run")
+    database_archive.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_handoff = database_subparsers.add_parser(
+        "render-handoff",
+        help="render AI-readable database README and status files",
+    )
+    database_handoff.add_argument("database_root", type=Path, help="database root")
+    database_handoff.add_argument("--catalog", type=Path, help="database catalog path")
+    database_handoff.add_argument("--policy", type=Path, help="database policy path")
+    database_handoff.add_argument("--apply", action="store_true", help="write handoff files; otherwise dry-run")
+    database_handoff.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    database_template_index_check = database_subparsers.add_parser(
+        "template-index-check",
+        help="check a database model-template index",
+    )
+    database_template_index_check.add_argument("index", type=Path, help="path to DatabaseModelTemplateIndex YAML")
+    database_template_index_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     database_check = database_subparsers.add_parser(
         "check",
         help="check a database catalog",
@@ -390,6 +482,7 @@ def build_parser() -> argparse.ArgumentParser:
     database_query.add_argument("--has-validation", choices=("true", "false"), help="filter by validation presence")
     database_query.add_argument("--has-test-data", choices=("true", "false"), help="filter by test-data presence")
     database_query.add_argument("--project-status", help="filter by project status")
+    database_query.add_argument("--include-inactive", action="store_true", help="include archived/deprecated/superseded/rejected records")
     database_query.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     return parser
 
@@ -612,6 +705,111 @@ def evidence_map_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
+def database_init_command(
+    root: Path,
+    *,
+    database_id: str,
+    database_name: str | None = None,
+    apply: bool = False,
+    overwrite: bool = False,
+    pretty: bool = False,
+) -> int:
+    report = initialize_database_root(
+        root,
+        database_id=database_id,
+        database_name=database_name,
+        apply=apply,
+        overwrite=overwrite,
+    )
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_policy_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_database_policy(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_template_index_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_database_model_template_index(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_intake_plan_command(
+    database_root: Path,
+    project_root: Path,
+    *,
+    catalog: Path | None = None,
+    project_id: str | None = None,
+    requested_state: str = "candidate",
+    pretty: bool = False,
+) -> int:
+    report = plan_database_project_intake(
+        database_root,
+        project_root,
+        catalog_path=catalog,
+        project_id=project_id,
+        requested_state=requested_state,  # type: ignore[arg-type]
+    )
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_admit_command(path: Path, *, apply: bool = False, pretty: bool = False) -> int:
+    report = admit_database_project(path, apply=apply)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_audit_command(
+    database_root: Path,
+    *,
+    catalog: Path | None = None,
+    policy: Path | None = None,
+    pretty: bool = False,
+) -> int:
+    report = audit_database_maintenance(database_root, catalog_path=catalog, policy_path=policy)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_archive_command(
+    catalog: Path,
+    project_id: str,
+    *,
+    reason: str,
+    archive_state: str = "archived",
+    superseded_by_project_id: str | None = None,
+    apply: bool = False,
+    pretty: bool = False,
+) -> int:
+    report = archive_database_project(
+        catalog,
+        project_id,
+        reason=reason,
+        archive_state=archive_state,  # type: ignore[arg-type]
+        superseded_by_project_id=superseded_by_project_id,
+        apply=apply,
+    )
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def database_handoff_command(
+    database_root: Path,
+    *,
+    catalog: Path | None = None,
+    policy: Path | None = None,
+    apply: bool = False,
+    pretty: bool = False,
+) -> int:
+    report = render_database_handoff(database_root, catalog_path=catalog, policy_path=policy, apply=apply)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
 def database_check_command(path: Path, pretty: bool = False) -> int:
     report = check_database_catalog(path)
     _print_json(report.to_dict(), pretty)
@@ -652,6 +850,7 @@ def database_query_command(
     has_validation: str | None = None,
     has_test_data: str | None = None,
     project_status: str | None = None,
+    include_inactive: bool = False,
     pretty: bool = False,
 ) -> int:
     report = query_database_catalog(
@@ -663,6 +862,7 @@ def database_query_command(
         has_validation=_parse_bool(has_validation),
         has_test_data=_parse_bool(has_test_data),
         project_status=project_status,
+        include_inactive=include_inactive,
     )
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
@@ -760,6 +960,50 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.evidence_command == "map":
                 return evidence_map_command(args.registry, args.pretty)
         if args.command == "database":
+            if args.database_command == "init":
+                return database_init_command(
+                    args.root,
+                    database_id=args.database_id,
+                    database_name=args.database_name,
+                    apply=args.apply,
+                    overwrite=args.overwrite,
+                    pretty=args.pretty,
+                )
+            if args.database_command == "policy-check":
+                return database_policy_check_command(args.policy, args.pretty)
+            if args.database_command == "template-index-check":
+                return database_template_index_check_command(args.index, args.pretty)
+            if args.database_command == "intake-plan":
+                return database_intake_plan_command(
+                    args.database_root,
+                    args.project_root,
+                    catalog=args.catalog,
+                    project_id=args.project_id,
+                    requested_state=args.requested_state,
+                    pretty=args.pretty,
+                )
+            if args.database_command == "admit":
+                return database_admit_command(args.intake_plan, apply=args.apply, pretty=args.pretty)
+            if args.database_command == "audit":
+                return database_audit_command(args.database_root, catalog=args.catalog, policy=args.policy, pretty=args.pretty)
+            if args.database_command == "archive":
+                return database_archive_command(
+                    args.catalog,
+                    args.project_id,
+                    reason=args.reason,
+                    archive_state=args.archive_state,
+                    superseded_by_project_id=args.superseded_by_project_id,
+                    apply=args.apply,
+                    pretty=args.pretty,
+                )
+            if args.database_command == "render-handoff":
+                return database_handoff_command(
+                    args.database_root,
+                    catalog=args.catalog,
+                    policy=args.policy,
+                    apply=args.apply,
+                    pretty=args.pretty,
+                )
             if args.database_command == "check":
                 return database_check_command(args.catalog, args.pretty)
             if args.database_command == "scan":
@@ -780,6 +1024,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     has_validation=args.has_validation,
                     has_test_data=args.has_test_data,
                     project_status=args.project_status,
+                    include_inactive=args.include_inactive,
                     pretty=args.pretty,
                 )
     except Exception as exc:

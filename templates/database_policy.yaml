@@ -1,0 +1,50 @@
+database_id: example_database
+database_name: Example PhysicsGuard database
+schema_version: "1.0"
+physicsguard_version: "0.8.0"
+physicsguard_repository: https://github.com/liuyingxuvka/PhysicsGuard
+scope_summary: >
+  Explicit local PhysicsGuard database. Update this before broad historical,
+  reuse, or cross-project claims.
+maintainer: PhysicsGuard AI
+lifecycle_artifacts:
+  database_readme: DATABASE_README.md
+  database_status: DATABASE_STATUS.md
+  database_policy: database_policy.yaml
+  database_catalog: database_catalog.yaml
+  database_history: database_history.jsonl
+  database_maintenance_report: database_maintenance_report.yaml
+  model_template_index: model_template_index.yaml
+require_explicit_user_authorization: true
+require_apply_for_writes: true
+forbid_raw_data_payloads: true
+require_project_adoption_for_active: true
+require_project_evidence_registry_for_active: true
+require_no_blocking_project_gaps_for_active: true
+require_validation_for_validated_state: true
+require_model_library_for_reusable_state: true
+default_project_state: candidate
+allowed_project_states:
+  - candidate
+  - placeholder
+  - active_registered
+  - active_validated
+  - active_reusable
+  - blocked
+  - archived
+  - deprecated
+  - superseded
+  - rejected
+raw_data_policy: >
+  Large raw datasets stay in source locations; database artifacts store only
+  paths, hashes, summaries, and evidence references.
+write_policy: >
+  Database lifecycle writes require explicit apply intent and append-only
+  history events.
+archive_policy: >
+  Prefer archive, deprecate, supersede, or reject records instead of silent
+  deletion.
+non_physicsguard_ai_guidance: >
+  Read DATABASE_README.md, DATABASE_STATUS.md, database_policy.yaml,
+  database_catalog.yaml, and database_maintenance_report.yaml before claims.
+metadata: {}

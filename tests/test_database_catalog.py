@@ -8,16 +8,26 @@ import pytest
 import yaml
 
 from physicsguard.core.database_catalog import (
+    admit_database_project,
+    archive_database_project,
+    audit_database_maintenance,
     build_database_map,
     check_database_catalog,
     check_database_catalog_gaps,
+    check_database_model_template_index,
+    check_database_policy,
+    initialize_database_root,
+    plan_database_project_intake,
     query_database_catalog,
     refresh_database_catalog,
+    render_database_handoff,
     scan_database_catalog_candidates,
 )
 from physicsguard.schema.database_catalog import (
     DatabaseCatalogGapReportSpec,
     DatabaseCatalogSpec,
+    DatabaseLifecycleOperationReportSpec,
+    DatabaseMaintenanceReportSpec,
     DatabaseMapReportSpec,
     DatabaseQueryReportSpec,
 )
@@ -126,12 +136,95 @@ def test_duplicate_project_ids_fail_schema() -> None:
         DatabaseCatalogSpec.model_validate(data)
 
 
+def test_database_lifecycle_init_policy_audit_and_handoff(tmp_path: Path) -> None:
+    root = tmp_path / "database"
+
+    dry_run = initialize_database_root(root, database_id="unit_database")
+    assert dry_run.status == "dry_run"
+    assert not root.exists()
+
+    init = initialize_database_root(root, database_id="unit_database", apply=True)
+    assert init.ok
+    assert (root / "database_policy.yaml").exists()
+    assert (root / "database_catalog.yaml").exists()
+    assert (root / "database_history.jsonl").exists()
+    assert DatabaseLifecycleOperationReportSpec.model_validate(init.to_dict()).status == "pass"
+
+    assert check_database_policy(root / "database_policy.yaml").ok
+    assert check_database_model_template_index(root / "model_template_index.yaml").ok
+
+    audit = audit_database_maintenance(root)
+    assert audit.ok
+    assert DatabaseMaintenanceReportSpec.model_validate(audit.to_dict()).status == "pass"
+
+    handoff = render_database_handoff(root, apply=True)
+    assert handoff.ok
+    assert (root / "DATABASE_README.md").exists()
+    assert (root / "DATABASE_STATUS.md").exists()
+
+
+def test_database_project_intake_admit_archive_and_query(tmp_path: Path) -> None:
+    root = tmp_path / "database"
+    initialize_database_root(root, database_id="unit_database", apply=True)
+
+    plan_report = plan_database_project_intake(
+        root,
+        PUMP,
+        project_id="pump_loop_copy",
+        requested_state="active_registered",
+    )
+    assert plan_report.ok
+    intake_plan = tmp_path / "intake_plan.yaml"
+    intake_data = plan_report.summary["intake_plan"]
+    intake_data["domain_tags"] = ["fixture-domain"]
+    intake_plan.write_text(yaml.safe_dump(intake_data, sort_keys=False), encoding="utf-8")
+
+    dry_run = admit_database_project(intake_plan)
+    assert dry_run.status == "dry_run"
+    admit = admit_database_project(intake_plan, apply=True)
+    assert admit.ok
+
+    catalog = root / "database_catalog.yaml"
+    query = query_database_catalog(catalog, tag="fixture-domain")
+    assert query.summary["match_count"] == 1
+
+    archive = archive_database_project(
+        catalog,
+        "pump_loop_copy",
+        reason="unit test archive",
+        apply=True,
+    )
+    assert archive.ok
+    assert query_database_catalog(catalog, tag="fixture-domain").summary["match_count"] == 0
+    assert query_database_catalog(catalog, tag="fixture-domain", include_inactive=True).summary["match_count"] == 1
+
+
 def test_database_cli_commands() -> None:
     commands = [
         ["database", "check", str(CATALOG), "--pretty"],
         ["database", "gap-check", str(CATALOG), "--pretty"],
         ["database", "map", str(CATALOG), "--pretty"],
         ["database", "query", str(CATALOG), "--quantity", "pump.commanded_speed", "--pretty"],
+    ]
+    for command in commands:
+        result = subprocess.run(
+            [sys.executable, "-m", "physicsguard.cli", *command],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stderr
+
+
+def test_database_lifecycle_cli_commands(tmp_path: Path) -> None:
+    root = tmp_path / "database"
+    commands = [
+        ["database", "init", str(root), "--database-id", "cli_database", "--apply", "--pretty"],
+        ["database", "policy-check", str(root / "database_policy.yaml"), "--pretty"],
+        ["database", "template-index-check", str(root / "model_template_index.yaml"), "--pretty"],
+        ["database", "audit", str(root), "--pretty"],
+        ["database", "render-handoff", str(root), "--apply", "--pretty"],
     ]
     for command in commands:
         result = subprocess.run(

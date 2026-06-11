@@ -37,7 +37,13 @@ Use this route before non-trivial PhysicsGuard debugging or model-building work 
    `physicsguard-database-catalog` before answering. Project adoption only
    says the current repository has a workflow record; it does not index the
    surrounding database.
-7. If the user asks whether the project is ready, complete, validated,
+7. If the user asks to create a local database, route through
+   `physicsguard-database-adoption`. If this project should be added to an
+   existing database, route through `physicsguard-database-project-intake`.
+   If a database already owns this project and the project record changes,
+   route through `physicsguard-database-maintenance` to refresh handoff and
+   gap status.
+8. If the user asks whether the project is ready, complete, validated,
    reusable, or safe for handoff, run or inspect project closure:
 
    ```powershell

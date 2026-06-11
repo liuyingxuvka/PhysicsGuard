@@ -28,6 +28,9 @@ the model, and which gaps still need work.
 - Blocking evidence gaps prevent validation pass or validated reuse claims.
 - If this project is listed in a database catalog, refresh or flag the catalog
   after project evidence changes so multi-project maps do not become stale.
+  If the project is being added to a database for the first time, use
+  `physicsguard-database-project-intake`; if an existing database record needs
+  repair, archive, or handoff refresh, use `physicsguard-database-maintenance`.
 
 ## Workflow
 
@@ -106,4 +109,6 @@ If a database catalog owns this project, follow with:
 ```powershell
 python -m physicsguard.cli database refresh CATALOG.yaml --pretty
 python -m physicsguard.cli database gap-check CATALOG.yaml --pretty
+python -m physicsguard.cli database audit DATABASE_ROOT --pretty
+python -m physicsguard.cli database render-handoff DATABASE_ROOT --apply --pretty
 ```

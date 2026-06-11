@@ -49,10 +49,13 @@ warnings, low validation confidence, failed physical envelopes, redundant-sensor
 mismatches, and review-required confidence updates must remain visible in the
 final claim boundary.
 
-For database-level or cross-project claims, also read the database catalog map
-and gap report. Missing project registries, stale catalog summaries, propagated
-project evidence blocking gaps, or unknown comparison scope block broad
-historical, reuse, or direct-comparison conclusions.
+For database-level or cross-project claims, also read the database handoff
+files, catalog map, lifecycle maintenance audit, and gap report. Missing
+project registries, stale catalog summaries, missing database policy/history,
+propagated project evidence blocking gaps, or unknown comparison scope block
+broad historical, reuse, or direct-comparison conclusions. If the database
+needs archive, supersession, rejection, or handoff refresh, route through
+`physicsguard-database-maintenance`.
 
 Closure pass supports only a scoped low-fidelity claim inside the checked audit
 or project closure boundary.

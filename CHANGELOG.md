@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.0 - 2026-06-11
+
+Explicit database lifecycle management.
+
+- Added explicit local database initialization with policy, catalog, history, maintenance report, model-template index, README, and status handoff files.
+- Added database project intake, dry-run admission, active/candidate/placeholder lifecycle states, archive/deprecate/supersede/reject operations, and append-only history events.
+- Added `physicsguard database init`, `policy-check`, `template-index-check`, `intake-plan`, `admit`, `audit`, `archive`, and `render-handoff` CLI commands.
+- Added database lifecycle templates, stronger catalog examples, docs, tests, FlowGuard governance, and dedicated Codex skill routes for database adoption, project intake, and maintenance.
+- Updated existing PhysicsGuard skills so database build, project admission, validation updates, model-template reuse, archive, and AI handoff work route through explicit database lifecycle gates.
+
 ## v0.7.0 - 2026-06-11
 
 Database catalog and cross-project AI map.

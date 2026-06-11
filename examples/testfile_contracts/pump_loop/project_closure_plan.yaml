@@ -1,8 +1,8 @@
 # PhysicsGuard project closure plan
-# Purpose: pump-loop fixture project closure.
+# Purpose: pump loop fixture closure.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli project closure examples/testfile_contracts/pump_loop/project_closure_plan.yaml --pretty
-# Boundary: Fixture validation-readiness gate only; not a real pump validation.
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 closure_id: pump_loop_fixture_closure
 claim_scope: validation_ready
 project_root: ../../..

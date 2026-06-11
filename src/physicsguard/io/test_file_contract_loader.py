@@ -9,7 +9,12 @@ import yaml
 from pydantic import BaseModel, ValidationError
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
-from physicsguard.schema.database_catalog import DatabaseCatalogSpec
+from physicsguard.schema.database_catalog import (
+    DatabaseCatalogSpec,
+    DatabaseModelTemplateIndexSpec,
+    DatabasePolicySpec,
+    DatabaseProjectIntakePlanSpec,
+)
 from physicsguard.schema.dataset_identity import LogicalDatasetRecordSpec, TestFileRelationIndexSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
 from physicsguard.schema.model_library import ModelLibraryIndexSpec
@@ -63,6 +68,18 @@ def load_data_file_manifest(path: str | Path) -> DataFileManifestSpec:
 
 def load_database_catalog(path: str | Path) -> DatabaseCatalogSpec:
     return load_spec(path, DatabaseCatalogSpec)
+
+
+def load_database_policy(path: str | Path) -> DatabasePolicySpec:
+    return load_spec(path, DatabasePolicySpec)
+
+
+def load_database_project_intake_plan(path: str | Path) -> DatabaseProjectIntakePlanSpec:
+    return load_spec(path, DatabaseProjectIntakePlanSpec)
+
+
+def load_database_model_template_index(path: str | Path) -> DatabaseModelTemplateIndexSpec:
+    return load_spec(path, DatabaseModelTemplateIndexSpec)
 
 
 def load_logical_dataset_record(path: str | Path) -> LogicalDatasetRecordSpec:
@@ -129,6 +146,9 @@ __all__ = [
     "load_coverage_policy",
     "load_data_file_manifest",
     "load_database_catalog",
+    "load_database_model_template_index",
+    "load_database_policy",
+    "load_database_project_intake_plan",
     "load_extractor_profile",
     "load_logical_dataset_record",
     "load_model_binding",

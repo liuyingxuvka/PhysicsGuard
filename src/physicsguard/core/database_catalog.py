@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
+import json
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Literal, Optional
+from uuid import uuid4
 
 import yaml
 
+from physicsguard import __version__
 from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
 from physicsguard.core.project_evidence import (
     SCAN_EXCLUDED_DIRS,
@@ -16,6 +20,9 @@ from physicsguard.core.project_evidence import (
 )
 from physicsguard.io.test_file_contract_loader import (
     load_database_catalog,
+    load_database_model_template_index,
+    load_database_policy,
+    load_database_project_intake_plan,
     load_model_library_index,
     load_yaml_mapping,
 )
@@ -25,10 +32,23 @@ from physicsguard.schema.database_catalog import (
     DatabaseCatalogCandidateSpec,
     DatabaseCatalogGapSpec,
     DatabaseCatalogSpec,
+    DatabaseHistoryEventSpec,
+    DatabaseLifecycleArtifactsSpec,
+    DatabaseMaintenanceReportSpec,
+    DatabaseModelTemplateIndexSpec,
+    DatabasePolicySpec,
+    DatabaseProjectAdmissionSpec,
+    DatabaseProjectIntakePlanSpec,
+    DatabaseProjectLifecycleState,
 )
 from physicsguard.schema.project_evidence import GapSeverity
+from physicsguard.schema.variable import ensure_non_empty
 
 
+PHYSICSGUARD_REPOSITORY = "https://github.com/liuyingxuvka/PhysicsGuard"
+DEFAULT_DATABASE_ARTIFACTS = DatabaseLifecycleArtifactsSpec()
+ACTIVE_LIFECYCLE_STATES = {"active_registered", "active_validated", "active_reusable"}
+INACTIVE_LIFECYCLE_STATES = {"archived", "deprecated", "superseded", "rejected"}
 RAW_DATA_KEYS = {
     "raw_data",
     "raw_dataset",
@@ -112,6 +132,45 @@ class DatabaseQueryReport:
     matches: list[dict[str, Any]]
     gaps: dict[str, Any]
     summary: dict[str, Any]
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class DatabaseLifecycleOperationReport:
+    artifact_kind: str
+    operation: str
+    status: str
+    ok: bool
+    dry_run: bool = True
+    applied: bool = False
+    written_files: list[str] = field(default_factory=list)
+    skipped_files: list[str] = field(default_factory=list)
+    history_events: list[dict[str, Any]] = field(default_factory=list)
+    findings: list[dict[str, Any]] = field(default_factory=list)
+    summary: dict[str, Any] = field(default_factory=dict)
+    next_actions: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class DatabaseMaintenanceReport:
+    artifact_kind: str
+    status: str
+    ok: bool
+    database_root: str
+    catalog_path: str
+    policy_path: Optional[str] = None
+    blocking_gaps: list[dict[str, Any]] = field(default_factory=list)
+    review_gaps: list[dict[str, Any]] = field(default_factory=list)
+    optional_gaps: list[dict[str, Any]] = field(default_factory=list)
+    project_summaries: list[dict[str, Any]] = field(default_factory=list)
+    lifecycle_artifacts: dict[str, Any] = field(default_factory=dict)
+    summary: dict[str, Any] = field(default_factory=dict)
+    next_actions: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -339,6 +398,7 @@ def query_database_catalog(
     has_validation: bool | None = None,
     has_test_data: bool | None = None,
     project_status: str | None = None,
+    include_inactive: bool = False,
 ) -> DatabaseQueryReport:
     database_map = build_database_map(path)
     filters = {
@@ -349,11 +409,15 @@ def query_database_catalog(
         "has_validation": has_validation,
         "has_test_data": has_test_data,
         "project_status": project_status,
+        "include_inactive": include_inactive if include_inactive else None,
     }
     active_filters = {key: value for key, value in filters.items() if value is not None}
     matches = [
         project
         for project in database_map.projects
+        if include_inactive
+        or project_status is not None
+        or project.get("lifecycle_state") not in {"archived", "deprecated", "superseded", "rejected"}
         if _project_matches(project, active_filters)
     ]
     return DatabaseQueryReport(
@@ -375,12 +439,1081 @@ def query_database_catalog(
     )
 
 
+def initialize_database_root(
+    root: str | Path,
+    *,
+    database_id: str = "local_physicsguard_database",
+    database_name: str | None = None,
+    apply: bool = False,
+    overwrite: bool = False,
+    actor: str = "PhysicsGuard AI",
+) -> DatabaseLifecycleOperationReport:
+    """Initialize an explicit local database root, dry-run by default."""
+
+    root_path = Path(root)
+    artifacts = DEFAULT_DATABASE_ARTIFACTS
+    targets = _database_artifact_paths(root_path, artifacts)
+    findings: list[ContractFinding] = []
+    written: list[str] = []
+    skipped: list[str] = []
+    event = _history_event(
+        "database_created",
+        actor=actor,
+        target_artifact=str(root_path),
+        reason="initialize explicit PhysicsGuard database root",
+        apply=apply,
+        affected_paths=[str(path) for path in targets.values()],
+    )
+
+    payloads = {
+        "database_policy": DatabasePolicySpec(
+            database_id=database_id,
+            database_name=database_name or database_id,
+            physicsguard_version=__version__,
+            scope_summary="Explicit local PhysicsGuard database. Update this scope before broad use.",
+            maintainer=actor,
+        ).model_dump(mode="json"),
+        "database_catalog": DatabaseCatalogSpec(
+            catalog_id=database_id,
+            catalog_name=database_name or database_id,
+            physicsguard_version=__version__,
+            created_at=_now(),
+            updated_at=_now(),
+            description="Explicit local PhysicsGuard database catalog. It is a map, not a raw-data store.",
+            catalog_roots=["."],
+            database_policy=artifacts.database_policy,
+            database_history=artifacts.database_history,
+            database_maintenance_report=artifacts.database_maintenance_report,
+            model_template_index=artifacts.model_template_index,
+        ).model_dump(mode="json"),
+        "database_maintenance_report": DatabaseMaintenanceReportSpec(
+            artifact_kind="database_maintenance_report",
+            status="partial",
+            ok=False,
+            database_root=str(root_path),
+            catalog_path=artifacts.database_catalog,
+            policy_path=artifacts.database_policy,
+            summary={"semantics": "Initial placeholder; run database audit after adding projects."},
+            next_actions=["Run database audit after project intake."],
+        ).model_dump(mode="json"),
+        "model_template_index": DatabaseModelTemplateIndexSpec(
+            index_id=f"{database_id}_model_templates",
+            database_id=database_id,
+            physicsguard_version=__version__,
+        ).model_dump(mode="json"),
+    }
+    markdown = _render_handoff_markdown(
+        database_root=root_path,
+        catalog=None,
+        maintenance=None,
+        policy=DatabasePolicySpec(
+            database_id=database_id,
+            database_name=database_name or database_id,
+            physicsguard_version=__version__,
+            scope_summary="Explicit local PhysicsGuard database. Update this scope before broad use.",
+            maintainer=actor,
+        ),
+    )
+    status_markdown = _render_status_markdown(database_id, [], [], "Initial database root; run audit after intake.")
+
+    if not apply:
+        return DatabaseLifecycleOperationReport(
+            artifact_kind="database_lifecycle_operation",
+            operation="database_init",
+            status="dry_run",
+            ok=True,
+            dry_run=True,
+            applied=False,
+            written_files=[],
+            skipped_files=[str(path) for path in targets.values() if path.exists()],
+            history_events=[event.model_dump(mode="json")],
+            findings=[],
+            summary={
+                "database_root": str(root_path),
+                "would_create": [str(path) for path in targets.values() if overwrite or not path.exists()],
+                "semantics": "dry-run only; pass apply=True or CLI --apply to write database files",
+            },
+            next_actions=["Review the dry-run file list, then rerun with explicit apply intent if correct."],
+        )
+
+    root_path.mkdir(parents=True, exist_ok=True)
+    for key, path in targets.items():
+        if path.exists() and not overwrite:
+            skipped.append(str(path))
+            continue
+        if key in payloads:
+            _write_yaml(path, payloads[key])
+        elif key == "database_readme":
+            path.write_text(markdown, encoding="utf-8")
+        elif key == "database_status":
+            path.write_text(status_markdown, encoding="utf-8")
+        elif key == "database_history":
+            path.write_text("", encoding="utf-8")
+        written.append(str(path))
+    _append_history(targets["database_history"], event)
+    written.append(str(targets["database_history"]))
+    status = "pass" if not findings else _status(findings)
+    return DatabaseLifecycleOperationReport(
+        artifact_kind="database_lifecycle_operation",
+        operation="database_init",
+        status=status,
+        ok=status == "pass",
+        dry_run=False,
+        applied=True,
+        written_files=sorted(set(written)),
+        skipped_files=skipped,
+        history_events=[event.model_dump(mode="json")],
+        findings=[asdict(item) for item in findings],
+        summary={
+            "database_root": str(root_path),
+            "database_id": database_id,
+            "semantics": "explicit local database root initialized; not a hidden global database",
+        },
+        next_actions=["Run database intake-plan for projects that should enter this database."],
+    )
+
+
+def check_database_policy(path: str | Path) -> ContractReview:
+    policy_path = Path(path)
+    policy = load_database_policy(policy_path)
+    findings: list[ContractFinding] = []
+    if policy.forbid_raw_data_payloads and _contains_raw_data_payload(policy.metadata):
+        findings.append(
+            ContractFinding(
+                severity="error",
+                type="database_policy_raw_data_payload",
+                message="database policy metadata must not embed raw test data payloads",
+                target=policy.database_id,
+            )
+        )
+    if not policy.physicsguard_repository:
+        findings.append(
+            ContractFinding(
+                severity="warning",
+                type="database_policy_repository_missing",
+                message="database policy should reference the PhysicsGuard repository or record why it is unknown",
+                target=policy.database_id,
+            )
+        )
+    status = _status(findings)
+    return ContractReview(
+        artifact_kind="database_policy",
+        status=status,
+        ok=status == "pass",
+        findings=findings,
+        summary={
+            "database_id": policy.database_id,
+            "database_name": policy.database_name,
+            "physicsguard_repository": policy.physicsguard_repository,
+            "semantics": "database policy governs explicit local database lifecycle; it is not validation proof",
+        },
+        next_actions=_next_actions(findings),
+    )
+
+
+def check_database_model_template_index(path: str | Path) -> ContractReview:
+    index_path = Path(path)
+    index = load_database_model_template_index(index_path)
+    findings: list[ContractFinding] = []
+    base_dir = index_path.parent
+    for template in index.templates:
+        if not template.template_path and not template.model_library_entry_id:
+            findings.append(
+                ContractFinding(
+                    severity="warning",
+                    type="database_model_template_source_missing",
+                    message="model template should reference a template file or model-library entry",
+                    target=template.template_id,
+                )
+            )
+        if template.template_path and not _resolve_path(base_dir, template.template_path).exists():
+            findings.append(
+                ContractFinding(
+                    severity="warning",
+                    type="database_model_template_path_missing",
+                    message="model template path does not exist locally",
+                    target=template.template_id,
+                    details={"path": template.template_path},
+                )
+            )
+        if not template.known_limits:
+            findings.append(
+                ContractFinding(
+                    severity="warning",
+                    type="database_model_template_limits_missing",
+                    message="model template should record known limits before reuse guidance",
+                    target=template.template_id,
+                )
+            )
+        if not template.validation_reports and template.review_state not in {"review_required", "source_missing"}:
+            findings.append(
+                ContractFinding(
+                    severity="warning",
+                    type="database_model_template_validation_boundary_missing",
+                    message="model template should reference validation reports or mark review/source-missing state",
+                    target=template.template_id,
+                )
+            )
+    for library in index.model_library_indexes:
+        library_path = _resolve_path(base_dir, library.path)
+        if not library_path.exists():
+            findings.append(
+                ContractFinding(
+                    severity="error",
+                    type="database_model_template_library_missing",
+                    message="referenced model-library index does not exist",
+                    target=str(library_path),
+                )
+            )
+    status = _status(findings)
+    return ContractReview(
+        artifact_kind="database_model_template_index",
+        status=status,
+        ok=status == "pass",
+        findings=findings,
+        summary={
+            "index_id": index.index_id,
+            "template_count": len(index.templates),
+            "model_library_index_count": len(index.model_library_indexes),
+            "semantics": "model templates are reuse starting points, not project-specific validation proof",
+        },
+        next_actions=_next_actions(findings),
+    )
+
+
+def plan_database_project_intake(
+    database_root: str | Path,
+    project_root: str | Path,
+    *,
+    catalog_path: str | Path | None = None,
+    project_id: str | None = None,
+    requested_state: DatabaseProjectLifecycleState = "candidate",
+) -> DatabaseLifecycleOperationReport:
+    root_path = Path(database_root)
+    project_path = Path(project_root)
+    catalog = Path(catalog_path) if catalog_path else root_path / DEFAULT_DATABASE_ARTIFACTS.database_catalog
+    findings: list[ContractFinding] = []
+    registry_path = _find_project_evidence_registry(project_path)
+    adoption_path = project_path / ".physicsguard" / "project.yaml"
+    inferred_project_id = project_id or project_path.name
+    project_name: str | None = None
+    gap_status = "unknown"
+    if registry_path:
+        try:
+            registry_data = load_yaml_mapping(registry_path)
+            inferred_project_id = project_id or str(registry_data.get("project_id") or inferred_project_id)
+            profile = registry_data.get("project_profile") if isinstance(registry_data.get("project_profile"), dict) else {}
+            project_name = profile.get("project_name") if isinstance(profile.get("project_name"), str) else None
+            gap_report = check_evidence_gaps(registry_path)
+            gap_status = gap_report.status
+            if gap_report.blocking_gaps:
+                findings.append(
+                    ContractFinding(
+                        severity="error" if requested_state in {"active_registered", "active_validated", "active_reusable"} else "warning",
+                        type="database_intake_project_blocking_gaps",
+                        message="project evidence registry has blocking gaps",
+                        target=inferred_project_id,
+                        details={"blocking_gap_count": len(gap_report.blocking_gaps)},
+                    )
+                )
+        except Exception as exc:
+            findings.append(
+                ContractFinding(
+                    severity="error",
+                    type="database_intake_registry_invalid",
+                    message=f"project evidence registry could not be checked: {exc}",
+                    target=str(registry_path),
+                )
+            )
+    elif requested_state in {"active_registered", "active_validated", "active_reusable"}:
+        findings.append(
+            ContractFinding(
+                severity="error",
+                type="database_intake_registry_missing",
+                message="active project intake requires a project evidence registry or explicit placeholder state",
+                target=inferred_project_id,
+            )
+        )
+    if not adoption_path.exists() and requested_state in {"active_registered", "active_validated", "active_reusable"}:
+        findings.append(
+            ContractFinding(
+                severity="warning",
+                type="database_intake_project_adoption_missing",
+                message="active database project should have a project-level PhysicsGuard adoption record or missing reason",
+                target=inferred_project_id,
+            )
+        )
+    plan = DatabaseProjectIntakePlanSpec(
+        database_root=str(root_path),
+        catalog_path=str(catalog),
+        project_id=inferred_project_id,
+        requested_state=requested_state,
+        project_root=str(project_path),
+        project_name=project_name,
+        project_evidence_registry=str(_relative_or_absolute(registry_path, catalog.parent)) if registry_path else None,
+        registry_missing_reason=None if registry_path else "project evidence registry not found during intake scan",
+        project_adoption_record=str(_relative_or_absolute(adoption_path, catalog.parent)) if adoption_path.exists() else None,
+        project_adoption_missing_reason=None if adoption_path.exists() else "project adoption record not found during intake scan",
+        admission_reason="intake plan generated from explicit database project intake",
+        metadata={"evidence_gap_status": gap_status},
+    )
+    status = _status(findings)
+    return DatabaseLifecycleOperationReport(
+        artifact_kind="database_lifecycle_operation",
+        operation="database_intake_plan",
+        status="dry_run" if status == "pass" else status,
+        ok=status in {"pass", "partial"},
+        dry_run=True,
+        applied=False,
+        written_files=[],
+        findings=[asdict(item) for item in findings],
+        summary={
+            "intake_plan": plan.model_dump(mode="json"),
+            "project_level_requirements_met": status == "pass",
+            "semantics": "intake planning is read-only; use database admit with explicit apply to modify the catalog",
+        },
+        next_actions=[
+            "Review the intake plan.",
+            "Use placeholder/candidate state for incomplete projects or fix blocking gaps before active admission.",
+        ],
+    )
+
+
+def admit_database_project(
+    plan_path: str | Path,
+    *,
+    apply: bool = False,
+    actor: str = "PhysicsGuard AI",
+) -> DatabaseLifecycleOperationReport:
+    plan = load_database_project_intake_plan(plan_path)
+    catalog_path = Path(plan.catalog_path)
+    catalog = load_database_catalog(catalog_path)
+    findings: list[ContractFinding] = []
+    active_states = {"active_registered", "active_validated", "active_reusable"}
+    if plan.requested_state in active_states and not plan.project_evidence_registry:
+        findings.append(
+            ContractFinding(
+                severity="error",
+                type="database_admit_registry_missing",
+                message="active project admission requires project_evidence_registry",
+                target=plan.project_id,
+            )
+        )
+    if plan.requested_state == "active_validated":
+        findings.append(
+            ContractFinding(
+                severity="warning",
+                type="database_admit_validation_review_required",
+                message="active_validated admission should be reviewed against validation reports",
+                target=plan.project_id,
+            )
+        )
+    status = _status(findings)
+    if not apply:
+        return DatabaseLifecycleOperationReport(
+            artifact_kind="database_lifecycle_operation",
+            operation="database_admit_project",
+            status="dry_run" if status == "pass" else status,
+            ok=status != "fail",
+            dry_run=True,
+            applied=False,
+            findings=[asdict(item) for item in findings],
+            summary={
+                "project_id": plan.project_id,
+                "requested_state": plan.requested_state,
+                "catalog_path": str(catalog_path),
+                "semantics": "dry-run only; pass apply=True or CLI --apply to update the catalog and history",
+            },
+            next_actions=["Review findings, then rerun with explicit apply intent if admission is correct."],
+        )
+    if status == "fail":
+        return DatabaseLifecycleOperationReport(
+            artifact_kind="database_lifecycle_operation",
+            operation="database_admit_project",
+            status="fail",
+            ok=False,
+            dry_run=False,
+            applied=False,
+            findings=[asdict(item) for item in findings],
+            summary={"project_id": plan.project_id, "catalog_path": str(catalog_path)},
+            next_actions=_next_actions(findings),
+        )
+    catalog_data = catalog.model_dump(mode="json")
+    record = _project_record_from_intake_plan(plan, actor=actor)
+    replaced = False
+    for index, item in enumerate(catalog_data["projects"]):
+        if item["project_id"] == plan.project_id:
+            catalog_data["projects"][index] = record
+            replaced = True
+            break
+    if not replaced:
+        catalog_data["projects"].append(record)
+    catalog_data["updated_at"] = _now()
+    DatabaseCatalogSpec.model_validate(catalog_data)
+    _write_yaml(catalog_path, catalog_data)
+    history_path = _history_path_for_catalog(catalog_path, catalog)
+    event = _history_event(
+        "project_admitted",
+        actor=actor,
+        target_project_id=plan.project_id,
+        reason=plan.admission_reason or "project admitted through database intake",
+        apply=True,
+        before_state=None if not replaced else "updated_existing_record",
+        after_state=plan.requested_state,
+        affected_paths=[str(catalog_path), str(history_path)],
+    )
+    _append_history(history_path, event)
+    return DatabaseLifecycleOperationReport(
+        artifact_kind="database_lifecycle_operation",
+        operation="database_admit_project",
+        status="pass",
+        ok=True,
+        dry_run=False,
+        applied=True,
+        written_files=[str(catalog_path), str(history_path)],
+        history_events=[event.model_dump(mode="json")],
+        findings=[asdict(item) for item in findings],
+        summary={"project_id": plan.project_id, "catalog_path": str(catalog_path), "replaced": replaced},
+        next_actions=["Run database audit and render handoff after admission."],
+    )
+
+
+def audit_database_maintenance(
+    database_root: str | Path,
+    *,
+    catalog_path: str | Path | None = None,
+    policy_path: str | Path | None = None,
+) -> DatabaseMaintenanceReport:
+    root_path = Path(database_root)
+    catalog_file = Path(catalog_path) if catalog_path else root_path / DEFAULT_DATABASE_ARTIFACTS.database_catalog
+    policy_file = Path(policy_path) if policy_path else root_path / DEFAULT_DATABASE_ARTIFACTS.database_policy
+    gaps: list[DatabaseCatalogGapSpec] = []
+    lifecycle = _lifecycle_artifact_status(root_path)
+    for name, item in lifecycle.items():
+        if not item["exists"]:
+            severity: GapSeverity = "blocking" if name in {"database_policy", "database_catalog", "database_history"} else "review"
+            gaps.append(
+                _gap(
+                    f"lifecycle_{name}_missing",
+                    severity,
+                    "lifecycle_artifact_missing",
+                    item["path"],
+                    f"database lifecycle artifact is missing: {name}",
+                    None,
+                    ["database_lifecycle_policy"],
+                    [f"create {item['path']} or run database init"],
+                )
+            )
+    project_summaries: list[dict[str, Any]] = []
+    if catalog_file.exists():
+        catalog = load_database_catalog(catalog_file)
+        project_summaries = refresh_database_catalog(catalog_file).refreshed_projects
+        gaps.extend(_collect_catalog_gaps(catalog_file, catalog))
+        for project in catalog.projects:
+            gaps.extend(_lifecycle_project_gaps(catalog_file, project))
+    else:
+        catalog = None
+    if policy_file.exists():
+        try:
+            policy_review = check_database_policy(policy_file)
+            for finding in policy_review.findings:
+                severity: GapSeverity = "blocking" if finding.severity == "error" else "review"
+                gaps.append(
+                    _gap(
+                        f"policy_{finding.type}",
+                        severity,
+                        finding.type,
+                        finding.target or str(policy_file),
+                        finding.message,
+                        None,
+                        ["database_lifecycle_policy"],
+                        _next_actions([finding]),
+                    )
+                )
+        except Exception as exc:
+            gaps.append(
+                _gap(
+                    "policy_invalid",
+                    "blocking",
+                    "database_policy_invalid",
+                    str(policy_file),
+                    f"database policy cannot be loaded: {exc}",
+                    None,
+                    ["database_lifecycle_policy"],
+                    ["repair database_policy.yaml"],
+                )
+            )
+    gaps = _dedupe_gaps(gaps)
+    blocking = [gap for gap in gaps if gap.severity == "blocking"]
+    review = [gap for gap in gaps if gap.severity == "review"]
+    optional = [gap for gap in gaps if gap.severity == "optional"]
+    status = "fail" if blocking else "partial" if review else "pass"
+    return DatabaseMaintenanceReport(
+        artifact_kind="database_maintenance_report",
+        status=status,
+        ok=status == "pass",
+        database_root=str(root_path),
+        catalog_path=str(catalog_file),
+        policy_path=str(policy_file) if policy_file.exists() else None,
+        blocking_gaps=[gap.model_dump(mode="json") for gap in blocking],
+        review_gaps=[gap.model_dump(mode="json") for gap in review],
+        optional_gaps=[gap.model_dump(mode="json") for gap in optional],
+        project_summaries=project_summaries,
+        lifecycle_artifacts=lifecycle,
+        summary={
+            "project_count": len(project_summaries),
+            "blocking_gap_count": len(blocking),
+            "review_gap_count": len(review),
+            "optional_gap_count": len(optional),
+            "semantics": "maintenance audit is database lifecycle evidence; it does not prove physics validation",
+        },
+        next_actions=_gap_next_actions(gaps),
+    )
+
+
+def archive_database_project(
+    catalog_path: str | Path,
+    project_id: str,
+    *,
+    reason: str,
+    archive_state: Literal["archived", "deprecated", "superseded", "rejected"] = "archived",
+    superseded_by_project_id: str | None = None,
+    apply: bool = False,
+    actor: str = "PhysicsGuard AI",
+) -> DatabaseLifecycleOperationReport:
+    catalog_file = Path(catalog_path)
+    catalog = load_database_catalog(catalog_file)
+    ensure_non_empty(project_id, "project_id")
+    ensure_non_empty(reason, "reason")
+    catalog_data = catalog.model_dump(mode="json")
+    target = None
+    for item in catalog_data["projects"]:
+        if item["project_id"] == project_id:
+            target = item
+            break
+    if target is None:
+        finding = ContractFinding(
+            severity="error",
+            type="database_archive_project_missing",
+            message="project_id is not present in catalog",
+            target=project_id,
+        )
+        return DatabaseLifecycleOperationReport(
+            artifact_kind="database_lifecycle_operation",
+            operation="database_archive_project",
+            status="fail",
+            ok=False,
+            findings=[asdict(finding)],
+            summary={"project_id": project_id, "catalog_path": str(catalog_file)},
+            next_actions=["Check the project_id or run database query/map before archive."],
+        )
+    if archive_state == "superseded" and not superseded_by_project_id:
+        finding = ContractFinding(
+            severity="error",
+            type="database_archive_superseded_target_missing",
+            message="superseded archive requires superseded_by_project_id",
+            target=project_id,
+        )
+        return DatabaseLifecycleOperationReport(
+            artifact_kind="database_lifecycle_operation",
+            operation="database_archive_project",
+            status="fail",
+            ok=False,
+            findings=[asdict(finding)],
+            summary={"project_id": project_id, "catalog_path": str(catalog_file)},
+            next_actions=["Provide superseded_by_project_id or choose a different archive state."],
+        )
+    previous_state = target.get("lifecycle_state")
+    if not apply:
+        return DatabaseLifecycleOperationReport(
+            artifact_kind="database_lifecycle_operation",
+            operation="database_archive_project",
+            status="dry_run",
+            ok=True,
+            dry_run=True,
+            applied=False,
+            summary={
+                "project_id": project_id,
+                "previous_state": previous_state,
+                "new_state": archive_state,
+                "semantics": "dry-run only; pass apply=True or CLI --apply to update catalog and history",
+            },
+            next_actions=["Review archive reason and rerun with explicit apply intent if correct."],
+        )
+    new_lifecycle_state = archive_state
+    target["lifecycle_state"] = new_lifecycle_state
+    target["project_status"] = "archived" if archive_state in {"archived", "superseded"} else "deprecated"
+    target["archive_record"] = {
+        "archive_state": archive_state,
+        "reason": reason,
+        "recorded_at": _now(),
+        "recorded_by": actor,
+        "superseded_by_project_id": superseded_by_project_id,
+        "previous_state": previous_state,
+    }
+    if archive_state == "superseded":
+        target["superseded_by_project_id"] = superseded_by_project_id
+    if archive_state == "rejected":
+        target["rejected_reason"] = reason
+    catalog_data["updated_at"] = _now()
+    DatabaseCatalogSpec.model_validate(catalog_data)
+    _write_yaml(catalog_file, catalog_data)
+    history_path = _history_path_for_catalog(catalog_file, catalog)
+    event_type = {
+        "archived": "project_archived",
+        "deprecated": "project_deprecated",
+        "superseded": "project_superseded",
+        "rejected": "project_rejected",
+    }[archive_state]
+    event = _history_event(
+        event_type,
+        actor=actor,
+        target_project_id=project_id,
+        reason=reason,
+        apply=True,
+        before_state=str(previous_state),
+        after_state=new_lifecycle_state,
+        affected_paths=[str(catalog_file), str(history_path)],
+    )
+    _append_history(history_path, event)
+    return DatabaseLifecycleOperationReport(
+        artifact_kind="database_lifecycle_operation",
+        operation="database_archive_project",
+        status="pass",
+        ok=True,
+        dry_run=False,
+        applied=True,
+        written_files=[str(catalog_file), str(history_path)],
+        history_events=[event.model_dump(mode="json")],
+        summary={"project_id": project_id, "previous_state": previous_state, "new_state": new_lifecycle_state},
+        next_actions=["Run database audit and render handoff after archive/deprecation/supersession."],
+    )
+
+
+def render_database_handoff(
+    database_root: str | Path,
+    *,
+    catalog_path: str | Path | None = None,
+    policy_path: str | Path | None = None,
+    apply: bool = False,
+    actor: str = "PhysicsGuard AI",
+) -> DatabaseLifecycleOperationReport:
+    root_path = Path(database_root)
+    catalog_file = Path(catalog_path) if catalog_path else root_path / DEFAULT_DATABASE_ARTIFACTS.database_catalog
+    policy_file = Path(policy_path) if policy_path else root_path / DEFAULT_DATABASE_ARTIFACTS.database_policy
+    catalog = load_database_catalog(catalog_file) if catalog_file.exists() else None
+    policy = load_database_policy(policy_file) if policy_file.exists() else None
+    maintenance = audit_database_maintenance(root_path, catalog_path=catalog_file, policy_path=policy_file)
+    markdown = _render_handoff_markdown(root_path, catalog, maintenance, policy)
+    status_markdown = _render_status_markdown(
+        catalog.catalog_id if catalog else root_path.name,
+        maintenance.blocking_gaps,
+        maintenance.review_gaps,
+        maintenance.status,
+    )
+    readme_path = root_path / DEFAULT_DATABASE_ARTIFACTS.database_readme
+    status_path = root_path / DEFAULT_DATABASE_ARTIFACTS.database_status
+    history_path = root_path / DEFAULT_DATABASE_ARTIFACTS.database_history
+    event = _history_event(
+        "handoff_rendered",
+        actor=actor,
+        target_artifact=str(readme_path),
+        reason="render database AI handoff documents",
+        apply=apply,
+        affected_paths=[str(readme_path), str(status_path), str(history_path)],
+    )
+    if not apply:
+        return DatabaseLifecycleOperationReport(
+            artifact_kind="database_lifecycle_operation",
+            operation="database_render_handoff",
+            status="dry_run",
+            ok=True,
+            dry_run=True,
+            applied=False,
+            history_events=[event.model_dump(mode="json")],
+            summary={
+                "readme_path": str(readme_path),
+                "status_path": str(status_path),
+                "rendered_markdown": markdown,
+                "semantics": "dry-run only; pass apply=True or CLI --apply to write handoff Markdown",
+            },
+            next_actions=["Review rendered Markdown, then rerun with explicit apply intent if correct."],
+        )
+    root_path.mkdir(parents=True, exist_ok=True)
+    readme_path.write_text(markdown, encoding="utf-8")
+    status_path.write_text(status_markdown, encoding="utf-8")
+    _append_history(history_path, event)
+    return DatabaseLifecycleOperationReport(
+        artifact_kind="database_lifecycle_operation",
+        operation="database_render_handoff",
+        status="pass",
+        ok=True,
+        dry_run=False,
+        applied=True,
+        written_files=[str(readme_path), str(status_path), str(history_path)],
+        history_events=[event.model_dump(mode="json")],
+        summary={"readme_path": str(readme_path), "status_path": str(status_path)},
+        next_actions=["Share DATABASE_README.md and DATABASE_STATUS.md with AI agents entering the database."],
+    )
+
+
+def _database_artifact_paths(root: Path, artifacts: DatabaseLifecycleArtifactsSpec) -> dict[str, Path]:
+    return {
+        "database_readme": root / artifacts.database_readme,
+        "database_status": root / artifacts.database_status,
+        "database_policy": root / artifacts.database_policy,
+        "database_catalog": root / artifacts.database_catalog,
+        "database_history": root / artifacts.database_history,
+        "database_maintenance_report": root / artifacts.database_maintenance_report,
+        "model_template_index": root / artifacts.model_template_index,
+    }
+
+
+def _write_yaml(path: Path, data: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+
+
+def _append_history(path: Path, event: DatabaseHistoryEventSpec) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(event.model_dump(mode="json"), sort_keys=True))
+        handle.write("\n")
+
+
+def _history_event(
+    event_type: str,
+    *,
+    actor: str,
+    target_project_id: str | None = None,
+    target_artifact: str | None = None,
+    reason: str | None = None,
+    apply: bool = False,
+    before_state: str | None = None,
+    after_state: str | None = None,
+    affected_paths: list[str] | None = None,
+    metadata: dict[str, Any] | None = None,
+) -> DatabaseHistoryEventSpec:
+    return DatabaseHistoryEventSpec(
+        event_id=str(uuid4()),
+        event_type=event_type,
+        occurred_at=_now(),
+        actor=actor,
+        target_project_id=target_project_id,
+        target_artifact=target_artifact,
+        reason=reason,
+        dry_run=not apply,
+        apply=apply,
+        before_state=before_state,
+        after_state=after_state,
+        affected_paths=affected_paths or [],
+        metadata=metadata or {},
+    )
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def _find_project_evidence_registry(project_root: Path) -> Path | None:
+    preferred = project_root / "evidence" / "project_evidence_registry.yaml"
+    if preferred.exists():
+        return preferred
+    for name in ("project_evidence_registry.yaml", "project_evidence_registry.yml"):
+        direct = project_root / name
+        if direct.exists():
+            return direct
+    candidates = sorted(
+        path
+        for path in project_root.rglob("*")
+        if path.is_file()
+        and path.name in {"project_evidence_registry.yaml", "project_evidence_registry.yml"}
+        and not _is_excluded(path)
+    )
+    return candidates[0] if candidates else None
+
+
+def _relative_or_absolute(path: Path | None, base: Path) -> Path | str | None:
+    if path is None:
+        return None
+    try:
+        return path.resolve(strict=False).relative_to(base.resolve(strict=False))
+    except ValueError:
+        return path
+
+
+def _project_record_from_intake_plan(plan: DatabaseProjectIntakePlanSpec, *, actor: str) -> dict[str, Any]:
+    gap_status = str(plan.metadata.get("evidence_gap_status", "unknown"))
+    if gap_status not in {"unknown", "pass", "partial", "fail"}:
+        gap_status = "unknown"
+    project_status = "draft"
+    if plan.requested_state in ACTIVE_LIFECYCLE_STATES:
+        project_status = "active"
+    elif plan.requested_state in {"archived", "superseded"}:
+        project_status = "archived"
+    elif plan.requested_state in {"deprecated", "rejected"}:
+        project_status = "deprecated"
+    admission = DatabaseProjectAdmissionSpec(
+        requested_state=plan.requested_state,
+        project_root=plan.project_root,
+        project_adoption_record=plan.project_adoption_record,
+        project_adoption_missing_reason=plan.project_adoption_missing_reason,
+        project_evidence_registry=plan.project_evidence_registry,
+        project_evidence_missing_reason=plan.registry_missing_reason,
+        evidence_gap_status=gap_status,  # type: ignore[arg-type]
+        admitted_at=_now(),
+        admitted_by=actor,
+        admission_reason=plan.admission_reason,
+        metadata=plan.metadata,
+    )
+    return CatalogProjectRecordSpec(
+        project_id=plan.project_id,
+        project_name=plan.project_name,
+        project_name_unknown_reason=None if plan.project_name else "project name not found during intake scan",
+        project_evidence_registry=plan.project_evidence_registry,
+        registry_missing_reason=plan.registry_missing_reason,
+        project_status=project_status,  # type: ignore[arg-type]
+        lifecycle_state=plan.requested_state,
+        admission=admission,
+        domain_tags=plan.domain_tags,
+        system_tags=plan.system_tags,
+        component_tags=plan.component_tags,
+        testbench_tags=plan.testbench_tags,
+        measurement_tags=plan.measurement_tags,
+        last_scanned_at=_now(),
+        notes=["Created from database project intake plan."],
+        metadata={"project_root": plan.project_root, **plan.metadata},
+    ).model_dump(mode="json")
+
+
+def _history_path_for_catalog(catalog_path: Path, catalog: DatabaseCatalogSpec) -> Path:
+    history = catalog.database_history or catalog.lifecycle_artifacts.database_history
+    return _resolve_path(catalog_path.parent, history)
+
+
+def _lifecycle_artifact_status(root: Path) -> dict[str, dict[str, Any]]:
+    artifacts = DEFAULT_DATABASE_ARTIFACTS
+    result: dict[str, dict[str, Any]] = {}
+    for key, path in _database_artifact_paths(root, artifacts).items():
+        result[key] = {"path": str(path), "exists": path.exists()}
+    return result
+
+
+def _lifecycle_project_gaps(catalog_path: Path, project: CatalogProjectRecordSpec) -> list[DatabaseCatalogGapSpec]:
+    gaps: list[DatabaseCatalogGapSpec] = []
+    if project.lifecycle_state in ACTIVE_LIFECYCLE_STATES and not project.project_evidence_registry:
+        gaps.append(
+            _gap(
+                f"{project.project_id}_active_registry_missing",
+                "blocking",
+                "active_project_registry_missing",
+                project.project_id,
+                "active database project requires a project evidence registry",
+                project.project_id,
+                ["database_project_intake", "project_evidence_registry"],
+                ["add project_evidence_registry or move this project to placeholder/candidate state"],
+            )
+        )
+    if project.lifecycle_state == "active_validated" and not project.has_validation:
+        gaps.append(
+            _gap(
+                f"{project.project_id}_validated_state_without_validation",
+                "review",
+                "validated_state_without_validation",
+                project.project_id,
+                "project is marked active_validated but catalog validation evidence is absent or unknown",
+                project.project_id,
+                ["database_project_intake", "model_dataset_validation"],
+                ["link validation evidence or downgrade lifecycle_state to active_registered"],
+            )
+        )
+    if project.lifecycle_state == "active_reusable" and not project.has_model_library_entry:
+        gaps.append(
+            _gap(
+                f"{project.project_id}_reusable_state_without_model_library",
+                "review",
+                "reusable_state_without_model_library",
+                project.project_id,
+                "project is marked active_reusable but no model-library entry is recorded",
+                project.project_id,
+                ["database_project_intake", "model_library"],
+                ["link a model-library entry or downgrade lifecycle_state"],
+            )
+        )
+    if project.lifecycle_state in INACTIVE_LIFECYCLE_STATES and project.archive_record is None:
+        gaps.append(
+            _gap(
+                f"{project.project_id}_inactive_without_archive_record",
+                "review",
+                "inactive_project_archive_record_missing",
+                project.project_id,
+                "inactive project should keep an archive/deprecation/supersession record",
+                project.project_id,
+                ["database_history_and_archive"],
+                ["add archive_record with reason and recorded_at"],
+            )
+        )
+    if project.lifecycle_state == "superseded" and not project.superseded_by_project_id:
+        gaps.append(
+            _gap(
+                f"{project.project_id}_superseded_target_missing",
+                "blocking",
+                "superseded_project_target_missing",
+                project.project_id,
+                "superseded project requires superseded_by_project_id",
+                project.project_id,
+                ["database_history_and_archive"],
+                ["record superseded_by_project_id"],
+            )
+        )
+    if project.lifecycle_state == "rejected" and not project.rejected_reason:
+        gaps.append(
+            _gap(
+                f"{project.project_id}_rejected_reason_missing",
+                "blocking",
+                "rejected_project_reason_missing",
+                project.project_id,
+                "rejected project requires rejected_reason",
+                project.project_id,
+                ["database_history_and_archive"],
+                ["record rejected_reason"],
+            )
+        )
+    return gaps
+
+
+def _gap_next_actions(gaps: list[DatabaseCatalogGapSpec]) -> list[str]:
+    actions: list[str] = []
+    for gap in gaps:
+        actions.extend(gap.suggested_action)
+    return sorted(set(actions))
+
+
+def _render_handoff_markdown(
+    database_root: Path,
+    catalog: DatabaseCatalogSpec | None,
+    maintenance: DatabaseMaintenanceReport | None,
+    policy: DatabasePolicySpec | None,
+) -> str:
+    database_id = catalog.catalog_id if catalog else policy.database_id if policy else database_root.name
+    database_name = catalog.catalog_name if catalog else policy.database_name if policy else None
+    project_count = len(catalog.projects) if catalog else 0
+    active_count = sum(1 for project in catalog.projects if project.lifecycle_state not in INACTIVE_LIFECYCLE_STATES) if catalog else 0
+    lines = [
+        "# PhysicsGuard Database Map",
+        "",
+        f"- Database id: `{database_id}`",
+        f"- Database name: `{database_name or 'unknown'}`",
+        f"- Database root: `{database_root}`",
+        f"- PhysicsGuard repository: `{policy.physicsguard_repository if policy else PHYSICSGUARD_REPOSITORY}`",
+        f"- Project count: `{project_count}`",
+        f"- Active/searchable project count: `{active_count}`",
+        "",
+        "## Required first reads",
+        "",
+        "- `database_policy.yaml`: lifecycle rules and write policy.",
+        "- `database_catalog.yaml`: project list, project evidence registries, model libraries, and lifecycle states.",
+        "- `database_maintenance_report.yaml`: latest database gap scan.",
+        "- `DATABASE_STATUS.md`: concise current blockers and review gaps.",
+        "- `database_history.jsonl`: append-only lifecycle history.",
+        "- `model_template_index.yaml`: reusable model templates and their limits.",
+        "",
+        "## Operating rules",
+        "",
+        "- This is an explicit local database root, not a hidden global database.",
+        "- Do not store raw test datasets inside database artifacts; store paths, summaries, hashes, and evidence pointers.",
+        "- Active projects should satisfy project-level PhysicsGuard requirements before broad database claims.",
+        "- Archived, deprecated, superseded, and rejected projects remain visible for history but are excluded from default queries.",
+        "- Model templates are reuse starting points; every target project still needs its own evidence and validation review.",
+        "",
+        "## Project overview",
+        "",
+    ]
+    if catalog and catalog.projects:
+        lines.append("| Project | Lifecycle | Registry | Validation | Notes |")
+        lines.append("| --- | --- | --- | --- | --- |")
+        for project in catalog.projects:
+            notes = "; ".join(project.notes[:2]) if project.notes else ""
+            lines.append(
+                "| "
+                f"{project.project_id} | {project.lifecycle_state} | "
+                f"{project.project_evidence_registry or project.registry_missing_reason or 'missing'} | "
+                f"{project.confidence_summary.validation_state} | {notes} |"
+            )
+    else:
+        lines.append("No projects are registered yet.")
+    lines.extend(["", "## Latest maintenance status", ""])
+    if maintenance:
+        lines.extend(
+            [
+                f"- Status: `{maintenance.status}`",
+                f"- Blocking gaps: `{len(maintenance.blocking_gaps)}`",
+                f"- Review gaps: `{len(maintenance.review_gaps)}`",
+                f"- Optional gaps: `{len(maintenance.optional_gaps)}`",
+            ]
+        )
+        if maintenance.next_actions:
+            lines.append("")
+            lines.append("## Next actions")
+            lines.append("")
+            for action in maintenance.next_actions[:12]:
+                lines.append(f"- {action}")
+    else:
+        lines.append("Maintenance audit has not been run yet.")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _render_status_markdown(
+    database_id: str,
+    blocking_gaps: list[dict[str, Any]],
+    review_gaps: list[dict[str, Any]],
+    status: str,
+) -> str:
+    lines = [
+        "# PhysicsGuard Database Status",
+        "",
+        f"- Database id: `{database_id}`",
+        f"- Status: `{status}`",
+        f"- Blocking gaps: `{len(blocking_gaps)}`",
+        f"- Review gaps: `{len(review_gaps)}`",
+        "",
+    ]
+    if blocking_gaps:
+        lines.append("## Blocking gaps")
+        lines.append("")
+        for gap in blocking_gaps[:20]:
+            lines.append(f"- `{gap.get('gap_type')}` at `{gap.get('target')}`: {gap.get('reason')}")
+        lines.append("")
+    if review_gaps:
+        lines.append("## Review gaps")
+        lines.append("")
+        for gap in review_gaps[:20]:
+            lines.append(f"- `{gap.get('gap_type')}` at `{gap.get('target')}`: {gap.get('reason')}")
+        lines.append("")
+    if not blocking_gaps and not review_gaps:
+        lines.append("No blocking or review gaps are currently reported.")
+        lines.append("")
+    return "\n".join(lines)
+
+
 def _project_record_findings(
     catalog_path: Path,
     project: CatalogProjectRecordSpec,
     catalog: DatabaseCatalogSpec,
 ) -> list[ContractFinding]:
     findings: list[ContractFinding] = []
+    if catalog.policies.forbid_raw_data_payloads and _contains_raw_data_payload(project.metadata):
+        findings.append(
+            ContractFinding(
+                severity="error",
+                type="database_catalog_project_raw_data_payload",
+                message="catalog project metadata must not embed raw test data payloads",
+                target=project.project_id,
+            )
+        )
+    if project.lifecycle_state in INACTIVE_LIFECYCLE_STATES:
+        return findings
     if not project.project_evidence_registry and not project.registry_missing_reason:
         findings.append(
             ContractFinding(
@@ -421,15 +1554,6 @@ def _project_record_findings(
                 details={"stale_reason": project.stale_reason},
             )
         )
-    if catalog.policies.forbid_raw_data_payloads and _contains_raw_data_payload(project.metadata):
-        findings.append(
-            ContractFinding(
-                severity="error",
-                type="database_catalog_project_raw_data_payload",
-                message="catalog project metadata must not embed raw test data payloads",
-                target=project.project_id,
-            )
-        )
     return findings
 
 
@@ -462,6 +1586,9 @@ def _collect_catalog_gaps(catalog_path: Path, catalog: DatabaseCatalogSpec) -> l
                     ["remove raw rows from catalog metadata and register the source artifact by path"],
                 )
             )
+        gaps.extend(_lifecycle_project_gaps(catalog_path, project))
+        if project.lifecycle_state in INACTIVE_LIFECYCLE_STATES:
+            continue
         if not project.project_evidence_registry:
             severity: GapSeverity = "review" if project.registry_missing_reason else "blocking"
             gaps.append(
@@ -562,7 +1689,9 @@ def _project_summary(catalog_path: Path, project: CatalogProjectRecordSpec) -> t
     registry_loaded = False
     project_map: Any | None = None
     registry_path_value = project.project_evidence_registry
-    if registry_path_value:
+    if project.lifecycle_state in INACTIVE_LIFECYCLE_STATES:
+        registry_loaded = False
+    elif registry_path_value:
         registry_path = _resolve_path(catalog_path.parent, registry_path_value)
         if registry_path.exists():
             try:
@@ -638,6 +1767,11 @@ def _project_summary(catalog_path: Path, project: CatalogProjectRecordSpec) -> t
             "project_name": project.project_name or profile.get("project_name"),
             "project_name_unknown_reason": project.project_name_unknown_reason or profile.get("project_name_unknown_reason"),
             "project_status": project.project_status,
+            "lifecycle_state": project.lifecycle_state,
+            "admission": project.admission.model_dump(mode="json"),
+            "archive_record": project.archive_record.model_dump(mode="json") if project.archive_record else None,
+            "superseded_by_project_id": project.superseded_by_project_id,
+            "rejected_reason": project.rejected_reason,
             "project_evidence_registry": project.project_evidence_registry,
             "registry_loaded": registry_loaded,
             "registry_missing_reason": project.registry_missing_reason,
@@ -946,12 +2080,22 @@ __all__ = [
     "DatabaseCatalogGapReport",
     "DatabaseCatalogRefreshReport",
     "DatabaseCatalogScanReport",
+    "DatabaseLifecycleOperationReport",
+    "DatabaseMaintenanceReport",
     "DatabaseMapReport",
     "DatabaseQueryReport",
+    "admit_database_project",
+    "archive_database_project",
+    "audit_database_maintenance",
     "build_database_map",
     "check_database_catalog",
     "check_database_catalog_gaps",
+    "check_database_model_template_index",
+    "check_database_policy",
+    "initialize_database_root",
+    "plan_database_project_intake",
     "query_database_catalog",
     "refresh_database_catalog",
+    "render_database_handoff",
     "scan_database_catalog_candidates",
 ]

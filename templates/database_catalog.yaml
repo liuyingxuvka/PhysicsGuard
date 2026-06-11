@@ -1,7 +1,7 @@
 catalog_id: example_database_catalog
 catalog_name: Example PhysicsGuard database catalog
 schema_version: "1.0"
-physicsguard_version: "0.7.0"
+physicsguard_version: "0.8.0"
 created_at: "2026-06-11T00:00:00Z"
 updated_at: "2026-06-11T00:00:00Z"
 description: >
@@ -9,11 +9,34 @@ description: >
   only references, summaries, tags, confidence state, and gap state here.
 catalog_roots:
   - examples
+lifecycle_artifacts:
+  database_readme: DATABASE_README.md
+  database_status: DATABASE_STATUS.md
+  database_policy: database_policy.yaml
+  database_catalog: database_catalog.yaml
+  database_history: database_history.jsonl
+  database_maintenance_report: database_maintenance_report.yaml
+  model_template_index: model_template_index.yaml
+database_policy: database_policy.yaml
+database_history: database_history.jsonl
+database_maintenance_report: database_maintenance_report.yaml
+model_template_index: model_template_index.yaml
 projects:
   - project_id: example_project
     project_name: Example project
     project_evidence_registry: path/to/project_evidence_registry.yaml
     project_status: active
+    lifecycle_state: active_registered
+    admission:
+      requested_state: active_registered
+      project_root: path/to/project
+      project_adoption_record: path/to/project/.physicsguard/project.yaml
+      project_evidence_registry: path/to/project_evidence_registry.yaml
+      evidence_gap_status: unknown
+      admitted_at: "2026-06-11T00:00:00Z"
+      admitted_by: PhysicsGuard AI
+      admission_reason: example active registration
+      review_state: ai_registered
     domain_tags:
       - example-domain
     system_tags:
