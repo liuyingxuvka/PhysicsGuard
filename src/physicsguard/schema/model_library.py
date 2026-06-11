@@ -21,6 +21,9 @@ class ModelLibraryEntrySpec(BaseModel):
     model_id: str
     model_file: str
     model_hash: Optional[str] = None
+    evidence_registry: Optional[str] = None
+    model_context: Optional[str] = None
+    evidence_bundle_id: Optional[str] = None
     compatible_testbench_profiles: list[str] = Field(default_factory=list)
     validation_reports: list[str] = Field(default_factory=list)
     reuse_status: ReuseStatus = "draft"
@@ -31,6 +34,13 @@ class ModelLibraryEntrySpec(BaseModel):
     @classmethod
     def _required_strings(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
+
+    @field_validator("evidence_registry", "model_context", "evidence_bundle_id")
+    @classmethod
+    def _optional_strings_not_empty(cls, value: Optional[str], info) -> Optional[str]:
+        if value is not None:
+            return ensure_non_empty(value, info.field_name)
+        return value
 
     @field_validator("compatible_testbench_profiles", "validation_reports", "known_limits")
     @classmethod

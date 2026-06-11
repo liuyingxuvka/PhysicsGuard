@@ -1,0 +1,39 @@
+# PhysicsGuard project evidence map report
+# Purpose: Example output shape from evidence map.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli evidence map path/to/project_evidence_registry.yaml --pretty
+# Boundary: AI onboarding/navigation only; not validation proof.
+artifact_kind: project_evidence_map
+status: pass
+ok: true
+registry_id: example_project_evidence
+project_id: example_project
+project_profile:
+  project_name: Example project
+  run_period:
+    coverage_period: Example coverage period
+  locations:
+    - location_id: example_site
+      label: Example site
+  source_count: 1
+project_scope:
+  project_id: example_project
+  project_name: Example project
+artifacts: []
+tests: []
+models: []
+facts: []
+bindings: []
+binding_expectations: []
+coverage_summary:
+  tested_model_targets: []
+  fact_bound_model_targets: []
+  required_binding_targets: []
+  missing_required_targets: []
+  unresolved_binding_gap_count: 0
+gaps:
+  blocking: []
+  review: []
+  optional: []
+summary:
+  semantics: project evidence maps are navigation summaries, not validation proof

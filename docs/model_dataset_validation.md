@@ -8,6 +8,7 @@ test data inside an explicit boundary.
 
 ```text
 contract pass
+  -> project evidence bundle gap-check when declared
   -> direct no-fit validation
   -> physical envelope checks
   -> redundant-sensor checks
@@ -34,3 +35,7 @@ python -m physicsguard.cli validation run PLAN.yaml --pretty
 The report separates direct audit pass, calibration optimizer status, holdout
 audit pass, final validation status, safe claim, unsafe claim boundary, and next
 actions.
+
+When a validation plan declares `evidence_registry` and `evidence_bundle_id`,
+blocking project evidence gaps prevent validation pass. Review and optional gaps
+remain visible in the validation claim boundary.

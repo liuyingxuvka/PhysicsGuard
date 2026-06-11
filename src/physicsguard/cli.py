@@ -21,6 +21,13 @@ from physicsguard.core.evaluator import AuditEvaluator
 from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy, plan_from_report
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.model_library import check_model_library_index
+from physicsguard.core.project_evidence import (
+    build_project_evidence_map,
+    check_evidence_bundle,
+    check_evidence_gaps,
+    check_project_evidence_registry,
+    scan_project_evidence_candidates,
+)
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.solver import BoundedSolver
 from physicsguard.core.test_file_contract import (
@@ -280,6 +287,45 @@ def build_parser() -> argparse.ArgumentParser:
     )
     model_library_check.add_argument("index", type=Path, help="path to ModelLibraryIndex YAML")
     model_library_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    evidence_parser = subparsers.add_parser(
+        "evidence",
+        help="project evidence registry commands",
+    )
+    evidence_subparsers = evidence_parser.add_subparsers(dest="evidence_command", required=True)
+    evidence_check = evidence_subparsers.add_parser(
+        "check",
+        help="check a project evidence registry",
+    )
+    evidence_check.add_argument("registry", type=Path, help="path to ProjectEvidenceRegistry YAML")
+    evidence_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    evidence_scan = evidence_subparsers.add_parser(
+        "scan",
+        help="scan a project tree for candidate evidence artifacts",
+    )
+    evidence_scan.add_argument("root", type=Path, help="project root or folder to scan")
+    evidence_scan.add_argument("--registry", type=Path, help="optional ProjectEvidenceRegistry YAML")
+    evidence_scan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    evidence_gap = evidence_subparsers.add_parser(
+        "gap-check",
+        help="check required evidence gaps",
+    )
+    evidence_gap.add_argument("registry", type=Path, help="path to ProjectEvidenceRegistry YAML")
+    evidence_gap.add_argument("--bundle-id", help="optional evidence bundle id to check")
+    evidence_gap.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    evidence_bundle = evidence_subparsers.add_parser(
+        "bundle-check",
+        help="check one evidence bundle for blocking gaps",
+    )
+    evidence_bundle.add_argument("registry", type=Path, help="path to ProjectEvidenceRegistry YAML")
+    evidence_bundle.add_argument("bundle_id", help="evidence bundle id")
+    evidence_bundle.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    evidence_map = evidence_subparsers.add_parser(
+        "map",
+        help="build an AI-readable project evidence map",
+    )
+    evidence_map.add_argument("registry", type=Path, help="path to ProjectEvidenceRegistry YAML")
+    evidence_map.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     return parser
 
 
@@ -465,6 +511,36 @@ def model_library_check_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
+def evidence_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_project_evidence_registry(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def evidence_scan_command(root: Path, registry: Path | None = None, pretty: bool = False) -> int:
+    report = scan_project_evidence_candidates(root, registry)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def evidence_gap_check_command(path: Path, bundle_id: str | None = None, pretty: bool = False) -> int:
+    report = check_evidence_gaps(path, bundle_id)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def evidence_bundle_check_command(path: Path, bundle_id: str, pretty: bool = False) -> int:
+    report = check_evidence_bundle(path, bundle_id)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
+def evidence_map_command(path: Path, pretty: bool = False) -> int:
+    report = build_project_evidence_map(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
     data = load_yaml_mapping(path)
     if "script" in data:
@@ -537,6 +613,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "model-library":
             if args.model_library_command == "check":
                 return model_library_check_command(args.index, args.pretty)
+        if args.command == "evidence":
+            if args.evidence_command == "check":
+                return evidence_check_command(args.registry, args.pretty)
+            if args.evidence_command == "scan":
+                return evidence_scan_command(args.root, args.registry, args.pretty)
+            if args.evidence_command == "gap-check":
+                return evidence_gap_check_command(args.registry, args.bundle_id, args.pretty)
+            if args.evidence_command == "bundle-check":
+                return evidence_bundle_check_command(args.registry, args.bundle_id, args.pretty)
+            if args.evidence_command == "map":
+                return evidence_map_command(args.registry, args.pretty)
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

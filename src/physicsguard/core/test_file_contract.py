@@ -23,6 +23,7 @@ from physicsguard.io.test_file_contract_loader import (
     load_parameter_catalog,
     load_parameter_mapping_edges,
     load_parameter_role_matrix,
+    load_project_evidence_registry,
     load_test_file_contract,
     load_test_file_project_index,
     load_testbench_profile,
@@ -184,6 +185,7 @@ def check_test_file_contract(path: str | Path) -> ContractReview:
     findings.extend(coverage.findings)
     findings.extend(_expected_model_target_findings(resolved, valid_targets))
     findings.extend(_known_defect_findings(resolved))
+    findings.extend(_project_evidence_findings(resolved))
     status = _status(findings)
     return ContractReview(
         artifact_kind="test_file_contract",
@@ -208,6 +210,7 @@ def check_test_file_contract(path: str | Path) -> ContractReview:
             "warning_count": sum(1 for finding in findings if finding.severity == "warning"),
             "analysis_claim_gate": _analysis_claim_gate(status),
             "coverage_status": coverage.status,
+            "registered_artifact_id": resolved.contract.registered_artifact_id,
             "semantics": (
                 "contract pass means the test file is identified, classified, bound, "
                 "and mapped enough for scoped AI analysis; it does not prove physical "
@@ -216,6 +219,57 @@ def check_test_file_contract(path: str | Path) -> ContractReview:
         },
         next_actions=_next_actions(findings),
     )
+
+
+def _project_evidence_findings(resolved: ResolvedTestFileContract) -> list[ContractFinding]:
+    contract = resolved.contract
+    if not contract.project_evidence_registry and not contract.registered_artifact_id:
+        return []
+    if not contract.project_evidence_registry or not contract.registered_artifact_id:
+        return [
+            ContractFinding(
+                severity="warning",
+                type="test_file_evidence_registry_incomplete",
+                message="project_evidence_registry and registered_artifact_id should be declared together",
+                target=contract.contract_id,
+            )
+        ]
+    registry_path = _resolve_path(resolved.contract_path.parent, contract.project_evidence_registry)
+    try:
+        registry = load_project_evidence_registry(registry_path)
+    except Exception as exc:
+        return [
+            ContractFinding(
+                severity="error",
+                type="test_file_evidence_registry_load_failed",
+                message=f"failed to load project evidence registry: {exc}",
+                target=str(registry_path),
+            )
+        ]
+    artifact = next(
+        (item for item in registry.artifacts if item.artifact_id == contract.registered_artifact_id),
+        None,
+    )
+    if artifact is None:
+        return [
+            ContractFinding(
+                severity="error",
+                type="test_file_registered_artifact_missing",
+                message="test-file contract references an unknown project evidence artifact",
+                target=contract.registered_artifact_id,
+            )
+        ]
+    if artifact.artifact_kind not in {"raw_test_data", "cleaned_test_data", "derived_test_data"}:
+        return [
+            ContractFinding(
+                severity="warning",
+                type="test_file_registered_artifact_kind_unexpected",
+                message="test-file contract registered artifact is not a test-data artifact kind",
+                target=contract.registered_artifact_id,
+                details={"artifact_kind": artifact.artifact_kind},
+            )
+        ]
+    return []
 
 
 def check_test_file_parameter_coverage(path: str | Path) -> ContractReview:

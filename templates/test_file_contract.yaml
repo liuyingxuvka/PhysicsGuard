@@ -1,5 +1,7 @@
 contract_id: example_test_file_contract
 file_id: example_bench_run_YYYYMMDD
+project_evidence_registry: path/to/project_evidence_registry.yaml
+registered_artifact_id: example_test_data_artifact
 manifest: path/to/data_manifest.yaml
 manifest_hash: null
 testbench_profile: path/to/testbench_profile.yaml

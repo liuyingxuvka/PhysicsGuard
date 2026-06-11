@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.4.0
+updated_for_version: 0.6.0
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -504,6 +504,7 @@ entries:
     code_symbols:
       - src/physicsguard/schema/dataset_identity.py::LogicalDatasetRecordSpec
       - src/physicsguard/schema/model_dataset_validation.py::ModelValidationPlanSpec
+      - src/physicsguard/core/project_evidence.py::check_evidence_gaps
       - src/physicsguard/core/dataset_identity.py::check_logical_dataset_record
       - src/physicsguard/core/model_dataset_validation.py::validate_model_dataset
       - src/physicsguard/cli.py::validation_run_command
@@ -530,8 +531,9 @@ entries:
       - Non-identical test files keep symmetric contracts.
       - Calibration must not mutate observed values.
       - Optimizer convergence is separate from validation pass.
+      - Blocking project evidence gaps prevent validation pass when a plan references an evidence bundle.
     stale_when:
-      - Dataset identity, validation, calibration, confidence feedback, or CLI semantics change.
+      - Dataset identity, validation, calibration, confidence feedback, project evidence bundle, or CLI semantics change.
 
   - id: workflow.model_library
     model_file: .flowguard/physicsguard_model_library_model.py
@@ -543,6 +545,7 @@ entries:
       library.
     code_symbols:
       - src/physicsguard/schema/model_library.py::ModelLibraryIndexSpec
+      - src/physicsguard/core/project_evidence.py::check_evidence_gaps
       - src/physicsguard/core/model_library.py::check_model_library_index
       - src/physicsguard/cli.py::model_library_check_command
     tests:
@@ -561,5 +564,57 @@ entries:
     boundaries:
       - Model library stores evidence references, not raw datasets.
       - Model library status is not proof outside referenced validation boundaries.
+      - Blocking project evidence gaps prevent validated reuse claims when an entry references an evidence bundle.
     stale_when:
-      - Model library schema, CLI, evidence, or skill-route semantics change.
+      - Model library schema, CLI, project evidence bundle, or skill-route semantics change.
+
+  - id: workflow.project_evidence_registry
+    model_file: .flowguard/physicsguard_project_evidence_registry_model.py
+    model_blocks:
+      - ReviewProjectProfile
+      - RegisterArtifacts
+      - ReviewBindingMaintenance
+      - RunGapCheck
+      - BuildProjectEvidenceMap
+      - GateDownstreamHandoff
+    responsibility: >
+      Govern the project-level evidence map so AI agents review project basics,
+      register important files, preserve engineering facts, maintain test-field
+      and physical-parameter binding expectations, run gap checks, generate the
+      onboarding map, and block validation or reuse handoff when blocking
+      evidence gaps remain.
+    code_symbols:
+      - src/physicsguard/schema/project_evidence.py::ProjectEvidenceRegistrySpec
+      - src/physicsguard/schema/project_evidence.py::ProjectProfileSpec
+      - src/physicsguard/schema/project_evidence.py::BindingExpectationSpec
+      - src/physicsguard/core/project_evidence.py::check_project_evidence_registry
+      - src/physicsguard/core/project_evidence.py::scan_project_evidence_candidates
+      - src/physicsguard/core/project_evidence.py::check_evidence_gaps
+      - src/physicsguard/core/project_evidence.py::check_evidence_bundle
+      - src/physicsguard/core/project_evidence.py::build_project_evidence_map
+      - src/physicsguard/cli.py::evidence_check_command
+      - src/physicsguard/cli.py::evidence_gap_check_command
+      - src/physicsguard/cli.py::evidence_map_command
+    tests:
+      - tests/test_project_evidence_registry.py
+      - tests/test_test_file_contract_cli.py
+    examples:
+      - examples/testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml
+      - templates/project_evidence_registry.yaml
+      - docs/project_evidence_registry.md
+      - skill/physicsguard-project-evidence-registry/SKILL.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_project_evidence_registry_checks.py
+        covers: Project profile, artifact registration, binding maintenance, gap-check, project map, validation handoff, and reuse handoff gates.
+      - command: python -m pytest tests/test_project_evidence_registry.py tests/test_test_file_contract_cli.py
+        covers: Registry schema/core, project profile gaps, binding expectations, CLI map/gap commands, and downstream validation gate.
+      - command: python -m physicsguard.cli evidence map examples/testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml --pretty
+        covers: Pump-loop AI onboarding map.
+    boundaries:
+      - Project evidence maps are onboarding/navigation reports, not validation proof.
+      - Unknown project basics must be explicit unknowns; AI must not invent project name, run time, or location.
+      - Every important test field or physical parameter must have a binding, a binding expectation, or an explicit exemption reason.
+      - Large raw test data should be referenced, not copied into the registry.
+      - Blocking evidence gaps prevent validation pass or validated model reuse claims.
+    stale_when:
+      - Project evidence schema, CLI command names, gap severity, binding expectation, project map, validation bundle, model-library reuse, or skill-route semantics change.

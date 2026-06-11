@@ -6,6 +6,8 @@
 contract_id: pump_loop_clean_contract
 file_id: pump_loop_clean_2026_06_10
 logical_dataset: ../datasets/clean_logical_dataset.yaml
+project_evidence_registry: ../evidence/project_evidence_registry.yaml
+registered_artifact_id: clean_run_042
 manifest: ../data/clean_manifest.yaml
 testbench_profile: ../profiles/pump_loop_testbench_profile.yaml
 extractor_profile: ../profiles/pump_loop_extractor_profile.yaml

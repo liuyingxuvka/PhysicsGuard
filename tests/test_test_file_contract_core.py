@@ -95,6 +95,7 @@ def test_review_required_contract_is_partial_and_not_ok(tmp_path: Path) -> None:
     contract_data["role_matrix"] = str(role_path)
     contract_data["mapping_edges"] = str((PUMP / "coverage" / "pump_loop_mapping_edges.yaml").resolve())
     contract_data["coverage_policy"] = str((PUMP / "coverage" / "pump_loop_coverage_policy.yaml").resolve())
+    contract_data["project_evidence_registry"] = str((PUMP / "evidence" / "project_evidence_registry.yaml").resolve())
     contract_path = tmp_path / "review_required_contract.yaml"
     contract_path.write_text(yaml.safe_dump(contract_data, sort_keys=False), encoding="utf-8")
 

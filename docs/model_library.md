@@ -15,3 +15,7 @@ python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
 
 Entries with `validated` or `partial` reuse status must reference validation
 evidence.
+
+Entries may also reference a project evidence registry, model context, and
+evidence bundle. Blocking project evidence gaps prevent validated reuse claims;
+review gaps remain visible as reuse limitations.

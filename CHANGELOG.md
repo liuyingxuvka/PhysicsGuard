@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.0 - 2026-06-11
+
+Project evidence registry and AI onboarding map.
+
+- Added project evidence registries with project profiles, artifact records, engineering facts, binding records, binding expectations, context cards, evidence bundles, conflicts, and missing evidence records.
+- Added `physicsguard evidence check`, `scan`, `gap-check`, `bundle-check`, and `map` commands so AI agents can find project files, project basics, model parts, test coverage, binding gaps, and explicit exemptions.
+- Integrated evidence bundles with test-file contracts, model-dataset validation, and model-library reuse so blocking project evidence gaps prevent broad pass/reuse claims.
+- Added templates, pump-loop examples, documentation, tests, FlowGuard governance, and a new `physicsguard-project-evidence-registry` Codex skill route.
+
 ## v0.5.0 - 2026-06-11
 
 Model-dataset validation workflow.

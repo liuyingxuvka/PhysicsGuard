@@ -1,0 +1,28 @@
+# PhysicsGuard project evidence gap report
+# Purpose: Example output shape from evidence gap-check.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli evidence gap-check path/to/project_evidence_registry.yaml --pretty
+# Boundary: Gap report for evidence governance only; not validation proof.
+artifact_kind: project_evidence_gap_report
+status: partial
+ok: false
+registry_id: example_project_evidence
+bundle_id: example_validation_bundle
+blocking_gaps: []
+review_gaps:
+  - gap_id: project_profile_location_missing
+    severity: review
+    gap_type: project_profile_location_missing
+    target: project_locations
+    reason: project run location is not recorded
+    required_by:
+      - registry:project_profile
+    suggested_search:
+      - search source reports, lab/testbench notes, and project handoff documents
+optional_gaps: []
+findings: []
+summary:
+  blocking_gap_count: 0
+  review_gap_count: 1
+  optional_gap_count: 0
+  semantics: review gaps must remain visible in scoped claims

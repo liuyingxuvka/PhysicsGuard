@@ -197,6 +197,8 @@ class ModelValidationPlanSpec(BaseModel):
     validation_id: str
     audit_file: str
     observed_file: str
+    evidence_registry: Optional[str] = None
+    evidence_bundle_id: Optional[str] = None
     contracts: list[ContractValidationReferenceSpec] = Field(default_factory=list)
     variable_roles: list[ValidationVariableRoleSpec] = Field(default_factory=list)
     physical_envelopes: list[PhysicalEnvelopeSpec] = Field(default_factory=list)
@@ -208,6 +210,13 @@ class ModelValidationPlanSpec(BaseModel):
     @classmethod
     def _required_strings(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
+
+    @field_validator("evidence_registry", "evidence_bundle_id")
+    @classmethod
+    def _optional_strings_not_empty(cls, value: Optional[str], info) -> Optional[str]:
+        if value is not None:
+            return ensure_non_empty(value, info.field_name)
+        return value
 
     @model_validator(mode="after")
     def _plan_valid(self) -> "ModelValidationPlanSpec":

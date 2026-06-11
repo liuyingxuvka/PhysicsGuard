@@ -25,6 +25,7 @@ from physicsguard.schema.test_file_contract import (
     TestFileContractSpec,
     TestFileProjectIndexSpec,
 )
+from physicsguard.schema.project_evidence import ProjectEvidenceRegistrySpec
 
 
 SpecT = TypeVar("SpecT", bound=BaseModel)
@@ -74,6 +75,10 @@ def load_model_library_index(path: str | Path) -> ModelLibraryIndexSpec:
     return load_spec(path, ModelLibraryIndexSpec)
 
 
+def load_project_evidence_registry(path: str | Path) -> ProjectEvidenceRegistrySpec:
+    return load_spec(path, ProjectEvidenceRegistrySpec)
+
+
 def load_testbench_profile(path: str | Path) -> TestBenchProfileSpec:
     return load_spec(path, TestBenchProfileSpec)
 
@@ -121,6 +126,7 @@ __all__ = [
     "load_parameter_catalog",
     "load_parameter_mapping_edges",
     "load_parameter_role_matrix",
+    "load_project_evidence_registry",
     "load_spec",
     "load_test_file_contract",
     "load_test_file_project_index",

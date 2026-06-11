@@ -6,6 +6,7 @@ from pathlib import Path
 
 from physicsguard.core.data_file_manifest import sha256_file
 from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
+from physicsguard.core.project_evidence import check_evidence_gaps
 from physicsguard.io.test_file_contract_loader import load_model_library_index, load_yaml_mapping
 
 
@@ -68,6 +69,46 @@ def check_model_library_index(path: str | Path) -> ContractReview:
                     target=entry.model_id,
                 )
             )
+        if entry.evidence_registry and entry.evidence_bundle_id:
+            gap_report = check_evidence_gaps(_resolve_path(index_path.parent, entry.evidence_registry), entry.evidence_bundle_id)
+            for gap in gap_report.blocking_gaps:
+                findings.append(
+                    ContractFinding(
+                        severity="error",
+                        type="model_library_blocking_evidence_gap",
+                        message="blocking evidence gap prevents validated model reuse",
+                        target=entry.model_id,
+                        details=gap,
+                    )
+                )
+            for gap in gap_report.review_gaps:
+                findings.append(
+                    ContractFinding(
+                        severity="warning",
+                        type="model_library_review_evidence_gap",
+                        message="review evidence gap remains visible for model reuse",
+                        target=entry.model_id,
+                        details=gap,
+                    )
+                )
+        elif entry.reuse_status in {"validated", "partial"} and (entry.evidence_registry or entry.evidence_bundle_id):
+            findings.append(
+                ContractFinding(
+                    severity="warning",
+                    type="model_library_evidence_bundle_incomplete",
+                    message="model library evidence registry and evidence_bundle_id should be declared together",
+                    target=entry.model_id,
+                )
+            )
+        if entry.reuse_status == "validated" and not entry.evidence_bundle_id:
+            findings.append(
+                ContractFinding(
+                    severity="warning",
+                    type="model_library_validated_without_evidence_bundle",
+                    message="validated reuse should reference a project evidence bundle",
+                    target=entry.model_id,
+                )
+            )
     status = _status(findings)
     return ContractReview(
         artifact_kind="model_library_index",
@@ -108,6 +149,10 @@ def _next_actions(findings: list[ContractFinding]) -> list[str]:
             actions.append("refresh model_hash after reviewing model changes")
         elif finding.type.startswith("model_library_validation_report"):
             actions.append("provide current validation report evidence before reuse claims")
+        elif finding.type.startswith("model_library_blocking_evidence_gap"):
+            actions.append("resolve blocking project evidence gaps before validated reuse")
+        elif finding.type == "model_library_validated_without_evidence_bundle":
+            actions.append("add a project evidence bundle before broad reuse claims")
     return sorted(set(actions))
 
 

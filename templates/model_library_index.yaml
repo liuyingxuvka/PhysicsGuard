@@ -3,6 +3,9 @@ entries:
   - model_id: pump_loop_low_fidelity_v1
     model_file: path/to/pump_loop_hierarchy.yaml
     model_hash: null
+    evidence_registry: path/to/project_evidence_registry.yaml
+    model_context: pump_loop_low_fidelity_context
+    evidence_bundle_id: example_validation_bundle
     compatible_testbench_profiles:
       - pump_loop_bench_v1
     validation_reports:

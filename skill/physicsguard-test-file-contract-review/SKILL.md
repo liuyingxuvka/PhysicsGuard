@@ -27,6 +27,11 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
   model gap and request a child model/model extension or human evidence.
 - A passing contract is coverage evidence only; it does not prove physical
   correctness and does not mutate observed values.
+- If a project evidence registry exists, the contract should declare
+  `project_evidence_registry` and `registered_artifact_id` so the file contract
+  appears in the project map. Covered fields should also have project-level
+  binding summaries or explicit binding exemptions in
+  `physicsguard-project-evidence-registry`.
 
 ## Workflow
 
@@ -74,6 +79,15 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
     For `partial` or `fail`, continue filling evidence, ask the user for
     unknown mappings, or extend the PhysicsGuard model under the normal low-
     fidelity module rules.
+11. If project-level evidence is in scope, run:
+
+    ```powershell
+    python -m physicsguard.cli evidence gap-check EVIDENCE.yaml --pretty
+    python -m physicsguard.cli evidence map EVIDENCE.yaml --pretty
+    ```
+
+    Resolve or report missing project profile, file registration, test-field
+    binding, physical-parameter binding, and binding-exemption gaps.
 
 ## Safe Claim Boundary
 

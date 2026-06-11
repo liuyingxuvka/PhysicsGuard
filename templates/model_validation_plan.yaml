@@ -1,4 +1,6 @@
 validation_id: example_validation
+evidence_registry: path/to/project_evidence_registry.yaml
+evidence_bundle_id: example_validation_bundle
 audit_file: path/to/hierarchy.yaml
 observed_file: path/to/observed.yaml
 contracts:

@@ -116,3 +116,25 @@ def test_cli_dataset_validation_and_model_library_commands() -> None:
     assert library.returncode == 0, library.stderr
     assert json.loads(logical.stdout)["status"] == "pass"
     assert json.loads(validation.stdout)["status"] == "pass"
+
+
+def test_cli_project_evidence_commands() -> None:
+    registry = PUMP / "evidence" / "project_evidence_registry.yaml"
+    check = run_cli("evidence", "check", str(registry), "--pretty")
+    gap = run_cli("evidence", "gap-check", str(registry), "--pretty")
+    bundle = run_cli(
+        "evidence",
+        "bundle-check",
+        str(registry),
+        "pump_loop_validation_bundle_001",
+        "--pretty",
+    )
+    project_map = run_cli("evidence", "map", str(registry), "--pretty")
+
+    assert check.returncode == 0, check.stderr
+    assert gap.returncode == 0, gap.stderr
+    assert bundle.returncode == 0, bundle.stderr
+    assert project_map.returncode == 0, project_map.stderr
+    map_data = json.loads(project_map.stdout)
+    assert map_data["coverage_summary"]["unresolved_binding_gap_count"] == 0
+    assert "pump_signal_map.x" in map_data["coverage_summary"]["tested_model_targets"]

@@ -4,6 +4,8 @@
 # Use with: python -m physicsguard.cli validation run examples/testfile_contracts/pump_loop/validation/calibration_validation_plan.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 validation_id: pump_loop_calibration_validation
+evidence_registry: ../evidence/project_evidence_registry.yaml
+evidence_bundle_id: pump_loop_validation_bundle_001
 audit_file: ../model/pump_loop_hierarchy.yaml
 observed_file: ../observed/calibration_train.yaml
 contracts:

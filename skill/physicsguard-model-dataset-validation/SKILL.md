@@ -21,6 +21,8 @@ partial, stale, or review-required contracts.
 
    ```yaml
    validation_id: example_validation
+   evidence_registry: path/to/project_evidence_registry.yaml
+   evidence_bundle_id: example_validation_bundle
    audit_file: path/to/hierarchy.yaml
    observed_file: path/to/observed.yaml
    contracts:
@@ -40,6 +42,9 @@ partial, stale, or review-required contracts.
 4. Inspect direct no-fit residuals, physical envelope findings,
    redundant-sensor findings, calibration status, holdout status, confidence
    updates, safe claim, unsafe claim boundary, and next actions.
+5. If `evidence_registry` and `evidence_bundle_id` are declared, inspect
+   evidence gap counts. Blocking gaps prevent validation pass; review and
+   optional gaps must stay visible in the claim boundary.
 
 ## Calibration Boundary
 
@@ -58,4 +63,5 @@ partial, stale, or review-required contracts.
 
 A passing validation supports only a scoped low-fidelity model-dataset claim
 inside the checked contract, observed data, model, assumptions, and physical
-envelopes. It is not high-fidelity proof and not commercial-model equivalence.
+envelopes plus the referenced project evidence bundle. It is not high-fidelity
+proof and not commercial-model equivalence.

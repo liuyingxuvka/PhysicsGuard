@@ -39,45 +39,52 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    manifest, check the file-specific contract, and do not make broad AI analysis
    claims until the contract passes. If there is no concrete test data file,
    continue with the normal model-only or observed-snapshot route.
-3. When a passing test-file contract will be used to validate a model against
+3. For project-level work with multiple files, source documents, physical
+   parameters, validation bundles, reusable models, or AI handoff needs, route
+   through `physicsguard-project-evidence-registry`. Run `evidence map` early so
+   the AI can see the project profile, file map, model parts, test coverage,
+   binding expectations, explicit exemptions, and open gaps. Do not hide missing
+   project name, run period, location, physical-parameter binding, or test-field
+   binding gaps.
+4. When a passing test-file contract will be used to validate a model against
    that dataset, route through `physicsguard-model-dataset-validation` before
    broad model-data consistency claims. Run direct no-fit residual checks,
    physical envelope checks, redundant-sensor checks, optional conservative
    bounded calibration, holdout validation, and confidence feedback. Do not
    treat optimizer convergence as validation pass.
-4. Check project adoption when working inside a repository:
+5. Check project adoption when working inside a repository:
 
    ```powershell
    python -m physicsguard.cli project audit --pretty
    ```
 
    If adoption is missing and setup is in scope, run `project adopt` or `project upgrade`. Project adoption is workflow evidence only.
-5. Create or review a model-understanding preflight before residual interpretation:
+6. Create or review a model-understanding preflight before residual interpretation:
 
    ```powershell
    python -m physicsguard.cli preflight review PREFLIGHT.yaml --pretty
    ```
 
    The preflight must name the visible symptom, external model source of truth, physical boundary, subsystem blocks, conserved quantities, expected SI units, assumptions, uncertain mappings, first audit level, and stop conditions.
-6. Build or choose the coarsest useful PhysicsGuard audit YAML.
-7. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record:
+7. Build or choose the coarsest useful PhysicsGuard audit YAML.
+8. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record:
 
    ```powershell
    python -m physicsguard.cli intake review INTAKE.yaml --pretty
    ```
 
    AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards are acceptable fallback evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
-8. Prefer direct observed evaluation:
+9. Prefer direct observed evaluation:
 
    ```powershell
    python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
    ```
 
-9. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
-10. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
-11. Request or export only the next small set of signals/parameters needed by the suspicious block.
-12. Refine that block with a lower-level audit template.
-13. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
+10. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
+11. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+12. Request or export only the next small set of signals/parameters needed by the suspicious block.
+13. Refine that block with a lower-level audit template.
+14. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
@@ -144,6 +151,10 @@ Keep the header as comments only. Do not add provenance metadata solely for this
 - Do not mark test-file fields as covered without mapping evidence. Unknown
   field meaning or unknown model binding must stay review-required, planned as a
   model extension, or fail the contract.
+- Do not leave project-level basics or binding maintenance implicit. Project
+  name, run period, location, test-field bindings, physical-parameter bindings,
+  and explicit binding exemptions belong in the project evidence registry when
+  project evidence work is in scope.
 - Do not treat `signal_mapping_ledger` as a conversion engine. It records evidence and review state; observed values are still used exactly as supplied.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
 - For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.

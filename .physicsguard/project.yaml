@@ -1,8 +1,8 @@
 physicsguard:
   repository: https://github.com/liuyingxuvka/PhysicsGuard
-  adopted_package_version: 0.5.0
+  adopted_package_version: 0.6.0
   schema_version: '1.0'
-  last_verified_at: '2026-06-09T04:52:11+00:00'
+  last_verified_at: '2026-06-11T00:00:00+00:00'
   last_verified_by: PhysicsGuard project-adopt
   rules_path: AGENTS.md
 paths:
@@ -14,6 +14,9 @@ policy:
   require_model_understanding_preflight: true
   require_external_model_intake_for_observed_debugging: true
   require_test_file_contract_for_test_data: true
+  require_project_evidence_registry_for_project_maps: true
+  require_project_profile_for_project_evidence: true
+  require_binding_expectations_for_project_evidence: true
   require_model_dataset_validation_for_validated_reuse: true
   require_signal_mapping_review_before_fault_claims: true
   require_closure_before_localization_claim: true
@@ -23,6 +26,7 @@ skill_routes:
 - physicsguard-project-adoption
 - physicsguard-model-understanding-preflight
 - physicsguard-test-file-contract-review
+- physicsguard-project-evidence-registry
 - physicsguard-model-dataset-validation
 - physicsguard-signal-mapping-review
 - physicsguard-audit-closure

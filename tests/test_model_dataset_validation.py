@@ -45,6 +45,7 @@ def test_coarse_grid_calibration_method_runs_with_same_claim_boundary(tmp_path: 
     data = yaml.safe_load((PUMP / "validation" / "calibration_validation_plan.yaml").read_text(encoding="utf-8"))
     data["audit_file"] = str(PUMP / "model" / "pump_loop_hierarchy.yaml")
     data["observed_file"] = str(PUMP / "observed" / "calibration_train.yaml")
+    data["evidence_registry"] = str(PUMP / "evidence" / "project_evidence_registry.yaml")
     data["contracts"][0]["contract"] = str(PUMP / "contracts" / "clean_contract.yaml")
     data["calibration"]["method"] = "coarse_grid_then_least_squares"
     data["calibration"]["train_observed"] = str(PUMP / "observed" / "calibration_train.yaml")
@@ -63,6 +64,7 @@ def test_calibration_parameter_must_exist_in_model(tmp_path: Path) -> None:
     data = yaml.safe_load((PUMP / "validation" / "calibration_validation_plan.yaml").read_text(encoding="utf-8"))
     data["audit_file"] = str(PUMP / "model" / "pump_loop_hierarchy.yaml")
     data["observed_file"] = str(PUMP / "observed" / "calibration_train.yaml")
+    data["evidence_registry"] = str(PUMP / "evidence" / "project_evidence_registry.yaml")
     data["contracts"][0]["contract"] = str(PUMP / "contracts" / "clean_contract.yaml")
     data["calibration"]["train_observed"] = str(PUMP / "observed" / "calibration_train.yaml")
     data["calibration"]["holdout_observed"] = str(PUMP / "observed" / "calibration_holdout.yaml")

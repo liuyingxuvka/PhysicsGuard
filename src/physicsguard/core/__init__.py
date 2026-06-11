@@ -15,8 +15,12 @@ __all__ = [
     "VariableDeviationDiagnostic",
     "VariableRegistry",
     "check_parameter_coverage",
+    "build_project_evidence_map",
     "check_logical_dataset_record",
     "check_model_library_index",
+    "check_evidence_bundle",
+    "check_evidence_gaps",
+    "check_project_evidence_registry",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
     "check_test_file_project_index",
@@ -24,6 +28,7 @@ __all__ = [
     "field_signature_hash",
     "generate_delimited_manifest",
     "inspect_test_file_contract",
+    "scan_project_evidence_candidates",
     "sha256_file",
     "validate_model_dataset",
 ]
@@ -94,6 +99,28 @@ def __getattr__(name: str):
         from physicsguard.core.model_library import check_model_library_index
 
         return check_model_library_index
+    if name in {
+        "check_evidence_bundle",
+        "check_evidence_gaps",
+        "check_project_evidence_registry",
+        "build_project_evidence_map",
+        "scan_project_evidence_candidates",
+    }:
+        from physicsguard.core.project_evidence import (
+            build_project_evidence_map,
+            check_evidence_bundle,
+            check_evidence_gaps,
+            check_project_evidence_registry,
+            scan_project_evidence_candidates,
+        )
+
+        return {
+            "check_evidence_bundle": check_evidence_bundle,
+            "check_evidence_gaps": check_evidence_gaps,
+            "check_project_evidence_registry": check_project_evidence_registry,
+            "build_project_evidence_map": build_project_evidence_map,
+            "scan_project_evidence_candidates": scan_project_evidence_candidates,
+        }[name]
     if name in {
         "AuditEvaluator",
         "ComparisonResult",

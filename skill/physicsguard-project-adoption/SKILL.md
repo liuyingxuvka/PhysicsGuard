@@ -28,6 +28,10 @@ Use this route before non-trivial PhysicsGuard debugging or model-building work 
    ```
 
 4. Treat project adoption as workflow evidence only. It does not prove residual behavior, physical correctness, or localization.
+5. If the project contains test data, source documents, reusable model assets,
+   or multi-file evidence, also route through
+   `physicsguard-project-evidence-registry` so the AI can inspect the project
+   profile, file map, binding expectations, evidence bundles, and open gaps.
 
 ## Claim Boundary
 

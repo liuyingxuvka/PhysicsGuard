@@ -27,8 +27,15 @@ from physicsguard.core.test_file_contract import (
 from physicsguard.core.dataset_identity import check_logical_dataset_record, check_test_file_relation_index
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.model_library import check_model_library_index
+from physicsguard.core.project_evidence import (
+    build_project_evidence_map,
+    check_evidence_bundle,
+    check_evidence_gaps,
+    check_project_evidence_registry,
+    scan_project_evidence_candidates,
+)
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -39,17 +46,22 @@ __all__ = [
     "ResidualDiagnostic",
     "SignalMappingRecord",
     "build_signal_mapping_ledger",
+    "build_project_evidence_map",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
     "check_test_file_project_index",
     "check_logical_dataset_record",
     "check_model_library_index",
+    "check_evidence_bundle",
+    "check_evidence_gaps",
+    "check_project_evidence_registry",
     "check_test_file_relation_index",
     "derive_bug_family_followups",
     "field_signature_hash",
     "generate_delimited_manifest",
     "mapping_warnings",
     "sha256_file",
+    "scan_project_evidence_candidates",
     "validate_model_dataset",
 ]
 

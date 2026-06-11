@@ -1,0 +1,345 @@
+# PhysicsGuard project evidence registry
+# Purpose: pump-loop fixture evidence map and gap-check example.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli evidence map examples/testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml --pretty
+# Boundary: Navigation and evidence governance only; not validation proof and not a real pump model.
+registry_id: pump_loop_fixture_evidence
+project_id: pump_loop_fixture_project
+schema_version: "1.0"
+physicsguard_version: 0.6.0
+created_at: "2026-06-11"
+project_profile:
+  project_name: Pump loop fixture project
+  objective: Demonstrate project evidence maps, test-file bindings, and low-fidelity validation handoff.
+  run_period:
+    run_started_at: "2026-06-10T10:00:00Z"
+    run_ended_at: "2026-06-10T10:00:03Z"
+    coverage_period: "Clean fixture run from 0.0s to 3.0s"
+    source_refs:
+      - artifact_id: clean_run_042
+        location: time_s column
+  locations:
+    - location_id: repository_fixture_workspace
+      label: Repository fixture workspace
+      role: example_fixture
+      external_reference: examples/testfile_contracts/pump_loop
+      source_refs:
+        - artifact_id: clean_contract_artifact
+          location: contract metadata
+  source_refs:
+    - artifact_id: pump_loop_model_artifact
+      location: audit_name and description
+  review:
+    state: ai_registered
+    confidence: 0.9
+artifacts:
+  - artifact_id: clean_run_042
+    artifact_kind: cleaned_test_data
+    path: ../data/clean.csv
+    do_not_copy: true
+    registered_at: "2026-06-11"
+    created_at: "2026-06-10"
+    status: active
+    time_context:
+      test_started_at: "2026-06-10T10:00:00Z"
+      test_ended_at: "2026-06-10T10:00:03Z"
+      data_time_range: "0.0s to 3.0s"
+    lineage:
+      original_source_missing_reason: Fixture uses this small CSV as the canonical cleaned input; no separate raw source is kept.
+    applies_to:
+      project: pump_loop_fixture_project
+      testbench: pump_loop_bench_v1
+      dataset: pump_loop_clean_2026_06_10
+      test_run: clean_run_042
+    review:
+      state: ai_registered
+      confidence: 0.9
+  - artifact_id: clean_contract_artifact
+    artifact_kind: test_file_contract
+    path: ../contracts/clean_contract.yaml
+    registered_at: "2026-06-11"
+    status: active
+    applies_to:
+      project: pump_loop_fixture_project
+      dataset: pump_loop_clean_2026_06_10
+    review:
+      state: ai_registered
+      confidence: 0.9
+  - artifact_id: clean_logical_dataset_artifact
+    artifact_kind: logical_dataset
+    path: ../datasets/clean_logical_dataset.yaml
+    registered_at: "2026-06-11"
+    status: active
+    review:
+      state: ai_registered
+  - artifact_id: pump_loop_model_artifact
+    artifact_kind: model_file
+    path: ../model/pump_loop_hierarchy.yaml
+    registered_at: "2026-06-11"
+    status: active
+    physicsguard_version: 0.6.0
+    applies_to:
+      project: pump_loop_fixture_project
+      model: pump_loop_contract_fixture
+    review:
+      state: ai_registered
+      confidence: 0.9
+  - artifact_id: clean_validation_plan_artifact
+    artifact_kind: validation_plan
+    path: ../validation/clean_validation_plan.yaml
+    registered_at: "2026-06-11"
+    status: active
+    review:
+      state: ai_registered
+  - artifact_id: pump_loop_model_library_artifact
+    artifact_kind: model_library
+    path: ../model_library.yaml
+    registered_at: "2026-06-11"
+    status: active
+    review:
+      state: ai_registered
+facts:
+  - fact_id: pump_signal_map.a
+    fact_kind: physical_parameter
+    value: 2.0
+    unit: "1"
+    behavior:
+      kind: static
+    source_refs:
+      - artifact_id: pump_loop_model_artifact
+        location: system.components[pump_signal_map].parameters.a
+    applies_to:
+      project: pump_loop_fixture_project
+      model: pump_loop_contract_fixture
+    bindings:
+      model_targets:
+        - pump_signal_map.a
+      validation_roles:
+        - calibration_candidate
+    review:
+      state: ai_extracted
+      confidence: 1.0
+  - fact_id: pump_loop.fixture_scope
+    fact_kind: configuration_fact
+    value: Fixture only; relation is y = 2 * x and is not a real pump model.
+    behavior:
+      kind: static
+    source_refs:
+      - artifact_id: pump_loop_model_artifact
+        location: description
+    applies_to:
+      project: pump_loop_fixture_project
+      model: pump_loop_contract_fixture
+    review:
+      state: ai_extracted
+      confidence: 0.9
+evidence_bindings:
+  - binding_id: clean_cmd_speed_to_model_x
+    binding_kind: source_field_to_model_target
+    authority: clean_contract_artifact
+    source_artifact: clean_run_042
+    source_contract: clean_contract_artifact
+    source_field: field:cmd_speed_rad_s
+    canonical_quantity: pump.commanded_speed
+    unit: rad/s
+    model_target: pump_signal_map.x
+    model_part: pump_signal_map
+    validation_role: model_input
+    mapping_confidence: 0.9
+    review:
+      state: ai_registered
+      confidence: 0.9
+  - binding_id: clean_flow_readback_to_model_y
+    binding_kind: source_field_to_model_target
+    authority: clean_contract_artifact
+    source_artifact: clean_run_042
+    source_contract: clean_contract_artifact
+    source_field: field:flow_readback_kg_s
+    canonical_quantity: pump.flow_readback
+    unit: kg/s
+    model_target: pump_signal_map.y
+    model_part: pump_signal_map
+    validation_role: validation_output
+    mapping_confidence: 0.9
+    review:
+      state: ai_registered
+      confidence: 0.9
+  - binding_id: clean_valve_open_to_pump_loop_context
+    binding_kind: source_field_to_model_target
+    authority: clean_contract_artifact
+    source_artifact: clean_run_042
+    source_contract: clean_contract_artifact
+    source_field: field:valve_open
+    canonical_quantity: pump.valve_open_flag
+    unit: "1"
+    model_target: pump_loop.mode_context
+    model_part: pump_loop
+    validation_role: check_only
+    mapping_confidence: 0.8
+    review:
+      state: ai_registered
+      confidence: 0.8
+  - binding_id: slope_fact_to_model_parameter
+    binding_kind: fact_to_model_parameter
+    authority: pump_loop_model_artifact
+    source_fact: pump_signal_map.a
+    model_target: pump_signal_map.a
+    model_part: pump_signal_map
+    validation_role: calibration_candidate
+    mapping_confidence: 1.0
+    review:
+      state: ai_registered
+      confidence: 1.0
+binding_expectations:
+  - expectation_id: expect_clean_cmd_speed
+    subject_kind: test_field
+    subject_id: field:cmd_speed_rad_s
+    policy: must_bind
+    source_artifact: clean_run_042
+    source_contract: clean_contract_artifact
+    source_field: field:cmd_speed_rad_s
+    model_target: pump_signal_map.x
+    model_part: pump_signal_map
+    required_for:
+      - bundle:pump_loop_validation_bundle_001
+      - context:pump_loop_contract_fixture_context
+    missing_severity: blocking
+  - expectation_id: expect_clean_flow_readback
+    subject_kind: test_field
+    subject_id: field:flow_readback_kg_s
+    policy: must_bind
+    source_artifact: clean_run_042
+    source_contract: clean_contract_artifact
+    source_field: field:flow_readback_kg_s
+    model_target: pump_signal_map.y
+    model_part: pump_signal_map
+    required_for:
+      - bundle:pump_loop_validation_bundle_001
+      - context:pump_loop_contract_fixture_context
+    missing_severity: blocking
+  - expectation_id: expect_clean_valve_open_context
+    subject_kind: test_field
+    subject_id: field:valve_open
+    policy: must_bind
+    source_artifact: clean_run_042
+    source_contract: clean_contract_artifact
+    source_field: field:valve_open
+    model_target: pump_loop.mode_context
+    model_part: pump_loop
+    required_for:
+      - bundle:pump_loop_validation_bundle_001
+    missing_severity: review
+  - expectation_id: exempt_clean_time_basis
+    subject_kind: test_field
+    subject_id: field:time_s
+    policy: exempt
+    source_artifact: clean_run_042
+    source_contract: clean_contract_artifact
+    source_field: field:time_s
+    required_for:
+      - bundle:pump_loop_validation_bundle_001
+    exemption_reason: Time is the sampling/index axis for this fixture, not a physical state or model parameter.
+    missing_severity: optional
+  - expectation_id: expect_slope_fact_bound
+    subject_kind: engineering_fact
+    subject_id: pump_signal_map.a
+    policy: must_bind
+    source_fact: pump_signal_map.a
+    model_target: pump_signal_map.a
+    model_part: pump_signal_map
+    required_for:
+      - bundle:pump_loop_validation_bundle_001
+      - context:pump_loop_contract_fixture_context
+    missing_severity: review
+context_cards:
+  - context_id: pump_loop_contract_fixture_context
+    context_kind: model
+    artifact_id: pump_loop_model_artifact
+    created_at: "2026-06-11"
+    physicsguard_version: 0.6.0
+    intended_scope:
+      project: pump_loop_fixture_project
+      testbench: pump_loop_bench_v1
+      dataset: pump_loop_clean_2026_06_10
+      model: pump_loop_contract_fixture
+    known_invalid_scope:
+      - Not a real pump model.
+      - Not valid for commercial-model equivalence claims.
+    model_parts:
+      - part_id: pump_signal_map
+        name: Linear signal relation
+        description: Low-fidelity fixture relation y = a*x + b.
+        model_targets:
+          - pump_signal_map.x
+          - pump_signal_map.y
+          - pump_signal_map.a
+      - part_id: pump_loop
+        name: Fixture top-level block
+        description: Top-level context carrying mode information.
+        model_targets:
+          - pump_loop.mode_context
+    required_evidence:
+      - requirement_id: require_cmd_speed_binding
+        kind: binding
+        target_id: pump_signal_map.x
+        missing_severity: blocking
+        reason: Model input must be traceable to a covered test field.
+      - requirement_id: require_flow_binding
+        kind: binding
+        target_id: pump_signal_map.y
+        missing_severity: blocking
+        reason: Validation output must be traceable to a covered test field.
+      - requirement_id: require_slope_fact
+        kind: fact
+        target_id: pump_signal_map.a
+        missing_severity: review
+        reason: Model parameter source should remain visible.
+    source_refs:
+      - artifact_id: pump_loop_model_artifact
+        location: hierarchy.blocks[pump_loop]
+    review:
+      state: ai_registered
+      confidence: 0.9
+  - context_id: pump_loop_bench_context
+    context_kind: testbench
+    artifact_id: clean_contract_artifact
+    created_at: "2026-06-11"
+    intended_scope:
+      project: pump_loop_fixture_project
+      testbench: pump_loop_bench_v1
+      dataset: pump_loop_clean_2026_06_10
+    source_refs:
+      - artifact_id: clean_contract_artifact
+        location: testbench_profile
+    review:
+      state: ai_registered
+      confidence: 0.9
+evidence_bundles:
+  - bundle_id: pump_loop_validation_bundle_001
+    model_context: pump_loop_contract_fixture_context
+    artifacts:
+      - clean_run_042
+      - clean_logical_dataset_artifact
+      - pump_loop_model_artifact
+      - clean_validation_plan_artifact
+    facts:
+      - pump_signal_map.a
+      - pump_loop.fixture_scope
+    bindings:
+      - clean_cmd_speed_to_model_x
+      - clean_flow_readback_to_model_y
+      - clean_valve_open_to_pump_loop_context
+      - slope_fact_to_model_parameter
+    contexts:
+      - pump_loop_bench_context
+    contracts:
+      - clean_contract_artifact
+    status: active
+    review:
+      state: ai_registered
+      confidence: 0.9
+conflicts: []
+missing_evidence: []
+metadata:
+  fixture: pump_loop
+  map_purpose: Let AI find project files, model scope, test coverage, bindings, exemptions, and gaps quickly.

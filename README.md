@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.5.0`
+- **Version:** `v0.6.0`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -153,6 +153,36 @@ bounded parameters, never observed values, and `optimization_success` is
 reported separately from validation pass. Model-library entries store model and
 validation-report references; they do not store large raw datasets or prove
 validity outside the checked boundary.
+
+## Project Evidence Registry And Map
+
+For multi-file projects, PhysicsGuard can keep a project-level evidence
+registry. It is the local map that tells another AI agent what project this is,
+where the important files are, what basic project facts are known, which facts
+or test fields bind to model targets, which items are explicitly exempted from
+model binding, and which gaps still need work.
+
+Use:
+
+```powershell
+python -m physicsguard.cli evidence check EVIDENCE.yaml --pretty
+python -m physicsguard.cli evidence scan PROJECT_OR_FOLDER --registry EVIDENCE.yaml --pretty
+python -m physicsguard.cli evidence gap-check EVIDENCE.yaml --pretty
+python -m physicsguard.cli evidence bundle-check EVIDENCE.yaml BUNDLE_ID --pretty
+python -m physicsguard.cli evidence map EVIDENCE.yaml --pretty
+```
+
+The registry stores `project_profile` fields such as project name, objective,
+run period, locations, and source references. If those basics are unknown, AI
+should record an unknown reason instead of inventing values; gap-check keeps the
+missing profile item visible. It also stores file artifacts, engineering facts,
+evidence bindings, binding expectations, context cards, and evidence bundles.
+
+The Project Evidence Map is an onboarding/navigation report, not validation
+proof. Validation and reuse claims still require test-file contracts, residual
+validation reports, and model-library checks. Blocking project evidence gaps
+prevent validation pass or validated reuse claims; review and optional gaps must
+remain visible in the claim boundary.
 
 ## The Core Contract
 
@@ -301,7 +331,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.5.0` includes low-fidelity audit relations for:
+PhysicsGuard `v0.6.0` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -351,7 +381,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.5.0`
+- **版本：** `v0.6.0`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -472,6 +502,24 @@ python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
 ```
 
 第一版校准刻意保守：不实现 Adam 或 SPSA。`coarse_grid_then_least_squares` 只是在边界内选一个很粗的初始点，再交给 least squares。校准只允许显式列出的有界参数被小规模调整，不能修改观测值。`optimization_success` 只表示优化器收敛，不等于 validation pass。模型复用库只保存模型和验证报告引用，不保存大型原始数据，也不证明模型在未验证边界外有效。
+
+## 项目证据登记和项目地图
+
+对于多文件项目，PhysicsGuard 可以维护一个项目级证据登记表。它像本地地图一样告诉新的 AI agent：这是什么项目，重要文件在哪里，项目基础信息是否已知，哪些事实或测试字段已经绑定到模型目标，哪些字段明确不需要绑定，以及还有哪些缺口要维护。
+
+常用命令：
+
+```powershell
+python -m physicsguard.cli evidence check EVIDENCE.yaml --pretty
+python -m physicsguard.cli evidence scan PROJECT_OR_FOLDER --registry EVIDENCE.yaml --pretty
+python -m physicsguard.cli evidence gap-check EVIDENCE.yaml --pretty
+python -m physicsguard.cli evidence bundle-check EVIDENCE.yaml BUNDLE_ID --pretty
+python -m physicsguard.cli evidence map EVIDENCE.yaml --pretty
+```
+
+登记表里的 `project_profile` 用来记录项目名称、目标、运行时间、地点和来源引用。如果这些基础信息暂时不知道，AI 应该写明 unknown reason，而不是编一个值；gap-check 会把这个缺口继续暴露出来。登记表还记录文件 artifact、工程事实、证据绑定、绑定期望、context card 和 evidence bundle。
+
+Project Evidence Map 是给 AI 入场和导航用的报告，不是验证证明。验证和复用结论仍然需要测试文件合同、残差校验报告和模型库检查。blocking 的项目证据缺口会阻止 validation pass 或 validated reuse；review/optional 缺口必须继续写在结论边界里。
 
 ## 核心合同
 
@@ -620,7 +668,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.5.0` 包含这些低保真审计关系：
+PhysicsGuard `v0.6.0` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；

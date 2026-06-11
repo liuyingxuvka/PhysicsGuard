@@ -19,6 +19,12 @@ partial, stale, or failing test-file contracts as blocking or downgrading
 evidence. A residual report cannot make a broad claim from a file whose fields
 are not fully cataloged, classified, and evidence-mapped.
 
+For project-level workflows, also read the project evidence map or gap report.
+Missing project profile basics, unregistered important files, unresolved
+blocking evidence gaps, missing binding summaries, unreviewed physical
+parameter bindings, or test-field binding expectations without bindings or
+exemptions downgrade or block broad claims.
+
 For workflows that validate a model against contracted test data, also read the
 model-dataset validation report. Missing, partial, failed, stale, or blocked
 validation reports downgrade or block broad model-data consistency claims. Treat

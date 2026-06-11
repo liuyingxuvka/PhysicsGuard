@@ -1,0 +1,157 @@
+# PhysicsGuard project evidence registry
+# Purpose: Register project files, engineering facts, binding expectations, model/test contexts, and reusable evidence bundles.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli evidence check path/to/project_evidence_registry.yaml --pretty
+# Boundary: Navigation and evidence governance only; not validation proof and not a raw-data copy.
+registry_id: example_project_evidence
+project_id: example_project
+schema_version: "1.0"
+physicsguard_version: 0.6.0
+created_at: "2026-06-11"
+project_profile:
+  project_name: Example project
+  objective: Demonstrate project-level evidence registration.
+  run_period:
+    coverage_period: "Example coverage period"
+    source_refs:
+      - artifact_id: example_model
+        location: metadata
+  locations:
+    - location_id: example_site
+      label: Example site or testbench location
+      role: testbench
+      source_refs:
+        - artifact_id: example_model
+          location: metadata
+  source_refs:
+    - artifact_id: example_model
+      location: metadata
+  review:
+    state: ai_registered
+artifacts:
+  - artifact_id: example_test_data
+    artifact_kind: cleaned_test_data
+    path: ../data/example.csv
+    do_not_copy: true
+    registered_at: "2026-06-11"
+    status: active
+    lineage:
+      original_source_missing_reason: Raw source is not available in this example.
+    review:
+      state: ai_registered
+  - artifact_id: example_test_contract
+    artifact_kind: test_file_contract
+    path: ../contracts/example_contract.yaml
+    registered_at: "2026-06-11"
+    status: active
+    review:
+      state: ai_registered
+  - artifact_id: example_model
+    artifact_kind: model_file
+    path: ../model/example_hierarchy.yaml
+    registered_at: "2026-06-11"
+    status: active
+    review:
+      state: ai_registered
+facts:
+  - fact_id: example_model.parameter_a
+    fact_kind: physical_parameter
+    value: 1.0
+    unit: "1"
+    behavior:
+      kind: static
+    source_refs:
+      - artifact_id: example_model
+        location: system.components[example].parameters.a
+    bindings:
+      model_targets:
+        - example_model.parameter_a
+    review:
+      state: ai_extracted
+evidence_bindings:
+  - binding_id: example_source_field_to_model_x
+    binding_kind: source_field_to_model_target
+    authority: example_test_contract
+    source_artifact: example_test_data
+    source_contract: example_test_contract
+    source_field: field:x
+    canonical_quantity: example.input
+    unit: "1"
+    model_target: example_model.x
+    model_part: example_part
+    validation_role: model_input
+    mapping_confidence: 0.8
+    review:
+      state: ai_registered
+  - binding_id: example_parameter_a_to_model
+    binding_kind: fact_to_model_parameter
+    authority: example_model
+    source_fact: example_model.parameter_a
+    model_target: example_model.parameter_a
+    model_part: example_part
+    validation_role: calibration_candidate
+    mapping_confidence: 1.0
+    review:
+      state: ai_registered
+binding_expectations:
+  - expectation_id: expect_example_field_x
+    subject_kind: test_field
+    subject_id: field:x
+    policy: must_bind
+    source_artifact: example_test_data
+    source_contract: example_test_contract
+    source_field: field:x
+    model_target: example_model.x
+    model_part: example_part
+    required_for:
+      - bundle:example_validation_bundle
+  - expectation_id: exempt_example_timestamp
+    subject_kind: test_field
+    subject_id: field:time_s
+    policy: exempt
+    source_artifact: example_test_data
+    source_contract: example_test_contract
+    source_field: field:time_s
+    required_for:
+      - bundle:example_validation_bundle
+    exemption_reason: Time basis is used for indexing and is not a physical model state in this example.
+context_cards:
+  - context_id: example_model_context
+    context_kind: model
+    artifact_id: example_model
+    created_at: "2026-06-11"
+    physicsguard_version: 0.6.0
+    intended_scope:
+      project: example_project
+      model: example_model
+    model_parts:
+      - part_id: example_part
+        name: Example low-fidelity relation
+        model_targets:
+          - example_model.x
+          - example_model.parameter_a
+    required_evidence:
+      - kind: binding
+        target_id: example_model.x
+        missing_severity: blocking
+      - kind: fact
+        target_id: example_model.parameter_a
+        missing_severity: review
+evidence_bundles:
+  - bundle_id: example_validation_bundle
+    model_context: example_model_context
+    artifacts:
+      - example_test_data
+      - example_model
+    contracts:
+      - example_test_contract
+    facts:
+      - example_model.parameter_a
+    bindings:
+      - example_source_field_to_model_x
+      - example_parameter_a_to_model
+    status: active
+conflicts: []
+missing_evidence: []
+metadata:
+  note: Replace example ids and paths before reuse.

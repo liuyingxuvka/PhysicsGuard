@@ -18,6 +18,9 @@ validity.
    entries:
      - model_id: pump_loop_low_fidelity_v1
        model_file: path/to/hierarchy.yaml
+       evidence_registry: path/to/project_evidence_registry.yaml
+       model_context: pump_loop_model_context
+       evidence_bundle_id: pump_loop_validation_bundle
        validation_reports:
          - reports/example_validation.yaml
        reuse_status: partial
@@ -31,9 +34,12 @@ validity.
 
 3. Treat missing model files, stale hashes, missing validation reports, or
    invalid report references as blocking for broad reuse claims.
+4. When evidence registry and bundle references exist, run or trust the
+   `model-library check` gap gate. Blocking project evidence gaps prevent
+   validated reuse; review gaps must remain visible.
 
 ## Safe Claim Boundary
 
 The library can say where a model has validation evidence and known limits. It
-must not store large raw data, invent compatibility, or imply validity outside
-the referenced validation reports.
+must not store large raw data, invent compatibility, hide project evidence gaps,
+or imply validity outside the referenced validation reports and evidence bundle.
