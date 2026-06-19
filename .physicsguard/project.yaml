@@ -1,8 +1,8 @@
 physicsguard:
   repository: https://github.com/liuyingxuvka/PhysicsGuard
-  adopted_package_version: 0.8.0
+  adopted_package_version: 0.8.1
   schema_version: '1.0'
-  last_verified_at: '2026-06-11T00:00:00+00:00'
+  last_verified_at: '2026-06-19T16:25:08+00:00'
   last_verified_by: PhysicsGuard project-adopt
   rules_path: AGENTS.md
 paths:
@@ -15,18 +15,10 @@ policy:
   require_external_model_intake_for_observed_debugging: true
   require_test_file_contract_for_test_data: true
   require_project_evidence_registry_for_project_maps: true
-  require_database_catalog_for_multi_project_queries: true
-  require_explicit_database_lifecycle_for_local_databases: true
-  require_database_project_intake_for_catalog_admission: true
-  require_database_maintenance_audit_for_database_handoff: true
-  require_database_history_for_lifecycle_writes: true
-  require_project_registry_reference_for_catalog_projects: true
-  database_catalog_must_not_store_raw_data: true
-  require_catalog_gap_check_before_cross_project_claims: true
-  require_explicit_scope_before_cross_project_comparison: true
   require_project_profile_for_project_evidence: true
   require_binding_expectations_for_project_evidence: true
   require_model_dataset_validation_for_validated_reuse: true
+  require_explicit_scope_before_cross_project_comparison: true
   require_signal_mapping_review_before_fault_claims: true
   require_closure_before_localization_claim: true
   require_project_closure_before_broad_claims: true
@@ -37,10 +29,6 @@ skill_routes:
 - physicsguard-model-understanding-preflight
 - physicsguard-test-file-contract-review
 - physicsguard-project-evidence-registry
-- physicsguard-database-catalog
-- physicsguard-database-adoption
-- physicsguard-database-project-intake
-- physicsguard-database-maintenance
 - physicsguard-model-dataset-validation
 - physicsguard-signal-mapping-review
 - physicsguard-audit-closure
