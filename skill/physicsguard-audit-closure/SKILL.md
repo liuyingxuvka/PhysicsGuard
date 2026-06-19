@@ -49,12 +49,10 @@ warnings, low validation confidence, failed physical envelopes, redundant-sensor
 mismatches, and review-required confidence updates must remain visible in the
 final claim boundary.
 
-For database-level or cross-project claims, route through `databank-workflow`
-and read DataBank navigation, freshness, closure, catalog/query, lifecycle, and
-handoff evidence. Missing project registries, stale catalog summaries, missing
-database policy/history, propagated project evidence blocking gaps, or unknown
-comparison scope block broad historical, reuse, or direct-comparison
-conclusions.
+For database-level or cross-project claims, do not answer from this closure
+route alone. Missing project registries, stale external summaries, propagated
+project evidence blocking gaps, or unknown comparison scope block broad
+historical, reuse, or direct-comparison conclusions.
 
 Closure pass supports only a scoped low-fidelity claim inside the checked audit
 or project closure boundary.

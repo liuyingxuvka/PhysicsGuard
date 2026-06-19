@@ -10,21 +10,16 @@ is an evidence index, not a raw-data database and not proof of universal model
 validity.
 
 For cross-project discovery, historical search, or "which projects/models have
-we tested before" questions, use `databank-workflow` first. DataBank may
-reference model-library indexes, but model libraries do not replace the
-database ledger, freshness, or closure checks.
+we tested before" questions, do not answer from one model library index alone.
+Model libraries can support a scoped reuse claim only after current validation
+and project closure evidence are checked.
 
-For a legacy explicit PhysicsGuard database, reusable templates and reusable
-model-asset pointers may still be listed in `model_template_index.yaml` and
-checked with:
+Reusable templates and reusable model-asset pointers may be listed in
+`model_template_index.yaml` and checked with:
 
 ```powershell
 python -m physicsguard.cli database template-index-check DATABASE_ROOT/model_template_index.yaml --pretty
 ```
-
-Updating reusable model availability inside a database should be followed by
-`databank-workflow` so the database ledger, freshness, closure, and handoff map
-stay current.
 
 ## Workflow
 
@@ -67,5 +62,5 @@ stay current.
 ## Safe Claim Boundary
 
 The library can say where a model has validation evidence and known limits. It
-must not store large raw data, invent compatibility, hide project evidence gaps,
+must not store large raw data, invent fit, hide project evidence gaps,
 or imply validity outside the referenced validation reports and evidence bundle.

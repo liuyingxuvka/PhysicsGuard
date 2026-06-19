@@ -33,15 +33,10 @@ Use this route before non-trivial PhysicsGuard debugging or model-building work 
    `physicsguard-project-evidence-registry` so the AI can inspect the project
    profile, file map, binding expectations, evidence bundles, and open gaps.
 6. If the user asks for multi-project history, reusable model discovery,
-   database-level maps, or cross-project comparison, route through
-   `databank-workflow` before answering. Project adoption only says the current
-   repository has a workflow record; it does not index the surrounding database.
-7. If the user asks to create a local database, add this project to an existing
-   database, or refresh database handoff/gap status after project record
-   changes, route through `databank-workflow`. Use PhysicsGuard database routes
-   only for legacy PhysicsGuard-specific compatibility over physical/test/model
-   evidence maps.
-8. If the user asks whether the project is ready, complete, validated,
+   database-level maps, or cross-project comparison, do not answer from project
+   adoption alone. Project adoption only says the current repository has a
+   workflow record; it does not index or maintain a surrounding database.
+7. If the user asks whether the project is ready, complete, validated,
    reusable, or safe for handoff, run or inspect project closure:
 
    ```powershell

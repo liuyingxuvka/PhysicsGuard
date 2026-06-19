@@ -12,6 +12,12 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 REPO_SKILL_ROOT = ROOT / "skill"
 DEFAULT_INSTALLED_ROOT = Path.home() / ".codex" / "skills"
+FORBIDDEN_INSTALLED_SKILLS = {
+    "physicsguard-database-adoption",
+    "physicsguard-database-catalog",
+    "physicsguard-database-maintenance",
+    "physicsguard-database-project-intake",
+}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -30,6 +36,17 @@ def main(argv: list[str] | None = None) -> int:
 def check_installed_skills(installed_root: Path) -> dict:
     findings: list[dict] = []
     skills = sorted(path for path in REPO_SKILL_ROOT.iterdir() if path.is_dir())
+    for skill_name in sorted(FORBIDDEN_INSTALLED_SKILLS):
+        installed_dir = installed_root / skill_name
+        if installed_dir.exists():
+            findings.append(
+                {
+                    "severity": "error",
+                    "type": "forbidden_installed_skill_present",
+                    "skill": skill_name,
+                    "path": str(installed_dir),
+                }
+            )
     for skill_dir in skills:
         installed_dir = installed_root / skill_dir.name
         if not installed_dir.exists():

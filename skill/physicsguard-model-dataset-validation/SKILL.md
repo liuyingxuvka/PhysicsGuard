@@ -45,10 +45,10 @@ partial, stale, or review-required contracts.
 5. If `evidence_registry` and `evidence_bundle_id` are declared, inspect
    evidence gap counts. Blocking gaps prevent validation pass; review and
    optional gaps must stay visible in the claim boundary.
-6. If the validated project is listed in a database catalog or DataBank ledger,
-   refresh or flag it through `databank-workflow` after validation so
-   cross-project maps can show the current validation state, freshness, closure
-   status, and remaining gaps.
+6. If the validated project is listed in an external database ledger, report
+   the current validation status, closure boundary, and remaining gaps as
+   provider evidence only. Do not update the ledger from this PhysicsGuard
+   skill.
 7. For final project validation-readiness claims, include the validation plan in
    a project closure plan and run:
 

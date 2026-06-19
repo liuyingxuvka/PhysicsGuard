@@ -2,11 +2,10 @@
 
 ## Unreleased
 
-DataBank workflow extraction.
+Codex skill boundary cleanup.
 
-- Added a Guard-neutral `databank-workflow` Codex skill with explicit root checks, stricter contract validation, provider adaptation, lifecycle transitions, one-command audit, fixture database, tests, and FlowGuard governance.
-- Updated PhysicsGuard database skills to remain legacy/provider compatibility routes for physical/test/model evidence maps.
-- Updated PhysicsGuard caller skills so broad database ledger, lifecycle, query, freshness, closure, AI navigation, and cross-Guard handoff work routes through DataBank.
+- Removed database workflow skill routes from the PhysicsGuard Codex skill bundle.
+- Kept the PhysicsGuard Codex skill bundle focused on physical audit, project evidence, contracts, validation, model-library, signal-mapping, closure, and blueprint work.
 
 ## v0.8.0 - 2026-06-11
 
@@ -24,7 +23,7 @@ Database catalog and cross-project AI map.
 
 - Added database catalog schemas, checks, read-only refresh, gap reports, maps, and safe query filters across project evidence registries and model-library indexes.
 - Added `physicsguard database check`, `scan`, `refresh`, `gap-check`, `map`, and `query` CLI commands for cross-project navigation without copying raw datasets.
-- Added templates, a fixture database catalog example, documentation, tests, FlowGuard governance, and a new `physicsguard-database-catalog` Codex skill route.
+- Added templates, a fixture database catalog example, documentation, tests, and FlowGuard governance.
 - Updated existing PhysicsGuard skills so multi-project, historical-test, reusable-model discovery, and cross-project comparison questions start from the database catalog map and keep catalog gaps visible.
 - Added project closure plans and `physicsguard project closure PLAN.yaml --pretty` so AI agents can aggregate project audit, evidence, contract, validation, model-library, and optional hierarchy closure evidence before broad final claims.
 - Added project closure templates, pump-loop closure examples, tests, FlowGuard governance, and skill prompt gates so evidence maps remain navigation only and final project claims require current closure evidence.

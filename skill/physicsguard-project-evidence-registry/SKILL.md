@@ -26,11 +26,9 @@ the model, and which gaps still need work.
 - The Project Evidence Map is an onboarding/navigation artifact. It is not
   validation proof.
 - Blocking evidence gaps prevent validation pass or validated reuse claims.
-- If this project is listed in a database catalog or DataBank ledger, refresh
-  or flag the ledger through `databank-workflow` after project evidence changes
-  so multi-project maps do not become stale. If the project is being added to a
-  database for the first time, or an existing database record needs repair,
-  archive, or handoff refresh, use `databank-workflow`.
+- If this project appears in an external database ledger, keep this route scoped
+  to the project's physical evidence registry. Do not update or repair the
+  external ledger from this PhysicsGuard skill.
 
 ## Workflow
 
@@ -104,9 +102,8 @@ For final project claims, follow with:
 python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
 ```
 
-If a database catalog or DataBank ledger owns this project, follow with
-`databank-workflow` freshness, closure, navigation, and handoff checks. Legacy
-PhysicsGuard database commands may still be used only as provider evidence:
+If an external database ledger owns this project, this skill can provide current
+project evidence and closure inputs, but it does not update the ledger itself:
 
 ```powershell
 python -m physicsguard.cli database refresh CATALOG.yaml --pretty

@@ -12,7 +12,7 @@ Run PhysicsGuard as a coarse-to-fine diagnostic tool:
    `TestFileContract` before broad AI analysis claims.
 6. Read `bug_family_followups` so sign/gain, unit-conversion, signal-mapping, or balance siblings are checked before the first failed residual is treated as fully localized.
 7. Follow `recommended_refinements` to decide the next signals or parameters to request.
-8. Mark uncertain signal mappings with per-variable observed fields when possible; metadata or Assumption Cards are fallback evidence.
+8. Mark uncertain signal mappings with per-variable observed fields when possible; metadata or Assumption Cards must be labeled as lower-confidence evidence.
 9. Refine only the suspicious block.
 
 Reports are machine-readable first. `optimization_success` is numerical status; `audit_pass` is residual-threshold plausibility. `confidence` is a heuristic, not probability.

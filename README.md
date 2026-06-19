@@ -381,11 +381,6 @@ Copy-Item -Recurse skill\physicsguard-model-understanding-preflight $env:USERPRO
 Copy-Item -Recurse skill\physicsguard-test-file-contract-review $env:USERPROFILE\.codex\skills\physicsguard-test-file-contract-review
 Copy-Item -Recurse skill\physicsguard-project-evidence-registry $env:USERPROFILE\.codex\skills\physicsguard-project-evidence-registry
 Copy-Item -Recurse skill\physicsguard-model-dataset-validation $env:USERPROFILE\.codex\skills\physicsguard-model-dataset-validation
-Copy-Item -Recurse skill\databank-workflow $env:USERPROFILE\.codex\skills\databank-workflow
-Copy-Item -Recurse skill\physicsguard-database-catalog $env:USERPROFILE\.codex\skills\physicsguard-database-catalog
-Copy-Item -Recurse skill\physicsguard-database-adoption $env:USERPROFILE\.codex\skills\physicsguard-database-adoption
-Copy-Item -Recurse skill\physicsguard-database-project-intake $env:USERPROFILE\.codex\skills\physicsguard-database-project-intake
-Copy-Item -Recurse skill\physicsguard-database-maintenance $env:USERPROFILE\.codex\skills\physicsguard-database-maintenance
 Copy-Item -Recurse skill\physicsguard-model-library $env:USERPROFILE\.codex\skills\physicsguard-model-library
 Copy-Item -Recurse skill\physicsguard-signal-mapping-review $env:USERPROFILE\.codex\skills\physicsguard-signal-mapping-review
 Copy-Item -Recurse skill\physicsguard-audit-closure $env:USERPROFILE\.codex\skills\physicsguard-audit-closure
@@ -777,11 +772,6 @@ Copy-Item -Recurse skill\physicsguard-model-understanding-preflight $env:USERPRO
 Copy-Item -Recurse skill\physicsguard-test-file-contract-review $env:USERPROFILE\.codex\skills\physicsguard-test-file-contract-review
 Copy-Item -Recurse skill\physicsguard-project-evidence-registry $env:USERPROFILE\.codex\skills\physicsguard-project-evidence-registry
 Copy-Item -Recurse skill\physicsguard-model-dataset-validation $env:USERPROFILE\.codex\skills\physicsguard-model-dataset-validation
-Copy-Item -Recurse skill\databank-workflow $env:USERPROFILE\.codex\skills\databank-workflow
-Copy-Item -Recurse skill\physicsguard-database-catalog $env:USERPROFILE\.codex\skills\physicsguard-database-catalog
-Copy-Item -Recurse skill\physicsguard-database-adoption $env:USERPROFILE\.codex\skills\physicsguard-database-adoption
-Copy-Item -Recurse skill\physicsguard-database-project-intake $env:USERPROFILE\.codex\skills\physicsguard-database-project-intake
-Copy-Item -Recurse skill\physicsguard-database-maintenance $env:USERPROFILE\.codex\skills\physicsguard-database-maintenance
 Copy-Item -Recurse skill\physicsguard-model-library $env:USERPROFILE\.codex\skills\physicsguard-model-library
 Copy-Item -Recurse skill\physicsguard-signal-mapping-review $env:USERPROFILE\.codex\skills\physicsguard-signal-mapping-review
 Copy-Item -Recurse skill\physicsguard-audit-closure $env:USERPROFILE\.codex\skills\physicsguard-audit-closure

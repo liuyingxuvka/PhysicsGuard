@@ -34,19 +34,13 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 ## Workflow A: Audit External Results
 
 1. Clarify the visible failure: wrong final value, unstable response, impossible pressure/flow/power/heat/current/voltage, bad efficiency, or inconsistent control logic.
-2. If the user asks to create, admit, maintain, archive, deprecate, supersede,
-   reject, repair, query, or hand off a local project evidence database, route
-   through `databank-workflow`. Use PhysicsGuard database routes only for
-   legacy PhysicsGuard-specific CLI compatibility over physical/test/model
-   evidence maps.
-3. If the user asks about multiple projects, historical tests, database-level
+2. If the user asks about multiple projects, historical tests, database-level
    search, reusable model discovery across projects, or cross-project
-   comparison, first route through `databank-workflow`. Read DataBank
-   navigation and closure files when present so AI can see which project
-   registries, model libraries, tested quantities, model targets, lifecycle
-   states, and database gaps exist.
-   Do not make cross-project claims from a single project map.
-4. If the work includes a concrete testbench/test-data file, first route through
+   comparison, do not answer from this PhysicsGuard route alone. PhysicsGuard
+   can inspect one project's physical evidence, contracts, validation, model
+   library records, and closure boundary, but it does not own a broad database
+   workflow skill in this repository.
+3. If the work includes a concrete testbench/test-data file, first route through
    `physicsguard-test-file-contract-review`. Generate or inspect the file
    manifest, check the file-specific contract, and do not make broad AI analysis
    claims until the contract passes. If there is no concrete test data file,
@@ -85,7 +79,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    python -m physicsguard.cli intake review INTAKE.yaml --pretty
    ```
 
-   AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards are acceptable fallback evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
+   AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards must be labeled as lower-confidence evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
 11. Prefer direct observed evaluation:
 
    ```powershell
@@ -180,8 +174,8 @@ Keep the header as comments only. Do not add provenance metadata solely for this
   and explicit binding exemptions belong in the project evidence registry when
   project evidence work is in scope.
 - Do not answer multi-project, historical-test, or database-level questions by
-  reading only one project. Use `databank-workflow` first and keep catalog,
-  freshness, closure, and query gaps visible.
+  reading only one project. State that this PhysicsGuard route does not own the
+  database workflow and keep the claim scoped to checked project evidence.
 - Do not treat `signal_mapping_ledger` as a conversion engine. It records evidence and review state; observed values are still used exactly as supplied.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
 - For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.

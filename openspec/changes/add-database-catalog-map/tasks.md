@@ -27,7 +27,7 @@
 
 ## 5. Skills, Docs, Templates, Examples
 
-- [x] 5.1 Add `physicsguard-database-catalog` skill.
+- [x] 5.1 Document database catalog usage without adding a persistent database skill route.
 - [x] 5.2 Update AI debugging, project evidence, model library, validation, test-file, and closure skills for database-level routing.
 - [x] 5.3 Add docs, templates, and a database catalog example.
 - [x] 5.4 Sync installed Codex skills.

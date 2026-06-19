@@ -702,7 +702,6 @@ entries:
       - templates/database_catalog_gap_report.yaml
       - templates/database_map_report.yaml
       - docs/database_catalog.md
-      - skill/physicsguard-database-catalog/SKILL.md
     validation_commands:
       - command: python .flowguard/run_physicsguard_database_catalog_checks.py
         covers: Catalog discovery, project references, registry loading, index building, gap-check, database map, query/reuse/comparison gates, raw-data payload block, and comparison-scope block.
@@ -717,7 +716,7 @@ entries:
       - Blocking database or project evidence gaps prevent broad database-level validation, reuse, or comparison claims.
       - Cross-project comparison requires explicit scope and project-level evidence review.
     stale_when:
-      - Database catalog schema, CLI command names, project evidence map projection, model-library reference behavior, query semantics, gap severity, or skill-route semantics change.
+      - Database catalog schema, CLI command names, project evidence map projection, model-library reference behavior, query semantics, or gap severity change.
 
   - id: workflow.database_lifecycle
     model_file: .flowguard/physicsguard_database_lifecycle_model.py
@@ -767,14 +766,11 @@ entries:
       - templates/database_readme.md
       - templates/database_status.md
       - docs/database_catalog.md
-      - skill/physicsguard-database-adoption/SKILL.md
-      - skill/physicsguard-database-project-intake/SKILL.md
-      - skill/physicsguard-database-maintenance/SKILL.md
     validation_commands:
       - command: python .flowguard/run_physicsguard_database_lifecycle_checks.py
         covers: Explicit database intent, root initialization, intake/admission gates, active/reusable/validated admission, maintenance audit, inactive archive states, and AI handoff.
       - command: python -m pytest tests/test_database_catalog.py
-        covers: Database catalog compatibility plus lifecycle schema/core/CLI tests.
+        covers: Database catalog and lifecycle schema/core/CLI tests.
       - command: python -m physicsguard.cli database init TEMP_ROOT --database-id temp_db --apply --pretty
         covers: Explicit database root creation with policy/catalog/history/maintenance/template/handoff files.
     boundaries:

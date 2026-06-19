@@ -4,11 +4,6 @@ The PhysicsGuard database is an explicit local folder that a user chooses to
 create. It is not a hidden global database and it does not automatically absorb
 every project on a computer.
 
-For Guard-neutral database roots, cross-Guard catalogs, lifecycle ledgers,
-freshness, closure, AI navigation, or reusable database claims, use the
-`databank-workflow` Codex skill. The PhysicsGuard database remains a legacy
-provider/compatibility route for physical, test, and model evidence maps.
-
 The database stores maps, policies, project cards, history, maintenance reports,
 and reusable model-template pointers. Large raw test files stay where they are.
 Project-level details stay in project evidence registries.
