@@ -45,11 +45,10 @@ partial, stale, or review-required contracts.
 5. If `evidence_registry` and `evidence_bundle_id` are declared, inspect
    evidence gap counts. Blocking gaps prevent validation pass; review and
    optional gaps must stay visible in the claim boundary.
-6. If the validated project is listed in a database catalog, refresh or flag the
-   database catalog after validation so cross-project maps can show the current
-   validation state and remaining gaps. For an explicit database root, follow
-   with `physicsguard-database-maintenance` and refresh the handoff files after
-   validation status changes.
+6. If the validated project is listed in a database catalog or DataBank ledger,
+   refresh or flag it through `databank-workflow` after validation so
+   cross-project maps can show the current validation state, freshness, closure
+   status, and remaining gaps.
 7. For final project validation-readiness claims, include the validation plan in
    a project closure plan and run:
 

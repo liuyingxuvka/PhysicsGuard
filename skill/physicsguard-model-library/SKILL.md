@@ -10,19 +10,21 @@ is an evidence index, not a raw-data database and not proof of universal model
 validity.
 
 For cross-project discovery, historical search, or "which projects/models have
-we tested before" questions, use `physicsguard-database-catalog` first. The
-database catalog may reference model-library indexes, but model libraries do
-not replace the database map.
+we tested before" questions, use `databank-workflow` first. DataBank may
+reference model-library indexes, but model libraries do not replace the
+database ledger, freshness, or closure checks.
 
-For an explicit local database, reusable templates and reusable model-asset
-pointers should also be listed in `model_template_index.yaml` and checked with:
+For a legacy explicit PhysicsGuard database, reusable templates and reusable
+model-asset pointers may still be listed in `model_template_index.yaml` and
+checked with:
 
 ```powershell
 python -m physicsguard.cli database template-index-check DATABASE_ROOT/model_template_index.yaml --pretty
 ```
 
 Updating reusable model availability inside a database should be followed by
-`physicsguard-database-maintenance` so the database handoff map stays current.
+`databank-workflow` so the database ledger, freshness, closure, and handoff map
+stay current.
 
 ## Workflow
 

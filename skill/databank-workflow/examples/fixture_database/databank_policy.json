@@ -1,0 +1,20 @@
+{
+  "database_id": "fixture_database",
+  "schema": "databank-root-v1",
+  "raw_data_policy": "Large raw datasets stay in source locations; DataBank stores only paths, hashes, summaries, and evidence references.",
+  "require_provider_closure": true,
+  "require_history_events": true,
+  "allowed_lifecycle_states": [
+    "candidate",
+    "placeholder",
+    "active_registered",
+    "active_validated",
+    "active_reusable",
+    "blocked",
+    "downgraded",
+    "archived",
+    "deprecated",
+    "superseded",
+    "rejected"
+  ]
+}

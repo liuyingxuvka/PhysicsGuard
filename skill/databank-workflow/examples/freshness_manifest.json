@@ -1,0 +1,23 @@
+{
+  "current_hashes": {
+    "model_hash": "current-model-hash",
+    "contract_hash": "current-contract-hash"
+  },
+  "validation_reports": [
+    {
+      "id": "validation-report-1",
+      "model_hash": "current-model-hash",
+      "contract_hash": "current-contract-hash"
+    }
+  ],
+  "hash_bindings": [
+    {
+      "id": "model-contract-binding",
+      "source": "model",
+      "target": "validation-report-1",
+      "expected": "current-model-hash",
+      "actual": "current-model-hash"
+    }
+  ],
+  "files": []
+}

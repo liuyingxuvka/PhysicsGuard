@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flowguard import Explorer
+from flowguard.explorer import Explorer
 
 import physicsguard_test_file_contract_development_model as model
 
@@ -39,3 +39,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

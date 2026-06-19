@@ -88,11 +88,10 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
 
     Resolve or report missing project profile, file registration, test-field
     binding, physical-parameter binding, and binding-exemption gaps.
-12. If the project is listed in a database catalog, refresh or flag the catalog
-    after test-file contract changes so cross-project searches see current
-    field coverage and binding state. For an explicit database root, follow
-    with `physicsguard-database-maintenance` when coverage changes affect
-    searchable project status, validation status, or AI handoff files.
+12. If the project is listed in a database catalog or DataBank ledger, refresh
+    or flag the ledger through `databank-workflow` after test-file contract
+    changes so cross-project searches see current field coverage, binding
+    state, freshness, closure status, and AI handoff files.
 13. For final analysis-readiness or validation-readiness claims, include the
     passing contract in project closure. A passing file contract is coverage
     evidence only; project closure checks whether the whole project is ready:

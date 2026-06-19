@@ -1,0 +1,18 @@
+{
+  "id": "physicsguard-project-closure",
+  "status": "blocked",
+  "evidence": [],
+  "missing_inputs": [
+    {
+      "id": "model-contract",
+      "reason": "model_hash_mismatch"
+    }
+  ],
+  "stale_evidence": [],
+  "skipped_checks": [],
+  "safe_claim": "",
+  "unsafe_claim_boundary": "Do not claim this project is validated until the model contract is refreshed.",
+  "next_actions": [
+    "Refresh the model contract and rerun provider validation."
+  ]
+}

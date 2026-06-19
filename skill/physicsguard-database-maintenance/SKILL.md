@@ -1,13 +1,16 @@
 ---
 name: physicsguard-database-maintenance
-description: Use when auditing, maintaining, refreshing, archiving, deprecating, superseding, rejecting, repairing, or handing off an explicit local PhysicsGuard database. Trigger for database maintenance, database gaps, historical project records, inactive projects, cleanup, deletion policy, or AI database status.
+description: Use for legacy PhysicsGuard-specific database maintenance over physical/test/model evidence maps. For Guard-neutral lifecycle ledgers, freshness, closure, downgrade, query, AI handoff, archive policy, or cross-Guard database status, use databank-workflow instead.
 ---
 
 # PhysicsGuard Database Maintenance
 
-Use this route to keep an explicit database usable over time. The goal is to
-show future AI agents what is active, what is historical, what is missing, and
-what claims are allowed.
+Use this route to keep an explicit PhysicsGuard-specific database usable over
+time. For total database lifecycle, freshness, closure, downgrade, AI handoff,
+or cross-Guard status, route to `databank-workflow`.
+
+The goal of this compatibility route is to show future AI agents what physical
+evidence is active, historical, missing, and claim-limited.
 
 ## Workflow
 
@@ -53,8 +56,11 @@ what claims are allowed.
   records; use `--include-inactive` only for history searches.
 - Missing project basics, missing registries, model binding gaps, validation
   gaps, and reusable-model gaps should remain visible in audit output.
+- If any project-level closure is blocked, stale, missing, skipped, or outside
+  scope, do not describe the database as fully validated or reusable. DataBank
+  closure must consume the current provider evidence before broad claims.
 - If a parameter, test field, file, or model target should not bind to a model,
   record an explicit reason through the project evidence route rather than
   letting it disappear.
 - Maintenance reports and handoff files are maps and status evidence, not
-  physical validation proof.
+  physical validation proof, and not DataBank closure proof.

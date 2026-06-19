@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+DataBank workflow extraction.
+
+- Added a Guard-neutral `databank-workflow` Codex skill with explicit root checks, stricter contract validation, provider adaptation, lifecycle transitions, one-command audit, fixture database, tests, and FlowGuard governance.
+- Updated PhysicsGuard database skills to remain legacy/provider compatibility routes for physical/test/model evidence maps.
+- Updated PhysicsGuard caller skills so broad database ledger, lifecycle, query, freshness, closure, AI navigation, and cross-Guard handoff work routes through DataBank.
+
 ## v0.8.0 - 2026-06-11
 
 Explicit database lifecycle management.

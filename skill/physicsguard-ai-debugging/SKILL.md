@@ -34,18 +34,17 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 ## Workflow A: Audit External Results
 
 1. Clarify the visible failure: wrong final value, unstable response, impossible pressure/flow/power/heat/current/voltage, bad efficiency, or inconsistent control logic.
-2. If the user asks to create a local database, first route through
-   `physicsguard-database-adoption`. If the user asks to add or update one
-   project inside a database, route through
-   `physicsguard-database-project-intake`. If the user asks to maintain,
-   archive, deprecate, supersede, reject, or repair database records, route
-   through `physicsguard-database-maintenance`.
+2. If the user asks to create, admit, maintain, archive, deprecate, supersede,
+   reject, repair, query, or hand off a local project evidence database, route
+   through `databank-workflow`. Use PhysicsGuard database routes only for
+   legacy PhysicsGuard-specific CLI compatibility over physical/test/model
+   evidence maps.
 3. If the user asks about multiple projects, historical tests, database-level
    search, reusable model discovery across projects, or cross-project
-   comparison, first route through `physicsguard-database-catalog`. Read the
-   database handoff files when present, then run `database map` or
-   `database query` so AI can see which project registries, model libraries,
-   tested quantities, model targets, lifecycle states, and database gaps exist.
+   comparison, first route through `databank-workflow`. Read DataBank
+   navigation and closure files when present so AI can see which project
+   registries, model libraries, tested quantities, model targets, lifecycle
+   states, and database gaps exist.
    Do not make cross-project claims from a single project map.
 4. If the work includes a concrete testbench/test-data file, first route through
    `physicsguard-test-file-contract-review`. Generate or inspect the file
@@ -181,8 +180,8 @@ Keep the header as comments only. Do not add provenance metadata solely for this
   and explicit binding exemptions belong in the project evidence registry when
   project evidence work is in scope.
 - Do not answer multi-project, historical-test, or database-level questions by
-  reading only one project. Use the database catalog map/query route first and
-  keep catalog gaps visible.
+  reading only one project. Use `databank-workflow` first and keep catalog,
+  freshness, closure, and query gaps visible.
 - Do not treat `signal_mapping_ledger` as a conversion engine. It records evidence and review state; observed values are still used exactly as supplied.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
 - For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flowguard import Explorer
+from flowguard.explorer import Explorer
 
 import physicsguard_model_dataset_validation_model as model
 
@@ -33,3 +33,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

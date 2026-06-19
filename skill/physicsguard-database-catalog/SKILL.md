@@ -1,19 +1,24 @@
 ---
 name: physicsguard-database-catalog
-description: Use when indexing, scanning, refreshing, querying, or reading a database-level PhysicsGuard catalog across multiple projects, historical tests, project evidence registries, model libraries, tested quantities, model targets, generic tags, and cross-project gaps. Trigger for database map, many projects, historical test search, cross-project comparison, reusable model discovery, or "what has been tested before" requests.
+description: Use for legacy PhysicsGuard-specific catalog reads over physical/test/model evidence registries. For Guard-neutral catalogs, query gates, lifecycle status, AI navigation, freshness, closure, cross-Guard comparison, or database total ledgers, use databank-workflow instead.
 ---
 
 # PhysicsGuard Database Catalog
 
-Use this route for database-level navigation and query. The catalog is the map
-above project evidence registries. It must not store raw test data, replace
-project-level validation, or claim direct comparability by itself.
+Use this route for legacy PhysicsGuard-specific navigation and query over
+physical/test/model evidence. For a Guard-neutral database map, query gate, AI
+navigation index, lifecycle status, freshness check, or closure claim, route to
+`databank-workflow`.
 
-If the task is to create a new database root, route to
-`physicsguard-database-adoption`. If the task is to add or update one project
-inside a database, route to `physicsguard-database-project-intake`. If the task
-is archive/deprecate/supersede/reject/repair/maintain, route to
-`physicsguard-database-maintenance`.
+The catalog is a map above project evidence registries. It must not store raw
+test data, replace project-level validation, or claim direct comparability by
+itself.
+
+If the task is to create a new database root, admit or update a project in the
+database ledger, archive/deprecate/supersede/reject/repair/maintain database
+status, or hand off a cross-Guard catalog, route to `databank-workflow`.
+Use the other PhysicsGuard database skills only when the user explicitly needs
+legacy PhysicsGuard CLI compatibility for physical/test/model evidence maps.
 
 ## Workflow
 
@@ -57,6 +62,9 @@ is archive/deprecate/supersede/reject/repair/maintain, route to
    python -m physicsguard.cli database map CATALOG.yaml --pretty
    ```
 
+   Treat this as PhysicsGuard compatibility output. DataBank AI navigation and
+   link freshness should be rendered through `databank-workflow`.
+
 7. Query by tag, tested quantity, component, model target, validation state, or
    test-data state:
 
@@ -71,6 +79,8 @@ is archive/deprecate/supersede/reject/repair/maintain, route to
 
 - Treat the catalog as a directory map. Keep large datasets in original
   locations and reference them through project evidence registries.
+- Do not claim the catalog is sufficient for cross-Guard closure, reusable
+  database proof, or current freshness. Route those claims to DataBank.
 - Use generic tags; do not hardcode an industry taxonomy into the skill.
 - Active projects should have project evidence registries and current gap
   status. Candidate and placeholder projects can exist, but must not be used
@@ -83,12 +93,11 @@ is archive/deprecate/supersede/reject/repair/maintain, route to
 
 ## Relationship To Other Routes
 
-- Use `physicsguard-database-adoption` to initialize an explicit local database
-  root.
-- Use `physicsguard-database-project-intake` to admit, update, or stage one
-  project.
-- Use `physicsguard-database-maintenance` for audit, archive, supersession,
-  rejection, and AI handoff refresh.
+- Use `databank-workflow` to initialize, query, maintain, refresh, close, or
+  hand off the Guard-neutral database ledger.
+- Use `physicsguard-database-adoption`, `physicsguard-database-project-intake`,
+  and `physicsguard-database-maintenance` only for legacy PhysicsGuard-specific
+  compatibility work.
 - Use `physicsguard-project-evidence-registry` for one project's files, facts,
   bindings, and gaps.
 - Use `physicsguard-test-file-contract-review` for one test file's fields,
