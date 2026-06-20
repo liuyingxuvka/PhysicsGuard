@@ -38,8 +38,8 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    search, reusable model discovery across projects, or cross-project
    comparison, do not answer from this PhysicsGuard route alone. PhysicsGuard
    can inspect one project's physical evidence, contracts, validation, model
-   library records, and closure boundary, but it does not own a broad database
-   workflow skill in this repository.
+   library records, and closure boundary, but it does not own database ledger
+   intake, lifecycle, freshness, query, or navigation.
 3. If the work includes a concrete testbench/test-data file, first route through
    `physicsguard-test-file-contract-review`. Generate or inspect the file
    manifest, check the file-specific contract, and do not make broad AI analysis
@@ -87,7 +87,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    ```
 
 12. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
-13. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, database map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+13. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
 14. Request or export only the next small set of signals/parameters needed by the suspicious block.
 15. Refine that block with a lower-level audit template.
 16. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
@@ -107,7 +107,7 @@ python %USERPROFILE%\\.codex\\skills\physicsguard-ai-debugging\scripts\physicsgu
 ```
 
 For project-level debugging with evidence registries, test contracts,
-validation plans, model libraries, database catalogs, or reusable handoff
+validation plans, model libraries, external database-ledger inputs, or reusable handoff
 claims, also run or inspect:
 
 ```powershell
@@ -175,7 +175,7 @@ Keep the header as comments only. Do not add provenance metadata solely for this
   project evidence work is in scope.
 - Do not answer multi-project, historical-test, or database-level questions by
   reading only one project. State that this PhysicsGuard route does not own the
-  database workflow and keep the claim scoped to checked project evidence.
+  database ledger and keep the claim scoped to checked project evidence.
 - Do not treat `signal_mapping_ledger` as a conversion engine. It records evidence and review state; observed values are still used exactly as supplied.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
 - For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.

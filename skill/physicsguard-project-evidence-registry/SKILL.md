@@ -103,11 +103,6 @@ python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
 ```
 
 If an external database ledger owns this project, this skill can provide current
-project evidence and closure inputs, but it does not update the ledger itself:
-
-```powershell
-python -m physicsguard.cli database refresh CATALOG.yaml --pretty
-python -m physicsguard.cli database gap-check CATALOG.yaml --pretty
-python -m physicsguard.cli database audit DATABASE_ROOT --pretty
-python -m physicsguard.cli database render-handoff DATABASE_ROOT --apply --pretty
-```
+project evidence, gap reports, closure inputs, validation status, and model
+library evidence. It does not update, refresh, audit, or render the external
+ledger itself.

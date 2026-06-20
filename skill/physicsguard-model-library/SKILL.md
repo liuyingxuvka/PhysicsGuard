@@ -11,15 +11,9 @@ validity.
 
 For cross-project discovery, historical search, or "which projects/models have
 we tested before" questions, do not answer from one model library index alone.
-Model libraries can support a scoped reuse claim only after current validation
-and project closure evidence are checked.
-
-Reusable templates and reusable model-asset pointers may be listed in
-`model_template_index.yaml` and checked with:
-
-```powershell
-python -m physicsguard.cli database template-index-check DATABASE_ROOT/model_template_index.yaml --pretty
-```
+Model libraries can provide provider evidence to an external database ledger,
+but this PhysicsGuard route does not own database indexes, lifecycle, query, or
+freshness gates.
 
 ## Workflow
 

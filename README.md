@@ -10,7 +10,7 @@
 </p>
 <!-- README HERO END -->
 
-- **Version:** `v0.8.1`
+- **Version:** `v0.9.0`
 - **Runtime:** Python 3.11+ with `pydantic`, `numpy`, `scipy`, and `PyYAML`
 - **License:** MIT
 **Language note:** English comes first; the second half is a full Chinese mirror.
@@ -204,49 +204,18 @@ The evidence map remains navigation only. A successful map cannot prove project
 readiness if gap-check, test-file contract, validation, model-library, or
 required closure evidence is missing or blocked.
 
-## Database Catalog And Cross-Project Map
+## Database Ledger Boundary
 
-For a database or folder that contains many PhysicsGuard projects, PhysicsGuard
-now treats the database as an explicit local root. The root has a policy,
-catalog, history log, maintenance report, model-template index, and AI handoff
-files. It is not a hidden global database, and it does not copy raw datasets.
+PhysicsGuard no longer owns database catalog, lifecycle, query, freshness, or
+handoff commands. It produces physical provider evidence: test-file contracts,
+field and unit checks, parameter roles, signal mappings, model bindings,
+physical audit reports, residual validation, model-library records, and
+project closure evidence.
 
-Create the database root only with explicit intent:
-
-```powershell
-python -m physicsguard.cli database init DATABASE_ROOT --database-id local_database --pretty
-python -m physicsguard.cli database init DATABASE_ROOT --database-id local_database --apply --pretty
-```
-
-Add projects through an intake plan, then admit them after review:
-
-```powershell
-python -m physicsguard.cli database intake-plan DATABASE_ROOT PROJECT_ROOT --requested-state candidate --pretty
-python -m physicsguard.cli database admit DATABASE_PROJECT_INTAKE_PLAN.yaml --apply --pretty
-```
-
-Use:
-
-```powershell
-python -m physicsguard.cli database policy-check DATABASE_ROOT/database_policy.yaml --pretty
-python -m physicsguard.cli database template-index-check DATABASE_ROOT/model_template_index.yaml --pretty
-python -m physicsguard.cli database audit DATABASE_ROOT --pretty
-python -m physicsguard.cli database render-handoff DATABASE_ROOT --apply --pretty
-python -m physicsguard.cli database check CATALOG.yaml --pretty
-python -m physicsguard.cli database scan ROOT --catalog CATALOG.yaml --pretty
-python -m physicsguard.cli database refresh CATALOG.yaml --pretty
-python -m physicsguard.cli database gap-check CATALOG.yaml --pretty
-python -m physicsguard.cli database map CATALOG.yaml --pretty
-python -m physicsguard.cli database query CATALOG.yaml --quantity pump.flow_readback --pretty
-python -m physicsguard.cli database archive CATALOG.yaml PROJECT_ID --reason "reason" --archive-state archived --apply --pretty
-```
-
-Database maps and queries are navigation outputs. They can find related
-projects, historical tests, reusable model candidates, active/inactive
-lifecycle states, and missing maintenance work, but they do not prove direct
-comparability. Broad cross-project claims still require project evidence maps,
-validation reports, model-library checks, project closure, and explicit
-comparison scope.
+Database root management, project intake, catalog/history/status, freshness,
+navigation, query, and cross-Guard closure belong outside this repository. This
+keeps the control path single and auditable: PhysicsGuard emits evidence;
+the database ledger consumes and gates that evidence.
 
 ## The Core Contract
 
@@ -399,7 +368,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## Library Coverage
 
-PhysicsGuard `v0.8.1` includes low-fidelity audit relations for:
+PhysicsGuard `v0.9.0` includes low-fidelity audit relations for:
 
 - aggregate power, heat, mass, species, and electrical-bus balances;
 - control error, PID algebraic checks, PID step checks, saturation, hysteresis, thresholds, delay, sample-and-hold, actuator/sensor relations;
@@ -422,7 +391,6 @@ All modules are low-fidelity audit relations. They are intended to expose obviou
 - [External-model intake](docs/external_model_intake.md)
 - [Module equation ledger](docs/module_equation_ledger.md)
 - [Model-code traceability](docs/model_code_traceability.md)
-- [Database lifecycle and catalog](docs/database_catalog.md)
 
 ## Repository Map
 
@@ -450,7 +418,7 @@ MIT License. See [LICENSE](LICENSE).
 
 # PhysicsGuard 中文说明
 
-- **版本：** `v0.8.1`
+- **版本：** `v0.9.0`
 - **运行环境：** Python 3.11+，依赖 `pydantic`、`numpy`、`scipy`、`PyYAML`
 - **许可证：** MIT
 
@@ -603,41 +571,15 @@ closure plan 会声明这次要支持哪种结论、项目证据登记表、evid
 
 Evidence map 仍然只是导航。就算 map 生成成功，只要 gap-check、测试文件合同、validation、模型库或必需 closure 证据缺失/失败，也不能说项目已经 ready。
 
-## 数据库目录和跨项目地图
+## 数据库总账边界
 
-如果一个文件夹或数据库里包含很多 PhysicsGuard 项目，PhysicsGuard 现在把数据库当成一个显式的本地根目录。这个根目录里有 policy、catalog、history log、maintenance report、model-template index，以及给其他 AI 看的 README/status 交接文件。它不是隐藏的全局数据库，也不会复制原始测试数据。
+PhysicsGuard 不再拥有数据库 catalog、生命周期、查询、freshness 或
+handoff 命令。它只负责产出物理 provider evidence：测试文件合同、字段和
+单位检查、参数角色、信号映射、模型绑定、物理审计报告、残差验证、模型库记录和项目收口证据。
 
-只有明确要建库时才初始化数据库：
-
-```powershell
-python -m physicsguard.cli database init DATABASE_ROOT --database-id local_database --pretty
-python -m physicsguard.cli database init DATABASE_ROOT --database-id local_database --apply --pretty
-```
-
-项目进入数据库要先生成 intake plan，再审核后写入：
-
-```powershell
-python -m physicsguard.cli database intake-plan DATABASE_ROOT PROJECT_ROOT --requested-state candidate --pretty
-python -m physicsguard.cli database admit DATABASE_PROJECT_INTAKE_PLAN.yaml --apply --pretty
-```
-
-常用命令：
-
-```powershell
-python -m physicsguard.cli database policy-check DATABASE_ROOT/database_policy.yaml --pretty
-python -m physicsguard.cli database template-index-check DATABASE_ROOT/model_template_index.yaml --pretty
-python -m physicsguard.cli database audit DATABASE_ROOT --pretty
-python -m physicsguard.cli database render-handoff DATABASE_ROOT --apply --pretty
-python -m physicsguard.cli database check CATALOG.yaml --pretty
-python -m physicsguard.cli database scan ROOT --catalog CATALOG.yaml --pretty
-python -m physicsguard.cli database refresh CATALOG.yaml --pretty
-python -m physicsguard.cli database gap-check CATALOG.yaml --pretty
-python -m physicsguard.cli database map CATALOG.yaml --pretty
-python -m physicsguard.cli database query CATALOG.yaml --quantity pump.flow_readback --pretty
-python -m physicsguard.cli database archive CATALOG.yaml PROJECT_ID --reason "reason" --archive-state archived --apply --pretty
-```
-
-数据库地图和查询结果只是导航输出。它可以帮助 AI 找到相关项目、历史测试、可复用模型候选、active/inactive 生命周期状态和缺少维护的地方，但它不能单独证明两个项目可以直接比较。跨项目结论仍然要回到项目证据地图、验证报告、模型库检查、项目收口和明确的比较范围。
+数据库根目录、项目入库、catalog/history/status、freshness、导航、查询和跨
+Guard 收口都属于本仓库之外的数据库总账。这样控制路径是唯一且可审查的：
+PhysicsGuard 产出证据，数据库总账消费并门禁这些证据。
 
 ## 核心合同
 
@@ -790,7 +732,7 @@ Use PhysicsGuard to design a low-fidelity blueprint for this coolant loop, valid
 
 ## 模块覆盖
 
-PhysicsGuard `v0.8.1` 包含这些低保真审计关系：
+PhysicsGuard `v0.9.0` 包含这些低保真审计关系：
 
 - aggregate power、heat、mass、species、电气母线平衡；
 - control error、PID algebraic checks、PID step checks、saturation、hysteresis、threshold、delay、sample-and-hold、actuator/sensor 关系；
@@ -813,7 +755,6 @@ PhysicsGuard `v0.8.1` 包含这些低保真审计关系：
 - [External-model intake](docs/external_model_intake.md)
 - [Module equation ledger](docs/module_equation_ledger.md)
 - [Model-code traceability](docs/model_code_traceability.md)
-- [Database lifecycle and catalog](docs/database_catalog.md)
 
 ## 仓库结构
 

@@ -1,11 +1,14 @@
 # Changelog
 
-## v0.8.1 - 2026-06-20
+## v0.9.0 - 2026-06-20
 
-Codex skill boundary cleanup.
+DataBank extraction and PhysicsGuard database-engine removal.
 
-- Removed database workflow skill routes from the PhysicsGuard Codex skill bundle.
-- Kept the PhysicsGuard Codex skill bundle focused on physical audit, project evidence, contracts, validation, model-library, signal-mapping, closure, and blueprint work.
+- Removed the `physicsguard database ...` CLI command group without a bridge, fallback, or compatibility route.
+- Removed database catalog/lifecycle core modules, schemas, templates, examples, docs, tests, and active FlowGuard model records from PhysicsGuard.
+- Removed database-engine exports and loader helpers from the Python package API.
+- Kept PhysicsGuard focused on physical provider evidence: test-file contracts, fields, units, parameter roles, signal mapping, model bindings, physical models, residual validation, model libraries, and project closure evidence.
+- Database ledger, lifecycle, freshness, navigation, query, and cross-Guard closure now belong to the standalone DataBank package/skill.
 
 ## v0.8.0 - 2026-06-11
 

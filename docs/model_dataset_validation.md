@@ -40,6 +40,6 @@ When a validation plan declares `evidence_registry` and `evidence_bundle_id`,
 blocking project evidence gaps prevent validation pass. Review and optional gaps
 remain visible in the validation claim boundary.
 
-If the project is listed in a database catalog, refresh the database map after
-new validation evidence so cross-project search can see current validation
-state and remaining gaps.
+If the project is listed in an external database ledger, report the current
+validation status, safe claim boundary, and remaining gaps as provider evidence
+only. PhysicsGuard does not refresh or maintain the surrounding ledger.

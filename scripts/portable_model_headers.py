@@ -31,20 +31,10 @@ def tracked_example_yaml_files(root: Path) -> list[Path]:
         )
     except (OSError, subprocess.CalledProcessError):
         return sorted((root / "examples").rglob("*.yaml"))
-    return [root / line for line in result.stdout.splitlines() if line.strip()]
+    return [root / line for line in result.stdout.splitlines() if line.strip() and (root / line).exists()]
 
 
 def artifact_kind(data: dict[str, Any]) -> str:
-    if "database_id" in data and "require_apply_for_writes" in data:
-        return "database policy"
-    if "catalog_id" in data and "projects" in data:
-        return "database catalog"
-    if data.get("artifact_kind") == "database_project_intake_plan":
-        return "database project intake plan"
-    if data.get("artifact_kind") == "database_maintenance_report":
-        return "database maintenance report"
-    if "index_id" in data and "templates" in data:
-        return "database model template index"
     if "closure_id" in data and "claim_scope" in data:
         return "project closure plan"
     if "registry_id" in data and "project_profile" in data and "artifacts" in data:
@@ -102,16 +92,6 @@ def purpose_for(path: Path, data: dict[str, Any]) -> str:
 
 def use_hint(path: Path, data: dict[str, Any]) -> str:
     rel = path.as_posix()
-    if "database_id" in data and "require_apply_for_writes" in data:
-        return f"python -m physicsguard.cli database policy-check {rel} --pretty"
-    if "catalog_id" in data and "projects" in data:
-        return f"python -m physicsguard.cli database check {rel} --pretty"
-    if data.get("artifact_kind") == "database_project_intake_plan":
-        return f"python -m physicsguard.cli database admit {rel} --pretty"
-    if data.get("artifact_kind") == "database_maintenance_report":
-        return "produced by python -m physicsguard.cli database audit DATABASE_ROOT --pretty"
-    if "index_id" in data and "templates" in data:
-        return f"python -m physicsguard.cli database template-index-check {rel} --pretty"
     if "closure_id" in data and "claim_scope" in data:
         return f"python -m physicsguard.cli project closure {rel} --pretty"
     if "registry_id" in data and "project_profile" in data and "artifacts" in data:

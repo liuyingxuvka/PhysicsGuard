@@ -85,6 +85,38 @@ def test_cli_invalid_file_returns_nonzero() -> None:
     assert result.returncode != 0
 
 
+def test_cli_database_command_group_is_removed() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "physicsguard.cli", "database", "--help"],
+        cwd=ROOT,
+        env=cli_env(),
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    combined_output = result.stdout + result.stderr
+    assert result.returncode != 0
+    assert "invalid choice" in combined_output
+    assert "database-level project catalog commands" not in combined_output
+
+
+def test_database_engine_public_exports_are_removed() -> None:
+    import physicsguard
+    import physicsguard.core as core
+
+    removed_names = [
+        "initialize_database_root",
+        "audit_database_maintenance",
+        "check_database_catalog",
+        "query_database_catalog",
+    ]
+    for name in removed_names:
+        assert name not in physicsguard.__all__
+        assert name not in core.__all__
+        assert not hasattr(physicsguard, name)
+        assert not hasattr(core, name)
+
+
 def test_cli_solve_physical_coolant_returns_valid_json() -> None:
     result = subprocess.run(
         [
