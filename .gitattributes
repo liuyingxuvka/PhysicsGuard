@@ -1,0 +1,4 @@
+# Keep byte-level fixture and model hashes stable across Windows/macOS/Linux checkouts.
+* text=auto eol=lf
+*.csv text eol=lf
+*.png -text

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.1 - 2026-06-20
+
+Windows fixture checkout hardening.
+
+- Added `.gitattributes` so CSV fixtures keep LF line endings across Windows, macOS, and Linux checkouts.
+- Kept data-file content hash validation byte-exact; no CRLF-normalizing fallback or compatibility path was added.
+
 ## v0.9.0 - 2026-06-20
 
 DataBank extraction and PhysicsGuard database-engine removal.
