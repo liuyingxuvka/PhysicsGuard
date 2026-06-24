@@ -20,6 +20,7 @@ __all__ = [
     "check_model_library_index",
     "check_evidence_bundle",
     "check_evidence_gaps",
+    "check_evidence_mesh",
     "check_project_evidence_registry",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
@@ -104,6 +105,12 @@ def __getattr__(name: str):
         from physicsguard.core.project_closure import run_project_closure
 
         return run_project_closure
+    if name in {
+        "check_evidence_mesh",
+    }:
+        from physicsguard.core.evidence_mesh import check_evidence_mesh
+
+        return check_evidence_mesh
     if name in {
         "check_evidence_bundle",
         "check_evidence_gaps",

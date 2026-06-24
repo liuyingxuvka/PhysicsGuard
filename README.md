@@ -12,7 +12,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.9.1` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.10.0` | Python 3.11+ | `physicsguard` | MIT |
 
 English comes first. A Chinese mirror follows below.
 
@@ -64,6 +64,7 @@ The important design choice is modesty. PhysicsGuard does not try to recreate a 
 | Decide what to export next | Targeted signal, parameter, unit, bound, map, or topology request | Missing data stays explicit |
 | Validate mapped data files | Test-file manifests, contracts, coverage checks, and model binding rows | File coverage is not physical correctness |
 | Compare model and dataset | Logical checks, relation checks, validation reports, and optional bounded calibration | Calibration is conservative and bounded |
+| Close project evidence claims | Evidence meshes and project closure reports | Claim-readiness proof, not physical correctness proof |
 | Build a candidate model | Interfaces, units, assumptions, block relations, examples, and validation order | Candidate models are new artifacts, not recovered commercial models |
 
 ## Quick Start
@@ -90,6 +91,7 @@ Project and model-understanding checks:
 python -m physicsguard.cli project audit --pretty
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
 python -m physicsguard.cli project closure templates/project_closure_plan.yaml --pretty
 python scripts/check_module_equation_ledger.py --json
 ```
@@ -150,7 +152,7 @@ Do not use it when:
 
 ## Library Coverage
 
-PhysicsGuard `v0.9.1` includes low-fidelity audit relations for:
+PhysicsGuard `v0.10.0` includes low-fidelity audit relations for:
 
 - controls, sensors, actuators, delays, saturation, maps, and PID-like steps;
 - drivetrain, vehicle, brake, wheel, gearbox, and road-load relations;
@@ -171,6 +173,7 @@ Each relation is low fidelity by design. The value is not that it replaces the t
 | [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | concrete test-file manifests and binding contracts |
 | [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | dataset validation and bounded calibration |
 | [`docs/project_evidence_registry.md`](./docs/project_evidence_registry.md) | project-level evidence registry |
+| [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | strong parent-child evidence mesh before broad claims |
 | [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | closure gate before final debugging claims |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption-card lifecycle |
 | [`docs/model_library.md`](./docs/model_library.md) | reusable low-fidelity model library |
@@ -206,7 +209,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.9.1` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.10.0` | Python 3.11+ | `physicsguard` | MIT |
 
 ## 它是什么
 
@@ -256,6 +259,7 @@ visible symptom
 | 决定下一步导出什么 | 有针对性的 signal / parameter / unit / map 请求 | 缺失数据保持显式 |
 | 校验 mapped data files | manifest、contract、coverage、model binding | 文件覆盖不等于物理正确 |
 | 对比模型和数据 | logical check、relation check、validation report、bounded calibration | calibration 是保守有界的 |
+| 闭合项目证据 claim | evidence mesh 和 project closure report | claim-readiness 证明，不是物理正确证明 |
 | 生成候选模型 | interface、unit、assumption、block relation、example、validation order | 候选模型是新工件，不是恢复商业模型 |
 
 ## 快速开始
@@ -282,6 +286,7 @@ python examples/run_pitch_residual_audit.py
 python -m physicsguard.cli project audit --pretty
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
 python -m physicsguard.cli project closure templates/project_closure_plan.yaml --pretty
 python scripts/check_module_equation_ledger.py --json
 ```
@@ -342,7 +347,7 @@ PhysicsGuard 可以用紧凑图表解释：
 
 ## 模块覆盖
 
-PhysicsGuard `v0.9.1` 包含这些低保真审计关系：
+PhysicsGuard `v0.10.0` 包含这些低保真审计关系：
 
 - controls、sensors、actuators、delays、saturation、maps、PID-like steps；
 - drivetrain、vehicle、brake、wheel、gearbox、road-load；
@@ -363,6 +368,7 @@ PhysicsGuard `v0.9.1` 包含这些低保真审计关系：
 | [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | 测试文件 manifest 和 binding contract |
 | [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | 数据集验证和有界 calibration |
 | [`docs/project_evidence_registry.md`](./docs/project_evidence_registry.md) | 项目级 evidence registry |
+| [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | broad claim 前的父子证据网格 |
 | [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | 最终 debugging claim 前的 closure gate |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption card 生命周期 |
 | [`docs/model_library.md`](./docs/model_library.md) | 可复用低保真模型库 |

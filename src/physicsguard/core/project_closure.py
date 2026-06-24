@@ -8,6 +8,7 @@ from typing import Any, Iterable
 
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.model_dataset_validation import validate_model_dataset
+from physicsguard.core.evidence_mesh import check_evidence_mesh
 from physicsguard.core.model_library import check_model_library_index
 from physicsguard.core.project_evidence import (
     build_project_evidence_map,
@@ -85,6 +86,7 @@ def run_project_closure(path: str | Path) -> ProjectClosureReport:
     _run_test_contract_checks(plan, base_dir, checked_inputs, findings, skipped)
     _run_validation_checks(plan, base_dir, checked_inputs, findings, skipped)
     _run_model_library_checks(plan, base_dir, checked_inputs, findings, skipped)
+    _run_evidence_mesh_checks(plan, base_dir, checked_inputs, findings, skipped)
     _run_hierarchy_closure_checks(plan, base_dir, checked_inputs, findings, skipped)
 
     blocking = [finding for finding in findings if finding.severity == "error"]
@@ -290,6 +292,29 @@ def _run_model_library_checks(
         _review_findings(review.to_dict(), "model_library", findings)
 
 
+def _run_evidence_mesh_checks(
+    plan: ProjectClosurePlanSpec,
+    base_dir: Path,
+    checked_inputs: list[dict[str, Any]],
+    findings: list[ProjectClosureFinding],
+    skipped: list[ProjectClosureSkippedCheck],
+) -> None:
+    if not plan.required_checks.evidence_mesh and not plan.evidence_meshes:
+        return
+    if not plan.evidence_meshes:
+        skipped.append(ProjectClosureSkippedCheck("evidence_mesh", "no evidence_meshes declared", plan.required_checks.evidence_mesh))
+        return
+    for value in plan.evidence_meshes:
+        path = _resolve_path(base_dir, value)
+        checked_inputs.append({"check": "evidence_mesh", "path": str(path)})
+        try:
+            report = check_evidence_mesh(path)
+        except Exception as exc:
+            findings.append(_finding("error", "evidence_mesh_check_failed", "evidence mesh check failed", "evidence_mesh", str(path), {"error": str(exc)}))
+            continue
+        _report_status_findings(report.to_dict(), "evidence_mesh", findings)
+
+
 def _run_hierarchy_closure_checks(
     plan: ProjectClosurePlanSpec,
     base_dir: Path,
@@ -375,6 +400,30 @@ def _report_status_findings(report: dict[str, Any], source: str, findings: list[
                 dict(item.get("details", {})) if isinstance(item.get("details"), dict) else item,
             )
         )
+    for key, default_severity in (
+        ("blocking_findings", "error"),
+        ("review_findings", "warning"),
+        ("optional_findings", "info"),
+    ):
+        items = report.get(key)
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            details = dict(item.get("details", {})) if isinstance(item.get("details"), dict) else {}
+            if item.get("source"):
+                details["inner_source"] = item["source"]
+            findings.append(
+                _finding(
+                    str(item.get("severity") or default_severity),
+                    str(item.get("type", f"{source}_finding")),
+                    str(item.get("message", "")),
+                    source,
+                    item.get("target"),
+                    details,
+                )
+            )
 
 
 def _gap_finding(severity: str, gap: dict[str, Any], source: str) -> ProjectClosureFinding:
@@ -421,7 +470,8 @@ def _safe_claim(plan: ProjectClosurePlanSpec, status: str) -> str:
 def _unsafe_claim_boundary(plan: ProjectClosurePlanSpec) -> str:
     return (
         f"Do not claim {plan.claim_scope} beyond the checked project audit, evidence bundles, "
-        "test contracts, validation reports, model-library records, and hierarchy closure inputs. "
+        "test contracts, validation reports, model-library records, evidence mesh reports, "
+        "and hierarchy closure inputs. "
         "Evidence maps are navigation only and do not prove validation."
     )
 
@@ -441,6 +491,8 @@ def _next_actions(
             actions.add("repair model-dataset validation before validation claims")
         elif item.source == "model_library":
             actions.add("repair model-library evidence before reuse claims")
+        elif item.source == "evidence_mesh":
+            actions.add("repair evidence mesh route receipts before broad closure claims")
         elif item.source == "hierarchy_closure":
             actions.add("rerun or refine hierarchy closure before localization claims")
         elif item.source == "project_audit":

@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.9.1"
+__version__ = "0.10.0"
 
 from physicsguard.core.signal_mapping import (
     BugFamilyFollowUp,
@@ -27,6 +27,7 @@ from physicsguard.core.test_file_contract import (
     check_test_file_project_index,
 )
 from physicsguard.core.dataset_identity import check_logical_dataset_record, check_test_file_relation_index
+from physicsguard.core.evidence_mesh import check_evidence_mesh
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.model_library import check_model_library_index
 from physicsguard.core.project_closure import run_project_closure
@@ -55,6 +56,7 @@ __all__ = [
     "check_model_library_index",
     "check_evidence_bundle",
     "check_evidence_gaps",
+    "check_evidence_mesh",
     "check_project_evidence_registry",
     "check_test_file_relation_index",
     "derive_bug_family_followups",

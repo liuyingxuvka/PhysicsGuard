@@ -32,6 +32,8 @@ class ProjectClosureInput:
     validation_ok: bool
     model_library_ok: bool
     hierarchy_closure_ok: bool
+    evidence_mesh_required: bool
+    evidence_mesh_ok: bool
 
 
 @dataclass(frozen=True)
@@ -48,6 +50,8 @@ class AuditReady:
     validation_ok: bool
     model_library_ok: bool
     hierarchy_closure_ok: bool
+    evidence_mesh_required: bool
+    evidence_mesh_ok: bool
 
 
 @dataclass(frozen=True)
@@ -60,6 +64,8 @@ class EvidenceReady:
     validation_ok: bool
     model_library_ok: bool
     hierarchy_closure_ok: bool
+    evidence_mesh_required: bool
+    evidence_mesh_ok: bool
 
 
 @dataclass(frozen=True)
@@ -93,6 +99,7 @@ class State:
     gap_checked: tuple[str, ...] = ()
     map_checked: tuple[str, ...] = ()
     downstream_checked: tuple[str, ...] = ()
+    evidence_mesh_checked: tuple[str, ...] = ()
     closure_passed: tuple[str, ...] = ()
     closure_partial: tuple[str, ...] = ()
     closure_blocked: tuple[str, ...] = ()
@@ -129,6 +136,8 @@ class RunProjectAudit:
                 input_obj.validation_ok,
                 input_obj.model_library_ok,
                 input_obj.hierarchy_closure_ok,
+                input_obj.evidence_mesh_required,
+                input_obj.evidence_mesh_ok,
             ),
             new_state=replace(state, audited=state.audited + (input_obj.case_id,)),
             label="project_audit_ready",
@@ -183,6 +192,8 @@ class RunEvidenceGate:
                 input_obj.validation_ok,
                 input_obj.model_library_ok,
                 input_obj.hierarchy_closure_ok,
+                input_obj.evidence_mesh_required,
+                input_obj.evidence_mesh_ok,
             ),
             new_state=replace(
                 state,
@@ -239,10 +250,24 @@ class RunDownstreamChecks:
                 label="hierarchy_closure_blocks",
             )
             return
+        if input_obj.evidence_mesh_required and not input_obj.evidence_mesh_ok:
+            yield FunctionResult(
+                output=ClosureBlocked(input_obj.case_id, "evidence_mesh_failed"),
+                new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
+                label="evidence_mesh_blocks",
+            )
+            return
+        evidence_mesh_checked = state.evidence_mesh_checked
+        if input_obj.evidence_mesh_required:
+            evidence_mesh_checked = evidence_mesh_checked + (input_obj.case_id,)
         yield FunctionResult(
             output=DownstreamReady(input_obj.case_id, input_obj.claim_scope, input_obj.review_gaps),
-            new_state=replace(state, downstream_checked=state.downstream_checked + (input_obj.case_id,)),
-            label="downstream_checks_ready",
+            new_state=replace(
+                state,
+                downstream_checked=state.downstream_checked + (input_obj.case_id,),
+                evidence_mesh_checked=evidence_mesh_checked,
+            ),
+            label="downstream_checks_ready" if not input_obj.evidence_mesh_required else "downstream_checks_with_evidence_mesh",
         )
 
 

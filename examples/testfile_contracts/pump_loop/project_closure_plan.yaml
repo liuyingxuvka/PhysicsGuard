@@ -15,6 +15,8 @@ validation_plans:
   - validation/clean_validation_plan.yaml
 model_library_indexes:
   - model_library.yaml
+evidence_meshes:
+  - evidence_mesh.yaml
 audit_pairs: []
 required_checks:
   project_audit: true
@@ -24,6 +26,7 @@ required_checks:
   test_contracts: true
   validation: true
   model_library: true
+  evidence_mesh: true
   hierarchy_closure: false
 allow_review_gaps: true
 allow_optional_gaps: true

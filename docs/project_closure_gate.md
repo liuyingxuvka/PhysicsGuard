@@ -33,6 +33,8 @@ validation_plans:
   - validation/example_validation_plan.yaml
 model_library_indexes:
   - model_library.yaml
+evidence_meshes:
+  - evidence_mesh.yaml
 audit_pairs: []
 required_checks:
   project_audit: true
@@ -43,6 +45,7 @@ required_checks:
   validation: true
   model_library: true
   hierarchy_closure: false
+  evidence_mesh: true
 allow_review_gaps: true
 allow_optional_gaps: true
 allow_skipped_required_checks: false
@@ -63,6 +66,10 @@ the same downstream evidence.
 - Evidence maps are navigation only. A successful map cannot make closure pass
   if gap-check, test contracts, validation, model-library, or required closure
   inputs fail.
+- Required evidence mesh reports must pass before broad claims can pass. The
+  mesh is the strong chain that proves parent models consumed child evidence,
+  required model obligations bind to code and tests, generated bad cases are
+  covered, behavior fields are closed, and the risk row consumed each route.
 - Skipped required checks block by default.
 
 ## Output

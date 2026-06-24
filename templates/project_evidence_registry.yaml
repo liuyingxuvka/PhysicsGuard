@@ -6,7 +6,7 @@
 registry_id: example_project_evidence
 project_id: example_project
 schema_version: "1.0"
-physicsguard_version: 0.9.1
+physicsguard_version: 0.10.0
 created_at: "2026-06-11"
 project_profile:
   project_name: Example project
@@ -120,7 +120,7 @@ context_cards:
     context_kind: model
     artifact_id: example_model
     created_at: "2026-06-11"
-    physicsguard_version: 0.9.1
+    physicsguard_version: 0.10.0
     intended_scope:
       project: example_project
       model: example_model

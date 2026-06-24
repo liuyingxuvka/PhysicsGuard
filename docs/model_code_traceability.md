@@ -29,6 +29,7 @@ Use the ledger before model-backed work, especially changes to:
 - assumptions and assumption reporting;
 - project adoption, model-understanding preflight, external-model intake, module/equation ledger, installed skill sync, or closure workflow;
 - test-file contract manifests, coverage policies, evidence-backed mappings, model bindings, contract diffing, or project index checks;
+- evidence mesh rows for parent-child model closure, model-test alignment, contract-exhaustion receipts, test mesh freshness, field lifecycle, or risk-ledger claims;
 - release confidence claims involving FlowGuard evidence.
 
 For a future AI agent, the default workflow is:
@@ -55,6 +56,7 @@ python .flowguard/run_physicsguard_core_checks.py
 python .flowguard/run_physicsguard_ai_workflow_checks.py
 python .flowguard/run_physicsguard_test_file_contract_checks.py
 python .flowguard/run_physicsguard_test_file_contract_development_checks.py
+python .flowguard/run_physicsguard_evidence_mesh_checks.py
 python scripts/check_model_code_ledger.py
 python scripts/check_module_equation_ledger.py --json
 python -m pytest
@@ -88,6 +90,7 @@ Treat ledger evidence as stale when:
 - assumption application or reporting changes;
 - new public behavior is added without a ledger entry;
 - project/preflight/intake/closure workflow behavior changes without updating the workflow ledger rows;
+- evidence mesh schema, checker, CLI, examples, or closure handoff changes without rerunning the mesh and closure model checks;
 - installed skill prompts or route folders change without a fresh skill-sync comparison;
 - peer-agent writes occur after validation.
 

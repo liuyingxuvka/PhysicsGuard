@@ -33,6 +33,7 @@ class ProjectClosureRequiredChecksSpec(BaseModel):
     validation: bool = False
     model_library: bool = False
     hierarchy_closure: bool = False
+    evidence_mesh: bool = False
 
 
 class ProjectClosureAuditPairSpec(BaseModel):
@@ -63,6 +64,7 @@ class ProjectClosurePlanSpec(BaseModel):
     test_contracts: list[str] = Field(default_factory=list)
     validation_plans: list[str] = Field(default_factory=list)
     model_library_indexes: list[str] = Field(default_factory=list)
+    evidence_meshes: list[str] = Field(default_factory=list)
     audit_pairs: list[ProjectClosureAuditPairSpec] = Field(default_factory=list)
     required_checks: ProjectClosureRequiredChecksSpec = Field(default_factory=ProjectClosureRequiredChecksSpec)
     allow_review_gaps: bool = True
@@ -80,6 +82,7 @@ class ProjectClosurePlanSpec(BaseModel):
         "test_contracts",
         "validation_plans",
         "model_library_indexes",
+        "evidence_meshes",
     )
     @classmethod
     def _list_values_not_empty(cls, values: list[str], info) -> list[str]:

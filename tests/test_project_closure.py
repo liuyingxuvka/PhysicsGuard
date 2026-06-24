@@ -23,6 +23,7 @@ def _write_plan(tmp_path: Path, **overrides) -> Path:
         "test_contracts": [],
         "validation_plans": [],
         "model_library_indexes": [],
+        "evidence_meshes": [],
         "audit_pairs": [],
         "required_checks": {
             "project_audit": True,
@@ -32,6 +33,7 @@ def _write_plan(tmp_path: Path, **overrides) -> Path:
             "test_contracts": False,
             "validation": False,
             "model_library": False,
+            "evidence_mesh": False,
             "hierarchy_closure": False,
         },
         "allow_review_gaps": True,
@@ -49,7 +51,8 @@ def test_clean_project_closure_passes() -> None:
 
     assert report.ok
     assert report.closure_status == "passed"
-    assert report.summary["checked_input_count"] >= 7
+    assert report.summary["checked_input_count"] >= 8
+    assert any(item["check"] == "evidence_mesh" for item in report.checked_inputs)
     assert ProjectClosureReportSpec.model_validate(report.to_dict()).closure_status == "passed"
 
 
@@ -105,6 +108,7 @@ def test_skipped_required_validation_blocks_closure(tmp_path: Path) -> None:
             "test_contracts": False,
             "validation": True,
             "model_library": False,
+            "evidence_mesh": False,
             "hierarchy_closure": False,
         },
     )
@@ -115,3 +119,59 @@ def test_skipped_required_validation_blocks_closure(tmp_path: Path) -> None:
     assert report.closure_status == "blocked"
     assert any(item["check"] == "validation" for item in report.skipped_checks)
     assert any(item["type"] == "project_closure_required_check_skipped" for item in report.blocking_findings)
+
+
+def test_skipped_required_evidence_mesh_blocks_closure(tmp_path: Path) -> None:
+    plan = _write_plan(
+        tmp_path,
+        evidence_meshes=[],
+        required_checks={
+            "project_audit": True,
+            "evidence_check": True,
+            "evidence_gap_check": True,
+            "evidence_map": True,
+            "test_contracts": False,
+            "validation": False,
+            "model_library": False,
+            "evidence_mesh": True,
+            "hierarchy_closure": False,
+        },
+    )
+
+    report = run_project_closure(plan)
+
+    assert not report.ok
+    assert any(item["check"] == "evidence_mesh" for item in report.skipped_checks)
+    assert any(item["type"] == "project_closure_required_check_skipped" for item in report.blocking_findings)
+
+
+def test_blocking_evidence_mesh_blocks_closure(tmp_path: Path) -> None:
+    mesh_data = yaml.safe_load((PUMP / "evidence_mesh.yaml").read_text(encoding="utf-8"))
+    mesh_data["risk_ledger"][0]["consumed_routes"] = ["risk_ledger"]
+    mesh = tmp_path / "blocking_mesh.yaml"
+    mesh.write_text(yaml.safe_dump(mesh_data, sort_keys=False), encoding="utf-8")
+    plan = _write_plan(
+        tmp_path,
+        evidence_meshes=[str(mesh)],
+        required_checks={
+            "project_audit": True,
+            "evidence_check": True,
+            "evidence_gap_check": True,
+            "evidence_map": True,
+            "test_contracts": False,
+            "validation": False,
+            "model_library": False,
+            "evidence_mesh": True,
+            "hierarchy_closure": False,
+        },
+    )
+
+    report = run_project_closure(plan)
+
+    assert not report.ok
+    assert report.closure_status == "blocked"
+    assert any(item["source"] == "evidence_mesh" for item in report.blocking_findings)
+    assert any(
+        item["type"] == "risk_ledger_missing_required_routes"
+        for item in report.blocking_findings
+    )

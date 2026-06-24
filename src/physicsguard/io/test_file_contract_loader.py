@@ -10,6 +10,7 @@ from pydantic import BaseModel, ValidationError
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.dataset_identity import LogicalDatasetRecordSpec, TestFileRelationIndexSpec
+from physicsguard.schema.evidence_mesh import EvidenceMeshSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
 from physicsguard.schema.model_library import ModelLibraryIndexSpec
 from physicsguard.schema.parameter_coverage import (
@@ -84,6 +85,10 @@ def load_project_closure_plan(path: str | Path) -> ProjectClosurePlanSpec:
     return load_spec(path, ProjectClosurePlanSpec)
 
 
+def load_evidence_mesh(path: str | Path) -> EvidenceMeshSpec:
+    return load_spec(path, EvidenceMeshSpec)
+
+
 def load_testbench_profile(path: str | Path) -> TestBenchProfileSpec:
     return load_spec(path, TestBenchProfileSpec)
 
@@ -124,6 +129,7 @@ __all__ = [
     "load_coverage_policy",
     "load_data_file_manifest",
     "load_extractor_profile",
+    "load_evidence_mesh",
     "load_logical_dataset_record",
     "load_model_binding",
     "load_model_library_index",

@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.9.0
+updated_for_version: 0.10.0
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -628,14 +628,16 @@ entries:
       - FinalizeClosure
     responsibility: >
       Aggregate current project audit, evidence registry, evidence gap, evidence
-      map, test-file contract, model-dataset validation, model-library, and
-      optional hierarchy closure evidence into the strongest safe project-level
-      claim. Keep evidence maps as navigation only and block broad claims when
-      required checks are skipped or blocking gaps remain.
+      map, test-file contract, model-dataset validation, model-library, evidence
+      mesh, and optional hierarchy closure evidence into the strongest safe
+      project-level claim. Keep evidence maps as navigation only and block broad
+      claims when required checks are skipped or blocking gaps remain.
     code_symbols:
       - src/physicsguard/schema/project_closure.py::ProjectClosurePlanSpec
       - src/physicsguard/schema/project_closure.py::ProjectClosureReportSpec
+      - src/physicsguard/schema/project_closure.py::ProjectClosureRequiredChecksSpec
       - src/physicsguard/core/project_closure.py::run_project_closure
+      - src/physicsguard/core/project_closure.py::_run_evidence_mesh_checks
       - src/physicsguard/io/test_file_contract_loader.py::load_project_closure_plan
       - src/physicsguard/cli.py::project_closure_command
     tests:
@@ -643,9 +645,11 @@ entries:
       - tests/test_test_file_contract_cli.py
     examples:
       - examples/testfile_contracts/pump_loop/project_closure_plan.yaml
+      - examples/testfile_contracts/pump_loop/evidence_mesh.yaml
       - templates/project_closure_plan.yaml
       - templates/project_closure_report.yaml
       - docs/project_closure_gate.md
+      - docs/evidence_mesh.md
       - docs/project_evidence_registry.md
       - skill/physicsguard-audit-closure/SKILL.md
     validation_commands:
@@ -654,11 +658,69 @@ entries:
       - command: python -m pytest tests/test_project_closure.py tests/test_test_file_contract_cli.py
         covers: Closure schema/core/CLI behavior over pump-loop examples and bad-case mutations.
       - command: python -m physicsguard.cli project closure examples/testfile_contracts/pump_loop/project_closure_plan.yaml --pretty
-        covers: End-to-end pump-loop project closure.
+        covers: End-to-end pump-loop project closure with required evidence mesh.
     boundaries:
       - Project closure is current-run claim-readiness evidence, not a permanent registry field.
       - Project evidence maps are navigation only and cannot prove validation by themselves.
+      - Required evidence mesh reports must pass before broad project closure claims can pass.
       - Blocking evidence gaps, failed required route checks, or skipped required checks block broad claims.
       - Review gaps downgrade or limit claims and must remain visible.
     stale_when:
-      - Closure plan/report schema, project audit policy, evidence gap severity, validation/model-library status semantics, or final claim wording changes.
+      - Closure plan/report schema, project audit policy, evidence mesh handoff, evidence gap severity, validation/model-library status semantics, or final claim wording changes.
+
+  - id: workflow.evidence_mesh
+    model_file: .flowguard/physicsguard_evidence_mesh_model.py
+    model_blocks:
+      - ReviewModelMesh
+      - ReviewModelTestAlignment
+      - ReviewContractExhaustion
+      - ReviewTestMesh
+      - ReviewFieldLifecycle
+      - GateRiskLedger
+    responsibility: >
+      Govern the strong evidence chain for broad PhysicsGuard claim readiness:
+      parent model meshes must consume current child evidence, required model
+      obligations must bind to owner code contracts and current tests, generated
+      bad cases must have oracles and downstream consumers, parent test suites
+      must consume current child suites, behavior-bearing fields must project
+      into downstream evidence, and the final risk ledger must consume all
+      required route receipts.
+    code_symbols:
+      - src/physicsguard/schema/evidence_mesh.py::EvidenceMeshSpec
+      - src/physicsguard/schema/evidence_mesh.py::ParentModelMeshSpec
+      - src/physicsguard/schema/evidence_mesh.py::ChildModelEvidenceSpec
+      - src/physicsguard/schema/evidence_mesh.py::ModelObligationSpec
+      - src/physicsguard/schema/evidence_mesh.py::CodeContractSpec
+      - src/physicsguard/schema/evidence_mesh.py::EvidenceMeshTestEvidenceSpec
+      - src/physicsguard/schema/evidence_mesh.py::ContractExhaustionCaseSpec
+      - src/physicsguard/schema/evidence_mesh.py::TestSuiteEvidenceSpec
+      - src/physicsguard/schema/evidence_mesh.py::FieldLifecycleRowSpec
+      - src/physicsguard/schema/evidence_mesh.py::RiskLedgerRowSpec
+      - src/physicsguard/schema/evidence_mesh.py::EvidenceMeshReportSpec
+      - src/physicsguard/core/evidence_mesh.py::check_evidence_mesh
+      - src/physicsguard/core/evidence_mesh.py::review_evidence_mesh
+      - src/physicsguard/io/test_file_contract_loader.py::load_evidence_mesh
+      - src/physicsguard/cli.py::evidence_mesh_check_command
+    tests:
+      - tests/test_evidence_mesh.py
+      - tests/test_project_closure.py
+      - tests/test_test_file_contract_cli.py
+    examples:
+      - examples/testfile_contracts/pump_loop/evidence_mesh.yaml
+      - examples/testfile_contracts/pump_loop/project_closure_plan.yaml
+      - docs/evidence_mesh.md
+    validation_commands:
+      - command: python .flowguard/run_physicsguard_evidence_mesh_checks.py
+        covers: Evidence mesh route gates for model mesh, alignment, generated cases, test mesh, field lifecycle, and risk ledger.
+      - command: python -m pytest tests/test_evidence_mesh.py tests/test_project_closure.py -q
+        covers: Schema/core/CLI evidence mesh behavior and project closure handoff.
+      - command: python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
+        covers: Pump-loop evidence mesh CLI smoke check.
+    boundaries:
+      - Evidence mesh closure is claim-readiness proof, not physical correctness proof.
+      - Child-local green evidence is insufficient unless the parent mesh consumes it.
+      - Progress-only, stale, skipped, failed, or missing result evidence cannot support broad claims.
+      - Generated bad-case rows need oracles and downstream route consumers.
+      - Behavior-bearing fields need projection and downstream evidence; old fields need disposition.
+    stale_when:
+      - Evidence mesh schema, checker semantics, CLI command name, pump-loop mesh fixture, project closure handoff, or final claim wording changes.

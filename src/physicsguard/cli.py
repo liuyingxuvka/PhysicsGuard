@@ -16,6 +16,7 @@ from physicsguard.core.dataset_identity import (
     check_logical_dataset_record,
     check_test_file_relation_index,
 )
+from physicsguard.core.evidence_mesh import check_evidence_mesh
 from physicsguard.core.diagnostics import DiagnosticReporter
 from physicsguard.core.evaluator import AuditEvaluator
 from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy, plan_from_report
@@ -333,6 +334,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     evidence_map.add_argument("registry", type=Path, help="path to ProjectEvidenceRegistry YAML")
     evidence_map.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    evidence_mesh = evidence_subparsers.add_parser(
+        "mesh-check",
+        help="check a FlowGuard-grade evidence mesh",
+    )
+    evidence_mesh.add_argument("mesh", type=Path, help="path to EvidenceMesh YAML")
+    evidence_mesh.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     return parser
 
 
@@ -554,6 +561,12 @@ def evidence_map_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
+def evidence_mesh_check_command(path: Path, pretty: bool = False) -> int:
+    report = check_evidence_mesh(path)
+    _print_json(report.to_dict(), pretty)
+    return 0 if report.ok else 1
+
+
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
     data = load_yaml_mapping(path)
     if "script" in data:
@@ -639,6 +652,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return evidence_bundle_check_command(args.registry, args.bundle_id, args.pretty)
             if args.evidence_command == "map":
                 return evidence_map_command(args.registry, args.pretty)
+            if args.evidence_command == "mesh-check":
+                return evidence_mesh_check_command(args.mesh, args.pretty)
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

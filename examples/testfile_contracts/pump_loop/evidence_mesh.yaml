@@ -1,0 +1,231 @@
+# PhysicsGuard evidence mesh
+# Purpose: FlowGuard-grade claim evidence for the pump-loop fixture.
+# Boundary: Low-fidelity fixture relation only; not a real pump model or commercial-tool equivalent.
+mesh_id: pump_loop_validation_evidence_mesh
+claim_scope: validation_ready
+required_routes:
+  - model_mesh
+  - model_test_alignment
+  - contract_exhaustion
+  - test_mesh
+  - field_lifecycle
+  - risk_ledger
+parent_models:
+  - model_id: pump_loop_contract_fixture_context
+    claim_boundary: validation_ready for the pump-loop fixture relation y = 2*x
+    required_child_evidence_ids:
+      - child_pump_signal_map_current
+      - child_pump_loop_context_current
+    consumed_child_evidence_ids:
+      - child_pump_signal_map_current
+      - child_pump_loop_context_current
+    partition_items:
+      - item_id: pump_signal_map_relation
+        item_type: function
+        owner_model_id: pump_signal_map
+        ownership: child
+      - item_id: pump_loop_mode_context
+        item_type: context
+        owner_model_id: pump_loop
+        ownership: child
+      - item_id: fixture_scope_boundary
+        item_type: limitation
+        owner_model_id: pump_loop_contract_fixture_context
+        ownership: parent
+    status: pass
+    freshness: current
+    result_ref: python -m physicsguard.cli evidence map examples/testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml --pretty
+child_model_evidence:
+  - evidence_id: child_pump_signal_map_current
+    model_id: pump_signal_map
+    parent_model_id: pump_loop_contract_fixture_context
+    risk_boundary: Linear fixture signal relation y = a*x + b
+    status: pass
+    freshness: current
+    inputs_accepted:
+      - pump_signal_map.x
+      - pump_signal_map.a
+    outputs_emitted:
+      - pump_signal_map.y
+    state_owned:
+      - pump_signal_map relation state
+    contracts_out:
+      - clean_flow_readback_to_model_y
+    result_ref: python -m physicsguard.cli validation run examples/testfile_contracts/pump_loop/validation/clean_validation_plan.yaml --pretty
+  - evidence_id: child_pump_loop_context_current
+    model_id: pump_loop
+    parent_model_id: pump_loop_contract_fixture_context
+    risk_boundary: Fixture top-level mode context
+    status: pass
+    freshness: current
+    inputs_accepted:
+      - field:valve_open
+    outputs_emitted:
+      - pump_loop.mode_context
+    state_owned:
+      - mode context
+    contracts_out:
+      - clean_valve_open_to_pump_loop_context
+    result_ref: python -m physicsguard.cli evidence map examples/testfile_contracts/pump_loop/evidence/project_evidence_registry.yaml --pretty
+model_obligations:
+  - obligation_id: obligation_cmd_speed_binding
+    description: Commanded speed field must bind to pump_signal_map.x before validation_ready can pass.
+    required: true
+    route_source: project_evidence
+    required_test_kinds:
+      - contract_check
+  - obligation_id: obligation_flow_readback_binding
+    description: Flow readback field must bind to pump_signal_map.y before validation_ready can pass.
+    required: true
+    route_source: project_evidence
+    required_test_kinds:
+      - contract_check
+  - obligation_id: obligation_validation_blocks_on_evidence_gap
+    description: Model-dataset validation must fail when blocking evidence gaps remain.
+    required: true
+    route_source: project_closure
+    required_test_kinds:
+      - regression
+code_contracts:
+  - contract_id: contract_test_file_contract_check
+    path: src/physicsguard/core/test_file_contract.py
+    symbol: check_test_file_contract
+    model_obligation_ids:
+      - obligation_cmd_speed_binding
+      - obligation_flow_readback_binding
+    status: pass
+    exact_boundary: true
+  - contract_id: contract_validation_evidence_gate
+    path: src/physicsguard/core/model_dataset_validation.py
+    symbol: validate_model_dataset
+    model_obligation_ids:
+      - obligation_validation_blocks_on_evidence_gap
+    status: pass
+    exact_boundary: true
+test_evidence:
+  - evidence_id: test_clean_contract_passes
+    test_name: tests/test_test_file_contract_core.py::test_clean_contract_passes_with_evidence_backed_mappings
+    path: tests/test_test_file_contract_core.py
+    status: pass
+    freshness: current
+    scope: external
+    covers_obligation_ids:
+      - obligation_cmd_speed_binding
+      - obligation_flow_readback_binding
+    covers_code_contract_ids:
+      - contract_test_file_contract_check
+    result_ref: python -m pytest tests/test_test_file_contract_core.py -q
+  - evidence_id: test_validation_blocks_on_gap
+    test_name: tests/test_project_evidence_registry.py::test_blocking_evidence_gap_prevents_validation_pass
+    path: tests/test_project_evidence_registry.py
+    status: pass
+    freshness: current
+    scope: mixed
+    covers_obligation_ids:
+      - obligation_validation_blocks_on_evidence_gap
+    covers_code_contract_ids:
+      - contract_validation_evidence_gate
+    result_ref: python -m pytest tests/test_project_evidence_registry.py -q
+  - evidence_id: test_mapping_without_evidence_blocks
+    test_name: tests/test_test_file_contract_core.py::test_mapping_without_evidence_does_not_count_as_covered
+    path: tests/test_test_file_contract_core.py
+    status: pass
+    freshness: current
+    scope: external
+    covers_obligation_ids:
+      - obligation_cmd_speed_binding
+      - obligation_flow_readback_binding
+    covers_code_contract_ids:
+      - contract_test_file_contract_check
+    result_ref: python -m pytest tests/test_test_file_contract_core.py -q
+contract_cases:
+  - case_id: ce_missing_mapping_evidence
+    source_boundary: parameter coverage mapping edge evidence
+    generated: true
+    oracle: mapping edge without evidence must report mapping_edge_missing_evidence and not count as covered
+    owner_test_evidence_id: test_mapping_without_evidence_blocks
+    downstream_routes:
+      - model_test_alignment
+      - test_mesh
+      - risk_ledger
+    required: true
+  - case_id: ce_missing_validation_binding
+    source_boundary: project evidence binding expectation
+    generated: true
+    oracle: missing required validation output binding must block validation pass
+    owner_test_evidence_id: test_validation_blocks_on_gap
+    downstream_routes:
+      - model_test_alignment
+      - test_mesh
+      - risk_ledger
+    required: true
+test_suites:
+  - suite_id: parent_pump_loop_validation_mesh
+    suite_kind: parent
+    status: pass
+    freshness: current
+    child_suite_ids:
+      - child_test_file_contract_suite
+      - child_project_evidence_suite
+    consumed_child_suite_ids:
+      - child_test_file_contract_suite
+      - child_project_evidence_suite
+    required_cell_ids:
+      - ce_missing_mapping_evidence
+      - ce_missing_validation_binding
+    result_ref: python -m pytest tests/test_test_file_contract_core.py tests/test_project_evidence_registry.py -q
+  - suite_id: child_test_file_contract_suite
+    suite_kind: child
+    status: pass
+    freshness: current
+    result_ref: python -m pytest tests/test_test_file_contract_core.py -q
+  - suite_id: child_project_evidence_suite
+    suite_kind: child
+    status: pass
+    freshness: current
+    result_ref: python -m pytest tests/test_project_evidence_registry.py -q
+field_lifecycle:
+  - field_id: field:cmd_speed_rad_s
+    owner: clean_contract_artifact
+    lifecycle: active
+    behavior_bearing: true
+    projection_target: pump_signal_map.x
+    downstream_evidence_ids:
+      - test_clean_contract_passes
+  - field_id: field:flow_readback_kg_s
+    owner: clean_contract_artifact
+    lifecycle: active
+    behavior_bearing: true
+    projection_target: pump_signal_map.y
+    downstream_evidence_ids:
+      - test_clean_contract_passes
+  - field_id: field:time_s
+    owner: clean_contract_artifact
+    lifecycle: active
+    behavior_bearing: false
+    old_field_disposition: Exempt as sampling/index axis in the project evidence registry.
+risk_ledger:
+  - risk_id: risk_validation_ready_pump_loop
+    claim_scope: validation_ready
+    decision: pass
+    consumed_routes:
+      - model_mesh
+      - model_test_alignment
+      - contract_exhaustion
+      - test_mesh
+      - field_lifecycle
+      - risk_ledger
+    consumed_evidence_ids:
+      - child_pump_signal_map_current
+      - child_pump_loop_context_current
+      - test_clean_contract_passes
+      - test_validation_blocks_on_gap
+      - test_mapping_without_evidence_blocks
+      - ce_missing_mapping_evidence
+      - ce_missing_validation_binding
+    freshness: current
+    safe_claim: validation_ready for the pump-loop fixture inside the declared evidence mesh.
+    unsafe_claim_boundary: Do not claim real pump validity, high-fidelity physics, or commercial-tool equivalence.
+metadata:
+  fixture: pump_loop
+  evidence_mesh_version: "1.0"

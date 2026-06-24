@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.10.0 - 2026-06-24
+
+FlowGuard-grade evidence mesh release.
+
+- Added first-class evidence mesh schemas, review logic, YAML loading, public API export, and `physicsguard evidence mesh-check` CLI support.
+- Added parent-child model mesh, model-code-test alignment, generated bad-case coverage, test mesh freshness, field lifecycle, and risk-ledger gates before broad claim readiness can pass.
+- Extended project closure plans so required evidence meshes are consumed and their concrete blocking findings flow into closure reports.
+- Added pump-loop evidence mesh examples, templates, docs, tests, FlowGuard route models, model-code ledger coverage, and release validation surfaces for the new claim chain.
+
 ## v0.9.1 - 2026-06-20
 
 Windows fixture checkout hardening.

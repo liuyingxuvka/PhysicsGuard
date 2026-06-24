@@ -6,7 +6,7 @@
 registry_id: pump_loop_fixture_evidence
 project_id: pump_loop_fixture_project
 schema_version: "1.0"
-physicsguard_version: 0.9.1
+physicsguard_version: 0.10.0
 created_at: "2026-06-11"
 project_profile:
   project_name: Pump loop fixture project
@@ -77,7 +77,7 @@ artifacts:
     path: ../model/pump_loop_hierarchy.yaml
     registered_at: "2026-06-11"
     status: active
-    physicsguard_version: 0.9.1
+    physicsguard_version: 0.10.0
     applies_to:
       project: pump_loop_fixture_project
       model: pump_loop_contract_fixture
@@ -256,7 +256,7 @@ context_cards:
     context_kind: model
     artifact_id: pump_loop_model_artifact
     created_at: "2026-06-11"
-    physicsguard_version: 0.9.1
+    physicsguard_version: 0.10.0
     intended_scope:
       project: pump_loop_fixture_project
       testbench: pump_loop_bench_v1
