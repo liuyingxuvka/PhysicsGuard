@@ -1,6 +1,8 @@
 # PhysicsGuard evidence mesh
-# Purpose: FlowGuard-grade claim evidence for the pump-loop fixture.
-# Boundary: Low-fidelity fixture relation only; not a real pump model or commercial-tool equivalent.
+# Purpose: pump loop validation evidence mesh.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 mesh_id: pump_loop_validation_evidence_mesh
 claim_scope: validation_ready
 required_routes:

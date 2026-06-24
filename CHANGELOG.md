@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.10.1 - 2026-06-24
+
+Evidence mesh release hardening.
+
+- Added portable YAML header recognition for evidence mesh artifacts.
+- Regenerated the pump-loop evidence mesh example header so committed example YAML files pass the project portability gate.
+
 ## v0.10.0 - 2026-06-24
 
 FlowGuard-grade evidence mesh release.

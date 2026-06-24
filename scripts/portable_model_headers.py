@@ -35,6 +35,8 @@ def tracked_example_yaml_files(root: Path) -> list[Path]:
 
 
 def artifact_kind(data: dict[str, Any]) -> str:
+    if "mesh_id" in data and "required_routes" in data and "risk_ledger" in data:
+        return "evidence mesh"
     if "closure_id" in data and "claim_scope" in data:
         return "project closure plan"
     if "registry_id" in data and "project_profile" in data and "artifacts" in data:
@@ -78,7 +80,7 @@ def purpose_for(path: Path, data: dict[str, Any]) -> str:
     description = data.get("description")
     if isinstance(description, str) and description.strip():
         return _sentence(description)
-    for key in ("audit_name", "observation_name", "system_name", "closure_id"):
+    for key in ("audit_name", "observation_name", "system_name", "closure_id", "mesh_id"):
         value = data.get(key)
         if isinstance(value, str) and value.strip():
             return _sentence(value.replace("_", " "))
@@ -92,6 +94,8 @@ def purpose_for(path: Path, data: dict[str, Any]) -> str:
 
 def use_hint(path: Path, data: dict[str, Any]) -> str:
     rel = path.as_posix()
+    if "mesh_id" in data and "required_routes" in data and "risk_ledger" in data:
+        return f"python -m physicsguard.cli evidence mesh-check {rel} --pretty"
     if "closure_id" in data and "claim_scope" in data:
         return f"python -m physicsguard.cli project closure {rel} --pretty"
     if "registry_id" in data and "project_profile" in data and "artifacts" in data:
