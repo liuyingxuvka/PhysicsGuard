@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.10.2 - 2026-06-27
+
+- Added SkillGuard runtime-contract governance for the installed PhysicsGuard Codex skill materials.
+- Synchronized installed skill copies with the canonical local source repository and local git evidence.
+- Recorded release-scope validation so route selection, evidence gates, quality floors, and closure boundaries remain visible before completion claims.
+
 ## v0.10.1 - 2026-06-24
 
 Evidence mesh release hardening.
