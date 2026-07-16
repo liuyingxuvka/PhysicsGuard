@@ -30,3 +30,4 @@ extractor:
 field_signature_hash: replace_with_generated_hash
 metadata:
   generated_by: script
+  adequacy_boundary: current row and field counts are authoritative inputs to downstream quantitative coverage checks

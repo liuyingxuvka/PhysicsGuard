@@ -1,0 +1,95 @@
+{
+  "schema_version": "physicsguard.family_baseline_contract.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-library",
+  "native_owner_id": "physicsguard.model-library",
+  "native_route_id": "route:physicsguard-model-library:reuse",
+  "prevented_failure_purpose": "Prevent reuse of a PhysicsGuard model asset unless its profile, testbench, compatibility evidence, gaps, validation receipt, and bounded reuse scope are current for the requested project.",
+  "physical_or_evidence_boundary": [
+    {
+      "boundary_id": "boundary:physicsguard-model-library:asset-catalog",
+      "description": "Current model asset and profile inventory",
+      "authority_source": "PhysicsGuard model library index",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-model-library:target-testbench",
+      "description": "Current target model/testbench/interface identity",
+      "authority_source": "target project evidence registry",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-model-library:compatibility-evidence",
+      "description": "Current compatibility, validation, and known-limit receipts",
+      "authority_source": "library validation records",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-model-library:reuse-request",
+      "description": "Requested reuse scope",
+      "authority_source": "target-owned reuse request",
+      "required": true
+    }
+  ],
+  "prevented_failure_classes": [
+    {
+      "failure_id": "failure:physicsguard-model-library:library-inventory-incomplete",
+      "title": "Candidate is not proven against library inventory is incomplete",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: selected assets, profiles, or testbenches are absent from the current inventory",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-model-library:compatibility-not-proven",
+      "title": "Candidate is not proven against compatibility is not proven",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the selected asset and target testbench/model interfaces are incompatible or unevaluated",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-model-library:validation-or-gap-stale",
+      "title": "Candidate is not proven against validation or gap evidence is stale",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the validation receipt is stale, missing, or unresolved gaps are hidden",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-model-library:reuse-scope-overreach",
+      "title": "Candidate is not proven against reuse scope is overreached",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the requested reuse exceeds the validated compatibility boundary",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    }
+  ],
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "authoring_order": [
+    "freeze_prevented_failure_contract",
+    "build_candidate",
+    "prove_known_good",
+    "prove_every_known_bad",
+    "issue_native_receipt"
+  ],
+  "candidate_requires_contract_fingerprint": true,
+  "candidate_admission": {
+    "artifact_ref": "guard-model/candidate.json",
+    "schema_version": "physicsguard.family_baseline_candidate.v1",
+    "fingerprint_algorithm": "sha256-canonical-json-uppercase-v1",
+    "required_event_order": [
+      "purpose_contract_frozen",
+      "candidate_built"
+    ],
+    "failure_codes": [
+      "candidate_artifact_missing",
+      "candidate_contract_fingerprint_mismatch",
+      "candidate_built_before_purpose_or_event_chain_broken"
+    ]
+  }
+}

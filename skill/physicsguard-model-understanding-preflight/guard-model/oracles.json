@@ -1,0 +1,72 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-understanding-preflight",
+  "required_obligation_ids": [
+    "visible_symptom",
+    "physical_boundary",
+    "subsystem_inventory",
+    "signal_inventory",
+    "parameter_inventory",
+    "assumption_inventory",
+    "access_gaps"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-model-understanding-preflight:visible-symptom",
+      "obligation_id": "visible_symptom",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:symptom-or-boundary-unclear",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'visible_symptom' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-understanding-preflight:physical-boundary",
+      "obligation_id": "physical_boundary",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:symptom-or-boundary-unclear",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'physical_boundary' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-understanding-preflight:subsystem-inventory",
+      "obligation_id": "subsystem_inventory",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:required-inventory-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'subsystem_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-understanding-preflight:signal-inventory",
+      "obligation_id": "signal_inventory",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:required-inventory-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'signal_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-understanding-preflight:parameter-inventory",
+      "obligation_id": "parameter_inventory",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:required-inventory-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'parameter_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-understanding-preflight:assumption-inventory",
+      "obligation_id": "assumption_inventory",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:assumption-hidden",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'assumption_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-understanding-preflight:access-gaps",
+      "obligation_id": "access_gaps",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:access-gap-suppressed",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'access_gaps' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-signal-mapping-review",
+  "cases": [
+    {
+      "case_id": "known-bad:review-confidence-unresolved",
+      "failure_id": "failure:physicsguard-signal-mapping-review:review-confidence-unresolved",
+      "trigger_obligation_id": "confidence_review",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:revision-or-time-stale",
+      "failure_id": "failure:physicsguard-signal-mapping-review:revision-or-time-stale",
+      "trigger_obligation_id": "revision_evidence",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:signal-target-mismatch",
+      "failure_id": "failure:physicsguard-signal-mapping-review:signal-target-mismatch",
+      "trigger_obligation_id": "governed_mapping_inventory",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:unit-conversion-invalid",
+      "failure_id": "failure:physicsguard-signal-mapping-review:unit-conversion-invalid",
+      "trigger_obligation_id": "unit_evidence",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    }
+  ]
+}

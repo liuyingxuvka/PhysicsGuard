@@ -1,0 +1,3494 @@
+{
+  "check_declarations_hash": "0C35869DFAA01277EB41130929931EA517DCEEEE82A3BED6B4BEE0A771DF387C",
+  "checks": [
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-ai-debugging"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:ai-debugging",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:ai-debugging"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:d68b44073804ddc5",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:3040211cbe20093c",
+        "component:runtime_source:31f699221ad6195f",
+        "component:runtime_source:a767dc64a9a9ad1e"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-ai-debugging.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-ai-debugging/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:805488311e6e605034c278c4f3017366d5ee297f8f1065340bfc1bb9b51d697d",
+      "owner_input_projection_hash": "sha256:8e3bcf129ec927c2aae0aa99d52fa9f37b6519e0b5715a03b641224751ed3d9c",
+      "projection_declaration_hash": "sha256:d3104d87364739c86b70a98383bce654de6e244cca006419e88b7677ae28937d",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:ai-debugging",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-audit-closure"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:audit-closure",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:audit-closure"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:d0387c79899fd7c9",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:842a35942105008f",
+        "component:runtime_source:17dc7a9c5729df38",
+        "component:runtime_source:a767dc64a9a9ad1e"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-audit-closure.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-audit-closure/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:52e3158248d2321b7bf25f8b81741a49ac94811822e95984377d97a5ddba4e92",
+      "owner_input_projection_hash": "sha256:7b71b0a921fc6e0bf0586e83a2778c89b4f742ccad4a20729e88b351a1f174cf",
+      "projection_declaration_hash": "sha256:56c09e8dadb71e627e6d5543364f5f2e49107d0c168daa2b98b7b1c3b7527f83",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:audit-closure",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-candidate-model-blueprint"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:candidate-model-blueprint",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:candidate-model-blueprint"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:a9385a587fa37462",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:f032af894b8b5f0a",
+        "component:runtime_source:5a84ea800a9044ae",
+        "component:runtime_source:a767dc64a9a9ad1e"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-candidate-model-blueprint.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:2940a31e61c73acc6bc7cdc9c3dcae695c23eb845ed7e1a1289604b44b258577",
+      "owner_input_projection_hash": "sha256:f401fa3971515eca25e51bee89dd7f897fbb11091ba13091a72e336ef4e75bea",
+      "projection_declaration_hash": "sha256:960a3b788bdfba35274037e2c9a1237e4197aabcc34b22cfd2149c649e3bdb1a",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:candidate-model-blueprint",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-model-dataset-validation"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:model-dataset-validation",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:model-dataset-validation"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:102e3ac431b6089e",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:9ed262eb848378cf",
+        "component:runtime_source:a767dc64a9a9ad1e",
+        "component:runtime_source:fdfcd0335aa1280a"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-model-dataset-validation.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-dataset-validation/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:9c88edf56ea278f0caf7031a4c20f6c067e95b2117d2a845642dcdcc91536251",
+      "owner_input_projection_hash": "sha256:825f555556cc5bbf5c8df005d19f3da3fd3aad43ef73e4e70141dba434582ae9",
+      "projection_declaration_hash": "sha256:56aec176fe10fe7a84227599e48c57ca8873aa29d2a67d2b1242aa80ba232c7d",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-dataset-validation",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-model-library"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:model-library",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:model-library"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:edc4ce50152d320d",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:2cdecf8bcd02940d",
+        "component:runtime_source:62003d40d834d369",
+        "component:runtime_source:a767dc64a9a9ad1e"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-model-library.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-library/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:fff88dc3be13bc493e82ee6d1609a8f8906d729b4f7152ac88320241623a5b5e",
+      "owner_input_projection_hash": "sha256:1f8f9e0b4fc87cbcb834f7277e695a199af15210e33e4acc7ed3a0b86f34f9e4",
+      "projection_declaration_hash": "sha256:9947c913866b0ad00540c238896b065e22352a6fb6721c639a13762720161d41",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-library",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-model-understanding-preflight"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:model-understanding-preflight",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:model-understanding-preflight"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:df78e33ddffe334d",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:d894482844d19c23",
+        "component:runtime_source:2ea70c470b798429",
+        "component:runtime_source:a767dc64a9a9ad1e"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-model-understanding-preflight.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-model-understanding-preflight/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:df271822362243ff1807dc5a9554d7f0615997c5980e9e48e80dbdd2d1151172",
+      "owner_input_projection_hash": "sha256:ac9cdf19974947617aadf83cba94dbf00b942010e53087414e6487e1636722d3",
+      "projection_declaration_hash": "sha256:50390f93ebbb364638f3feaab7544ab923f3e94cab91798eac7cc1617c7d3560",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-understanding-preflight",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-project-adoption"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:project-adoption",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:project-adoption"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:fcbc1863457c5061",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:34e1db5614708853",
+        "component:runtime_source:a767dc64a9a9ad1e",
+        "component:runtime_source:c67f64ae6c864078"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-project-adoption.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-adoption/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:da2e483d53c88b0e82771567943de7104bb1a3de0ccce7f2e521fd7b0dac360a",
+      "owner_input_projection_hash": "sha256:cc9c1e58db366ae699ad235c2c57dfae83b56474b3be57da5b124457bd013135",
+      "projection_declaration_hash": "sha256:8b92289e97c41434ce769d8c88e930ee2b1c067c3688285b8fc84237881ec206",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:project-adoption",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-project-evidence-registry"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:project-evidence-registry",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:project-evidence-registry"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:9cc2b67c0aba5ba2",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:85deb23213a45863",
+        "component:runtime_source:a767dc64a9a9ad1e",
+        "component:runtime_source:d758f03bdfe153c0"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-project-evidence-registry.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:400408e3ae91c5580961fed3f20065e0929b4fdb6f92bb30eafc2318085e49f9",
+      "owner_input_projection_hash": "sha256:712cbe66ae19c551a42d19157438a15631aef378fed1caea63cdcb1cce7ea6a2",
+      "projection_declaration_hash": "sha256:5ffae483d3f7c10d4c48d344c50ba5d33a37940e2a4b7d505bfe157c30a8b883",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:project-evidence-registry",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-signal-mapping-review"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:signal-mapping-review",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:signal-mapping-review"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:1daf5e034bb874a7",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:c5cf0978531b84e4",
+        "component:runtime_source:026bd792ddebe937",
+        "component:runtime_source:a767dc64a9a9ad1e"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-signal-mapping-review.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-signal-mapping-review/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:e623bc45f27c08ee3908b57b4cce3685c265a91c093ecb6e3a883e7df0d62979",
+      "owner_input_projection_hash": "sha256:d09c60a32c8d4982da68ff7ea81fcc7bd6bc91d0bf73e062023cd297ec74418d",
+      "projection_declaration_hash": "sha256:250bc9ba7dffc0c1340b70f3dbdebb3c73e52e4012f16c5a8a77004aeb119834",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:signal-mapping-review",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "scripts/verify_physicsguard_suite_parent.py",
+        "verify-child",
+        "--repository-root",
+        "{{repository_root}}",
+        "--skill-id",
+        "physicsguard-test-file-contract-review"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:consume:test-file-contract-review",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:consume:test-file-contract-review"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:contract_schema:e05fd2f188398e6d",
+        "component:documentation_model:175a2f151eff7ee6",
+        "component:documentation_model:2c47d32c547e5550",
+        "component:documentation_model:aebd4146ef9e38d4",
+        "component:runtime_source:9dfb5b7bd6ede5e3",
+        "component:runtime_source:a767dc64a9a9ad1e"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/retirement-receipts/physicsguard-test-file-contract-review.json"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_guard_simulation_readiness.py"
+        },
+        {
+          "kind": "path",
+          "path": "scripts/verify_physicsguard_suite_parent.py"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/.skillguard/check-manifest.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/.skillguard/compiled-contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:91186fc11a51a00b87705fbccce41b21aaa6f5fb956832cfe6dc920feabe0026",
+      "owner_input_projection_hash": "sha256:ace0ba589edac8252f472025a16f6e8f6aad3900503a1ee3838036f5cb85e5f6",
+      "projection_declaration_hash": "sha256:09d0c1bccbedcfbce450ed2965dc913269df1a0fddb193ee62b5871ac7cf2233",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:test-file-contract-review",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        ".flowguard/check_physicsguard_skill_suite_mesh.py"
+      ],
+      "check_id": "check:physicsguard-skill-suite-parent:reattach-model-mesh",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-skill-suite-parent:reattach-model-mesh"
+      ],
+      "cwd_token": "repository_root",
+      "depends_on_check_ids": [
+        "check:physicsguard-skill-suite-parent:consume:ai-debugging",
+        "check:physicsguard-skill-suite-parent:consume:audit-closure",
+        "check:physicsguard-skill-suite-parent:consume:candidate-model-blueprint",
+        "check:physicsguard-skill-suite-parent:consume:model-dataset-validation",
+        "check:physicsguard-skill-suite-parent:consume:model-library",
+        "check:physicsguard-skill-suite-parent:consume:model-understanding-preflight",
+        "check:physicsguard-skill-suite-parent:consume:project-adoption",
+        "check:physicsguard-skill-suite-parent:consume:project-evidence-registry",
+        "check:physicsguard-skill-suite-parent:consume:signal-mapping-review",
+        "check:physicsguard-skill-suite-parent:consume:test-file-contract-review"
+      ],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-skill-suite-parent:model-mesh",
+      "execution_owner_id": "owner:physicsguard-skill-suite-parent:reattach-model-mesh",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:documentation_model:1b9064e5a4dec093",
+        "component:documentation_model:2c47d32c547e5550"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".flowguard/check_physicsguard_skill_suite_mesh.py"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_skill_suite_mesh.json"
+        },
+        {
+          "kind": "path",
+          "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:daf61395c07602d084f63664075fcf009dfba044d2dd55a13c72b61508d7d5e2",
+      "owner_input_projection_hash": "sha256:9baa92d03963f54617ac796ba1a9d1d582a264e3a5505e1fa505a6f85e337fa8",
+      "projection_declaration_hash": "sha256:6767a5d264b8933f0cdb8ebd7d21a1122cd83b439fb60f6caf4a294714a5b923",
+      "semantic_check_id": "semantic:physicsguard-skill-suite-parent:reattach-model-mesh",
+      "timeout_seconds": 120
+    }
+  ],
+  "claim_boundary": "This manifest binds checks to exact model obligations. Passing checks do not by themselves prove target execution, user-visible quality, full closure, installation, or publication.",
+  "compiler_version": "skillguard.contract_compiler.v2",
+  "content_impact_plan": {
+    "all_owner_component_ids": [
+      "component:documentation_model:2c47d32c547e5550"
+    ],
+    "check_projections": [
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:ai-debugging",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:ai-debugging"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
+        "projection_declaration_hash": "sha256:d3104d87364739c86b70a98383bce654de6e244cca006419e88b7677ae28937d",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:ai-debugging"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:audit-closure",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:audit-closure"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
+        "projection_declaration_hash": "sha256:56c09e8dadb71e627e6d5543364f5f2e49107d0c168daa2b98b7b1c3b7527f83",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:audit-closure"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:candidate-model-blueprint",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:candidate-model-blueprint"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
+        "projection_declaration_hash": "sha256:960a3b788bdfba35274037e2c9a1237e4197aabcc34b22cfd2149c649e3bdb1a",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:candidate-model-blueprint"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:model-dataset-validation",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:model-dataset-validation"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
+        "projection_declaration_hash": "sha256:56aec176fe10fe7a84227599e48c57ca8873aa29d2a67d2b1242aa80ba232c7d",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-dataset-validation"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:model-library",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:model-library"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
+        "projection_declaration_hash": "sha256:9947c913866b0ad00540c238896b065e22352a6fb6721c639a13762720161d41",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-library"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:model-understanding-preflight",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:model-understanding-preflight"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
+        "projection_declaration_hash": "sha256:50390f93ebbb364638f3feaab7544ab923f3e94cab91798eac7cc1617c7d3560",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-understanding-preflight"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:project-adoption",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:project-adoption"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
+        "projection_declaration_hash": "sha256:8b92289e97c41434ce769d8c88e930ee2b1c067c3688285b8fc84237881ec206",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:project-adoption"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:project-evidence-registry",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:project-evidence-registry"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
+        "projection_declaration_hash": "sha256:5ffae483d3f7c10d4c48d344c50ba5d33a37940e2a4b7d505bfe157c30a8b883",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:project-evidence-registry"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:signal-mapping-review",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:signal-mapping-review"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
+        "projection_declaration_hash": "sha256:250bc9ba7dffc0c1340b70f3dbdebb3c73e52e4012f16c5a8a77004aeb119834",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:signal-mapping-review"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:consume:test-file-contract-review",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:consume:test-file-contract-review"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review",
+        "projection_declaration_hash": "sha256:09d0c1bccbedcfbce450ed2965dc913269df1a0fddb193ee62b5871ac7cf2233",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:test-file-contract-review"
+      },
+      {
+        "check_id": "check:physicsguard-skill-suite-parent:reattach-model-mesh",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-skill-suite-parent:reattach-model-mesh"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:reattach-model-mesh",
+        "projection_declaration_hash": "sha256:6767a5d264b8933f0cdb8ebd7d21a1122cd83b439fb60f6caf4a294714a5b923",
+        "semantic_check_id": "semantic:physicsguard-skill-suite-parent:reattach-model-mesh"
+      }
+    ],
+    "components": [
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:f4787e78796fa8f867e30098f975918690256b9cdda9dc9e2fabaef8a94f7a68",
+        "component_id": "component:contract_schema:cb162929f44d5a0f",
+        "consumer_ids": [
+          "projection:contract-compile",
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          ".flowguard/skillguard-parent/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:3a2ab5cccd88c7eabcb7b3f6574dfa3aa5cd74c3d70be023a22662da07556925",
+        "component_id": "component:contract_schema:b4e0b25e4be19d4e",
+        "consumer_ids": [
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          ".flowguard/skillguard-parent/test-mesh.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:9421694c51e7f6c6645f5c548b19180630af9928e9b026ec5173b5150ff0cd90",
+        "component_id": "component:contract_schema:d68b44073804ddc5",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-ai-debugging/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:18a328017b362eed79efefca3d1c152136e12fda4b87651d419298405f344e4e",
+        "component_id": "component:contract_schema:d0387c79899fd7c9",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-audit-closure/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:84192c82e2d72c7353795a058c78d1f835d0c2b1bf5aeadad3577c388a47d6a7",
+        "component_id": "component:contract_schema:a9385a587fa37462",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-candidate-model-blueprint/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:e9b6ed656eb749192d6213c1aed90594e21b90664c34bc33903f93e0659f357c",
+        "component_id": "component:contract_schema:102e3ac431b6089e",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-model-dataset-validation/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:1400fc305d94d01def302851af98a4d5acf17408cc34eb3e02e9c0870ecd43d2",
+        "component_id": "component:contract_schema:edc4ce50152d320d",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-model-library/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:87221f21b127bae2282dd4a3cfe09e85855c1bee002be7c3c9faac6112fcbc15",
+        "component_id": "component:contract_schema:df78e33ddffe334d",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-model-understanding-preflight/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:9636c92af3caf3dd651a10c6cd956ed60528cabecdf1d8662b602f060107140b",
+        "component_id": "component:contract_schema:fcbc1863457c5061",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-project-adoption/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:d75a560b7dc12e8426117bd32cccacb7de7f6ef72c0b85154fe999221b404c7d",
+        "component_id": "component:contract_schema:9cc2b67c0aba5ba2",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-project-evidence-registry/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:72274be4150958bda4d58c06b1bf47e99f15ebdd64bd92c68807bf3215ac4662",
+        "component_id": "component:contract_schema:1daf5e034bb874a7",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-signal-mapping-review/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:dc4520c9b615aaef86e8b1f462687df54cd4a5ba94206eac41211f7cbe26812c",
+        "component_id": "component:contract_schema:e05fd2f188398e6d",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-test-file-contract-review/.skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:d63460e7c1d20449f8bd3163690aaa52fb5556810fe6d04b10c0cdeb3d9773bd",
+        "component_id": "component:documentation_model:c5368255b51e3e7d",
+        "consumer_ids": [
+          "projection:contract-compile",
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          ".flowguard/skillguard-parent/.skillguard/contract_model.py"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:a7e0fce105e8c35e054a613ef91f70316728062b00debc86b59f4553b9f8f50f",
+        "component_id": "component:documentation_model:3040211cbe20093c",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-ai-debugging.json",
+          "skill/physicsguard-ai-debugging/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:663abe20077dc7405593bbcfe55aabd1b47416f8df7ff1f498f08f8e3ba73487",
+        "component_id": "component:documentation_model:175a2f151eff7ee6",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/physicsguard_v1_retirement_inventory.json"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:40fa5d6dabeda8b60d850f246fedbee0f35075e4f09918195c052eac6f4788d6",
+        "component_id": "component:documentation_model:2c47d32c547e5550",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review",
+          "owner:physicsguard-skill-suite-parent:reattach-model-mesh"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/physicsguard_suite_parent_inventory.json"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:5573033f22e71aa634c0329088088bb52943ec2992e72a1b799158ddcd1cb12e",
+        "component_id": "component:documentation_model:842a35942105008f",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-audit-closure.json",
+          "skill/physicsguard-audit-closure/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:a8e4a3355d3eafbf7cc3f09622dea31c8f7e98bb85b2db1a5057b0a320bab60c",
+        "component_id": "component:documentation_model:f032af894b8b5f0a",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-candidate-model-blueprint.json",
+          "skill/physicsguard-candidate-model-blueprint/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:1a24fbc6a0359584ff1a6b96e28a17a1b30b95d8dfd690123e50b842746a22f8",
+        "component_id": "component:documentation_model:9ed262eb848378cf",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-model-dataset-validation.json",
+          "skill/physicsguard-model-dataset-validation/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:0bab6185d706ecb557f88b85073f974562e289878d80857fdbe5ce2bde5ed67d",
+        "component_id": "component:documentation_model:2cdecf8bcd02940d",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-model-library.json",
+          "skill/physicsguard-model-library/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:57e88919ee31b727de1ac4651cf1dd719c11002bf45f9b170f3c747985553223",
+        "component_id": "component:documentation_model:d894482844d19c23",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-model-understanding-preflight.json",
+          "skill/physicsguard-model-understanding-preflight/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:70877cc9a529561756b2ded7aba2b5880e494fb7cc43f54a2a7e423babe77b21",
+        "component_id": "component:documentation_model:34e1db5614708853",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-project-adoption.json",
+          "skill/physicsguard-project-adoption/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:120dea484424d8e34022178453b339889b7f78ae8db14916316545625cd86b7f",
+        "component_id": "component:documentation_model:85deb23213a45863",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-project-evidence-registry.json",
+          "skill/physicsguard-project-evidence-registry/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:69a3a02aa0257f95a575075287b23a63da9fb56927ea9e3aa870f2eeee7b4e7f",
+        "component_id": "component:documentation_model:c5cf0978531b84e4",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-signal-mapping-review.json",
+          "skill/physicsguard-signal-mapping-review/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:802d71470022cca870ce270626ba38a89f341eaff738fee63ab93296488a9d1b",
+        "component_id": "component:documentation_model:aebd4146ef9e38d4",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/retirement-receipts/physicsguard-test-file-contract-review.json",
+          "skill/physicsguard-test-file-contract-review/SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:e02e8f393273cf377eb81277a95e878041aaab1fc0b790c70888b3e6b8e09e14",
+        "component_id": "component:documentation_model:1b9064e5a4dec093",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:reattach-model-mesh"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          ".flowguard/check_physicsguard_skill_suite_mesh.py",
+          ".flowguard/physicsguard_skill_suite_mesh.json"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:c22b5c7798c29c61910c3e38d3b1cbf357eeef9a07515ce9075b9a0b36e3f434",
+        "component_id": "component:runtime_source:31f699221ad6195f",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-ai-debugging/guard-model/candidate.json",
+          "skill/physicsguard-ai-debugging/guard-model/contract.json",
+          "skill/physicsguard-ai-debugging/guard-model/known-bad.json",
+          "skill/physicsguard-ai-debugging/guard-model/known-good.json",
+          "skill/physicsguard-ai-debugging/guard-model/oracles.json",
+          "skill/physicsguard-ai-debugging/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:ac3a9a67d89c6a3de31241d42187d50d08ea362b433fe1d1bf26b2e2cf60744a",
+        "component_id": "component:runtime_source:a767dc64a9a9ad1e",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "scripts/verify_guard_simulation_readiness.py",
+          "scripts/verify_physicsguard_suite_parent.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:f94698c78c6200d3602e5b838f690b397066b9c6df00542f368b00239a861a8b",
+        "component_id": "component:runtime_source:17dc7a9c5729df38",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-audit-closure/guard-model/candidate.json",
+          "skill/physicsguard-audit-closure/guard-model/contract.json",
+          "skill/physicsguard-audit-closure/guard-model/known-bad.json",
+          "skill/physicsguard-audit-closure/guard-model/known-good.json",
+          "skill/physicsguard-audit-closure/guard-model/oracles.json",
+          "skill/physicsguard-audit-closure/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:0b032b3322e563d12b8a54eed745bcd48cc55993bf0e29bd6c040c129114abd1",
+        "component_id": "component:runtime_source:5a84ea800a9044ae",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-candidate-model-blueprint/guard-model/candidate.json",
+          "skill/physicsguard-candidate-model-blueprint/guard-model/contract.json",
+          "skill/physicsguard-candidate-model-blueprint/guard-model/known-bad.json",
+          "skill/physicsguard-candidate-model-blueprint/guard-model/known-good.json",
+          "skill/physicsguard-candidate-model-blueprint/guard-model/oracles.json",
+          "skill/physicsguard-candidate-model-blueprint/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:275e9805df332eb215d68f2ba145a8e5c20577e8cfd5c449a4f68401fea6f7b1",
+        "component_id": "component:runtime_source:fdfcd0335aa1280a",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-model-dataset-validation/guard-model/candidate.json",
+          "skill/physicsguard-model-dataset-validation/guard-model/contract.json",
+          "skill/physicsguard-model-dataset-validation/guard-model/known-bad.json",
+          "skill/physicsguard-model-dataset-validation/guard-model/known-good.json",
+          "skill/physicsguard-model-dataset-validation/guard-model/oracles.json",
+          "skill/physicsguard-model-dataset-validation/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:8457311a2c72e5a10435e1699d265f29a29c1d3c55586c90a6006e2d3a755e10",
+        "component_id": "component:runtime_source:62003d40d834d369",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-model-library/guard-model/candidate.json",
+          "skill/physicsguard-model-library/guard-model/contract.json",
+          "skill/physicsguard-model-library/guard-model/known-bad.json",
+          "skill/physicsguard-model-library/guard-model/known-good.json",
+          "skill/physicsguard-model-library/guard-model/oracles.json",
+          "skill/physicsguard-model-library/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:00f01697f5699ace81e3310037d2de2947cdebbb3f3c279a17396f9dd39da66e",
+        "component_id": "component:runtime_source:2ea70c470b798429",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-model-understanding-preflight/guard-model/candidate.json",
+          "skill/physicsguard-model-understanding-preflight/guard-model/contract.json",
+          "skill/physicsguard-model-understanding-preflight/guard-model/known-bad.json",
+          "skill/physicsguard-model-understanding-preflight/guard-model/known-good.json",
+          "skill/physicsguard-model-understanding-preflight/guard-model/oracles.json",
+          "skill/physicsguard-model-understanding-preflight/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:92d423001a11b8ae8df0b971297a434f12397d8ea571869e4a106a36c07c1e8e",
+        "component_id": "component:runtime_source:c67f64ae6c864078",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-project-adoption/guard-model/candidate.json",
+          "skill/physicsguard-project-adoption/guard-model/contract.json",
+          "skill/physicsguard-project-adoption/guard-model/known-bad.json",
+          "skill/physicsguard-project-adoption/guard-model/known-good.json",
+          "skill/physicsguard-project-adoption/guard-model/oracles.json",
+          "skill/physicsguard-project-adoption/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:f81d91a2f865ae7b7872a77b2374b00254371dea7bd0c08c3f8999d623a8ec56",
+        "component_id": "component:runtime_source:d758f03bdfe153c0",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-project-evidence-registry/guard-model/candidate.json",
+          "skill/physicsguard-project-evidence-registry/guard-model/contract.json",
+          "skill/physicsguard-project-evidence-registry/guard-model/known-bad.json",
+          "skill/physicsguard-project-evidence-registry/guard-model/known-good.json",
+          "skill/physicsguard-project-evidence-registry/guard-model/oracles.json",
+          "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:795ee87d63d03adb8ab57e8997aad41cc58b2bb208355e5f7af31d322aa22148",
+        "component_id": "component:runtime_source:026bd792ddebe937",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-signal-mapping-review/guard-model/candidate.json",
+          "skill/physicsguard-signal-mapping-review/guard-model/contract.json",
+          "skill/physicsguard-signal-mapping-review/guard-model/known-bad.json",
+          "skill/physicsguard-signal-mapping-review/guard-model/known-good.json",
+          "skill/physicsguard-signal-mapping-review/guard-model/oracles.json",
+          "skill/physicsguard-signal-mapping-review/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:4c1b489d77763af941d91632ee21a29eae8a49cde2bd742db734b86ce335f674",
+        "component_id": "component:runtime_source:9dfb5b7bd6ede5e3",
+        "consumer_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review"
+        ],
+        "install_disposition": "source_only",
+        "member_paths": [
+          "skill/physicsguard-test-file-contract-review/guard-model/candidate.json",
+          "skill/physicsguard-test-file-contract-review/guard-model/contract.json",
+          "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json",
+          "skill/physicsguard-test-file-contract-review/guard-model/known-good.json",
+          "skill/physicsguard-test-file-contract-review/guard-model/oracles.json",
+          "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      }
+    ],
+    "full_admission_reason_codes": [
+      "explicit_final_gate",
+      "explicit_release_gate",
+      "impact_policy_or_compiler_changed",
+      "shared_validation_runtime_changed",
+      "all_owner_component_changed"
+    ],
+    "health": {
+      "ambiguous_role_paths": [],
+      "dependency_parse_errors": [],
+      "duplicate_owner_ids": [],
+      "invalid_dependency_edges": [],
+      "owner_cycles": [],
+      "unmapped_paths": []
+    },
+    "impact_graph_hash": "sha256:7ebd6b7bd3d88482ecfdd89217d78d1723b7084a8d82b19f4e204d347613f245",
+    "inventory": [
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:8a7a821b84da1834f429fe910620c7454d3892dfc1284447366752245e9e3a9b",
+        "install_disposition": "source_only",
+        "path": ".flowguard/check_physicsguard_skill_suite_mesh.py",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:5865f9f77dab305f1a3b5b4434f0494b255826d39a37eb6e4bcc0bf9173530d3",
+        "install_disposition": "source_only",
+        "path": ".flowguard/physicsguard_skill_suite_mesh.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:4e21aa4f711fa2a9c79df7824f7989971ef344c2ce5c75128302afd85fce4e8e",
+        "install_disposition": "source_only",
+        "path": ".flowguard/physicsguard_suite_parent_inventory.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:2e30344f1d169cd25c8b8888c98cf0565933eda71f143a884cd0b38776ef18e8",
+        "install_disposition": "source_only",
+        "path": ".flowguard/physicsguard_v1_retirement_inventory.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:78a690d87555095dab88d081ca5a82d90ee419de26d13e301ce40e90881f8cfc",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-ai-debugging.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:cb699ec1aa4334c30fc65ce87480fc936536c6e660ad9bfaef759d9a1f0d7349",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-audit-closure.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:f812ad547ab61ec8e548b895812c1a5420265f4c59f2a83ef4c0c48d531656ba",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-candidate-model-blueprint.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:9018952b1d71cb5b570760197116178ca0a696bb7ef2ca5d5abc7cb4587c940c",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-model-dataset-validation.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:b2e6417d7521676cbf1b1afc8996b03ed3276dd63078ba2064b24f134d79002e",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-model-library.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:91e9e285f9a996b973203df5a54fc579d4092fa60d4e7b897a83dcba981a4b29",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-model-understanding-preflight.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:5f4972175ef4fe7a21adc282ddf2c541333ae453a0daa5efa2246b6719f38bdc",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-project-adoption.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:9a7359e1e32caf7b40fe8f1c227aa12f98dceeb84b77886bbf67a2ea0bdf75eb",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-project-evidence-registry.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:f9a501393ab95f7c257af131ec895580404d95bb06df48a55d3a6a6bd89415f7",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-signal-mapping-review.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:e96705e5f7f76e5b6c7d5e3ad1549af67678a4dc4ed53f9609d112c7b319e305",
+        "install_disposition": "source_only",
+        "path": ".flowguard/retirement-receipts/physicsguard-test-file-contract-review.json",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:42eb547e71fff6e6d5dee696680525846e0a9f47aab2abca3fe8f058923074eb",
+        "install_disposition": "copy",
+        "path": ".flowguard/skillguard-parent/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:37629bd66235b7e77f7cf5731dec9d68d3cb5d811fcdf29bcbe9ab8f6d08856b",
+        "install_disposition": "copy",
+        "path": ".flowguard/skillguard-parent/.skillguard/contract_model.py",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:c697f609328edbf11910a649675021fd5fa29b1a5226b19d0c19bbf96e4d1e05",
+        "install_disposition": "copy",
+        "path": ".flowguard/skillguard-parent/test-mesh.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:4b9f021752a7404308d8ec2108f6927a71a1fb81673b60791ea15b4025c05d2a",
+        "install_disposition": "source_only",
+        "path": "scripts/verify_guard_simulation_readiness.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:27adfb4f06e040ac62012cd6962fa209dae62dc993ea7de12922e02f2214069d",
+        "install_disposition": "source_only",
+        "path": "scripts/verify_physicsguard_suite_parent.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:d0014fd951a9b4963a75455bb6a0f28a66f4d6f7c74072ad7a240f4cae471d70",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:2e1c97ba46fbb57e79703f6530460476c60d298ebce042de96f319f6e9645f35",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:b411ec27707f601f7c22e484613aa1e49f06cec481a0edd4c72f55d7db6cd32e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:958ce9ed015605ec61f6020a643a6801bd2b1afd7b0989fc084380fd07904909",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:57b4f953594cdb438921726b5cd98df187fb730c98b2c35bcc30c85032f3ffb8",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:12df9c9a66c53428af775d7ed55a9f89ed52b5ae4dcd65e1b9154d0aae21d68d",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:e5e3f74db225977bea9e9ba67cb76cd36780e57c1a9ba9de6a674fee3da65ec1",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:34695a1b7fac309dab93328396a4d191ef903cfe9f8c990aa8111a2c70ae68ca",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:d76224de0105be49bd892b21bd44bf695680fc286e22c52460024965c9a1038b",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:8795f88cf76bddf4aa8335629c0e98c51b356cc61bdb14d38d97f4254a3d0e09",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:ebb12cdd86cafee6314a4937eb2dede23d91d9b352e1a75097f3c1a006545053",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:ba4d09bf3a928c06f3647f41b7e2898dd78b2a7d7eb13d024a43e7cf40bc16e5",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:98ec85a5cba8470f603d009a103814c5d0c5957502dcfdac01740061a7efc553",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:823818b424249cdc58c0165e0697c5cf4c568477d52b6ce8e145da58c7024b1d",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-audit-closure/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:eda4c04615eac9f23f824128487f2d38136c3b491f89dbb4df8cdc304e0120e8",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:04e51ce3e66fab368754d359e1aac364c3e7f9c3d15e617241cbadd7e04b3def",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:71616b0f809d63309cc1c814a93326973e9dc5404cede6727677c544406b7fef",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:9eb84166f6c1038c93aa5344683ca9da8b1b71b56aa8ef50b867a86c6e003126",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:1f8a07ce8b74f2763955649c8a61184a7e76158763c94223608196b97f0a0c7e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:5df13523153451b209b681433dfa239fef73ba38c88fc2110a4b026b1923c8e5",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:33a07e9698b3adce4322f2d8734965144aed0d3334a80b2d2257319255a8edb3",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-candidate-model-blueprint/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:cf7779ea006ba3fba9df3199fcfd9b74ca781e1e97fda3782c6ea458fe985392",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:a3c39f265d33e74cf3c92f565e835bfda233551a6736ae9e44417edc4e4bdff6",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:e18c3fb8ab45154f1b273c7e57b9e90d23f10d5eb72fdba0c92644ae86ffc61c",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:5c11657d1341e8d18d7215fb8d6b170f01c78a242f327a17f2d8771a4771ac42",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:6cc6c76de987035d9855c0425040f1fa37a6fd1e0f449e64582446e1b15ab743",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:7a0c6fb26763fd8002183d33bced96aca3a1987f5b3f1ce75f30604891fb9982",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:259a9ffa00600826b8f3f5dcd5003b41b1be96a4e916739a3bfd851110794dad",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:e2468cb907014a9cdb171df8215d76f5f5670b58fb332a720e6b5ec31e22d53f",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:2471faf354306f2570dbb32cfd373021a16717db4da44353a57bbe67f8fe79a9",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:8b643c2532dbbffa31239536a0f772ce3ce2d7cf30dce4157a975a43d94b8f69",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:fd48fe2d628a1132c8ebb9f81e10f3a7fdce723347cc593b61e043c7254eb666",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:862c474c3a43bcf4fe4bd643cc9a88aaa6b979c5521645f8188edecb3de2af6d",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:8e4813fe644d7fc7b1a0bc54b6167ffbeab04ccd03275ec3eee5643103df290d",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:4530f18a846551f6ef823a76a5365cdaee5c70a485f76061724358c3d93b6482",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-library/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:9532842b008e1601f540250be67acae4ba2136bdcd15325f03b3022654ed894c",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:6b3210e346f86e15b6bce9e5b63b76233866120c56e1b6d0ef88beebf3a341c3",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:3a8d6e723725971d1570c8824eb6016bd655779fcf691811191734c790d6d243",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:2e33771d4e23c8cfff6a7fffc5e9a166f6a4b1ccfb171baf839fc6c46b89df44",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:ef2d2dad9dcf10a78138ab7f4e438ee9ce63cd2bc1836061d897129a6d1ff059",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:9d56e6453c942f6469f3022719a30ec9172045e47ba2368473d4a3563812cc00",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:07dbadd46691c78c61d42be06750715aedb9494c1e4388e26934c220b233324f",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-model-understanding-preflight/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:b15c91cce1a193b17db429ee6d4c057bc4acf5e289f98f94ce17e4ae05d81e7c",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:c3aa2027409173546fb3703e40d2a1a1587b49450d8c66627b8f2576dd979e06",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:87b7dcf2f46f59a501d6665c819de922a823fee5691d45d53390d7086fee0511",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:d4b5d3676580b1b1f7d6becdf49ca2c765f9f7edfe50fe7e6d94df523d90f204",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:d0be11f22e63b0ba2380f3718ac57119fc4d0f820a69efe9a69ab7ad547aae13",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:761f2fb6a2f4b08169ad27e3ecde35222696aa6af2bfcb45b05771e1bb1591ef",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:ce0367cbb95a52b1d018a0359dd67d9df88b4c7ea38c209645ff19d9ad387248",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-adoption/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:d1e4dd9a25db9864fd5d32a22420244076925d44c308f8261e3986e5db11eadc",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:f3827498b0be5ccc2941aa5a06407bb8afd6bb9a1f3a8f99c5fd13380159b80d",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:90c7b7ac2c0ca4f09cd0bb6c86f3cf07b4032c61a7fb37e56c24eaa3bbc923c9",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:26e192e3577daf315a38b161661512ec7b0e6b6e208e5a1b07a962d93e737aa5",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:d28e648fab04b532f7c6f91c8451ea677a72c1393ab791873222cff703bf4e76",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:d295a0e1ac9ab63cab5e161f5eed302c87551a3916bbd3b8ff3ea19fecd8c7a7",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:7d018e8dcf25d08783c206d31ba1be84d5bdfcc7a2c9c34ff87d00d4509341f2",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:dce25c6abc9dd5ded9d1ff1151f61e8c80f3840f1db53d58ca351fd9b1a6c5c9",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:e03a01b53de381b4f3a48578cb9f13ae4264cc1ad863441e4fe677779d61b48f",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:30a92fc87a5555efe715f03fb77af276c1175aeef9c45d2af467a3e2fab59b3a",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:f9649ece80530b6a3932a38de6c068c3313910182376b6d62bcfe81cc41c3c16",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:092d843cfd0136359cad86d633181927e821ad5553fcee23853db9593d1ecede",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:439dce009e72066672e4fe6091422b93b8b3dbec08f33c38b2534487fc9ed8df",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:d842d78bb0e0d7c534ee09187fef1c6b56008491e18c98e6cf8df8d045c5fbf2",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-signal-mapping-review/guard-model/verify.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:a149d5e3527c75dfe6ed688b49a63f7cb84bf8d84ddbb0556890c810b14c6dd1",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/.skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:e3ff43a5f975375efa0c65f758445168e24388ddab0d5b14f23456a28db292dd",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:ac9f3fdf5b3caf5d3202b4bece5ca4a22b43720426daef9a5c55f02a7dea8f02",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:5196e6a766ef7faafe2c3a41c303ad380e8a30143b2cd9d5217fedee482c9f9e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:b4f3226f5495f5a927df028f1abc5f0e81bcba04d412cbf82149c74e9c170ca9",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:7671577ae6f3c7e7d2b7c7933f09c95af5788a9a98917593ec5d62a85329e2d9",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:d345f4c59e231bc4e81f400001e900991c3a5f0371d35b644a174a434670c234",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:a14b6167ef86dad105f09a5f30f3315dd25b235caf5b3b587319f13d4df1ef6e",
+        "install_disposition": "source_only",
+        "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "role": "runtime_source"
+      }
+    ],
+    "inventory_hash": "sha256:80e7cacbc75935219001c9e70c6f2a5a86f71f07d7b71594abbc36558d74c8f1",
+    "member_root_path": ".flowguard/skillguard-parent",
+    "owner_receipt_root_ref": {
+      "path_token": "owner_evidence_root",
+      "relative_path": "check-executions"
+    },
+    "owners": [
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:ai-debugging"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
+        "input_component_ids": [
+          "component:contract_schema:d68b44073804ddc5",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:3040211cbe20093c",
+          "component:runtime_source:31f699221ad6195f",
+          "component:runtime_source:a767dc64a9a9ad1e"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-ai-debugging.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-ai-debugging/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:805488311e6e605034c278c4f3017366d5ee297f8f1065340bfc1bb9b51d697d",
+        "owner_input_projection_hash": "sha256:8e3bcf129ec927c2aae0aa99d52fa9f37b6519e0b5715a03b641224751ed3d9c"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:audit-closure"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
+        "input_component_ids": [
+          "component:contract_schema:d0387c79899fd7c9",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:842a35942105008f",
+          "component:runtime_source:17dc7a9c5729df38",
+          "component:runtime_source:a767dc64a9a9ad1e"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-audit-closure.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-audit-closure/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:52e3158248d2321b7bf25f8b81741a49ac94811822e95984377d97a5ddba4e92",
+        "owner_input_projection_hash": "sha256:7b71b0a921fc6e0bf0586e83a2778c89b4f742ccad4a20729e88b351a1f174cf"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:candidate-model-blueprint"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
+        "input_component_ids": [
+          "component:contract_schema:a9385a587fa37462",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:f032af894b8b5f0a",
+          "component:runtime_source:5a84ea800a9044ae",
+          "component:runtime_source:a767dc64a9a9ad1e"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-candidate-model-blueprint.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-candidate-model-blueprint/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:2940a31e61c73acc6bc7cdc9c3dcae695c23eb845ed7e1a1289604b44b258577",
+        "owner_input_projection_hash": "sha256:f401fa3971515eca25e51bee89dd7f897fbb11091ba13091a72e336ef4e75bea"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:model-dataset-validation"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
+        "input_component_ids": [
+          "component:contract_schema:102e3ac431b6089e",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:9ed262eb848378cf",
+          "component:runtime_source:a767dc64a9a9ad1e",
+          "component:runtime_source:fdfcd0335aa1280a"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-model-dataset-validation.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-dataset-validation/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:9c88edf56ea278f0caf7031a4c20f6c067e95b2117d2a845642dcdcc91536251",
+        "owner_input_projection_hash": "sha256:825f555556cc5bbf5c8df005d19f3da3fd3aad43ef73e4e70141dba434582ae9"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:model-library"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
+        "input_component_ids": [
+          "component:contract_schema:edc4ce50152d320d",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:2cdecf8bcd02940d",
+          "component:runtime_source:62003d40d834d369",
+          "component:runtime_source:a767dc64a9a9ad1e"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-model-library.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-library/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:fff88dc3be13bc493e82ee6d1609a8f8906d729b4f7152ac88320241623a5b5e",
+        "owner_input_projection_hash": "sha256:1f8f9e0b4fc87cbcb834f7277e695a199af15210e33e4acc7ed3a0b86f34f9e4"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:model-understanding-preflight"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
+        "input_component_ids": [
+          "component:contract_schema:df78e33ddffe334d",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:d894482844d19c23",
+          "component:runtime_source:2ea70c470b798429",
+          "component:runtime_source:a767dc64a9a9ad1e"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-model-understanding-preflight.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-model-understanding-preflight/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:df271822362243ff1807dc5a9554d7f0615997c5980e9e48e80dbdd2d1151172",
+        "owner_input_projection_hash": "sha256:ac9cdf19974947617aadf83cba94dbf00b942010e53087414e6487e1636722d3"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:project-adoption"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
+        "input_component_ids": [
+          "component:contract_schema:fcbc1863457c5061",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:34e1db5614708853",
+          "component:runtime_source:a767dc64a9a9ad1e",
+          "component:runtime_source:c67f64ae6c864078"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-project-adoption.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-adoption/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:da2e483d53c88b0e82771567943de7104bb1a3de0ccce7f2e521fd7b0dac360a",
+        "owner_input_projection_hash": "sha256:cc9c1e58db366ae699ad235c2c57dfae83b56474b3be57da5b124457bd013135"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:project-evidence-registry"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
+        "input_component_ids": [
+          "component:contract_schema:9cc2b67c0aba5ba2",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:85deb23213a45863",
+          "component:runtime_source:a767dc64a9a9ad1e",
+          "component:runtime_source:d758f03bdfe153c0"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-project-evidence-registry.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:400408e3ae91c5580961fed3f20065e0929b4fdb6f92bb30eafc2318085e49f9",
+        "owner_input_projection_hash": "sha256:712cbe66ae19c551a42d19157438a15631aef378fed1caea63cdcb1cce7ea6a2"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:signal-mapping-review"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
+        "input_component_ids": [
+          "component:contract_schema:1daf5e034bb874a7",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:c5cf0978531b84e4",
+          "component:runtime_source:026bd792ddebe937",
+          "component:runtime_source:a767dc64a9a9ad1e"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-signal-mapping-review.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-signal-mapping-review/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:e623bc45f27c08ee3908b57b4cce3685c265a91c093ecb6e3a883e7df0d62979",
+        "owner_input_projection_hash": "sha256:d09c60a32c8d4982da68ff7ea81fcc7bd6bc91d0bf73e062023cd297ec74418d"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:consume:test-file-contract-review"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review",
+        "input_component_ids": [
+          "component:contract_schema:e05fd2f188398e6d",
+          "component:documentation_model:175a2f151eff7ee6",
+          "component:documentation_model:2c47d32c547e5550",
+          "component:documentation_model:aebd4146ef9e38d4",
+          "component:runtime_source:9dfb5b7bd6ede5e3",
+          "component:runtime_source:a767dc64a9a9ad1e"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_v1_retirement_inventory.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/retirement-receipts/physicsguard-test-file-contract-review.json"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_guard_simulation_readiness.py"
+          },
+          {
+            "kind": "path",
+            "path": "scripts/verify_physicsguard_suite_parent.py"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/.skillguard/check-manifest.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/.skillguard/compiled-contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/.skillguard/contract-source.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/SKILL.md"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:91186fc11a51a00b87705fbccce41b21aaa6f5fb956832cfe6dc920feabe0026",
+        "owner_input_projection_hash": "sha256:ace0ba589edac8252f472025a16f6e8f6aad3900503a1ee3838036f5cb85e5f6"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-skill-suite-parent:reattach-model-mesh"
+        ],
+        "depends_on_owner_ids": [
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
+          "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review"
+        ],
+        "evidence_domain_id": "physicsguard-skill-suite-parent:model-mesh",
+        "execution_owner_id": "owner:physicsguard-skill-suite-parent:reattach-model-mesh",
+        "input_component_ids": [
+          "component:documentation_model:1b9064e5a4dec093",
+          "component:documentation_model:2c47d32c547e5550"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".flowguard/check_physicsguard_skill_suite_mesh.py"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_skill_suite_mesh.json"
+          },
+          {
+            "kind": "path",
+            "path": ".flowguard/physicsguard_suite_parent_inventory.json"
+          }
+        ],
+        "owner_declaration_hash": "sha256:daf61395c07602d084f63664075fcf009dfba044d2dd55a13c72b61508d7d5e2",
+        "owner_input_projection_hash": "sha256:9baa92d03963f54617ac796ba1a9d1d582a264e3a5505e1fa505a6f85e337fa8"
+      }
+    ],
+    "policy_id": "skillguard.content_impact_policy.current",
+    "portfolio_target_edges": [],
+    "projection_consumers": [
+      {
+        "consumer_id": "projection:contract-compile",
+        "consumer_projection_hash": "sha256:d764e757dcf6a2ea0230cb737531034c387e38f56606e774009374015421ea49",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [
+          "component:contract_schema:cb162929f44d5a0f",
+          "component:documentation_model:c5368255b51e3e7d"
+        ],
+        "input_projection_hash": "sha256:409bf7f986ae1a478920855bdefbf57fc357ef785c812464d0d13e353ff7a3c0",
+        "kind": "contract_compile",
+        "projection_declaration_hash": "sha256:f0d4884f25163d2baa7a050af57b07b8bf89c1b3cb91c5e39302c9067676d9e0"
+      },
+      {
+        "consumer_id": "projection:global-router",
+        "consumer_projection_hash": "sha256:c05984df180fa719bed1a62a48db6052b1a7e03b87e7a9e6eda3430a1905cf86",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [],
+        "input_projection_hash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "kind": "global_router",
+        "projection_declaration_hash": "sha256:667973c38b6c505040402a17baf7ebb4fb1ebe562415b046f317c029a3861f2a"
+      },
+      {
+        "consumer_id": "projection:installation",
+        "consumer_projection_hash": "sha256:2b5b9c9b5b6eb1fe6f425bd3ab8c43000039008530dc40190516abf657fa1620",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [
+          "component:contract_schema:b4e0b25e4be19d4e",
+          "component:contract_schema:cb162929f44d5a0f",
+          "component:documentation_model:c5368255b51e3e7d"
+        ],
+        "input_projection_hash": "sha256:21df3d69a946b255f26f798ca86cffe2a0937228b5313345ceec8232ff9f4199",
+        "kind": "installation",
+        "projection_declaration_hash": "sha256:c136eba1759b5347e0c6da4368c8984f8e7be98a5a8eaebc3596ce9b48ea145d"
+      },
+      {
+        "consumer_id": "projection:portfolio",
+        "consumer_projection_hash": "sha256:9829573143198c085bf05b11cfa1f5d2f0b51f7dcf833f143c0b53b00bf4bbae",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [],
+        "input_projection_hash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "kind": "portfolio",
+        "projection_declaration_hash": "sha256:9194e37d395a5756ddd87565ee97fe8dcdae46c150b4b03754291a80060b8b26"
+      },
+      {
+        "consumer_id": "projection:source-maintenance",
+        "consumer_projection_hash": "sha256:13be01e10a981898727db9510b3c43dc1fddb727f0fd9bbb8c5009db65106e6c",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [],
+        "input_projection_hash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "kind": "source_maintenance",
+        "projection_declaration_hash": "sha256:b55f389a1ff76e45148a5e9c63699fe47970e1d99e9b1d3805bec3f98aafa235"
+      }
+    ],
+    "schema_version": "skillguard.content_impact_plan.current",
+    "unknown_mapping_disposition": "block"
+  },
+  "contract_hash": "E92B5A9D109B38FB1E628CE1D0D12611802E9435EF6580BC9E57ACD4C5B614D4",
+  "manifest_hash": "882AB8C04ED3C1FC2B40C9E39B69F60FBC95D7E9EA2CF9B47E6D64176699354A",
+  "model_id": "physicsguard-skill-suite-parent.receipt-only.current",
+  "schema_version": "skillguard.check_manifest.v2",
+  "skill_id": "physicsguard-skill-suite-parent",
+  "source_fingerprints": {
+    "binding": "42EB547E71FFF6E6D5DEE696680525846E0A9F47AAB2ABCA3FE8F058923074EB",
+    "entrypoint": "MISSING",
+    "implementation:.flowguard/check_physicsguard_skill_suite_mesh.py": "8A7A821B84DA1834F429FE910620C7454D3892DFC1284447366752245E9E3A9B",
+    "implementation:.flowguard/physicsguard_skill_suite_mesh.json": "5865F9F77DAB305F1A3B5B4434F0494B255826D39A37EB6E4BCC0BF9173530D3",
+    "implementation:.flowguard/physicsguard_suite_parent_inventory.json": "4E21AA4F711FA2A9C79DF7824F7989971EF344C2CE5C75128302AFD85FCE4E8E",
+    "implementation:.flowguard/physicsguard_v1_retirement_inventory.json": "2E30344F1D169CD25C8B8888C98CF0565933EDA71F143A884CD0B38776EF18E8",
+    "implementation:.flowguard/retirement-receipts/physicsguard-ai-debugging.json": "78A690D87555095DAB88D081CA5A82D90EE419DE26D13E301CE40E90881F8CFC",
+    "implementation:.flowguard/retirement-receipts/physicsguard-audit-closure.json": "CB699EC1AA4334C30FC65CE87480FC936536C6E660AD9BFAEF759D9A1F0D7349",
+    "implementation:.flowguard/retirement-receipts/physicsguard-candidate-model-blueprint.json": "F812AD547AB61EC8E548B895812C1A5420265F4C59F2A83EF4C0C48D531656BA",
+    "implementation:.flowguard/retirement-receipts/physicsguard-model-dataset-validation.json": "9018952B1D71CB5B570760197116178CA0A696BB7EF2CA5D5ABC7CB4587C940C",
+    "implementation:.flowguard/retirement-receipts/physicsguard-model-library.json": "B2E6417D7521676CBF1B1AFC8996B03ED3276DD63078BA2064B24F134D79002E",
+    "implementation:.flowguard/retirement-receipts/physicsguard-model-understanding-preflight.json": "91E9E285F9A996B973203DF5A54FC579D4092FA60D4E7B897A83DCBA981A4B29",
+    "implementation:.flowguard/retirement-receipts/physicsguard-project-adoption.json": "5F4972175EF4FE7A21ADC282DDF2C541333AE453A0DAA5EFA2246B6719F38BDC",
+    "implementation:.flowguard/retirement-receipts/physicsguard-project-evidence-registry.json": "9A7359E1E32CAF7B40FE8F1C227AA12F98DCEEB84B77886BBF67A2EA0BDF75EB",
+    "implementation:.flowguard/retirement-receipts/physicsguard-signal-mapping-review.json": "F9A501393AB95F7C257AF131EC895580404D95BB06DF48A55D3A6A6BD89415F7",
+    "implementation:.flowguard/retirement-receipts/physicsguard-test-file-contract-review.json": "E96705E5F7F76E5B6C7D5E3AD1549AF67678A4DC4ED53F9609D112C7B319E305",
+    "implementation:scripts/verify_guard_simulation_readiness.py": "4B9F021752A7404308D8EC2108F6927A71A1FB81673B60791EA15B4025C05D2A",
+    "implementation:scripts/verify_physicsguard_suite_parent.py": "27ADFB4F06E040AC62012CD6962FA209DAE62DC993EA7DE12922E02F2214069D",
+    "implementation:skill/physicsguard-ai-debugging/.skillguard/contract-source.json": "D0014FD951A9B4963A75455BB6A0F28A66F4D6F7C74072AD7A240F4CAE471D70",
+    "implementation:skill/physicsguard-ai-debugging/SKILL.md": "2E1C97BA46FBB57E79703F6530460476C60D298EBCE042DE96F319F6E9645F35",
+    "implementation:skill/physicsguard-ai-debugging/guard-model": "1FA4837CAC39143CBC0127C303DBFF0B67024765C808668069A89E7ACF8C451C",
+    "implementation:skill/physicsguard-audit-closure/.skillguard/contract-source.json": "34695A1B7FAC309DAB93328396A4D191EF903CFE9F8C990AA8111A2C70AE68CA",
+    "implementation:skill/physicsguard-audit-closure/SKILL.md": "D76224DE0105BE49BD892B21BD44BF695680FC286E22C52460024965C9A1038B",
+    "implementation:skill/physicsguard-audit-closure/guard-model": "2AC2A296A840DA81424355458951C73ED346D3B25CF4871DDF95684B290C742B",
+    "implementation:skill/physicsguard-candidate-model-blueprint/.skillguard/contract-source.json": "EDA4C04615EAC9F23F824128487F2D38136C3B491F89DBB4DF8CDC304E0120E8",
+    "implementation:skill/physicsguard-candidate-model-blueprint/SKILL.md": "04E51CE3E66FAB368754D359E1AAC364C3E7F9C3D15E617241CBADD7E04B3DEF",
+    "implementation:skill/physicsguard-candidate-model-blueprint/guard-model": "41F04EFDC1BD5B15105775C6FFBBFB87F510645AC60E28116565606B828B7F50",
+    "implementation:skill/physicsguard-model-dataset-validation/.skillguard/contract-source.json": "CF7779EA006BA3FBA9DF3199FCFD9B74CA781E1E97FDA3782C6EA458FE985392",
+    "implementation:skill/physicsguard-model-dataset-validation/SKILL.md": "A3C39F265D33E74CF3C92F565E835BFDA233551A6736AE9E44417EDC4E4BDFF6",
+    "implementation:skill/physicsguard-model-dataset-validation/guard-model": "05C53545032B5406AB2A1E303150E6550843AE10FB56F87F5B950B5E2960C742",
+    "implementation:skill/physicsguard-model-library/.skillguard/contract-source.json": "E2468CB907014A9CDB171DF8215D76F5F5670B58FB332A720E6B5EC31E22D53F",
+    "implementation:skill/physicsguard-model-library/SKILL.md": "2471FAF354306F2570DBB32CFD373021A16717DB4DA44353A57BBE67F8FE79A9",
+    "implementation:skill/physicsguard-model-library/guard-model": "43118634041B22166226BA6A33D7BB6F1D642EEDE816F40E03FD2D62951AF803",
+    "implementation:skill/physicsguard-model-understanding-preflight/.skillguard/contract-source.json": "9532842B008E1601F540250BE67ACAE4BA2136BDCD15325F03B3022654ED894C",
+    "implementation:skill/physicsguard-model-understanding-preflight/SKILL.md": "6B3210E346F86E15B6BCE9E5B63B76233866120C56E1B6D0EF88BEEBF3A341C3",
+    "implementation:skill/physicsguard-model-understanding-preflight/guard-model": "99F3B19A40D1E5061D969E4D110F1A67ED912542F92C210BF5CAB63E3548B691",
+    "implementation:skill/physicsguard-project-adoption/.skillguard/contract-source.json": "B15C91CCE1A193B17DB429EE6D4C057BC4ACF5E289F98F94CE17E4AE05D81E7C",
+    "implementation:skill/physicsguard-project-adoption/SKILL.md": "C3AA2027409173546FB3703E40D2A1A1587B49450D8C66627B8F2576DD979E06",
+    "implementation:skill/physicsguard-project-adoption/guard-model": "3525E61A7C06125714C3746AE383172EA4DCA2AD9C57406E888111B5EC1E2F88",
+    "implementation:skill/physicsguard-project-evidence-registry/.skillguard/contract-source.json": "D1E4DD9A25DB9864FD5D32A22420244076925D44C308F8261E3986E5DB11EADC",
+    "implementation:skill/physicsguard-project-evidence-registry/SKILL.md": "F3827498B0BE5CCC2941AA5A06407BB8AFD6BB9A1F3A8F99C5FD13380159B80D",
+    "implementation:skill/physicsguard-project-evidence-registry/guard-model": "45ADC648765F63ABBFC6F6451039141BF50969A451816A243DF2BD3A92D0CCB9",
+    "implementation:skill/physicsguard-signal-mapping-review/.skillguard/contract-source.json": "DCE25C6ABC9DD5DED9D1FF1151F61E8C80F3840F1DB53D58CA351FD9B1A6C5C9",
+    "implementation:skill/physicsguard-signal-mapping-review/SKILL.md": "E03A01B53DE381B4F3A48578CB9F13AE4264CC1AD863441E4FE677779D61B48F",
+    "implementation:skill/physicsguard-signal-mapping-review/guard-model": "FB7215BCE3B14607DE28571B2AA33803423D5855F76AF4C9512DBCDEE19D312D",
+    "implementation:skill/physicsguard-test-file-contract-review/.skillguard/contract-source.json": "A149D5E3527C75DFE6ED688B49A63F7CB84BF8D84DDBB0556890C810B14C6DD1",
+    "implementation:skill/physicsguard-test-file-contract-review/SKILL.md": "E3FF43A5F975375EFA0C65F758445168E24388DDAB0D5B14F23456A28DB292DD",
+    "implementation:skill/physicsguard-test-file-contract-review/guard-model": "C65C6D4FD5A1A6D50466AC2D7067CFA962DA7E7D7164C271C7474A8C48E55450",
+    "model": "37629BD66235B7E77F7CF5731DEC9D68D3CB5D811FCDF29BCBE9AB8F6D08856B",
+    "model_export": "2B65611A60DAEB17F7B1E497DDBDC11C667623A84546B5FDB925459D8AD56C61"
+  }
+}

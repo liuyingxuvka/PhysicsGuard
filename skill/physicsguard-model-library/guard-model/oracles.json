@@ -1,0 +1,63 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-library",
+  "required_obligation_ids": [
+    "asset_inventory",
+    "profile_inventory",
+    "testbench_compatibility",
+    "gap_gate",
+    "validation_receipt",
+    "bounded_reuse_scope"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-model-library:asset-inventory",
+      "obligation_id": "asset_inventory",
+      "failure_id": "failure:physicsguard-model-library:library-inventory-incomplete",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'asset_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-library:profile-inventory",
+      "obligation_id": "profile_inventory",
+      "failure_id": "failure:physicsguard-model-library:library-inventory-incomplete",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'profile_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-library:testbench-compatibility",
+      "obligation_id": "testbench_compatibility",
+      "failure_id": "failure:physicsguard-model-library:compatibility-not-proven",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'testbench_compatibility' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-library:gap-gate",
+      "obligation_id": "gap_gate",
+      "failure_id": "failure:physicsguard-model-library:validation-or-gap-stale",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'gap_gate' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-library:validation-receipt",
+      "obligation_id": "validation_receipt",
+      "failure_id": "failure:physicsguard-model-library:validation-or-gap-stale",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'validation_receipt' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-library:bounded-reuse-scope",
+      "obligation_id": "bounded_reuse_scope",
+      "failure_id": "failure:physicsguard-model-library:reuse-scope-overreach",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'bounded_reuse_scope' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

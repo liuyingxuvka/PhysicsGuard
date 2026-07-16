@@ -1,0 +1,54 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-project-evidence-registry",
+  "required_obligation_ids": [
+    "artifact_inventory_reconciled",
+    "binding_edges",
+    "role_coverage",
+    "critical_gaps",
+    "bundle_scope"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-project-evidence-registry:artifact-inventory-reconciled",
+      "obligation_id": "artifact_inventory_reconciled",
+      "failure_id": "failure:physicsguard-project-evidence-registry:artifact-universe-shrunk",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'artifact_inventory_reconciled' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-evidence-registry:binding-edges",
+      "obligation_id": "binding_edges",
+      "failure_id": "failure:physicsguard-project-evidence-registry:binding-or-role-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'binding_edges' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-evidence-registry:role-coverage",
+      "obligation_id": "role_coverage",
+      "failure_id": "failure:physicsguard-project-evidence-registry:binding-or-role-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'role_coverage' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-evidence-registry:critical-gaps",
+      "obligation_id": "critical_gaps",
+      "failure_id": "failure:physicsguard-project-evidence-registry:critical-gap-hidden",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'critical_gaps' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-evidence-registry:bundle-scope",
+      "obligation_id": "bundle_scope",
+      "failure_id": "failure:physicsguard-project-evidence-registry:bundle-scope-overreach",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'bundle_scope' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "schema_version": "physicsguard.family_baseline_contract.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-test-file-contract-review",
+  "native_owner_id": "physicsguard.test-file-contract-review",
+  "native_route_id": "route:physicsguard-test-file-contract-review:check",
+  "prevented_failure_purpose": "Prevent a test file from authorizing validation unless file/field identities, units, timing, testbench/model bindings, per-signal depth, mappings, and project gaps are complete and current.",
+  "physical_or_evidence_boundary": [
+    {
+      "boundary_id": "boundary:physicsguard-test-file-contract-review:test-file-inventory",
+      "description": "Current governed test files and hashes",
+      "authority_source": "project evidence registry",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-test-file-contract-review:field-contracts",
+      "description": "Current required fields, units, and timing identities",
+      "authority_source": "test-file contract",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-test-file-contract-review:testbench-model-identity",
+      "description": "Current testbench/model/version/interface binding",
+      "authority_source": "project profile",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-test-file-contract-review:signal-mapping-depth",
+      "description": "Current per-signal mappings, depth, and project gaps",
+      "authority_source": "mapping ledger and validation plan",
+      "required": true
+    }
+  ],
+  "prevented_failure_classes": [
+    {
+      "failure_id": "failure:physicsguard-test-file-contract-review:file-or-field-identity-missing",
+      "title": "Candidate is not proven against file or field identity is missing",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: a governed test file or required field is absent, stale, duplicated, or misidentified",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-test-file-contract-review:unit-or-timing-mismatch",
+      "title": "Candidate is not proven against unit or timing contract mismatches",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: field units, timestamps, step, duration, or temporal semantics are inconsistent",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-test-file-contract-review:testbench-model-binding-wrong",
+      "title": "Candidate is not proven against testbench or model binding is wrong",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the file is bound to the wrong testbench, model, version, or interface",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-test-file-contract-review:per-signal-evidence-shallow",
+      "title": "Candidate is not proven against per-signal evidence is shallow",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: required signal depth or mapping evidence is missing or inadequate",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-test-file-contract-review:project-gap-hidden",
+      "title": "Candidate is not proven against project-level gap is hidden",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: a current project evidence gap is omitted from the contract result",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    }
+  ],
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "authoring_order": [
+    "freeze_prevented_failure_contract",
+    "build_candidate",
+    "prove_known_good",
+    "prove_every_known_bad",
+    "issue_native_receipt"
+  ],
+  "candidate_requires_contract_fingerprint": true,
+  "candidate_admission": {
+    "artifact_ref": "guard-model/candidate.json",
+    "schema_version": "physicsguard.family_baseline_candidate.v1",
+    "fingerprint_algorithm": "sha256-canonical-json-uppercase-v1",
+    "required_event_order": [
+      "purpose_contract_frozen",
+      "candidate_built"
+    ],
+    "failure_codes": [
+      "candidate_artifact_missing",
+      "candidate_contract_fingerprint_mismatch",
+      "candidate_built_before_purpose_or_event_chain_broken"
+    ]
+  }
+}

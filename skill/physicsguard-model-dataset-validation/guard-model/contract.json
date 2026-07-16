@@ -1,0 +1,110 @@
+{
+  "schema_version": "physicsguard.family_baseline_contract.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-dataset-validation",
+  "native_owner_id": "physicsguard-model-dataset-validation",
+  "native_route_id": "route:physicsguard-model-dataset-validation",
+  "prevented_failure_purpose": "Prevent a model/dataset consistency or predictive claim unless exact model, dataset, mapping, signal, parameter, time, scenario, physical-envelope, and claim-scope obligations pass the native evaluator.",
+  "physical_or_evidence_boundary": [
+    {
+      "boundary_id": "boundary:physicsguard-model-dataset-validation:dataset-manifest",
+      "description": "Current raw dataset rows, fields, cases, timestamps, and hashes",
+      "authority_source": "target-owned data manifest",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-model-dataset-validation:model-hierarchy",
+      "description": "Current required variables, parameters, blocks, units, and assumptions",
+      "authority_source": "validated model hierarchy",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-model-dataset-validation:mapping-and-roles",
+      "description": "Current signal/parameter mappings, role matrix, exclusions, and critical targets",
+      "authority_source": "mapping ledger and role matrix",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-model-dataset-validation:validation-plan",
+      "description": "Current sampling, scenario, residual, envelope, split, and threshold plan",
+      "authority_source": "target-owned validation plan",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-model-dataset-validation:prediction-holdout",
+      "description": "Current stateful rollout, initial state, horizon, and disjoint holdout identities",
+      "authority_source": "predictive plan and holdout registry",
+      "required": true
+    }
+  ],
+  "prevented_failure_classes": [
+    {
+      "failure_id": "failure:physicsguard-model-dataset-validation:validation-identity-wrong",
+      "title": "Validation identity is wrong",
+      "block_when": "the model, dataset, plan, mapping, split, or receipt identity is missing, stale, or mismatched",
+      "expected_finding_code": "dataset_identity_stale",
+      "proof_strength": "native_semantic_detection",
+      "known_limit": "The named target-native PhysicsGuard fixture and assertion prove only this bounded semantic failure and do not prove every future physical operating point.",
+      "claim_boundary": "Native semantic detection is limited to tests/test_validation_depth_receipts.py::test_changed_dataset_content_makes_receipt_stale and its asserted observation 'dataset_identity_stale'."
+    },
+    {
+      "failure_id": "failure:physicsguard-model-dataset-validation:coverage-universe-shallow",
+      "title": "Coverage universe is shallow",
+      "block_when": "signals, parameters, timepoints, events, scenarios, or families are missing or inadequately sampled",
+      "expected_finding_code": "signal_coverage_ratio_not_met",
+      "proof_strength": "native_semantic_detection",
+      "known_limit": "The named target-native PhysicsGuard fixture and assertion prove only this bounded semantic failure and do not prove every future physical operating point.",
+      "claim_boundary": "Native semantic detection is limited to tests/test_validation_adequacy.py::test_10000_signals_with_only_two_selected_are_blocked and its asserted observation 'signal_coverage_ratio_not_met'."
+    },
+    {
+      "failure_id": "failure:physicsguard-model-dataset-validation:physical-relation-violated",
+      "title": "Physical relation or envelope is violated",
+      "block_when": "native residual, unit, sign, balance, constitutive, or physical-envelope checks fail",
+      "expected_finding_code": "direct_validation_audit_failed",
+      "proof_strength": "native_semantic_detection",
+      "known_limit": "The named target-native PhysicsGuard fixture and assertion prove only this bounded semantic failure and do not prove every future physical operating point.",
+      "claim_boundary": "Native semantic detection is limited to tests/test_model_dataset_validation.py::test_conservative_calibration_does_not_turn_direct_failure_into_pass and its asserted observation 'direct_validation_audit_failed'."
+    },
+    {
+      "failure_id": "failure:physicsguard-model-dataset-validation:prediction-semantics-overclaimed",
+      "title": "Prediction semantics are overclaimed",
+      "block_when": "pointwise evidence or a stale/partial rollout is used to authorize prediction",
+      "expected_finding_code": "pointwise_prediction_forbidden",
+      "proof_strength": "native_semantic_detection",
+      "known_limit": "The named target-native PhysicsGuard fixture and assertion prove only this bounded semantic failure and do not prove every future physical operating point.",
+      "claim_boundary": "Native semantic detection is limited to tests/test_predictive_rollout_validation.py::test_pointwise_prediction_is_forbidden and its asserted observation 'pointwise_prediction_forbidden'."
+    },
+    {
+      "failure_id": "failure:physicsguard-model-dataset-validation:validation-scope-overreach",
+      "title": "Validation scope is overreached",
+      "block_when": "the requested claim exceeds the native receipt's covered scope",
+      "expected_finding_code": "snapshot_scope_incompatible",
+      "proof_strength": "native_semantic_detection",
+      "known_limit": "The named target-native PhysicsGuard fixture and assertion prove only this bounded semantic failure and do not prove every future physical operating point.",
+      "claim_boundary": "Native semantic detection is limited to tests/test_validation_adequacy.py::test_snapshot_receipt_cannot_satisfy_validation_ready_closure and its asserted observation 'snapshot_scope_incompatible'."
+    }
+  ],
+  "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt.",
+  "authoring_order": [
+    "freeze_prevented_failure_contract",
+    "build_candidate",
+    "prove_known_good",
+    "prove_every_known_bad",
+    "issue_native_receipt"
+  ],
+  "candidate_requires_contract_fingerprint": true,
+  "candidate_admission": {
+    "artifact_ref": "guard-model/candidate.json",
+    "schema_version": "physicsguard.family_baseline_candidate.v1",
+    "fingerprint_algorithm": "sha256-canonical-json-uppercase-v1",
+    "required_event_order": [
+      "purpose_contract_frozen",
+      "candidate_built"
+    ],
+    "failure_codes": [
+      "candidate_artifact_missing",
+      "candidate_contract_fingerprint_mismatch",
+      "candidate_built_before_purpose_or_event_chain_broken"
+    ]
+  }
+}

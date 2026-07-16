@@ -1,0 +1,112 @@
+contract_version: 1
+change: migrate-physicsguard-skill-suite-to-skillguard-v2
+evidence_roots:
+  SKILLGUARD_EVIDENCE: work/verification/migrate-physicsguard-skill-suite-to-skillguard-v2
+obligations:
+  - id: req.physicsguard-suite.complete-inventory
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Complete PhysicsGuard maintained-skill inventory"
+    claim: All ten maintained skills have current V2 child receipts and are consumed by the parent mesh.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.native-route
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Existing native route remains authoritative"
+    claim: Every maintained skill preserves exactly one route-specific PhysicsGuard native owner and no generic alternate success path.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.exact-identity
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Exact current-run target identity"
+    claim: Child evidence binds exact target, route, owner, run, obligations, domain, inputs, and immutable native receipt identity.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.deep-execution
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Route-specific deep execution"
+    claim: Complete native inventories and per-object quantitative or semantic depth prevent aggregate evidence from hiding a shallow object.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.purpose-before-candidate
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: PhysicsGuard-owned purpose declaration precedes candidate construction"
+    claim: Every governed model freezes its PhysicsGuard-owned prevented-failure, boundary, oracle, proof-strength, and claim contract before candidate construction without selectable modes.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.per-failure-proof
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Every declared prevented failure is proven natively"
+    claim: Every target passes its known-good case and natively blocks one exact known-bad case for every declared prevented failure class with the declared finding code.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.domain-separation
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Fixture and production evidence domains are disjoint"
+    claim: Capability fixtures cannot close scheduled production.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.reattachment
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Parent mesh reattachment"
+    claim: The parent consumes all current child evidence ids and verifies typed reattachment and affected siblings.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.v2-only
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Generic SkillGuard supervision and single current authority"
+    claim: Source and installed skills contain one current generic declared-check authority, no Guard semantics or modes in SkillGuard, and no executable or mutable former runtime residual.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+  - id: req.physicsguard-suite.install-currentness
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Transactional installation and currentness replay"
+    claim: Source/install parity and the same installation receipt root are verified through issuance, terminal closure, parent consumption, and replay.
+    required: true
+    evidence: [check.physicsguard-suite.parent-receipt]
+checks:
+  - id: check.physicsguard-suite.parent-receipt
+    kind: receipt
+    semantic_check_id: semantic.physicsguard-suite.v2-migration-parent
+    execution_id: execution.physicsguard-suite.v2-migration-parent
+    receipt_ref:
+      provider_id: skillguard
+      work_package_id: migrate-physicsguard-skill-suite-to-skillguard-v2
+      adapter: portable-receipt.v1
+      ref_path: work/verification/migrate-physicsguard-skill-suite-to-skillguard-v2/portable/migrate-physicsguard-skill-suite-to-skillguard-v2/ref.json
+    consumer: openspec.verify-change
+    validation_scope: full
+    snapshot_policy: frozen
+    required: true
+    covers:
+      - req.physicsguard-suite.complete-inventory
+      - req.physicsguard-suite.native-route
+      - req.physicsguard-suite.exact-identity
+      - req.physicsguard-suite.deep-execution
+      - req.physicsguard-suite.purpose-before-candidate
+      - req.physicsguard-suite.per-failure-proof
+      - req.physicsguard-suite.domain-separation
+      - req.physicsguard-suite.reattachment
+      - req.physicsguard-suite.v2-only
+      - req.physicsguard-suite.install-currentness
+    expected: {exit_code: 0}
+freshness:
+  watch:
+    - openspec/changes/migrate-physicsguard-skill-suite-to-skillguard-v2/**/*.md
+    - openspec/changes/migrate-physicsguard-skill-suite-to-skillguard-v2/verification-contract.yaml
+    - openspec/changes/migrate-physicsguard-skill-suite-to-skillguard-v2/v1-retirement-inventory.json
+    - openspec/changes/migrate-physicsguard-skill-suite-to-skillguard-v2/skillguard-freeze-identity.json
+    - skill/*/SKILL.md
+    - skill/*/.skillguard/contract-source.json
+    - skill/*/.skillguard/compiled-contract.json
+    - skill/*/.skillguard/check-manifest.json
+    - .flowguard/retirement-receipts/*.json
+    - skill/*/scripts/**/*
+    - physicsguard/**/*
+    - scripts/verify_guard_simulation_readiness.py
+    - scripts/issue_guard_retirement_receipts.py
+    - tests/test_guard_skill_mesh.py
+    - tests/test_skillguard_v2_runtime_authority_audit.py
+    - tests/test_openspec_receipt_only_verification.py
+    - .flowguard/physicsguard_skill_suite_mesh.json
+    - .flowguard/check_physicsguard_skill_suite_mesh.py
+    - .flowguard/physicsguard_suite_parent_inventory.json
+    - .flowguard/skillguard-parent/**/*
+    - scripts/generate_physicsguard_suite_parent_contract.py
+    - scripts/verify_physicsguard_suite_parent.py
+  exclude:
+    - "**/verification-report.json"
+    - "**/.skillguard/runs/**"
+    - "**/.flowguard/evidence/**"
+    - "**/work/verification/**"
+    - "**/__pycache__/**"
+    - "**/.pytest_cache/**"

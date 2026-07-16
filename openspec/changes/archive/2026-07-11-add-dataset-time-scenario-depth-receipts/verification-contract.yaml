@@ -1,0 +1,67 @@
+contract_version: 1
+change: add-dataset-time-scenario-depth-receipts
+obligations:
+  - id: req.physics.identity-mapping
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Exact dataset identity"
+    claim: "Validation is bound to exact dataset and current mapping identities."
+    required: true
+    evidence: [check.physics.depth]
+  - id: req.physics.scope-split
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Time and scenario scope"
+    claim: "Snapshot, time, scenario, training, and holdout scopes are explicit and non-overlapping where required."
+    required: true
+    evidence: [check.physics.depth]
+  - id: req.physics.series-envelope-receipt
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Native validation-depth receipt"
+    claim: "Residual series and physical envelope evidence produce a target-owned depth receipt with honest claim scope."
+    required: true
+    evidence: [check.physics.depth, check.physics.full]
+checks:
+  - id: check.physics.depth
+    kind: command
+    command: python
+    args: [-m, pytest, tests/test_validation_depth_receipts.py, -q]
+    required: true
+    covers: [req.physics.identity-mapping, req.physics.scope-split, req.physics.series-envelope-receipt]
+    expected: {exit_code: 0}
+  - id: check.physics.flowguard
+    kind: command
+    command: python
+    args: [.flowguard/run_physicsguard_validation_depth_checks.py]
+    required: true
+    covers: [req.physics.identity-mapping, req.physics.scope-split]
+    expected: {exit_code: 0}
+  - id: check.physics.full
+    kind: command
+    command: python
+    args: [-m, pytest, -q]
+    required: true
+    covers: [req.physics.series-envelope-receipt]
+    expected: {exit_code: 0}
+  - id: check.openspec.strict
+    kind: command
+    command: openspec
+    args: [validate, add-dataset-time-scenario-depth-receipts, --strict]
+    required: true
+    covers: [req.physics.identity-mapping, req.physics.scope-split, req.physics.series-envelope-receipt]
+    expected: {exit_code: 0}
+  - id: check.flowguard.audit
+    kind: command
+    command: python
+    args: [-m, flowguard, project-audit, --root, .]
+    required: true
+    covers: [req.physics.series-envelope-receipt]
+    expected: {exit_code: 0}
+freshness:
+  watch:
+    - openspec/changes/add-dataset-time-scenario-depth-receipts/.openspec.yaml
+    - openspec/changes/add-dataset-time-scenario-depth-receipts/proposal.md
+    - openspec/changes/add-dataset-time-scenario-depth-receipts/design.md
+    - openspec/changes/add-dataset-time-scenario-depth-receipts/README.md
+    - openspec/changes/add-dataset-time-scenario-depth-receipts/tasks.md
+    - openspec/changes/add-dataset-time-scenario-depth-receipts/verification-contract.yaml
+    - openspec/changes/add-dataset-time-scenario-depth-receipts/specs/**/*.md
+    - src/physicsguard/**/*.py
+    - tests/**/*.py
+    - skill/physicsguard*/**/*
+    - .flowguard/**/*.py

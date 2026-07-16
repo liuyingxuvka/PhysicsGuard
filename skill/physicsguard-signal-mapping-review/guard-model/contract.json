@@ -1,0 +1,95 @@
+{
+  "schema_version": "physicsguard.family_baseline_contract.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-signal-mapping-review",
+  "native_owner_id": "physicsguard.signal-mapping-review",
+  "native_route_id": "route:physicsguard-signal-mapping-review:review",
+  "prevented_failure_purpose": "Prevent an external signal from being treated as a PhysicsGuard variable unless target identity, unit/conversion, revision, confidence/review, temporal coverage, and mapping evidence are current.",
+  "physical_or_evidence_boundary": [
+    {
+      "boundary_id": "boundary:physicsguard-signal-mapping-review:governed-signals",
+      "description": "Current external signal inventory",
+      "authority_source": "source/test-file contract",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-signal-mapping-review:target-variables",
+      "description": "Current PhysicsGuard target variable and unit inventory",
+      "authority_source": "model hierarchy",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-signal-mapping-review:conversion-revision",
+      "description": "Current conversion, revision, and lineage evidence",
+      "authority_source": "mapping ledger",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-signal-mapping-review:temporal-review",
+      "description": "Current temporal coverage, confidence, and review state",
+      "authority_source": "mapping review records",
+      "required": true
+    }
+  ],
+  "prevented_failure_classes": [
+    {
+      "failure_id": "failure:physicsguard-signal-mapping-review:signal-target-mismatch",
+      "title": "Candidate is not proven against signal and target variable mismatch",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the governed external signal does not bind to the intended PhysicsGuard variable",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-signal-mapping-review:unit-conversion-invalid",
+      "title": "Candidate is not proven against unit or conversion is invalid",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: unit evidence or conversion semantics are missing, inconsistent, or physically invalid",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-signal-mapping-review:revision-or-time-stale",
+      "title": "Candidate is not proven against revision or temporal evidence is stale",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: revision identity or temporal coverage no longer matches the source data",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-signal-mapping-review:review-confidence-unresolved",
+      "title": "Candidate is not proven against review or confidence is unresolved",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: required review, evidence, or confidence disposition is incomplete",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    }
+  ],
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "authoring_order": [
+    "freeze_prevented_failure_contract",
+    "build_candidate",
+    "prove_known_good",
+    "prove_every_known_bad",
+    "issue_native_receipt"
+  ],
+  "candidate_requires_contract_fingerprint": true,
+  "candidate_admission": {
+    "artifact_ref": "guard-model/candidate.json",
+    "schema_version": "physicsguard.family_baseline_candidate.v1",
+    "fingerprint_algorithm": "sha256-canonical-json-uppercase-v1",
+    "required_event_order": [
+      "purpose_contract_frozen",
+      "candidate_built"
+    ],
+    "failure_codes": [
+      "candidate_artifact_missing",
+      "candidate_contract_fingerprint_mismatch",
+      "candidate_built_before_purpose_or_event_chain_broken"
+    ]
+  }
+}

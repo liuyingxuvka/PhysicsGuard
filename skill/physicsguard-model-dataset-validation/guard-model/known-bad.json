@@ -1,0 +1,77 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-dataset-validation",
+  "cases": [
+    {
+      "case_id": "known-bad:coverage-universe-shallow",
+      "failure_id": "failure:physicsguard-model-dataset-validation:coverage-universe-shallow",
+      "trigger_obligation_id": "obligation:coverage-universe-adequate",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "signal_coverage_ratio_not_met",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_semantic_detection",
+      "native_fixture": {
+        "test_node_id": "tests/test_validation_adequacy.py::test_10000_signals_with_only_two_selected_are_blocked",
+        "assertion_kind": "native_finding_type",
+        "expected_observation": "signal_coverage_ratio_not_met"
+      }
+    },
+    {
+      "case_id": "known-bad:physical-relation-violated",
+      "failure_id": "failure:physicsguard-model-dataset-validation:physical-relation-violated",
+      "trigger_obligation_id": "obligation:per-signal-depth-adequate",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "direct_validation_audit_failed",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_semantic_detection",
+      "native_fixture": {
+        "test_node_id": "tests/test_model_dataset_validation.py::test_conservative_calibration_does_not_turn_direct_failure_into_pass",
+        "assertion_kind": "native_finding_type",
+        "expected_observation": "direct_validation_audit_failed"
+      }
+    },
+    {
+      "case_id": "known-bad:prediction-semantics-overclaimed",
+      "failure_id": "failure:physicsguard-model-dataset-validation:prediction-semantics-overclaimed",
+      "trigger_obligation_id": "obligation:predictive-semantics-honest",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "pointwise_prediction_forbidden",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_semantic_detection",
+      "native_fixture": {
+        "test_node_id": "tests/test_predictive_rollout_validation.py::test_pointwise_prediction_is_forbidden",
+        "assertion_kind": "native_finding_code",
+        "expected_observation": "pointwise_prediction_forbidden"
+      }
+    },
+    {
+      "case_id": "known-bad:validation-identity-wrong",
+      "failure_id": "failure:physicsguard-model-dataset-validation:validation-identity-wrong",
+      "trigger_obligation_id": "obligation:exact-validation-inputs",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "dataset_identity_stale",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_semantic_detection",
+      "native_fixture": {
+        "test_node_id": "tests/test_validation_depth_receipts.py::test_changed_dataset_content_makes_receipt_stale",
+        "assertion_kind": "native_finding_type",
+        "expected_observation": "dataset_identity_stale"
+      }
+    },
+    {
+      "case_id": "known-bad:validation-scope-overreach",
+      "failure_id": "failure:physicsguard-model-dataset-validation:validation-scope-overreach",
+      "trigger_obligation_id": "obligation:claim-scope-compatible",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "snapshot_scope_incompatible",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_semantic_detection",
+      "native_fixture": {
+        "test_node_id": "tests/test_validation_adequacy.py::test_snapshot_receipt_cannot_satisfy_validation_ready_closure",
+        "assertion_kind": "native_issue_code",
+        "expected_observation": "snapshot_scope_incompatible"
+      }
+    }
+  ]
+}

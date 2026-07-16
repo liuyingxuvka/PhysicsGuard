@@ -1,0 +1,34 @@
+# PhysicsGuard disjoint future-holdout artifact
+# Boundary: Fixture evidence only; exact future horizon for rollout comparison.
+series_id: pump_loop_future_holdout
+time_unit: s
+points:
+  - point_id: future_holdout_1
+    timestamp: 1.2
+    scenario_id: future_rollout
+    case_id: future_case_1
+    source_identity_id: future_holdout_artifact
+    source_row_index: 0
+    variables:
+      pump_signal_map.x: {value: 12.0, unit: rad/s}
+      pump_signal_map.y: {value: 24.0, unit: kg/s}
+  - point_id: future_holdout_2
+    timestamp: 2.2
+    scenario_id: future_rollout
+    case_id: future_case_2
+    source_identity_id: future_holdout_artifact
+    source_row_index: 1
+    variables:
+      pump_signal_map.x: {value: 13.0, unit: rad/s}
+      pump_signal_map.y: {value: 26.0, unit: kg/s}
+  - point_id: future_holdout_3
+    timestamp: 3.2
+    scenario_id: future_rollout
+    case_id: future_case_3
+    source_identity_id: future_holdout_artifact
+    source_row_index: 2
+    variables:
+      pump_signal_map.x: {value: 14.0, unit: rad/s}
+      pump_signal_map.y: {value: 28.0, unit: kg/s}
+metadata:
+  source: disjoint_future_fixture_v1

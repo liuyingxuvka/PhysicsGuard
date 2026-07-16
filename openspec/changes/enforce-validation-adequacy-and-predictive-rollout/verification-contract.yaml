@@ -1,0 +1,143 @@
+
+contract_version: 1
+change: enforce-validation-adequacy-and-predictive-rollout
+obligations:
+  - id: req.adequacy.universe
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Target-owned validation universe"
+    claim: "Available, eligible, selected, evaluated, and validated point/signal counts are derived from current target-owned artifacts."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.adequacy.temporal
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Quantitative temporal adequacy"
+    claim: "Broad temporal claims reject tiny, duplicate, degenerate, endpoint-only, and missing-event samples."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.adequacy.sampling-modes
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Explicit sampling modes"
+    claim: "Every supported sampling mode has provenance and executable pass/block rules."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.adequacy.signal-time
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Signal-time and family coverage"
+    claim: "Large signal/parameter universes, per-signal and per-time-varying-parameter histories, classifications, exclusions, critical targets, and family quotas are quantified and shallow coverage is blocked."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.adequacy.parameter-time
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Parameter temporal classification and depth"
+    claim: "Every available parameter is source-classified; static parameters use binding-only evidence, while each time-varying parameter uses a raw target-owned denominator and passes its own count/ratio/time/gap/universal/project-stage floors plus representative residual/direction/envelope gates."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.adequacy.closure
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Claim-compatible project closure"
+    claim: "Validation closure consumes a passing non-snapshot adequacy receipt compatible with the requested scope."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.predictive.semantics
+    source: "specs/predictive-rollout-validation/spec.md#Requirement: Explicit model semantics"
+    claim: "Pointwise evidence never authorizes trajectory prediction."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.predictive.identity
+    source: "specs/predictive-rollout-validation/spec.md#Requirement: Future-holdout rollout identity"
+    claim: "Predictive rollout binds exact model, prediction, disjoint future holdout, initial state, step, horizon, scale, and threshold identities."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.predictive.metrics
+    source: "specs/predictive-rollout-validation/spec.md#Requirement: Predictive rollout metrics"
+    claim: "Native rollout comparison preserves error, lag/phase, drift, and stability metrics and gates thresholds."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.predictive.closure
+    source: "specs/predictive-rollout-validation/spec.md#Requirement: Prediction-ready closure"
+    claim: "Prediction-ready closure requires stateful semantics plus passing adequacy and predictive receipts."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.skills.native-depth
+    source: "proposal.md#What Changes"
+    claim: "PhysicsGuard skills route broad and predictive claims through target-owned adequacy and rollout receipts while SkillGuard stays supervisory."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.skills.skillguard-v2-depth
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Native validation-depth receipt"
+    claim: "SkillGuard V2 executes the exact target plan, preserves class-aware raw denominators, calibrates static/deep/shallow native outcomes, and cannot use calibration fixtures as target evidence."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.skills.v2-only-retirement
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Single current SkillGuard V2 authority and expanded V1 retirement"
+    claim: "The maintained PhysicsGuard skill has only current V2 authority and an expanded-scope retirement receipt."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.skills.receipt-only-verification
+    source: "specs/simulation-validation-depth/spec.md#Requirement: Receipt-only OpenSpec verification"
+    claim: "OpenSpec consumes the current family parent receipt without executing any owner."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+  - id: req.skills.native-integration-identity
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Generic SkillGuard supervision and single current authority"
+    claim: "Every maintained target projects its exact PhysicsGuard owner/default route through common required route/check bindings and a compiled non-optional depth profile whose check ids match the complete declared inventory before the sole enforced closure, while parallel and SkillGuard-owned runtime routes remain forbidden."
+    required: true
+    evidence: [check.physicsguard-family.parent-receipt]
+checks:
+  - id: check.physicsguard-family.parent-receipt
+    kind: receipt
+    semantic_check_id: semantic.physicsguard-suite.v2-migration-parent
+    execution_id: execution.physicsguard-suite.v2-migration-parent
+    receipt_ref:
+      provider_id: skillguard
+      work_package_id: enforce-validation-adequacy-and-predictive-rollout
+      adapter: portable-receipt.v1
+      ref_path: work/verification/enforce-validation-adequacy-and-predictive-rollout/skillguard-parent-receipt-ref.json
+    consumer: openspec.verify-change
+    validation_scope: full
+    snapshot_policy: frozen
+    required: true
+    covers:
+      - req.adequacy.universe
+      - req.adequacy.temporal
+      - req.adequacy.sampling-modes
+      - req.adequacy.signal-time
+      - req.adequacy.parameter-time
+      - req.adequacy.closure
+      - req.predictive.semantics
+      - req.predictive.identity
+      - req.predictive.metrics
+      - req.predictive.closure
+      - req.skills.native-depth
+      - req.skills.skillguard-v2-depth
+      - req.skills.v2-only-retirement
+      - req.skills.receipt-only-verification
+      - req.skills.native-integration-identity
+    expected: {exit_code: 0}
+freshness:
+  watch:
+    - openspec/changes/enforce-validation-adequacy-and-predictive-rollout/v1-retirement-inventory.json
+    - scripts/verify_guard_simulation_readiness.py
+    - scripts/upgrade_purpose_contracts.py
+    - tests/test_skillguard_v2_runtime_authority_audit.py
+    - tests/test_guard_model_contract.py
+    - tests/test_skill_execution_depth.py
+    - tests/test_openspec_receipt_only_verification.py
+    - .flowguard/physicsguard_skill_suite_mesh.json
+    - .flowguard/check_physicsguard_skill_suite_mesh.py
+    - openspec/changes/enforce-validation-adequacy-and-predictive-rollout/proposal.md
+    - openspec/changes/enforce-validation-adequacy-and-predictive-rollout/design.md
+    - openspec/changes/enforce-validation-adequacy-and-predictive-rollout/tasks.md
+    - openspec/changes/enforce-validation-adequacy-and-predictive-rollout/specs/**/*.md
+    - openspec/changes/enforce-validation-adequacy-and-predictive-rollout/verification-contract.yaml
+    - src/physicsguard/schema/**/*.py
+    - src/physicsguard/core/**/*.py
+    - src/physicsguard/io/**/*.py
+    - tests/test_validation_adequacy.py
+    - tests/test_predictive_rollout_validation.py
+    - tests/test_validation_depth_receipts.py
+    - tests/test_model_dataset_validation.py
+    - tests/test_project_closure.py
+    - tests/test_skillguard_native_depth_bridge.py
+    - templates/**/*.yaml
+    - examples/testfile_contracts/pump_loop/**/*
+    - skill/physicsguard*/SKILL.md
+    - skill/physicsguard*/.skillguard/**/*
+    - docs/model_dataset_validation.md
+    - docs/project_closure_gate.md
+    - docs/test_file_contracts.md
+    - .flowguard/**/*.py

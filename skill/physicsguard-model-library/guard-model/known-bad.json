@@ -1,0 +1,43 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-library",
+  "cases": [
+    {
+      "case_id": "known-bad:compatibility-not-proven",
+      "failure_id": "failure:physicsguard-model-library:compatibility-not-proven",
+      "trigger_obligation_id": "testbench_compatibility",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:library-inventory-incomplete",
+      "failure_id": "failure:physicsguard-model-library:library-inventory-incomplete",
+      "trigger_obligation_id": "asset_inventory",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:reuse-scope-overreach",
+      "failure_id": "failure:physicsguard-model-library:reuse-scope-overreach",
+      "trigger_obligation_id": "bounded_reuse_scope",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:validation-or-gap-stale",
+      "failure_id": "failure:physicsguard-model-library:validation-or-gap-stale",
+      "trigger_obligation_id": "gap_gate",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    }
+  ]
+}

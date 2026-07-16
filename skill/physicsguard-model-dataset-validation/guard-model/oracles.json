@@ -1,0 +1,72 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-dataset-validation",
+  "required_obligation_ids": [
+    "obligation:claim-scope-compatible",
+    "obligation:coverage-universe-adequate",
+    "obligation:exact-validation-inputs",
+    "obligation:native-depth-receipt-current",
+    "obligation:per-parameter-depth-adequate",
+    "obligation:per-signal-depth-adequate",
+    "obligation:predictive-semantics-honest"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-model-dataset-validation:obligation-claim-scope-compatible",
+      "obligation_id": "obligation:claim-scope-compatible",
+      "failure_id": "failure:physicsguard-model-dataset-validation:validation-scope-overreach",
+      "predicate_kind": "native_semantic_fixture_must_block",
+      "predicate": "The exact target-native fixture for 'failure:physicsguard-model-dataset-validation:validation-scope-overreach' must assert the bounded semantic observation; otherwise semantic detection is unproved.",
+      "expected_finding_code": "snapshot_scope_incompatible"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-dataset-validation:obligation-coverage-universe-adequate",
+      "obligation_id": "obligation:coverage-universe-adequate",
+      "failure_id": "failure:physicsguard-model-dataset-validation:coverage-universe-shallow",
+      "predicate_kind": "native_semantic_fixture_must_block",
+      "predicate": "The exact target-native fixture for 'failure:physicsguard-model-dataset-validation:coverage-universe-shallow' must assert the bounded semantic observation; otherwise semantic detection is unproved.",
+      "expected_finding_code": "signal_coverage_ratio_not_met"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-dataset-validation:obligation-exact-validation-inputs",
+      "obligation_id": "obligation:exact-validation-inputs",
+      "failure_id": "failure:physicsguard-model-dataset-validation:validation-identity-wrong",
+      "predicate_kind": "native_semantic_fixture_must_block",
+      "predicate": "The exact target-native fixture for 'failure:physicsguard-model-dataset-validation:validation-identity-wrong' must assert the bounded semantic observation; otherwise semantic detection is unproved.",
+      "expected_finding_code": "dataset_identity_stale"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-dataset-validation:obligation-native-depth-receipt-current",
+      "obligation_id": "obligation:native-depth-receipt-current",
+      "failure_id": "failure:physicsguard-model-dataset-validation:validation-identity-wrong",
+      "predicate_kind": "native_semantic_fixture_must_block",
+      "predicate": "The exact target-native fixture for 'failure:physicsguard-model-dataset-validation:validation-identity-wrong' must assert the bounded semantic observation; otherwise semantic detection is unproved.",
+      "expected_finding_code": "dataset_identity_stale"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-dataset-validation:obligation-per-parameter-depth-adequate",
+      "obligation_id": "obligation:per-parameter-depth-adequate",
+      "failure_id": "failure:physicsguard-model-dataset-validation:coverage-universe-shallow",
+      "predicate_kind": "native_semantic_fixture_must_block",
+      "predicate": "The exact target-native fixture for 'failure:physicsguard-model-dataset-validation:coverage-universe-shallow' must assert the bounded semantic observation; otherwise semantic detection is unproved.",
+      "expected_finding_code": "signal_coverage_ratio_not_met"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-dataset-validation:obligation-per-signal-depth-adequate",
+      "obligation_id": "obligation:per-signal-depth-adequate",
+      "failure_id": "failure:physicsguard-model-dataset-validation:physical-relation-violated",
+      "predicate_kind": "native_semantic_fixture_must_block",
+      "predicate": "The exact target-native fixture for 'failure:physicsguard-model-dataset-validation:physical-relation-violated' must assert the bounded semantic observation; otherwise semantic detection is unproved.",
+      "expected_finding_code": "direct_validation_audit_failed"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-model-dataset-validation:obligation-predictive-semantics-honest",
+      "obligation_id": "obligation:predictive-semantics-honest",
+      "failure_id": "failure:physicsguard-model-dataset-validation:prediction-semantics-overclaimed",
+      "predicate_kind": "native_semantic_fixture_must_block",
+      "predicate": "The exact target-native fixture for 'failure:physicsguard-model-dataset-validation:prediction-semantics-overclaimed' must assert the bounded semantic observation; otherwise semantic detection is unproved.",
+      "expected_finding_code": "pointwise_prediction_forbidden"
+    }
+  ]
+}

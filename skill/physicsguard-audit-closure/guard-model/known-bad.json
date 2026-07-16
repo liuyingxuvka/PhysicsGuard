@@ -1,0 +1,52 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-audit-closure",
+  "cases": [
+    {
+      "case_id": "known-bad:blocker-suppressed",
+      "failure_id": "failure:physicsguard-audit-closure:blocker-suppressed",
+      "trigger_obligation_id": "blockers_reconciled",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:closure-scope-overreach",
+      "failure_id": "failure:physicsguard-audit-closure:closure-scope-overreach",
+      "trigger_obligation_id": "safe_claim_boundary",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:predictive-overclaim",
+      "failure_id": "failure:physicsguard-audit-closure:predictive-overclaim",
+      "trigger_obligation_id": "predictive_rollout_if_requested",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:required-check-missing",
+      "failure_id": "failure:physicsguard-audit-closure:required-check-missing",
+      "trigger_obligation_id": "closure_plan",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:stale-or-skipped-promoted",
+      "failure_id": "failure:physicsguard-audit-closure:stale-or-skipped-promoted",
+      "trigger_obligation_id": "validation_depth",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    }
+  ]
+}

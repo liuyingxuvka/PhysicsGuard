@@ -1,0 +1,686 @@
+{
+  "schema_version": "skillguard.contract_source.v2",
+  "skill_id": "physicsguard-test-file-contract-review",
+  "model_id": "physicsguard-test-file-contract-review.family-baseline-regression.current",
+  "model_path": ".skillguard/contract_model.py",
+  "confirmed": true,
+  "integration_mode": "native-integrated",
+  "native_route_owner": "physicsguard.test-file-contract-review",
+  "default_route_id": "route:physicsguard-test-file-contract-review:check",
+  "native_route_bindings": [
+    {
+      "binding_id": "native:physicsguard-test-file-contract-review:current",
+      "native_route_id": "route:physicsguard-test-file-contract-review:check",
+      "required_before_closure": true,
+      "source": "guard-model/contract.json"
+    }
+  ],
+  "native_check_bindings": [
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-contract",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-contract",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-candidate",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-candidate",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-good",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-good",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-bad-file-or-field-identity-missing",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:file-or-field-identity-missing",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-bad-unit-or-timing-mismatch",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:unit-or-timing-mismatch",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-bad-testbench-model-binding-wrong",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:testbench-model-binding-wrong",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-bad-per-signal-evidence-shallow",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:per-signal-evidence-shallow",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-test-file-contract-review:check-physicsguard-test-file-contract-review-family-baseline-bad-project-gap-hidden",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:project-gap-hidden",
+      "required": true
+    }
+  ],
+  "depth_profile": {
+    "schema_version": "skillguard.depth_profile.v2",
+    "profile_id": "profile:physicsguard-test-file-contract-review:family-baseline-regression",
+    "target_skill_id": "physicsguard-test-file-contract-review",
+    "integration_mode": "native-integrated",
+    "native_owner_id": "physicsguard.test-file-contract-review",
+    "native_route_ids": [
+      "route:physicsguard-test-file-contract-review:check"
+    ],
+    "native_check_ids": [
+      "check:physicsguard-test-file-contract-review:family-baseline-contract",
+      "check:physicsguard-test-file-contract-review:family-baseline-candidate",
+      "check:physicsguard-test-file-contract-review:family-baseline-good",
+      "check:physicsguard-test-file-contract-review:family-baseline-bad:file-or-field-identity-missing",
+      "check:physicsguard-test-file-contract-review:family-baseline-bad:unit-or-timing-mismatch",
+      "check:physicsguard-test-file-contract-review:family-baseline-bad:testbench-model-binding-wrong",
+      "check:physicsguard-test-file-contract-review:family-baseline-bad:per-signal-evidence-shallow",
+      "check:physicsguard-test-file-contract-review:family-baseline-bad:project-gap-hidden"
+    ],
+    "skillguard_adds_domain_route": false,
+    "enforcement_level": "enforced",
+    "required_closure_profiles": [
+      "enforced"
+    ],
+    "provider_runtime": {
+      "provider_id": "skillguard-local-provider",
+      "required_runtime_contract_id": "skillguard-declared-check-supervision-current",
+      "required_capability_ids": [
+        "declared-check-inventory.v1",
+        "declared-check-receipt-reconciliation.v1",
+        "installation-receipt-binding.v1",
+        "installation-currentness-replay.v1",
+        "provider-runtime-enrollment.v1",
+        "single-flight-check-execution.v1"
+      ],
+      "required_enrollment_status": "enrolled",
+      "readiness_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-contract"
+      ]
+    },
+    "claim_boundary": "PhysicsGuard owns the family baseline semantics and every target-local current-model purpose, failure, native oracle, proof, residual risk, and bounded claim. SkillGuard only executes and reconciles the declared family baseline inventory; that receipt cannot close a current model."
+  },
+  "may_define_parallel_execution_route": false,
+  "may_define_skillguard_runtime_route": false,
+  "release_eligible": false,
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "checks": [
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-contract",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-contract",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "check-baseline-contract",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 120,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:guard-model-contract",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-contract"
+      ],
+      "depends_on_check_ids": [],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-candidate",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-candidate",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "check-baseline-candidate",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 120,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:candidate-bound",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-candidate-bound"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-contract"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-good",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-good",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-good",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:known-good",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-good"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-candidate"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:file-or-field-identity-missing",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-blocks:file-or-field-identity-missing",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-test-file-contract-review:file-or-field-identity-missing"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:known-bad:file-or-field-identity-missing",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:file-or-field-identity-missing"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:unit-or-timing-mismatch",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-blocks:unit-or-timing-mismatch",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-test-file-contract-review:unit-or-timing-mismatch"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:known-bad:unit-or-timing-mismatch",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:unit-or-timing-mismatch"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:testbench-model-binding-wrong",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-blocks:testbench-model-binding-wrong",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-test-file-contract-review:testbench-model-binding-wrong"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:known-bad:testbench-model-binding-wrong",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:testbench-model-binding-wrong"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:per-signal-evidence-shallow",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-blocks:per-signal-evidence-shallow",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-test-file-contract-review:per-signal-evidence-shallow"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:known-bad:per-signal-evidence-shallow",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:per-signal-evidence-shallow"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:project-gap-hidden",
+      "semantic_check_id": "semantic:physicsguard-test-file-contract-review:family-baseline-blocks:project-gap-hidden",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-test-file-contract-review:project-gap-hidden"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-test-file-contract-review:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-test-file-contract-review:known-bad:project-gap-hidden",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:project-gap-hidden"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    }
+  ],
+  "artifacts": [],
+  "judgment_rubrics": [],
+  "closure_profiles": [
+    {
+      "profile_id": "enforced",
+      "required_obligation_ids": [
+        "obligation:physicsguard-test-file-contract-review:family-baseline-contract",
+        "obligation:physicsguard-test-file-contract-review:family-baseline-candidate-bound",
+        "obligation:physicsguard-test-file-contract-review:family-baseline-good",
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:file-or-field-identity-missing",
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:unit-or-timing-mismatch",
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:testbench-model-binding-wrong",
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:per-signal-evidence-shallow",
+        "obligation:physicsguard-test-file-contract-review:family-baseline-blocks:project-gap-hidden"
+      ]
+    }
+  ],
+  "step_bindings": [
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-contract",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-contract"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "contract",
+        "summary": "Validate the immutable PhysicsGuard family baseline contract; this is not current-model purpose authority."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-candidate",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-candidate"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "candidate_admission",
+        "summary": "Admit only the family baseline candidate bound to its exact baseline contract and ordered authoring chain."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-good",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-good"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Execute the mandatory family baseline known-good proof."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-bad:file-or-field-identity-missing",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-bad:file-or-field-identity-missing"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against file or field identity is missing."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-bad:unit-or-timing-mismatch",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-bad:unit-or-timing-mismatch"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against unit or timing contract mismatches."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-bad:testbench-model-binding-wrong",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-bad:testbench-model-binding-wrong"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against testbench or model binding is wrong."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-bad:per-signal-evidence-shallow",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-bad:per-signal-evidence-shallow"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against per-signal evidence is shallow."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-test-file-contract-review:family-baseline-bad:project-gap-hidden",
+      "check_ids": [
+        "check:physicsguard-test-file-contract-review:family-baseline-bad:project-gap-hidden"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against project-level gap is hidden."
+      }
+    }
+  ],
+  "implementation_paths": [
+    ".skillguard/contract_model.py",
+    ".skillguard/runtime/skill_execution_depth.py",
+    "SKILL.md",
+    "guard-model/candidate.json",
+    "guard-model/contract.json",
+    "guard-model/known-bad.json",
+    "guard-model/known-good.json",
+    "guard-model/oracles.json",
+    "guard-model/verify.py"
+  ]
+}

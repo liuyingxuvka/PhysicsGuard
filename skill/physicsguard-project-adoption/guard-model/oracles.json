@@ -1,0 +1,54 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-project-adoption",
+  "required_obligation_ids": [
+    "project_record_current",
+    "toolchain_supported",
+    "native_artifact_inventory",
+    "blocker_inventory",
+    "required_revalidation"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-project-adoption:project-record-current",
+      "obligation_id": "project_record_current",
+      "failure_id": "failure:physicsguard-project-adoption:adoption-record-stale",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'project_record_current' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-adoption:toolchain-supported",
+      "obligation_id": "toolchain_supported",
+      "failure_id": "failure:physicsguard-project-adoption:toolchain-unsupported",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'toolchain_supported' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-adoption:native-artifact-inventory",
+      "obligation_id": "native_artifact_inventory",
+      "failure_id": "failure:physicsguard-project-adoption:native-artifacts-incomplete",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'native_artifact_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-adoption:blocker-inventory",
+      "obligation_id": "blocker_inventory",
+      "failure_id": "failure:physicsguard-project-adoption:blocker-or-revalidation-omitted",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'blocker_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-project-adoption:required-revalidation",
+      "obligation_id": "required_revalidation",
+      "failure_id": "failure:physicsguard-project-adoption:blocker-or-revalidation-omitted",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'required_revalidation' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

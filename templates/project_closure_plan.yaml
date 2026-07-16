@@ -23,6 +23,8 @@ required_checks:
   evidence_map: true
   test_contracts: true
   validation: true
+  validation_depth: true
+  predictive_rollout: false
   model_library: false
   hierarchy_closure: false
   evidence_mesh: false

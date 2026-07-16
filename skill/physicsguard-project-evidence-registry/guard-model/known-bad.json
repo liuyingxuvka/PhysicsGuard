@@ -1,0 +1,43 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-project-evidence-registry",
+  "cases": [
+    {
+      "case_id": "known-bad:artifact-universe-shrunk",
+      "failure_id": "failure:physicsguard-project-evidence-registry:artifact-universe-shrunk",
+      "trigger_obligation_id": "artifact_inventory_reconciled",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:binding-or-role-missing",
+      "failure_id": "failure:physicsguard-project-evidence-registry:binding-or-role-missing",
+      "trigger_obligation_id": "binding_edges",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:bundle-scope-overreach",
+      "failure_id": "failure:physicsguard-project-evidence-registry:bundle-scope-overreach",
+      "trigger_obligation_id": "bundle_scope",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:critical-gap-hidden",
+      "failure_id": "failure:physicsguard-project-evidence-registry:critical-gap-hidden",
+      "trigger_obligation_id": "critical_gaps",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    }
+  ]
+}

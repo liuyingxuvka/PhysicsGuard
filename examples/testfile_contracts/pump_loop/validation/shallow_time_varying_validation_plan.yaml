@@ -1,0 +1,180 @@
+audit_file: ../model/pump_loop_hierarchy.yaml
+calibration:
+  enabled: false
+  method: none
+contracts:
+- contract: ../contracts/clean_contract.yaml
+  required_status: pass
+depth:
+  adequacy:
+    critical_parameters:
+    - pump_signal_map.a
+    critical_signals:
+    - pump_signal_map.x
+    - pump_signal_map.y
+    family_quotas:
+    - family_id: pump_loop_core
+      member_ids:
+      - pump_signal_map.x
+      - pump_signal_map.y
+      - pump_signal_map.a
+      member_kind: mixed
+      minimum_covered_count: 3
+      minimum_covered_ratio: 1.0
+    maximum_exclusion_ratio: 0.0
+    maximum_time_gap: 0.1
+    minimum_distinct_timestamps: 3
+    minimum_parameter_coverage_ratio: 1.0
+    minimum_per_parameter_valid_points: 3
+    minimum_per_parameter_valid_ratio: 1.0
+    minimum_per_signal_valid_points: 3
+    minimum_per_signal_valid_ratio: 1.0
+    minimum_selected_points: 3
+    minimum_selected_ratio: 1.0
+    minimum_signal_coverage_ratio: 1.0
+    minimum_time_span: 0.2
+    parameter_temporal_policies:
+    - parameter_id: pump_signal_map.a
+      temporal_behavior: time_varying
+      classification_source: target-owned shallow time-varying parameter regression
+        plan
+      availability_source_id: manifest:rows
+      minimum_valid_points: 3
+      minimum_valid_ratio: 1.0
+      minimum_distinct_timestamps: 3
+      minimum_time_span: 0.2
+      maximum_time_gap: 0.1
+      contribution_expectation: sensitive
+      minimum_normalized_contribution_effect: 1.0e-9
+      required_strata:
+      - stratum_id: startup
+        start_fraction: 0.0
+        end_fraction: 0.2
+        minimum_valid_points: 1
+      - stratum_id: steady
+        start_fraction: 0.4
+        end_fraction: 0.6
+        minimum_valid_points: 1
+      - stratum_id: shutdown
+        start_fraction: 0.8
+        end_fraction: 1.0
+        minimum_valid_points: 1
+    require_start_middle_end: true
+    required_boundary_tags:
+    - window_start
+    - window_end
+    required_event_tags:
+    - baseline
+    - speed_ramp
+    required_mode_ids:
+    - valve_open
+    required_peak_tags:
+    - speed_peak
+    sampling_mode: full
+    selection_policy_id: pump_loop_fixture_full_manifest_selection_v1
+    selection_rationale: Every row in the bounded three-row fixture is evaluated;
+      no representative subsampling is used.
+    threshold_source: pump_loop_fixture_full_manifest_policy_v1
+  assumptions:
+  - The fixture relation y = 2*x is intentionally low fidelity and used only for contract
+    coverage.
+  - Each series point is evaluated independently; no dynamics are inferred between
+    timestamps.
+  dataset:
+    dataset_id: pump_loop_clean_dataset
+    field_schema:
+      identity_id: clean_manifest_schema
+      path: ../data/clean_manifest.yaml
+      sha256: 1fabd2b6b4f8af07c5391bfceda30aeab09ed25d9c590f63ec83eecee7716524
+    files:
+    - case_ids:
+      - baseline_case
+      - speed_ramp_case_01
+      - speed_ramp_case_02
+      identity_id: clean_csv
+      path: ../data/clean.csv
+      sha256: a187027e2b4251c607c72405051574034f0ec35b40dec26f8ad8d6b6a0a78a84
+    parameter_roles:
+      identity_id: pump_loop_parameter_roles
+      path: ../coverage/pump_loop_role_matrix.yaml
+      sha256: fb8d627c33fa0927486601b872a3b377d6804775a6991255e8da4d9a0659419d
+    testbench:
+      identity_id: pump_loop_testbench_profile
+      path: ../profiles/pump_loop_testbench_profile.yaml
+      sha256: 5a346f92f5a100c7dfe7bbe7bd310d943a1ea66a7fcc55d02332d18cbd8bbe01
+    testbench_version: v1
+  mapping_review:
+    accepted_review_states:
+    - ai_registered
+    - human_confirmed
+    bundle_id: pump_loop_validation_bundle_001
+    minimum_confidence: 0.75
+    registry:
+      identity_id: pump_loop_mapping_registry
+      path: ../evidence/project_evidence_registry.yaml
+      sha256: 31db144ac67d16757fca0dc6710a5b05057f0208a5f5b95148519e02492c7d2a
+  model_semantics: pointwise
+  observed_series:
+    identity_id: shallow_time_varying_parameter_series
+    path: ../observed/shallow_time_varying_parameter_series.yaml
+    sha256: 840ced4b5b7392928098521fe28438281e8c3cc95e6edcd90e93639fde7145e4
+    case_ids:
+    - baseline_case
+    - speed_ramp_case_01
+    - speed_ramp_case_02
+  scenarios:
+  - case_ids:
+    - baseline_case
+    description: Exact baseline point from the clean fixture dataset.
+    scenario_id: baseline
+  - baseline_scenario_id: baseline
+    case_ids:
+    - speed_ramp_case_01
+    - speed_ramp_case_02
+    description: Two exact rows with a declared commanded-speed perturbation.
+    perturbations:
+    - change: profile
+      reason: Declared commanded-speed ramp present in the bounded fixture rows.
+      target: pump_signal_map.x
+      unit: rad/s
+      value:
+        end: 11.0
+        start: 10.5
+    scenario_id: speed_ramp
+  time_scope:
+    claim_scope: scenario_set
+    end_time: 0.2
+    expected_point_count: 3
+    start_time: 0.0
+    time_unit: s
+evidence_bundle_id: pump_loop_validation_bundle_001
+evidence_registry: ../evidence/project_evidence_registry.yaml
+metadata:
+  fixture: shallow_time_varying_parameter_validation
+observed_file: ../observed/clean_observed.yaml
+physical_envelopes:
+- lower: 0.0
+  severity: warning
+  target: pump_signal_map.x
+  unit: rad/s
+  upper: 100.0
+- lower: 0.0
+  severity: warning
+  target: pump_signal_map.y
+  unit: kg/s
+  upper: 300.0
+redundant_sensor_checks: []
+validation_id: pump_loop_shallow_time_varying_validation
+variable_roles:
+- mapping_confidence: 0.9
+  measurement_confidence: 0.8
+  source_id: field:cmd_speed_rad_s
+  target: pump_signal_map.x
+  use_policy: preferred
+  validation_role: model_input
+- mapping_confidence: 0.9
+  measurement_confidence: 0.8
+  source_id: field:flow_readback_kg_s
+  target: pump_signal_map.y
+  use_policy: holdout_only
+  validation_role: validation_output

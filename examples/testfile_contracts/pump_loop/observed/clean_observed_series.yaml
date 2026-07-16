@@ -1,0 +1,63 @@
+# PhysicsGuard bounded observed series
+# Purpose: demonstrate exact time/scenario/perturbation validation depth.
+# Boundary: Low-fidelity relation fixture only; no commercial-model equivalence.
+series_id: pump_loop_clean_observed_series
+time_unit: s
+points:
+  - point_id: baseline_t0
+    timestamp: 0.0
+    scenario_id: baseline
+    case_id: baseline_case
+    source_identity_id: clean_csv
+    source_row_index: 0
+    event_tags: [baseline]
+    boundary_tags: [window_start]
+    mode_id: valve_open
+    variables:
+      pump_signal_map.x:
+        value: 10.0
+        unit: rad/s
+        source: field:cmd_speed_rad_s
+      pump_signal_map.y:
+        value: 20.0
+        unit: kg/s
+        source: field:flow_readback_kg_s
+  - point_id: speed_ramp_t1
+    timestamp: 0.1
+    scenario_id: speed_ramp
+    case_id: speed_ramp_case_01
+    source_identity_id: clean_csv
+    source_row_index: 1
+    event_tags: [speed_ramp]
+    mode_id: valve_open
+    variables:
+      pump_signal_map.x:
+        value: 10.5
+        unit: rad/s
+        source: field:cmd_speed_rad_s
+      pump_signal_map.y:
+        value: 21.0
+        unit: kg/s
+        source: field:flow_readback_kg_s
+  - point_id: speed_ramp_t2
+    timestamp: 0.2
+    scenario_id: speed_ramp
+    case_id: speed_ramp_case_02
+    source_identity_id: clean_csv
+    source_row_index: 2
+    event_tags: [speed_ramp]
+    peak_tags: [speed_peak]
+    boundary_tags: [window_end]
+    mode_id: valve_open
+    variables:
+      pump_signal_map.x:
+        value: 11.0
+        unit: rad/s
+        source: field:cmd_speed_rad_s
+      pump_signal_map.y:
+        value: 22.0
+        unit: kg/s
+        source: field:flow_readback_kg_s
+metadata:
+  fixture: clean_validation_depth
+  source_dataset: pump_loop_clean_dataset

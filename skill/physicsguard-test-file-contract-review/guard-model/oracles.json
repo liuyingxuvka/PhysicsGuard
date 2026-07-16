@@ -1,0 +1,90 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-test-file-contract-review",
+  "required_obligation_ids": [
+    "file_inventory",
+    "field_inventory",
+    "unit_contract",
+    "timing_contract",
+    "testbench_binding",
+    "model_binding",
+    "per_signal_depth",
+    "mapping_evidence",
+    "project_gaps"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:file-inventory",
+      "obligation_id": "file_inventory",
+      "failure_id": "failure:physicsguard-test-file-contract-review:file-or-field-identity-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'file_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:field-inventory",
+      "obligation_id": "field_inventory",
+      "failure_id": "failure:physicsguard-test-file-contract-review:file-or-field-identity-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'field_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:unit-contract",
+      "obligation_id": "unit_contract",
+      "failure_id": "failure:physicsguard-test-file-contract-review:unit-or-timing-mismatch",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'unit_contract' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:timing-contract",
+      "obligation_id": "timing_contract",
+      "failure_id": "failure:physicsguard-test-file-contract-review:unit-or-timing-mismatch",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'timing_contract' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:testbench-binding",
+      "obligation_id": "testbench_binding",
+      "failure_id": "failure:physicsguard-test-file-contract-review:testbench-model-binding-wrong",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'testbench_binding' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:model-binding",
+      "obligation_id": "model_binding",
+      "failure_id": "failure:physicsguard-test-file-contract-review:testbench-model-binding-wrong",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'model_binding' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:per-signal-depth",
+      "obligation_id": "per_signal_depth",
+      "failure_id": "failure:physicsguard-test-file-contract-review:per-signal-evidence-shallow",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'per_signal_depth' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:mapping-evidence",
+      "obligation_id": "mapping_evidence",
+      "failure_id": "failure:physicsguard-test-file-contract-review:per-signal-evidence-shallow",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'mapping_evidence' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-test-file-contract-review:project-gaps",
+      "obligation_id": "project_gaps",
+      "failure_id": "failure:physicsguard-test-file-contract-review:project-gap-hidden",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'project_gaps' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

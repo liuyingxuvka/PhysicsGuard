@@ -1,0 +1,45 @@
+{
+  "schema_version": "physicsguard.family_baseline_candidate.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-audit-closure",
+  "candidate_id": "candidate:physicsguard-audit-closure:guard-model-current",
+  "purpose_contract_ref": "guard-model/contract.json",
+  "purpose_contract_fingerprint": "416203577BA56049747F90A1910F924AD7C28DBCC58815E4E3A478D7EBF2A3BD",
+  "candidate_definition": {
+    "native_owner_id": "physicsguard.audit-closure",
+    "native_route_id": "route:physicsguard-audit-closure:close",
+    "protected_failure_ids": [
+      "failure:physicsguard-audit-closure:blocker-suppressed",
+      "failure:physicsguard-audit-closure:closure-scope-overreach",
+      "failure:physicsguard-audit-closure:predictive-overclaim",
+      "failure:physicsguard-audit-closure:required-check-missing",
+      "failure:physicsguard-audit-closure:stale-or-skipped-promoted"
+    ],
+    "required_obligation_ids": [
+      "closure_plan",
+      "required_native_checks",
+      "validation_depth",
+      "blockers_reconciled",
+      "stale_and_skipped_accounted",
+      "predictive_rollout_if_requested",
+      "safe_claim_boundary"
+    ],
+    "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
+  },
+  "authoring_events": [
+    {
+      "event_id": "event:physicsguard-audit-closure:purpose-contract-frozen",
+      "sequence": 1,
+      "event_kind": "purpose_contract_frozen",
+      "purpose_contract_fingerprint": "416203577BA56049747F90A1910F924AD7C28DBCC58815E4E3A478D7EBF2A3BD"
+    },
+    {
+      "event_id": "event:physicsguard-audit-closure:candidate-built",
+      "sequence": 2,
+      "event_kind": "candidate_built",
+      "purpose_contract_fingerprint": "416203577BA56049747F90A1910F924AD7C28DBCC58815E4E3A478D7EBF2A3BD",
+      "previous_event_fingerprint": "96C5FB47A0B8393EE04EC0AC95C6082AAFD963783059ED771BDABF386FCE0874",
+      "candidate_definition_fingerprint": "60F643146AEF6D21292C4962B0ED9F9D97097E5AD5F48F27C94498BEB8E3831A"
+    }
+  ]
+}

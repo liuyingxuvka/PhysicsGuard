@@ -1,0 +1,16 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_good.v1",
+  "artifact_role": "family_baseline_regression",
+  "case_id": "known-good:physicsguard-candidate-model-blueprint:complete-native-route",
+  "target_skill_id": "physicsguard-candidate-model-blueprint",
+  "covered_obligation_ids": [
+    "validated_hierarchy",
+    "block_readiness",
+    "signal_parameter_mapping",
+    "interface_inventory",
+    "rollout_boundary",
+    "generation_eligibility"
+  ],
+  "expected_native_status": "pass",
+  "self_reported_outcome_allowed": false
+}

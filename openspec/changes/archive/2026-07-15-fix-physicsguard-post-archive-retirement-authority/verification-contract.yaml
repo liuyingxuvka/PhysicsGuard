@@ -1,0 +1,101 @@
+contract_version: 1
+change: fix-physicsguard-post-archive-retirement-authority
+evidence_roots:
+  SKILLGUARD_EVIDENCE: work/verification/fix-physicsguard-post-archive-retirement-authority
+obligations:
+  - id: req.physicsguard-runtime-authority.post-archive-current-path
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Current retirement authority survives specification archival"
+    claim: Post-archive source, installed, and parent checks consume one project-owned current retirement inventory and never read OpenSpec change history.
+    required: true
+    evidence:
+      - check.physicsguard-runtime-authority.post-archive-regression
+      - check.physicsguard-runtime-authority.parent-receipt
+  - id: req.physicsguard-runtime-authority.fail-closed
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Scenario: Current retirement authority is missing"
+    claim: Missing or invalid current authority blocks issuance and replay without archive search, alternate path, compatibility reader, or silent fallback.
+    required: true
+    evidence:
+      - check.physicsguard-runtime-authority.post-archive-regression
+  - id: req.physicsguard-runtime-authority.transitive-input-freshness
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Scenario: Transitive retirement input changes"
+    claim: Every parent child-replay owner declares the current inventory and imported readiness verifier as exact inputs and therefore receives affected revalidation.
+    required: true
+    evidence:
+      - check.physicsguard-runtime-authority.post-archive-regression
+      - check.physicsguard-runtime-authority.parent-receipt
+checks:
+  - id: check.physicsguard-runtime-authority.post-archive-regression
+    kind: command
+    semantic_check_id: semantic.physicsguard-runtime-authority.post-archive-regression
+    execution_id: execution.physicsguard-runtime-authority.post-archive-regression
+    validation_scope: full
+    snapshot_policy: frozen
+    toolchain_identity: python-pytest-current
+    input_selectors:
+      - .flowguard/physicsguard_v1_retirement_inventory.json
+      - scripts/verify_guard_simulation_readiness.py
+      - scripts/verify_physicsguard_suite_parent.py
+      - scripts/generate_physicsguard_suite_parent_contract.py
+      - tests/test_post_archive_retirement_authority.py
+      - .flowguard/skillguard-parent/.skillguard/contract-source.json
+      - .flowguard/skillguard-parent/.skillguard/compiled-contract.json
+      - .flowguard/skillguard-parent/.skillguard/check-manifest.json
+      - .flowguard/physicsguard_suite_parent_inventory.json
+      - .flowguard/retirement-receipts/*.json
+    depends_on_receipts: []
+    command: python
+    args:
+      - -m
+      - pytest
+      - -q
+      - tests/test_post_archive_retirement_authority.py
+    timeout_seconds: 600
+    required: true
+    covers:
+      - req.physicsguard-runtime-authority.post-archive-current-path
+      - req.physicsguard-runtime-authority.fail-closed
+      - req.physicsguard-runtime-authority.transitive-input-freshness
+    expected:
+      exit_code: 0
+  - id: check.physicsguard-runtime-authority.parent-receipt
+    kind: receipt
+    semantic_check_id: semantic.physicsguard-runtime-authority.parent-receipt
+    execution_id: execution.physicsguard-runtime-authority.parent-receipt
+    receipt_ref:
+      provider_id: skillguard
+      work_package_id: fix-physicsguard-post-archive-retirement-authority
+      adapter: portable-receipt.v1
+      ref_path: work/verification/fix-physicsguard-post-archive-retirement-authority/portable/fix-physicsguard-post-archive-retirement-authority/ref.json
+    consumer: openspec.verify-change
+    validation_scope: full
+    snapshot_policy: frozen
+    required: true
+    covers:
+      - req.physicsguard-runtime-authority.post-archive-current-path
+      - req.physicsguard-runtime-authority.transitive-input-freshness
+    expected:
+      exit_code: 0
+freshness:
+  watch:
+    - openspec/changes/fix-physicsguard-post-archive-retirement-authority/proposal.md
+    - openspec/changes/fix-physicsguard-post-archive-retirement-authority/design.md
+    - openspec/changes/fix-physicsguard-post-archive-retirement-authority/tasks.md
+    - openspec/changes/fix-physicsguard-post-archive-retirement-authority/specs/**/*.md
+    - openspec/changes/fix-physicsguard-post-archive-retirement-authority/verification-contract.yaml
+    - .flowguard/physicsguard_v1_retirement_inventory.json
+    - .flowguard/model_miss_reviews/physicsguard-post-archive-retirement-authority-20260715.json
+    - .flowguard/skillguard-parent/**/*
+    - .flowguard/physicsguard_suite_parent_inventory.json
+    - .flowguard/retirement-receipts/*.json
+    - scripts/verify_guard_simulation_readiness.py
+    - scripts/verify_physicsguard_suite_parent.py
+    - scripts/generate_physicsguard_suite_parent_contract.py
+    - tests/test_post_archive_retirement_authority.py
+  exclude:
+    - "**/verification-report.json"
+    - "**/verification-receipts/**"
+    - "**/.skillguard/runs/**"
+    - "**/.flowguard/evidence/**"
+    - "**/work/verification/**"
+    - "**/__pycache__/**"
+    - "**/.pytest_cache/**"

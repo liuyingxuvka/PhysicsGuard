@@ -1,0 +1,52 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-test-file-contract-review",
+  "cases": [
+    {
+      "case_id": "known-bad:file-or-field-identity-missing",
+      "failure_id": "failure:physicsguard-test-file-contract-review:file-or-field-identity-missing",
+      "trigger_obligation_id": "file_inventory",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:per-signal-evidence-shallow",
+      "failure_id": "failure:physicsguard-test-file-contract-review:per-signal-evidence-shallow",
+      "trigger_obligation_id": "per_signal_depth",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:project-gap-hidden",
+      "failure_id": "failure:physicsguard-test-file-contract-review:project-gap-hidden",
+      "trigger_obligation_id": "project_gaps",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:testbench-model-binding-wrong",
+      "failure_id": "failure:physicsguard-test-file-contract-review:testbench-model-binding-wrong",
+      "trigger_obligation_id": "testbench_binding",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:unit-or-timing-mismatch",
+      "failure_id": "failure:physicsguard-test-file-contract-review:unit-or-timing-mismatch",
+      "trigger_obligation_id": "unit_contract",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    }
+  ]
+}

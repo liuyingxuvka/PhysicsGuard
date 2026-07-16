@@ -1,0 +1,1471 @@
+{
+  "artifacts": [],
+  "check_declarations_hash": "03FF41907E8CD3DC450A87B2F4515AF48B16A05F01E2FC39030EF4B17D666EB6",
+  "checks": [
+    {
+      "args": [
+        "guard-model/verify.py",
+        "check-baseline-contract",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "check_id": "check:physicsguard-model-library:family-baseline-contract",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-contract"
+      ],
+      "cwd_token": "target_root",
+      "depends_on_check_ids": [],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-library:guard-model-contract",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:runtime_source:3abe8a946ce72b1c"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:f61e537fa1ae8b8fbd83dc808785b158e1d64dc3a96420e678e81e80b3989103",
+      "owner_input_projection_hash": "sha256:dae87751b7f9b973d2d57c72bb363c490083fc24a7c0c756ff3671ac2a8918ef",
+      "projection_declaration_hash": "sha256:28b063c2970226eb7831b4b06b3e3b39d6684d80f89106e314c6aa162476388d",
+      "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-contract",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "guard-model/verify.py",
+        "check-baseline-candidate",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "check_id": "check:physicsguard-model-library:family-baseline-candidate",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-candidate-bound"
+      ],
+      "cwd_token": "target_root",
+      "depends_on_check_ids": [
+        "check:physicsguard-model-library:family-baseline-contract"
+      ],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-library:candidate-bound",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:runtime_source:3abe8a946ce72b1c",
+        "component:runtime_source:8dde74c277dd4617"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:58152d354f79e32471fb520d54dd75d398036af6890031c37dbbc3b553bafb89",
+      "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff",
+      "projection_declaration_hash": "sha256:2b999daed4cdf04437dd828bdf8c2af665c663ab5fa4bc7ae0fe4ec2c1299bb1",
+      "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-candidate",
+      "timeout_seconds": 120
+    },
+    {
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-good",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "check_id": "check:physicsguard-model-library:family-baseline-good",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-good"
+      ],
+      "cwd_token": "target_root",
+      "depends_on_check_ids": [
+        "check:physicsguard-model-library:family-baseline-candidate"
+      ],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-library:known-good",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:runtime_source:3abe8a946ce72b1c",
+        "component:runtime_source:8dde74c277dd4617"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:8bf7cbff9e887cba9ff50823ec57ec2558aba9b64189fe4c221e3691eb5495f2",
+      "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff",
+      "projection_declaration_hash": "sha256:717b04312fbdd41e5b125ccef1fac8b2836ebf0e1535c0f5a6b4c96935a235e8",
+      "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-good",
+      "timeout_seconds": 240
+    },
+    {
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-library:library-inventory-incomplete"
+      ],
+      "check_id": "check:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-blocks:library-inventory-incomplete"
+      ],
+      "cwd_token": "target_root",
+      "depends_on_check_ids": [
+        "check:physicsguard-model-library:family-baseline-good"
+      ],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-library:known-bad:library-inventory-incomplete",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:runtime_source:3abe8a946ce72b1c",
+        "component:runtime_source:8dde74c277dd4617"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:7c052b81551f5fa7fea767502cd7991812b1b58ac15636be0c7f2b6d92f9ad19",
+      "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff",
+      "projection_declaration_hash": "sha256:d5c3b11ca8272375cbffecc4958979a33417946e49e315bdb1eb9b80349148dc",
+      "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:library-inventory-incomplete",
+      "timeout_seconds": 240
+    },
+    {
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-library:compatibility-not-proven"
+      ],
+      "check_id": "check:physicsguard-model-library:family-baseline-bad:compatibility-not-proven",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-blocks:compatibility-not-proven"
+      ],
+      "cwd_token": "target_root",
+      "depends_on_check_ids": [
+        "check:physicsguard-model-library:family-baseline-good"
+      ],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-library:known-bad:compatibility-not-proven",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:runtime_source:3abe8a946ce72b1c",
+        "component:runtime_source:8dde74c277dd4617"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:29222bf936809dce73b9858bdca4a6d844c964bedbb93b4b182d2ba51f5fb832",
+      "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff",
+      "projection_declaration_hash": "sha256:4568c137d70f1789a3a836820d231f26495b08c3a9f11e36220fb94c97743cef",
+      "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:compatibility-not-proven",
+      "timeout_seconds": 240
+    },
+    {
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-library:validation-or-gap-stale"
+      ],
+      "check_id": "check:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-blocks:validation-or-gap-stale"
+      ],
+      "cwd_token": "target_root",
+      "depends_on_check_ids": [
+        "check:physicsguard-model-library:family-baseline-good"
+      ],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-library:known-bad:validation-or-gap-stale",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:runtime_source:3abe8a946ce72b1c",
+        "component:runtime_source:8dde74c277dd4617"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:90f2509d88a6dccad33dcce9d827c7e2bc9b87bbdb6e419a2359c511ef4891da",
+      "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff",
+      "projection_declaration_hash": "sha256:e24345e8ba165fc6118db847714c4e97b0bf31e4884a15bd6095aea83a6d8f65",
+      "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:validation-or-gap-stale",
+      "timeout_seconds": 240
+    },
+    {
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-library:reuse-scope-overreach"
+      ],
+      "check_id": "check:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach",
+      "command": "python",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-blocks:reuse-scope-overreach"
+      ],
+      "cwd_token": "target_root",
+      "depends_on_check_ids": [
+        "check:physicsguard-model-library:family-baseline-good"
+      ],
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-library:known-bad:reuse-scope-overreach",
+      "expected": {
+        "exit_code": 0
+      },
+      "input_component_ids": [
+        "component:runtime_source:3abe8a946ce72b1c",
+        "component:runtime_source:8dde74c277dd4617"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        }
+      ],
+      "kind": "command",
+      "owner_declaration_hash": "sha256:c9a2afd5b850909047c4044ea02fd6cae48a105148c202685e0590281e02ac84",
+      "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff",
+      "projection_declaration_hash": "sha256:1c7dabece1eb360f0562e8091c8803f9d55c053f4d16561d5f09dc96b11ba795",
+      "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:reuse-scope-overreach",
+      "timeout_seconds": 240
+    }
+  ],
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "closure_profiles": [
+    {
+      "profile_id": "enforced",
+      "required_obligation_ids": [
+        "obligation:physicsguard-model-library:family-baseline-contract",
+        "obligation:physicsguard-model-library:family-baseline-candidate-bound",
+        "obligation:physicsguard-model-library:family-baseline-good",
+        "obligation:physicsguard-model-library:family-baseline-blocks:library-inventory-incomplete",
+        "obligation:physicsguard-model-library:family-baseline-blocks:compatibility-not-proven",
+        "obligation:physicsguard-model-library:family-baseline-blocks:validation-or-gap-stale",
+        "obligation:physicsguard-model-library:family-baseline-blocks:reuse-scope-overreach"
+      ]
+    }
+  ],
+  "compiler_version": "skillguard.contract_compiler.v2",
+  "content_impact_plan": {
+    "all_owner_component_ids": [
+      "component:runtime_source:3abe8a946ce72b1c"
+    ],
+    "check_projections": [
+      {
+        "check_id": "check:physicsguard-model-library:family-baseline-contract",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-model-library:family-baseline-contract"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-model-library:guard-model-contract",
+        "projection_declaration_hash": "sha256:28b063c2970226eb7831b4b06b3e3b39d6684d80f89106e314c6aa162476388d",
+        "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-contract"
+      },
+      {
+        "check_id": "check:physicsguard-model-library:family-baseline-candidate",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-model-library:family-baseline-candidate-bound"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-model-library:candidate-bound",
+        "projection_declaration_hash": "sha256:2b999daed4cdf04437dd828bdf8c2af665c663ab5fa4bc7ae0fe4ec2c1299bb1",
+        "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-candidate"
+      },
+      {
+        "check_id": "check:physicsguard-model-library:family-baseline-good",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-model-library:family-baseline-good"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-model-library:known-good",
+        "projection_declaration_hash": "sha256:717b04312fbdd41e5b125ccef1fac8b2836ebf0e1535c0f5a6b4c96935a235e8",
+        "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-good"
+      },
+      {
+        "check_id": "check:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-model-library:family-baseline-blocks:library-inventory-incomplete"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:library-inventory-incomplete",
+        "projection_declaration_hash": "sha256:d5c3b11ca8272375cbffecc4958979a33417946e49e315bdb1eb9b80349148dc",
+        "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:library-inventory-incomplete"
+      },
+      {
+        "check_id": "check:physicsguard-model-library:family-baseline-bad:compatibility-not-proven",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-model-library:family-baseline-blocks:compatibility-not-proven"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:compatibility-not-proven",
+        "projection_declaration_hash": "sha256:4568c137d70f1789a3a836820d231f26495b08c3a9f11e36220fb94c97743cef",
+        "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:compatibility-not-proven"
+      },
+      {
+        "check_id": "check:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-model-library:family-baseline-blocks:validation-or-gap-stale"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:validation-or-gap-stale",
+        "projection_declaration_hash": "sha256:e24345e8ba165fc6118db847714c4e97b0bf31e4884a15bd6095aea83a6d8f65",
+        "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:validation-or-gap-stale"
+      },
+      {
+        "check_id": "check:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach",
+        "covers_obligation_ids": [
+          "obligation:physicsguard-model-library:family-baseline-blocks:reuse-scope-overreach"
+        ],
+        "evidence_class": "hard",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:reuse-scope-overreach",
+        "projection_declaration_hash": "sha256:1c7dabece1eb360f0562e8091c8803f9d55c053f4d16561d5f09dc96b11ba795",
+        "semantic_check_id": "semantic:physicsguard-model-library:family-baseline-blocks:reuse-scope-overreach"
+      }
+    ],
+    "components": [
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:contract_schema"
+        ],
+        "component_hash": "sha256:abb33b7c4a017ab74c88242dc0636a0ee987dd553cc55aeb28e35b23ae58ae07",
+        "component_id": "component:contract_schema:4f90d3ef5eeadaa2",
+        "consumer_ids": [
+          "projection:contract-compile",
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          ".skillguard/contract-source.json"
+        ],
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:179b1f4e555b1cc6c9c4fdc89f0e2c60b73d3b8c52766f60d4b1b276dbf8b935",
+        "component_id": "component:documentation_model:0d98436276af8994",
+        "consumer_ids": [
+          "projection:contract-compile",
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          ".skillguard/contract_model.py"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:documentation_model"
+        ],
+        "component_hash": "sha256:68901a64c8a06c0c3cf73deabaf19d4ff27cce53a911c6076f6c0581cabe7007",
+        "component_id": "component:documentation_model:e7e7b0cff39d5c2b",
+        "consumer_ids": [
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          "SKILL.md"
+        ],
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:8443df2eca71aec8305d9ff56b98dff4827181a78ec2050273e173e7232084b6",
+        "component_id": "component:runtime_source:3abe8a946ce72b1c",
+        "consumer_ids": [
+          "owner:physicsguard-model-library:candidate-bound",
+          "owner:physicsguard-model-library:guard-model-contract",
+          "owner:physicsguard-model-library:known-bad:compatibility-not-proven",
+          "owner:physicsguard-model-library:known-bad:library-inventory-incomplete",
+          "owner:physicsguard-model-library:known-bad:reuse-scope-overreach",
+          "owner:physicsguard-model-library:known-bad:validation-or-gap-stale",
+          "owner:physicsguard-model-library:known-good",
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          ".skillguard/runtime/skill_execution_depth.py",
+          "guard-model/contract.json",
+          "guard-model/known-bad.json",
+          "guard-model/known-good.json",
+          "guard-model/oracles.json",
+          "guard-model/verify.py"
+        ],
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_ids": [
+          "skillguard.content_role_classifier.current:runtime_source"
+        ],
+        "component_hash": "sha256:c238609b66a25ea0b30875ed061439fe8877a502e004d81189bb11e1826658c6",
+        "component_id": "component:runtime_source:8dde74c277dd4617",
+        "consumer_ids": [
+          "owner:physicsguard-model-library:candidate-bound",
+          "owner:physicsguard-model-library:known-bad:compatibility-not-proven",
+          "owner:physicsguard-model-library:known-bad:library-inventory-incomplete",
+          "owner:physicsguard-model-library:known-bad:reuse-scope-overreach",
+          "owner:physicsguard-model-library:known-bad:validation-or-gap-stale",
+          "owner:physicsguard-model-library:known-good",
+          "projection:installation"
+        ],
+        "install_disposition": "copy",
+        "member_paths": [
+          "guard-model/candidate.json"
+        ],
+        "role": "runtime_source"
+      }
+    ],
+    "full_admission_reason_codes": [
+      "explicit_final_gate",
+      "explicit_release_gate",
+      "impact_policy_or_compiler_changed",
+      "shared_validation_runtime_changed",
+      "all_owner_component_changed"
+    ],
+    "health": {
+      "ambiguous_role_paths": [],
+      "dependency_parse_errors": [],
+      "duplicate_owner_ids": [],
+      "invalid_dependency_edges": [],
+      "owner_cycles": [],
+      "unmapped_paths": []
+    },
+    "impact_graph_hash": "sha256:5886c3530a0b92665748f0c1e89e0b9008d97473ef143a5f7f15b73490f7aca3",
+    "inventory": [
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
+        "content_hash": "sha256:e2468cb907014a9cdb171df8215d76f5f5670b58fb332a720e6b5ec31e22d53f",
+        "install_disposition": "copy",
+        "path": ".skillguard/contract-source.json",
+        "role": "contract_schema"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:2c75f5b62bce414cd0bb07f14dae0ca1f5e958d20ea710025d6a5cf1ebf58688",
+        "install_disposition": "copy",
+        "path": ".skillguard/contract_model.py",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:52145c2f5dbfb0f6d3b55723518dc80c996cf0b551f8c01879572feb4e45529e",
+        "install_disposition": "copy",
+        "path": ".skillguard/runtime/skill_execution_depth.py",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
+        "content_hash": "sha256:2471faf354306f2570dbb32cfd373021a16717db4da44353a57bbe67f8fe79a9",
+        "install_disposition": "copy",
+        "path": "SKILL.md",
+        "role": "documentation_model"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:8b643c2532dbbffa31239536a0f772ce3ce2d7cf30dce4157a975a43d94b8f69",
+        "install_disposition": "copy",
+        "path": "guard-model/candidate.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:fd48fe2d628a1132c8ebb9f81e10f3a7fdce723347cc593b61e043c7254eb666",
+        "install_disposition": "copy",
+        "path": "guard-model/contract.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:862c474c3a43bcf4fe4bd643cc9a88aaa6b979c5521645f8188edecb3de2af6d",
+        "install_disposition": "copy",
+        "path": "guard-model/known-bad.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:8e4813fe644d7fc7b1a0bc54b6167ffbeab04ccd03275ec3eee5643103df290d",
+        "install_disposition": "copy",
+        "path": "guard-model/known-good.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:4530f18a846551f6ef823a76a5365cdaee5c70a485f76061724358c3d93b6482",
+        "install_disposition": "copy",
+        "path": "guard-model/oracles.json",
+        "role": "runtime_source"
+      },
+      {
+        "classification_rule_id": "skillguard.content_role_classifier.current:runtime_source",
+        "content_hash": "sha256:83c2121b6d1c53db1a38f27954887593e8f716b162115bd69e9d9f72a020506e",
+        "install_disposition": "copy",
+        "path": "guard-model/verify.py",
+        "role": "runtime_source"
+      }
+    ],
+    "inventory_hash": "sha256:792d538d5287f1c9a0f4372debe7f6119baef4b6616d9f8a9a2ad7a7000bd3dc",
+    "member_root_path": ".",
+    "owner_receipt_root_ref": {
+      "path_token": "owner_evidence_root",
+      "relative_path": "check-executions"
+    },
+    "owners": [
+      {
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-candidate"
+        ],
+        "depends_on_owner_ids": [
+          "owner:physicsguard-model-library:guard-model-contract"
+        ],
+        "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+        "execution_owner_id": "owner:physicsguard-model-library:candidate-bound",
+        "input_component_ids": [
+          "component:runtime_source:3abe8a946ce72b1c",
+          "component:runtime_source:8dde74c277dd4617"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".skillguard/runtime/skill_execution_depth.py"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:58152d354f79e32471fb520d54dd75d398036af6890031c37dbbc3b553bafb89",
+        "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-contract"
+        ],
+        "depends_on_owner_ids": [],
+        "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+        "execution_owner_id": "owner:physicsguard-model-library:guard-model-contract",
+        "input_component_ids": [
+          "component:runtime_source:3abe8a946ce72b1c"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".skillguard/runtime/skill_execution_depth.py"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:f61e537fa1ae8b8fbd83dc808785b158e1d64dc3a96420e678e81e80b3989103",
+        "owner_input_projection_hash": "sha256:dae87751b7f9b973d2d57c72bb363c490083fc24a7c0c756ff3671ac2a8918ef"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:compatibility-not-proven"
+        ],
+        "depends_on_owner_ids": [
+          "owner:physicsguard-model-library:known-good"
+        ],
+        "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:compatibility-not-proven",
+        "input_component_ids": [
+          "component:runtime_source:3abe8a946ce72b1c",
+          "component:runtime_source:8dde74c277dd4617"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".skillguard/runtime/skill_execution_depth.py"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:29222bf936809dce73b9858bdca4a6d844c964bedbb93b4b182d2ba51f5fb832",
+        "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete"
+        ],
+        "depends_on_owner_ids": [
+          "owner:physicsguard-model-library:known-good"
+        ],
+        "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:library-inventory-incomplete",
+        "input_component_ids": [
+          "component:runtime_source:3abe8a946ce72b1c",
+          "component:runtime_source:8dde74c277dd4617"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".skillguard/runtime/skill_execution_depth.py"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:7c052b81551f5fa7fea767502cd7991812b1b58ac15636be0c7f2b6d92f9ad19",
+        "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach"
+        ],
+        "depends_on_owner_ids": [
+          "owner:physicsguard-model-library:known-good"
+        ],
+        "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:reuse-scope-overreach",
+        "input_component_ids": [
+          "component:runtime_source:3abe8a946ce72b1c",
+          "component:runtime_source:8dde74c277dd4617"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".skillguard/runtime/skill_execution_depth.py"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:c9a2afd5b850909047c4044ea02fd6cae48a105148c202685e0590281e02ac84",
+        "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale"
+        ],
+        "depends_on_owner_ids": [
+          "owner:physicsguard-model-library:known-good"
+        ],
+        "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+        "execution_owner_id": "owner:physicsguard-model-library:known-bad:validation-or-gap-stale",
+        "input_component_ids": [
+          "component:runtime_source:3abe8a946ce72b1c",
+          "component:runtime_source:8dde74c277dd4617"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".skillguard/runtime/skill_execution_depth.py"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:90f2509d88a6dccad33dcce9d827c7e2bc9b87bbdb6e419a2359c511ef4891da",
+        "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff"
+      },
+      {
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-good"
+        ],
+        "depends_on_owner_ids": [
+          "owner:physicsguard-model-library:candidate-bound"
+        ],
+        "evidence_domain_id": "physicsguard-model-library:guard-model-proof",
+        "execution_owner_id": "owner:physicsguard-model-library:known-good",
+        "input_component_ids": [
+          "component:runtime_source:3abe8a946ce72b1c",
+          "component:runtime_source:8dde74c277dd4617"
+        ],
+        "input_selectors": [
+          {
+            "kind": "path",
+            "path": ".skillguard/runtime/skill_execution_depth.py"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/candidate.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/contract.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-bad.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/known-good.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/oracles.json"
+          },
+          {
+            "kind": "path",
+            "path": "guard-model/verify.py"
+          }
+        ],
+        "owner_declaration_hash": "sha256:8bf7cbff9e887cba9ff50823ec57ec2558aba9b64189fe4c221e3691eb5495f2",
+        "owner_input_projection_hash": "sha256:d8269c977ef4946bec5f91f4ebfa36b1f5f5c28ed56e09af786fe312bb4641ff"
+      }
+    ],
+    "policy_id": "skillguard.content_impact_policy.current",
+    "portfolio_target_edges": [],
+    "projection_consumers": [
+      {
+        "consumer_id": "projection:contract-compile",
+        "consumer_projection_hash": "sha256:009e1864cb8df7983a32cfa91bcb25898134e4c854861c5f4489b86c3986366e",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [
+          "component:contract_schema:4f90d3ef5eeadaa2",
+          "component:documentation_model:0d98436276af8994"
+        ],
+        "input_projection_hash": "sha256:61f9c7071d5d3d2c4d1d8a4158eaf132b4bccf02d93425327e9eb42838f71ae7",
+        "kind": "contract_compile",
+        "projection_declaration_hash": "sha256:a54fc23afe85e4ef618fbd332b5ba367f349d899cedf92ad1a44538c268b3c2d"
+      },
+      {
+        "consumer_id": "projection:global-router",
+        "consumer_projection_hash": "sha256:c05984df180fa719bed1a62a48db6052b1a7e03b87e7a9e6eda3430a1905cf86",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [],
+        "input_projection_hash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "kind": "global_router",
+        "projection_declaration_hash": "sha256:667973c38b6c505040402a17baf7ebb4fb1ebe562415b046f317c029a3861f2a"
+      },
+      {
+        "consumer_id": "projection:installation",
+        "consumer_projection_hash": "sha256:833424813f855b176eca663f5cb5fbf5a7b028ef993c1d16622f0c8de5ef35eb",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [
+          "component:contract_schema:4f90d3ef5eeadaa2",
+          "component:documentation_model:0d98436276af8994",
+          "component:documentation_model:e7e7b0cff39d5c2b",
+          "component:runtime_source:3abe8a946ce72b1c",
+          "component:runtime_source:8dde74c277dd4617"
+        ],
+        "input_projection_hash": "sha256:329543ce6d60f46aba72758fb7ae71c13925aad3d51acedf42691ef6bba183de",
+        "kind": "installation",
+        "projection_declaration_hash": "sha256:48a592ad0200a2ef1b3c48384af6ce145c54890816f25e9fea800c20bf0a48ed"
+      },
+      {
+        "consumer_id": "projection:portfolio",
+        "consumer_projection_hash": "sha256:9829573143198c085bf05b11cfa1f5d2f0b51f7dcf833f143c0b53b00bf4bbae",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [],
+        "input_projection_hash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "kind": "portfolio",
+        "projection_declaration_hash": "sha256:9194e37d395a5756ddd87565ee97fe8dcdae46c150b4b03754291a80060b8b26"
+      },
+      {
+        "consumer_id": "projection:source-maintenance",
+        "consumer_projection_hash": "sha256:13be01e10a981898727db9510b3c43dc1fddb727f0fd9bbb8c5009db65106e6c",
+        "impact_plan_schema_version": "skillguard.content_impact_plan.current",
+        "impact_policy_id": "skillguard.content_impact_policy.current",
+        "input_component_ids": [],
+        "input_projection_hash": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "kind": "source_maintenance",
+        "projection_declaration_hash": "sha256:b55f389a1ff76e45148a5e9c63699fe47970e1d99e9b1d3805bec3f98aafa235"
+      }
+    ],
+    "schema_version": "skillguard.content_impact_plan.current",
+    "unknown_mapping_disposition": "block"
+  },
+  "contract_hash": "B1AD4EFAD148444035FAAD018CE7EA40EB32AB9B230EAE08583A5B97BBFB7CFF",
+  "depth_profile": {
+    "claim_boundary": "PhysicsGuard owns the family baseline semantics and every target-local current-model purpose, failure, native oracle, proof, residual risk, and bounded claim. SkillGuard only executes and reconciles the declared family baseline inventory; that receipt cannot close a current model.",
+    "enforcement_level": "enforced",
+    "integration_mode": "native-integrated",
+    "native_check_ids": [
+      "check:physicsguard-model-library:family-baseline-contract",
+      "check:physicsguard-model-library:family-baseline-candidate",
+      "check:physicsguard-model-library:family-baseline-good",
+      "check:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete",
+      "check:physicsguard-model-library:family-baseline-bad:compatibility-not-proven",
+      "check:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale",
+      "check:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach"
+    ],
+    "native_owner_id": "physicsguard.model-library",
+    "native_route_ids": [
+      "route:physicsguard-model-library:reuse"
+    ],
+    "profile_id": "profile:physicsguard-model-library:family-baseline-regression",
+    "provider_runtime": {
+      "provider_id": "skillguard-local-provider",
+      "readiness_check_ids": [
+        "check:physicsguard-model-library:family-baseline-contract"
+      ],
+      "required_capability_ids": [
+        "declared-check-inventory.v1",
+        "declared-check-receipt-reconciliation.v1",
+        "installation-receipt-binding.v1",
+        "installation-currentness-replay.v1",
+        "provider-runtime-enrollment.v1",
+        "single-flight-check-execution.v1"
+      ],
+      "required_enrollment_status": "enrolled",
+      "required_runtime_contract_id": "skillguard-declared-check-supervision-current"
+    },
+    "required_closure_profiles": [
+      "enforced"
+    ],
+    "schema_version": "skillguard.depth_profile.v2",
+    "skillguard_adds_domain_route": false,
+    "target_skill_id": "physicsguard-model-library"
+  },
+  "flowguard_schema_version": "1.0",
+  "functions": [
+    {
+      "business_intent": "Prove the maintained family baseline checker capability only: Prevent reuse of a PhysicsGuard model asset unless its profile, testbench, compatibility evidence, gaps, validation receipt, and bounded reuse scope are current for the requested project.",
+      "function_id": "function:physicsguard-model-library:guard-model",
+      "owner_id": "physicsguard.model-library",
+      "route_ids": [
+        "route:physicsguard-model-library:reuse"
+      ]
+    }
+  ],
+  "judgment_rubrics": [],
+  "model_id": "physicsguard-model-library.family-baseline-regression.current",
+  "model_path": ".skillguard/contract_model.py",
+  "obligations": [
+    {
+      "evidence_classes": [
+        "hard"
+      ],
+      "invariant_id": "invariant:physicsguard-model-library:family-baseline-contract",
+      "obligation_id": "obligation:physicsguard-model-library:family-baseline-contract",
+      "owner_step_ids": [
+        "step:physicsguard-model-library:family-baseline-contract"
+      ],
+      "required": true,
+      "required_check_ids": [
+        "check:physicsguard-model-library:family-baseline-contract"
+      ]
+    },
+    {
+      "evidence_classes": [
+        "hard"
+      ],
+      "invariant_id": "invariant:physicsguard-model-library:family-baseline-good",
+      "obligation_id": "obligation:physicsguard-model-library:family-baseline-good",
+      "owner_step_ids": [
+        "step:physicsguard-model-library:family-baseline-good"
+      ],
+      "required": true,
+      "required_check_ids": [
+        "check:physicsguard-model-library:family-baseline-good"
+      ]
+    },
+    {
+      "evidence_classes": [
+        "hard"
+      ],
+      "invariant_id": "invariant:physicsguard-model-library:family-baseline-candidate-bound",
+      "obligation_id": "obligation:physicsguard-model-library:family-baseline-candidate-bound",
+      "owner_step_ids": [
+        "step:physicsguard-model-library:family-baseline-candidate"
+      ],
+      "required": true,
+      "required_check_ids": [
+        "check:physicsguard-model-library:family-baseline-candidate"
+      ]
+    },
+    {
+      "evidence_classes": [
+        "hard"
+      ],
+      "invariant_id": "invariant:physicsguard-model-library:family-baseline-blocks:library-inventory-incomplete",
+      "obligation_id": "obligation:physicsguard-model-library:family-baseline-blocks:library-inventory-incomplete",
+      "owner_step_ids": [
+        "step:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete"
+      ],
+      "required": true,
+      "required_check_ids": [
+        "check:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete"
+      ]
+    },
+    {
+      "evidence_classes": [
+        "hard"
+      ],
+      "invariant_id": "invariant:physicsguard-model-library:family-baseline-blocks:compatibility-not-proven",
+      "obligation_id": "obligation:physicsguard-model-library:family-baseline-blocks:compatibility-not-proven",
+      "owner_step_ids": [
+        "step:physicsguard-model-library:family-baseline-bad:compatibility-not-proven"
+      ],
+      "required": true,
+      "required_check_ids": [
+        "check:physicsguard-model-library:family-baseline-bad:compatibility-not-proven"
+      ]
+    },
+    {
+      "evidence_classes": [
+        "hard"
+      ],
+      "invariant_id": "invariant:physicsguard-model-library:family-baseline-blocks:validation-or-gap-stale",
+      "obligation_id": "obligation:physicsguard-model-library:family-baseline-blocks:validation-or-gap-stale",
+      "owner_step_ids": [
+        "step:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale"
+      ],
+      "required": true,
+      "required_check_ids": [
+        "check:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale"
+      ]
+    },
+    {
+      "evidence_classes": [
+        "hard"
+      ],
+      "invariant_id": "invariant:physicsguard-model-library:family-baseline-blocks:reuse-scope-overreach",
+      "obligation_id": "obligation:physicsguard-model-library:family-baseline-blocks:reuse-scope-overreach",
+      "owner_step_ids": [
+        "step:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach"
+      ],
+      "required": true,
+      "required_check_ids": [
+        "check:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach"
+      ]
+    }
+  ],
+  "parent_model_id": "physicsguard.guard-family.family-baseline-regression.current",
+  "portfolio_capability_contracts": [],
+  "routes": [
+    {
+      "blocked_terminal_step_id": "terminal:physicsguard-model-library:blocked",
+      "function_id": "function:physicsguard-model-library:guard-model",
+      "handoffs": [],
+      "owner_id": "physicsguard.model-library",
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_ids": [
+        "step:physicsguard-model-library:family-baseline-contract",
+        "step:physicsguard-model-library:family-baseline-candidate",
+        "step:physicsguard-model-library:family-baseline-good",
+        "step:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete",
+        "step:physicsguard-model-library:family-baseline-bad:compatibility-not-proven",
+        "step:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale",
+        "step:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach",
+        "terminal:physicsguard-model-library:current",
+        "terminal:physicsguard-model-library:blocked"
+      ],
+      "success_terminal_step_id": "terminal:physicsguard-model-library:current"
+    }
+  ],
+  "schema_version": "skillguard.compiled_contract.v2",
+  "skill_id": "physicsguard-model-library",
+  "source_fingerprints": {
+    "binding": "E2468CB907014A9CDB171DF8215D76F5F5670B58FB332A720E6B5EC31E22D53F",
+    "entrypoint": "2471FAF354306F2570DBB32CFD373021A16717DB4DA44353A57BBE67F8FE79A9",
+    "implementation:.skillguard/contract_model.py": "2C75F5B62BCE414CD0BB07F14DAE0CA1F5E958D20EA710025D6A5CF1EBF58688",
+    "implementation:.skillguard/runtime/skill_execution_depth.py": "52145C2F5DBFB0F6D3B55723518DC80C996CF0B551F8C01879572FEB4E45529E",
+    "implementation:SKILL.md": "2471FAF354306F2570DBB32CFD373021A16717DB4DA44353A57BBE67F8FE79A9",
+    "implementation:guard-model/candidate.json": "8B643C2532DBBFFA31239536A0F772CE3CE2D7CF30DCE4157A975A43D94B8F69",
+    "implementation:guard-model/contract.json": "FD48FE2D628A1132C8EBB9F81E10F3A7FDCE723347CC593B61E043C7254EB666",
+    "implementation:guard-model/known-bad.json": "862C474C3A43BCF4FE4BD643CC9A88AAA6B979C5521645F8188EDECB3DE2AF6D",
+    "implementation:guard-model/known-good.json": "8E4813FE644D7FC7B1A0BC54B6167FFBEAB04CCD03275EC3EEE5643103DF290D",
+    "implementation:guard-model/oracles.json": "4530F18A846551F6EF823A76A5365CDAEE5C70A485F76061724358C3D93B6482",
+    "implementation:guard-model/verify.py": "83C2121B6D1C53DB1A38F27954887593E8F716B162115BD69E9D9F72A020506E",
+    "model": "2C75F5B62BCE414CD0BB07F14DAE0CA1F5E958D20EA710025D6A5CF1EBF58688",
+    "model_export": "FA855E77F5B93C03C73A0AEC7D1EDA7DBF37D34B7E6FFCE826DEE0D5195248D3"
+  },
+  "steps": [
+    {
+      "action_kind": "contract",
+      "binding": {
+        "action": {
+          "kind": "contract",
+          "summary": "Validate the immutable PhysicsGuard family baseline contract; this is not current-model purpose authority."
+        },
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-contract"
+        ],
+        "output_artifact_ids": []
+      },
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "step:physicsguard-model-library:family-baseline-contract",
+      "terminal_kind": ""
+    },
+    {
+      "action_kind": "candidate_admission",
+      "binding": {
+        "action": {
+          "kind": "candidate_admission",
+          "summary": "Admit only the family baseline candidate bound to its exact baseline contract and ordered authoring chain."
+        },
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-candidate"
+        ],
+        "output_artifact_ids": []
+      },
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [
+        "step:physicsguard-model-library:family-baseline-contract"
+      ],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "step:physicsguard-model-library:family-baseline-candidate",
+      "terminal_kind": ""
+    },
+    {
+      "action_kind": "native",
+      "binding": {
+        "action": {
+          "kind": "native",
+          "summary": "Execute the mandatory family baseline known-good proof."
+        },
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-good"
+        ],
+        "output_artifact_ids": []
+      },
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [
+        "step:physicsguard-model-library:family-baseline-candidate"
+      ],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "step:physicsguard-model-library:family-baseline-good",
+      "terminal_kind": ""
+    },
+    {
+      "action_kind": "native",
+      "binding": {
+        "action": {
+          "kind": "native",
+          "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against library inventory is incomplete."
+        },
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete"
+        ],
+        "output_artifact_ids": []
+      },
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [
+        "step:physicsguard-model-library:family-baseline-good"
+      ],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "step:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete",
+      "terminal_kind": ""
+    },
+    {
+      "action_kind": "native",
+      "binding": {
+        "action": {
+          "kind": "native",
+          "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against compatibility is not proven."
+        },
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:compatibility-not-proven"
+        ],
+        "output_artifact_ids": []
+      },
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [
+        "step:physicsguard-model-library:family-baseline-good"
+      ],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "step:physicsguard-model-library:family-baseline-bad:compatibility-not-proven",
+      "terminal_kind": ""
+    },
+    {
+      "action_kind": "native",
+      "binding": {
+        "action": {
+          "kind": "native",
+          "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against validation or gap evidence is stale."
+        },
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale"
+        ],
+        "output_artifact_ids": []
+      },
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [
+        "step:physicsguard-model-library:family-baseline-good"
+      ],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "step:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale",
+      "terminal_kind": ""
+    },
+    {
+      "action_kind": "native",
+      "binding": {
+        "action": {
+          "kind": "native",
+          "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against reuse scope is overreached."
+        },
+        "check_ids": [
+          "check:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach"
+        ],
+        "output_artifact_ids": []
+      },
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [
+        "step:physicsguard-model-library:family-baseline-good"
+      ],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "step:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach",
+      "terminal_kind": ""
+    },
+    {
+      "action_kind": "terminal",
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [
+        "step:physicsguard-model-library:family-baseline-bad:library-inventory-incomplete",
+        "step:physicsguard-model-library:family-baseline-bad:compatibility-not-proven",
+        "step:physicsguard-model-library:family-baseline-bad:validation-or-gap-stale",
+        "step:physicsguard-model-library:family-baseline-bad:reuse-scope-overreach"
+      ],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "terminal:physicsguard-model-library:current",
+      "terminal_kind": "success"
+    },
+    {
+      "action_kind": "terminal",
+      "owner_id": "physicsguard.model-library",
+      "prerequisite_step_ids": [],
+      "route_id": "route:physicsguard-model-library:reuse",
+      "step_id": "terminal:physicsguard-model-library:blocked",
+      "terminal_kind": "blocked"
+    }
+  ]
+}

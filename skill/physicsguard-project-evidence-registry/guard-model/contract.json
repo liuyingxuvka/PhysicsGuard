@@ -1,0 +1,95 @@
+{
+  "schema_version": "physicsguard.family_baseline_contract.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-project-evidence-registry",
+  "native_owner_id": "physicsguard.project-evidence-registry",
+  "native_route_id": "route:physicsguard-project-evidence-registry:check",
+  "prevented_failure_purpose": "Prevent a project evidence claim from shrinking or misbinding the declared, discovered, required, excluded, role-bound, and critical file universe.",
+  "physical_or_evidence_boundary": [
+    {
+      "boundary_id": "boundary:physicsguard-project-evidence-registry:filesystem-discovery",
+      "description": "Current discovered project files",
+      "authority_source": "canonical project-root discovery",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-project-evidence-registry:declared-required-files",
+      "description": "Declared and required evidence inventory",
+      "authority_source": "project profile and role contracts",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-project-evidence-registry:binding-graph",
+      "description": "Current evidence-to-model and evidence-to-check bindings",
+      "authority_source": "project evidence registry",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-project-evidence-registry:exclusions-and-gaps",
+      "description": "Current exclusions, critical gaps, and bundle scope",
+      "authority_source": "registry reconciliation",
+      "required": true
+    }
+  ],
+  "prevented_failure_classes": [
+    {
+      "failure_id": "failure:physicsguard-project-evidence-registry:artifact-universe-shrunk",
+      "title": "Candidate is not proven against artifact universe is shrunk",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: declared, discovered, required, or excluded files are not completely reconciled",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-project-evidence-registry:binding-or-role-missing",
+      "title": "Candidate is not proven against binding or role is missing",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: a required evidence-to-model edge or evidence role has no current proof",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-project-evidence-registry:critical-gap-hidden",
+      "title": "Candidate is not proven against critical evidence gap is hidden",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: a required or critical artifact is missing, stale, or invalidly excluded",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-project-evidence-registry:bundle-scope-overreach",
+      "title": "Candidate is not proven against evidence bundle scope is overreached",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the claimed project scope exceeds the exact bound bundle",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    }
+  ],
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "authoring_order": [
+    "freeze_prevented_failure_contract",
+    "build_candidate",
+    "prove_known_good",
+    "prove_every_known_bad",
+    "issue_native_receipt"
+  ],
+  "candidate_requires_contract_fingerprint": true,
+  "candidate_admission": {
+    "artifact_ref": "guard-model/candidate.json",
+    "schema_version": "physicsguard.family_baseline_candidate.v1",
+    "fingerprint_algorithm": "sha256-canonical-json-uppercase-v1",
+    "required_event_order": [
+      "purpose_contract_frozen",
+      "candidate_built"
+    ],
+    "failure_codes": [
+      "candidate_artifact_missing",
+      "candidate_contract_fingerprint_mismatch",
+      "candidate_built_before_purpose_or_event_chain_broken"
+    ]
+  }
+}

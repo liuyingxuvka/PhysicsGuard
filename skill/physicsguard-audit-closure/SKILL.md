@@ -49,6 +49,32 @@ warnings, low validation confidence, failed physical envelopes, redundant-sensor
 mismatches, and review-required confidence updates must remain visible in the
 final claim boundary.
 
+For `validation_ready` or `validated_reuse_ready`, require
+`required_checks.validation_depth: true`. The validation plan must emit a
+passing `physicsguard_validation_depth_receipt` bound to its report type,
+status, and SHA-256. Closure consumes that receipt without recomputing physics;
+missing/stale/partial/blocked receipts, snapshot overclaim, uncertain mappings,
+split overlap, invalid intervals, or hard envelope intervals block the broad
+claim.
+
+The native receipt must also contain a passing quantitative adequacy gate for
+every non-snapshot claim. Verify that `covered_scope` is compatible with the
+requested scope and that the receipt accounts the artifact-derived point,
+signal, and parameter universe; temporal strata/gaps; per-signal histories;
+source-backed static/time-varying parameter classifications; each time-varying
+parameter's own resolved native/project/convergence floor, strata and row-gap
+receipt; counterfactual proof that observed values affect executable model
+residuals or an exact bounded non-sensitive disposition; critical members and
+families; and explicit exclusions. A snapshot or shallow
+subset cannot close validation or reuse readiness merely because its evaluated
+points passed.
+
+For `prediction_ready`, additionally require
+`required_checks.predictive_rollout: true`, `stateful_dynamic` semantics, an
+exact training/prediction/future-holdout identity chain, and a passing native
+rollout receipt whose stability and error-growth checks pass. A pointwise model
+or an in-sample/overlapping holdout blocks prediction closure.
+
 For database-level or cross-project claims, do not answer from this closure
 route alone. Missing project registries, stale external summaries, propagated
 project evidence blocking gaps, or unknown comparison scope block broad
@@ -57,25 +83,64 @@ historical, reuse, or direct-comparison conclusions.
 Closure pass supports only a scoped low-fidelity claim inside the checked audit
 or project closure boundary.
 
+## Native skill-execution depth receipt gate
+
+Before broad audit closure, issue
+`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`
+for target `physicsguard-audit-closure`, owner
+`physicsguard.audit-closure`, and route
+`route:physicsguard-audit-closure:close`. The current package must bind the
+closure plan, every required native check, the native validation-depth receipt,
+blocker reconciliation, stale and skipped evidence, any requested predictive
+rollout, and the safe claim boundary. It must reconcile the complete governed
+closure-object universe and cannot promote a locally green, stale, skipped, or
+fixture-only result. SkillGuard verifies this receipt and its current identity;
+PhysicsGuard retains closure authority.
+Declare critical closure objects explicitly. Required or critical objects cannot
+be excluded, and every other exclusion needs current hashed evidence, a specific
+reason, and a closed non-contributing disposition with no claim contribution.
+
+Counts, object-name lists, catalog expansion, whole-receipt hashes, and ordinal
+ranges are not per-obligation evidence. Every satisfied closure obligation must
+retain its exact target-native semantic object, `evidence_ref`, and lowercase
+content hash; missing, renamed, overlapping, mechanically generated, or
+summary-only mappings block broad audit closure.
+
 <!-- BEGIN SKILLGUARD CONTRACT LAYER -->
-## Purpose
-Bind each physicsguard run to the declared integration mode, evidence, blockers, residual_risk, and claim_boundary.
-## Entrypoint Scope
-Covers physicsguard-audit-closure plus explicitly routed local materials; no unrelated repos, private files, external services, publication, or release claims unless requested and routed.
-## Local Material Routing
-Use workspace, skill directory, user files, or configured project paths; keep private machine paths local and public instructions portable.
-## Entrypoint Acceptance Map
-Use SkillGuard as the runtime contract executor attached to the native route/check owner: PhysicsGuard skill family and local PhysicsGuard model/test workflow. It enforces contract gates through that native owner before progress or closure; duplicate SkillGuard-owned execution paths are invalid. Declared gates/routes: model understanding, evidence mapping, validation, closure.
-## Use When
-Use when the request matches physicsguard-audit-closure and needs this governed workflow, materials, checks, or handoff behavior.
-## Do Not Use When
-Do not use outside the domain, without required materials, when a more specific skill owns the work, or for tiny direct answers.
-## Required Workflow
-Select the target-owned native route/check surface, run the SkillGuard contract gates around the native workflow, collect evidence, run checks, fix failures, then report.
-## Hard Gates
-Do not skip phases, do not replace required evidence with prose, do not treat stale reports as current, do not weaken validation to pass, and do not claim completion when blockers remain.
-## Output Requirements
-Report evidence, failures, blockers, skipped_checks with reasons, residual_risk, and claim_boundary; distinguish checked, unchecked, blocked, and uncertain.
-## SkillGuard Maintenance
-Keep `.skillguard` contracts, checks, evidence, and ledger current; rerun SkillGuard after entrypoint, route, evidence, or closure changes.
+## Generic SkillGuard supervision
+
+SkillGuard supervises only the checks declared by `physicsguard-audit-closure`. It freezes the exact check inventory, one execution owner per check, dependency order, governed inputs, immutable terminal receipts, installation projection, and closure. PhysicsGuard remains the sole owner of the physical/evidence purpose, prevented failure classes, native oracles, good/bad proofs, pass/block decisions, residual risk, and bounded claim.
+
+Every declared check is mandatory unless the target contract itself removes it in a new reviewed contract. There is no selectable supervision mode, reduced-depth path, alternate authority, compatibility reader, or generic SkillGuard semantic decision. Reuse is allowed only for a current immutable receipt with the same execution identity and governed inputs. Receipt consumers verify and project; they do not rerun an owner or use `--resume` as a read-only audit. A final full gate runs once after source and tool identities freeze, never through a scheduled task or unattended retry. After timeout or interruption, evidence is invalid until the entire descendant process tree is confirmed stopped.
+
+The only SkillGuard runtime authority is `.skillguard/contract-source.json`, `.skillguard/compiled-contract.json`, and `.skillguard/check-manifest.json`. The bundled PhysicsGuard `guard-model/` assets are family baseline regression inputs. Current model-purpose artifacts remain target-local PhysicsGuard authority and are not duplicated or semantically interpreted in SkillGuard.
+The source contract uses one fixed `native-integrated` identity for the declared family baseline checks. Every declared binding is required before that baseline closure, but a baseline receipt cannot be projected as current-model proof. A real task may declare its own PhysicsGuard-native current-purpose checks for SkillGuard supervision; SkillGuard still cannot invent their semantics. Parallel success routes and SkillGuard-owned domain routes are forbidden.
 <!-- END SKILLGUARD CONTRACT LAYER -->
+
+<!-- BEGIN MANAGED PURPOSE AND BLOCKABILITY -->
+## PhysicsGuard dynamic model-purpose and family baseline
+
+Family capability baseline purpose: Prevent an engineering audit from being declared complete while required native checks, current evidence, blockers, predictive conditions, or the bounded claim scope remain unresolved.
+
+Family route bounded claim: Closure proves only the exact requested audit scope represented by current native receipts; skipped, stale, partial, and predictive gaps remain non-pass.
+
+Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
+
+The bundled `guard-model/` files declare these maintained family baseline regression classes:
+
+- `Candidate is not proven against required native check is missing` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the closure plan omits or lacks a current required PhysicsGuard check. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
+- `Candidate is not proven against stale or skipped evidence is promoted` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: stale, skipped, not-run, or foreign evidence is treated as passed. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
+- `Candidate is not proven against unresolved blocker is suppressed` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: a current native blocker or missing-input condition is absent from closure. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
+- `Candidate is not proven against predictive readiness is overclaimed` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: pointwise or non-predictive evidence is used for a predictive closure request. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
+- `Candidate is not proven against closure scope is overreached` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the final statement exceeds the exact checked evidence and assumptions. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
+
+These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.
+
+For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.
+
+Use `guard-model/verify.py check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.
+
+`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
+
+`guard-model/verify.py` is the PhysicsGuard-native verifier. SkillGuard remains generic: it only supervises checks declared by a skill or task, owners, dependency order, current immutable receipts, installation projection, and closure; it never chooses what a model prevents.
+<!-- END MANAGED PURPOSE AND BLOCKABILITY -->

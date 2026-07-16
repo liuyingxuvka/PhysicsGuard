@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.11.0 - 2026-07-15
+
+Purpose-declared physical audit modeling release.
+
+- Required each candidate low-fidelity audit model to state the concrete
+  physical inconsistency, invalid relation, unit/range breach, or unsupported
+  mapping it is intended to block for the current task before construction.
+- Added purpose, boundary, observable, counterexample, and licensed-claim
+  evidence across the PhysicsGuard hierarchy, dataset validation, signal
+  mapping, project evidence, model-library, blueprint, and audit-closure
+  routes.
+- Preserved PhysicsGuard's low-fidelity and SI-based boundary: passing an audit
+  does not prove commercial-solver equivalence, physical truth, or full-system
+  validity outside the declared range.
+- Replaced former SkillGuard records with target-owned declared checks under
+  generic SkillGuard execution supervision and fixed enforced closure.
+- Updated package schemas, templates, examples, tests, OpenSpec records,
+  FlowGuard evidence, and all ten maintained PhysicsGuard skills.
+
 ## v0.10.2 - 2026-06-27
 
 - Added SkillGuard runtime-contract governance for the installed PhysicsGuard Codex skill materials.

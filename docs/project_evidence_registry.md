@@ -19,7 +19,9 @@ Use `ProjectEvidenceRegistry` for project-level evidence:
   found.
 - `artifacts`: concrete files and external references, including large raw or
   cleaned test data, contracts, logical datasets, source documents, model files,
-  validation plans, validation reports, and model-library indexes.
+  validation plans, validation reports, bounded observed series,
+  signal-mapping reviews, native validation-depth receipts, and model-library
+  indexes.
 - `facts`: physical parameters, equipment identity, configuration facts,
   software versions, time-series references, calibrated values, derived values,
   and human overrides.
@@ -115,6 +117,31 @@ Model-dataset validation plans and model-library entries can reference an
 evidence registry and bundle. Blocking evidence gaps prevent validation pass or
 validated reuse claims. Review and optional gaps stay visible and must be
 reported in the claim boundary.
+
+For validation depth, the bundle must include the exact observed-series
+artifact and every mapping binding consumed by the validation plan. Each
+required binding needs current bundle membership, unit evidence, mapping
+confidence, active status, and accepted reviewer state. The plan binds the
+registry itself by SHA-256 so later changes make the old receipt stale.
+
+For quantitative adequacy, the registry and its referenced artifacts are also
+coverage authorities. They identify the available signal and parameter
+universe, hierarchy-required parameters, subsystem membership, intentional
+exclusions, and the evidence behind every required binding. The validation
+plan may set project-sourced floors, but it cannot shrink the target universe
+by omission. Critical signals, critical parameters, events, modes, and family
+quotas that matter to the requested claim must remain explicit and traceable.
+Record a source-backed static/time-varying classification for every available
+model parameter. A time-varying parameter needs its own series mapping,
+resolved native/project/convergence temporal floor, and evidence that the
+mapped observations actually affect executable model residuals or support an
+explicit bounded non-sensitive disposition; a static parameter needs current
+fact/binding evidence.
+
+For predictive work, register the exact stateful model, training inputs,
+producer receipt, generated prediction series, future holdout, and validation
+receipt. Training and future evidence must remain disjoint by resolved path,
+content hash, and case identity.
 
 ```yaml
 evidence_registry: ../evidence/project_evidence_registry.yaml

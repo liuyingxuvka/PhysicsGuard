@@ -1,0 +1,41 @@
+{
+  "claim_boundary": "This deterministic receipt proves only that the expanded former-V1 residual inventory was absent from the named source skill while the exact current V2 authority files were present. Current installed parity, installation receipts, native closure, parent consumption, release, and future AI behavior require separate current evidence.",
+  "current_authority_sha256": {
+    "check-manifest.json": "709f5c597b477d9afb6defc0891ded64ef0578cb6bc705d007f4451879c3cadf",
+    "compiled-contract.json": "c3306984a57b9ab9bf9d42e1a3e6e21c66b5908545c3257b96bc0e7b9e1d245f",
+    "contract-source.json": "bd6cd8640dd2eec6a5f36247d51af33b17623e0a2710b38b4ccc1c3e7242c524"
+  },
+  "receipt_hash": "584c28728946607d95a8e4931c98a9d9f4fa4b0278494719e32ad00bc9452f84",
+  "receipt_id": "retirement-917e87aded2dffdde86bf108",
+  "residual_scan": {
+    "forbid_control_root_python_cache": true,
+    "forbidden_directories": [
+      "ai_judgments",
+      "evidence",
+      "reports",
+      "runs"
+    ],
+    "forbidden_files": [
+      "check_manifest.json",
+      "work-contract.json",
+      "check.py",
+      "checks/check_closure.py",
+      "checks/check_evidence.py",
+      "checks/check_phase_order.py",
+      "checks/check_quality_floor.py",
+      "checks/check_route.py",
+      "skillguard_closure_policy.json",
+      "skillguard_evidence_rules.json",
+      "skillguard_manifest.json",
+      "skillguard_profile.json",
+      "skillguard_skill_contract.json",
+      "skillguard_progress_ledger.jsonl"
+    ],
+    "residual_count": 0,
+    "residuals": []
+  },
+  "retirement_inventory_sha256": "2e30344f1d169cd25c8b8888c98cf0565933eda71f143a884cd0b38776ef18e8",
+  "schema_version": "physicsguard.v1_retirement_completion_receipt.v2",
+  "status": "retired",
+  "target_skill_id": "physicsguard-ai-debugging"
+}

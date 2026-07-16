@@ -1,0 +1,81 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-ai-debugging",
+  "required_obligation_ids": [
+    "visible_symptom",
+    "physical_boundary",
+    "topology_inventory",
+    "signal_parameter_mapping",
+    "validation_depth",
+    "residual_localization",
+    "assumption_boundary",
+    "safe_claim_boundary"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:visible-symptom",
+      "obligation_id": "visible_symptom",
+      "failure_id": "failure:physicsguard-ai-debugging:symptom-mislocalized",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'visible_symptom' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:physical-boundary",
+      "obligation_id": "physical_boundary",
+      "failure_id": "failure:physicsguard-ai-debugging:physical-boundary-violation",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'physical_boundary' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:topology-inventory",
+      "obligation_id": "topology_inventory",
+      "failure_id": "failure:physicsguard-ai-debugging:physical-boundary-violation",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'topology_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:signal-parameter-mapping",
+      "obligation_id": "signal_parameter_mapping",
+      "failure_id": "failure:physicsguard-ai-debugging:mapping-identity-wrong",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'signal_parameter_mapping' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:validation-depth",
+      "obligation_id": "validation_depth",
+      "failure_id": "failure:physicsguard-ai-debugging:validation-too-shallow",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'validation_depth' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:residual-localization",
+      "obligation_id": "residual_localization",
+      "failure_id": "failure:physicsguard-ai-debugging:symptom-mislocalized",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'residual_localization' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:assumption-boundary",
+      "obligation_id": "assumption_boundary",
+      "failure_id": "failure:physicsguard-ai-debugging:assumption-or-scope-overreach",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'assumption_boundary' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-ai-debugging:safe-claim-boundary",
+      "obligation_id": "safe_claim_boundary",
+      "failure_id": "failure:physicsguard-ai-debugging:assumption-or-scope-overreach",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'safe_claim_boundary' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

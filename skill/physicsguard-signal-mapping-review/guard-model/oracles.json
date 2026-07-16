@@ -1,0 +1,72 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-signal-mapping-review",
+  "required_obligation_ids": [
+    "governed_mapping_inventory",
+    "unit_evidence",
+    "conversion_evidence",
+    "revision_evidence",
+    "confidence_review",
+    "temporal_coverage",
+    "target_variable_binding"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-signal-mapping-review:governed-mapping-inventory",
+      "obligation_id": "governed_mapping_inventory",
+      "failure_id": "failure:physicsguard-signal-mapping-review:signal-target-mismatch",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'governed_mapping_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-signal-mapping-review:unit-evidence",
+      "obligation_id": "unit_evidence",
+      "failure_id": "failure:physicsguard-signal-mapping-review:unit-conversion-invalid",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'unit_evidence' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-signal-mapping-review:conversion-evidence",
+      "obligation_id": "conversion_evidence",
+      "failure_id": "failure:physicsguard-signal-mapping-review:unit-conversion-invalid",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'conversion_evidence' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-signal-mapping-review:revision-evidence",
+      "obligation_id": "revision_evidence",
+      "failure_id": "failure:physicsguard-signal-mapping-review:revision-or-time-stale",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'revision_evidence' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-signal-mapping-review:confidence-review",
+      "obligation_id": "confidence_review",
+      "failure_id": "failure:physicsguard-signal-mapping-review:review-confidence-unresolved",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'confidence_review' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-signal-mapping-review:temporal-coverage",
+      "obligation_id": "temporal_coverage",
+      "failure_id": "failure:physicsguard-signal-mapping-review:revision-or-time-stale",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'temporal_coverage' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-signal-mapping-review:target-variable-binding",
+      "obligation_id": "target_variable_binding",
+      "failure_id": "failure:physicsguard-signal-mapping-review:signal-target-mismatch",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'target_variable_binding' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

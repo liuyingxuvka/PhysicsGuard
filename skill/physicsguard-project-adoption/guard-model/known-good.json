@@ -1,0 +1,15 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_good.v1",
+  "artifact_role": "family_baseline_regression",
+  "case_id": "known-good:physicsguard-project-adoption:complete-native-route",
+  "target_skill_id": "physicsguard-project-adoption",
+  "covered_obligation_ids": [
+    "project_record_current",
+    "toolchain_supported",
+    "native_artifact_inventory",
+    "blocker_inventory",
+    "required_revalidation"
+  ],
+  "expected_native_status": "pass",
+  "self_reported_outcome_allowed": false
+}

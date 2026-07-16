@@ -1,0 +1,63 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-candidate-model-blueprint",
+  "required_obligation_ids": [
+    "validated_hierarchy",
+    "block_readiness",
+    "signal_parameter_mapping",
+    "interface_inventory",
+    "rollout_boundary",
+    "generation_eligibility"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:validated-hierarchy",
+      "obligation_id": "validated_hierarchy",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:hierarchy-not-validated",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'validated_hierarchy' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:block-readiness",
+      "obligation_id": "block_readiness",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:hierarchy-not-validated",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'block_readiness' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:signal-parameter-mapping",
+      "obligation_id": "signal_parameter_mapping",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:interface-mapping-incomplete",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'signal_parameter_mapping' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:interface-inventory",
+      "obligation_id": "interface_inventory",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:interface-mapping-incomplete",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'interface_inventory' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:rollout-boundary",
+      "obligation_id": "rollout_boundary",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:rollout-boundary-unclear",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'rollout_boundary' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:generation-eligibility",
+      "obligation_id": "generation_eligibility",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:generation-despite-blocker",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'generation_eligibility' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

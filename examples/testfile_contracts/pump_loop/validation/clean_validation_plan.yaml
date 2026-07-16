@@ -39,5 +39,122 @@ redundant_sensor_checks: []
 calibration:
   enabled: false
   method: none
+depth:
+  model_semantics: pointwise
+  dataset:
+    dataset_id: pump_loop_clean_dataset
+    files:
+      - identity_id: clean_csv
+        path: ../data/clean.csv
+        sha256: a187027e2b4251c607c72405051574034f0ec35b40dec26f8ad8d6b6a0a78a84
+        case_ids:
+          - baseline_case
+          - speed_ramp_case_01
+          - speed_ramp_case_02
+    field_schema:
+      identity_id: clean_manifest_schema
+      path: ../data/clean_manifest.yaml
+      sha256: 1fabd2b6b4f8af07c5391bfceda30aeab09ed25d9c590f63ec83eecee7716524
+    parameter_roles:
+      identity_id: pump_loop_parameter_roles
+      path: ../coverage/pump_loop_role_matrix.yaml
+      sha256: fb8d627c33fa0927486601b872a3b377d6804775a6991255e8da4d9a0659419d
+    testbench:
+      identity_id: pump_loop_testbench_profile
+      path: ../profiles/pump_loop_testbench_profile.yaml
+      sha256: 5a346f92f5a100c7dfe7bbe7bd310d943a1ea66a7fcc55d02332d18cbd8bbe01
+    testbench_version: v1
+  mapping_review:
+    registry:
+      identity_id: pump_loop_mapping_registry
+      path: ../evidence/project_evidence_registry.yaml
+      sha256: 31db144ac67d16757fca0dc6710a5b05057f0208a5f5b95148519e02492c7d2a
+    bundle_id: pump_loop_validation_bundle_001
+    minimum_confidence: 0.75
+    accepted_review_states:
+      - ai_registered
+      - human_confirmed
+  observed_series:
+    identity_id: clean_observed_series
+    path: ../observed/clean_observed_series.yaml
+    sha256: b79fb4fa9fddd5ba6fbb09f5a8fa48f48d996e1c226454d2cabc1849bb3536d4
+    case_ids:
+      - baseline_case
+      - speed_ramp_case_01
+      - speed_ramp_case_02
+  time_scope:
+    claim_scope: scenario_set
+    start_time: 0.0
+    end_time: 0.2
+    time_unit: s
+    expected_point_count: 3
+  adequacy:
+    sampling_mode: full
+    threshold_source: pump_loop_fixture_full_manifest_policy_v1
+    selection_policy_id: pump_loop_fixture_full_manifest_selection_v1
+    selection_rationale: Every row in the bounded three-row fixture is evaluated; no representative subsampling is used.
+    minimum_selected_points: 3
+    minimum_selected_ratio: 1.0
+    minimum_distinct_timestamps: 3
+    minimum_time_span: 0.2
+    maximum_time_gap: 0.1
+    require_start_middle_end: true
+    minimum_signal_coverage_ratio: 1.0
+    minimum_per_signal_valid_points: 3
+    minimum_per_signal_valid_ratio: 1.0
+    minimum_per_parameter_valid_points: 3
+    minimum_per_parameter_valid_ratio: 1.0
+    minimum_parameter_coverage_ratio: 1.0
+    maximum_exclusion_ratio: 0.0
+    critical_signals:
+      - pump_signal_map.x
+      - pump_signal_map.y
+    critical_parameters:
+      - pump_signal_map.a
+    parameter_temporal_policies:
+      - parameter_id: pump_signal_map.a
+        temporal_behavior: static
+        classification_source: pump_loop hierarchy plus registered fixture parameter fact
+    required_event_tags:
+      - baseline
+      - speed_ramp
+    required_peak_tags:
+      - speed_peak
+    required_boundary_tags:
+      - window_start
+      - window_end
+    required_mode_ids:
+      - valve_open
+    family_quotas:
+      - family_id: pump_loop_core
+        member_kind: mixed
+        member_ids:
+          - pump_signal_map.x
+          - pump_signal_map.y
+          - pump_signal_map.a
+        minimum_covered_count: 3
+        minimum_covered_ratio: 1.0
+  scenarios:
+    - scenario_id: baseline
+      case_ids:
+        - baseline_case
+      description: Exact baseline point from the clean fixture dataset.
+    - scenario_id: speed_ramp
+      case_ids:
+        - speed_ramp_case_01
+        - speed_ramp_case_02
+      baseline_scenario_id: baseline
+      perturbations:
+        - target: pump_signal_map.x
+          change: profile
+          value:
+            start: 10.5
+            end: 11.0
+          unit: rad/s
+          reason: Declared commanded-speed ramp present in the bounded fixture rows.
+      description: Two exact rows with a declared commanded-speed perturbation.
+  assumptions:
+    - The fixture relation y = 2*x is intentionally low fidelity and used only for contract coverage.
+    - Each series point is evaluated independently; no dynamics are inferred between timestamps.
 metadata:
   fixture: clean

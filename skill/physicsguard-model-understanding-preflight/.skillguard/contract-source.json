@@ -1,0 +1,609 @@
+{
+  "schema_version": "skillguard.contract_source.v2",
+  "skill_id": "physicsguard-model-understanding-preflight",
+  "model_id": "physicsguard-model-understanding-preflight.family-baseline-regression.current",
+  "model_path": ".skillguard/contract_model.py",
+  "confirmed": true,
+  "integration_mode": "native-integrated",
+  "native_route_owner": "physicsguard.model-understanding-preflight",
+  "default_route_id": "route:physicsguard-model-understanding-preflight:review",
+  "native_route_bindings": [
+    {
+      "binding_id": "native:physicsguard-model-understanding-preflight:current",
+      "native_route_id": "route:physicsguard-model-understanding-preflight:review",
+      "required_before_closure": true,
+      "source": "guard-model/contract.json"
+    }
+  ],
+  "native_check_bindings": [
+    {
+      "binding_id": "native-check:physicsguard-model-understanding-preflight:check-physicsguard-model-understanding-preflight-family-baseline-contract",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-model-understanding-preflight:family-baseline-contract",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-model-understanding-preflight:check-physicsguard-model-understanding-preflight-family-baseline-candidate",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-model-understanding-preflight:family-baseline-candidate",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-model-understanding-preflight:check-physicsguard-model-understanding-preflight-family-baseline-good",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-model-understanding-preflight:family-baseline-good",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-model-understanding-preflight:check-physicsguard-model-understanding-preflight-family-baseline-bad-symptom-or-boundary-unclear",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:symptom-or-boundary-unclear",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-model-understanding-preflight:check-physicsguard-model-understanding-preflight-family-baseline-bad-required-inventory-missing",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:required-inventory-missing",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-model-understanding-preflight:check-physicsguard-model-understanding-preflight-family-baseline-bad-assumption-hidden",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:assumption-hidden",
+      "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-model-understanding-preflight:check-physicsguard-model-understanding-preflight-family-baseline-bad-access-gap-suppressed",
+      "evidence_source": "guard-model/verify.py",
+      "native_check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:access-gap-suppressed",
+      "required": true
+    }
+  ],
+  "depth_profile": {
+    "schema_version": "skillguard.depth_profile.v2",
+    "profile_id": "profile:physicsguard-model-understanding-preflight:family-baseline-regression",
+    "target_skill_id": "physicsguard-model-understanding-preflight",
+    "integration_mode": "native-integrated",
+    "native_owner_id": "physicsguard.model-understanding-preflight",
+    "native_route_ids": [
+      "route:physicsguard-model-understanding-preflight:review"
+    ],
+    "native_check_ids": [
+      "check:physicsguard-model-understanding-preflight:family-baseline-contract",
+      "check:physicsguard-model-understanding-preflight:family-baseline-candidate",
+      "check:physicsguard-model-understanding-preflight:family-baseline-good",
+      "check:physicsguard-model-understanding-preflight:family-baseline-bad:symptom-or-boundary-unclear",
+      "check:physicsguard-model-understanding-preflight:family-baseline-bad:required-inventory-missing",
+      "check:physicsguard-model-understanding-preflight:family-baseline-bad:assumption-hidden",
+      "check:physicsguard-model-understanding-preflight:family-baseline-bad:access-gap-suppressed"
+    ],
+    "skillguard_adds_domain_route": false,
+    "enforcement_level": "enforced",
+    "required_closure_profiles": [
+      "enforced"
+    ],
+    "provider_runtime": {
+      "provider_id": "skillguard-local-provider",
+      "required_runtime_contract_id": "skillguard-declared-check-supervision-current",
+      "required_capability_ids": [
+        "declared-check-inventory.v1",
+        "declared-check-receipt-reconciliation.v1",
+        "installation-receipt-binding.v1",
+        "installation-currentness-replay.v1",
+        "provider-runtime-enrollment.v1",
+        "single-flight-check-execution.v1"
+      ],
+      "required_enrollment_status": "enrolled",
+      "readiness_check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-contract"
+      ]
+    },
+    "claim_boundary": "PhysicsGuard owns the family baseline semantics and every target-local current-model purpose, failure, native oracle, proof, residual risk, and bounded claim. SkillGuard only executes and reconciles the declared family baseline inventory; that receipt cannot close a current model."
+  },
+  "may_define_parallel_execution_route": false,
+  "may_define_skillguard_runtime_route": false,
+  "release_eligible": false,
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "checks": [
+    {
+      "check_id": "check:physicsguard-model-understanding-preflight:family-baseline-contract",
+      "semantic_check_id": "semantic:physicsguard-model-understanding-preflight:family-baseline-contract",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "check-baseline-contract",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 120,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-understanding-preflight:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-understanding-preflight:guard-model-contract",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-contract"
+      ],
+      "depends_on_check_ids": [],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-model-understanding-preflight:family-baseline-candidate",
+      "semantic_check_id": "semantic:physicsguard-model-understanding-preflight:family-baseline-candidate",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "check-baseline-candidate",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 120,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-understanding-preflight:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-understanding-preflight:candidate-bound",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-candidate-bound"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-contract"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-model-understanding-preflight:family-baseline-good",
+      "semantic_check_id": "semantic:physicsguard-model-understanding-preflight:family-baseline-good",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-good",
+        "--skill-root",
+        "{{target_root}}"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-understanding-preflight:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-understanding-preflight:known-good",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-good"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-candidate"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:symptom-or-boundary-unclear",
+      "semantic_check_id": "semantic:physicsguard-model-understanding-preflight:family-baseline-blocks:symptom-or-boundary-unclear",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-understanding-preflight:symptom-or-boundary-unclear"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-understanding-preflight:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-understanding-preflight:known-bad:symptom-or-boundary-unclear",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:symptom-or-boundary-unclear"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:required-inventory-missing",
+      "semantic_check_id": "semantic:physicsguard-model-understanding-preflight:family-baseline-blocks:required-inventory-missing",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-understanding-preflight:required-inventory-missing"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-understanding-preflight:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-understanding-preflight:known-bad:required-inventory-missing",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:required-inventory-missing"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:assumption-hidden",
+      "semantic_check_id": "semantic:physicsguard-model-understanding-preflight:family-baseline-blocks:assumption-hidden",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-understanding-preflight:assumption-hidden"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-understanding-preflight:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-understanding-preflight:known-bad:assumption-hidden",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:assumption-hidden"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    },
+    {
+      "check_id": "check:physicsguard-model-understanding-preflight:family-baseline-bad:access-gap-suppressed",
+      "semantic_check_id": "semantic:physicsguard-model-understanding-preflight:family-baseline-blocks:access-gap-suppressed",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "guard-model/verify.py",
+        "prove-baseline-bad",
+        "--skill-root",
+        "{{target_root}}",
+        "--failure-id",
+        "failure:physicsguard-model-understanding-preflight:access-gap-suppressed"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-model-understanding-preflight:guard-model-proof",
+      "execution_owner_id": "owner:physicsguard-model-understanding-preflight:known-bad:access-gap-suppressed",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:access-gap-suppressed"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "guard-model/contract.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/oracles.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-good.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/known-bad.json"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/verify.py"
+        },
+        {
+          "kind": "path",
+          "path": ".skillguard/runtime/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "guard-model/candidate.json"
+        }
+      ]
+    }
+  ],
+  "artifacts": [],
+  "judgment_rubrics": [],
+  "closure_profiles": [
+    {
+      "profile_id": "enforced",
+      "required_obligation_ids": [
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-contract",
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-candidate-bound",
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-good",
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:symptom-or-boundary-unclear",
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:required-inventory-missing",
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:assumption-hidden",
+        "obligation:physicsguard-model-understanding-preflight:family-baseline-blocks:access-gap-suppressed"
+      ]
+    }
+  ],
+  "step_bindings": [
+    {
+      "step_id": "step:physicsguard-model-understanding-preflight:family-baseline-contract",
+      "check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-contract"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "contract",
+        "summary": "Validate the immutable PhysicsGuard family baseline contract; this is not current-model purpose authority."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-model-understanding-preflight:family-baseline-candidate",
+      "check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-candidate"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "candidate_admission",
+        "summary": "Admit only the family baseline candidate bound to its exact baseline contract and ordered authoring chain."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-model-understanding-preflight:family-baseline-good",
+      "check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-good"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Execute the mandatory family baseline known-good proof."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-model-understanding-preflight:family-baseline-bad:symptom-or-boundary-unclear",
+      "check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-bad:symptom-or-boundary-unclear"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against symptom or physical boundary is unclear."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-model-understanding-preflight:family-baseline-bad:required-inventory-missing",
+      "check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-bad:required-inventory-missing"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against required model inventory is missing."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-model-understanding-preflight:family-baseline-bad:assumption-hidden",
+      "check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-bad:assumption-hidden"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against assumption is hidden."
+      }
+    },
+    {
+      "step_id": "step:physicsguard-model-understanding-preflight:family-baseline-bad:access-gap-suppressed",
+      "check_ids": [
+        "check:physicsguard-model-understanding-preflight:family-baseline-bad:access-gap-suppressed"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against access gap is suppressed."
+      }
+    }
+  ],
+  "implementation_paths": [
+    ".skillguard/contract_model.py",
+    ".skillguard/runtime/skill_execution_depth.py",
+    "SKILL.md",
+    "guard-model/candidate.json",
+    "guard-model/contract.json",
+    "guard-model/known-bad.json",
+    "guard-model/known-good.json",
+    "guard-model/oracles.json",
+    "guard-model/verify.py"
+  ]
+}

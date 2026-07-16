@@ -9,3 +9,4 @@ roles:
     reason: null
 metadata:
   rule: every catalog entry needs exactly one role/disposition row
+  adequacy_boundary: covered and explicitly excluded rows define downstream eligibility; selected validation roles do not redefine the universe

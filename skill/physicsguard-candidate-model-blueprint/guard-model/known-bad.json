@@ -1,0 +1,43 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-candidate-model-blueprint",
+  "cases": [
+    {
+      "case_id": "known-bad:generation-despite-blocker",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:generation-despite-blocker",
+      "trigger_obligation_id": "generation_eligibility",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:hierarchy-not-validated",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:hierarchy-not-validated",
+      "trigger_obligation_id": "validated_hierarchy",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:interface-mapping-incomplete",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:interface-mapping-incomplete",
+      "trigger_obligation_id": "signal_parameter_mapping",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:rollout-boundary-unclear",
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:rollout-boundary-unclear",
+      "trigger_obligation_id": "rollout_boundary",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    }
+  ]
+}

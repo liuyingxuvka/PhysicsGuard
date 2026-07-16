@@ -13,6 +13,7 @@ ClaimScope = Literal[
     "analysis_ready",
     "validation_ready",
     "validated_reuse_ready",
+    "prediction_ready",
     "fault_localization_ready",
 ]
 
@@ -34,6 +35,12 @@ class ProjectClosureInput:
     hierarchy_closure_ok: bool
     evidence_mesh_required: bool
     evidence_mesh_ok: bool
+    validation_depth_receipt_ok: bool = True
+    supervisory_physics_recomputed: bool = False
+    covered_scope_compatible: bool = True
+    adequacy_passed: bool = True
+    stateful_dynamic: bool = False
+    predictive_rollout_passed: bool = False
 
 
 @dataclass(frozen=True)
@@ -52,6 +59,12 @@ class AuditReady:
     hierarchy_closure_ok: bool
     evidence_mesh_required: bool
     evidence_mesh_ok: bool
+    validation_depth_receipt_ok: bool
+    supervisory_physics_recomputed: bool
+    covered_scope_compatible: bool
+    adequacy_passed: bool
+    stateful_dynamic: bool
+    predictive_rollout_passed: bool
 
 
 @dataclass(frozen=True)
@@ -66,6 +79,12 @@ class EvidenceReady:
     hierarchy_closure_ok: bool
     evidence_mesh_required: bool
     evidence_mesh_ok: bool
+    validation_depth_receipt_ok: bool
+    supervisory_physics_recomputed: bool
+    covered_scope_compatible: bool
+    adequacy_passed: bool
+    stateful_dynamic: bool
+    predictive_rollout_passed: bool
 
 
 @dataclass(frozen=True)
@@ -99,6 +118,8 @@ class State:
     gap_checked: tuple[str, ...] = ()
     map_checked: tuple[str, ...] = ()
     downstream_checked: tuple[str, ...] = ()
+    validation_scope_requested: tuple[str, ...] = ()
+    validation_depth_receipt_consumed: tuple[str, ...] = ()
     evidence_mesh_checked: tuple[str, ...] = ()
     closure_passed: tuple[str, ...] = ()
     closure_partial: tuple[str, ...] = ()
@@ -108,7 +129,7 @@ class State:
 class RunProjectAudit:
     name = "RunProjectAudit"
     reads = ()
-    writes = ("audited", "closure_blocked")
+    writes = ("audited", "validation_scope_requested", "closure_blocked")
     accepted_input_type = ProjectClosureInput
     input_description = "project closure request"
     output_description = "AuditReady or ClosureBlocked"
@@ -138,8 +159,22 @@ class RunProjectAudit:
                 input_obj.hierarchy_closure_ok,
                 input_obj.evidence_mesh_required,
                 input_obj.evidence_mesh_ok,
+                input_obj.validation_depth_receipt_ok,
+                input_obj.supervisory_physics_recomputed,
+                input_obj.covered_scope_compatible,
+                input_obj.adequacy_passed,
+                input_obj.stateful_dynamic,
+                input_obj.predictive_rollout_passed,
             ),
-            new_state=replace(state, audited=state.audited + (input_obj.case_id,)),
+            new_state=replace(
+                state,
+                audited=state.audited + (input_obj.case_id,),
+                validation_scope_requested=(
+                    state.validation_scope_requested + (input_obj.case_id,)
+                    if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready", "prediction_ready"}
+                    else state.validation_scope_requested
+                ),
+            ),
             label="project_audit_ready",
         )
 
@@ -194,6 +229,12 @@ class RunEvidenceGate:
                 input_obj.hierarchy_closure_ok,
                 input_obj.evidence_mesh_required,
                 input_obj.evidence_mesh_ok,
+                input_obj.validation_depth_receipt_ok,
+                input_obj.supervisory_physics_recomputed,
+                input_obj.covered_scope_compatible,
+                input_obj.adequacy_passed,
+                input_obj.stateful_dynamic,
+                input_obj.predictive_rollout_passed,
             ),
             new_state=replace(
                 state,
@@ -208,7 +249,7 @@ class RunEvidenceGate:
 class RunDownstreamChecks:
     name = "RunDownstreamChecks"
     reads = ("evidence_checked", "gap_checked", "map_checked")
-    writes = ("downstream_checked", "closure_blocked")
+    writes = ("downstream_checked", "validation_depth_receipt_consumed", "closure_blocked")
     accepted_input_type = EvidenceReady
     input_description = "evidence-ready closure request"
     output_description = "DownstreamReady or ClosureBlocked"
@@ -229,11 +270,53 @@ class RunDownstreamChecks:
                 label="test_contract_blocks",
             )
             return
-        if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready"} and not input_obj.validation_ok:
+        if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready", "prediction_ready"} and not input_obj.validation_ok:
             yield FunctionResult(
                 output=ClosureBlocked(input_obj.case_id, "validation_failed"),
                 new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
                 label="validation_blocks",
+            )
+            return
+        if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready", "prediction_ready"} and not input_obj.validation_depth_receipt_ok:
+            yield FunctionResult(
+                output=ClosureBlocked(input_obj.case_id, "validation_depth_receipt_failed"),
+                new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
+                label="validation_depth_receipt_blocks",
+            )
+            return
+        if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready", "prediction_ready"} and input_obj.supervisory_physics_recomputed:
+            yield FunctionResult(
+                output=ClosureBlocked(input_obj.case_id, "supervisory_physics_recomputed"),
+                new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
+                label="supervisory_physics_recompute_blocked",
+            )
+            return
+        if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready", "prediction_ready"} and not input_obj.covered_scope_compatible:
+            yield FunctionResult(
+                output=ClosureBlocked(input_obj.case_id, "requested_covered_scope_mismatch"),
+                new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
+                label="requested_covered_scope_mismatch_blocks",
+            )
+            return
+        if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready", "prediction_ready"} and not input_obj.adequacy_passed:
+            yield FunctionResult(
+                output=ClosureBlocked(input_obj.case_id, "validation_adequacy_failed"),
+                new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
+                label="validation_adequacy_blocks",
+            )
+            return
+        if input_obj.claim_scope == "prediction_ready" and not input_obj.stateful_dynamic:
+            yield FunctionResult(
+                output=ClosureBlocked(input_obj.case_id, "stateful_dynamic_required"),
+                new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
+                label="pointwise_prediction_closure_blocked",
+            )
+            return
+        if input_obj.claim_scope == "prediction_ready" and not input_obj.predictive_rollout_passed:
+            yield FunctionResult(
+                output=ClosureBlocked(input_obj.case_id, "predictive_rollout_failed"),
+                new_state=replace(state, closure_blocked=state.closure_blocked + (input_obj.case_id,)),
+                label="predictive_rollout_closure_blocked",
             )
             return
         if input_obj.claim_scope == "validated_reuse_ready" and not input_obj.model_library_ok:
@@ -260,12 +343,16 @@ class RunDownstreamChecks:
         evidence_mesh_checked = state.evidence_mesh_checked
         if input_obj.evidence_mesh_required:
             evidence_mesh_checked = evidence_mesh_checked + (input_obj.case_id,)
+        receipt_consumed = state.validation_depth_receipt_consumed
+        if input_obj.claim_scope in {"validation_ready", "validated_reuse_ready", "prediction_ready"}:
+            receipt_consumed = receipt_consumed + (input_obj.case_id,)
         yield FunctionResult(
             output=DownstreamReady(input_obj.case_id, input_obj.claim_scope, input_obj.review_gaps),
             new_state=replace(
                 state,
                 downstream_checked=state.downstream_checked + (input_obj.case_id,),
                 evidence_mesh_checked=evidence_mesh_checked,
+                validation_depth_receipt_consumed=receipt_consumed,
             ),
             label="downstream_checks_ready" if not input_obj.evidence_mesh_required else "downstream_checks_with_evidence_mesh",
         )
@@ -320,6 +407,17 @@ def no_pass_without_downstream_checks(state: State, trace) -> InvariantResult:
     return InvariantResult.pass_()
 
 
+def no_validation_pass_without_native_depth_receipt(state: State, trace) -> InvariantResult:
+    del trace
+    validation_passes = set(state.closure_passed) & set(state.validation_scope_requested)
+    missing = validation_passes - set(state.validation_depth_receipt_consumed)
+    if missing:
+        return InvariantResult.fail(
+            f"validation closure passed without native depth receipt consumption: {sorted(missing)!r}"
+        )
+    return InvariantResult.pass_()
+
+
 def no_case_both_passed_and_blocked(state: State, trace) -> InvariantResult:
     del trace
     overlap = set(state.closure_passed) & set(state.closure_blocked)
@@ -332,6 +430,7 @@ INVARIANTS = (
     Invariant("no_pass_without_audit", "Closure pass requires project audit.", no_pass_without_audit),
     Invariant("no_pass_without_gap_check_and_map", "Closure pass requires gap-check and map.", no_pass_without_gap_check_and_map),
     Invariant("no_pass_without_downstream_checks", "Closure pass requires downstream checks.", no_pass_without_downstream_checks),
+    Invariant("no_validation_pass_without_native_depth_receipt", "Validation closure pass requires native depth receipt consumption without recomputation.", no_validation_pass_without_native_depth_receipt),
     Invariant("no_case_both_passed_and_blocked", "Closure cannot both pass and block.", no_case_both_passed_and_blocked),
 )
 

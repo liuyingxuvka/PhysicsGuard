@@ -24,6 +24,10 @@ class ProjectEvidenceInput:
     review_gaps: bool
     evidence_map_generated: bool
     downstream_claim: DownstreamClaim
+    exact_dataset_identity_registered: bool = True
+    mapping_review_current: bool = True
+    observed_series_registered: bool = True
+    validation_depth_receipt_registered: bool = True
 
 
 @dataclass(frozen=True)
@@ -96,6 +100,7 @@ class ProjectEvidenceBlocked:
 @dataclass(frozen=True)
 class State:
     profile_reviewed: tuple[str, ...] = ()
+    validation_depth_assets_reviewed: tuple[str, ...] = ()
     artifacts_registered: tuple[str, ...] = ()
     binding_reviewed: tuple[str, ...] = ()
     gap_checked: tuple[str, ...] = ()
@@ -109,7 +114,7 @@ class State:
 class ReviewProjectProfile:
     name = "ReviewProjectProfile"
     reads = ()
-    writes = ("profile_reviewed", "partial")
+    writes = ("profile_reviewed", "validation_depth_assets_reviewed", "partial")
     accepted_input_type = ProjectEvidenceInput
     input_description = "project evidence maintenance request"
     output_description = "ProfileReady or ProjectEvidencePartial"
@@ -123,6 +128,26 @@ class ReviewProjectProfile:
                 label="profile_missing_partial",
             )
             return
+        if input_obj.downstream_claim in {"validation", "reuse"}:
+            missing_depth_assets = [
+                name
+                for name, present in (
+                    ("exact_dataset_identity", input_obj.exact_dataset_identity_registered),
+                    ("mapping_review", input_obj.mapping_review_current),
+                    ("observed_series", input_obj.observed_series_registered),
+                )
+                if not present
+            ]
+            if input_obj.downstream_claim == "reuse" and not input_obj.validation_depth_receipt_registered:
+                missing_depth_assets.append("validation_depth_receipt")
+            if missing_depth_assets:
+                label = f"{missing_depth_assets[0]}_missing_partial"
+                yield FunctionResult(
+                    output=ProjectEvidencePartial(input_obj.case_id, "validation_depth_assets_missing"),
+                    new_state=replace(state, partial=state.partial + (input_obj.case_id,)),
+                    label=label,
+                )
+                return
         label = "profile_known" if input_obj.project_profile_known else "profile_unknown_recorded"
         yield FunctionResult(
             output=ProfileReady(
@@ -136,7 +161,11 @@ class ReviewProjectProfile:
                 input_obj.evidence_map_generated,
                 input_obj.downstream_claim,
             ),
-            new_state=replace(state, profile_reviewed=state.profile_reviewed + (input_obj.case_id,)),
+            new_state=replace(
+                state,
+                profile_reviewed=state.profile_reviewed + (input_obj.case_id,),
+                validation_depth_assets_reviewed=state.validation_depth_assets_reviewed + (input_obj.case_id,),
+            ),
             label=label,
         )
 
@@ -322,6 +351,16 @@ def no_ready_without_artifacts_and_bindings(state: State, trace) -> InvariantRes
     return InvariantResult.pass_()
 
 
+def no_downstream_without_validation_depth_assets(state: State, trace) -> InvariantResult:
+    del trace
+    missing = set(state.downstream_ready) - set(state.validation_depth_assets_reviewed)
+    if missing:
+        return InvariantResult.fail(
+            f"downstream evidence handoff without validation-depth asset review: {sorted(missing)!r}"
+        )
+    return InvariantResult.pass_()
+
+
 def no_ready_without_gap_check_and_map(state: State, trace) -> InvariantResult:
     del trace
     ready = set(state.gap_checked) & set(state.map_generated)
@@ -334,6 +373,7 @@ def no_ready_without_gap_check_and_map(state: State, trace) -> InvariantResult:
 INVARIANTS = (
     Invariant("no_ready_without_profile", "Project evidence ready requires profile review.", no_ready_without_profile),
     Invariant("no_ready_without_artifacts_and_bindings", "Project evidence ready requires artifacts and binding maintenance.", no_ready_without_artifacts_and_bindings),
+    Invariant("no_downstream_without_validation_depth_assets", "Validation/reuse handoff requires exact depth assets.", no_downstream_without_validation_depth_assets),
     Invariant("no_ready_without_gap_check_and_map", "Project evidence ready requires gap-check and evidence map.", no_ready_without_gap_check_and_map),
 )
 
@@ -350,6 +390,64 @@ EXTERNAL_INPUTS = (
     ProjectEvidenceInput("blocking_gap", True, False, True, True, True, True, True, False, True, "validation"),
     ProjectEvidenceInput("review_gap", True, False, True, True, True, True, False, True, True, "none"),
     ProjectEvidenceInput("map_missing", True, False, True, True, True, True, False, False, False, "none"),
+)
+VALIDATION_DEPTH_EXTERNAL_INPUTS = (
+    ProjectEvidenceInput(
+        "missing_exact_dataset_identity",
+        True,
+        False,
+        True,
+        True,
+        True,
+        True,
+        False,
+        False,
+        True,
+        "validation",
+        exact_dataset_identity_registered=False,
+    ),
+    ProjectEvidenceInput(
+        "missing_mapping_review",
+        True,
+        False,
+        True,
+        True,
+        True,
+        True,
+        False,
+        False,
+        True,
+        "validation",
+        mapping_review_current=False,
+    ),
+    ProjectEvidenceInput(
+        "missing_observed_series",
+        True,
+        False,
+        True,
+        True,
+        True,
+        True,
+        False,
+        False,
+        True,
+        "validation",
+        observed_series_registered=False,
+    ),
+    ProjectEvidenceInput(
+        "missing_depth_receipt_for_reuse",
+        True,
+        False,
+        True,
+        True,
+        True,
+        True,
+        False,
+        False,
+        True,
+        "reuse",
+        validation_depth_receipt_registered=False,
+    ),
 )
 MAX_SEQUENCE_LENGTH = 6
 

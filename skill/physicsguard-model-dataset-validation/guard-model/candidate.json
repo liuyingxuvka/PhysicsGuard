@@ -1,0 +1,45 @@
+{
+  "schema_version": "physicsguard.family_baseline_candidate.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-dataset-validation",
+  "candidate_id": "candidate:physicsguard-model-dataset-validation:guard-model-current",
+  "purpose_contract_ref": "guard-model/contract.json",
+  "purpose_contract_fingerprint": "B9E39127882A827C7FF9E26461A9B568BC0E027C2D2BD41E9D55B40C1D0639CD",
+  "candidate_definition": {
+    "native_owner_id": "physicsguard-model-dataset-validation",
+    "native_route_id": "route:physicsguard-model-dataset-validation",
+    "protected_failure_ids": [
+      "failure:physicsguard-model-dataset-validation:coverage-universe-shallow",
+      "failure:physicsguard-model-dataset-validation:physical-relation-violated",
+      "failure:physicsguard-model-dataset-validation:prediction-semantics-overclaimed",
+      "failure:physicsguard-model-dataset-validation:validation-identity-wrong",
+      "failure:physicsguard-model-dataset-validation:validation-scope-overreach"
+    ],
+    "required_obligation_ids": [
+      "obligation:claim-scope-compatible",
+      "obligation:coverage-universe-adequate",
+      "obligation:exact-validation-inputs",
+      "obligation:native-depth-receipt-current",
+      "obligation:per-parameter-depth-adequate",
+      "obligation:per-signal-depth-adequate",
+      "obligation:predictive-semantics-honest"
+    ],
+    "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt."
+  },
+  "authoring_events": [
+    {
+      "event_id": "event:physicsguard-model-dataset-validation:purpose-contract-frozen",
+      "sequence": 1,
+      "event_kind": "purpose_contract_frozen",
+      "purpose_contract_fingerprint": "B9E39127882A827C7FF9E26461A9B568BC0E027C2D2BD41E9D55B40C1D0639CD"
+    },
+    {
+      "event_id": "event:physicsguard-model-dataset-validation:candidate-built",
+      "sequence": 2,
+      "event_kind": "candidate_built",
+      "purpose_contract_fingerprint": "B9E39127882A827C7FF9E26461A9B568BC0E027C2D2BD41E9D55B40C1D0639CD",
+      "previous_event_fingerprint": "1B2F49CF820732BBE65F6F5893CF74D30811A7ED46A270FB2398157138D7B0DD",
+      "candidate_definition_fingerprint": "6BF3103408A4BCF64B117F018F8FF38DB01A3ACBA8C9C8B90E82E03978BD415E"
+    }
+  ]
+}

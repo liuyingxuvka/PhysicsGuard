@@ -1,0 +1,104 @@
+{
+  "schema_version": "physicsguard.family_baseline_contract.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-audit-closure",
+  "native_owner_id": "physicsguard.audit-closure",
+  "native_route_id": "route:physicsguard-audit-closure:close",
+  "prevented_failure_purpose": "Prevent an engineering audit from being declared complete while required native checks, current evidence, blockers, predictive conditions, or the bounded claim scope remain unresolved.",
+  "physical_or_evidence_boundary": [
+    {
+      "boundary_id": "boundary:physicsguard-audit-closure:closure-plan",
+      "description": "Requested closure profile and required checks",
+      "authority_source": "target-owned closure plan",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-audit-closure:native-receipts",
+      "description": "Current native check, validation-depth, and predictive receipts",
+      "authority_source": "immutable PhysicsGuard receipt inventory",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-audit-closure:open-blockers",
+      "description": "Current blockers, skipped checks, stale evidence, and missing inputs",
+      "authority_source": "native audit result and evidence registry",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-audit-closure:requested-claim",
+      "description": "Requested and covered claim scope",
+      "authority_source": "closure request and native claim boundary",
+      "required": true
+    }
+  ],
+  "prevented_failure_classes": [
+    {
+      "failure_id": "failure:physicsguard-audit-closure:required-check-missing",
+      "title": "Candidate is not proven against required native check is missing",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the closure plan omits or lacks a current required PhysicsGuard check",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-audit-closure:stale-or-skipped-promoted",
+      "title": "Candidate is not proven against stale or skipped evidence is promoted",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: stale, skipped, not-run, or foreign evidence is treated as passed",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-audit-closure:blocker-suppressed",
+      "title": "Candidate is not proven against unresolved blocker is suppressed",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: a current native blocker or missing-input condition is absent from closure",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-audit-closure:predictive-overclaim",
+      "title": "Candidate is not proven against predictive readiness is overclaimed",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: pointwise or non-predictive evidence is used for a predictive closure request",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-audit-closure:closure-scope-overreach",
+      "title": "Candidate is not proven against closure scope is overreached",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the final statement exceeds the exact checked evidence and assumptions",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    }
+  ],
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "authoring_order": [
+    "freeze_prevented_failure_contract",
+    "build_candidate",
+    "prove_known_good",
+    "prove_every_known_bad",
+    "issue_native_receipt"
+  ],
+  "candidate_requires_contract_fingerprint": true,
+  "candidate_admission": {
+    "artifact_ref": "guard-model/candidate.json",
+    "schema_version": "physicsguard.family_baseline_candidate.v1",
+    "fingerprint_algorithm": "sha256-canonical-json-uppercase-v1",
+    "required_event_order": [
+      "purpose_contract_frozen",
+      "candidate_built"
+    ],
+    "failure_codes": [
+      "candidate_artifact_missing",
+      "candidate_contract_fingerprint_mismatch",
+      "candidate_built_before_purpose_or_event_chain_broken"
+    ]
+  }
+}

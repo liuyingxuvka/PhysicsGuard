@@ -34,5 +34,113 @@ redundant_sensor_checks: []
 calibration:
   enabled: false
   method: none
+depth:
+  # `pointwise` may validate independent observations but cannot support a
+  # prediction claim. Use `stateful_dynamic` only when an external rollout
+  # preserves explicit state and is checked against a disjoint future holdout.
+  model_semantics: pointwise
+  dataset:
+    dataset_id: example_dataset
+    files:
+      - identity_id: example_data_file
+        path: path/to/data.csv
+        sha256: 0000000000000000000000000000000000000000000000000000000000000000
+        case_ids:
+          - baseline_case
+    field_schema:
+      identity_id: example_field_schema
+      path: path/to/manifest.yaml
+      sha256: 0000000000000000000000000000000000000000000000000000000000000000
+    parameter_roles:
+      identity_id: example_parameter_roles
+      path: path/to/role_matrix.yaml
+      sha256: 0000000000000000000000000000000000000000000000000000000000000000
+    testbench:
+      identity_id: example_testbench
+      path: path/to/testbench_profile.yaml
+      sha256: 0000000000000000000000000000000000000000000000000000000000000000
+    testbench_version: v1
+  mapping_review:
+    registry:
+      identity_id: example_mapping_registry
+      path: path/to/project_evidence_registry.yaml
+      sha256: 0000000000000000000000000000000000000000000000000000000000000000
+    bundle_id: example_validation_bundle
+    minimum_confidence: 0.75
+  observed_series:
+    identity_id: example_observed_series
+    path: path/to/observed_series.yaml
+    sha256: 0000000000000000000000000000000000000000000000000000000000000000
+    case_ids:
+      - baseline_case
+  time_scope:
+    claim_scope: time_window
+    start_time: 0.0
+    end_time: 1.0
+    expected_point_count: 3
+    time_unit: s
+  # Quantitative floors must come from the project, testbench, or an approved
+  # engineering policy. They cannot be invented after seeing the results.
+  adequacy:
+    sampling_mode: project_declared
+    threshold_source: path/to/approved_validation_policy
+    selection_policy_id: approved_validation_selection_v1
+    selection_rationale: explain why this predeclared sample is representative for the bounded claim; use full mode when the complete aligned sequence is available
+    # PhysicsGuard always applies min(N, max(12, ceil(sqrt(N)))) and uses the
+    # strictest native/plan/project/convergence count implied by all floors.
+    minimum_selected_points: 3
+    minimum_selected_ratio: 0.8
+    minimum_distinct_timestamps: 3
+    minimum_time_span: 1.0
+    maximum_time_gap: 0.5
+    require_start_middle_end: true
+    minimum_signal_coverage_ratio: 1.0
+    minimum_per_signal_valid_points: 3
+    minimum_per_signal_valid_ratio: 1.0
+    minimum_per_parameter_valid_points: 3
+    minimum_per_parameter_valid_ratio: 1.0
+    minimum_parameter_coverage_ratio: 1.0
+    maximum_exclusion_ratio: 0.0
+    critical_signals:
+      - pump_signal_map.x
+      - pump_signal_map.y
+    critical_parameters: []
+    # Classify every hierarchy-required, bound, critical, or calibration
+    # parameter. A time_varying parameter must name manifest:rows or a bound
+    # field as its availability_source_id, declare its own non-lowerable
+    # count/ratio/time/gap floors, and define at least three row-position
+    # strata. It must also declare contribution_expectation: sensitive plus a
+    # positive minimum_normalized_contribution_effect, or
+    # verified_non_sensitive plus maximum_non_sensitive_contribution_effect,
+    # non_sensitive_reason, and non_sensitive_claim_boundary. Observed values
+    # are applied to the executable model and checked by counterfactual replay.
+    # A static parameter declares none of those time/contribution fields and
+    # still needs current binding evidence.
+    parameter_temporal_policies: []
+    required_event_tags: []
+    required_peak_tags: []
+    required_boundary_tags:
+      - window_start
+      - window_end
+    required_mode_ids: []
+    family_quotas:
+      - family_id: core_signals
+        member_kind: signal
+        member_ids:
+          - pump_signal_map.x
+          - pump_signal_map.y
+        minimum_covered_count: 2
+        minimum_covered_ratio: 1.0
+  scenarios:
+    - scenario_id: baseline
+      case_ids:
+        - baseline_case
+  assumptions:
+    - Replace every placeholder hash with the current exact file SHA-256 before validation.
+    - Declare event, peak, boundary, and operating-mode tags in the observed series when the claim depends on them.
+# For a predictive claim, change model_semantics to stateful_dynamic and add a
+# depth.predictive_rollout block with exact model, training, generated
+# prediction-series, and future-holdout identities; initial state; step size;
+# horizon; signal scales; project-sourced thresholds; and producer receipt id.
 metadata:
   boundary: low-fidelity validation only

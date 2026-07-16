@@ -1,0 +1,58 @@
+{
+  "schema_version": "flowguard.model_miss_review.v1",
+  "review_id": "physicsguard-post-archive-retirement-authority-20260715",
+  "status": "repair_validated_post_archive",
+  "observed_failure": {
+    "surface": "PhysicsGuard suite parent replay and runtime-authority audit immediately after OpenSpec archive",
+    "prior_local_claim": "the archived migration leaves a self-contained current PhysicsGuard runtime and receipt-only parent",
+    "observed_result": "the verifier imported its retirement inventory from the now-moved active change directory, so all ten child replays and the audit failed with FileNotFoundError",
+    "failure_code": "retirement_authority_unreadable_after_openspec_archive"
+  },
+  "classification": {
+    "behavior_plane": "development_process",
+    "commitment_id": "physicsguard.retirement-authority.post-archive-currentness",
+    "owner": "PhysicsGuard retirement authority and parent input selector mesh",
+    "miss_type": "planning_artifact_used_as_runtime_authority",
+    "error_signature": "openspec/changes/<active-change>/v1-retirement-inventory.json missing after archive",
+    "affected_feature_tags": ["openspec-archive", "retirement-authority", "parent-replay", "input-freshness"]
+  },
+  "root_cause_backpropagation": {
+    "supported_cause": "a planning artifact was treated as a permanent runtime dependency and the parent contract did not declare the imported verifier or inventory as input selectors",
+    "would_have_failed_if": "the model had included archive as a state transition and rerun the read-only runtime audit after the change directory moved",
+    "new_model_item": "archive must preserve runtime authority by consuming only project-owned current artifacts; imported verifier and authority files are exact owner inputs",
+    "owner_code_contract": "project current retirement inventory -> readiness verifier -> child replay -> parent mesh"
+  },
+  "generalized_repair": {
+    "rule": "Runtime verification cannot read active or archived OpenSpec planning artifacts; promote required authority into a single current project path and declare all transitive runtime inputs.",
+    "observed_regression": "post-archive source/install audit, parent receipt replay, strict spec validation, and runtime dependency scan all passed",
+    "same_class_regression": "removing the historical planning copy cannot change the current verifier result",
+    "negative_boundary": "no archive search, compatibility reader, alternate inventory, or silent fallback is allowed"
+  },
+  "required_revalidation": [
+    "focused retirement-authority regression",
+    "source and installed authority audit",
+    "parent contract recompilation",
+    "affected parent owner execution and closure",
+    "full parent TestMesh aggregation",
+    "OpenSpec strict validation, receipt-only verification, and archive"
+  ],
+  "validation_evidence": {
+    "current_retirement_inventory": {
+      "path": ".flowguard/physicsguard_v1_retirement_inventory.json",
+      "sha256": "2e30344f1d169cd25c8b8888c98cf0565933eda71f143a884cd0b38776ef18e8"
+    },
+    "parent_closure_receipt_id": "closure-6da2111df33afdd2b0b60b0c",
+    "parent_test_mesh_aggregation_id": "sha256:8194a4db504ce82438170d06c3d085582032540ea3fab3cecf4fe3f952f651bf",
+    "openspec_portable_parent_receipt_id": "sha256:13ce7b477aac2166bb55f84cb39696cf19e1677dc214dc73a9917e121b2caa22",
+    "openspec_command_receipt_id": "sha256:1a7b9ce5c35b2ca0ccf895a2023218d105f611a90476c5a32c5a21f77eb4916b",
+    "openspec_projection_receipt_id": "sha256:2360a526e4e782afaea79b07d488681dc384548b5616fc4c7377bf53d7329b8d",
+    "archived_change": "openspec/changes/archive/2026-07-15-fix-physicsguard-post-archive-retirement-authority",
+    "post_archive_checks": {
+      "source_and_installed_authority_audit": "pass",
+      "parent_receipt_replay": "pass_zero_execution",
+      "strict_spec_validation": "pass",
+      "runtime_change_history_dependency_matches": 0
+    }
+  },
+  "claim_boundary": "The repaired current authority survived OpenSpec archive, all ten source and installed skills remained current, and the parent replay passed with zero child execution and zero runtime dependency on active or archived change history."
+}

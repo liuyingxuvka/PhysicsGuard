@@ -1,0 +1,44 @@
+{
+  "schema_version": "physicsguard.family_baseline_candidate.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-understanding-preflight",
+  "candidate_id": "candidate:physicsguard-model-understanding-preflight:guard-model-current",
+  "purpose_contract_ref": "guard-model/contract.json",
+  "purpose_contract_fingerprint": "DABFA99FBBEE823A1E063C94A7EEF0AAAB545CBEF6A9A42EBC04E1C0F5072788",
+  "candidate_definition": {
+    "native_owner_id": "physicsguard.model-understanding-preflight",
+    "native_route_id": "route:physicsguard-model-understanding-preflight:review",
+    "protected_failure_ids": [
+      "failure:physicsguard-model-understanding-preflight:access-gap-suppressed",
+      "failure:physicsguard-model-understanding-preflight:assumption-hidden",
+      "failure:physicsguard-model-understanding-preflight:required-inventory-missing",
+      "failure:physicsguard-model-understanding-preflight:symptom-or-boundary-unclear"
+    ],
+    "required_obligation_ids": [
+      "visible_symptom",
+      "physical_boundary",
+      "subsystem_inventory",
+      "signal_inventory",
+      "parameter_inventory",
+      "assumption_inventory",
+      "access_gaps"
+    ],
+    "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
+  },
+  "authoring_events": [
+    {
+      "event_id": "event:physicsguard-model-understanding-preflight:purpose-contract-frozen",
+      "sequence": 1,
+      "event_kind": "purpose_contract_frozen",
+      "purpose_contract_fingerprint": "DABFA99FBBEE823A1E063C94A7EEF0AAAB545CBEF6A9A42EBC04E1C0F5072788"
+    },
+    {
+      "event_id": "event:physicsguard-model-understanding-preflight:candidate-built",
+      "sequence": 2,
+      "event_kind": "candidate_built",
+      "purpose_contract_fingerprint": "DABFA99FBBEE823A1E063C94A7EEF0AAAB545CBEF6A9A42EBC04E1C0F5072788",
+      "previous_event_fingerprint": "B271DBE048C204845DF6193EEE6FD61B855B3F21AD98537213FB8524B139A4E0",
+      "candidate_definition_fingerprint": "05D1590A40203904252BFB435B49AE50D9044F50A4B20C11A081764AEAD2B0D7"
+    }
+  ]
+}

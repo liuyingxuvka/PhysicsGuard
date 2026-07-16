@@ -1,0 +1,72 @@
+{
+  "schema_version": "physicsguard.family_baseline_oracle_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-audit-closure",
+  "required_obligation_ids": [
+    "closure_plan",
+    "required_native_checks",
+    "validation_depth",
+    "blockers_reconciled",
+    "stale_and_skipped_accounted",
+    "predictive_rollout_if_requested",
+    "safe_claim_boundary"
+  ],
+  "oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:closure-plan",
+      "obligation_id": "closure_plan",
+      "failure_id": "failure:physicsguard-audit-closure:required-check-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'closure_plan' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:required-native-checks",
+      "obligation_id": "required_native_checks",
+      "failure_id": "failure:physicsguard-audit-closure:required-check-missing",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'required_native_checks' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:validation-depth",
+      "obligation_id": "validation_depth",
+      "failure_id": "failure:physicsguard-audit-closure:stale-or-skipped-promoted",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'validation_depth' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blockers-reconciled",
+      "obligation_id": "blockers_reconciled",
+      "failure_id": "failure:physicsguard-audit-closure:blocker-suppressed",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'blockers_reconciled' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:stale-and-skipped-accounted",
+      "obligation_id": "stale_and_skipped_accounted",
+      "failure_id": "failure:physicsguard-audit-closure:stale-or-skipped-promoted",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'stale_and_skipped_accounted' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:predictive-rollout-if-requested",
+      "obligation_id": "predictive_rollout_if_requested",
+      "failure_id": "failure:physicsguard-audit-closure:predictive-overclaim",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'predictive_rollout_if_requested' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:safe-claim-boundary",
+      "obligation_id": "safe_claim_boundary",
+      "failure_id": "failure:physicsguard-audit-closure:closure-scope-overreach",
+      "predicate_kind": "native_obligation_admission_must_pass",
+      "predicate": "The target-native result for 'safe_claim_boundary' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
+      "expected_finding_code": "missing_target_obligation"
+    }
+  ]
+}

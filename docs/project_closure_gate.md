@@ -43,6 +43,8 @@ required_checks:
   evidence_map: true
   test_contracts: true
   validation: true
+  validation_depth: true
+  predictive_rollout: false
   model_library: true
   hierarchy_closure: false
   evidence_mesh: true
@@ -71,6 +73,17 @@ the same downstream evidence.
   required model obligations bind to code and tests, generated bad cases are
   covered, behavior fields are closed, and the risk row consumed each route.
 - Skipped required checks block by default.
+- `validation_ready` and `validated_reuse_ready` consume a passing native
+  `physicsguard_validation_depth_receipt` bound to report type, status, and
+  SHA-256. The closure gate records `physical_recomputation: false`; it does
+  not duplicate PhysicsGuard's residual or physical-envelope calculations.
+- Non-snapshot validation and reuse closure require a passing quantitative
+  adequacy receipt and a compatible `covered_scope`; a snapshot receipt cannot
+  close a time-window, scenario-set, reuse, or prediction claim.
+- `prediction_ready` additionally requires
+  `required_checks.predictive_rollout: true`, `stateful_dynamic` semantics, a
+  passing future-holdout rollout receipt, and passing stability evidence.
+  Pointwise validation is explicitly ineligible for prediction closure.
 
 ## Output
 

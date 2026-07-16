@@ -1,0 +1,43 @@
+{
+  "schema_version": "physicsguard.family_baseline_candidate.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-library",
+  "candidate_id": "candidate:physicsguard-model-library:guard-model-current",
+  "purpose_contract_ref": "guard-model/contract.json",
+  "purpose_contract_fingerprint": "FE7B34A406760377C56B312987B63403F2D177AB7DFB01AB00E70D62F9A12CA7",
+  "candidate_definition": {
+    "native_owner_id": "physicsguard.model-library",
+    "native_route_id": "route:physicsguard-model-library:reuse",
+    "protected_failure_ids": [
+      "failure:physicsguard-model-library:compatibility-not-proven",
+      "failure:physicsguard-model-library:library-inventory-incomplete",
+      "failure:physicsguard-model-library:reuse-scope-overreach",
+      "failure:physicsguard-model-library:validation-or-gap-stale"
+    ],
+    "required_obligation_ids": [
+      "asset_inventory",
+      "profile_inventory",
+      "testbench_compatibility",
+      "gap_gate",
+      "validation_receipt",
+      "bounded_reuse_scope"
+    ],
+    "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
+  },
+  "authoring_events": [
+    {
+      "event_id": "event:physicsguard-model-library:purpose-contract-frozen",
+      "sequence": 1,
+      "event_kind": "purpose_contract_frozen",
+      "purpose_contract_fingerprint": "FE7B34A406760377C56B312987B63403F2D177AB7DFB01AB00E70D62F9A12CA7"
+    },
+    {
+      "event_id": "event:physicsguard-model-library:candidate-built",
+      "sequence": 2,
+      "event_kind": "candidate_built",
+      "purpose_contract_fingerprint": "FE7B34A406760377C56B312987B63403F2D177AB7DFB01AB00E70D62F9A12CA7",
+      "previous_event_fingerprint": "4021BC12E267F984F2488B364E11567BA30049D159B8403E0091F6216FE567F5",
+      "candidate_definition_fingerprint": "475F4B19535A15F742286E5B839DA2F11A22FB9AA58F1FCF9438AFA0654A45BC"
+    }
+  ]
+}

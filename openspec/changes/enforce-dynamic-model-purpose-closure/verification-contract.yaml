@@ -1,0 +1,157 @@
+contract_version: 1
+change: enforce-dynamic-model-purpose-closure
+obligations:
+  - id: req.dynamic-model-purpose.declaration
+    source: "specs/dynamic-model-purpose-closure/spec.md#Requirement: Every concrete model declares a dynamic prevented-failure purpose"
+    claim: Every real model freezes a task-specific purpose and one or more AI-selected failures before candidate construction.
+    required: true
+    evidence: [check.dynamic-model-purpose.focused-tests, check.dynamic-model-purpose.flowguard-preflight, check.dynamic-model-purpose.flowguard-model]
+  - id: req.dynamic-model-purpose.explicit-paths
+    source: "specs/dynamic-model-purpose-closure/spec.md#Requirement: Current-instance authority uses explicit target-local paths"
+    claim: Current-instance actions reject implicit, outside-root, and bundled-baseline paths.
+    required: true
+    evidence: [check.dynamic-model-purpose.focused-tests]
+  - id: req.dynamic-model-purpose.candidate-binding
+    source: "specs/dynamic-model-purpose-closure/spec.md#Requirement: Candidate binds the frozen contract and actual model artifact"
+    claim: Candidate identity binds the contract, exact failure universe, actual model artifact, and ordered event chain.
+    required: true
+    evidence: [check.dynamic-model-purpose.focused-tests]
+  - id: req.dynamic-model-purpose.native-cases
+    source: "specs/dynamic-model-purpose-closure/spec.md#Requirement: Every dynamic failure owns a PhysicsGuard-native oracle and cases"
+    claim: Every failure has exactly one native oracle and complete good/bad case coverage.
+    required: true
+    evidence: [check.dynamic-model-purpose.focused-tests]
+  - id: req.dynamic-model-purpose.proof-exhaustion
+    source: "specs/dynamic-model-purpose-closure/spec.md#Requirement: Proof closure exhausts the exact dynamic failure universe"
+    claim: Closure requires one bound good proof and one bound blocking proof per declared failure.
+    required: true
+    evidence: [check.dynamic-model-purpose.focused-tests]
+  - id: req.dynamic-model-purpose.role-separation
+    source: "specs/dynamic-model-purpose-closure/spec.md#Requirement: Baseline regression and current model authority remain disjoint"
+    claim: Bundled family baselines cannot satisfy current model-purpose closure.
+    required: true
+    evidence: [check.dynamic-model-purpose.focused-tests, check.dynamic-model-purpose.skill-mesh]
+  - id: req.skill-suite.dynamic-purpose-prompts
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: PhysicsGuard-owned purpose declaration precedes candidate construction"
+    claim: All ten generated skills direct AI to declare a current target-local purpose while preserving family baselines.
+    required: true
+    evidence: [check.dynamic-model-purpose.skill-mesh]
+  - id: req.skill-suite.generic-skillguard
+    source: "specs/physicsguard-skill-suite-runtime-authority/spec.md#Requirement: Generic SkillGuard supervision and single current authority"
+    claim: SkillGuard checks remain generic and family baselines do not become current-task semantic authority.
+    required: true
+    evidence: [check.dynamic-model-purpose.skill-mesh]
+checks:
+  - id: check.dynamic-model-purpose.focused-tests
+    kind: command
+    semantic_check_id: semantic.physicsguard.dynamic-model-purpose.focused
+    execution_id: execution.physicsguard.dynamic-model-purpose.focused
+    validation_scope: focused
+    snapshot_policy: live
+    toolchain_identity: pytest-current-python
+    input_selectors:
+      - src/physicsguard/guard_model_contract.py
+      - tests/test_guard_model_contract.py
+      - tests/test_dynamic_model_purpose.py
+    depends_on_receipts: []
+    command: python
+    args: [-m, pytest, -q, tests/test_guard_model_contract.py, tests/test_dynamic_model_purpose.py, -k, "not every_declared_proof_executes_through_the_target_verifier"]
+    timeout_seconds: 900
+    required: true
+    covers:
+      - req.dynamic-model-purpose.declaration
+      - req.dynamic-model-purpose.explicit-paths
+      - req.dynamic-model-purpose.candidate-binding
+      - req.dynamic-model-purpose.native-cases
+      - req.dynamic-model-purpose.proof-exhaustion
+      - req.dynamic-model-purpose.role-separation
+    expected: {exit_code: 0}
+  - id: check.dynamic-model-purpose.skill-mesh
+    kind: command
+    semantic_check_id: semantic.physicsguard.dynamic-model-purpose.skill-mesh
+    execution_id: execution.physicsguard.dynamic-model-purpose.skill-mesh
+    validation_scope: focused
+    snapshot_policy: live
+    toolchain_identity: pytest-current-python
+    input_selectors:
+      - scripts/upgrade_purpose_contracts.py
+      - skill/physicsguard*/SKILL.md
+      - skill/physicsguard*/guard-model/**
+      - skill/physicsguard*/.skillguard/**
+      - tests/test_guard_skill_mesh.py
+    depends_on_receipts: []
+    command: python
+    args: [-m, pytest, -q, tests/test_guard_skill_mesh.py]
+    timeout_seconds: 900
+    required: true
+    covers:
+      - req.dynamic-model-purpose.role-separation
+      - req.skill-suite.dynamic-purpose-prompts
+      - req.skill-suite.generic-skillguard
+    expected: {exit_code: 0}
+  - id: check.dynamic-model-purpose.flowguard-preflight
+    kind: command
+    semantic_check_id: semantic.physicsguard.dynamic-model-purpose.flowguard-preflight
+    execution_id: execution.physicsguard.dynamic-model-purpose.flowguard-preflight
+    validation_scope: focused
+    snapshot_policy: live
+    toolchain_identity: flowguard-0.55.0
+    input_selectors:
+      - .flowguard/existing_model_preflight/dynamic_model_purpose_preflight.py
+      - .flowguard/physicsguard_ai_workflow_model.py
+      - src/physicsguard/guard_model_contract.py
+      - skill/physicsguard*/SKILL.md
+    depends_on_receipts: []
+    command: python
+    args: [.flowguard/existing_model_preflight/dynamic_model_purpose_preflight.py]
+    timeout_seconds: 300
+    required: true
+    covers:
+      - req.dynamic-model-purpose.declaration
+    expected: {exit_code: 0}
+  - id: check.dynamic-model-purpose.flowguard-model
+    kind: command
+    semantic_check_id: semantic.physicsguard.dynamic-model-purpose.flowguard-model
+    execution_id: execution.physicsguard.dynamic-model-purpose.flowguard-model
+    validation_scope: focused
+    snapshot_policy: live
+    toolchain_identity: flowguard-0.55.0
+    input_selectors:
+      - .flowguard/physicsguard_dynamic_model_purpose_model.py
+      - .flowguard/run_physicsguard_dynamic_model_purpose_checks.py
+    depends_on_receipts: []
+    command: python
+    args: [.flowguard/run_physicsguard_dynamic_model_purpose_checks.py]
+    timeout_seconds: 300
+    required: true
+    covers:
+      - req.dynamic-model-purpose.declaration
+      - req.dynamic-model-purpose.candidate-binding
+      - req.dynamic-model-purpose.proof-exhaustion
+      - req.dynamic-model-purpose.role-separation
+    expected: {exit_code: 0}
+freshness:
+  watch:
+    - openspec/changes/enforce-dynamic-model-purpose-closure/proposal.md
+    - openspec/changes/enforce-dynamic-model-purpose-closure/design.md
+    - openspec/changes/enforce-dynamic-model-purpose-closure/tasks.md
+    - openspec/changes/enforce-dynamic-model-purpose-closure/specs/**/*.md
+    - openspec/changes/enforce-dynamic-model-purpose-closure/verification-contract.yaml
+    - src/physicsguard/guard_model_contract.py
+    - scripts/upgrade_purpose_contracts.py
+    - .flowguard/existing_model_preflight/dynamic_model_purpose_preflight.py
+    - .flowguard/physicsguard_dynamic_model_purpose_model.py
+    - .flowguard/run_physicsguard_dynamic_model_purpose_checks.py
+    - .flowguard/physicsguard_ai_workflow_model.py
+    - skill/physicsguard*/SKILL.md
+    - skill/physicsguard*/guard-model/**
+    - skill/physicsguard*/.skillguard/**
+    - tests/test_guard_model_contract.py
+    - tests/test_dynamic_model_purpose.py
+    - tests/test_guard_skill_mesh.py
+  exclude:
+    - "**/verification-report.json"
+    - "**/.skillguard/runs/**"
+    - "**/.flowguard/evidence/**"
+    - "**/run-artifacts/**"
+    - "**/run_artifacts/**"

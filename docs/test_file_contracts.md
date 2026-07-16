@@ -122,3 +122,11 @@ A passing contract does not prove the physical model is correct. It only proves
 that the file fields were accounted for and bound or disposed under explicit
 rules. Residual audits, FlowGuard checks, pytest, and closure evidence still
 govern physical debugging claims.
+
+For downstream non-snapshot validation, the current manifest and role matrix
+become coverage authorities. Preserve their exact hashes, raw row and field
+counts, timestamps, row identities, modes/events/peaks/boundaries, parameter
+roles, and specific exclusion reasons. The native validation-adequacy gate—not
+the validation plan's selected subset—then decides whether point, time,
+per-signal, critical-member, and family coverage are sufficient. Contract pass
+alone never authorizes temporal or predictive claims.

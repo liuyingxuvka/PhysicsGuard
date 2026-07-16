@@ -1,0 +1,95 @@
+{
+  "schema_version": "physicsguard.family_baseline_contract.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-candidate-model-blueprint",
+  "native_owner_id": "physicsguard.candidate-model-blueprint",
+  "native_route_id": "route:physicsguard-candidate-model-blueprint:build",
+  "prevented_failure_purpose": "Prevent generation of a candidate simulation blueprint until the hierarchy, block readiness, interfaces, signal/parameter mappings, and rollout boundary are validated for the requested bounded use.",
+  "physical_or_evidence_boundary": [
+    {
+      "boundary_id": "boundary:physicsguard-candidate-model-blueprint:validated-hierarchy",
+      "description": "Validated hierarchy and component-block inventory",
+      "authority_source": "current PhysicsGuard hierarchy",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-candidate-model-blueprint:interface-inventory",
+      "description": "Required interfaces, signals, parameters, units, and mappings",
+      "authority_source": "target model and mapping registry",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-candidate-model-blueprint:rollout-request",
+      "description": "Requested semantics and rollout boundary",
+      "authority_source": "target-owned generation request",
+      "required": true
+    },
+    {
+      "boundary_id": "boundary:physicsguard-candidate-model-blueprint:readiness-findings",
+      "description": "Current readiness blockers and validation receipts",
+      "authority_source": "native preflight and validation outputs",
+      "required": true
+    }
+  ],
+  "prevented_failure_classes": [
+    {
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:hierarchy-not-validated",
+      "title": "Candidate is not proven against hierarchy or blocks are not ready",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the required hierarchy, component blocks, or physical interfaces are missing or unvalidated",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:interface-mapping-incomplete",
+      "title": "Candidate is not proven against interface or mapping inventory is incomplete",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: required signal, parameter, unit, or interface bindings are missing",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:rollout-boundary-unclear",
+      "title": "Candidate is not proven against rollout boundary is unclear",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: the intended pointwise or stateful semantics and rollout limits are not explicit",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    },
+    {
+      "failure_id": "failure:physicsguard-candidate-model-blueprint:generation-despite-blocker",
+      "title": "Candidate is not proven against generation proceeds despite a blocker",
+      "block_when": "the candidate lacks current passing target-native obligation evidence for this bounded route condition: generation eligibility is asserted while a required readiness condition is blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "proof_strength": "native_obligation_admission_gate",
+      "known_limit": "This admission proof rejects a candidate whose governed obligation evidence is absent or native-failed; it does not detect the underlying physical, mapping, topology, or evidence defect and does not certify upstream truth.",
+      "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
+    }
+  ],
+  "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
+  "authoring_order": [
+    "freeze_prevented_failure_contract",
+    "build_candidate",
+    "prove_known_good",
+    "prove_every_known_bad",
+    "issue_native_receipt"
+  ],
+  "candidate_requires_contract_fingerprint": true,
+  "candidate_admission": {
+    "artifact_ref": "guard-model/candidate.json",
+    "schema_version": "physicsguard.family_baseline_candidate.v1",
+    "fingerprint_algorithm": "sha256-canonical-json-uppercase-v1",
+    "required_event_order": [
+      "purpose_contract_frozen",
+      "candidate_built"
+    ],
+    "failure_codes": [
+      "candidate_artifact_missing",
+      "candidate_contract_fingerprint_mismatch",
+      "candidate_built_before_purpose_or_event_chain_broken"
+    ]
+  }
+}

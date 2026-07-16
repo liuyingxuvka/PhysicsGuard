@@ -1,0 +1,14 @@
+{
+  "fixture_version": "physicsguard.skill-execution-cases.v1",
+  "cases": [
+    {"target_skill_id":"physicsguard-ai-debugging","shallow_missing_obligation_id":"validation_depth"},
+    {"target_skill_id":"physicsguard-audit-closure","shallow_missing_obligation_id":"stale_and_skipped_accounted"},
+    {"target_skill_id":"physicsguard-candidate-model-blueprint","shallow_missing_obligation_id":"generation_eligibility"},
+    {"target_skill_id":"physicsguard-model-library","shallow_missing_obligation_id":"testbench_compatibility"},
+    {"target_skill_id":"physicsguard-model-understanding-preflight","shallow_missing_obligation_id":"parameter_inventory"},
+    {"target_skill_id":"physicsguard-project-adoption","shallow_missing_obligation_id":"required_revalidation"},
+    {"target_skill_id":"physicsguard-project-evidence-registry","shallow_missing_obligation_id":"binding_edges"},
+    {"target_skill_id":"physicsguard-signal-mapping-review","shallow_missing_obligation_id":"temporal_coverage"},
+    {"target_skill_id":"physicsguard-test-file-contract-review","shallow_missing_obligation_id":"per_signal_depth"}
+  ]
+}

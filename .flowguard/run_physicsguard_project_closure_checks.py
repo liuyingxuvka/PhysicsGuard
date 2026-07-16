@@ -60,6 +60,25 @@ def main() -> int:
             ),
             ("test_contract_blocks", "validation_blocks", "model_library_blocks", "hierarchy_closure_blocks", "evidence_mesh_blocks"),
         ),
+        (
+            "native_depth_receipt_supervision",
+            (
+                model.ProjectClosureInput("depth_receipt_fail", "validation_ready", True, True, True, False, False, True, True, True, True, True, True, False, True, validation_depth_receipt_ok=False),
+                model.ProjectClosureInput("supervisor_recomputes_physics", "validation_ready", True, True, True, False, False, True, True, True, True, True, True, False, True, supervisory_physics_recomputed=True),
+            ),
+            ("validation_depth_receipt_blocks", "supervisory_physics_recompute_blocked"),
+        ),
+        (
+            "adequacy_scope_and_prediction_closure",
+            (
+                model.ProjectClosureInput("snapshot_mismatch", "validation_ready", True, True, True, False, False, True, True, True, True, True, True, False, True, covered_scope_compatible=False),
+                model.ProjectClosureInput("adequacy_fail", "validation_ready", True, True, True, False, False, True, True, True, True, True, True, False, True, adequacy_passed=False),
+                model.ProjectClosureInput("pointwise_prediction", "prediction_ready", True, True, True, False, False, True, True, True, True, True, True, False, True, stateful_dynamic=False, predictive_rollout_passed=False),
+                model.ProjectClosureInput("predictive_fail", "prediction_ready", True, True, True, False, False, True, True, True, True, True, True, False, True, stateful_dynamic=True, predictive_rollout_passed=False),
+                model.ProjectClosureInput("predictive_pass", "prediction_ready", True, True, True, False, False, True, True, True, True, True, True, False, True, stateful_dynamic=True, predictive_rollout_passed=True),
+            ),
+            ("requested_covered_scope_mismatch_blocks", "validation_adequacy_blocks", "pointwise_prediction_closure_blocked", "predictive_rollout_closure_blocked", "closure_passed"),
+        ),
     )
     ok = True
     for group_name, external_inputs, required_labels in groups:
@@ -80,4 +99,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

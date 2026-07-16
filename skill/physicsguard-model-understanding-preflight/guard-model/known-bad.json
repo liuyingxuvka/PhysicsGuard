@@ -1,0 +1,43 @@
+{
+  "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
+  "artifact_role": "family_baseline_regression",
+  "target_skill_id": "physicsguard-model-understanding-preflight",
+  "cases": [
+    {
+      "case_id": "known-bad:access-gap-suppressed",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:access-gap-suppressed",
+      "trigger_obligation_id": "access_gaps",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:assumption-hidden",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:assumption-hidden",
+      "trigger_obligation_id": "assumption_inventory",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:required-inventory-missing",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:required-inventory-missing",
+      "trigger_obligation_id": "subsystem_inventory",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    },
+    {
+      "case_id": "known-bad:symptom-or-boundary-unclear",
+      "failure_id": "failure:physicsguard-model-understanding-preflight:symptom-or-boundary-unclear",
+      "trigger_obligation_id": "visible_symptom",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "missing_target_obligation",
+      "self_reported_outcome_allowed": false,
+      "proof_strength": "native_obligation_admission_gate"
+    }
+  ]
+}
