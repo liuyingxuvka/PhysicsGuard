@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: deep time varying parameter series.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/testfile_contracts/pump_loop/observed/deep_time_varying_parameter_series.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 # PhysicsGuard bounded observed series
 # Purpose: positive execution-depth calibration for one genuinely time-varying parameter.
 # Boundary: Low-fidelity fixture only; it proves coverage mechanics, not commercial-model equivalence.

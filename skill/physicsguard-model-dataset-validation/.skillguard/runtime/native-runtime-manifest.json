@@ -2,8 +2,8 @@
   "schema_version": "physicsguard.installed_native_runtime_manifest.v1",
   "target_skill_id": "physicsguard-model-dataset-validation",
   "runtime_root": ".skillguard/runtime",
-  "source_file_count": 91,
-  "source_inventory_fingerprint": "67983DDB37E2A02071AD5FB0F1895EE1DCEE43ED1E0EC9950F033BF6169D50BE",
+  "source_file_count": 93,
+  "source_inventory_fingerprint": "79B57C67BF6EAA7A0497602C539B559E9361FBE046CDC2B4F6B9186602B849D3",
   "files": [
     {
       "path": "physicsguard/__init__.py",
@@ -360,6 +360,14 @@
     {
       "path": "physicsguard/skill_execution_depth.py",
       "sha256": "52145c2f5dbfb0f6d3b55723518dc80c996cf0b551f8c01879572feb4e45529e"
+    },
+    {
+      "path": "physicsguard/skillguard_template_adapter.py",
+      "sha256": "ff017015ed0e0ea648ce2ad7ddcd931e791ad3cb2470a394ba7aa7d508072056"
+    },
+    {
+      "path": "physicsguard/template_packs.py",
+      "sha256": "7c01508f43f19d36e9ffad80fd39871794b90975b19b02fbcc93e030d36cd1ce"
     },
     {
       "path": "physicsguard/workflow.py",

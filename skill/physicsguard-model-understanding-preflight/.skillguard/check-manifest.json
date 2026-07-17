@@ -559,7 +559,7 @@
         "classification_rule_ids": [
           "skillguard.content_role_classifier.current:documentation_model"
         ],
-        "component_hash": "sha256:5a95d078a75f3fd7a6805cefb48c415053dd4c78fa9f7756a9854ac37c7778fa",
+        "component_hash": "sha256:1c87034d243c00eb849d97df58dd0756c6e3c9a8dde192f2d8b1bce1e9055705",
         "component_id": "component:documentation_model:e7e7b0cff39d5c2b",
         "consumer_ids": [
           "projection:installation"
@@ -634,7 +634,7 @@
       "owner_cycles": [],
       "unmapped_paths": []
     },
-    "impact_graph_hash": "sha256:95b70be5dec16bfd007b64447555c67fe15ba6e1b2eebd7e3d8a0b7137346b50",
+    "impact_graph_hash": "sha256:19727d7c2db544b2a31012f09cf958b5ec7ff70089b547ebca174798d8ad14b5",
     "inventory": [
       {
         "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
@@ -659,7 +659,7 @@
       },
       {
         "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
-        "content_hash": "sha256:6b3210e346f86e15b6bce9e5b63b76233866120c56e1b6d0ef88beebf3a341c3",
+        "content_hash": "sha256:0a0238e4be5ad2e714b195bf49b722e1faf312bdedb0c4b09b96436d7c2197c5",
         "install_disposition": "copy",
         "path": "SKILL.md",
         "role": "documentation_model"
@@ -707,7 +707,7 @@
         "role": "runtime_source"
       }
     ],
-    "inventory_hash": "sha256:22163aa313a6048815b20f6a7db47b7ba4484b9d90a492cb560fec71fdacada8",
+    "inventory_hash": "sha256:a6567f61f1a1f501b24e6985f4f6ee7761e145ea77b29d71188a98042198ea32",
     "member_root_path": ".",
     "owner_receipt_root_ref": {
       "path_token": "owner_evidence_root",
@@ -1058,7 +1058,7 @@
       },
       {
         "consumer_id": "projection:installation",
-        "consumer_projection_hash": "sha256:0c6ca98e20eb620f3c807dac41f9937be22f98ff817d3f009268bd412f1a4655",
+        "consumer_projection_hash": "sha256:85cb887a2b5370d4c782742f8963b56e2d57eb46e76c4a74864d6ffdd9f6035c",
         "impact_plan_schema_version": "skillguard.content_impact_plan.current",
         "impact_policy_id": "skillguard.content_impact_policy.current",
         "input_component_ids": [
@@ -1068,7 +1068,7 @@
           "component:runtime_source:20b9e800878baf90",
           "component:runtime_source:7e0a39a41369ff58"
         ],
-        "input_projection_hash": "sha256:d96d6ef912a5e4e6a8cec312913faaca5957582b2c85cd32ce96db869725ad52",
+        "input_projection_hash": "sha256:56b95d4b49c2d38638d96374b97c1bf4898305f8da61b349af6be33d1c08c82f",
         "kind": "installation",
         "projection_declaration_hash": "sha256:a6241c7dd09bbaf0adc56caaa5a68bfa8888ae68f94ee3275ca86ecfa386d29e"
       },
@@ -1096,17 +1096,17 @@
     "schema_version": "skillguard.content_impact_plan.current",
     "unknown_mapping_disposition": "block"
   },
-  "contract_hash": "EB218CCF5F3B10743C0EFFA05FC4D49604787858D3DD04DB29A31C3383E142DC",
-  "manifest_hash": "6C3A7980A8B28A5B5888018408F17F3358DFF93B6C9FE5C1A67380CF8CB72897",
+  "contract_hash": "758283413FCAEEA68F9D2720982CED3B64D7371AAD1A5C6CA3FF76A89E091CF7",
+  "manifest_hash": "90070FDD4BEDFA759BEC3A477194D1CA11565E2AF583293C6D70B3D3DD9E277D",
   "model_id": "physicsguard-model-understanding-preflight.family-baseline-regression.current",
   "schema_version": "skillguard.check_manifest.v2",
   "skill_id": "physicsguard-model-understanding-preflight",
   "source_fingerprints": {
     "binding": "9532842B008E1601F540250BE67ACAE4BA2136BDCD15325F03B3022654ED894C",
-    "entrypoint": "6B3210E346F86E15B6BCE9E5B63B76233866120C56E1B6D0EF88BEEBF3A341C3",
+    "entrypoint": "0A0238E4BE5AD2E714B195BF49B722E1FAF312BDEDB0C4B09B96436D7C2197C5",
     "implementation:.skillguard/contract_model.py": "FCE7953230BA1274F619B49A1F07F1DC6228129E480AFA24C2BE9CF7EF4C4739",
     "implementation:.skillguard/runtime/skill_execution_depth.py": "52145C2F5DBFB0F6D3B55723518DC80C996CF0B551F8C01879572FEB4E45529E",
-    "implementation:SKILL.md": "6B3210E346F86E15B6BCE9E5B63B76233866120C56E1B6D0EF88BEEBF3A341C3",
+    "implementation:SKILL.md": "0A0238E4BE5AD2E714B195BF49B722E1FAF312BDEDB0C4B09B96436D7C2197C5",
     "implementation:guard-model/candidate.json": "3A8D6E723725971D1570C8824EB6016BD655779FCF691811191734C790D6D243",
     "implementation:guard-model/contract.json": "2E33771D4E23C8CFFF6A7FFFC5E9A166F6A4B1CCFB171BAF839FC6C46B89DF44",
     "implementation:guard-model/known-bad.json": "EF2D2DAD9DCF10A78138AB7F4E438EE9CE63CD2BC1836061D897129A6D1FF059",

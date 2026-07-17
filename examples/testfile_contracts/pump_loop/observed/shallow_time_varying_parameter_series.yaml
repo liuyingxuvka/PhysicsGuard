@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: shallow time varying parameter series.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/testfile_contracts/pump_loop/observed/shallow_time_varying_parameter_series.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 # PhysicsGuard intentionally shallow bounded observed series
 # Purpose: negative calibration showing that one value cannot validate a time-varying parameter.
 # Boundary: SkillGuard/PhysicsGuard shallow-depth regression fixture only.

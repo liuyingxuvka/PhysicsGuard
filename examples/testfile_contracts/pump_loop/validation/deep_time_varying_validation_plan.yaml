@@ -1,3 +1,8 @@
+# PhysicsGuard model-dataset validation plan
+# Purpose: deep time varying validation plan.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli validation run examples/testfile_contracts/pump_loop/validation/deep_time_varying_validation_plan.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_file: ../model/pump_loop_hierarchy.yaml
 calibration:
   enabled: false
@@ -84,7 +89,7 @@ depth:
     field_schema:
       identity_id: clean_manifest_schema
       path: ../data/clean_manifest.yaml
-      sha256: 1fabd2b6b4f8af07c5391bfceda30aeab09ed25d9c590f63ec83eecee7716524
+      sha256: 104d08dcfc017eb598d94f27b319b732d388cb8a60cee24a2710b32ad2bf72a6
     files:
     - case_ids:
       - baseline_case
@@ -96,11 +101,11 @@ depth:
     parameter_roles:
       identity_id: pump_loop_parameter_roles
       path: ../coverage/pump_loop_role_matrix.yaml
-      sha256: fb8d627c33fa0927486601b872a3b377d6804775a6991255e8da4d9a0659419d
+      sha256: fd2671eca165bddac606325ce80d33cdc493c3109afa3d715a9fda838891b53e
     testbench:
       identity_id: pump_loop_testbench_profile
       path: ../profiles/pump_loop_testbench_profile.yaml
-      sha256: 5a346f92f5a100c7dfe7bbe7bd310d943a1ea66a7fcc55d02332d18cbd8bbe01
+      sha256: 01dec6a59b115ef6c09ed4ed847bf5cda4d3bb36590a280cc64dbe88c857663b
     testbench_version: v1
   mapping_review:
     accepted_review_states:
@@ -116,7 +121,7 @@ depth:
   observed_series:
     identity_id: deep_time_varying_parameter_series
     path: ../observed/deep_time_varying_parameter_series.yaml
-    sha256: 09379ca56655c8c8f98818b3a84690ca00b5bc4d6b0584d510aaece8473aac5a
+    sha256: 2aa7fcb259b708e5c546c67d9abef0198da11289833421eb3295168e1c870b46
     case_ids:
     - baseline_case
     - speed_ramp_case_01

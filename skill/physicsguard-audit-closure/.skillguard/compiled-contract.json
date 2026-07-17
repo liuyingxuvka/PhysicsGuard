@@ -650,7 +650,7 @@
         "classification_rule_ids": [
           "skillguard.content_role_classifier.current:documentation_model"
         ],
-        "component_hash": "sha256:d1a2e248cb162a18272ada415d7cb72f475871bbd1b841900dd268e4b6caed3b",
+        "component_hash": "sha256:1397873841c768fd08679c3e88db7629d4b693e68419094008e94396f8a0ec7f",
         "component_id": "component:documentation_model:e7e7b0cff39d5c2b",
         "consumer_ids": [
           "projection:installation"
@@ -727,7 +727,7 @@
       "owner_cycles": [],
       "unmapped_paths": []
     },
-    "impact_graph_hash": "sha256:38620e11c1f522677a36525039a47f4ef8437e87a45d8eed24e8146027c0ec23",
+    "impact_graph_hash": "sha256:41ddbadf35e2265a040762eb2a2c2a62921cdeee65c6ce9c39cb038c803060f4",
     "inventory": [
       {
         "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
@@ -752,7 +752,7 @@
       },
       {
         "classification_rule_id": "skillguard.content_role_classifier.current:documentation_model",
-        "content_hash": "sha256:d76224de0105be49bd892b21bd44bf695680fc286e22c52460024965c9a1038b",
+        "content_hash": "sha256:3bcdeeaa0d4810ed7aa8d93377beffadd9727343330dae777426d735977444a3",
         "install_disposition": "copy",
         "path": "SKILL.md",
         "role": "documentation_model"
@@ -800,7 +800,7 @@
         "role": "runtime_source"
       }
     ],
-    "inventory_hash": "sha256:59908b7e3f83e8865d192fd893ef2e42666632608e67079b1804d01b44f156b3",
+    "inventory_hash": "sha256:10173c1ece86c1dc37d4cda631b0c6ccd96e6b537f97b2750a6f85e0e46abb22",
     "member_root_path": ".",
     "owner_receipt_root_ref": {
       "path_token": "owner_evidence_root",
@@ -1197,7 +1197,7 @@
       },
       {
         "consumer_id": "projection:installation",
-        "consumer_projection_hash": "sha256:945a9b7255801dddb0ae771ba711befdb3f7fe2d1f0c5296b0d0bd2992cdc2c3",
+        "consumer_projection_hash": "sha256:bb84deae32aa9e0d0d468cbd5717b6071f36dfed0312488ec54fa3777c3356fc",
         "impact_plan_schema_version": "skillguard.content_impact_plan.current",
         "impact_policy_id": "skillguard.content_impact_policy.current",
         "input_component_ids": [
@@ -1207,7 +1207,7 @@
           "component:runtime_source:510625d839bcca94",
           "component:runtime_source:d3e1f4846c105f77"
         ],
-        "input_projection_hash": "sha256:2ffd48d8045778b82e2e8120032428ba2545932b248922b6d8f3f3048c103fbf",
+        "input_projection_hash": "sha256:c52a823727e4afb72b26c32c491ae9af7c96fc5f21f6073702a01fa18138d6b3",
         "kind": "installation",
         "projection_declaration_hash": "sha256:7927c5939984f6cb0f5eac6bf6e0ab036b4f9fdc9511a19bf3e2b8613cfd6e57"
       },
@@ -1235,7 +1235,7 @@
     "schema_version": "skillguard.content_impact_plan.current",
     "unknown_mapping_disposition": "block"
   },
-  "contract_hash": "0C9B902F6602483F0A3F29009F32C80FED88A63E0D1498418583175F433B461F",
+  "contract_hash": "531396F28B237795AF4A112B5DB3C2D11DF1C530B8EB69554E17A268E8B6AB92",
   "depth_profile": {
     "claim_boundary": "PhysicsGuard owns the family baseline semantics and every target-local current-model purpose, failure, native oracle, proof, residual risk, and bounded claim. SkillGuard only executes and reconciles the declared family baseline inventory; that receipt cannot close a current model.",
     "enforcement_level": "enforced",
@@ -1434,10 +1434,10 @@
   "skill_id": "physicsguard-audit-closure",
   "source_fingerprints": {
     "binding": "34695A1B7FAC309DAB93328396A4D191EF903CFE9F8C990AA8111A2C70AE68CA",
-    "entrypoint": "D76224DE0105BE49BD892B21BD44BF695680FC286E22C52460024965C9A1038B",
+    "entrypoint": "3BCDEEAA0D4810ED7AA8D93377BEFFADD9727343330DAE777426D735977444A3",
     "implementation:.skillguard/contract_model.py": "08CA39928C450E84FB1257D6C026AC024B40527B84D8305E6A64D7A346D58377",
     "implementation:.skillguard/runtime/skill_execution_depth.py": "52145C2F5DBFB0F6D3B55723518DC80C996CF0B551F8C01879572FEB4E45529E",
-    "implementation:SKILL.md": "D76224DE0105BE49BD892B21BD44BF695680FC286E22C52460024965C9A1038B",
+    "implementation:SKILL.md": "3BCDEEAA0D4810ED7AA8D93377BEFFADD9727343330DAE777426D735977444A3",
     "implementation:guard-model/candidate.json": "8795F88CF76BDDF4AA8335629C0E98C51B356CC61BDB14D38D97F4254A3D0E09",
     "implementation:guard-model/contract.json": "EBB12CDD86CAFEE6314A4937EB2DEDE23D91D9B352E1A75097F3C1A006545053",
     "implementation:guard-model/known-bad.json": "BA4D09BF3A928C06F3647F41B7E2898DD78B2A7D7EB13D024A43E7CF40BC16E5",
