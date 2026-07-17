@@ -229,6 +229,23 @@ The only SkillGuard runtime authority is `.skillguard/contract-source.json`, `.s
 The source contract uses one fixed `native-integrated` identity for the declared family baseline checks. Every declared binding is required before that baseline closure, but a baseline receipt cannot be projected as current-model proof. A real task may declare its own PhysicsGuard-native current-purpose checks for SkillGuard supervision; SkillGuard still cannot invent their semantics. Parallel success routes and SkillGuard-owned domain routes are forbidden.
 <!-- END SKILLGUARD CONTRACT LAYER -->
 
+
+<!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
+## Validated Template Pack Routing
+
+- Target families: `physicsguard`; native owner: `physicsguard.purpose-pack-selector.v1`.
+- Current catalogs: `physicsguard.purpose-template-packs` revision `1`.
+- Resolve the task through this Guard's native router first, then ask the target-owned adapter for a current neutral projection; never infer a template from wording or a skill name.
+- Preserve the adapter's complete candidate and rejection accounting. Zero candidates may use only the declared validated base; one candidate gets a read-only preview; many candidates require complete dependencies, pairwise compatibility, one field owner, and target-authored dominance or must block as ambiguous.
+- Recompute the projection immediately before applying a preview. A stale request, catalog, route, builder, validator, or content identity blocks all writes.
+- Hand the selected preview to the target-declared builder and consume every target-native validator receipt. Template structure is not domain validity, completion, installation, release, or publication evidence.
+- Record a harvest disposition after creating or materially deepening a reusable model, and keep no-match evidence visible.
+- Declared validated bases: `physicsguard.base.audit-work-package`.
+- Template inventory: `physicsguard.base.audit-work-package`, `physicsguard.dataset-validation-basic`, `physicsguard.dataset-validation-comprehensive`, `physicsguard.model-understanding-preflight`, `physicsguard.signal-mapping-core`, `physicsguard.signal-mapping-evidence`.
+- Native validator inventory: `physicsguard.template-pack-instance-validator.v1`, `physicsguard.template-pack-manifest-validator.v1`, `physicsguard.template-pack-selection-validator.v1`.
+- Claim boundaries: The catalog supports deterministic workflow-pack selection and structural native validation only; physical truth, dataset adequacy, audit_pass, installation, and release require separate current PhysicsGuard evidence.
+<!-- END MANAGED VALIDATED TEMPLATE PACK -->
+
 <!-- BEGIN MANAGED PURPOSE AND BLOCKABILITY -->
 ## PhysicsGuard dynamic model-purpose and family baseline
 

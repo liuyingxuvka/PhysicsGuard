@@ -1,0 +1,108 @@
+cases:
+  - case_id: no-base-blocks
+    kind: blocked_decision
+    mutation:
+      base_template_id: null
+      remove_template_ids:
+        - physicsguard.base.audit-work-package
+      template_updates: {}
+    request:
+      request_id: fixture-no-base
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-ai-debugging:audit
+      purpose_tags:
+        - novel-audit-purpose
+      inputs: {}
+      requested_template_ids: []
+    expected_disposition: ambiguous_template_selection
+    expected_reason_prefix: no_approved_base
+  - case_id: incompatible-many-blocks
+    kind: blocked_decision
+    mutation:
+      base_template_id: physicsguard.base.audit-work-package
+      remove_template_ids: []
+      template_updates:
+        physicsguard.signal-mapping-core:
+          compatible_with: []
+        physicsguard.signal-mapping-evidence:
+          compatible_with: []
+    request:
+      request_id: fixture-ambiguous
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-signal-mapping-review:review
+      purpose_tags:
+        - signal-mapping
+      inputs:
+        model_id: demo-model
+        dataset_id: dataset-003
+      requested_template_ids: []
+    expected_disposition: ambiguous_template_selection
+    expected_reason_prefix: compatibility_missing
+  - case_id: field-owner-collision-blocks
+    kind: blocked_decision
+    mutation:
+      base_template_id: physicsguard.base.audit-work-package
+      remove_template_ids: []
+      template_updates:
+        physicsguard.signal-mapping-evidence:
+          owned_fields:
+            - mapping_context
+            - evidence_contract
+            - review_contract
+          body:
+            mapping_context:
+              duplicate_owner: true
+            evidence_contract:
+              dataset_id: "{{input.dataset_id}}"
+              mapping_evidence_required: true
+            review_contract:
+              initial_state: "{{param.initial_review_state}}"
+              uncertain_mappings_block_residual_claims: true
+    request:
+      request_id: fixture-field-conflict
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-signal-mapping-review:review
+      purpose_tags:
+        - signal-mapping
+      inputs:
+        model_id: demo-model
+        dataset_id: dataset-004
+      requested_template_ids: []
+    expected_disposition: ambiguous_template_selection
+    expected_reason_prefix: field_owner_conflict
+  - case_id: stale-template-digest-rejected
+    kind: stale_manifest
+    mutation:
+      template_id: physicsguard.model-understanding-preflight
+      body_update:
+        workflow_kind: stale-unsealed-change
+    expected_finding_code: template_digest_mismatch
+  - case_id: unresolved-placeholder-rejected
+    kind: instantiation_error
+    mutation:
+      base_template_id: physicsguard.base.audit-work-package
+      remove_template_ids: []
+      template_updates:
+        physicsguard.model-understanding-preflight:
+          body:
+            workflow_kind: physicsguard_model_understanding_preflight
+            model_context:
+              model_id: "{{input.model_id}}"
+              missing_signal: "{{input.missing_signal}}"
+              detail_level: "{{param.detail_level}}"
+              physical_boundary_required: true
+            assumption_policy:
+              explicit_assumption_cards_required: true
+              uncertain_mappings_must_remain_visible: true
+    request:
+      request_id: fixture-unresolved
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-model-understanding-preflight:review
+      purpose_tags:
+        - model-understanding
+      inputs:
+        model_id: demo-model
+      requested_template_ids: []
+    parameters:
+      detail_level: coarse-to-fine
+    expected_error_code: unresolved_placeholders

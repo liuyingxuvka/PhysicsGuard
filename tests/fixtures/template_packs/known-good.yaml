@@ -1,0 +1,64 @@
+cases:
+  - case_id: model-understanding-single
+    request:
+      request_id: fixture-single
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-model-understanding-preflight:review
+      purpose_tags:
+        - model-understanding
+      inputs:
+        model_id: demo-model
+      requested_template_ids: []
+    parameters:
+      detail_level: coarse-to-fine
+    expected_disposition: single_selected
+    expected_template_ids:
+      - physicsguard.model-understanding-preflight
+  - case_id: signal-mapping-composed
+    request:
+      request_id: fixture-composed
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-signal-mapping-review:review
+      purpose_tags:
+        - signal-mapping
+      inputs:
+        model_id: demo-model
+        dataset_id: dataset-001
+      requested_template_ids: []
+    parameters:
+      mapping_confidence_policy: explicit
+      initial_review_state: pending
+    expected_disposition: composed
+    expected_template_ids:
+      - physicsguard.signal-mapping-core
+      - physicsguard.signal-mapping-evidence
+  - case_id: base-no-match
+    request:
+      request_id: fixture-base
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-ai-debugging:audit
+      purpose_tags:
+        - novel-audit-purpose
+      inputs:
+        visible_symptom: unexplained residual
+      requested_template_ids: []
+    parameters:
+      review_depth: coarse-to-fine
+    expected_disposition: base_no_match
+    expected_template_ids:
+      - physicsguard.base.audit-work-package
+  - case_id: dataset-validation-strict-dominance
+    request:
+      request_id: fixture-dominance
+      native_family_id: physicsguard
+      native_route_id: route:physicsguard-model-dataset-validation
+      purpose_tags:
+        - dataset-validation
+      inputs:
+        dataset_id: dataset-002
+      requested_template_ids: []
+    parameters:
+      temporal_depth: per-signal
+    expected_disposition: strictly_dominated_selection
+    expected_template_ids:
+      - physicsguard.dataset-validation-comprehensive

@@ -1,0 +1,308 @@
+schema_id: physicsguard.purpose-template-pack-manifest.v1
+catalog_id: physicsguard.purpose-template-packs
+revision: "1"
+digest: sha256:3ee21d2037d0896d36fb45c0082b3b6757b742f19311bf5e24ee5bb3fdd89e56
+native_family_id: physicsguard
+base_template_id: physicsguard.base.audit-work-package
+templates:
+  - template_id: physicsguard.base.audit-work-package
+    revision: "1"
+    digest: sha256:27b3d0229f7bb36faeec995299f8ead27925caa38dba5c153edfd682acad7c70
+    role: base
+    native_family_id: physicsguard
+    native_route_ids:
+      - "*"
+    applicability:
+      all_tags: []
+      any_tags: []
+      forbidden_tags: []
+      required_inputs: []
+      input_equals: {}
+    provides_fragments:
+      - physicsguard-base-work-package
+    requires_fragments: []
+    owned_fields:
+      - workflow_kind
+      - intake_contract
+      - validation_contract
+    compatible_with: []
+    conflicts_with: []
+    dominates: []
+    parameter_schema:
+      review_depth:
+        type: string
+        required: false
+        default: coarse-to-fine
+    generated_artifacts:
+      - artifacts/physicsguard/base-audit-work-package.yaml
+    referenced_assets:
+      - docs/ai_guided_debugging_protocol.md
+      - docs/assumption_cards.md
+    native_builder_id: physicsguard.purpose-pack-builder.v1
+    native_validator_ids:
+      - physicsguard.template-pack-manifest-validator.v1
+      - physicsguard.template-pack-selection-validator.v1
+      - physicsguard.template-pack-instance-validator.v1
+    fixture_ids:
+      - fixture:base-no-match
+    body:
+      workflow_kind: physicsguard_generic_audit_work_package
+      intake_contract:
+        required_fields:
+          - visible_symptom
+          - physical_boundary
+          - assumptions
+        review_depth: "{{param.review_depth}}"
+      validation_contract:
+        target_native_checks_required: true
+        generated_template_is_not_audit_pass: true
+    claim_boundary: Generic no-match scaffold only; it requires target-native intake and validation before any physical or audit claim.
+  - template_id: physicsguard.model-understanding-preflight
+    revision: "1"
+    digest: sha256:ddedbfaf3e940724a9f80f66ca848adbacf237ca4f9f6950eeb3b9372fcc27d8
+    role: template
+    native_family_id: physicsguard
+    native_route_ids:
+      - route:physicsguard-model-understanding-preflight:review
+    applicability:
+      all_tags:
+        - model-understanding
+      any_tags: []
+      forbidden_tags:
+        - reverse-engineer-commercial-model
+      required_inputs:
+        - model_id
+      input_equals: {}
+    provides_fragments:
+      - model-understanding-preflight
+    requires_fragments: []
+    owned_fields:
+      - workflow_kind
+      - model_context
+      - assumption_policy
+    compatible_with: []
+    conflicts_with: []
+    dominates: []
+    parameter_schema:
+      detail_level:
+        type: string
+        required: false
+        default: coarse-to-fine
+    generated_artifacts:
+      - artifacts/physicsguard/model-understanding-preflight.yaml
+    referenced_assets:
+      - templates/model_understanding_preflight.yaml
+      - docs/model_understanding_preflight.md
+    native_builder_id: physicsguard.purpose-pack-builder.v1
+    native_validator_ids:
+      - physicsguard.template-pack-manifest-validator.v1
+      - physicsguard.template-pack-selection-validator.v1
+      - physicsguard.template-pack-instance-validator.v1
+    fixture_ids:
+      - fixture:model-understanding-single
+    body:
+      workflow_kind: physicsguard_model_understanding_preflight
+      model_context:
+        model_id: "{{input.model_id}}"
+        detail_level: "{{param.detail_level}}"
+        physical_boundary_required: true
+      assumption_policy:
+        explicit_assumption_cards_required: true
+        uncertain_mappings_must_remain_visible: true
+    claim_boundary: Captures visible model context and uncertainty; it does not recover or validate commercial-model internals.
+  - template_id: physicsguard.signal-mapping-core
+    revision: "1"
+    digest: sha256:dba3bdbb0f40f55e41bc498a5436c6b02b1a26aa1d3232e1aa762a11b11c48e6
+    role: fragment
+    native_family_id: physicsguard
+    native_route_ids:
+      - route:physicsguard-signal-mapping-review:review
+    applicability:
+      all_tags:
+        - signal-mapping
+      any_tags: []
+      forbidden_tags:
+        - implicit-unit-conversion
+      required_inputs:
+        - model_id
+      input_equals: {}
+    provides_fragments:
+      - signal-mapping-core
+    requires_fragments: []
+    owned_fields:
+      - mapping_context
+      - unit_policy
+    compatible_with:
+      - physicsguard.signal-mapping-evidence
+    conflicts_with: []
+    dominates: []
+    parameter_schema:
+      mapping_confidence_policy:
+        type: string
+        required: false
+        default: explicit
+    generated_artifacts:
+      - artifacts/physicsguard/signal-mapping/context.yaml
+    referenced_assets:
+      - templates/model_binding.yaml
+      - docs/model_code_traceability.md
+    native_builder_id: physicsguard.purpose-pack-builder.v1
+    native_validator_ids:
+      - physicsguard.template-pack-manifest-validator.v1
+      - physicsguard.template-pack-selection-validator.v1
+      - physicsguard.template-pack-instance-validator.v1
+    fixture_ids:
+      - fixture:signal-mapping-composed
+    body:
+      mapping_context:
+        model_id: "{{input.model_id}}"
+        confidence_policy: "{{param.mapping_confidence_policy}}"
+      unit_policy:
+        si_internal_required: true
+        explicit_conversion_evidence_required: true
+    claim_boundary: Declares mapping context and unit policy; it does not prove signal meaning or physical correctness.
+  - template_id: physicsguard.signal-mapping-evidence
+    revision: "1"
+    digest: sha256:05ff3acb61bcc2d935ed6fe1e9f5a7599cf28084a7014dabfae153eadd4f0b4d
+    role: fragment
+    native_family_id: physicsguard
+    native_route_ids:
+      - route:physicsguard-signal-mapping-review:review
+    applicability:
+      all_tags:
+        - signal-mapping
+      any_tags: []
+      forbidden_tags:
+        - accept-uncertain-mapping-as-fact
+      required_inputs:
+        - dataset_id
+      input_equals: {}
+    provides_fragments:
+      - signal-mapping-evidence
+    requires_fragments:
+      - signal-mapping-core
+    owned_fields:
+      - evidence_contract
+      - review_contract
+    compatible_with:
+      - physicsguard.signal-mapping-core
+    conflicts_with: []
+    dominates: []
+    parameter_schema:
+      initial_review_state:
+        type: string
+        required: false
+        default: pending
+    generated_artifacts:
+      - artifacts/physicsguard/signal-mapping/evidence.yaml
+    referenced_assets:
+      - templates/logical_dataset_record.yaml
+      - docs/dataset_identity.md
+    native_builder_id: physicsguard.purpose-pack-builder.v1
+    native_validator_ids:
+      - physicsguard.template-pack-manifest-validator.v1
+      - physicsguard.template-pack-selection-validator.v1
+      - physicsguard.template-pack-instance-validator.v1
+    fixture_ids:
+      - fixture:signal-mapping-composed
+    body:
+      evidence_contract:
+        dataset_id: "{{input.dataset_id}}"
+        mapping_evidence_required: true
+      review_contract:
+        initial_state: "{{param.initial_review_state}}"
+        uncertain_mappings_block_residual_claims: true
+    claim_boundary: Registers evidence and review state; it does not make an uncertain mapping valid or authorize residual-based fault claims.
+  - template_id: physicsguard.dataset-validation-basic
+    revision: "1"
+    digest: sha256:3e2349cfec110d4555ed0fac05808fed12def58553a2fb27631c076bf631654e
+    role: template
+    native_family_id: physicsguard
+    native_route_ids:
+      - route:physicsguard-model-dataset-validation
+    applicability:
+      all_tags:
+        - dataset-validation
+      any_tags: []
+      forbidden_tags: []
+      required_inputs:
+        - dataset_id
+      input_equals: {}
+    provides_fragments:
+      - dataset-validation-basic
+    requires_fragments: []
+    owned_fields:
+      - dataset_identity
+    compatible_with: []
+    conflicts_with: []
+    dominates: []
+    parameter_schema: {}
+    generated_artifacts:
+      - artifacts/physicsguard/dataset-validation/basic.yaml
+    referenced_assets:
+      - templates/logical_dataset_record.yaml
+    native_builder_id: physicsguard.purpose-pack-builder.v1
+    native_validator_ids:
+      - physicsguard.template-pack-manifest-validator.v1
+      - physicsguard.template-pack-selection-validator.v1
+      - physicsguard.template-pack-instance-validator.v1
+    fixture_ids:
+      - fixture:dataset-validation-dominance
+    body:
+      dataset_identity:
+        dataset_id: "{{input.dataset_id}}"
+        exact_identity_required: true
+    claim_boundary: Captures the minimum dataset identity only; it does not prove coverage adequacy or model validity.
+  - template_id: physicsguard.dataset-validation-comprehensive
+    revision: "1"
+    digest: sha256:0e258ba48827ca1e231dc52a19c6f4b3e327061d987d474620d11d984aafee17
+    role: template
+    native_family_id: physicsguard
+    native_route_ids:
+      - route:physicsguard-model-dataset-validation
+    applicability:
+      all_tags:
+        - dataset-validation
+      any_tags: []
+      forbidden_tags: []
+      required_inputs:
+        - dataset_id
+      input_equals: {}
+    provides_fragments:
+      - dataset-validation-comprehensive
+    requires_fragments: []
+    owned_fields:
+      - dataset_identity
+      - validation_depth
+    compatible_with: []
+    conflicts_with: []
+    dominates:
+      - physicsguard.dataset-validation-basic
+    parameter_schema:
+      temporal_depth:
+        type: string
+        required: false
+        default: per-signal
+    generated_artifacts:
+      - artifacts/physicsguard/dataset-validation/comprehensive.yaml
+    referenced_assets:
+      - templates/model_dataset_validation_report.yaml
+      - templates/model_validation_plan.yaml
+      - docs/model_dataset_validation.md
+    native_builder_id: physicsguard.purpose-pack-builder.v1
+    native_validator_ids:
+      - physicsguard.template-pack-manifest-validator.v1
+      - physicsguard.template-pack-selection-validator.v1
+      - physicsguard.template-pack-instance-validator.v1
+    fixture_ids:
+      - fixture:dataset-validation-dominance
+    body:
+      dataset_identity:
+        dataset_id: "{{input.dataset_id}}"
+        exact_identity_required: true
+      validation_depth:
+        temporal_depth: "{{param.temporal_depth}}"
+        per_signal_coverage_required: true
+        mapping_review_must_be_current: true
+    claim_boundary: Structures exact dataset and coverage review; it does not establish commercial-model equivalence or validity outside the reviewed dataset scope.
+claim_boundary: The catalog supports deterministic workflow-pack selection and structural native validation only; physical truth, dataset adequacy, audit_pass, installation, and release require separate current PhysicsGuard evidence.
