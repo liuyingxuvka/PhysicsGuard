@@ -86,7 +86,7 @@ or project closure boundary.
 ## Native skill-execution depth receipt gate
 
 Before broad audit closure, issue
-`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`
+`python runtime/skill_execution_depth.py PACKAGE.json --output RECEIPT.json`
 for target `physicsguard-audit-closure`, owner
 `physicsguard.audit-closure`, and route
 `route:physicsguard-audit-closure:close`. The current package must bind the
@@ -94,8 +94,8 @@ closure plan, every required native check, the native validation-depth receipt,
 blocker reconciliation, stale and skipped evidence, any requested predictive
 rollout, and the safe claim boundary. It must reconcile the complete governed
 closure-object universe and cannot promote a locally green, stale, skipped, or
-fixture-only result. SkillGuard verifies this receipt and its current identity;
-PhysicsGuard retains closure authority.
+fixture-only result. PhysicsGuard verifies the receipt and its current identity
+and retains closure authority.
 Declare critical closure objects explicitly. Required or critical objects cannot
 be excluded, and every other exclusion needs current hashed evidence, a specific
 reason, and a closed non-contributing disposition with no claim contribution.
@@ -106,16 +106,6 @@ retain its exact target-native semantic object, `evidence_ref`, and lowercase
 content hash; missing, renamed, overlapping, mechanically generated, or
 summary-only mappings block broad audit closure.
 
-<!-- BEGIN SKILLGUARD CONTRACT LAYER -->
-## Generic SkillGuard supervision
-
-SkillGuard supervises only the checks declared by `physicsguard-audit-closure`. It freezes the exact check inventory, one execution owner per check, dependency order, governed inputs, immutable terminal receipts, installation projection, and closure. PhysicsGuard remains the sole owner of the physical/evidence purpose, prevented failure classes, native oracles, good/bad proofs, pass/block decisions, residual risk, and bounded claim.
-
-Every declared check is mandatory unless the target contract itself removes it in a new reviewed contract. There is no selectable supervision mode, reduced-depth path, alternate authority, compatibility reader, or generic SkillGuard semantic decision. Reuse is allowed only for a current immutable receipt with the same execution identity and governed inputs. Receipt consumers verify and project; they do not rerun an owner or use `--resume` as a read-only audit. A final full gate runs once after source and tool identities freeze, never through a scheduled task or unattended retry. After timeout or interruption, evidence is invalid until the entire descendant process tree is confirmed stopped.
-
-The only SkillGuard runtime authority is `.skillguard/contract-source.json`, `.skillguard/compiled-contract.json`, and `.skillguard/check-manifest.json`. The bundled PhysicsGuard `guard-model/` assets are family baseline regression inputs. Current model-purpose artifacts remain target-local PhysicsGuard authority and are not duplicated or semantically interpreted in SkillGuard.
-The source contract uses one fixed `native-integrated` identity for the declared family baseline checks. Every declared binding is required before that baseline closure, but a baseline receipt cannot be projected as current-model proof. A real task may declare its own PhysicsGuard-native current-purpose checks for SkillGuard supervision; SkillGuard still cannot invent their semantics. Parallel success routes and SkillGuard-owned domain routes are forbidden.
-<!-- END SKILLGUARD CONTRACT LAYER -->
 
 
 <!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
@@ -159,5 +149,5 @@ Use `guard-model/verify.py check-current-contract|check-current-candidate|prove-
 
 `native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
 
-`guard-model/verify.py` is the PhysicsGuard-native verifier. SkillGuard remains generic: it only supervises checks declared by a skill or task, owners, dependency order, current immutable receipts, installation projection, and closure; it never chooses what a model prevents.
+`guard-model/verify.py` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
 <!-- END MANAGED PURPOSE AND BLOCKABILITY -->

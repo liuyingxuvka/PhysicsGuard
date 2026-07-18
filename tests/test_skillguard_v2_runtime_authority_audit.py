@@ -108,22 +108,23 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
     contract = json.loads(
         (PRIMARY_ROOT / ".skillguard/contract-source.json").read_text(encoding="utf-8")
     )
+    runtime_prefix = "skill/physicsguard-model-dataset-validation/runtime/"
     runtime_paths = sorted(
         str(path)
         for path in contract["implementation_paths"]
-        if str(path).startswith(".skillguard/runtime/") and str(path).endswith(".py")
+        if str(path).startswith(runtime_prefix) and str(path).endswith(".py")
     )
     disk_paths = sorted(
-        path.relative_to(PRIMARY_ROOT).as_posix()
-        for path in (PRIMARY_ROOT / ".skillguard/runtime").rglob("*.py")
+        path.relative_to(ROOT).as_posix()
+        for path in (PRIMARY_ROOT / "runtime").rglob("*.py")
     )
     assert runtime_paths == disk_paths
     assert runtime_paths
-    assert ".skillguard/runtime/physicsguard/guard_model_contract.py" in runtime_paths
-    assert ".skillguard/runtime/physicsguard/skill_execution_depth.py" in runtime_paths
+    assert f"{runtime_prefix}physicsguard/guard_model_contract.py" in runtime_paths
+    assert f"{runtime_prefix}physicsguard/skill_execution_depth.py" in runtime_paths
     runtime_authority_paths = {
         *runtime_paths,
-        ".skillguard/runtime/native-runtime-manifest.json",
+        f"{runtime_prefix}native-runtime-manifest.json",
     }
     assert runtime_authority_paths <= set(contract["implementation_paths"])
     assert not {
@@ -168,14 +169,16 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
     assert depth["required_closure_profiles"] == ["enforced"]
     assert all("skillguard_current_protocol.py" not in path for path in runtime_paths)
     assert all("skillguard_satellite_v2.py" not in path for path in runtime_paths)
+    skill_prefix = "skill/physicsguard-model-dataset-validation"
     contract_paths = {
-        "guard-model/contract.json",
-        "guard-model/oracles.json",
-        "guard-model/known-good.json",
-        "guard-model/known-bad.json",
-        "guard-model/verify.py",
+        f"{skill_prefix}/guard-model/contract.json",
+        f"{skill_prefix}/guard-model/oracles.json",
+        f"{skill_prefix}/guard-model/known-good.json",
+        f"{skill_prefix}/guard-model/known-bad.json",
+        f"{skill_prefix}/guard-model/verify.py",
     }
-    guard_paths = {*contract_paths, "guard-model/candidate.json"}
+    candidate_path = f"{skill_prefix}/guard-model/candidate.json"
+    guard_paths = {*contract_paths, candidate_path}
     assert guard_paths <= set(contract["implementation_paths"])
     for check in contract["checks"]:
         assert not {
@@ -191,7 +194,7 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
         }
         assert contract_paths <= selectors
         if str(check["check_id"]).endswith(":family-baseline-contract"):
-            assert "guard-model/candidate.json" not in selectors
+            assert candidate_path not in selectors
         else:
             assert guard_paths <= selectors
         assert runtime_authority_paths <= selectors

@@ -14,7 +14,7 @@ partial, stale, or review-required contracts.
 1. Check every referenced test-file contract:
 
    ```powershell
-   python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
+   python scripts/run_physicsguard.py testfile contract-check CONTRACT.yaml --pretty
    ```
 
 2. Create or review a model validation plan:
@@ -93,7 +93,7 @@ partial, stale, or review-required contracts.
 3. Run validation:
 
    ```powershell
-   python -m physicsguard.cli validation run PLAN.yaml --pretty
+   python scripts/run_physicsguard.py validation run PLAN.yaml --pretty
    ```
 
 4. Inspect direct no-fit residuals, physical envelope findings,
@@ -114,11 +114,11 @@ partial, stale, or review-required contracts.
 5. To emit only the target-owned receipt, run:
 
    ```powershell
-   python -m physicsguard.cli validation receipt PLAN.yaml --pretty
+   python scripts/run_physicsguard.py validation receipt PLAN.yaml --pretty
    ```
 
-   Downstream supervisors consume this receipt. They must not recompute or
-   reinterpret physical residuals themselves. SkillGuard must reconcile every
+   Downstream consumers use this receipt. They must not recompute or
+   reinterpret physical residuals themselves. PhysicsGuard must reconcile every
    native object and raw denominator, retain only true event/boundary/
    contribution sentinels as critical, and consume the precommitted native
    per-object floor. Treating every ordinary raw row as critical incorrectly
@@ -134,7 +134,7 @@ partial, stale, or review-required contracts.
    a project closure plan and run:
 
    ```powershell
-   python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
+   python scripts/run_physicsguard.py project closure PROJECT_CLOSURE_PLAN.yaml --pretty
    ```
 
    A passing validation report is necessary for validation claims, but project
@@ -158,38 +158,25 @@ growth, and stability. Only a passing stateful receipt can be handed to
 `prediction_ready` closure. PhysicsGuard validates an externally generated
 trajectory; it does not turn a pointwise residual function into a simulator.
 
-## SkillGuard V2 Supervision Boundary
+## PhysicsGuard Execution-Depth Boundary
 
 Any non-trivial, broad, validation-ready, reuse-ready, or predictive conclusion
-must run the target-owned PhysicsGuard validation route and then close through a
-current SkillGuard V2 supervised execution-depth run. The V2 request must bind
-the exact plan, hierarchy, manifest, role matrix, evidence registry, observed
-series, and prediction/holdout artifacts (when present) through
-`target_input_paths`; the supervisor consumes the native receipt and must not
-recalculate PhysicsGuard metrics.
-
-The supervised target check must execute the validation plan discovered in
-those target inputs; a bundled calibration fixture cannot stand in for target
-execution. SkillGuard separately runs content-addressed static-positive,
-time-varying-positive, and intentionally shallow calibrations. Its parameter
-universe is class-aware: `static` has one binding object and no time strata;
-`time_varying` preserves every raw-denominator item and independently enforces
-the universal count/ratio and early/middle/late floor before accepting the
-native receipt.
+must run the target-owned PhysicsGuard validation route against the exact plan,
+hierarchy, manifest, role matrix, evidence registry, observed series, and
+prediction or holdout artifacts when present. A bundled calibration fixture
+proves only the fixture and cannot stand in for current target execution.
 
 Counts, parameter-name lists, catalog expansion, whole-receipt hashes, and
 ordinal time ranges are not per-obligation evidence. Every satisfied parameter,
 time-stratum, counterfactual, convergence, and prediction obligation must retain
-its exact target-native semantic object, `evidence_ref`, and lowercase content
-hash; missing, renamed, overlapping, mechanically generated, or summary-only
-mappings block validation-ready, reuse-ready, and predictive closure.
+its exact target-native semantic object, evidence reference, and content hash.
+Missing, renamed, overlapping, mechanically generated, or summary-only mappings
+block validation-ready, reuse-ready, and predictive closure.
 
-A local quick check without a current V2 execution-depth receipt is permitted
-only as `BOUNDARY_ONLY` or `BOUNDED_PARTIAL`. It may report the exact checked
-rows and remaining gaps, but it must not claim general model understanding,
-deep validation, reusable validation readiness, or prediction. Contract
-presence, a green generic test, and a static coverage table are not runtime
-depth evidence.
+A local quick check without a current PhysicsGuard execution-depth receipt is
+`BOUNDARY_ONLY` or `BOUNDED_PARTIAL`. It may report the exact checked rows and
+remaining gaps, but it must not claim general model understanding, deep
+validation, reusable validation readiness, or prediction.
 
 ## Calibration Boundary
 
@@ -218,16 +205,6 @@ envelopes plus the referenced project evidence bundle. It is not high-fidelity
 proof, dynamic interpolation, universal model understanding, or
 commercial-model equivalence.
 
-<!-- BEGIN SKILLGUARD CONTRACT LAYER -->
-## Generic SkillGuard supervision
-
-SkillGuard supervises only the checks declared by `physicsguard-model-dataset-validation`. It freezes the exact check inventory, one execution owner per check, dependency order, governed inputs, immutable terminal receipts, installation projection, and closure. PhysicsGuard remains the sole owner of the physical/evidence purpose, prevented failure classes, native oracles, good/bad proofs, pass/block decisions, residual risk, and bounded claim.
-
-Every declared check is mandatory unless the target contract itself removes it in a new reviewed contract. There is no selectable supervision mode, reduced-depth path, alternate authority, compatibility reader, or generic SkillGuard semantic decision. Reuse is allowed only for a current immutable receipt with the same execution identity and governed inputs. Receipt consumers verify and project; they do not rerun an owner or use `--resume` as a read-only audit. A final full gate runs once after source and tool identities freeze, never through a scheduled task or unattended retry. After timeout or interruption, evidence is invalid until the entire descendant process tree is confirmed stopped.
-
-The only SkillGuard runtime authority is `.skillguard/contract-source.json`, `.skillguard/compiled-contract.json`, and `.skillguard/check-manifest.json`. The bundled PhysicsGuard `guard-model/` assets are family baseline regression inputs. Current model-purpose artifacts remain target-local PhysicsGuard authority and are not duplicated or semantically interpreted in SkillGuard.
-The source contract uses one fixed `native-integrated` identity for the declared family baseline checks. Every declared binding is required before that baseline closure, but a baseline receipt cannot be projected as current-model proof. A real task may declare its own PhysicsGuard-native current-purpose checks for SkillGuard supervision; SkillGuard still cannot invent their semantics. Parallel success routes and SkillGuard-owned domain routes are forbidden.
-<!-- END SKILLGUARD CONTRACT LAYER -->
 
 
 <!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
@@ -271,5 +248,5 @@ Use `guard-model/verify.py check-current-contract|check-current-candidate|prove-
 
 `native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
 
-`guard-model/verify.py` is the PhysicsGuard-native verifier. SkillGuard remains generic: it only supervises checks declared by a skill or task, owners, dependency order, current immutable receipts, installation projection, and closure; it never chooses what a model prevents.
+`guard-model/verify.py` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
 <!-- END MANAGED PURPOSE AND BLOCKABILITY -->

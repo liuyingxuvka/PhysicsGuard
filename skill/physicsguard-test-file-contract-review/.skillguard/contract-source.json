@@ -2,7 +2,7 @@
   "schema_version": "skillguard.contract_source.v2",
   "skill_id": "physicsguard-test-file-contract-review",
   "model_id": "physicsguard-test-file-contract-review.family-baseline-regression.current",
-  "model_path": ".skillguard/contract_model.py",
+  "model_path": "skill/physicsguard-test-file-contract-review/.skillguard/contract_model.py",
   "confirmed": true,
   "integration_mode": "native-integrated",
   "native_route_owner": "physicsguard.test-file-contract-review",
@@ -118,7 +118,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "check-baseline-contract",
         "--skill-root",
         "{{target_root}}"
@@ -138,29 +138,32 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-contract"
     },
     {
       "check_id": "check:physicsguard-test-file-contract-review:family-baseline-candidate",
@@ -168,7 +171,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "check-baseline-candidate",
         "--skill-root",
         "{{target_root}}"
@@ -190,33 +193,36 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         },
         {
           "kind": "path",
-          "path": "guard-model/candidate.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-candidate"
     },
     {
       "check_id": "check:physicsguard-test-file-contract-review:family-baseline-good",
@@ -224,7 +230,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "prove-baseline-good",
         "--skill-root",
         "{{target_root}}"
@@ -246,33 +252,36 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         },
         {
           "kind": "path",
-          "path": "guard-model/candidate.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-good"
     },
     {
       "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:file-or-field-identity-missing",
@@ -280,7 +289,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -304,33 +313,36 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         },
         {
           "kind": "path",
-          "path": "guard-model/candidate.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-bad:file-or-field-identity-missing"
     },
     {
       "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:unit-or-timing-mismatch",
@@ -338,7 +350,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -362,33 +374,36 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         },
         {
           "kind": "path",
-          "path": "guard-model/candidate.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-bad:unit-or-timing-mismatch"
     },
     {
       "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:testbench-model-binding-wrong",
@@ -396,7 +411,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -420,33 +435,36 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         },
         {
           "kind": "path",
-          "path": "guard-model/candidate.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-bad:testbench-model-binding-wrong"
     },
     {
       "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:per-signal-evidence-shallow",
@@ -454,7 +472,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -478,33 +496,36 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         },
         {
           "kind": "path",
-          "path": "guard-model/candidate.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-bad:per-signal-evidence-shallow"
     },
     {
       "check_id": "check:physicsguard-test-file-contract-review:family-baseline-bad:project-gap-hidden",
@@ -512,7 +533,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -536,33 +557,36 @@
       "input_selectors": [
         {
           "kind": "path",
-          "path": "guard-model/contract.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/contract.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/oracles.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/oracles.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-good.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-good.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/known-bad.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json"
         },
         {
           "kind": "path",
-          "path": "guard-model/verify.py"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
         },
         {
           "kind": "path",
-          "path": ".skillguard/runtime/skill_execution_depth.py"
+          "path": "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
         },
         {
           "kind": "path",
-          "path": "guard-model/candidate.json"
+          "path": "skill/physicsguard-test-file-contract-review/guard-model/candidate.json"
         }
-      ]
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-test-file-contract-review",
+      "evidence_subject_id": "subject:check:physicsguard-test-file-contract-review:family-baseline-bad:project-gap-hidden"
     }
   ],
   "artifacts": [],
@@ -673,14 +697,48 @@
     }
   ],
   "implementation_paths": [
-    ".skillguard/contract_model.py",
-    ".skillguard/runtime/skill_execution_depth.py",
-    "SKILL.md",
-    "guard-model/candidate.json",
-    "guard-model/contract.json",
-    "guard-model/known-bad.json",
-    "guard-model/known-good.json",
-    "guard-model/oracles.json",
-    "guard-model/verify.py"
+    "skill/physicsguard-test-file-contract-review/.skillguard/contract_model.py",
+    "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py",
+    "skill/physicsguard-test-file-contract-review/SKILL.md",
+    "skill/physicsguard-test-file-contract-review/guard-model/candidate.json",
+    "skill/physicsguard-test-file-contract-review/guard-model/contract.json",
+    "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json",
+    "skill/physicsguard-test-file-contract-review/guard-model/known-good.json",
+    "skill/physicsguard-test-file-contract-review/guard-model/oracles.json",
+    "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
+  ],
+  "repository_role": "skill_maintainer_source",
+  "maintenance_unit_id": "unit:physicsguard-family",
+  "member_skill_ids": [
+    "physicsguard-ai-debugging",
+    "physicsguard-audit-closure",
+    "physicsguard-candidate-model-blueprint",
+    "physicsguard-model-dataset-validation",
+    "physicsguard-model-library",
+    "physicsguard-model-understanding-preflight",
+    "physicsguard-project-adoption",
+    "physicsguard-project-evidence-registry",
+    "physicsguard-signal-mapping-review",
+    "physicsguard-test-file-contract-review"
+  ],
+  "consumer_projection": {
+    "prohibited_path_prefixes": [
+      ".skillguard/"
+    ],
+    "prohibited_prompt_tokens": [
+      "SkillGuard",
+      ".skillguard",
+      "skillguard.py"
+    ],
+    "projection_id": "projection:consumer-distribution",
+    "release_manifest_path": "consumer-release.json"
+  },
+  "content_role_overrides": [
+    {
+      "path": "skill/physicsguard-test-file-contract-review/guard-model",
+      "role": "test_dev",
+      "install_disposition": "source_only",
+      "reason": "author_only_guard_contract"
+    }
   ]
 }

@@ -181,7 +181,7 @@ def test_candidate_missing_mismatch_and_candidate_before_purpose_fail_closed(
 
 
 def test_primary_runtime_manifest_is_complete_and_every_check_fingerprints_it() -> None:
-    runtime_root = PRIMARY / ".skillguard" / "runtime"
+    runtime_root = PRIMARY / "runtime"
     manifest = json.loads(
         (runtime_root / "native-runtime-manifest.json").read_text(encoding="utf-8")
     )
@@ -204,8 +204,9 @@ def test_primary_runtime_manifest_is_complete_and_every_check_fingerprints_it() 
     source_contract = json.loads(
         (PRIMARY / ".skillguard/contract-source.json").read_text(encoding="utf-8")
     )
-    runtime_paths = {f".skillguard/runtime/{relative}" for relative in declared}
-    runtime_paths.add(".skillguard/runtime/native-runtime-manifest.json")
+    runtime_prefix = f"skill/{PRIMARY.name}/runtime"
+    runtime_paths = {f"{runtime_prefix}/{relative}" for relative in declared}
+    runtime_paths.add(f"{runtime_prefix}/native-runtime-manifest.json")
     assert runtime_paths <= set(source_contract["implementation_paths"])
     for check in source_contract["checks"]:
         selectors = {
@@ -222,7 +223,7 @@ def test_missing_bundled_primary_runtime_blocks_even_with_global_import(
     __import__("physicsguard")
     target = tmp_path / PRIMARY.name
     shutil.copytree(PRIMARY, target)
-    missing = target / ".skillguard/runtime/physicsguard/core/validation_depth.py"
+    missing = target / "runtime/physicsguard/core/validation_depth.py"
     assert missing.is_file()
     missing.unlink()
     with pytest.raises(GuardModelContractError, match="bundled_runtime_inventory_mismatch"):

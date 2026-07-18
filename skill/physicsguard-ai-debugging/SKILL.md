@@ -102,10 +102,28 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    ```
 
 12. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
-13. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
-14. Request or export only the next small set of signals/parameters needed by the suspicious block.
-15. Refine that block with a lower-level audit template.
-16. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
+13. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations. Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and freeze each hypothesis's signal, residual, and timing expectations plus its weakening condition:
+
+   ```powershell
+   python -m physicsguard.cli task-model plan HYPOTHESIS_PLAN.yaml --pretty
+   ```
+
+   Rank the next observation from both residual relevance and the declared
+   difference between hypothesis outcomes. Do not choose only the largest
+   residual when a lower-residual signal distinguishes the live explanations.
+14. Acquire the selected observation only after the plan is frozen, then compare
+   it without rewriting the old prediction:
+
+   ```powershell
+   python -m physicsguard.cli task-model observe HYPOTHESIS_PLAN.yaml OBSERVATION.yaml --pretty
+   ```
+
+   Preserve supported, weakened, and undetermined hypotheses. Missing targets
+   remain missing; they are not retroactive support.
+15. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+16. Request or export only the next small set of signals/parameters needed by the suspicious block and the live-hypothesis distinction.
+17. Refine that block with a lower-level audit template.
+18. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
@@ -205,6 +223,10 @@ Keep the header as comments only. Do not add provenance metadata solely for this
   even when the overall series and other signals are deep.
 - Do not describe pointwise evaluation as simulation or prediction. Prediction
   requires state propagation and an exact, disjoint future-holdout rollout.
+- Do not learn by modifying PhysicsGuard itself during a diagnostic episode.
+  Hypotheses, predictions, observations, mismatches, and candidate revisions
+  are task-local artifacts. Core thresholds, Guard code, reusable library
+  defaults, and installed skills remain unchanged.
 - For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.
 
 ## When To Create A New PhysicsGuard Relation
@@ -231,7 +253,7 @@ Load `references/model-generation.md` when turning a PhysicsGuard hierarchy into
 ## Native skill-execution depth receipt gate
 
 Before claiming a broad AI-debugging result, issue the target-owned receipt with
-`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`.
+`python runtime/skill_execution_depth.py PACKAGE.json --output RECEIPT.json`.
 The package must use target `physicsguard-ai-debugging`, owner
 `physicsguard.ai-debugging`, and route
 `route:physicsguard-ai-debugging:audit`. It must reconcile the complete
@@ -242,8 +264,8 @@ every eligible signal, parameter, component, or artifact. Each time-varying
 object is checked against its own full time-point denominator, dynamic sampling
 floor, early/middle/late distribution, and maximum gap. A few convenient
 scalars, aggregate averages, generic obligations, or a calibration fixture do
-not license a real audit claim. SkillGuard consumes this native receipt; it does
-not reproduce PhysicsGuard's physical evaluation.
+not license a real audit claim. PhysicsGuard's current native receipt remains
+the audit authority and cannot be replaced by a generic summary.
 The package must declare the critical-object denominator explicitly. A critical
 or required object cannot be excluded; any other exclusion needs current hashed
 evidence plus a closed non-contributing disposition and contributes no claim evidence.
@@ -254,16 +276,6 @@ obligation must retain its exact target-native semantic object, `evidence_ref`,
 and lowercase content hash; missing, renamed, overlapping, mechanically generated,
 or summary-only mappings block a broad debugging claim.
 
-<!-- BEGIN SKILLGUARD CONTRACT LAYER -->
-## Generic SkillGuard supervision
-
-SkillGuard supervises only the checks declared by `physicsguard-ai-debugging`. It freezes the exact check inventory, one execution owner per check, dependency order, governed inputs, immutable terminal receipts, installation projection, and closure. PhysicsGuard remains the sole owner of the physical/evidence purpose, prevented failure classes, native oracles, good/bad proofs, pass/block decisions, residual risk, and bounded claim.
-
-Every declared check is mandatory unless the target contract itself removes it in a new reviewed contract. There is no selectable supervision mode, reduced-depth path, alternate authority, compatibility reader, or generic SkillGuard semantic decision. Reuse is allowed only for a current immutable receipt with the same execution identity and governed inputs. Receipt consumers verify and project; they do not rerun an owner or use `--resume` as a read-only audit. A final full gate runs once after source and tool identities freeze, never through a scheduled task or unattended retry. After timeout or interruption, evidence is invalid until the entire descendant process tree is confirmed stopped.
-
-The only SkillGuard runtime authority is `.skillguard/contract-source.json`, `.skillguard/compiled-contract.json`, and `.skillguard/check-manifest.json`. The bundled PhysicsGuard `guard-model/` assets are family baseline regression inputs. Current model-purpose artifacts remain target-local PhysicsGuard authority and are not duplicated or semantically interpreted in SkillGuard.
-The source contract uses one fixed `native-integrated` identity for the declared family baseline checks. Every declared binding is required before that baseline closure, but a baseline receipt cannot be projected as current-model proof. A real task may declare its own PhysicsGuard-native current-purpose checks for SkillGuard supervision; SkillGuard still cannot invent their semantics. Parallel success routes and SkillGuard-owned domain routes are forbidden.
-<!-- END SKILLGUARD CONTRACT LAYER -->
 
 
 <!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
@@ -307,5 +319,5 @@ Use `guard-model/verify.py check-current-contract|check-current-candidate|prove-
 
 `native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
 
-`guard-model/verify.py` is the PhysicsGuard-native verifier. SkillGuard remains generic: it only supervises checks declared by a skill or task, owners, dependency order, current immutable receipts, installation projection, and closure; it never chooses what a model prevents.
+`guard-model/verify.py` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
 <!-- END MANAGED PURPOSE AND BLOCKABILITY -->

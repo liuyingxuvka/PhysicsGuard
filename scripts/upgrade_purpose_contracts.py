@@ -846,7 +846,7 @@ def _implementation_paths(skill_root: Path) -> list[str]:
 
 
 def _sync_native_runtime(skill_root: Path, skill_id: str) -> list[str]:
-    runtime_root = skill_root / ".skillguard" / "runtime"
+    runtime_root = skill_root / "runtime"
     runtime_root.mkdir(parents=True, exist_ok=True)
     canonical_depth = ROOT / "src" / "physicsguard" / "skill_execution_depth.py"
     shutil.copyfile(canonical_depth, runtime_root / "skill_execution_depth.py")
@@ -874,7 +874,7 @@ def _sync_native_runtime(skill_root: Path, skill_id: str) -> list[str]:
         manifest = {
             "schema_version": "physicsguard.installed_native_runtime_manifest.v1",
             "target_skill_id": skill_id,
-            "runtime_root": ".skillguard/runtime",
+            "runtime_root": "runtime",
             "source_file_count": len(rows),
             "source_inventory_fingerprint": canonical_fingerprint(rows),
             "files": rows,

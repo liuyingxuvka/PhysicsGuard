@@ -275,24 +275,25 @@ tests, replay, and closure evidence still need to be current for the claim.
 
 <!-- END FLOWGUARD PROJECT RULES -->
 
-<!-- BEGIN MANAGED SKILLGUARD PROJECT RULES -->
-## SkillGuard project maintenance
 
-This repository contains skills maintained with SkillGuard. For non-trivial skill maintenance, validation, installation, synchronization, or release work, use SkillGuard by default.
+<!-- BEGIN MANAGED SKILLGUARD AUTHOR RULES -->
+## SkillGuard author maintenance
+
+This repository is an explicit skill-authoring workspace. Use SkillGuard only while maintaining, validating, graduating, or releasing the managed source skills below.
 
 Canonical SkillGuard repository: https://github.com/liuyingxuvka/SkillGuard
 
 Managed skills:
-- `skill/physicsguard-ai-debugging` — native owner=`physicsguard.ai-debugging`, route evidence=`skill/physicsguard-ai-debugging/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-audit-closure` — native owner=`physicsguard.audit-closure`, route evidence=`skill/physicsguard-audit-closure/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-candidate-model-blueprint` — native owner=`physicsguard.candidate-model-blueprint`, route evidence=`skill/physicsguard-candidate-model-blueprint/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-model-dataset-validation` — native owner=`physicsguard-model-dataset-validation`, route evidence=`skill/physicsguard-model-dataset-validation/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-model-library` — native owner=`physicsguard.model-library`, route evidence=`skill/physicsguard-model-library/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-model-understanding-preflight` — native owner=`physicsguard.model-understanding-preflight`, route evidence=`skill/physicsguard-model-understanding-preflight/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-project-adoption` — native owner=`physicsguard.project-adoption`, route evidence=`skill/physicsguard-project-adoption/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-project-evidence-registry` — native owner=`physicsguard.project-evidence-registry`, route evidence=`skill/physicsguard-project-evidence-registry/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-signal-mapping-review` — native owner=`physicsguard.signal-mapping-review`, route evidence=`skill/physicsguard-signal-mapping-review/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
-- `skill/physicsguard-test-file-contract-review` — native owner=`physicsguard.test-file-contract-review`, route evidence=`skill/physicsguard-test-file-contract-review/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-ai-debugging` — native owner=`physicsguard.ai-debugging`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-ai-debugging/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-audit-closure` — native owner=`physicsguard.audit-closure`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-audit-closure/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-candidate-model-blueprint` — native owner=`physicsguard.candidate-model-blueprint`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-candidate-model-blueprint/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-model-dataset-validation` — native owner=`physicsguard-model-dataset-validation`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-model-dataset-validation/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-model-library` — native owner=`physicsguard.model-library`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-model-library/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-model-understanding-preflight` — native owner=`physicsguard.model-understanding-preflight`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-model-understanding-preflight/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-project-adoption` — native owner=`physicsguard.project-adoption`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-project-adoption/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-project-evidence-registry` — native owner=`physicsguard.project-evidence-registry`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-project-evidence-registry/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-signal-mapping-review` — native owner=`physicsguard.signal-mapping-review`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-signal-mapping-review/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
+- `skill/physicsguard-test-file-contract-review` — native owner=`physicsguard.test-file-contract-review`, maintenance unit=`unit:physicsguard-family`, route evidence=`skill/physicsguard-test-file-contract-review/SKILL.md`; the target skill keeps domain-route, judgment, action, and native-check authority.
 
 Required maintenance handoff:
 
@@ -301,26 +302,28 @@ Required maintenance handoff:
 3. Preserve the target's sole current native route and exact declared checks; SkillGuard never supplies a target-domain route.
 4. Never let SkillGuard replace target-owned domain judgment, simulation, search, modeling, actions, or checks.
 5. Do not claim complete use from contract presence alone; require a current declared-check execution receipt.
-6. If SkillGuard is unavailable or this block/manifest is missing, stale, duplicated, or invalid, report the maintenance result as blocked instead of silently bypassing it.
+6. Never copy this block, the author manifest, contracts, receipts, router state, or Portfolio state into a graduated consumer skill or an ordinary business project.
+7. If SkillGuard is unavailable or this block/manifest is missing, stale, duplicated, or invalid, report only author maintenance as blocked; ordinary consumer use remains independent.
 
 Validation execution ownership:
 
 - policy_id: `skillguard.validation_execution_ownership.current`
-- Creating, updating, directly rewriting a non-current target, installing/synchronizing, or releasing a maintained skill requires SkillGuard maintenance supervision; no migration or compatibility route exists.
+- Creating, updating, directly rewriting, installing/synchronizing, or releasing an explicitly registered maintained skill source requires SkillGuard author-side supervision; no migration or compatibility route exists.
 - Covered skill maintenance uses direct current replacement. Do not add a compatibility reader, fallback, migration or upgrade command, converter, alias, renewal path, dual manifest, or parallel authority. An ordinary software historical reader is allowed only when an explicit requirement names the old document/data/interface and FlowGuard records its bounded owner and claim boundary.
-- Ordinary use of an already-installed skill for its domain work does not start SkillGuard maintenance or validation.
-- SkillGuard supervises the frozen owner plan, receipts, affected-only revalidation, installation projection, and closure; the target skill retains its domain actions, judgment, and native-check authority.
-- Before multi-skill validation starts, freeze one task-level validation plan in the existing verification contract or TestMesh: list every exact check, covered obligation and evidence domain, dependency/order, persistent receipt root, and exactly one primary execution owner; missing, duplicate, or cyclic ownership blocks execution.
-- Before executing a listed check, resolve its exact owner receipt from the frozen execution identity and inputs. Reuse only a current immutable terminal-success receipt; consumer skills verify and project that receipt and must not carry or rerun the owner's command.
+- Ordinary use of an installed consumer skill for its domain work does not start SkillGuard maintenance or validation and must not require SkillGuard files, imports, commands, receipts, or router state.
+- SkillGuard supervises the author-side frozen owner plan, receipts, affected-only revalidation, clean consumer projection, and closure; the target skill retains its domain actions, judgment, and native-check authority.
+- Before validating one maintenance unit, freeze its unit id, member ids, exact semantic checks, evidence subjects, covered obligations/domains, dependency order, private receipt root, and exactly one execution owner per check; missing, duplicate, foreign-unit, or cyclic ownership blocks execution.
+- Reuse one immutable terminal-success receipt only inside the same maintenance unit when unit, member, evidence subject, semantic check, owner, request, inputs, dependencies, toolchain, and environment are all exact. A different unit must execute and own its own evidence even when command text and inputs look identical.
+- Consumer distributions contain no SkillGuard receipt reference or execution-owner projection. They run their target-owned checks directly when their own workflow requires them.
 - Compile the complete maintained inventory into exact content components before validation. A change invalidates only owners and projections that explicitly consume its changed component; an unmapped or ambiguous file blocks instead of falling back to run-all.
 - Treat maintained test, code, contract, configuration, toolchain, and policy changes as freshness inputs only through those exact component edges. Reports, receipts, progress logs, checkboxes, and other runtime outputs are evidence outputs and must not refresh source authority or trigger their own validation.
 - Installation consumes only the frozen `projection:installation`; source-only tests, fixtures, models, and notes do not make an installation stale. A read-only installation currentness check never launches smoke or another validation owner.
 - Treat `--resume` as an execution command that may run missing owners; it is never a read-only receipt audit, and a receipt consumer must not invoke it.
-- Start exactly one final full validation only after source, toolchain, and impact-plan identities are frozen, under one explicit execution owner; later consumers project its immutable parent receipt and never launch another equivalent full run.
+- Start exactly one final full validation for the maintenance unit only after its source, toolchain, and impact-plan identities are frozen, under one explicit execution owner. Other maintenance units and consumers do not consume that parent receipt.
 - After any launcher timeout, cancellation, or interruption, confirm the entire descendant process tree count is zero before accepting evidence or starting another owner; `cleanup-unconfirmed` results are invalid and non-reusable.
 - Never use a Windows Scheduled Task, background resume, or unattended retry script to run full validation or resume a mutable worktree.
 
-Portable audit command: `python <installed-skillguard>/scripts/skillguard.py project-audit --root .`
+Author audit command: `python <installed-skillguard>/scripts/skillguard.py maintainer-audit --root .`
 
 This managed block is a routing and maintenance contract. It is not runtime, test, release, or future-behavior proof.
-<!-- END MANAGED SKILLGUARD PROJECT RULES -->
+<!-- END MANAGED SKILLGUARD AUTHOR RULES -->

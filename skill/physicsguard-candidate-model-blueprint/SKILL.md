@@ -24,23 +24,38 @@ Use this route when the user asks to build a candidate model from PhysicsGuard e
    target interface, preserve the initial state, step size, horizon, producer
    receipt, and exact trajectory identity, and validate it against a disjoint
    future holdout with the native predictive-rollout gate.
+7. Keep the base task model and candidate model as separate content-addressed
+   artifacts. Record the triggering hypothesis mismatch and the exact
+   regression and holdout inventory. A stateful candidate additionally
+   consumes the existing native predictive-rollout receipt:
+
+   ```powershell
+   python -m physicsguard.cli task-model revision CANDIDATE_REVISION.yaml --pretty
+   ```
+
+8. Accept the candidate only when every declared check passes. Reject an
+   unapplied failed candidate. If an applied candidate fails, roll back only to
+   the exact still-current base identity. Never overwrite or delete v1 during
+   candidate evaluation.
 
 A candidate model is a new engineering artifact, not a recovered commercial-model copy.
 Even a passing predictive rollout is bounded to its checked horizon, signals,
 thresholds, initial state, and future-holdout cases.
+This loop revises only the current task model. It does not modify PhysicsGuard,
+its default thresholds, its reusable model library, or an installed skill.
 
 ## Native skill-execution depth receipt gate
 
 Before declaring a candidate blueprint ready, issue
-`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`
+`python runtime/skill_execution_depth.py PACKAGE.json --output RECEIPT.json`
 for target `physicsguard-candidate-model-blueprint`, owner
 `physicsguard.candidate-model-blueprint`, and route
 `route:physicsguard-candidate-model-blueprint:build`. The package must account
 for every eligible validated block and interface and bind validated hierarchy,
 block readiness, signal/parameter mappings, interface inventory, rollout
 boundary, and generation eligibility. A blueprint assembled from a sampled
-subset or from unchecked library metadata remains partial. SkillGuard consumes
-the target-owned receipt without deciding which physical model is appropriate.
+subset or from unchecked library metadata remains partial. The target-owned
+receipt records the decision without delegating physical-model selection.
 The package must preserve an explicit critical-object denominator. Required or
 critical blocks and interfaces cannot be excluded; all other exclusions need
 current hashed evidence and a closed non-contributing disposition.
@@ -51,16 +66,6 @@ must retain its exact target-native semantic object, `evidence_ref`, and
 lowercase content hash; missing, renamed, overlapping, mechanically generated,
 or summary-only mappings block blueprint readiness.
 
-<!-- BEGIN SKILLGUARD CONTRACT LAYER -->
-## Generic SkillGuard supervision
-
-SkillGuard supervises only the checks declared by `physicsguard-candidate-model-blueprint`. It freezes the exact check inventory, one execution owner per check, dependency order, governed inputs, immutable terminal receipts, installation projection, and closure. PhysicsGuard remains the sole owner of the physical/evidence purpose, prevented failure classes, native oracles, good/bad proofs, pass/block decisions, residual risk, and bounded claim.
-
-Every declared check is mandatory unless the target contract itself removes it in a new reviewed contract. There is no selectable supervision mode, reduced-depth path, alternate authority, compatibility reader, or generic SkillGuard semantic decision. Reuse is allowed only for a current immutable receipt with the same execution identity and governed inputs. Receipt consumers verify and project; they do not rerun an owner or use `--resume` as a read-only audit. A final full gate runs once after source and tool identities freeze, never through a scheduled task or unattended retry. After timeout or interruption, evidence is invalid until the entire descendant process tree is confirmed stopped.
-
-The only SkillGuard runtime authority is `.skillguard/contract-source.json`, `.skillguard/compiled-contract.json`, and `.skillguard/check-manifest.json`. The bundled PhysicsGuard `guard-model/` assets are family baseline regression inputs. Current model-purpose artifacts remain target-local PhysicsGuard authority and are not duplicated or semantically interpreted in SkillGuard.
-The source contract uses one fixed `native-integrated` identity for the declared family baseline checks. Every declared binding is required before that baseline closure, but a baseline receipt cannot be projected as current-model proof. A real task may declare its own PhysicsGuard-native current-purpose checks for SkillGuard supervision; SkillGuard still cannot invent their semantics. Parallel success routes and SkillGuard-owned domain routes are forbidden.
-<!-- END SKILLGUARD CONTRACT LAYER -->
 
 
 <!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
@@ -103,5 +108,5 @@ Use `guard-model/verify.py check-current-contract|check-current-candidate|prove-
 
 `native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
 
-`guard-model/verify.py` is the PhysicsGuard-native verifier. SkillGuard remains generic: it only supervises checks declared by a skill or task, owners, dependency order, current immutable receipts, installation projection, and closure; it never chooses what a model prevents.
+`guard-model/verify.py` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
 <!-- END MANAGED PURPOSE AND BLOCKABILITY -->

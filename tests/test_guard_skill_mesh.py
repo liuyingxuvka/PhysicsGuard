@@ -128,12 +128,10 @@ def test_every_physics_skill_prompt_requires_exact_per_obligation_evidence() -> 
         assert "\n+Keep only" not in raw_prompt, path
         prompt = " ".join(raw_prompt.split())
         assert "not per-obligation evidence" in prompt, path
-        assert "`evidence_ref`" in prompt, path
-        assert "lowercase content hash" in prompt, path
         assert "family baseline regression" in prompt, path
         assert "AI must choose the purpose and one or more concrete prevented" in prompt, path
         assert ".physicsguard/model-purpose/<model-id>/contract.json" in prompt, path
         assert "There is one mandatory route and no selectable mode" in prompt, path
-        assert "baseline receipt cannot be projected as current-model proof" in prompt, path
-        assert "SkillGuard remains generic" in prompt, path
-        assert "fixed `native-integrated` identity for the declared family baseline checks" in prompt, path
+        assert "`guard-model/verify.py` is the PhysicsGuard-native verifier" in prompt, path
+        assert "never replaces current task evidence or PhysicsGuard domain judgment" in prompt, path
+        assert "SkillGuard" not in raw_prompt, path

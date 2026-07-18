@@ -1,0 +1,104 @@
+{
+  "claim_boundary": "Author adoption marks only this explicit skill-maintainer repository. It creates no consumer or ordinary-project dependency and proves no target-domain work.",
+  "maintenance_default": "skillguard-author-maintenance-only",
+  "managed_block_hash": "D2B6179095127B8DE761A047217317D5CFF7481D809B44F59599D199376D2509",
+  "managed_skills": [
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.ai-debugging",
+      "native_route_evidence_path": "skill/physicsguard-ai-debugging/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-ai-debugging",
+      "skill_path": "skill/physicsguard-ai-debugging"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.audit-closure",
+      "native_route_evidence_path": "skill/physicsguard-audit-closure/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-audit-closure",
+      "skill_path": "skill/physicsguard-audit-closure"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.candidate-model-blueprint",
+      "native_route_evidence_path": "skill/physicsguard-candidate-model-blueprint/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-candidate-model-blueprint",
+      "skill_path": "skill/physicsguard-candidate-model-blueprint"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard-model-dataset-validation",
+      "native_route_evidence_path": "skill/physicsguard-model-dataset-validation/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-model-dataset-validation",
+      "skill_path": "skill/physicsguard-model-dataset-validation"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.model-library",
+      "native_route_evidence_path": "skill/physicsguard-model-library/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-model-library",
+      "skill_path": "skill/physicsguard-model-library"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.model-understanding-preflight",
+      "native_route_evidence_path": "skill/physicsguard-model-understanding-preflight/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-model-understanding-preflight",
+      "skill_path": "skill/physicsguard-model-understanding-preflight"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.project-adoption",
+      "native_route_evidence_path": "skill/physicsguard-project-adoption/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-project-adoption",
+      "skill_path": "skill/physicsguard-project-adoption"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.project-evidence-registry",
+      "native_route_evidence_path": "skill/physicsguard-project-evidence-registry/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-project-evidence-registry",
+      "skill_path": "skill/physicsguard-project-evidence-registry"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.signal-mapping-review",
+      "native_route_evidence_path": "skill/physicsguard-signal-mapping-review/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-signal-mapping-review",
+      "skill_path": "skill/physicsguard-signal-mapping-review"
+    },
+    {
+      "integration_mode": "native-integrated",
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "native_owner_id": "physicsguard.test-file-contract-review",
+      "native_route_evidence_path": "skill/physicsguard-test-file-contract-review/SKILL.md",
+      "native_route_status": "present",
+      "skill_id": "physicsguard-test-file-contract-review",
+      "skill_path": "skill/physicsguard-test-file-contract-review"
+    }
+  ],
+  "manifest_hash": "661CA477874035D949A8DA94293C1A7FA317E2878E5643A987C6BABFB00C0B74",
+  "project_id": "PhysicGuard_20260501",
+  "project_prompt_path": "AGENTS.md",
+  "repository_role": "skill_maintainer_source",
+  "schema_version": "skillguard.project_adoption.v1",
+  "skillguard_repository": "https://github.com/liuyingxuvka/SkillGuard",
+  "skillguard_version": "0.3.3"
+}

@@ -113,7 +113,7 @@ Dataset-validation failures keep `native_semantic_detection` only where an exact
 
 ### 11. Use one target-owned production identity sidecar and one installed runtime manifest
 
-The scheduled package contains discovered domain inputs but no installation identity. A separate target-owned sidecar binds target id, run id, package ref/hash, trigger/execution ids, installation receipt, and installed runtime fingerprint. The loader requires the package, exactly one sidecar, and every content-addressed target input to equal the declared input set; generic request copies and in-package identity fields are rejected. Dataset validation bundles all current `physicsguard/**/*.py` sources plus a hash manifest under `.skillguard/runtime`, and guard-model admission checks that manifest without importing a global fallback.
+The scheduled package contains discovered domain inputs but no installation identity. A separate target-owned sidecar binds target id, run id, package ref/hash, trigger/execution ids, installation receipt, and installed runtime fingerprint. The loader requires the package, exactly one sidecar, and every content-addressed target input to equal the declared input set; generic request copies and in-package identity fields are rejected. Dataset validation bundles all current `physicsguard/**/*.py` sources plus a hash manifest under `runtime`, and guard-model admission checks that manifest without importing a global fallback.
 
 ### 12. Project target ownership through one fixed native-integrated identity
 

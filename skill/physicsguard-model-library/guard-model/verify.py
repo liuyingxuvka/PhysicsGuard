@@ -80,7 +80,7 @@ def _contract_bundle(
 
 
 def _validate_bundled_runtime(skill_root: Path) -> dict[str, Any]:
-    manifest_path = skill_root / ".skillguard" / "runtime" / "native-runtime-manifest.json"
+    manifest_path = skill_root / "runtime" / "native-runtime-manifest.json"
     try:
         manifest = _load(manifest_path)
     except GuardModelContractError as exc:
@@ -89,7 +89,7 @@ def _validate_bundled_runtime(skill_root: Path) -> dict[str, Any]:
         raise GuardModelContractError("bundled_runtime_manifest_schema_invalid")
     if manifest.get("target_skill_id") != "physicsguard-model-dataset-validation":
         raise GuardModelContractError("bundled_runtime_manifest_target_mismatch")
-    if manifest.get("runtime_root") != ".skillguard/runtime":
+    if manifest.get("runtime_root") != "runtime":
         raise GuardModelContractError("bundled_runtime_manifest_root_invalid")
     rows = manifest.get("files")
     if not isinstance(rows, list) or not rows:
@@ -401,7 +401,7 @@ def validate_baseline_bundle(skill_root: Path) -> dict[str, Any]:
 
 
 def _load_satellite_runtime(skill_root: Path):
-    path = skill_root / ".skillguard" / "runtime" / "skill_execution_depth.py"
+    path = skill_root / "runtime" / "skill_execution_depth.py"
     spec = importlib.util.spec_from_file_location("physicsguard_target_native_depth", path)
     if spec is None or spec.loader is None:
         raise GuardModelContractError(f"native route runtime is unavailable: {path}")

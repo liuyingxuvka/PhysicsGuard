@@ -293,19 +293,110 @@ def _parity_status(source_skill: Path, installed_skill: Path) -> dict[str, Any]:
     return {"ok": all(row["ok"] for row in rows), "rows": rows}
 
 
+def _consumer_status(
+    source_skill: Path,
+    installed_skill: Path,
+    target_skill_id: str,
+) -> dict[str, Any]:
+    manifest_path = installed_skill / "consumer-release.json"
+    findings: list[str] = []
+    rows: list[dict[str, Any]] = []
+    if (installed_skill / ".skillguard").exists():
+        findings.append("installed_consumer_contains_author_control")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return {
+            "ok": False,
+            "skill_root": str(installed_skill),
+            "manifest_path": str(manifest_path),
+            "findings": [f"consumer_manifest_unreadable:{type(exc).__name__}"],
+            "rows": rows,
+        }
+    if manifest.get("schema_version") != "consumer.skill_distribution.current":
+        findings.append("consumer_manifest_schema_wrong")
+    if manifest.get("skill_id") != target_skill_id:
+        findings.append("consumer_manifest_skill_wrong")
+    if manifest.get("author_control_excluded") is not True:
+        findings.append("consumer_manifest_author_boundary_wrong")
+    declared = manifest.get("files")
+    if not isinstance(declared, list) or not declared:
+        findings.append("consumer_manifest_files_missing")
+        declared = []
+    declared_paths: set[str] = set()
+    for index, row in enumerate(declared):
+        if not isinstance(row, Mapping):
+            findings.append(f"consumer_manifest_row_invalid:{index}")
+            continue
+        relative = str(row.get("path", "")).replace("\\", "/")
+        expected = str(row.get("content_hash", "")).lower()
+        parts = relative.split("/")
+        if (
+            not relative
+            or relative.startswith("/")
+            or any(part in {"", ".", ".."} for part in parts)
+            or ".skillguard" in parts
+            or relative == "consumer-release.json"
+            or relative in declared_paths
+        ):
+            findings.append(f"consumer_manifest_path_invalid:{relative}")
+            continue
+        declared_paths.add(relative)
+        source = source_skill / Path(relative)
+        installed = installed_skill / Path(relative)
+        source_hash = f"sha256:{_sha256(source)}" if source.is_file() else None
+        installed_hash = f"sha256:{_sha256(installed)}" if installed.is_file() else None
+        ok = (
+            expected.startswith("sha256:")
+            and len(expected) == 71
+            and source_hash == expected
+            and installed_hash == expected
+        )
+        rows.append(
+            {
+                "relative_path": relative,
+                "expected_hash": expected,
+                "source_sha256": source_hash,
+                "installed_sha256": installed_hash,
+                "ok": ok,
+            }
+        )
+        if not ok:
+            findings.append(f"consumer_file_mismatch:{relative}")
+    actual_paths = {
+        path.relative_to(installed_skill).as_posix()
+        for path in installed_skill.rglob("*")
+        if path.is_file() and path.name != "consumer-release.json"
+    }
+    if actual_paths != declared_paths:
+        findings.append(
+            "consumer_inventory_mismatch:"
+            f"missing={sorted(declared_paths - actual_paths)}:"
+            f"unexpected={sorted(actual_paths - declared_paths)}"
+        )
+    return {
+        "ok": not findings and len(rows) == len(declared_paths),
+        "skill_root": str(installed_skill),
+        "manifest_path": str(manifest_path),
+        "release_id": manifest.get("release_id"),
+        "manifest_hash": manifest.get("manifest_hash"),
+        "findings": findings,
+        "rows": rows,
+    }
+
+
 def _skill_status(target_skill_id: str, source_relative: str, installed_name: str) -> dict[str, Any]:
     source_skill = (ROOT / source_relative).resolve()
     installed_skill = (HOME_SKILLS / installed_name).resolve()
     receipt = retirement_receipt_path(target_skill_id)
     source = _authority_status(source_skill, target_skill_id, receipt)
-    installed = _authority_status(installed_skill, target_skill_id, receipt)
-    parity = _parity_status(source_skill, installed_skill)
+    installed = _consumer_status(source_skill, installed_skill, target_skill_id)
     return {
         "target_skill_id": target_skill_id,
-        "ok": source["ok"] and installed["ok"] and parity["ok"],
+        "ok": source["ok"] and installed["ok"],
         "source": source,
         "installed": installed,
-        "source_installed_authority_parity": parity,
+        "source_installed_authority_parity": installed,
     }
 
 
