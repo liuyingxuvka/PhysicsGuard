@@ -1,4 +1,4 @@
-"""Compatibility CLI for the canonical FlowGuard skill-suite validator."""
+"""Project CLI for the canonical FlowGuard skill-suite validator."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from flowguard.skill_suite import validate_skill_suite
 
 
 def verify_repository(root: Path) -> list[str]:
-    """Return compatibility finding strings from the canonical report."""
+    """Return finding strings from the canonical report."""
 
     report = validate_skill_suite(root)
     return [

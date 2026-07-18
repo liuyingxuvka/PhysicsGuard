@@ -21,7 +21,7 @@ Accept a named source model and existing parent surface; derive child ownership;
 - Use for splitting large code surfaces, moving public imports/CLI/API/data/plugin entrypoints, dividing state/config/side effects, or checking dependency cycles and parity.
 
 ## Do Not Use When
-- Do not derive behavior requirements from scratch, recommend greenfield modules, refactor code directly, or claim parity from internal/formatting checks; return unclear models to `model-first-function-flow`.
+- Do not derive behavior requirements from scratch, recommend greenfield modules, refactor code directly, or claim parity from internal/formatting checks; return unclear models to `flowguard`.
 
 ## Required Workflow
 1. Derive target modules from a named FlowGuard model with FunctionBlock/state/side-effect/facade/validation maps.
@@ -29,7 +29,7 @@ Accept a named source model and existing parent surface; derive child ownership;
 3. Attach current routine/release parity evidence and export gaps/obligations downstream.
 
 ## Hard Gates
-- Model-purpose gate: before build/change, freeze this instance's task-specific failure(s) and boundary; then bind candidate plus native good/bad-per-failure/oracle/current evidence. Reusable types are not fixed-purpose; no mode/fallback; SkillGuard only supervises FlowGuard-declared checks.
+- Model-purpose gate: before build/change, freeze this instance's task-specific failure(s) and boundary; then bind candidate plus native good/bad-per-failure/oracle/current evidence. Reusable types are not fixed-purpose; no mode/fallback; only FlowGuard-declared checks may support completion claims.
 - Verify the real FlowGuard check engine and AGENTS.md managed record; never create a fake mini-framework.
 - Missing model-derived target structure, public facade, owner, compatibility, or current parity blocks the matching scope.
 - Dependency/config drift and release-only gaps remain visible; new/deepened models require template harvest closure.
@@ -37,5 +37,5 @@ Accept a named source model and existing parent surface; derive child ownership;
 ## Output Requirements
 - Return `evidence`, `failures`, `blockers`, `skipped_checks`, `residual_risk`, `claim_boundary`, and `typed_next_actions`, plus a structure mesh diagram and parity status.
 
-## SkillGuard Maintenance
-- Edit `.skillguard/contract-source.json`, then regenerate derived contracts; SkillGuard checks native mesh evidence and cannot perform the refactor or invent parity.
+
+<!--VTP:target adapter/catalog;native validation;stale/ambiguous=block;preview!=proof;harvest:VTP-->

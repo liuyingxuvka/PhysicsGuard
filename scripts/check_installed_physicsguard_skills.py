@@ -1,4 +1,4 @@
-"""Verify installed Codex PhysicsGuard skills match repository source."""
+"""Verify installed Codex PhysicsGuard consumer projections match source."""
 
 from __future__ import annotations
 
@@ -59,22 +59,14 @@ def check_installed_skills(installed_root: Path) -> dict:
                 }
             )
             continue
-        repo_hashes = _tree_hashes(skill_dir)
-        installed_hashes = _tree_hashes(installed_dir)
-        if repo_hashes != installed_hashes:
+        projection = _consumer_projection_status(skill_dir, installed_dir)
+        if not projection["ok"]:
             findings.append(
                 {
                     "severity": "error",
-                    "type": "installed_skill_hash_mismatch",
+                    "type": "installed_consumer_projection_mismatch",
                     "skill": skill_dir.name,
-                    "repo_hash": _stable_dict_hash(repo_hashes),
-                    "installed_hash": _stable_dict_hash(installed_hashes),
-                    "missing_files": sorted(set(repo_hashes) - set(installed_hashes)),
-                    "extra_files": sorted(set(installed_hashes) - set(repo_hashes)),
-                    "changed_files": sorted(
-                        key for key in set(repo_hashes) & set(installed_hashes)
-                        if repo_hashes[key] != installed_hashes[key]
-                    ),
+                    **projection,
                 }
             )
     return {
@@ -87,14 +79,102 @@ def check_installed_skills(installed_root: Path) -> dict:
     }
 
 
-def _tree_hashes(root: Path) -> dict[str, str]:
-    hashes: dict[str, str] = {}
-    for path in sorted(item for item in root.rglob("*") if item.is_file()):
-        if "__pycache__" in path.parts:
+def _consumer_projection_status(source: Path, installed: Path) -> dict:
+    manifest_path = installed / "consumer-release.json"
+    reasons: list[str] = []
+    rows: list[dict[str, object]] = []
+    if (installed / ".skillguard").exists():
+        reasons.append("installed_author_control_state_present")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        return {
+            "ok": False,
+            "reasons": [f"consumer_manifest_unreadable:{type(exc).__name__}"],
+            "rows": rows,
+        }
+    if not isinstance(manifest, dict):
+        return {
+            "ok": False,
+            "reasons": ["consumer_manifest_not_object"],
+            "rows": rows,
+        }
+    if manifest.get("schema_version") != "consumer.skill_distribution.current":
+        reasons.append("consumer_manifest_schema_wrong")
+    if manifest.get("skill_id") != source.name:
+        reasons.append("consumer_manifest_skill_wrong")
+    if manifest.get("projection_id") != "projection:consumer-distribution":
+        reasons.append("consumer_manifest_projection_wrong")
+    if manifest.get("author_control_excluded") is not True:
+        reasons.append("consumer_manifest_author_boundary_wrong")
+    unsigned = {key: value for key, value in manifest.items() if key != "manifest_hash"}
+    if manifest.get("manifest_hash") != _canonical_hash(unsigned):
+        reasons.append("consumer_manifest_hash_wrong")
+
+    declared = manifest.get("files")
+    if not isinstance(declared, list) or not declared:
+        reasons.append("consumer_manifest_files_missing")
+        declared = []
+    declared_paths: set[str] = set()
+    for index, row in enumerate(declared):
+        if not isinstance(row, dict):
+            reasons.append(f"consumer_manifest_row_invalid:{index}")
             continue
-        relative = path.relative_to(root).as_posix()
-        hashes[relative] = _file_hash(path)
-    return hashes
+        relative = str(row.get("path", "")).replace("\\", "/")
+        expected = str(row.get("content_hash", "")).lower()
+        parts = relative.split("/")
+        if (
+            not relative
+            or relative.startswith("/")
+            or any(part in {"", ".", ".."} for part in parts)
+            or ".skillguard" in parts
+            or relative == "consumer-release.json"
+            or relative in declared_paths
+        ):
+            reasons.append(f"consumer_manifest_path_invalid:{relative}")
+            continue
+        declared_paths.add(relative)
+        source_path = source / Path(relative)
+        installed_path = installed / Path(relative)
+        source_hash = f"sha256:{_file_hash(source_path)}" if source_path.is_file() else None
+        installed_hash = (
+            f"sha256:{_file_hash(installed_path)}" if installed_path.is_file() else None
+        )
+        current = (
+            expected.startswith("sha256:")
+            and len(expected) == 71
+            and source_hash == expected
+            and installed_hash == expected
+        )
+        rows.append(
+            {
+                "relative_path": relative,
+                "expected_hash": expected,
+                "source_hash": source_hash,
+                "installed_hash": installed_hash,
+                "ok": current,
+            }
+        )
+        if not current:
+            reasons.append(f"consumer_file_mismatch:{relative}")
+    actual_paths = {
+        path.relative_to(installed).as_posix()
+        for path in installed.rglob("*")
+        if path.is_file() and path.name != "consumer-release.json"
+    }
+    missing = sorted(declared_paths - actual_paths)
+    unexpected = sorted(actual_paths - declared_paths)
+    if missing:
+        reasons.extend(f"consumer_file_missing:{path}" for path in missing)
+    if unexpected:
+        reasons.extend(f"consumer_file_unexpected:{path}" for path in unexpected)
+    return {
+        "ok": not reasons and len(rows) == len(declared_paths),
+        "release_id": manifest.get("release_id"),
+        "manifest_hash": manifest.get("manifest_hash"),
+        "reasons": reasons,
+        "rows": rows,
+    }
 
 
 def _file_hash(path: Path) -> str:
@@ -105,9 +185,11 @@ def _file_hash(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _stable_dict_hash(value: dict[str, str]) -> str:
-    payload = json.dumps(value, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+def _canonical_hash(value: object) -> str:
+    payload = (
+        json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest().upper()
 
 
 if __name__ == "__main__":

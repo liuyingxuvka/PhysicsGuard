@@ -118,7 +118,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "check-baseline-contract",
         "--skill-root",
         "{{target_root}}"
@@ -171,7 +171,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "check-baseline-candidate",
         "--skill-root",
         "{{target_root}}"
@@ -230,7 +230,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-good",
         "--skill-root",
         "{{target_root}}"
@@ -289,7 +289,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -350,7 +350,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -411,7 +411,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -472,7 +472,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -533,7 +533,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -698,14 +698,14 @@
   ],
   "implementation_paths": [
     "skill/physicsguard-test-file-contract-review/.skillguard/contract_model.py",
-    "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py",
     "skill/physicsguard-test-file-contract-review/SKILL.md",
     "skill/physicsguard-test-file-contract-review/guard-model/candidate.json",
     "skill/physicsguard-test-file-contract-review/guard-model/contract.json",
     "skill/physicsguard-test-file-contract-review/guard-model/known-bad.json",
     "skill/physicsguard-test-file-contract-review/guard-model/known-good.json",
     "skill/physicsguard-test-file-contract-review/guard-model/oracles.json",
-    "skill/physicsguard-test-file-contract-review/guard-model/verify.py"
+    "skill/physicsguard-test-file-contract-review/guard-model/verify.py",
+    "skill/physicsguard-test-file-contract-review/runtime/skill_execution_depth.py"
   ],
   "repository_role": "skill_maintainer_source",
   "maintenance_unit_id": "unit:physicsguard-family",

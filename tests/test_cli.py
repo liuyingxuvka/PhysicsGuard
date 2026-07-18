@@ -117,13 +117,13 @@ def test_database_engine_public_exports_are_removed() -> None:
         assert not hasattr(core, name)
 
 
-def test_cli_solve_physical_coolant_returns_valid_json() -> None:
+def test_cli_run_physical_coolant_returns_valid_json() -> None:
     result = subprocess.run(
         [
             sys.executable,
             "-m",
             "physicsguard.cli",
-            "solve",
+            "run",
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             "--pretty",
         ],

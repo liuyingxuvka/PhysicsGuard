@@ -103,13 +103,6 @@ class ResidualBuilder:
         self._registry = registry
         return registry
 
-    def residual_records(self, x: np.ndarray) -> list[ResidualRecord]:
-        """Return all diagnostic residual records.
-
-        Kept as a compatibility alias for diagnostic_residual_records().
-        """
-        return self.diagnostic_residual_records(x)
-
     def solver_residual_records(self, x: np.ndarray) -> list[ResidualRecord]:
         return [
             record

@@ -15,6 +15,8 @@ MODEL_PATH = ".flowguard/skillguard-parent/.skillguard/contract_model.py"
 ROUTE_ID = "route:physicsguard-skill-suite-parent:receipt-only"
 FUNCTION_ID = "function:physicsguard-skill-suite-parent:receipt-only"
 OWNER_ID = "physicsguard.skill-suite-parent"
+PARENT_SKILL_ID = "physicsguard-skill-suite-parent"
+PARENT_UNIT_ID = "unit:physicsguard-skill-suite-parent"
 CLAIM_BOUNDARY = (
     "This parent consumes current child closure and installation receipts for all ten "
     "maintained PhysicsGuard skills and the existing suite ModelMesh. It launches no "
@@ -190,6 +192,11 @@ def _source(model: dict[str, object]) -> dict[str, object]:
                 "covers_obligation_ids": [obligation_id],
                 "depends_on_check_ids": [],
                 "input_selectors": _selectors(skill_id),
+                "maintenance_unit_id": PARENT_UNIT_ID,
+                "member_skill_id": PARENT_SKILL_ID,
+                "evidence_subject_id": (
+                    f"subject:physicsguard-skill-suite-parent:consume:{skill_id}"
+                ),
             }
         )
         bindings.append(
@@ -226,6 +233,11 @@ def _source(model: dict[str, object]) -> dict[str, object]:
                 {"kind": "path", "path": ".flowguard/check_physicsguard_skill_suite_mesh.py"},
                 {"kind": "path", "path": ".flowguard/physicsguard_suite_parent_inventory.json"},
             ],
+            "maintenance_unit_id": PARENT_UNIT_ID,
+            "member_skill_id": PARENT_SKILL_ID,
+            "evidence_subject_id": (
+                "subject:physicsguard-skill-suite-parent:reattach-model-mesh"
+            ),
         }
     )
     bindings.append(
@@ -261,7 +273,16 @@ def _source(model: dict[str, object]) -> dict[str, object]:
     )
     return {
         "schema_version": "skillguard.contract_source.v2",
-        "skill_id": "physicsguard-skill-suite-parent",
+        "skill_id": PARENT_SKILL_ID,
+        "repository_role": "skill_maintainer_source",
+        "maintenance_unit_id": PARENT_UNIT_ID,
+        "member_skill_ids": [PARENT_SKILL_ID],
+        "consumer_projection": {
+            "projection_id": "projection:consumer-distribution",
+            "prohibited_path_prefixes": [".skillguard/"],
+            "prohibited_prompt_tokens": ["SkillGuard", ".skillguard", "skillguard.py"],
+            "release_manifest_path": "consumer-release.json",
+        },
         "model_id": model["model_id"],
         "model_path": MODEL_PATH,
         "confirmed": True,

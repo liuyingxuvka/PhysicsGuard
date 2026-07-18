@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.11.1 - 2026-07-18
+
+Task-local model revision and clean consumer-runtime release.
+
+- Added independent, task-local competing-hypothesis planning, observation
+  ranking, frozen expectation comparison, and reversible candidate revision
+  disposition without changing PhysicsGuard's core thresholds.
+- Moved the consumer PhysicsGuard runtime out of author-only `.skillguard`
+  control state and kept all ten installed skill projections directly usable.
+- Upgraded the repository to FlowGuard 0.58.1 governance and retained one
+  current runtime path with no compatibility reader or fallback authority.
+- Removed the duplicate top-level `solve` command and the old
+  `ResidualBuilder.residual_records` method; `run` and
+  `diagnostic_residual_records` are now the only current entrypoints.
+- Synchronized package, examples, templates, installed skills, Git tag, and
+  GitHub Release at version 0.11.1.
+
 ## v0.11.0 - 2026-07-15
 
 Purpose-declared physical audit modeling release.

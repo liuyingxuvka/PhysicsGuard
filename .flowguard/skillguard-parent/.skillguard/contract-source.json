@@ -19,6 +19,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-ai-debugging",
       "expected": {
         "exit_code": 0
@@ -86,6 +87,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:ai-debugging",
       "timeout_seconds": 120
     },
@@ -107,6 +110,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-audit-closure",
       "expected": {
         "exit_code": 0
@@ -174,6 +178,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:audit-closure",
       "timeout_seconds": 120
     },
@@ -195,6 +201,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-candidate-model-blueprint",
       "expected": {
         "exit_code": 0
@@ -262,6 +269,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:candidate-model-blueprint",
       "timeout_seconds": 120
     },
@@ -283,6 +292,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-dataset-validation",
       "expected": {
         "exit_code": 0
@@ -350,6 +360,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-dataset-validation",
       "timeout_seconds": 120
     },
@@ -371,6 +383,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-library",
       "expected": {
         "exit_code": 0
@@ -438,6 +451,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-library",
       "timeout_seconds": 120
     },
@@ -459,6 +474,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-model-understanding-preflight",
       "expected": {
         "exit_code": 0
@@ -526,6 +542,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:model-understanding-preflight",
       "timeout_seconds": 120
     },
@@ -547,6 +565,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-adoption",
       "expected": {
         "exit_code": 0
@@ -614,6 +633,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:project-adoption",
       "timeout_seconds": 120
     },
@@ -635,6 +656,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-project-evidence-registry",
       "expected": {
         "exit_code": 0
@@ -702,6 +724,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:project-evidence-registry",
       "timeout_seconds": 120
     },
@@ -723,6 +747,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-signal-mapping-review",
       "expected": {
         "exit_code": 0
@@ -790,6 +815,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:signal-mapping-review",
       "timeout_seconds": 120
     },
@@ -811,6 +838,7 @@
       "depends_on_check_ids": [],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:receipt-replay",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:consume:physicsguard-test-file-contract-review",
       "expected": {
         "exit_code": 0
@@ -878,6 +906,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:consume:test-file-contract-review",
       "timeout_seconds": 120
     },
@@ -905,6 +935,7 @@
       ],
       "evidence_class": "hard",
       "evidence_domain_id": "physicsguard-skill-suite-parent:model-mesh",
+      "evidence_subject_id": "subject:physicsguard-skill-suite-parent:reattach-model-mesh",
       "execution_owner_id": "owner:physicsguard-skill-suite-parent:reattach-model-mesh",
       "expected": {
         "exit_code": 0
@@ -924,6 +955,8 @@
         }
       ],
       "kind": "command",
+      "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+      "member_skill_id": "physicsguard-skill-suite-parent",
       "semantic_check_id": "semantic:physicsguard-skill-suite-parent:reattach-model-mesh",
       "timeout_seconds": 120
     }
@@ -948,6 +981,18 @@
     }
   ],
   "confirmed": true,
+  "consumer_projection": {
+    "prohibited_path_prefixes": [
+      ".skillguard/"
+    ],
+    "prohibited_prompt_tokens": [
+      "SkillGuard",
+      ".skillguard",
+      "skillguard.py"
+    ],
+    "projection_id": "projection:consumer-distribution",
+    "release_manifest_path": "consumer-release.json"
+  },
   "implementation_paths": [
     ".flowguard/check_physicsguard_skill_suite_mesh.py",
     ".flowguard/physicsguard_skill_suite_mesh.json",
@@ -997,8 +1042,13 @@
     "skill/physicsguard-test-file-contract-review/guard-model"
   ],
   "judgment_rubrics": [],
+  "maintenance_unit_id": "unit:physicsguard-skill-suite-parent",
+  "member_skill_ids": [
+    "physicsguard-skill-suite-parent"
+  ],
   "model_id": "physicsguard-skill-suite-parent.receipt-only.current",
   "model_path": ".flowguard/skillguard-parent/.skillguard/contract_model.py",
+  "repository_role": "skill_maintainer_source",
   "schema_version": "skillguard.contract_source.v2",
   "skill_id": "physicsguard-skill-suite-parent",
   "step_bindings": [

@@ -9,10 +9,10 @@ description: Use for staged development, multi-skill work, freshness, sync, rele
 Simulate lifecycle order and freshness without replacing specialists.
 
 ## Entrypoint Scope
-Front-door FlowGuard satellite skill; `development_process_flow` (`public_owner`) owns `execution_freshness` and conditional internal process optimization, with `plan_detailing` and `agent_workflow` delegates.
+Front-door `public_owner`; `development_process_flow` owns `execution_freshness`, conditional optimization, and internal `plan_detailing_compiler` and `agent_workflow_rehearsal` routes.
 
 ## Local Material Routing
-Read `references/development_process_flow_protocol.md`; load `references/process_optimization_protocol.md` only for an optimization reason and `references/failure_triage_protocol.md` only for non-pass triage.
+Read `references/development_process_flow_protocol.md`; load `references/plan_detailing_protocol.md` or `references/agent_workflow_protocol.md` only when that internal route is selected, `references/process_optimization_protocol.md` only for an optimization reason, and `references/failure_triage_protocol.md` only for non-pass triage.
 
 ## Entrypoint Acceptance Map
 Order modes, keep ordinary work light, compare hard-equivalent candidates conditionally, enforce freshness, and delegate gaps.
@@ -21,7 +21,7 @@ Order modes, keep ordinary work light, compare hard-equivalent candidates condit
 - Use for rough plans, staged work, multiple skills, background checks, artifact versions, payload schemas, sync, release, or broad claims.
 
 ## Do Not Use When
-- Do not replace specialists; return unclear routing to `model-first-function-flow`.
+- Do not replace specialists; return unclear routing to `flowguard`.
 
 ## Required Workflow
 1. Register modes, artifacts, actions, targets, writes, evidence, peer changes, and a bounded provider package.
@@ -31,7 +31,7 @@ Order modes, keep ordinary work light, compare hard-equivalent candidates condit
 5. Route non-pass results, scan owners, preserve peer writes, track freshness domains separately, freeze final inputs, and use one owner per heavy check.
 
 ## Hard Gates
-- Model-purpose gate: before build/change, freeze this instance's task-specific failure(s) and boundary; then bind candidate plus native good/bad-per-failure/oracle/current evidence. Reusable types are not fixed-purpose; no mode/fallback; SkillGuard only supervises FlowGuard-declared checks.
+- Model-purpose gate: before build/change, freeze this instance's task-specific failure(s) and boundary; then bind candidate plus native good/bad-per-failure/oracle/current evidence. Reusable types are not fixed-purpose; no mode/fallback; only FlowGuard-declared checks may support completion claims.
 - Use the real FlowGuard check engine and AGENTS.md managed record; never create a fake mini-framework.
 - Keep provider tasks and sibling semantics with native owners; progress is not proof.
 - Estimated comparison supports a preference; measured finite comparison may support a bounded minimum. Never claim global optimality.
@@ -40,5 +40,5 @@ Order modes, keep ordinary work light, compare hard-equivalent candidates condit
 ## Output Requirements
 - Return `evidence`, `failures`, `blockers`, `skipped_checks`, `residual_risk`, `claim_boundary`, `typed_next_actions`, modes, freshness, and required revalidation. Include optimization details only when active; diagram edges mean order, invalidation, or required revalidation.
 
-## SkillGuard Maintenance
-- Edit current source, regenerate current outputs, and remove former authority. SkillGuard cannot manufacture evidence.
+
+<!--VTP:target adapter/catalog;native validation;stale/ambiguous=block;preview!=proof;harvest:VTP-->

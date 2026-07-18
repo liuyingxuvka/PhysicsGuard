@@ -39,7 +39,7 @@ def one_dummy_system(**parameters) -> SystemSpec:
 
 def test_one_dummy_module_residual_works() -> None:
     builder = ResidualBuilder(one_dummy_system())
-    records = builder.residual_records(np.array([0.0]))
+    records = builder.diagnostic_residual_records(np.array([0.0]))
     assert records[0].name == "a.dummy_target"
     assert records[0].value == -5.0
     assert records[0].role == "equation"
@@ -47,7 +47,7 @@ def test_one_dummy_module_residual_works() -> None:
 
 def test_dummy_residual_zero_when_x_equals_target() -> None:
     builder = ResidualBuilder(one_dummy_system())
-    records = builder.residual_records(np.array([5.0]))
+    records = builder.diagnostic_residual_records(np.array([5.0]))
     assert records[0].normalized_value == 0.0
 
 
@@ -72,7 +72,7 @@ def test_boundary_residual_works() -> None:
         }
     )
     builder = ResidualBuilder(spec)
-    records = builder.residual_records(np.array([5.0]))
+    records = builder.diagnostic_residual_records(np.array([5.0]))
     boundary = [record for record in records if record.source == "boundary"][0]
     assert boundary.value == 2.0
     assert boundary.role == "boundary"
@@ -90,7 +90,7 @@ def test_connection_residual_works() -> None:
         }
     )
     builder = ResidualBuilder(spec)
-    records = builder.residual_records(np.array([3.0, 1.0]))
+    records = builder.diagnostic_residual_records(np.array([3.0, 1.0]))
     connection = [record for record in records if record.source == "connection"][0]
     assert connection.value == 2.0
     assert connection.role == "connection"
@@ -135,7 +135,7 @@ def test_residual_vector_returns_normalized_values() -> None:
 def test_wrong_x_length_fails() -> None:
     builder = ResidualBuilder(one_dummy_system())
     with pytest.raises(ValueError, match="length"):
-        builder.residual_records(np.array([1.0, 2.0]))
+        builder.diagnostic_residual_records(np.array([1.0, 2.0]))
 
 
 def test_residual_record_role_validation() -> None:
@@ -382,7 +382,7 @@ def test_linear_relation_module_residual_works() -> None:
         }
     )
     builder = ResidualBuilder(spec)
-    records = builder.residual_records(np.array([2.0, 5.0]))
+    records = builder.diagnostic_residual_records(np.array([2.0, 5.0]))
     assert records[0].diagnostic_key == "linear_relation_mismatch"
     assert records[0].normalized_value == 0.0
     assert records[0].role == "equation"
@@ -412,7 +412,7 @@ def test_conservation_sum_module_references_existing_variables() -> None:
         }
     )
     builder = ResidualBuilder(spec)
-    records = builder.residual_records(np.array([2.0, 5.0]))
+    records = builder.diagnostic_residual_records(np.array([2.0, 5.0]))
     conservation = [record for record in records if record.diagnostic_key == "conservation_sum_mismatch"][0]
     assert conservation.normalized_value == 0.0
 
@@ -441,7 +441,7 @@ def test_range_check_module_reports_soft_range_violation() -> None:
         }
     )
     builder = ResidualBuilder(spec)
-    records = builder.residual_records(np.array([2.0, 5.0]))
+    records = builder.diagnostic_residual_records(np.array([2.0, 5.0]))
     range_record = [record for record in records if record.diagnostic_key == "range_check_violation"][0]
     assert range_record.normalized_value == 1.0
     assert range_record.role == "post_check"

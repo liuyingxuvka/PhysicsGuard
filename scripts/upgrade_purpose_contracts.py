@@ -813,21 +813,44 @@ def _managed_current_prompt(
         "For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.\n\n"
         "Use `guard-model/verify.py check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.\n\n"
         "`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.\n\n"
-        "`guard-model/verify.py` is the PhysicsGuard-native verifier. SkillGuard remains generic: it only supervises checks declared by a skill or task, owners, dependency order, current immutable receipts, installation projection, and closure; it never chooses what a model prevents.\n"
+        "`guard-model/verify.py` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.\n"
         f"{PURPOSE_MARKER_END}"
     )
 
 
-def _managed_skillguard_layer(skill_id: str) -> str:
-    return (
-        f"{SKILLGUARD_LAYER_START}\n"
-        "## Generic SkillGuard supervision\n\n"
-        f"SkillGuard supervises only the checks declared by `{skill_id}`. It freezes the exact check inventory, one execution owner per check, dependency order, governed inputs, immutable terminal receipts, installation projection, and closure. PhysicsGuard remains the sole owner of the physical/evidence purpose, prevented failure classes, native oracles, good/bad proofs, pass/block decisions, residual risk, and bounded claim.\n\n"
-        "Every declared check is mandatory unless the target contract itself removes it in a new reviewed contract. There is no selectable supervision mode, reduced-depth path, alternate authority, compatibility reader, or generic SkillGuard semantic decision. Reuse is allowed only for a current immutable receipt with the same execution identity and governed inputs. Receipt consumers verify and project; they do not rerun an owner or use `--resume` as a read-only audit. A final full gate runs once after source and tool identities freeze, never through a scheduled task or unattended retry. After timeout or interruption, evidence is invalid until the entire descendant process tree is confirmed stopped.\n\n"
-        "The only SkillGuard runtime authority is `.skillguard/contract-source.json`, `.skillguard/compiled-contract.json`, and `.skillguard/check-manifest.json`. The bundled PhysicsGuard `guard-model/` assets are family baseline regression inputs. Current model-purpose artifacts remain target-local PhysicsGuard authority and are not duplicated or semantically interpreted in SkillGuard.\n"
-        "The source contract uses one fixed `native-integrated` identity for the declared family baseline checks. Every declared binding is required before that baseline closure, but a baseline receipt cannot be projected as current-model proof. A real task may declare its own PhysicsGuard-native current-purpose checks for SkillGuard supervision; SkillGuard still cannot invent their semantics. Parallel success routes and SkillGuard-owned domain routes are forbidden.\n"
-        f"{SKILLGUARD_LAYER_END}"
-    )
+def _content_role_overrides(skill_id: str) -> list[dict[str, str]]:
+    rows = [
+        {
+            "path": f"skill/{skill_id}/guard-model",
+            "role": "test_dev",
+            "install_disposition": "source_only",
+            "reason": "author_only_guard_contract",
+        }
+    ]
+    if skill_id == "physicsguard-model-dataset-validation":
+        rows.extend(
+            [
+                {
+                    "path": f"skill/{skill_id}/runtime/native-runtime-manifest.json",
+                    "role": "test_dev",
+                    "install_disposition": "source_only",
+                    "reason": "author_only_runtime_inventory",
+                },
+                {
+                    "path": f"skill/{skill_id}/runtime/physicsguard/guard_model_contract.py",
+                    "role": "test_dev",
+                    "install_disposition": "source_only",
+                    "reason": "author_only_guard_contract_runtime",
+                },
+                {
+                    "path": f"skill/{skill_id}/runtime/physicsguard/skillguard_template_adapter.py",
+                    "role": "test_dev",
+                    "install_disposition": "source_only",
+                    "reason": "author_only_template_projection_adapter",
+                },
+            ]
+        )
+    return rows
 
 
 def _implementation_paths(skill_root: Path) -> list[str]:
@@ -841,7 +864,7 @@ def _implementation_paths(skill_root: Path) -> list[str]:
             continue
         if relative == ".skillguard/contract-source.json":
             continue
-        rows.append(relative)
+        rows.append(path.relative_to(ROOT).as_posix())
     return sorted(rows)
 
 
@@ -921,17 +944,24 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
     contract_check = f"check:{skill_id}:family-baseline-contract"
     candidate_check = f"check:{skill_id}:family-baseline-candidate"
     good_check = f"check:{skill_id}:family-baseline-good"
+    repository_prefix = f"skill/{skill_id}"
     contract_selectors = [
-        {"kind": "path", "path": "guard-model/contract.json"},
-        {"kind": "path", "path": "guard-model/oracles.json"},
-        {"kind": "path", "path": "guard-model/known-good.json"},
-        {"kind": "path", "path": "guard-model/known-bad.json"},
-        {"kind": "path", "path": "guard-model/verify.py"},
-        *[{"kind": "path", "path": path} for path in runtime_paths],
+        {"kind": "path", "path": f"{repository_prefix}/guard-model/contract.json"},
+        {"kind": "path", "path": f"{repository_prefix}/guard-model/oracles.json"},
+        {"kind": "path", "path": f"{repository_prefix}/guard-model/known-good.json"},
+        {"kind": "path", "path": f"{repository_prefix}/guard-model/known-bad.json"},
+        {"kind": "path", "path": f"{repository_prefix}/guard-model/verify.py"},
+        *[
+            {"kind": "path", "path": f"{repository_prefix}/{path}"}
+            for path in runtime_paths
+        ],
     ]
     candidate_selectors = [
         *contract_selectors,
-        {"kind": "path", "path": "guard-model/candidate.json"},
+        {
+            "kind": "path",
+            "path": f"{repository_prefix}/guard-model/candidate.json",
+        },
     ]
     checks: list[dict[str, Any]] = [
         {
@@ -1008,6 +1038,10 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
                 "input_selectors": candidate_selectors,
             }
         )
+    for check in checks:
+        check["maintenance_unit_id"] = "unit:physicsguard-family"
+        check["member_skill_id"] = skill_id
+        check["evidence_subject_id"] = f"subject:{check['check_id']}"
     required = [
         contract_obligation,
         candidate_obligation,
@@ -1019,7 +1053,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
         "schema_version": "skillguard.contract_source.v2",
         "skill_id": skill_id,
         "model_id": export["model_id"],
-        "model_path": ".skillguard/contract_model.py",
+        "model_path": f"{repository_prefix}/.skillguard/contract_model.py",
         "confirmed": True,
         "integration_mode": "native-integrated",
         "native_route_owner": owner,
@@ -1119,18 +1153,25 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
             ],
         ],
         "implementation_paths": [],
+        "repository_role": "skill_maintainer_source",
+        "maintenance_unit_id": "unit:physicsguard-family",
+        "member_skill_ids": sorted(TARGETS),
+        "consumer_projection": {
+            "prohibited_path_prefixes": [".skillguard/"],
+            "prohibited_prompt_tokens": ["SkillGuard", ".skillguard", "skillguard.py"],
+            "projection_id": "projection:consumer-distribution",
+            "release_manifest_path": "consumer-release.json",
+        },
+        "content_role_overrides": _content_role_overrides(skill_id),
     }
     source_path.write_text(stable_json(source_contract), encoding="utf-8")
 
     skill_path = skill_root / "SKILL.md"
     text = skill_path.read_text(encoding="utf-8")
-    skillguard_layer = _managed_skillguard_layer(skill_id)
     if SKILLGUARD_LAYER_START in text and SKILLGUARD_LAYER_END in text:
         prefix, remainder = text.split(SKILLGUARD_LAYER_START, 1)
         _, suffix = remainder.split(SKILLGUARD_LAYER_END, 1)
-        text = prefix.rstrip() + "\n\n" + skillguard_layer + suffix
-    else:
-        text = text.rstrip() + "\n\n" + skillguard_layer + "\n"
+        text = prefix.rstrip() + suffix
     section = _managed_current_prompt(config, guard_contract)
     if PURPOSE_MARKER_START in text and PURPOSE_MARKER_END in text:
         prefix, remainder = text.split(PURPOSE_MARKER_START, 1)

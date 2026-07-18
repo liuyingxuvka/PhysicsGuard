@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 
-SCHEMA_VERSION = "physicsguard.skill_suite_parent_inventory.v1"
+SCHEMA_VERSION = "physicsguard.skill_suite_parent_inventory.v2"
 EXPECTED_SKILLS = (
     "physicsguard-ai-debugging",
     "physicsguard-audit-closure",
@@ -30,9 +30,10 @@ EXPECTED_SKILLS = (
     "physicsguard-test-file-contract-review",
 )
 CLAIM_BOUNDARY = (
-    "The parent proves only current replay of the ten frozen child closures, "
-    "their exact source/install projections, and their installation receipts. "
-    "It launches no child proof and makes no physical judgment of its own."
+    "The parent proves only current replay of the ten frozen author-side child "
+    "closures, their source contracts, clean consumer installation projections, "
+    "and installation receipts. It launches no child proof, copies no author "
+    "control state into consumers, and makes no physical judgment of its own."
 )
 
 
@@ -121,7 +122,11 @@ def _load_inventory(path: Path) -> dict[str, Any]:
 
 def _candidate_reports(repository_root: Path, skill_id: str) -> list[tuple[str, Path, dict[str, Any]]]:
     candidates: list[tuple[str, Path, dict[str, Any]]] = []
-    for path in sorted((repository_root / "work" / "r").glob("*/.skillguard/runs/*/supervisor-result.json")):
+    for path in sorted(
+        (repository_root / "work" / "r").glob(
+            "*/units/*/members/*/runs/*/supervisor-result.json"
+        )
+    ):
         report = _read_object(path, "supervisor_result_unreadable")
         if report.get("status") != "passed" or report.get("skill_id") != skill_id:
             continue
@@ -136,6 +141,8 @@ def _candidate_reports(repository_root: Path, skill_id: str) -> list[tuple[str, 
 
 
 def _capture_child(repository_root: Path, codex_home: Path, skill_id: str) -> dict[str, Any]:
+    from skillguard_v2.provenance import canonical_hash
+
     candidates = _candidate_reports(repository_root, skill_id)
     if not candidates:
         raise ParentReceiptError(f"current_child_supervisor_result_missing:{skill_id}")
@@ -146,15 +153,12 @@ def _capture_child(repository_root: Path, codex_home: Path, skill_id: str) -> di
     transaction_id = str(head.get("transaction_id", ""))
     receipt_path = transaction_root / "receipts" / f"{transaction_id}.json"
     receipt = _read_object(receipt_path, "target_install_receipt_unreadable")
+    active_projection = receipt.get("active_projection", {})
     source_skill = repository_root / "skill" / skill_id
     installed_skill = codex_home / "skills" / skill_id
     source_contract = _read_object(
         source_skill / ".skillguard" / "compiled-contract.json",
         "source_compiled_contract_unreadable",
-    )
-    installed_contract = _read_object(
-        installed_skill / ".skillguard" / "compiled-contract.json",
-        "installed_compiled_contract_unreadable",
     )
     row = {
         "skill_id": skill_id,
@@ -169,13 +173,12 @@ def _capture_child(repository_root: Path, codex_home: Path, skill_id: str) -> di
         "supervisor_report_hash": str(report.get("report_hash", "")),
         "installation_transaction_id": transaction_id,
         "installation_receipt_hash": str(receipt.get("receipt_hash", "")),
-        "installation_projection_identity_hash": str(
-            receipt.get("active_projection", {}).get("identity_hash", "")
-            if isinstance(receipt.get("active_projection"), Mapping)
+        "installation_projection_hash": (
+            canonical_hash(active_projection)
+            if isinstance(active_projection, Mapping)
             else ""
         ),
         "source_contract_hash": str(source_contract.get("contract_hash", "")),
-        "installed_contract_hash": str(installed_contract.get("contract_hash", "")),
     }
     return row
 
@@ -205,12 +208,18 @@ def _verify_installation(
     codex_home: Path,
     row: Mapping[str, Any],
 ) -> list[str]:
-    from skillguard_v2.installation import installation_projection_identity
+    from skillguard_v2.provenance import canonical_hash
+    from skillguard_v2.target_installation import (
+        _canonical_target,
+        _consumer_tree_projection,
+    )
 
     findings: list[str] = []
     skill_id = str(row.get("skill_id", ""))
     source_skill = repository_root / Path(str(row.get("source_skill_path", "")))
     installed_skill = codex_home / Path(str(row.get("installed_skill_path", "")))
+    if (installed_skill / ".skillguard").exists():
+        findings.append("installed_author_control_state_present")
     transaction_id = str(row.get("installation_transaction_id", ""))
     transaction_root = codex_home / "target-install-transactions" / skill_id
     receipt = _read_object(
@@ -227,8 +236,10 @@ def _verify_installation(
     if receipt.get("receipt_hash") != row.get("installation_receipt_hash"):
         findings.append("frozen_installation_receipt_changed")
     try:
-        source_projection = installation_projection_identity(source_skill)
-        active_projection = installation_projection_identity(installed_skill)
+        source_projection = _canonical_target(
+            repository_root, source_skill
+        )["projection"]
+        active_projection = _consumer_tree_projection(installed_skill)
     except (OSError, ValueError) as exc:
         findings.append(f"installation_projection_invalid:{exc}")
         return findings
@@ -239,30 +250,29 @@ def _verify_installation(
         findings.append("installed_projection_drift")
     if receipt.get("active_projection") != expected_projection or receipt.get("stage_projection") != expected_projection:
         findings.append("installation_receipt_projection_mismatch")
-    if expected_projection.get("identity_hash") != row.get("installation_projection_identity_hash"):
+    if canonical_hash(expected_projection) != row.get("installation_projection_hash"):
         findings.append("frozen_installation_projection_changed")
     try:
-        from verify_guard_simulation_readiness import _authority_status, _parity_status
+        from verify_guard_simulation_readiness import (
+            _authority_status,
+            _consumer_status,
+        )
 
         retirement_path = repository_root / ".flowguard" / "retirement-receipts" / f"{skill_id}.json"
         source_authority = _authority_status(source_skill, skill_id, retirement_path)
-        installed_authority = _authority_status(installed_skill, skill_id, retirement_path)
-        retirement_parity = _parity_status(source_skill, installed_skill)
+        installed_consumer = _consumer_status(source_skill, installed_skill, skill_id)
     except (OSError, ValueError) as exc:
         findings.append(f"retirement_authority_unreadable:{type(exc).__name__}")
     else:
         if not source_authority.get("ok"):
             findings.append("source_retirement_authority_not_current")
-        if not installed_authority.get("ok"):
-            findings.append("installed_retirement_authority_not_current")
-        if not retirement_parity.get("ok"):
-            findings.append("retirement_authority_parity_mismatch")
+        if not installed_consumer.get("ok"):
+            findings.append("installed_consumer_projection_not_current")
     return findings
 
 
 def _verify_closure(
     repository_root: Path,
-    codex_home: Path,
     inventory: Mapping[str, Any],
     row: Mapping[str, Any],
 ) -> list[str]:
@@ -273,7 +283,7 @@ def _verify_closure(
     findings: list[str] = []
     skill_id = str(row.get("skill_id", ""))
     run_root = repository_root / Path(str(row.get("run_root", "")))
-    installed_skill = codex_home / Path(str(row.get("installed_skill_path", "")))
+    source_skill = repository_root / Path(str(row.get("source_skill_path", "")))
     report = _read_object(run_root / "supervisor-result.json", "supervisor_result_unreadable")
     if report.get("report_hash") != _unsigned_hash(report, "report_hash"):
         findings.append("supervisor_report_hash_mismatch")
@@ -313,27 +323,19 @@ def _verify_closure(
     replay = verify_closure(
         run_root,
         str(row.get("closure_receipt_id", "")),
-        current_fingerprints=_current_fingerprints(contract, run["request"], installed_skill),
-        target_root=installed_skill,
+        current_fingerprints=_current_fingerprints(contract, run["request"], source_skill),
+        target_root=source_skill,
         repository_root=repository_root,
         owner_evidence_root=repository_root / Path(str(inventory.get("owner_evidence_root", ""))),
     )
     if not replay.get("ok"):
         findings.extend(f"closure_replay:{value}" for value in replay.get("findings", []))
     source_contract = _read_object(
-        repository_root / Path(str(row.get("source_skill_path", ""))) / ".skillguard/compiled-contract.json",
+        source_skill / ".skillguard/compiled-contract.json",
         "source_compiled_contract_unreadable",
-    )
-    installed_contract = _read_object(
-        installed_skill / ".skillguard/compiled-contract.json",
-        "installed_compiled_contract_unreadable",
     )
     if source_contract.get("contract_hash") != row.get("source_contract_hash"):
         findings.append("source_contract_drift")
-    if installed_contract.get("contract_hash") != row.get("installed_contract_hash"):
-        findings.append("installed_contract_drift")
-    if source_contract.get("contract_hash") != installed_contract.get("contract_hash"):
-        findings.append("source_installed_contract_mismatch")
     return findings
 
 
@@ -350,7 +352,7 @@ def verify_child(
         raise ParentReceiptError(f"parent_child_unknown:{skill_id}")
     findings = [
         *_verify_installation(repository_root, codex_home, row),
-        *_verify_closure(repository_root, codex_home, inventory, row),
+        *_verify_closure(repository_root, inventory, row),
     ]
     return {
         "artifact_kind": "physicsguard_suite_child_receipt_replay",

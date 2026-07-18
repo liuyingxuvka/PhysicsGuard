@@ -269,30 +269,6 @@ def _authority_status(
     }
 
 
-def _parity_status(source_skill: Path, installed_skill: Path) -> dict[str, Any]:
-    relatives = [
-        Path("SKILL.md"),
-        *(Path(".skillguard") / name for name in V2_AUTHORITY_FILES),
-    ]
-    if (source_skill / "agents" / "openai.yaml").is_file():
-        relatives.append(Path("agents") / "openai.yaml")
-    rows: list[dict[str, Any]] = []
-    for relative in relatives:
-        source = source_skill / relative
-        installed = installed_skill / relative
-        source_hash = _sha256(source) if source.is_file() else None
-        installed_hash = _sha256(installed) if installed.is_file() else None
-        rows.append(
-            {
-                "relative_path": relative.as_posix(),
-                "source_sha256": source_hash,
-                "installed_sha256": installed_hash,
-                "ok": source_hash is not None and source_hash == installed_hash,
-            }
-        )
-    return {"ok": all(row["ok"] for row in rows), "rows": rows}
-
-
 def _consumer_status(
     source_skill: Path,
     installed_skill: Path,
@@ -396,7 +372,7 @@ def _skill_status(target_skill_id: str, source_relative: str, installed_name: st
         "ok": source["ok"] and installed["ok"],
         "source": source,
         "installed": installed,
-        "source_installed_authority_parity": installed,
+        "source_installed_consumer_parity": installed,
     }
 
 
@@ -413,7 +389,7 @@ def main() -> int:
             "status": "external_exact_receipt_required",
             "claim_boundary": "Byte parity here does not prove issuance, terminal closure, parent consumption, or installation-currentness replay.",
         },
-        "claim_boundary": "Pass proves canonical package identity, exact V2 authority-file presence, expanded former-V1 residual absence, expanded-scope retirement receipt presence, and limited source/install authority parity. It executes no native owner and cannot close production by itself.",
+        "claim_boundary": "Pass proves canonical package identity, exact author-side V2 authority-file presence, expanded former-V1 residual absence, expanded-scope retirement receipt presence, and exact clean consumer parity. It executes no native owner and cannot close production by itself.",
     }
     print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     return 0 if ok else 1

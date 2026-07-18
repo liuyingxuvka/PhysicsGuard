@@ -4,6 +4,7 @@ import importlib.util
 import hashlib
 import json
 from pathlib import Path
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +21,11 @@ def _source_file_hash(path: Path) -> str:
     return hashlib.sha256(body).hexdigest().upper()
 SCRIPT = ROOT / "scripts" / "verify_guard_simulation_readiness.py"
 PRIMARY_ROOT = ROOT / "skill" / "physicsguard-model-dataset-validation"
+SKILLGUARD_SCRIPTS = Path.home() / ".codex" / "skills" / "skillguard" / "scripts"
+if str(SKILLGUARD_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SKILLGUARD_SCRIPTS))
+
+from skillguard_v2.consumer_distribution import build_consumer_distribution
 
 
 def _load_audit_module():
@@ -63,18 +69,30 @@ def test_expanded_residual_scan_blocks_generic_checker_and_mutable_report(tmp_pa
     assert "reports/**" in status["former_v1_residuals"]
 
 
-def test_narrow_receipt_cannot_hide_residual_and_parity_is_exact(tmp_path: Path) -> None:
+def test_narrow_receipt_cannot_hide_residual_and_consumer_parity_is_exact(
+    tmp_path: Path,
+) -> None:
     audit = _load_audit_module()
     source = tmp_path / "source"
     installed = tmp_path / "installed"
     receipt_path = tmp_path / "retirement.json"
     target_skill_id = "physicsguard-ai-debugging"
     _write_current_authority(source, target_skill_id, audit, receipt_path)
-    _write_current_authority(installed, target_skill_id, audit, receipt_path)
-    assert audit._parity_status(source, installed)["ok"] is True
+    contract = json.loads(
+        (PRIMARY_ROOT / ".skillguard" / "compiled-contract.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    result = build_consumer_distribution(PRIMARY_ROOT, installed, contract)
+    assert result["status"] == "passed"
+    assert audit._consumer_status(
+        PRIMARY_ROOT, installed, PRIMARY_ROOT.name
+    )["ok"] is True
 
     installed.joinpath("SKILL.md").write_text("changed prompt\n", encoding="utf-8")
-    assert audit._parity_status(source, installed)["ok"] is False
+    assert audit._consumer_status(
+        PRIMARY_ROOT, installed, PRIMARY_ROOT.name
+    )["ok"] is False
 
     residual = source / ".skillguard" / "skillguard_manifest.json"
     residual.write_text("{}\n", encoding="utf-8")

@@ -21,21 +21,22 @@ Accept a current topology digest, usage intent, and evidence boundary; promote o
 - Use before broad done/release/publish confidence when local green may hide duplicate/conflicting paths, broad terminals, repeatable side effects, compatibility paths, or closure/liveness hazards.
 
 ## Do Not Use When
-- Do not use for generic risk lists, unmodeled systems, or as a replacement for maturation, alignment, Risk Evidence Ledger, or Architecture Reduction; return unclear topology to `model-first-function-flow`.
+- Do not use for generic risk lists, unmodeled systems, or as a replacement for maturation, alignment, Risk Evidence Ledger, or Architecture Reduction; return unclear topology to `flowguard`.
 
 ## Required Workflow
-1. Record usage intent, claim scope, topology landmarks, business paths, current evidence, and stale/skipped gaps.
+1. Record usage, scope, topology, business paths, evidence, and gaps. Portable temporal claims bind the digest to the exact `flowguard.portable_model.v1` fingerprint and executable obligations.
 2. For each candidate, name the topology anchor, real-use failure, affected element, confidence effect, and disposition.
 3. Resolve, scope with rationale, or issue typed owner-route handoffs and maintenance obligations.
 
 ## Hard Gates
-- Model-purpose gate: before build/change, freeze this instance's task-specific failure(s) and boundary; then bind candidate plus native good/bad-per-failure/oracle/current evidence. Reusable types are not fixed-purpose; no mode/fallback; SkillGuard only supervises FlowGuard-declared checks.
+- Model-purpose gate: before build/change, freeze this instance's task-specific failure(s) and boundary; then bind candidate plus native good/bad-per-failure/oracle/current evidence. Reusable types are not fixed-purpose; no mode/fallback; only FlowGuard-declared checks may support completion claims.
 - Verify the real FlowGuard check engine and AGENTS.md managed record; never create a fake mini-framework.
 - Unanchored concerns cannot block confidence; anchored hazards need current evidence, owner route, or explicit scoped disposition.
 - Important path conflicts, loop liveness, compatibility/history, and template harvest closure must remain visible before broad confidence.
+- Portable liveness/fairness requires canonical checker evidence for the same graph; prose/metadata and stale or truncated reports cannot pass.
 
 ## Output Requirements
 - Return `evidence`, `failures`, `blockers`, `skipped_checks`, `residual_risk`, `claim_boundary`, and `typed_next_actions`, plus anchored candidates and confidence effects.
 
-## SkillGuard Maintenance
-- Edit `.skillguard/contract-source.json`, then regenerate derived contracts; SkillGuard validates hazard structure and cannot promote unanchored prose into proof.
+
+<!--VTP:target adapter/catalog;native validation;stale/ambiguous=block;preview!=proof;harvest:VTP-->

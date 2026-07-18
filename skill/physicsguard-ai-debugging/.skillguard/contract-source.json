@@ -118,7 +118,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "check-baseline-contract",
         "--skill-root",
         "{{target_root}}"
@@ -171,7 +171,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "check-baseline-candidate",
         "--skill-root",
         "{{target_root}}"
@@ -230,7 +230,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-good",
         "--skill-root",
         "{{target_root}}"
@@ -289,7 +289,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -350,7 +350,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -411,7 +411,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -472,7 +472,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -533,7 +533,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-ai-debugging/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -698,7 +698,6 @@
   ],
   "implementation_paths": [
     "skill/physicsguard-ai-debugging/.skillguard/contract_model.py",
-    "skill/physicsguard-ai-debugging/runtime/skill_execution_depth.py",
     "skill/physicsguard-ai-debugging/SKILL.md",
     "skill/physicsguard-ai-debugging/agents/openai.yaml",
     "skill/physicsguard-ai-debugging/guard-model/candidate.json",
@@ -710,6 +709,7 @@
     "skill/physicsguard-ai-debugging/references/bug-playbooks.md",
     "skill/physicsguard-ai-debugging/references/model-generation.md",
     "skill/physicsguard-ai-debugging/references/protocol.md",
+    "skill/physicsguard-ai-debugging/runtime/skill_execution_depth.py",
     "skill/physicsguard-ai-debugging/scripts/physicsguard_closure_check.py"
   ],
   "repository_role": "skill_maintainer_source",

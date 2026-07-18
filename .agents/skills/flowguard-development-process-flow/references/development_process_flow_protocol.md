@@ -10,11 +10,11 @@ specialist's judgment.
 
 Record applicable modes in this order:
 
-1. `plan_detailing`: delegate rough or underspecified plans to
-   `flowguard-plan-detailing-compiler` when structured rows are needed.
+1. `plan_detailing`: run the internal plan-detailing route for rough or
+   underspecified plans when structured rows are needed.
 2. `strategy_selection`: an internal, conditional process-optimization mode.
-3. `agent_workflow`: delegate multi-skill/tool or external-side-effect
-   rehearsal to `flowguard-agent-workflow-rehearsal`.
+3. `agent_workflow`: run the internal agent-workflow route for multi-skill,
+   tool, plugin, or external-side-effect rehearsal.
 4. `execution_freshness`: review artifact versions, evidence, sync, and final
    claim closure here.
 
@@ -37,13 +37,14 @@ records, repair groups, or optimization evidence gate.
 
 - DevelopmentProcessFlow owns process order, artifact versions, invalidation,
   current decision references, peer-write handling, and process claims.
-- PlanDetail owns structured plan rows, not execution proof.
-- AgentWorkflowRehearsal owns AI-operation skill/tool order.
+- Internal `plan_detailing` owns structured plan rows, not execution proof.
+- Internal `agent_workflow` owns AI-operation skill/tool order.
 - TestMesh owns diagnostic boundaries, actual execution accounting, findings,
   skips, and terminal test receipts.
 - Finding Ledger owns stable raw finding ids.
-- SpecWorkPackage owns provider tasks, dependency graphs, sessions, receipts,
-  and consumer fan-out.
+- Official OpenSpec owns its proposal, design, specifications, tasks, status,
+  validation, and archive lifecycle. DevelopmentProcessFlow may consume only a
+  current read-only `SpecContext`; it owns no OpenSpec execution bridge.
 - Model-Test Alignment owns ordinary obligation, primary CodeContract owner,
   and TestEvidence closure.
 - Product models retain product-runtime behavior; process references are typed
@@ -67,8 +68,8 @@ Capture grouped rows for:
 - final claim: routine versus release/archive/publish scope and consuming Risk
   Evidence Ledger evidence.
 
-Keep provider, work-package, change, task, obligation, check, validation,
-session, receipt, and consumer ids distinct.
+Keep the read-only OpenSpec context/change/artifact ids distinct from
+FlowGuard's own obligation, validation, execution, and receipt ids.
 
 ## Execution Shape
 
@@ -106,18 +107,18 @@ evidence requires terminal status, exit code, concrete result artifact and
 fingerprint, covered ids, inventory revision, and current artifact/verifier
 versions.
 
-## Specification Work Packages
+## Read-only OpenSpec context
 
-For an active OpenSpec, Spec Kit, or supported provider, consume one bounded
-`SpecWorkPackage`. Reconcile provider tasks with FlowGuard obligations/checks
-in both directions. Canonical input snapshots exclude reports, logs, caches,
-and receipts. One exact terminal receipt may serve several consumers without
-being copied or counted as several executions. Cross-change reuse requires an
-explicit safe scope and identical execution identity.
+For an active official OpenSpec change, read only its proposal, design,
+specifications, tasks, and derived status as one current `SpecContext`.
+FlowGuard may use that material to understand scope and order its own work. It
+must not write OpenSpec artifacts, execute OpenSpec checks, open sessions,
+create caches or receipts for OpenSpec, claim provider execution ownership, or
+fan one provider result out to FlowGuard consumers.
 
-A failed dependency creates visible not-run descendants instead of launching
-them. Archive remains blocked while mappings, frozen/post-run input stability,
-provider-native verification, or receipt freshness is missing.
+FlowGuard validations remain ordinary FlowGuard validations with their own
+owners and evidence. OpenSpec validation and archive decisions remain entirely
+with official OpenSpec.
 
 ## Failure Routing
 

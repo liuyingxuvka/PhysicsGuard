@@ -369,17 +369,17 @@ def _legacy_snapshot_depth(
             "repeated_exclusion_reasons": {},
             "templated_exclusion_reasons": [],
             "finding_codes": ["validation_depth_not_declared"],
-            "claim_boundary": "legacy snapshot only; quantitative adequacy not applicable",
+            "claim_boundary": "scalar snapshot only; quantitative adequacy not applicable",
         },
         "predictive": evaluate_predictive_rollout("pointwise", None, base_dir=base_dir).receipt,
-        "assumptions": ["legacy scalar command; no validation-depth plan was declared"],
+        "assumptions": ["scalar snapshot input; no validation-depth plan was declared"],
         "findings": findings,
         "safe_claim": "one low-fidelity scalar snapshot was evaluated; no time-series or scenario claim is supported",
         "unsafe_claim_boundary": UNSAFE_BOUNDARY,
     }
-    # Split overlap is a real calibration defect even for a legacy plan and is
-    # therefore promoted.  The generic depth-not-declared warning remains
-    # receipt-local for backwards-compatible scalar command status.
+    # Split overlap is a real calibration defect even for a scalar snapshot and
+    # is therefore promoted. The generic depth-not-declared warning remains
+    # receipt-local for the explicit scalar-snapshot route.
     promoted = [item for item in split_findings if item["severity"] == "error"]
     return ValidationDepthEvaluation(payload, promoted, [], None)
 

@@ -64,11 +64,7 @@ from physicsguard.workflow import (
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="physicsguard")
     subparsers = parser.add_subparsers(dest="command", required=True)
-    solve_parser = subparsers.add_parser("solve", help="solve a PhysicsGuard YAML audit")
-    solve_parser.add_argument("system", type=Path, help="path to a YAML SystemSpec")
-    solve_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
-    run_parser = subparsers.add_parser("run", help="alias for solve")
+    run_parser = subparsers.add_parser("run", help="run a PhysicsGuard YAML audit")
     run_parser.add_argument("system", type=Path, help="path to a YAML SystemSpec")
     run_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
@@ -669,7 +665,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command in {"run", "solve"}:
+        if args.command == "run":
             return solve(args.system, args.pretty)
         if args.command == "evaluate":
             return evaluate(args.system, args.observed, args.pretty)

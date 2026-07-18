@@ -118,7 +118,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "check-baseline-contract",
         "--skill-root",
         "{{target_root}}"
@@ -551,7 +551,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "check-baseline-candidate",
         "--skill-root",
         "{{target_root}}"
@@ -990,7 +990,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-good",
         "--skill-root",
         "{{target_root}}"
@@ -1429,7 +1429,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -1870,7 +1870,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -2311,7 +2311,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -2752,7 +2752,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -3193,7 +3193,7 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
+        "guard-model/verify.py",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -3738,6 +3738,13 @@
   ],
   "implementation_paths": [
     "skill/physicsguard-model-dataset-validation/.skillguard/contract_model.py",
+    "skill/physicsguard-model-dataset-validation/SKILL.md",
+    "skill/physicsguard-model-dataset-validation/guard-model/candidate.json",
+    "skill/physicsguard-model-dataset-validation/guard-model/contract.json",
+    "skill/physicsguard-model-dataset-validation/guard-model/known-bad.json",
+    "skill/physicsguard-model-dataset-validation/guard-model/known-good.json",
+    "skill/physicsguard-model-dataset-validation/guard-model/oracles.json",
+    "skill/physicsguard-model-dataset-validation/guard-model/verify.py",
     "skill/physicsguard-model-dataset-validation/runtime/native-runtime-manifest.json",
     "skill/physicsguard-model-dataset-validation/runtime/physicsguard/__init__.py",
     "skill/physicsguard-model-dataset-validation/runtime/physicsguard/cli.py",
@@ -3834,13 +3841,7 @@
     "skill/physicsguard-model-dataset-validation/runtime/physicsguard/template_packs.py",
     "skill/physicsguard-model-dataset-validation/runtime/physicsguard/workflow.py",
     "skill/physicsguard-model-dataset-validation/runtime/skill_execution_depth.py",
-    "skill/physicsguard-model-dataset-validation/SKILL.md",
-    "skill/physicsguard-model-dataset-validation/guard-model/candidate.json",
-    "skill/physicsguard-model-dataset-validation/guard-model/contract.json",
-    "skill/physicsguard-model-dataset-validation/guard-model/known-bad.json",
-    "skill/physicsguard-model-dataset-validation/guard-model/known-good.json",
-    "skill/physicsguard-model-dataset-validation/guard-model/oracles.json",
-    "skill/physicsguard-model-dataset-validation/guard-model/verify.py"
+    "skill/physicsguard-model-dataset-validation/scripts/run_physicsguard.py"
   ],
   "repository_role": "skill_maintainer_source",
   "maintenance_unit_id": "unit:physicsguard-family",
