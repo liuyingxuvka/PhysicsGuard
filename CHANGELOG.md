@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.11.2 - 2026-07-19
+
+SkillGuard author-contract and release-identity refresh.
+
+- Refreshed all ten private author-side SkillGuard contracts under the current
+  affected-only validation and provenance ownership model.
+- Synchronized package, embedded consumer runtime, templates, examples,
+  project adoption identity, and installed skill projections at version
+  0.11.2.
+- Preserved the existing low-fidelity physics boundary and one current runtime
+  path with no compatibility reader, alias, or fallback authority.
+
 ## v0.11.1 - 2026-07-18
 
 Task-local model revision and clean consumer-runtime release.
