@@ -1,6 +1,6 @@
 {
   "artifacts": [],
-  "check_declarations_hash": "32A690D01E1BB52689923B9B7C7B57E88F53DA74F6AE8D620669A7251C329A40",
+  "check_declarations_hash": "9E5FFF3B0E59C9D721F3F99612C59AA4622B2578B5A3AB0FE8F8F512296E2DD6",
   "checks": [
     {
       "args": [
@@ -56,10 +56,11 @@
       "kind": "command",
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
-      "owner_declaration_hash": "sha256:c4e8c63800a41fa5f5924272e3b99d0ad4a653e3c7cbaa2cdf7cf768b8120f33",
+      "owner_declaration_hash": "sha256:c91adad6ae9d5c3d248d0a2f8f8d117e10bb62c7ef9ef7513bb5daf1645781ae",
       "owner_input_projection_hash": "sha256:b1cf15f3350f775d41723b91f57f6c721405bf6c07d38ea491316b34538ec88c",
       "projection_declaration_hash": "sha256:54b962931e662f7c6e9000fe56d11aa14786f6709ee8da4113010fbe8a8c9f3d",
       "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:family-baseline-contract",
+      "target_input_role_ids": [],
       "timeout_seconds": 120
     },
     {
@@ -123,10 +124,11 @@
       "kind": "command",
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
-      "owner_declaration_hash": "sha256:bd132531b0f2d42605f93fb1a62fbfc7e911c24e9c166d70e15060f6ec613af6",
+      "owner_declaration_hash": "sha256:a794950643adb74664c823a2c611b6b7396d20136133cc5ec6fd6cc02dc700b3",
       "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
       "projection_declaration_hash": "sha256:13d3bc2952577d272b1d3152680d44dfc6bfa0d0dcf4197f9735a40f800e7e25",
       "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:family-baseline-candidate",
+      "target_input_role_ids": [],
       "timeout_seconds": 120
     },
     {
@@ -190,10 +192,11 @@
       "kind": "command",
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
-      "owner_declaration_hash": "sha256:4b316e9375b2c0edd4d848ef175341674e1196d117be919b0a4b1f046fe63bf7",
+      "owner_declaration_hash": "sha256:2966059613cd09c47f6544be7a816c453048a59babe0b65498c563689fa9d451",
       "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
       "projection_declaration_hash": "sha256:3fe9efcfe0cfb7abd144fc706b7ac1fb3dbf820998d8a31c153e279a29af1fe3",
       "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:family-baseline-good",
+      "target_input_role_ids": [],
       "timeout_seconds": 240
     },
     {
@@ -259,10 +262,11 @@
       "kind": "command",
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
-      "owner_declaration_hash": "sha256:a14f14af081620df4d20955f94175f40a56a479d72729cbb70164d186de5abac",
+      "owner_declaration_hash": "sha256:3ca1a541d49f318f954cb947ea6113934be3687e4bab2de111446529cf175883",
       "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
       "projection_declaration_hash": "sha256:1d566b27033e2bd1a0ee912dfa34154c3f3ddbe39e7b1d49cdab7ddf8079fdb0",
       "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:family-baseline-blocks:hierarchy-not-validated",
+      "target_input_role_ids": [],
       "timeout_seconds": 240
     },
     {
@@ -328,10 +332,11 @@
       "kind": "command",
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
-      "owner_declaration_hash": "sha256:37c5cb2d7543e725a721d69b36d1b69236b0f59777021bf99a749022a31211b1",
+      "owner_declaration_hash": "sha256:cd25ae7395c56208fd634af11b393466a651a820f7443d7a4c5bf807159ad038",
       "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
       "projection_declaration_hash": "sha256:0189281832e66ea741926acb722e024820e639c2f8d11314a333dd2f25a51f9b",
       "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:family-baseline-blocks:interface-mapping-incomplete",
+      "target_input_role_ids": [],
       "timeout_seconds": 240
     },
     {
@@ -397,10 +402,11 @@
       "kind": "command",
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
-      "owner_declaration_hash": "sha256:316ec4d51f162a761fba2530f23dbc79b194167b0acc439177454fa2d752930f",
+      "owner_declaration_hash": "sha256:e5132c6db09a7c130e5d405a05924be962c80673520c8824df981139ed53d49b",
       "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
       "projection_declaration_hash": "sha256:d6d0b0561f2c14fdffbbd35094dd530b8833c8202fac5a4cd4f92bc79ba2d613",
       "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:family-baseline-blocks:rollout-boundary-unclear",
+      "target_input_role_ids": [],
       "timeout_seconds": 240
     },
     {
@@ -466,10 +472,11 @@
       "kind": "command",
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
-      "owner_declaration_hash": "sha256:4d212ef98705db765844a104a762a244f6b8d45d43d4eae36600cb28d143b1c6",
+      "owner_declaration_hash": "sha256:12680651a3c890b2673cc0ff4a6c2ae2b66b7d772e28e2962f86eda6e3c677c4",
       "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
       "projection_declaration_hash": "sha256:a30a388d4b0fabe8f2ee671a84e6c52227b44d4ec630a3ee2028aab6dcb4f99d",
       "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:family-baseline-blocks:generation-despite-blocker",
+      "target_input_role_ids": [],
       "timeout_seconds": 240
     }
   ],
@@ -711,7 +718,7 @@
       "owner_cycles": [],
       "unmapped_paths": []
     },
-    "impact_graph_hash": "sha256:246e85e62765b36744763158b92da3f6da8f484433ff48e99c09ca8cc666c1bd",
+    "impact_graph_hash": "sha256:a487654a3b9b7b1fa488a1d8c0356efafcdb28b69f4088fc02869ef1c9dce891",
     "inventory": [
       {
         "classification_rule_id": "skillguard.content_role_classifier.current:contract_schema",
@@ -835,8 +842,9 @@
             "path": "skill/physicsguard-candidate-model-blueprint/runtime/skill_execution_depth.py"
           }
         ],
-        "owner_declaration_hash": "sha256:bd132531b0f2d42605f93fb1a62fbfc7e911c24e9c166d70e15060f6ec613af6",
-        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e"
+        "owner_declaration_hash": "sha256:a794950643adb74664c823a2c611b6b7396d20136133cc5ec6fd6cc02dc700b3",
+        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
+        "target_input_role_ids": []
       },
       {
         "check_ids": [
@@ -875,8 +883,9 @@
             "path": "skill/physicsguard-candidate-model-blueprint/runtime/skill_execution_depth.py"
           }
         ],
-        "owner_declaration_hash": "sha256:c4e8c63800a41fa5f5924272e3b99d0ad4a653e3c7cbaa2cdf7cf768b8120f33",
-        "owner_input_projection_hash": "sha256:b1cf15f3350f775d41723b91f57f6c721405bf6c07d38ea491316b34538ec88c"
+        "owner_declaration_hash": "sha256:c91adad6ae9d5c3d248d0a2f8f8d117e10bb62c7ef9ef7513bb5daf1645781ae",
+        "owner_input_projection_hash": "sha256:b1cf15f3350f775d41723b91f57f6c721405bf6c07d38ea491316b34538ec88c",
+        "target_input_role_ids": []
       },
       {
         "check_ids": [
@@ -922,8 +931,9 @@
             "path": "skill/physicsguard-candidate-model-blueprint/runtime/skill_execution_depth.py"
           }
         ],
-        "owner_declaration_hash": "sha256:4d212ef98705db765844a104a762a244f6b8d45d43d4eae36600cb28d143b1c6",
-        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e"
+        "owner_declaration_hash": "sha256:12680651a3c890b2673cc0ff4a6c2ae2b66b7d772e28e2962f86eda6e3c677c4",
+        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
+        "target_input_role_ids": []
       },
       {
         "check_ids": [
@@ -969,8 +979,9 @@
             "path": "skill/physicsguard-candidate-model-blueprint/runtime/skill_execution_depth.py"
           }
         ],
-        "owner_declaration_hash": "sha256:a14f14af081620df4d20955f94175f40a56a479d72729cbb70164d186de5abac",
-        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e"
+        "owner_declaration_hash": "sha256:3ca1a541d49f318f954cb947ea6113934be3687e4bab2de111446529cf175883",
+        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
+        "target_input_role_ids": []
       },
       {
         "check_ids": [
@@ -1016,8 +1027,9 @@
             "path": "skill/physicsguard-candidate-model-blueprint/runtime/skill_execution_depth.py"
           }
         ],
-        "owner_declaration_hash": "sha256:37c5cb2d7543e725a721d69b36d1b69236b0f59777021bf99a749022a31211b1",
-        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e"
+        "owner_declaration_hash": "sha256:cd25ae7395c56208fd634af11b393466a651a820f7443d7a4c5bf807159ad038",
+        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
+        "target_input_role_ids": []
       },
       {
         "check_ids": [
@@ -1063,8 +1075,9 @@
             "path": "skill/physicsguard-candidate-model-blueprint/runtime/skill_execution_depth.py"
           }
         ],
-        "owner_declaration_hash": "sha256:316ec4d51f162a761fba2530f23dbc79b194167b0acc439177454fa2d752930f",
-        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e"
+        "owner_declaration_hash": "sha256:e5132c6db09a7c130e5d405a05924be962c80673520c8824df981139ed53d49b",
+        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
+        "target_input_role_ids": []
       },
       {
         "check_ids": [
@@ -1110,8 +1123,9 @@
             "path": "skill/physicsguard-candidate-model-blueprint/runtime/skill_execution_depth.py"
           }
         ],
-        "owner_declaration_hash": "sha256:4b316e9375b2c0edd4d848ef175341674e1196d117be919b0a4b1f046fe63bf7",
-        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e"
+        "owner_declaration_hash": "sha256:2966059613cd09c47f6544be7a816c453048a59babe0b65498c563689fa9d451",
+        "owner_input_projection_hash": "sha256:a294c7e86db3cb15d85420c290720662963200d6c4e422580e814d4bf5b4844e",
+        "target_input_role_ids": []
       }
     ],
     "policy_id": "skillguard.content_impact_policy.current",
@@ -1182,7 +1196,7 @@
     "schema_version": "skillguard.content_impact_plan.current",
     "unknown_mapping_disposition": "block"
   },
-  "contract_hash": "6AB9A3394107C07AC9947460327BE0474609E01B0FCE62EECB44D4090037537B",
+  "contract_hash": "48DD6AF62BEA2D17793BC2CC0090DBEB98AB908E72589BA1693E1895875CEE0F",
   "depth_profile": {
     "claim_boundary": "PhysicsGuard owns the family baseline semantics and every target-local current-model purpose, failure, native oracle, proof, residual risk, and bounded claim. SkillGuard only executes and reconciles the declared family baseline inventory; that receipt cannot close a current model.",
     "enforcement_level": "enforced",
