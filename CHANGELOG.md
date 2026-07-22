@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.3 - 2026-07-22
+
+- Adopt SkillGuard 0.4 bounded evidence lifecycle while preserving 74 target-owned checks across ten maintained skills.
+- Remove duplicated embedded runtime, depth, and verifier copies in favor of the single installed `physicsguard` package.
+- Keep legacy evidence roots fail-closed when no current lifecycle head proves safe collection.
+
 ## v0.11.2 - 2026-07-19
 
 SkillGuard author-contract and release-identity refresh.

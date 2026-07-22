@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib.util
+from importlib import metadata
 import json
 import os
 from pathlib import Path
@@ -38,7 +38,6 @@ DYNAMIC_BAD_SCHEMA = "physicsguard.model_known_bad_set.v1"
 DYNAMIC_PROOF_SCHEMA = "physicsguard.model_purpose_proof_set.v1"
 NATIVE_ORACLE_RESULT_SCHEMA = "physicsguard.native_model_oracle_result.v1"
 RESULT_SCHEMA = "physicsguard.guard_model_proof_result.v1"
-RUNTIME_MANIFEST_SCHEMA = "physicsguard.installed_native_runtime_manifest.v1"
 BASELINE_ROLE = "family_baseline_regression"
 DYNAMIC_ROLE = "current_model_purpose"
 SEMANTIC_PROOF = "native_semantic_detection"
@@ -79,73 +78,28 @@ def _contract_bundle(
     )
 
 
-def _validate_bundled_runtime(skill_root: Path) -> dict[str, Any]:
-    manifest_path = skill_root / "runtime" / "native-runtime-manifest.json"
+def _canonical_runtime_identity() -> dict[str, Any]:
+    """Return the one package runtime used by every maintained skill.
+
+    Missing package authority is a visible blocker.  There is deliberately no
+    per-skill file lookup or bundled fallback.
+    """
+
+    from physicsguard import skill_execution_depth
+
+    if not callable(getattr(skill_execution_depth, "evaluate_skill_execution_package", None)):
+        raise GuardModelContractError("canonical_skill_execution_depth_entrypoint_missing")
     try:
-        manifest = _load(manifest_path)
-    except GuardModelContractError as exc:
-        raise GuardModelContractError(f"bundled_runtime_manifest_missing: {exc}") from exc
-    if manifest.get("schema_version") != RUNTIME_MANIFEST_SCHEMA:
-        raise GuardModelContractError("bundled_runtime_manifest_schema_invalid")
-    if manifest.get("target_skill_id") != "physicsguard-model-dataset-validation":
-        raise GuardModelContractError("bundled_runtime_manifest_target_mismatch")
-    if manifest.get("runtime_root") != "runtime":
-        raise GuardModelContractError("bundled_runtime_manifest_root_invalid")
-    rows = manifest.get("files")
-    if not isinstance(rows, list) or not rows:
-        raise GuardModelContractError("bundled_runtime_manifest_empty")
-    declared: dict[str, str] = {}
-    for index, row in enumerate(rows):
-        if not isinstance(row, Mapping):
-            raise GuardModelContractError(f"bundled_runtime_manifest_row_invalid:{index}")
-        relative = str(row.get("path", "")).replace("\\", "/")
-        digest = str(row.get("sha256", "")).lower()
-        if (
-            not relative
-            or relative.startswith("/")
-            or any(part in {"", ".", ".."} for part in relative.split("/"))
-            or not relative.endswith(".py")
-            or relative in declared
-        ):
-            raise GuardModelContractError(f"bundled_runtime_manifest_path_invalid:{relative}")
-        if len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest):
-            raise GuardModelContractError(f"bundled_runtime_manifest_hash_invalid:{relative}")
-        declared[relative] = digest
-    required = {
-        "skill_execution_depth.py",
-        "physicsguard/__init__.py",
-        "physicsguard/guard_model_contract.py",
-        "physicsguard/skill_execution_depth.py",
-    }
-    if not required <= set(declared):
-        raise GuardModelContractError(
-            f"bundled_runtime_required_file_missing:{sorted(required - set(declared))}"
-        )
-    runtime_root = manifest_path.parent
-    actual = {
-        path.relative_to(runtime_root).as_posix()
-        for path in runtime_root.rglob("*.py")
-        if "__pycache__" not in path.parts
-    }
-    if actual != set(declared):
-        raise GuardModelContractError(
-            "bundled_runtime_inventory_mismatch:"
-            f"missing={sorted(set(declared) - actual)}:undeclared={sorted(actual - set(declared))}"
-        )
-    for relative, expected in declared.items():
-        actual_hash = hashlib.sha256((runtime_root / relative).read_bytes()).hexdigest()
-        if actual_hash != expected:
-            raise GuardModelContractError(f"bundled_runtime_hash_mismatch:{relative}")
-    if manifest.get("source_file_count") != len(declared):
-        raise GuardModelContractError("bundled_runtime_source_count_mismatch")
-    inventory = [{"path": path, "sha256": declared[path]} for path in sorted(declared)]
-    if str(manifest.get("source_inventory_fingerprint", "")).upper() != _fingerprint(
-        inventory
-    ):
-        raise GuardModelContractError("bundled_runtime_inventory_fingerprint_mismatch")
+        package_version = metadata.version("physicsguard")
+    except metadata.PackageNotFoundError as exc:
+        raise GuardModelContractError("canonical_physicsguard_package_missing") from exc
     return {
-        "manifest_fingerprint": _fingerprint(manifest),
-        "file_count": len(declared),
+        "provider": "physicsguard-package",
+        "package_name": "physicsguard",
+        "package_version": package_version,
+        "guard_model_entrypoint": "physicsguard.guard_model_contract",
+        "execution_depth_entrypoint": "physicsguard.skill_execution_depth",
+        "fallback": False,
     }
 
 
@@ -314,11 +268,7 @@ def validate_baseline_contract_bundle(skill_root: Path) -> dict[str, Any]:
         case_by_failure[failure_id] = case
     if set(case_by_failure) != set(failure_by_id):
         raise GuardModelContractError("every declared prevented failure must be proven")
-    runtime = (
-        _validate_bundled_runtime(skill_root)
-        if target == "physicsguard-model-dataset-validation"
-        else {}
-    )
+    runtime = _canonical_runtime_identity()
     return {
         "target_skill_id": target,
         "native_owner_id": contract["native_owner_id"],
@@ -401,14 +351,12 @@ def validate_baseline_bundle(skill_root: Path) -> dict[str, Any]:
 
 
 def _load_satellite_runtime(skill_root: Path):
-    path = skill_root / "runtime" / "skill_execution_depth.py"
-    spec = importlib.util.spec_from_file_location("physicsguard_target_native_depth", path)
-    if spec is None or spec.loader is None:
-        raise GuardModelContractError(f"native route runtime is unavailable: {path}")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+    del skill_root
+    from physicsguard import skill_execution_depth
+
+    if not callable(getattr(skill_execution_depth, "evaluate_skill_execution_package", None)):
+        raise GuardModelContractError("canonical_skill_execution_depth_entrypoint_missing")
+    return skill_execution_depth
 
 
 def _repository_root(skill_root: Path) -> Path:

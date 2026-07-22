@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+import physicsguard.core.task_local_revision as task_local_revision_runtime
 from physicsguard.cli import main as physicsguard_main
 from physicsguard.core.predictive_rollout import evaluate_predictive_rollout
 from physicsguard.core.task_local_revision import (
@@ -23,15 +24,6 @@ from physicsguard.schema.task_local_revision import (
 from tests.test_predictive_rollout_validation import PUMP, _plan as predictive_plan
 
 ROOT = Path(__file__).resolve().parents[1]
-BUNDLED_RUNTIME = (
-    ROOT
-    / "skill"
-    / "physicsguard-model-dataset-validation"
-    / "runtime"
-    / "physicsguard"
-)
-
-
 def _write_model(path: Path, content: str) -> dict[str, str]:
     path.write_text(content, encoding="utf-8")
     return {
@@ -346,15 +338,10 @@ def test_task_model_plan_cli_emits_ranked_receipt(
     assert output["ranked_observation_candidates"][0]["candidate_id"] == "discriminating"
 
 
-def test_task_local_source_and_bundled_runtime_are_exactly_equal() -> None:
-    for relative_path in (
-        Path("__init__.py"),
-        Path("cli.py"),
-        Path("core") / "__init__.py",
-        Path("core") / "task_local_revision.py",
-        Path("schema") / "__init__.py",
-        Path("schema") / "task_local_revision.py",
-    ):
-        assert (ROOT / "src" / "physicsguard" / relative_path).read_bytes() == (
-            BUNDLED_RUNTIME / relative_path
-        ).read_bytes()
+def test_task_local_revision_uses_the_canonical_package_runtime() -> None:
+    assert Path(task_local_revision_runtime.__file__).resolve() == (
+        ROOT / "src" / "physicsguard" / "core" / "task_local_revision.py"
+    ).resolve()
+    assert not (
+        ROOT / "skill" / "physicsguard-model-dataset-validation" / "runtime"
+    ).exists()

@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 import sys
 
+import physicsguard
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -126,25 +128,21 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
     contract = json.loads(
         (PRIMARY_ROOT / ".skillguard/contract-source.json").read_text(encoding="utf-8")
     )
-    runtime_prefix = "skill/physicsguard-model-dataset-validation/runtime/"
-    runtime_paths = sorted(
-        str(path)
-        for path in contract["implementation_paths"]
-        if str(path).startswith(runtime_prefix) and str(path).endswith(".py")
-    )
-    disk_paths = sorted(
-        path.relative_to(ROOT).as_posix()
-        for path in (PRIMARY_ROOT / "runtime").rglob("*.py")
-    )
-    assert runtime_paths == disk_paths
-    assert runtime_paths
-    assert f"{runtime_prefix}physicsguard/guard_model_contract.py" in runtime_paths
-    assert f"{runtime_prefix}physicsguard/skill_execution_depth.py" in runtime_paths
     runtime_authority_paths = {
-        *runtime_paths,
-        f"{runtime_prefix}native-runtime-manifest.json",
+        "src/physicsguard/guard_model_contract.py",
+        "src/physicsguard/skill_execution_depth.py",
+        "skill/physicsguard-model-dataset-validation/runtime-requirements.json",
     }
     assert runtime_authority_paths <= set(contract["implementation_paths"])
+    assert not (PRIMARY_ROOT / "runtime").exists()
+    assert not (PRIMARY_ROOT / "guard-model/verify.py").exists()
+    requirement = json.loads(
+        (PRIMARY_ROOT / "runtime-requirements.json").read_text(encoding="utf-8")
+    )
+    assert requirement["package_name"] == "physicsguard"
+    assert requirement["package_version"] == physicsguard.__version__
+    assert requirement["missing_dependency_behavior"] == "fail_visible"
+    assert requirement["fallback"] is False
     assert not {
         "calibration",
     }.intersection(contract)
@@ -173,7 +171,7 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
                 "native-check:physicsguard-model-dataset-validation:"
                 f"{check_id.replace(':', '-')}"
             ),
-            "evidence_source": "guard-model/verify.py",
+            "evidence_source": "physicsguard.guard_model_contract",
             "native_check_id": check_id,
             "required": True,
         }
@@ -185,15 +183,12 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
     assert depth["native_check_ids"] == check_ids
     assert depth["enforcement_level"] == "enforced"
     assert depth["required_closure_profiles"] == ["enforced"]
-    assert all("skillguard_current_protocol.py" not in path for path in runtime_paths)
-    assert all("skillguard_satellite_v2.py" not in path for path in runtime_paths)
     skill_prefix = "skill/physicsguard-model-dataset-validation"
     contract_paths = {
         f"{skill_prefix}/guard-model/contract.json",
         f"{skill_prefix}/guard-model/oracles.json",
         f"{skill_prefix}/guard-model/known-good.json",
         f"{skill_prefix}/guard-model/known-bad.json",
-        f"{skill_prefix}/guard-model/verify.py",
     }
     candidate_path = f"{skill_prefix}/guard-model/candidate.json"
     guard_paths = {*contract_paths, candidate_path}
@@ -216,3 +211,4 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
         else:
             assert guard_paths <= selectors
         assert runtime_authority_paths <= selectors
+        assert check["args"][:2] == ["-m", "physicsguard.guard_model_contract"]

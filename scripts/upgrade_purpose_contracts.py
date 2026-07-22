@@ -1,4 +1,4 @@
-"""Refresh PhysicsGuard SkillGuard V2 purpose and blockability authorities.
+"""Generate the current PhysicsGuard skill contracts and consumer metadata.
 
 The table in this file is the reviewable source for route-specific protected
 purposes, independently discovered external universes, semantic obligations,
@@ -13,6 +13,7 @@ import re
 from pathlib import Path
 from typing import Any
 import shutil
+import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,6 +35,16 @@ PRIMARY_RUNTIME = (
     / ".skillguard"
     / "runtime"
     / "physicsguard"
+)
+CANONICAL_RUNTIME_INPUTS = (
+    "src/physicsguard/guard_model_contract.py",
+    "src/physicsguard/skill_execution_depth.py",
+)
+RUNTIME_REQUIREMENT_SCHEMA = "physicsguard.skill_runtime_requirement.v1"
+PHYSICSGUARD_VERSION = str(
+    tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"][
+        "version"
+    ]
 )
 
 
@@ -807,19 +818,21 @@ def _managed_current_prompt(
         f"Family capability baseline purpose: {config['purpose']}\n\n"
         f"Family route bounded claim: {config['claim_boundary']}\n\n"
         f"Family baseline proof boundary: {guard_contract['claim_boundary']}\n\n"
+        f"Shared simulator prerequisite: install the current `physicsguard=={PHYSICSGUARD_VERSION}` package in the active Python environment. Before executing this skill, run `python -c \"import physicsguard; print(physicsguard.__version__)\"`; a missing package is a visible blocker and there is no bundled fallback.\n\n"
+        "Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.\n\n"
         "The bundled `guard-model/` files declare these maintained family baseline regression classes:\n\n"
         f"{failures}\n\n"
         "These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.\n\n"
         "For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.\n\n"
-        "Use `guard-model/verify.py check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.\n\n"
+        "Use `python -m physicsguard.guard_model_contract check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.\n\n"
         "`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.\n\n"
-        "`guard-model/verify.py` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.\n"
+        "`physicsguard.guard_model_contract` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.\n"
         f"{PURPOSE_MARKER_END}"
     )
 
 
 def _content_role_overrides(skill_id: str) -> list[dict[str, str]]:
-    rows = [
+    return [
         {
             "path": f"skill/{skill_id}/guard-model",
             "role": "test_dev",
@@ -827,30 +840,6 @@ def _content_role_overrides(skill_id: str) -> list[dict[str, str]]:
             "reason": "author_only_guard_contract",
         }
     ]
-    if skill_id == "physicsguard-model-dataset-validation":
-        rows.extend(
-            [
-                {
-                    "path": f"skill/{skill_id}/runtime/native-runtime-manifest.json",
-                    "role": "test_dev",
-                    "install_disposition": "source_only",
-                    "reason": "author_only_runtime_inventory",
-                },
-                {
-                    "path": f"skill/{skill_id}/runtime/physicsguard/guard_model_contract.py",
-                    "role": "test_dev",
-                    "install_disposition": "source_only",
-                    "reason": "author_only_guard_contract_runtime",
-                },
-                {
-                    "path": f"skill/{skill_id}/runtime/physicsguard/skillguard_template_adapter.py",
-                    "role": "test_dev",
-                    "install_disposition": "source_only",
-                    "reason": "author_only_template_projection_adapter",
-                },
-            ]
-        )
-    return rows
 
 
 def _implementation_paths(skill_root: Path) -> list[str]:
@@ -868,51 +857,36 @@ def _implementation_paths(skill_root: Path) -> list[str]:
     return sorted(rows)
 
 
-def _sync_native_runtime(skill_root: Path, skill_id: str) -> list[str]:
+def _write_runtime_requirement(skill_root: Path, skill_id: str) -> None:
+    requirement = {
+        "schema_version": RUNTIME_REQUIREMENT_SCHEMA,
+        "target_skill_id": skill_id,
+        "package_name": "physicsguard",
+        "package_version": PHYSICSGUARD_VERSION,
+        "entrypoints": [
+            "physicsguard.cli",
+            "physicsguard.guard_model_contract",
+            "physicsguard.skill_execution_depth",
+        ],
+        "missing_dependency_behavior": "fail_visible",
+        "fallback": False,
+        "claim_boundary": (
+            "This declares only the shared simulator required to execute the skill. "
+            "It does not prove a domain check ran or authorize a result."
+        ),
+    }
+    (skill_root / "runtime-requirements.json").write_text(
+        stable_json(requirement), encoding="utf-8"
+    )
+
+
+def _remove_copied_runtime(skill_root: Path) -> None:
+    copied_verifier = skill_root / "guard-model" / "verify.py"
+    if copied_verifier.exists():
+        copied_verifier.unlink()
     runtime_root = skill_root / "runtime"
-    runtime_root.mkdir(parents=True, exist_ok=True)
-    canonical_depth = ROOT / "src" / "physicsguard" / "skill_execution_depth.py"
-    shutil.copyfile(canonical_depth, runtime_root / "skill_execution_depth.py")
-    if skill_id == "physicsguard-model-dataset-validation":
-        source_package = ROOT / "src" / "physicsguard"
-        target_package = runtime_root / "physicsguard"
-        for source in sorted(source_package.rglob("*.py")):
-            if "__pycache__" in source.parts:
-                continue
-            destination = target_package / source.relative_to(source_package)
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, destination)
-        runtime_files = [
-            path
-            for path in runtime_root.rglob("*.py")
-            if "__pycache__" not in path.parts
-        ]
-        rows = [
-            {
-                "path": path.relative_to(runtime_root).as_posix(),
-                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-            }
-            for path in sorted(runtime_files)
-        ]
-        manifest = {
-            "schema_version": "physicsguard.installed_native_runtime_manifest.v1",
-            "target_skill_id": skill_id,
-            "runtime_root": "runtime",
-            "source_file_count": len(rows),
-            "source_inventory_fingerprint": canonical_fingerprint(rows),
-            "files": rows,
-            "claim_boundary": "This manifest proves only byte-complete bundled PhysicsGuard Python runtime authority for the current installed skill projection; it does not prove native checks executed.",
-        }
-        (runtime_root / "native-runtime-manifest.json").write_text(
-            stable_json(manifest), encoding="utf-8"
-        )
-    return [
-        path.relative_to(skill_root).as_posix()
-        for path in sorted(runtime_root.rglob("*"))
-        if path.is_file()
-        and "__pycache__" not in path.parts
-        and (path.suffix == ".py" or path.name == "native-runtime-manifest.json")
-    ]
+    if runtime_root.exists():
+        shutil.rmtree(runtime_root)
 
 
 def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
@@ -931,8 +905,8 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
     (guard_root / "oracles.json").write_text(stable_json(oracles), encoding="utf-8")
     (guard_root / "known-good.json").write_text(stable_json(known_good), encoding="utf-8")
     (guard_root / "known-bad.json").write_text(stable_json(known_bad), encoding="utf-8")
-    shutil.copyfile(ROOT / "src" / "physicsguard" / "guard_model_contract.py", guard_root / "verify.py")
-    runtime_paths = _sync_native_runtime(skill_root, skill_id)
+    _remove_copied_runtime(skill_root)
+    _write_runtime_requirement(skill_root, skill_id)
 
     export = _flowguard_export(skill_id, owner, route, guard_contract)
     model_path = skill_root / ".skillguard" / "contract_model.py"
@@ -950,11 +924,8 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
         {"kind": "path", "path": f"{repository_prefix}/guard-model/oracles.json"},
         {"kind": "path", "path": f"{repository_prefix}/guard-model/known-good.json"},
         {"kind": "path", "path": f"{repository_prefix}/guard-model/known-bad.json"},
-        {"kind": "path", "path": f"{repository_prefix}/guard-model/verify.py"},
-        *[
-            {"kind": "path", "path": f"{repository_prefix}/{path}"}
-            for path in runtime_paths
-        ],
+        {"kind": "path", "path": f"{repository_prefix}/runtime-requirements.json"},
+        *({"kind": "path", "path": path} for path in CANONICAL_RUNTIME_INPUTS),
     ]
     candidate_selectors = [
         *contract_selectors,
@@ -969,7 +940,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
             "semantic_check_id": f"semantic:{skill_id}:family-baseline-contract",
             "kind": "command",
             "command": "python",
-            "args": ["guard-model/verify.py", "check-baseline-contract", "--skill-root", "{{target_root}}"],
+            "args": ["-m", "physicsguard.guard_model_contract", "check-baseline-contract", "--skill-root", "{{target_root}}"],
             "cwd_token": "target_root",
             "expected": {"exit_code": 0},
             "timeout_seconds": 120,
@@ -985,7 +956,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
             "semantic_check_id": f"semantic:{skill_id}:family-baseline-candidate",
             "kind": "command",
             "command": "python",
-            "args": ["guard-model/verify.py", "check-baseline-candidate", "--skill-root", "{{target_root}}"],
+            "args": ["-m", "physicsguard.guard_model_contract", "check-baseline-candidate", "--skill-root", "{{target_root}}"],
             "cwd_token": "target_root",
             "expected": {"exit_code": 0},
             "timeout_seconds": 120,
@@ -1001,7 +972,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
             "semantic_check_id": f"semantic:{skill_id}:family-baseline-good",
             "kind": "command",
             "command": "python",
-            "args": ["guard-model/verify.py", "prove-baseline-good", "--skill-root", "{{target_root}}"],
+            "args": ["-m", "physicsguard.guard_model_contract", "prove-baseline-good", "--skill-root", "{{target_root}}"],
             "cwd_token": "target_root",
             "expected": {"exit_code": 0},
             "timeout_seconds": 240,
@@ -1026,7 +997,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
                 "semantic_check_id": f"semantic:{skill_id}:family-baseline-blocks:{suffix}",
                 "kind": "command",
                 "command": "python",
-                "args": ["guard-model/verify.py", "prove-baseline-bad", "--skill-root", "{{target_root}}", "--failure-id", failure_id],
+                "args": ["-m", "physicsguard.guard_model_contract", "prove-baseline-bad", "--skill-root", "{{target_root}}", "--failure-id", failure_id],
                 "cwd_token": "target_root",
                 "expected": {"exit_code": 0},
                 "timeout_seconds": 240,
@@ -1072,7 +1043,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
                     f"native-check:{skill_id}:"
                     f"{binding_id_fragment(str(check['check_id']))}"
                 ),
-                "evidence_source": "guard-model/verify.py",
+                "evidence_source": "physicsguard.guard_model_contract",
                 "native_check_id": str(check["check_id"]),
                 "required": True,
             }
@@ -1168,6 +1139,10 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
 
     skill_path = skill_root / "SKILL.md"
     text = skill_path.read_text(encoding="utf-8")
+    text = text.replace(
+        "python runtime/skill_execution_depth.py",
+        "python -m physicsguard.skill_execution_depth",
+    )
     if SKILLGUARD_LAYER_START in text and SKILLGUARD_LAYER_END in text:
         prefix, remainder = text.split(SKILLGUARD_LAYER_START, 1)
         _, suffix = remainder.split(SKILLGUARD_LAYER_END, 1)
@@ -1181,7 +1156,25 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
         text = text.rstrip() + "\n\n" + section + "\n"
     skill_path.write_text(text, encoding="utf-8")
 
-    source_contract["implementation_paths"] = _implementation_paths(skill_root)
+    source_contract["implementation_paths"] = sorted(
+        {
+            *_implementation_paths(skill_root),
+            *CANONICAL_RUNTIME_INPUTS,
+            "scripts/upgrade_purpose_contracts.py",
+        }
+    )
+    source_contract["projection_consumers"] = [
+        {
+            "consumer_id": "projection:physicsguard-family-contract-generation",
+            "kind": "source_maintenance",
+            "input_selectors": [
+                {
+                    "kind": "path",
+                    "path": "scripts/upgrade_purpose_contracts.py",
+                }
+            ],
+        }
+    ]
     source_path.write_text(stable_json(source_contract), encoding="utf-8")
 
 

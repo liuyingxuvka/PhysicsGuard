@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Run the PhysicsGuard CLI from this skill's bundled target runtime."""
+"""Run the one installed PhysicsGuard simulator used by all maintained skills."""
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-
-SKILL_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SKILL_ROOT / "runtime"))
-
-from physicsguard.cli import main
+try:
+    from physicsguard.cli import main
+except ModuleNotFoundError as exc:
+    if exc.name != "physicsguard":
+        raise
+    raise SystemExit(
+        "PhysicsGuard runtime is unavailable. Install the current physicsguard "
+        "package before using this skill; no bundled fallback is provided."
+    ) from exc
 
 
 if __name__ == "__main__":

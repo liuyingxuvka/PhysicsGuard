@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -10,6 +9,8 @@ import sys
 
 import pytest
 
+import physicsguard
+import physicsguard.guard_model_contract as guard_model_contract
 from physicsguard.guard_model_contract import (
     ADMISSION_PROOF,
     BASELINE_ROLE,
@@ -82,9 +83,8 @@ def test_semantic_detection_and_admission_proofs_are_truthfully_disjoint() -> No
     assert admission_count == 39
 
 
-def test_every_declared_proof_executes_through_the_target_verifier() -> None:
+def test_every_declared_proof_executes_through_the_canonical_verifier() -> None:
     for skill_root in SKILLS:
-        verifier = skill_root / "guard-model" / "verify.py"
         contract = json.loads(
             (skill_root / "guard-model" / "contract.json").read_text(encoding="utf-8")
         )
@@ -100,7 +100,8 @@ def test_every_declared_proof_executes_through_the_target_verifier() -> None:
             completed = subprocess.run(
                 [
                     sys.executable,
-                    str(verifier),
+                    "-m",
+                    "physicsguard.guard_model_contract",
                     action,
                     "--skill-root",
                     str(skill_root),
@@ -180,54 +181,60 @@ def test_candidate_missing_mismatch_and_candidate_before_purpose_fail_closed(
         validate_baseline_bundle(premature)
 
 
-def test_primary_runtime_manifest_is_complete_and_every_check_fingerprints_it() -> None:
-    runtime_root = PRIMARY / "runtime"
-    manifest = json.loads(
-        (runtime_root / "native-runtime-manifest.json").read_text(encoding="utf-8")
-    )
-    declared = {str(row["path"]): str(row["sha256"]) for row in manifest["files"]}
-    expected_sources = {
-        "skill_execution_depth.py": ROOT / "src/physicsguard/skill_execution_depth.py",
-        **{
-            f"physicsguard/{path.relative_to(ROOT / 'src/physicsguard').as_posix()}": path
-            for path in sorted((ROOT / "src/physicsguard").rglob("*.py"))
-            if "__pycache__" not in path.parts
-        },
+def test_every_skill_declares_one_canonical_package_runtime() -> None:
+    canonical_sources = {
+        "src/physicsguard/guard_model_contract.py",
+        "src/physicsguard/skill_execution_depth.py",
     }
-    assert set(declared) == set(expected_sources)
-    assert manifest["source_file_count"] == len(expected_sources)
-    for relative, source in expected_sources.items():
-        expected_hash = hashlib.sha256(source.read_bytes()).hexdigest()
-        assert declared[relative] == expected_hash
-        assert hashlib.sha256((runtime_root / relative).read_bytes()).hexdigest() == expected_hash
-
-    source_contract = json.loads(
-        (PRIMARY / ".skillguard/contract-source.json").read_text(encoding="utf-8")
-    )
-    runtime_prefix = f"skill/{PRIMARY.name}/runtime"
-    runtime_paths = {f"{runtime_prefix}/{relative}" for relative in declared}
-    runtime_paths.add(f"{runtime_prefix}/native-runtime-manifest.json")
-    assert runtime_paths <= set(source_contract["implementation_paths"])
-    for check in source_contract["checks"]:
-        selectors = {
-            str(row.get("path"))
-            for row in check.get("input_selectors", [])
-            if isinstance(row, dict) and row.get("kind") == "path"
+    for skill_root in SKILLS:
+        requirement = json.loads(
+            (skill_root / "runtime-requirements.json").read_text(encoding="utf-8")
+        )
+        assert requirement == {
+            "schema_version": "physicsguard.skill_runtime_requirement.v1",
+            "target_skill_id": skill_root.name,
+            "package_name": "physicsguard",
+            "package_version": physicsguard.__version__,
+            "entrypoints": [
+                "physicsguard.cli",
+                "physicsguard.guard_model_contract",
+                "physicsguard.skill_execution_depth",
+            ],
+            "missing_dependency_behavior": "fail_visible",
+            "fallback": False,
+            "claim_boundary": (
+                "This declares only the shared simulator required to execute the skill. "
+                "It does not prove a domain check ran or authorize a result."
+            ),
         }
-        assert runtime_paths <= selectors, check["check_id"]
+        assert not (skill_root / "runtime").exists()
+        assert not (skill_root / "guard-model/verify.py").exists()
+        source_contract = json.loads(
+            (skill_root / ".skillguard/contract-source.json").read_text(encoding="utf-8")
+        )
+        requirement_path = f"skill/{skill_root.name}/runtime-requirements.json"
+        assert canonical_sources | {requirement_path} <= set(
+            source_contract["implementation_paths"]
+        )
+        for check in source_contract["checks"]:
+            assert check["args"][:2] == ["-m", "physicsguard.guard_model_contract"]
+            selectors = {
+                str(row.get("path"))
+                for row in check.get("input_selectors", [])
+                if isinstance(row, dict) and row.get("kind") == "path"
+            }
+            assert canonical_sources | {requirement_path} <= selectors, check["check_id"]
 
 
-def test_missing_bundled_primary_runtime_blocks_even_with_global_import(
-    tmp_path: Path,
+def test_missing_canonical_package_authority_blocks_without_fallback(
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    __import__("physicsguard")
-    target = tmp_path / PRIMARY.name
-    shutil.copytree(PRIMARY, target)
-    missing = target / "runtime/physicsguard/core/validation_depth.py"
-    assert missing.is_file()
-    missing.unlink()
-    with pytest.raises(GuardModelContractError, match="bundled_runtime_inventory_mismatch"):
-        validate_baseline_contract_bundle(target)
+    def _missing(_name: str) -> str:
+        raise guard_model_contract.metadata.PackageNotFoundError("physicsguard")
+
+    monkeypatch.setattr(guard_model_contract.metadata, "version", _missing)
+    with pytest.raises(GuardModelContractError, match="canonical_physicsguard_package_missing"):
+        validate_baseline_contract_bundle(PRIMARY)
 
 
 def test_generic_skillguard_contract_contains_only_target_owned_native_integration() -> None:
@@ -269,7 +276,7 @@ def test_generic_skillguard_contract_contains_only_target_owned_native_integrati
                 "binding_id": (
                     f"native-check:{skill_root.name}:{check_id.replace(':', '-')}"
                 ),
-                "evidence_source": "guard-model/verify.py",
+                "evidence_source": "physicsguard.guard_model_contract",
                 "native_check_id": check_id,
                 "required": True,
             }

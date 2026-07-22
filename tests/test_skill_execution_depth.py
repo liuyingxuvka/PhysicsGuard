@@ -602,7 +602,7 @@ def test_satellite_contracts_use_generic_supervision_for_native_guard_proofs() -
         assert source["native_check_bindings"] == [
             {
                 "binding_id": f"native-check:{target}:{check_id.replace(':', '-')}",
-                "evidence_source": "guard-model/verify.py",
+                "evidence_source": "physicsguard.guard_model_contract",
                 "native_check_id": check_id,
                 "required": True,
             }

@@ -18,43 +18,43 @@
   "native_check_bindings": [
     {
       "binding_id": "native-check:physicsguard-project-evidence-registry:check-physicsguard-project-evidence-registry-family-baseline-contract",
-      "evidence_source": "guard-model/verify.py",
+      "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-project-evidence-registry:family-baseline-contract",
       "required": true
     },
     {
       "binding_id": "native-check:physicsguard-project-evidence-registry:check-physicsguard-project-evidence-registry-family-baseline-candidate",
-      "evidence_source": "guard-model/verify.py",
+      "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-project-evidence-registry:family-baseline-candidate",
       "required": true
     },
     {
       "binding_id": "native-check:physicsguard-project-evidence-registry:check-physicsguard-project-evidence-registry-family-baseline-good",
-      "evidence_source": "guard-model/verify.py",
+      "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-project-evidence-registry:family-baseline-good",
       "required": true
     },
     {
       "binding_id": "native-check:physicsguard-project-evidence-registry:check-physicsguard-project-evidence-registry-family-baseline-bad-artifact-universe-shrunk",
-      "evidence_source": "guard-model/verify.py",
+      "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-project-evidence-registry:family-baseline-bad:artifact-universe-shrunk",
       "required": true
     },
     {
       "binding_id": "native-check:physicsguard-project-evidence-registry:check-physicsguard-project-evidence-registry-family-baseline-bad-binding-or-role-missing",
-      "evidence_source": "guard-model/verify.py",
+      "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-project-evidence-registry:family-baseline-bad:binding-or-role-missing",
       "required": true
     },
     {
       "binding_id": "native-check:physicsguard-project-evidence-registry:check-physicsguard-project-evidence-registry-family-baseline-bad-critical-gap-hidden",
-      "evidence_source": "guard-model/verify.py",
+      "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-project-evidence-registry:family-baseline-bad:critical-gap-hidden",
       "required": true
     },
     {
       "binding_id": "native-check:physicsguard-project-evidence-registry:check-physicsguard-project-evidence-registry-family-baseline-bad-bundle-scope-overreach",
-      "evidence_source": "guard-model/verify.py",
+      "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-project-evidence-registry:family-baseline-bad:bundle-scope-overreach",
       "required": true
     }
@@ -111,7 +111,8 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "-m",
+        "physicsguard.guard_model_contract",
         "check-baseline-contract",
         "--skill-root",
         "{{target_root}}"
@@ -147,11 +148,15 @@
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json"
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+          "path": "src/physicsguard/guard_model_contract.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/skill_execution_depth.py"
         }
       ],
       "maintenance_unit_id": "unit:physicsguard-family",
@@ -164,7 +169,8 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "-m",
+        "physicsguard.guard_model_contract",
         "check-baseline-candidate",
         "--skill-root",
         "{{target_root}}"
@@ -202,11 +208,15 @@
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json"
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+          "path": "src/physicsguard/guard_model_contract.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/skill_execution_depth.py"
         },
         {
           "kind": "path",
@@ -223,7 +233,8 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "-m",
+        "physicsguard.guard_model_contract",
         "prove-baseline-good",
         "--skill-root",
         "{{target_root}}"
@@ -261,11 +272,15 @@
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json"
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+          "path": "src/physicsguard/guard_model_contract.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/skill_execution_depth.py"
         },
         {
           "kind": "path",
@@ -282,7 +297,8 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "-m",
+        "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -322,11 +338,15 @@
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json"
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+          "path": "src/physicsguard/guard_model_contract.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/skill_execution_depth.py"
         },
         {
           "kind": "path",
@@ -343,7 +363,8 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "-m",
+        "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -383,11 +404,15 @@
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json"
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+          "path": "src/physicsguard/guard_model_contract.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/skill_execution_depth.py"
         },
         {
           "kind": "path",
@@ -404,7 +429,8 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "-m",
+        "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -444,11 +470,15 @@
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json"
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+          "path": "src/physicsguard/guard_model_contract.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/skill_execution_depth.py"
         },
         {
           "kind": "path",
@@ -465,7 +495,8 @@
       "kind": "command",
       "command": "python",
       "args": [
-        "guard-model/verify.py",
+        "-m",
+        "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
         "{{target_root}}",
@@ -505,11 +536,15 @@
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/guard-model/verify.py"
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json"
         },
         {
           "kind": "path",
-          "path": "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+          "path": "src/physicsguard/guard_model_contract.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/skill_execution_depth.py"
         },
         {
           "kind": "path",
@@ -617,6 +652,7 @@
     }
   ],
   "implementation_paths": [
+    "scripts/upgrade_purpose_contracts.py",
     "skill/physicsguard-project-evidence-registry/.skillguard/contract_model.py",
     "skill/physicsguard-project-evidence-registry/SKILL.md",
     "skill/physicsguard-project-evidence-registry/guard-model/candidate.json",
@@ -624,8 +660,9 @@
     "skill/physicsguard-project-evidence-registry/guard-model/known-bad.json",
     "skill/physicsguard-project-evidence-registry/guard-model/known-good.json",
     "skill/physicsguard-project-evidence-registry/guard-model/oracles.json",
-    "skill/physicsguard-project-evidence-registry/guard-model/verify.py",
-    "skill/physicsguard-project-evidence-registry/runtime/skill_execution_depth.py"
+    "skill/physicsguard-project-evidence-registry/runtime-requirements.json",
+    "src/physicsguard/guard_model_contract.py",
+    "src/physicsguard/skill_execution_depth.py"
   ],
   "repository_role": "skill_maintainer_source",
   "maintenance_unit_id": "unit:physicsguard-family",
@@ -659,6 +696,18 @@
       "role": "test_dev",
       "install_disposition": "source_only",
       "reason": "author_only_guard_contract"
+    }
+  ],
+  "projection_consumers": [
+    {
+      "consumer_id": "projection:physicsguard-family-contract-generation",
+      "kind": "source_maintenance",
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "scripts/upgrade_purpose_contracts.py"
+        }
+      ]
     }
   ]
 }

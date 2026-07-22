@@ -10,7 +10,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 AUDIT_SCRIPT = ROOT / "scripts" / "verify_guard_simulation_readiness.py"
 CURRENT_INVENTORY = ROOT / ".flowguard" / "physicsguard_v1_retirement_inventory.json"
-PARENT_SOURCE = ROOT / ".flowguard" / "skillguard-parent" / ".skillguard" / "contract-source.json"
+STRUCTURE_REPORT = ROOT / "scripts" / "report_physicsguard_skill_suite.py"
 RETIRED_ACTIVE_INVENTORY = (
     ROOT
     / "openspec"
@@ -63,32 +63,42 @@ def test_missing_current_inventory_blocks_without_archive_fallback(
         )
 
 
-def test_parent_declares_every_transitive_retirement_input() -> None:
-    source = json.loads(PARENT_SOURCE.read_text(encoding="utf-8"))
-    required = {
-        "scripts/verify_physicsguard_suite_parent.py",
-        "scripts/verify_guard_simulation_readiness.py",
-        ".flowguard/physicsguard_v1_retirement_inventory.json",
-    }
+def test_retired_parent_authority_is_absent_and_summary_is_source_only() -> None:
+    retired = (
+        ROOT / ".flowguard" / "skillguard-parent",
+        ROOT / ".flowguard" / "physicsguard_suite_parent_inventory.json",
+        ROOT / "scripts" / "generate_physicsguard_suite_parent_contract.py",
+        ROOT / "scripts" / "verify_physicsguard_suite_parent.py",
+    )
+    assert all(not path.exists() for path in retired)
 
-    child_checks = [
-        row
-        for row in source["checks"]
-        if row["check_id"].startswith("check:physicsguard-skill-suite-parent:consume:")
-    ]
-    assert len(child_checks) == 10
-    for check in child_checks:
-        selectors = {row["path"] for row in check["input_selectors"]}
-        assert required <= selectors
-    assert required <= set(source["implementation_paths"])
-    assert "openspec/changes/" not in json.dumps(source)
+    spec = importlib.util.spec_from_file_location(
+        "physicsguard_structure_report_under_test", STRUCTURE_REPORT
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    report = module.build_report(ROOT)
+
+    assert report["structure_status"] == "pass"
+    assert report["authoritative"] is False
+    assert report["maintenance_unit_id"] == "unit:physicsguard-family"
+    assert report["member_count"] == 10
+    assert report["declared_check_count"] == 74
 
 
-def test_post_archive_runtime_retirement_audit_is_current() -> None:
+def test_post_archive_source_retirement_audit_is_current_without_install_claim() -> None:
     audit = _load_audit_module()
-    skill_rows = [audit._skill_status(*row) for row in audit.SKILLS]
-    assert all(row["ok"] for row in skill_rows), json.dumps(
-        skill_rows,
+    source_rows = [
+        audit._authority_status(
+            ROOT / source_relative,
+            target_skill_id,
+            audit.retirement_receipt_path(target_skill_id),
+        )
+        for target_skill_id, source_relative, _installed_name in audit.SKILLS
+    ]
+    assert all(row["ok"] for row in source_rows), json.dumps(
+        source_rows,
         ensure_ascii=False,
         indent=2,
     )
