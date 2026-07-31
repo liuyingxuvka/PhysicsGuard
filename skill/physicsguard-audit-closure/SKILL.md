@@ -25,6 +25,12 @@ python <physicsguard-ai-debugging skill directory>\scripts\physicsguard_closure_
 ```
 
 Blocking or downgrading evidence includes failed audit, missing variables or parameters, review-required mappings, stale evidence, skipped checks, open refinements, and same-family follow-ups.
+For interval-aware work, `indeterminate` and `not_run` remain visible and
+cannot be promoted to robust pass. For diagnosability work, unresolved
+hypothesis pairs, missing fault-signature intervals, or a missing recommended
+signal disposition block an isolated-fault claim. `isolable` means only that
+the declared signatures can be separated by declared signals; it is not proof
+of the true fault.
 For workflows that include concrete test data files, also treat missing,
 partial, stale, or failing test-file contracts as blocking or downgrading
 evidence. A residual report cannot make a broad claim from a file whose fields
@@ -133,7 +139,7 @@ Family route bounded claim: Closure proves only the exact requested audit scope 
 
 Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
 
-Shared simulator prerequisite: install the current `physicsguard==0.11.3` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
+Shared simulator prerequisite: install the current `physicsguard==0.13.0` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
 
 Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
 

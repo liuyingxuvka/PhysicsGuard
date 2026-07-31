@@ -1,0 +1,153 @@
+{
+  "schema_version": "flowguard.model_regression_manifest.v3",
+  "governed_input_globs": [
+    ".flowguard/guard_closure_contract/model.py",
+    ".flowguard/guard_closure_contract/run_checks.py",
+    ".flowguard/interval_diagnosability/model.py",
+    ".flowguard/interval_diagnosability/run_checks.py",
+    "src/physicsguard/core/diagnosability.py",
+    "src/physicsguard/schema/diagnosability.py",
+    "src/physicsguard/core/task_local_revision.py",
+    "src/physicsguard/cli.py",
+    "skill/physicsguard-ai-debugging/SKILL.md",
+    "skill/physicsguard-model-understanding-preflight/SKILL.md",
+    "skill/physicsguard-signal-mapping-review/SKILL.md",
+    "skill/physicsguard-audit-closure/SKILL.md",
+    "tests/test_diagnosability.py",
+    "tests/test_task_local_revision.py"
+  ],
+  "snapshot_only_input_globs": [
+    ".flowguard/model-mesh/snapshots/*.json",
+    ".flowguard/model-mesh/receipts/*.json"
+  ],
+  "shared_input_groups": [],
+  "models": [
+    {
+      "model_id": "guard_closure_contract",
+      "model_path": ".flowguard/guard_closure_contract/model.py",
+      "runner": [
+        "{python}",
+        ".flowguard/guard_closure_contract/run_checks.py"
+      ],
+      "tier": "full",
+      "timeout_seconds": 120,
+      "shard_safe": true,
+      "mutation_policy": "none",
+      "input_globs": [
+        ".flowguard/guard_closure_contract/model.py",
+        ".flowguard/guard_closure_contract/run_checks.py"
+      ],
+      "expected_artifacts": [],
+      "exclusion_reason": "",
+      "distribution_policy": "required_public",
+      "absence_reason": "",
+      "model_kind": "executable_workflow",
+      "purpose_closure": {
+        "schema_version": "flowguard.model_purpose_closure.v1",
+        "model_instance_id": "regression:guard_closure_contract:0.13.0",
+        "reusable_model_type_id": "guard_closure_contract",
+        "task_intent_id": "physicsguard-regression:guard-closure",
+        "declaration_phase": "before_candidate",
+        "guarded_purpose": "Prevent partial, stale, skipped, or blocked child-Guard evidence from supporting a done claim.",
+        "protected_failure_ids": [
+          "physicsguard:partial-closure-promoted",
+          "physicsguard:stale-or-skipped-closure-promoted"
+        ],
+        "claim_boundary": "This closure covers only the declared Guard-family closure-report states and does not prove child domain evidence.",
+        "adoption_scope": "current_candidate_only",
+        "known_good_case_id": "native-runner:guard-closure:clean-report",
+        "failure_bindings": [
+          {
+            "failure_id": "physicsguard:partial-closure-promoted",
+            "known_bad_case_id": "known-bad:guard_closure_contract:1",
+            "oracle_id": "native:guard_closure_contract:run-checks"
+          },
+          {
+            "failure_id": "physicsguard:stale-or-skipped-closure-promoted",
+            "known_bad_case_id": "known-bad:guard_closure_contract:2",
+            "oracle_id": "native:guard_closure_contract:run-checks"
+          }
+        ],
+        "evidence_check_ids": [
+          "check:model-regression:guard-closure"
+        ],
+        "model_sha256": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa",
+        "runner_sha256": "sha256:24cd4f1ba388f021880170f9acacb373f6605c987aae816938e25272e50cfac2",
+        "declaration_fingerprint": "sha256:449da12b4dcf61ec3c654d13696e98b9b724d35c66aa2142be4fc27c1e54666a",
+        "closure_fingerprint": "sha256:777aa59866a624892ba579c9f7b352f6b979e92a50be7225da1ccc28b2c69e19"
+      }
+    },
+    {
+      "model_id": "interval_diagnosability",
+      "model_path": ".flowguard/interval_diagnosability/model.py",
+      "runner": [
+        "{python}",
+        ".flowguard/interval_diagnosability/run_checks.py"
+      ],
+      "tier": "full",
+      "timeout_seconds": 120,
+      "shard_safe": true,
+      "mutation_policy": "none",
+      "input_globs": [
+        ".flowguard/interval_diagnosability/model.py",
+        ".flowguard/interval_diagnosability/run_checks.py",
+        "src/physicsguard/core/diagnosability.py",
+        "src/physicsguard/schema/diagnosability.py",
+        "src/physicsguard/core/task_local_revision.py",
+        "src/physicsguard/cli.py",
+        "skill/physicsguard-ai-debugging/SKILL.md",
+        "skill/physicsguard-model-understanding-preflight/SKILL.md",
+        "skill/physicsguard-signal-mapping-review/SKILL.md",
+        "skill/physicsguard-audit-closure/SKILL.md",
+        "tests/test_diagnosability.py",
+        "tests/test_task_local_revision.py"
+      ],
+      "expected_artifacts": [],
+      "exclusion_reason": "",
+      "distribution_policy": "required_public",
+      "absence_reason": "",
+      "model_kind": "executable_workflow",
+      "purpose_closure": {
+        "schema_version": "flowguard.model_purpose_closure.v1",
+        "model_instance_id": "regression:interval_diagnosability:0.13.0",
+        "reusable_model_type_id": "interval_diagnosability",
+        "task_intent_id": "physicsguard-regression:interval-diagnosability",
+        "declaration_phase": "before_candidate",
+        "guarded_purpose": "Prevent interval uncertainty from being collapsed to point pass/fail or task-local signatures from being promoted to true-fault claims.",
+        "protected_failure_ids": [
+          "physicsguard:interval-crossing-collapsed",
+          "physicsguard:indistinguishable-pair-hidden",
+          "physicsguard:true-fault-overclaim"
+        ],
+        "claim_boundary": "This closure covers only declared finite interval and fault-signature scenarios; external physical truth requires separate evidence.",
+        "adoption_scope": "current_candidate_only",
+        "known_good_case_id": "native-runner:interval-diagnosability:declared-scenarios",
+        "failure_bindings": [
+          {
+            "failure_id": "physicsguard:interval-crossing-collapsed",
+            "known_bad_case_id": "known-bad:interval_diagnosability:1",
+            "oracle_id": "native:interval_diagnosability:run-checks"
+          },
+          {
+            "failure_id": "physicsguard:indistinguishable-pair-hidden",
+            "known_bad_case_id": "known-bad:interval_diagnosability:2",
+            "oracle_id": "native:interval_diagnosability:run-checks"
+          },
+          {
+            "failure_id": "physicsguard:true-fault-overclaim",
+            "known_bad_case_id": "known-bad:interval_diagnosability:3",
+            "oracle_id": "native:interval_diagnosability:run-checks"
+          }
+        ],
+        "evidence_check_ids": [
+          "check:model-regression:interval-diagnosability",
+          "check:physicsguard:diagnosability-tests"
+        ],
+        "model_sha256": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c",
+        "runner_sha256": "sha256:3514876e30f1cdad7bcf14dd50a4ad178456d47f45de4d9e1edbf0a36cca6fdc",
+        "declaration_fingerprint": "sha256:cfe3d7732e508e7910c2d03d01b7702efcf49b15ed76223935a918bb0ffd1c8a",
+        "closure_fingerprint": "sha256:34c6d36aa80495af2cce6d380cdd473d5ca4b222bb63394429a8a21002564b5d"
+      }
+    }
+  ]
+}

@@ -120,10 +120,19 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 
    Preserve supported, weakened, and undetermined hypotheses. Missing targets
    remain missing; they are not retroactive support.
-15. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
-16. Request or export only the next small set of signals/parameters needed by the suspicious block and the live-hypothesis distinction.
-17. Refine that block with a lower-level audit template.
-18. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
+15. When measurement, mapping, or low-fidelity model uncertainty is bounded by
+   intervals, keep it as an interval. Use `task-model interval-residual` and
+   report `robust_pass`, `robust_fail`, `indeterminate`, or `not_run`; never
+   collapse an interval-crossing result into the ordinary audit pass/fail.
+16. For fault localization, use the existing task-local hypotheses as fault
+   signatures and run `task-model diagnose`. Report pairwise
+   distinguishability, viable and rejected hypotheses, unresolved pairs, and
+   the ranked next signal. The result is task-local and does not prove that the
+   hypothesis inventory exhausts physical reality.
+17. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+18. Request or export only the next small set of signals/parameters needed by the suspicious block and the live-hypothesis distinction.
+19. Refine that block with a lower-level audit template.
+20. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
@@ -303,7 +312,7 @@ Family route bounded claim: This route can license only a low-fidelity, evidence
 
 Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
 
-Shared simulator prerequisite: install the current `physicsguard==0.11.3` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
+Shared simulator prerequisite: install the current `physicsguard==0.13.0` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
 
 Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
 

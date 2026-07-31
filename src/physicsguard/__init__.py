@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.11.3"
+__version__ = "0.13.0"
 
 from physicsguard.core.signal_mapping import (
     BugFamilyFollowUp,
@@ -44,6 +44,10 @@ from physicsguard.core.task_local_revision import (
     freeze_hypothesis_plan,
     rank_observation_candidates,
 )
+from physicsguard.core.diagnosability import (
+    evaluate_diagnosability,
+    evaluate_interval_residual,
+)
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -75,6 +79,8 @@ __all__ = [
     "validate_model_dataset",
     "evaluate_candidate_model_revision",
     "evaluate_hypothesis_observation",
+    "evaluate_diagnosability",
+    "evaluate_interval_residual",
     "freeze_hypothesis_plan",
     "rank_observation_candidates",
 ]

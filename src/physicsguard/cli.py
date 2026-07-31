@@ -43,6 +43,10 @@ from physicsguard.core.task_local_revision import (
     evaluate_hypothesis_observation,
     freeze_hypothesis_plan,
 )
+from physicsguard.core.diagnosability import (
+    evaluate_diagnosability,
+    evaluate_interval_residual,
+)
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
 from physicsguard.io.test_file_contract_loader import load_yaml_mapping
@@ -52,6 +56,10 @@ from physicsguard.schema.task_local_revision import (
     CandidateModelRevisionSpec,
     DiagnosticObservationSpec,
     HypothesisPlanSpec,
+)
+from physicsguard.schema.diagnosability import (
+    DiagnosabilityRequestSpec,
+    IntervalResidualSpec,
 )
 from physicsguard.workflow import (
     adopt_project,
@@ -179,6 +187,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="path to a CandidateModelRevisionSpec YAML",
     )
     task_model_revision.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    task_model_interval = task_model_subparsers.add_parser(
+        "interval-residual",
+        help="classify one residual interval as robust pass, fail, indeterminate, or not-run",
+    )
+    task_model_interval.add_argument(
+        "residual",
+        type=Path,
+        help="path to an IntervalResidualSpec YAML",
+    )
+    task_model_interval.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    task_model_diagnose = task_model_subparsers.add_parser(
+        "diagnose",
+        help="evaluate task-local fault signatures and recommend the next signal",
+    )
+    task_model_diagnose.add_argument(
+        "diagnosis",
+        type=Path,
+        help="path to a DiagnosabilityRequestSpec YAML",
+    )
+    task_model_diagnose.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     assumptions_parser = subparsers.add_parser(
         "assumptions",
@@ -497,6 +525,28 @@ def task_model_revision_command(path: Path, pretty: bool = False) -> int:
     return 0 if output["status"] == "pass" else 1
 
 
+def task_model_interval_residual_command(
+    path: Path,
+    pretty: bool = False,
+) -> int:
+    residual = IntervalResidualSpec.model_validate(load_yaml_mapping(path))
+    output = evaluate_interval_residual(residual)
+    _print_json(output, pretty)
+    return 0
+
+
+def task_model_diagnose_command(
+    path: Path,
+    pretty: bool = False,
+) -> int:
+    diagnosis = DiagnosabilityRequestSpec.model_validate(
+        load_yaml_mapping(path)
+    )
+    output = evaluate_diagnosability(diagnosis)
+    _print_json(output, pretty)
+    return 0
+
+
 def assumptions_inspect(path: Path, pretty: bool = False) -> int:
     system = load_system_spec(path)
     builder = ResidualBuilder(system)
@@ -693,6 +743,16 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             if args.task_model_command == "revision":
                 return task_model_revision_command(args.revision, args.pretty)
+            if args.task_model_command == "interval-residual":
+                return task_model_interval_residual_command(
+                    args.residual,
+                    args.pretty,
+                )
+            if args.task_model_command == "diagnose":
+                return task_model_diagnose_command(
+                    args.diagnosis,
+                    args.pretty,
+                )
         if args.command == "assumptions":
             if args.assumptions_command == "inspect":
                 return assumptions_inspect(args.system, args.pretty)

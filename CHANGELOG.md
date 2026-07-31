@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.13.0 - 2026-07-30
+
+- Preserve bounded observation and residual uncertainty as intervals with
+  `robust_pass`, `robust_fail`, `indeterminate`, and `not_run` statuses.
+- Add task-local fault signatures, pairwise detectability/isolability evidence,
+  viable and rejected hypothesis inventories, unresolved pairs, and
+  deterministic next-signal ranking.
+- Keep diagnosability subordinate to the existing task-local
+  competing-hypothesis route; it never creates a parallel audit owner or
+  claims the true physical fault.
+- Refresh all ten maintained skill runtime contracts to PhysicsGuard v0.13.0
+  and register the new FlowGuard behavior boundary.
+
 ## v0.11.3 - 2026-07-22
 
 - Adopt SkillGuard 0.4 bounded evidence lifecycle while preserving 74 target-owned checks across ten maintained skills.

@@ -12,7 +12,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.11.3` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.13.0` | Python 3.11+ | `physicsguard` | MIT |
 
 English comes first. A Chinese mirror follows below.
 
@@ -23,6 +23,12 @@ PhysicsGuard is a Python toolkit and Codex skill for AI-guided debugging of phys
 It helps an agent build a low-fidelity physical understanding map before it tries to fix, explain, or generate anything. That map names the visible symptom, subsystem boundary, interfaces, SI units, conservation relations, mapped signals, assumptions, residual checks, and stop condition.
 
 From that map, PhysicsGuard can evaluate observed or user-mapped values, rank suspicious blocks, expose assumptions, recommend the next signals or parameters to inspect, and produce a candidate-model blueprint for a separate user-owned model.
+
+The task-local diagnostic route also preserves bounded measurement, mapping,
+and model uncertainty as intervals. It reports robust pass/fail,
+indeterminate, or not-run residual status, derives pairwise fault-signature
+distinguishability, and recommends the next declared signal without claiming
+the true physical fault.
 
 It does not parse commercial solver formats, reverse engineer proprietary models, replace the original solver, or claim high-fidelity equivalence. The original engineering model remains the source of truth.
 
@@ -152,7 +158,7 @@ Do not use it when:
 
 ## Library Coverage
 
-PhysicsGuard `v0.11.3` includes low-fidelity audit relations for:
+PhysicsGuard `v0.13.0` includes low-fidelity audit relations for:
 
 - controls, sensors, actuators, delays, saturation, maps, and PID-like steps;
 - drivetrain, vehicle, brake, wheel, gearbox, and road-load relations;
@@ -209,7 +215,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.11.3` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.13.0` | Python 3.11+ | `physicsguard` | MIT |
 
 ## 它是什么
 
@@ -347,7 +353,7 @@ PhysicsGuard 可以用紧凑图表解释：
 
 ## 模块覆盖
 
-PhysicsGuard `v0.11.3` 包含这些低保真审计关系：
+PhysicsGuard `v0.13.0` 包含这些低保真审计关系：
 
 - controls、sensors、actuators、delays、saturation、maps、PID-like steps；
 - drivetrain、vehicle、brake、wheel、gearbox、road-load；

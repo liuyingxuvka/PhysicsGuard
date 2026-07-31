@@ -65,3 +65,10 @@ This log records project-level PhysicsGuard workflow adoption, audits, closure e
 - Record: .physicsguard/project.yaml
 - Boundary: version and author-contract synchronization only; native audit,
   installation, Git, and publication evidence remain separate gates.
+
+## physicsguard-project-upgrade
+
+- Version: 0.13.0
+- Schema: 1.0
+- Record: .physicsguard/project.yaml
+- Boundary: workflow adoption only; not runtime audit proof.

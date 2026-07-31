@@ -20,6 +20,10 @@ field has a catalog row, role/disposition, and evidence-backed mapping.
    ```
 
 3. If mappings are low confidence, missing conversion notes, review-required, or stale, review signal names, units, sign conventions, timing, and neighboring balance signals before blaming a physical parameter.
+4. If mapping or measurement error is bounded, preserve the lower and upper
+   bounds as an interval and identify the bound source. Do not replace a bounded
+   interval with its midpoint for robust residual or fault-signature analysis.
+   An interval that overlaps an acceptance boundary remains `indeterminate`.
 
 For model-dataset validation depth, the current project evidence registry and
 named bundle are the consumed mapping review. Every required model input,
@@ -104,7 +108,7 @@ Family route bounded claim: A mapping pass licenses only the exact external sign
 
 Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
 
-Shared simulator prerequisite: install the current `physicsguard==0.11.3` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
+Shared simulator prerequisite: install the current `physicsguard==0.13.0` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
 
 Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
 
