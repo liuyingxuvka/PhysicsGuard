@@ -14,4 +14,4 @@
 
 - [x] 3.1 Extend FlowGuard models with known-good, robust-fail, overlap-indeterminate, missing, and unit-mismatch cases.
 - [x] 3.2 Update SkillGuard contracts and focused/full tests.
-- [ ] 3.3 Update clean installed projection, README/changelog/version, and v0.13.0 release evidence.
+- [x] 3.3 Update clean installed projection, README/changelog/version, and v0.13.0 release evidence.

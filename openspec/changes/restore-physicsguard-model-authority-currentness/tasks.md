@@ -8,4 +8,4 @@
 
 - [x] 2.1 Rebuild affected SkillGuard currentness evidence.
 - [x] 2.2 Run one frozen full baseline validation.
-- [ ] 2.3 Supersede the no-publication v0.11.4 intermediate and close the repair in the combined v0.13.0 release.
+- [x] 2.3 Supersede the no-publication v0.11.4 intermediate and close the repair in the combined v0.13.0 release.
