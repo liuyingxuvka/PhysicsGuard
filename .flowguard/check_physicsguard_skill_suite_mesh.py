@@ -26,57 +26,65 @@ MESH_PATH = Path(__file__).with_name("physicsguard_skill_suite_mesh.json")
 CANONICAL_MODULES = {
     "src/physicsguard/guard_model_contract.py",
     "src/physicsguard/skill_execution_depth.py",
+    "src/physicsguard/schema/task_local_revision.py",
+    "src/physicsguard/core/task_local_revision.py",
+    "src/physicsguard/cli.py",
+}
+TASK_MODEL_MODULES = {
+    "src/physicsguard/schema/task_local_revision.py",
+    "src/physicsguard/core/task_local_revision.py",
+    "src/physicsguard/cli.py",
 }
 EXPECTED: dict[str, tuple[str, str, int]] = {
     "physicsguard-ai-debugging": (
         "physicsguard.ai-debugging",
         "route:physicsguard-ai-debugging:audit",
-        8,
+        9,
     ),
     "physicsguard-audit-closure": (
         "physicsguard.audit-closure",
         "route:physicsguard-audit-closure:close",
-        8,
+        9,
     ),
     "physicsguard-candidate-model-blueprint": (
         "physicsguard.candidate-model-blueprint",
         "route:physicsguard-candidate-model-blueprint:build",
-        7,
+        8,
     ),
     "physicsguard-model-dataset-validation": (
         "physicsguard-model-dataset-validation",
         "route:physicsguard-model-dataset-validation",
-        8,
+        9,
     ),
     "physicsguard-model-library": (
         "physicsguard.model-library",
         "route:physicsguard-model-library:reuse",
-        7,
+        8,
     ),
     "physicsguard-model-understanding-preflight": (
         "physicsguard.model-understanding-preflight",
         "route:physicsguard-model-understanding-preflight:review",
-        7,
+        8,
     ),
     "physicsguard-project-adoption": (
         "physicsguard.project-adoption",
         "route:physicsguard-project-adoption:audit",
-        7,
+        8,
     ),
     "physicsguard-project-evidence-registry": (
         "physicsguard.project-evidence-registry",
         "route:physicsguard-project-evidence-registry:check",
-        7,
+        8,
     ),
     "physicsguard-signal-mapping-review": (
         "physicsguard.signal-mapping-review",
         "route:physicsguard-signal-mapping-review:review",
-        7,
+        8,
     ),
     "physicsguard-test-file-contract-review": (
         "physicsguard.test-file-contract-review",
         "route:physicsguard-test-file-contract-review:check",
-        8,
+        9,
     ),
 }
 EXPECTED_GUARD_MODEL = {
@@ -111,6 +119,9 @@ EXPECTED_GUARD_MODEL = {
     "admission_claim_boundary": "candidate_rejected_only_when_current_target_native_obligation_evidence_is_absent_or_native_failed",
     "mode_branching": "forbidden",
     "family_baseline_can_close_current_model": False,
+    "task_local_model_role": "strict_receipt_derived_model_deepening",
+    "task_local_gap_authority": "target_owned_six_family_native_depth_receipt",
+    "task_local_closure_rule": "zero_native_gaps_plus_exact_candidate_regression_independent_holdout_and_predictive_receipts",
 }
 
 
@@ -221,13 +232,23 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
             _finding(findings, "depth_profile_native_identity_wrong", target)
         if depth.get("native_check_ids") != check_ids:
             _finding(findings, "depth_profile_check_inventory_wrong", target)
+        task_model_check = f"check:{target}:task-local-model-deepening"
+        if (
+            depth.get("model_deepening_check_id") != task_model_check
+            or task_model_check not in check_ids
+        ):
+            _finding(findings, "model_deepening_check_binding_wrong", target)
         if depth.get("skillguard_adds_domain_route") is not False:
             _finding(findings, "skillguard_adds_domain_route", target)
 
     expected_bindings = [
         {
             "binding_id": f"native-check:{target}:{_binding_id_fragment(check_id)}",
-            "evidence_source": "physicsguard.guard_model_contract",
+            "evidence_source": (
+                "physicsguard.task_local_revision"
+                if check_id.endswith(":task-local-model-deepening")
+                else "physicsguard.guard_model_contract"
+            ),
             "native_check_id": check_id,
             "required": True,
         }
@@ -242,10 +263,19 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
         if check.get("member_skill_id") != target:
             _finding(findings, "check_member_identity_wrong", str(check.get("check_id", "")))
         args = [str(value) for value in check.get("args", [])]
-        if args[:2] != ["-m", "physicsguard.guard_model_contract"]:
-            _finding(findings, "noncanonical_guard_model_entrypoint", str(check.get("check_id", "")))
+        is_task_model = str(check.get("check_id", "")).endswith(
+            ":task-local-model-deepening"
+        )
+        expected_entrypoint = (
+            ["-m", "pytest"]
+            if is_task_model
+            else ["-m", "physicsguard.guard_model_contract"]
+        )
+        if args[:2] != expected_entrypoint:
+            _finding(findings, "noncanonical_native_entrypoint", str(check.get("check_id", "")))
         selectors = _path_selectors(check)
-        if not CANONICAL_MODULES <= selectors:
+        required_modules = TASK_MODEL_MODULES if is_task_model else CANONICAL_MODULES
+        if not required_modules <= selectors:
             _finding(findings, "canonical_simulator_input_missing", str(check.get("check_id", "")))
         if any(
             path.endswith("/guard-model/verify.py")
@@ -353,7 +383,7 @@ def check_mesh(mesh: Mapping[str, Any], *, check_targets: bool = True) -> dict[s
         _finding(findings, "canonical_simulator_missing", "Canonical simulator boundary is required.")
     else:
         if set(map(str, simulator.get("source_authority", []))) != CANONICAL_MODULES:
-            _finding(findings, "canonical_simulator_authority_wrong", "Exactly two canonical source modules are required.")
+            _finding(findings, "canonical_simulator_authority_wrong", "The five current canonical source modules are required.")
         if simulator.get("copied_editable_implementations_allowed") is not False:
             _finding(findings, "copied_editable_simulator_allowed", "Copied implementations cannot be editable authority.")
         if simulator.get("missing_dependency_behavior") != "fail_visible":
@@ -376,6 +406,9 @@ def check_mesh(mesh: Mapping[str, Any], *, check_targets: bool = True) -> dict[s
     if set(map(str, structure.get("target_modules", []))) != {
         "physicsguard.guard_model_contract",
         "physicsguard.skill_execution_depth",
+        "physicsguard.schema.task_local_revision",
+        "physicsguard.core.task_local_revision",
+        "physicsguard.cli",
     } or structure.get("public_entrypoint_plan") != "package_module_entrypoints_no_fallback":
         _finding(findings, "structure_mesh_target_wrong", "Canonical module target and no-fallback entrypoints are required.")
 

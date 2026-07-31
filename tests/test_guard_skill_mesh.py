@@ -62,6 +62,7 @@ def test_native_integration_identity_mutations_block(tmp_path: Path) -> None:
         ("parallel_execution_route_not_forbidden", lambda value: value.update(may_define_parallel_execution_route=True)),
         ("native_route_identity_wrong", lambda value: value.update(default_route_id="route:foreign")),
         ("depth_profile_check_inventory_wrong", lambda value: value["depth_profile"]["native_check_ids"].pop()),
+        ("model_deepening_check_binding_wrong", lambda value: value["depth_profile"].update(model_deepening_check_id="check:foreign")),
     )
     for expected_code, mutate in cases:
         source = copy.deepcopy(original)
@@ -81,7 +82,7 @@ def test_source_structure_report_is_non_authoritative_and_receipt_free() -> None
     assert report["authoritative"] is False
     assert report["maintenance_unit_id"] == "unit:physicsguard-family"
     assert report["member_count"] == 10
-    assert report["declared_check_count"] == 74
+    assert report["declared_check_count"] == 84
     assert report["findings"] == []
     assert set(report) == {
         "artifact_kind",

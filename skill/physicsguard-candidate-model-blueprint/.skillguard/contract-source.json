@@ -57,11 +57,17 @@
       "evidence_source": "physicsguard.guard_model_contract",
       "native_check_id": "check:physicsguard-candidate-model-blueprint:family-baseline-bad:generation-despite-blocker",
       "required": true
+    },
+    {
+      "binding_id": "native-check:physicsguard-candidate-model-blueprint:check-physicsguard-candidate-model-blueprint-task-local-model-deepening",
+      "evidence_source": "physicsguard.task_local_revision",
+      "native_check_id": "check:physicsguard-candidate-model-blueprint:task-local-model-deepening",
+      "required": true
     }
   ],
   "depth_profile": {
     "schema_version": "skillguard.depth_profile.v2",
-    "profile_id": "profile:physicsguard-candidate-model-blueprint:family-baseline-regression",
+    "profile_id": "profile:physicsguard-candidate-model-blueprint:current-closure",
     "target_skill_id": "physicsguard-candidate-model-blueprint",
     "integration_mode": "native-integrated",
     "native_owner_id": "physicsguard.candidate-model-blueprint",
@@ -75,8 +81,10 @@
       "check:physicsguard-candidate-model-blueprint:family-baseline-bad:hierarchy-not-validated",
       "check:physicsguard-candidate-model-blueprint:family-baseline-bad:interface-mapping-incomplete",
       "check:physicsguard-candidate-model-blueprint:family-baseline-bad:rollout-boundary-unclear",
-      "check:physicsguard-candidate-model-blueprint:family-baseline-bad:generation-despite-blocker"
+      "check:physicsguard-candidate-model-blueprint:family-baseline-bad:generation-despite-blocker",
+      "check:physicsguard-candidate-model-blueprint:task-local-model-deepening"
     ],
+    "model_deepening_check_id": "check:physicsguard-candidate-model-blueprint:task-local-model-deepening",
     "skillguard_adds_domain_route": false,
     "enforcement_level": "enforced",
     "required_closure_profiles": [
@@ -157,6 +165,18 @@
         {
           "kind": "path",
           "path": "src/physicsguard/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
         }
       ],
       "maintenance_unit_id": "unit:physicsguard-family",
@@ -217,6 +237,18 @@
         {
           "kind": "path",
           "path": "src/physicsguard/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
         },
         {
           "kind": "path",
@@ -281,6 +313,18 @@
         {
           "kind": "path",
           "path": "src/physicsguard/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
         },
         {
           "kind": "path",
@@ -350,6 +394,18 @@
         },
         {
           "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
+        },
+        {
+          "kind": "path",
           "path": "skill/physicsguard-candidate-model-blueprint/guard-model/candidate.json"
         }
       ],
@@ -413,6 +469,18 @@
         {
           "kind": "path",
           "path": "src/physicsguard/skill_execution_depth.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
         },
         {
           "kind": "path",
@@ -482,6 +550,18 @@
         },
         {
           "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
+        },
+        {
+          "kind": "path",
           "path": "skill/physicsguard-candidate-model-blueprint/guard-model/candidate.json"
         }
       ],
@@ -548,12 +628,86 @@
         },
         {
           "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
+        },
+        {
+          "kind": "path",
           "path": "skill/physicsguard-candidate-model-blueprint/guard-model/candidate.json"
         }
       ],
       "maintenance_unit_id": "unit:physicsguard-family",
       "member_skill_id": "physicsguard-candidate-model-blueprint",
       "evidence_subject_id": "subject:check:physicsguard-candidate-model-blueprint:family-baseline-bad:generation-despite-blocker"
+    },
+    {
+      "check_id": "check:physicsguard-candidate-model-blueprint:task-local-model-deepening",
+      "semantic_check_id": "semantic:physicsguard-candidate-model-blueprint:task-local-model-deepening",
+      "kind": "command",
+      "command": "python",
+      "args": [
+        "-m",
+        "pytest",
+        "tests/test_task_local_revision.py",
+        "tests/test_physicsguard_skill_prompts.py",
+        "-q",
+        "-k",
+        "test_task_local_revision or physicsguard_candidate_model_blueprint"
+      ],
+      "cwd_token": "target_root",
+      "expected": {
+        "exit_code": 0
+      },
+      "timeout_seconds": 240,
+      "evidence_class": "hard",
+      "evidence_domain_id": "physicsguard-candidate-model-blueprint:task-local-model-deepening",
+      "execution_owner_id": "owner:physicsguard-candidate-model-blueprint:task-local-model-deepening",
+      "covers_obligation_ids": [
+        "obligation:physicsguard-candidate-model-blueprint:task-local-model-deepening"
+      ],
+      "depends_on_check_ids": [
+        "check:physicsguard-candidate-model-blueprint:family-baseline-good"
+      ],
+      "input_selectors": [
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/SKILL.md"
+        },
+        {
+          "kind": "path",
+          "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/contract-source.json"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/schema/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/core/task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "src/physicsguard/cli.py"
+        },
+        {
+          "kind": "path",
+          "path": "tests/test_task_local_revision.py"
+        },
+        {
+          "kind": "path",
+          "path": "tests/test_physicsguard_skill_prompts.py"
+        }
+      ],
+      "maintenance_unit_id": "unit:physicsguard-family",
+      "member_skill_id": "physicsguard-candidate-model-blueprint",
+      "evidence_subject_id": "subject:check:physicsguard-candidate-model-blueprint:task-local-model-deepening"
     }
   ],
   "artifacts": [],
@@ -568,7 +722,8 @@
         "obligation:physicsguard-candidate-model-blueprint:family-baseline-blocks:hierarchy-not-validated",
         "obligation:physicsguard-candidate-model-blueprint:family-baseline-blocks:interface-mapping-incomplete",
         "obligation:physicsguard-candidate-model-blueprint:family-baseline-blocks:rollout-boundary-unclear",
-        "obligation:physicsguard-candidate-model-blueprint:family-baseline-blocks:generation-despite-blocker"
+        "obligation:physicsguard-candidate-model-blueprint:family-baseline-blocks:generation-despite-blocker",
+        "obligation:physicsguard-candidate-model-blueprint:task-local-model-deepening"
       ]
     }
   ],
@@ -649,6 +804,17 @@
         "kind": "native",
         "summary": "Prove the maintained family baseline blocks its declared regression case: Candidate is not proven against generation proceeds despite a blocker."
       }
+    },
+    {
+      "step_id": "step:physicsguard-candidate-model-blueprint:task-local-model-deepening",
+      "check_ids": [
+        "check:physicsguard-candidate-model-blueprint:task-local-model-deepening"
+      ],
+      "output_artifact_ids": [],
+      "action": {
+        "kind": "native",
+        "summary": "Execute the target-declared strict task-local model-deepening closure checks."
+      }
     }
   ],
   "implementation_paths": [
@@ -661,7 +827,10 @@
     "skill/physicsguard-candidate-model-blueprint/guard-model/known-good.json",
     "skill/physicsguard-candidate-model-blueprint/guard-model/oracles.json",
     "skill/physicsguard-candidate-model-blueprint/runtime-requirements.json",
+    "src/physicsguard/cli.py",
+    "src/physicsguard/core/task_local_revision.py",
     "src/physicsguard/guard_model_contract.py",
+    "src/physicsguard/schema/task_local_revision.py",
     "src/physicsguard/skill_execution_depth.py"
   ],
   "repository_role": "skill_maintainer_source",

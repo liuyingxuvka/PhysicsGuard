@@ -1,7 +1,7 @@
 {
   "artifact_kind": "flowguard_model_mesh",
-  "mesh_id": "physicsguard.skill-suite-maintenance.v3",
-  "mesh_version": "3.0",
+  "mesh_id": "physicsguard.skill-suite-maintenance.v4",
+  "mesh_version": "4.0",
   "structure_owner": "physicsguard.skill-suite-structure-report",
   "guard_model_contract": {
     "semantic_owner": "physicsguard",
@@ -34,7 +34,10 @@
     "semantic_claim_requires_exact_native_fixture": true,
     "admission_claim_boundary": "candidate_rejected_only_when_current_target_native_obligation_evidence_is_absent_or_native_failed",
     "mode_branching": "forbidden",
-    "family_baseline_can_close_current_model": false
+    "family_baseline_can_close_current_model": false,
+    "task_local_model_role": "strict_receipt_derived_model_deepening",
+    "task_local_gap_authority": "target_owned_six_family_native_depth_receipt",
+    "task_local_closure_rule": "zero_native_gaps_plus_exact_candidate_regression_independent_holdout_and_predictive_receipts"
   },
   "maintenance_boundary": {
     "maintenance_unit_id": "unit:physicsguard-family",
@@ -67,14 +70,17 @@
   "canonical_simulator": {
     "source_authority": [
       "src/physicsguard/skill_execution_depth.py",
-      "src/physicsguard/guard_model_contract.py"
+      "src/physicsguard/guard_model_contract.py",
+      "src/physicsguard/schema/task_local_revision.py",
+      "src/physicsguard/core/task_local_revision.py",
+      "src/physicsguard/cli.py"
     ],
     "entrypoints": [
       "python -m physicsguard.skill_execution_depth",
       "python -m physicsguard.guard_model_contract",
       "python -m physicsguard.cli"
     ],
-    "consumer_dependency": "physicsguard==0.11.2",
+    "consumer_dependency": "physicsguard==0.15.0",
     "missing_dependency_behavior": "fail_visible",
     "copied_editable_implementations_allowed": false,
     "dataset_bundle_reduction_gate": "isolated_package_install_and_entrypoint_equivalence_required",
@@ -85,7 +91,7 @@
       "target_skill_id": "physicsguard-ai-debugging",
       "native_owner_id": "physicsguard.ai-debugging",
       "native_route_id": "route:physicsguard-ai-debugging:audit",
-      "declared_check_count": 8,
+      "declared_check_count": 9,
       "inputs": ["symptom", "physical_boundary", "topology", "signals", "parameters", "validation_evidence"],
       "outputs": ["localized_findings", "next_required_evidence", "bounded_audit_claim"],
       "state_or_side_effects": ["audit_artifacts"],
@@ -95,7 +101,7 @@
       "target_skill_id": "physicsguard-audit-closure",
       "native_owner_id": "physicsguard.audit-closure",
       "native_route_id": "route:physicsguard-audit-closure:close",
-      "declared_check_count": 8,
+      "declared_check_count": 9,
       "inputs": ["closure_plan", "native_check_receipts", "validation_depth_receipt"],
       "outputs": ["closure_status", "blockers", "claim_boundary"],
       "state_or_side_effects": ["closure_receipt"],
@@ -105,7 +111,7 @@
       "target_skill_id": "physicsguard-candidate-model-blueprint",
       "native_owner_id": "physicsguard.candidate-model-blueprint",
       "native_route_id": "route:physicsguard-candidate-model-blueprint:build",
-      "declared_check_count": 7,
+      "declared_check_count": 8,
       "inputs": ["validated_hierarchy", "signals", "parameters", "interfaces"],
       "outputs": ["candidate_blueprint", "generation_eligibility", "rollout_boundary"],
       "state_or_side_effects": ["blueprint_artifact"],
@@ -115,7 +121,7 @@
       "target_skill_id": "physicsguard-model-dataset-validation",
       "native_owner_id": "physicsguard-model-dataset-validation",
       "native_route_id": "route:physicsguard-model-dataset-validation",
-      "declared_check_count": 8,
+      "declared_check_count": 9,
       "inputs": ["model", "dataset", "test_file_contract", "validation_plan", "project_evidence"],
       "outputs": ["validation_receipt", "adequacy_findings", "bounded_validation_claim"],
       "state_or_side_effects": ["validation_artifacts"],
@@ -125,7 +131,7 @@
       "target_skill_id": "physicsguard-model-library",
       "native_owner_id": "physicsguard.model-library",
       "native_route_id": "route:physicsguard-model-library:reuse",
-      "declared_check_count": 7,
+      "declared_check_count": 8,
       "inputs": ["asset_inventory", "profiles", "testbench_context", "validation_receipts"],
       "outputs": ["compatible_assets", "gaps", "bounded_reuse_scope"],
       "state_or_side_effects": ["library_index"],
@@ -135,7 +141,7 @@
       "target_skill_id": "physicsguard-model-understanding-preflight",
       "native_owner_id": "physicsguard.model-understanding-preflight",
       "native_route_id": "route:physicsguard-model-understanding-preflight:review",
-      "declared_check_count": 7,
+      "declared_check_count": 8,
       "inputs": ["visible_symptom", "physical_boundary", "subsystems", "signals", "parameters", "assumptions"],
       "outputs": ["understanding_record", "access_gaps", "next_route"],
       "state_or_side_effects": ["preflight_record"],
@@ -145,7 +151,7 @@
       "target_skill_id": "physicsguard-project-adoption",
       "native_owner_id": "physicsguard.project-adoption",
       "native_route_id": "route:physicsguard-project-adoption:audit",
-      "declared_check_count": 7,
+      "declared_check_count": 8,
       "inputs": ["project_root", "project_record", "toolchain_identity", "artifact_inventory"],
       "outputs": ["adoption_status", "blockers", "required_revalidation"],
       "state_or_side_effects": ["project_adoption_record"],
@@ -155,7 +161,7 @@
       "target_skill_id": "physicsguard-project-evidence-registry",
       "native_owner_id": "physicsguard.project-evidence-registry",
       "native_route_id": "route:physicsguard-project-evidence-registry:check",
-      "declared_check_count": 7,
+      "declared_check_count": 8,
       "inputs": ["declared_artifacts", "discovered_artifacts", "binding_expectations", "bundles"],
       "outputs": ["reconciled_inventory", "binding_map", "critical_gaps"],
       "state_or_side_effects": ["evidence_registry"],
@@ -165,7 +171,7 @@
       "target_skill_id": "physicsguard-signal-mapping-review",
       "native_owner_id": "physicsguard.signal-mapping-review",
       "native_route_id": "route:physicsguard-signal-mapping-review:review",
-      "declared_check_count": 7,
+      "declared_check_count": 8,
       "inputs": ["governed_signal_universe", "units", "conversions", "revision_evidence", "time_axes"],
       "outputs": ["mapping_results", "confidence_gaps", "target_bindings"],
       "state_or_side_effects": ["mapping_review"],
@@ -175,7 +181,7 @@
       "target_skill_id": "physicsguard-test-file-contract-review",
       "native_owner_id": "physicsguard.test-file-contract-review",
       "native_route_id": "route:physicsguard-test-file-contract-review:check",
-      "declared_check_count": 8,
+      "declared_check_count": 9,
       "inputs": ["file_inventory", "field_inventory", "units", "timing", "testbench_and_model_bindings"],
       "outputs": ["contract_status", "per_signal_depth", "project_gaps"],
       "state_or_side_effects": ["test_file_contract"],
@@ -209,15 +215,19 @@
     ]
   },
   "structure_mesh": {
-    "source_model_id": "physicsguard.skill-suite-maintenance.v3",
+    "source_model_id": "physicsguard.skill-suite-maintenance.v4",
     "parent_surface": "per-skill copied execution-depth and guard-model verifier implementations",
     "target_modules": [
       "physicsguard.skill_execution_depth",
-      "physicsguard.guard_model_contract"
+      "physicsguard.guard_model_contract",
+      "physicsguard.schema.task_local_revision",
+      "physicsguard.core.task_local_revision",
+      "physicsguard.cli"
     ],
     "function_block_owners": {
       "execution_depth": "src/physicsguard/skill_execution_depth.py",
       "guard_model_verification": "src/physicsguard/guard_model_contract.py",
+      "task_local_model_deepening": "src/physicsguard/schema/task_local_revision.py + src/physicsguard/core/task_local_revision.py + src/physicsguard/cli.py",
       "target_semantics": "each skill guard-model JSON and declared semantic checks"
     },
     "state_owner": "each SkillGuard member receipt store",
@@ -227,22 +237,22 @@
     "parity_gate": "isolated_package_install_and_representative_consumer_replay"
   },
   "test_mesh": {
-    "mesh_id": "physicsguard.skillguard-family-validation.v3",
-    "source_model_id": "physicsguard.skill-suite-maintenance.v3",
-    "inventory_revision": "ten-members-74-semantic-checks",
-    "diagnostic_boundary": "declared_complete",
-    "planned": 74,
+    "mesh_id": "physicsguard.skillguard-family-validation.v4",
+    "source_model_id": "physicsguard.skill-suite-maintenance.v4",
+    "inventory_revision": "ten-members-84-semantic-checks",
+    "diagnostic_boundary": "declared_in_progress",
+    "planned": 84,
     "executed": 74,
     "failed": 0,
-    "not_run": 0,
-    "not_run_reason": "",
+    "not_run": 10,
+    "not_run_reason": "The ten new task-local model-deepening owners await the parent integration owner's final frozen SkillGuard run.",
     "parent_gate": "ten frozen same-unit member plans; no suite-parent receipt",
     "child_evidence_owner": "each member semantic check projection",
     "supervisor_run_count": 10,
     "read_only_reuse_review": {
-      "selected_owner_count": 74,
-      "reusable_owner_count": 74,
-      "would_execute_owner_count": 0
+      "selected_owner_count": 84,
+      "reusable_owner_count": 0,
+      "would_execute_owner_count": 84
     },
     "release_scope": "deferred_not_requested"
   },
@@ -264,7 +274,7 @@
       "final_scope_audit"
     ],
     "sequential_supervisor_run_count": 10,
-    "declared_execution_owner_count": 74,
+    "declared_execution_owner_count": 84,
     "peer_write_policy": "preserve_and_stale_only_affected_evidence"
   },
   "evidence_lifecycle": {

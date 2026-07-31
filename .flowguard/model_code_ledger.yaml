@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.10.1
+updated_for_version: 0.15.0
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -8,6 +8,52 @@ purpose: >
   ledger helps future AI agents find the right implementation surface; it does
   not prove runtime behavior or physical correctness by itself.
 entries:
+  - id: workflow.task_local_model_deepening
+    model_file: .flowguard/task_local_model_deepening/model.py
+    model_blocks:
+      - FreezeStrictPlan
+      - CompareFrozenPrediction
+      - DeriveCandidateDisposition
+    responsibility: >
+      Keep non-trivial task-local model deepening tied to an explicit purpose,
+      independent coverage universe, assumptions, unknowns, predecessor, and
+      target-owned native depth receipt; expose model misses and derive model
+      progress or closure from exact candidate-bound evidence.
+    code_symbols:
+      - src/physicsguard/schema/task_local_revision.py::HypothesisPlanSpec
+      - src/physicsguard/schema/task_local_revision.py::NativeDepthReceiptSpec
+      - src/physicsguard/schema/task_local_revision.py::DiagnosticObservationSpec
+      - src/physicsguard/schema/task_local_revision.py::TaskRevisionCheckReceiptSpec
+      - src/physicsguard/schema/task_local_revision.py::CandidateModelRevisionSpec
+      - src/physicsguard/core/task_local_revision.py::freeze_hypothesis_plan
+      - src/physicsguard/core/task_local_revision.py::evaluate_hypothesis_observation
+      - src/physicsguard/core/task_local_revision.py::evaluate_candidate_model_revision
+      - src/physicsguard/cli.py::task_model_plan_command
+      - src/physicsguard/cli.py::task_model_observe_command
+      - src/physicsguard/cli.py::task_model_revision_command
+      - scripts/upgrade_purpose_contracts.py::upgrade_target_current
+    tests:
+      - tests/test_task_local_revision.py
+      - tests/test_physicsguard_skill_prompts.py
+    examples:
+      - openspec/changes/make-physics-model-deepening-iterative/specs/physics-model-deepening/spec.md
+      - openspec/changes/make-physics-model-deepening-iterative/design.md
+    validation_commands:
+      - command: python .flowguard/task_local_model_deepening/run_checks.py
+        covers: Strict plan, model-miss, native gap transition, closure, and all bounded non-success terminals.
+      - command: python -m pytest tests/test_task_local_revision.py tests/test_physicsguard_skill_prompts.py -q
+        covers: Runtime schemas, evaluator behavior, CLI receipts, and all ten maintained skill projections.
+      - command: openspec validate make-physics-model-deepening-iterative --strict --json
+        covers: Requirement, design, and task-artifact coherence.
+    boundaries:
+      - AI-authored prose and caller-provided gap lists do not prove understanding, progress, or closure.
+      - The six open-gap families come from target-owned current native depth receipts.
+      - Contradicting every declared hypothesis is a model miss, not proof of an undeclared physical cause.
+      - Regression, independent holdout, and predictive receipts must bind the exact same candidate.
+      - Closure does not prove physical truth beyond the target-owned evidence and declared coverage universe.
+    stale_when:
+      - Task-local schema, evaluator, CLI, strict skill prompt, generated author contract, or terminal semantics change.
+
   - id: core.system_validation
     model_file: .flowguard/physicsguard_core_model.py
     model_blocks:

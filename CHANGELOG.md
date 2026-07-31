@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.15.0 - 2026-07-31
+
+- Make task-local model deepening strict and receipt-driven: every non-trivial
+  plan now binds its purpose, independent coverage universe, assumptions,
+  unknowns, predecessor, and target-owned native depth receipt.
+- Derive six gap families and their resolved, persisted, and introduced
+  transitions from current native receipts instead of accepting AI-written
+  gap or progress claims.
+- Treat observations that contradict every declared hypothesis as a
+  `model_miss`, and require regression, independent holdout, and predictive
+  receipts to bind to the exact same candidate before closure.
+- Refresh all ten maintained PhysicsGuard skill prompts and author contracts
+  so the installed routes use the same strict task-local model lifecycle.
+
 ## v0.13.0 - 2026-07-30
 
 - Preserve bounded observation and residual uncertainty as intervals with

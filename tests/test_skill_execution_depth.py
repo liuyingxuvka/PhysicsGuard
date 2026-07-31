@@ -602,7 +602,11 @@ def test_satellite_contracts_use_generic_supervision_for_native_guard_proofs() -
         assert source["native_check_bindings"] == [
             {
                 "binding_id": f"native-check:{target}:{check_id.replace(':', '-')}",
-                "evidence_source": "physicsguard.guard_model_contract",
+                "evidence_source": (
+                    "physicsguard.task_local_revision"
+                    if check_id.endswith(":task-local-model-deepening")
+                    else "physicsguard.guard_model_contract"
+                ),
                 "native_check_id": check_id,
                 "required": True,
             }
@@ -612,6 +616,9 @@ def test_satellite_contracts_use_generic_supervision_for_native_guard_proofs() -
         assert depth["native_owner_id"] == owner
         assert depth["native_route_ids"] == [route]
         assert depth["native_check_ids"] == list(checks)
+        assert depth["model_deepening_check_id"] == (
+            f"check:{target}:task-local-model-deepening"
+        )
         assert depth["integration_mode"] == "native-integrated"
         assert depth["enforcement_level"] == "enforced"
         assert depth["required_closure_profiles"] == ["enforced"]

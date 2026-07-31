@@ -5,22 +5,48 @@
     ".flowguard/guard_closure_contract/run_checks.py",
     ".flowguard/interval_diagnosability/model.py",
     ".flowguard/interval_diagnosability/run_checks.py",
+    ".flowguard/task_local_model_deepening/model.py",
+    ".flowguard/task_local_model_deepening/run_checks.py",
+    ".flowguard/check_physicsguard_skill_suite_mesh.py",
+    ".flowguard/physicsguard_skill_suite_mesh.json",
     "src/physicsguard/core/diagnosability.py",
     "src/physicsguard/schema/diagnosability.py",
+    "src/physicsguard/schema/task_local_revision.py",
     "src/physicsguard/core/task_local_revision.py",
     "src/physicsguard/cli.py",
-    "skill/physicsguard-ai-debugging/SKILL.md",
-    "skill/physicsguard-model-understanding-preflight/SKILL.md",
-    "skill/physicsguard-signal-mapping-review/SKILL.md",
-    "skill/physicsguard-audit-closure/SKILL.md",
+    "scripts/upgrade_purpose_contracts.py",
+    "scripts/report_physicsguard_skill_suite.py",
+    "skill/*/SKILL.md",
+    "skill/*/.skillguard/contract-source.json",
+    "skill/*/runtime-requirements.json",
     "tests/test_diagnosability.py",
-    "tests/test_task_local_revision.py"
+    "tests/test_task_local_revision.py",
+    "tests/test_physicsguard_skill_prompts.py",
+    "tests/test_guard_model_contract.py",
+    "tests/test_guard_skill_mesh.py",
+    "tests/test_skill_execution_depth.py",
+    "tests/test_skillguard_v2_runtime_authority_audit.py"
   ],
   "snapshot_only_input_globs": [
     ".flowguard/model-mesh/snapshots/*.json",
     ".flowguard/model-mesh/receipts/*.json"
   ],
-  "shared_input_groups": [],
+  "shared_input_groups": [
+    {
+      "component_id": "task-local-diagnosability-boundary",
+      "globs": [
+        "src/physicsguard/cli.py",
+        "skill/physicsguard-ai-debugging/SKILL.md",
+        "skill/physicsguard-audit-closure/SKILL.md",
+        "skill/physicsguard-model-understanding-preflight/SKILL.md",
+        "skill/physicsguard-signal-mapping-review/SKILL.md"
+      ],
+      "consumers": [
+        "interval_diagnosability",
+        "task_local_model_deepening"
+      ]
+    }
+  ],
   "models": [
     {
       "model_id": "guard_closure_contract",
@@ -44,7 +70,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:guard_closure_contract:0.14.0",
+        "model_instance_id": "regression:guard_closure_contract:0.15.0",
         "reusable_model_type_id": "guard_closure_contract",
         "task_intent_id": "physicsguard-regression:guard-closure",
         "declaration_phase": "before_candidate",
@@ -73,8 +99,8 @@
         ],
         "model_sha256": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa",
         "runner_sha256": "sha256:24cd4f1ba388f021880170f9acacb373f6605c987aae816938e25272e50cfac2",
-        "declaration_fingerprint": "sha256:39eb1c79d5e3f3eb0ed65d0884f2620a3e5583c692d8686b322e14c2dfab0330",
-        "closure_fingerprint": "sha256:828ec6a6f5650250ba229fc4894e9abc865b6aab5730d90d8d0cbf3e9c3f03fc"
+        "declaration_fingerprint": "sha256:940e72174e9c9480af474b01d78cfd5d006f8841ee7b76f7e7973e66108027ae",
+        "closure_fingerprint": "sha256:42c1676e44a1847ddf3fff510cfc527bea4bc9f46199a5fe4554b3b09106d7f7"
       }
     },
     {
@@ -93,14 +119,12 @@
         ".flowguard/interval_diagnosability/run_checks.py",
         "src/physicsguard/core/diagnosability.py",
         "src/physicsguard/schema/diagnosability.py",
-        "src/physicsguard/core/task_local_revision.py",
         "src/physicsguard/cli.py",
         "skill/physicsguard-ai-debugging/SKILL.md",
         "skill/physicsguard-model-understanding-preflight/SKILL.md",
         "skill/physicsguard-signal-mapping-review/SKILL.md",
         "skill/physicsguard-audit-closure/SKILL.md",
-        "tests/test_diagnosability.py",
-        "tests/test_task_local_revision.py"
+        "tests/test_diagnosability.py"
       ],
       "expected_artifacts": [],
       "exclusion_reason": "",
@@ -109,7 +133,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:interval_diagnosability:0.14.0",
+        "model_instance_id": "regression:interval_diagnosability:0.15.0",
         "reusable_model_type_id": "interval_diagnosability",
         "task_intent_id": "physicsguard-regression:interval-diagnosability",
         "declaration_phase": "before_candidate",
@@ -145,8 +169,87 @@
         ],
         "model_sha256": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c",
         "runner_sha256": "sha256:3514876e30f1cdad7bcf14dd50a4ad178456d47f45de4d9e1edbf0a36cca6fdc",
-        "declaration_fingerprint": "sha256:faabfcb8bc1ad8093dce8572f6880d04eb2b9cf4160c14e04e71d296e3b9d467",
-        "closure_fingerprint": "sha256:892cb9c10e1858a5b043ae1a1b23f4ce582da0c7e2623fafe314103aa6408733"
+        "declaration_fingerprint": "sha256:fa247a71569e483d34e1d954ea31641b889c23dc009f3e71d6b0485f809c53b3",
+        "closure_fingerprint": "sha256:65dcc556b76c656ddeea4fa6be9bf9c552c392479d86f54120528f13534cf1ce"
+      }
+    },
+    {
+      "model_id": "task_local_model_deepening",
+      "model_path": ".flowguard/task_local_model_deepening/model.py",
+      "runner": [
+        "{python}",
+        ".flowguard/task_local_model_deepening/run_checks.py"
+      ],
+      "tier": "full",
+      "timeout_seconds": 120,
+      "shard_safe": true,
+      "mutation_policy": "none",
+      "input_globs": [
+        ".flowguard/task_local_model_deepening/model.py",
+        ".flowguard/task_local_model_deepening/run_checks.py",
+        ".flowguard/check_physicsguard_skill_suite_mesh.py",
+        ".flowguard/physicsguard_skill_suite_mesh.json",
+        "src/physicsguard/schema/task_local_revision.py",
+        "src/physicsguard/core/task_local_revision.py",
+        "src/physicsguard/cli.py",
+        "scripts/upgrade_purpose_contracts.py",
+        "scripts/report_physicsguard_skill_suite.py",
+        "skill/*/SKILL.md",
+        "skill/*/.skillguard/contract-source.json",
+        "skill/*/runtime-requirements.json",
+        "tests/test_task_local_revision.py",
+        "tests/test_physicsguard_skill_prompts.py",
+        "tests/test_guard_model_contract.py",
+        "tests/test_guard_skill_mesh.py",
+        "tests/test_skill_execution_depth.py",
+        "tests/test_skillguard_v2_runtime_authority_audit.py"
+      ],
+      "expected_artifacts": [],
+      "exclusion_reason": "",
+      "distribution_policy": "required_public",
+      "absence_reason": "",
+      "model_kind": "executable_workflow",
+      "purpose_closure": {
+        "schema_version": "flowguard.model_purpose_closure.v1",
+        "model_instance_id": "regression:task_local_model_deepening:0.15.0",
+        "reusable_model_type_id": "task_local_model_deepening",
+        "task_intent_id": "physicsguard-regression:strict-task-local-model-deepening",
+        "declaration_phase": "before_candidate",
+        "guarded_purpose": "Prevent AI-authored understanding or gap edits from closing a task without current target-owned native depth and exact candidate-bound regression, independent holdout, and predictive receipts.",
+        "protected_failure_ids": [
+          "physicsguard:self-reported-gap-progress-promoted",
+          "physicsguard:zero-survivor-cause-invented",
+          "physicsguard:wrong-candidate-evidence-promoted"
+        ],
+        "claim_boundary": "This closure covers the strict finite task-local model lifecycle and does not prove target physics, source truth, or evidence quality outside target-owned receipts.",
+        "adoption_scope": "current_candidate_only",
+        "known_good_case_id": "native-runner:task-local-model-deepening:declared-scenarios",
+        "failure_bindings": [
+          {
+            "failure_id": "physicsguard:self-reported-gap-progress-promoted",
+            "known_bad_case_id": "known-bad:task-local-model-deepening:pgt03",
+            "oracle_id": "native:task-local-model-deepening:run-checks"
+          },
+          {
+            "failure_id": "physicsguard:zero-survivor-cause-invented",
+            "known_bad_case_id": "known-bad:task-local-model-deepening:pgt04",
+            "oracle_id": "native:task-local-model-deepening:run-checks"
+          },
+          {
+            "failure_id": "physicsguard:wrong-candidate-evidence-promoted",
+            "known_bad_case_id": "known-bad:task-local-model-deepening:pgt07",
+            "oracle_id": "native:task-local-model-deepening:run-checks"
+          }
+        ],
+        "evidence_check_ids": [
+          "check:model-regression:task-local-model-deepening",
+          "check:physicsguard:task-local-revision-tests",
+          "check:physicsguard:skill-prompt-task-model-tests"
+        ],
+        "model_sha256": "sha256:537c92eba9b05bb67fc6b00c173e14c5e746c63e4f40301bfbf7a35645f64b43",
+        "runner_sha256": "sha256:3914882a52d44722194d92e8a0d046f346e83e245eb78c9ccbc9dba29886bfc7",
+        "declaration_fingerprint": "sha256:c034a28823c4bc20396464dd555fc329d5ec24fa6474fc1235d0da90b923b346",
+        "closure_fingerprint": "sha256:0a90debd456c22f5435ed93142da46a596b30ecead38e989d7e6b460c8b47555"
       }
     }
   ]

@@ -154,7 +154,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     task_model_parser = subparsers.add_parser(
         "task-model",
-        help="task-local competing-hypothesis and reversible candidate-model commands",
+        help="strict receipt-bound task-local hypothesis and candidate-model commands",
     )
     task_model_subparsers = task_model_parser.add_subparsers(
         dest="task_model_command",
@@ -162,13 +162,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     task_model_plan = task_model_subparsers.add_parser(
         "plan",
-        help="freeze a task-local competing-hypothesis plan and rank observations",
+        help="freeze purpose, coverage, assumptions, hypotheses, and native depth receipt",
     )
     task_model_plan.add_argument("plan", type=Path, help="path to a HypothesisPlanSpec YAML")
     task_model_plan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     task_model_observe = task_model_subparsers.add_parser(
         "observe",
-        help="compare a later observation with frozen task-local predictions",
+        help="compare bound evidence with frozen predictions and expose a model miss",
     )
     task_model_observe.add_argument("plan", type=Path, help="path to a HypothesisPlanSpec YAML")
     task_model_observe.add_argument(
@@ -179,7 +179,7 @@ def build_parser() -> argparse.ArgumentParser:
     task_model_observe.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     task_model_revision = task_model_subparsers.add_parser(
         "revision",
-        help="evaluate a separate candidate task model and accept, reject, or roll back",
+        help="derive candidate gap transition and closure from exact typed receipts",
     )
     task_model_revision.add_argument(
         "revision",

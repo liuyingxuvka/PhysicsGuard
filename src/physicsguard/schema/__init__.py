@@ -79,15 +79,20 @@ from physicsguard.schema.predictive_rollout import (
 )
 from physicsguard.schema.task_local_revision import (
     CandidateModelRevisionSpec,
+    CoverageUniverseSpec,
     DiagnosticHypothesisSpec,
     DiagnosticObservationSpec,
+    EvidenceIdentitySpec,
     HypothesisExpectationSpec,
     HypothesisPlanSpec,
+    NativeDepthGapSpec,
+    NativeDepthReceiptSpec,
     ObservationCandidateSpec,
     ObservationSelectionWeightsSpec,
     ObservedSignalSpec,
-    RevisionCheckSpec,
+    PredecessorIterationSpec,
     TaskModelIdentitySpec,
+    TaskRevisionCheckReceiptSpec,
 )
 
 __all__ = [
@@ -153,13 +158,18 @@ __all__ = [
     "PredictiveThresholdsSpec",
     "RolloutArtifactIdentitySpec",
     "CandidateModelRevisionSpec",
+    "CoverageUniverseSpec",
     "DiagnosticHypothesisSpec",
     "DiagnosticObservationSpec",
+    "EvidenceIdentitySpec",
     "HypothesisExpectationSpec",
     "HypothesisPlanSpec",
+    "NativeDepthGapSpec",
+    "NativeDepthReceiptSpec",
     "ObservationCandidateSpec",
     "ObservationSelectionWeightsSpec",
     "ObservedSignalSpec",
-    "RevisionCheckSpec",
+    "PredecessorIterationSpec",
     "TaskModelIdentitySpec",
+    "TaskRevisionCheckReceiptSpec",
 ]

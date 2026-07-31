@@ -12,7 +12,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.14.0` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.0` | Python 3.11+ | `physicsguard` | MIT |
 
 English comes first. A Chinese mirror follows below.
 
@@ -158,7 +158,7 @@ Do not use it when:
 
 ## Library Coverage
 
-PhysicsGuard `v0.14.0` includes task-local model revision loops and low-fidelity audit relations for:
+PhysicsGuard `v0.15.0` includes strict, receipt-driven task-local model revision loops and low-fidelity audit relations for:
 
 - controls, sensors, actuators, delays, saturation, maps, and PID-like steps;
 - drivetrain, vehicle, brake, wheel, gearbox, and road-load relations;
@@ -169,11 +169,19 @@ PhysicsGuard `v0.14.0` includes task-local model revision loops and low-fidelity
 
 Each relation is low fidelity by design. The value is not that it replaces the target model; the value is that it gives the AI a checkable physics boundary before it changes the target workflow.
 
+For a non-trivial task, the AI must freeze a purpose, independent coverage
+universe, assumptions, unknowns, hypotheses, and a target-owned native depth
+receipt before observing new evidence. Closure is derived from the native
+receipt's six gap families plus regression, independent holdout, and predictive
+receipts for the exact candidate. Self-reported understanding, rewritten gap
+lists, and a green regression alone cannot close the task.
+
 ## Documentation Map
 
 | File | Purpose |
 | --- | --- |
 | [`docs/model_understanding_preflight.md`](./docs/model_understanding_preflight.md) | visible symptom, subsystem boundary, units, assumptions, and stop condition |
+| [`docs/task_local_model_deepening.md`](./docs/task_local_model_deepening.md) | strict prediction, model-miss, native-gap, and candidate-receipt lifecycle |
 | [`docs/external_model_intake.md`](./docs/external_model_intake.md) | safe intake of external model facts without claiming parser support |
 | [`docs/hierarchical_audit_workflow.md`](./docs/hierarchical_audit_workflow.md) | hierarchy and residual audit route |
 | [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | concrete test-file manifests and binding contracts |
@@ -215,7 +223,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.14.0` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.0` | Python 3.11+ | `physicsguard` | MIT |
 
 ## 它是什么
 
@@ -353,7 +361,7 @@ PhysicsGuard 可以用紧凑图表解释：
 
 ## 模块覆盖
 
-PhysicsGuard `v0.14.0` 包含任务局部模型迭代和这些低保真审计关系：
+PhysicsGuard `v0.15.0` 包含严格、由原生回执驱动的任务局部模型迭代和这些低保真审计关系：
 
 - controls、sensors、actuators、delays、saturation、maps、PID-like steps；
 - drivetrain、vehicle、brake、wheel、gearbox、road-load；

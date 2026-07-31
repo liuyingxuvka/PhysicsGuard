@@ -39,6 +39,9 @@ PRIMARY_RUNTIME = (
 CANONICAL_RUNTIME_INPUTS = (
     "src/physicsguard/guard_model_contract.py",
     "src/physicsguard/skill_execution_depth.py",
+    "src/physicsguard/schema/task_local_revision.py",
+    "src/physicsguard/core/task_local_revision.py",
+    "src/physicsguard/cli.py",
 )
 RUNTIME_REQUIREMENT_SCHEMA = "physicsguard.skill_runtime_requirement.v1"
 PHYSICSGUARD_VERSION = str(
@@ -738,6 +741,7 @@ def _flowguard_export(
         f"step:{skill_id}:family-baseline-bad:{row['failure_id'].rsplit(':', 1)[-1]}"
         for row in guard_contract["prevented_failure_classes"]
     ]
+    task_model_step = f"step:{skill_id}:task-local-model-deepening"
     terminal = f"terminal:{skill_id}:current"
     blocked = f"terminal:{skill_id}:blocked"
     steps = [
@@ -748,7 +752,8 @@ def _flowguard_export(
             {"step_id": step_id, "route_id": route, "owner_id": owner, "action_kind": "native", "terminal_kind": "", "prerequisite_step_ids": [good_step]}
             for step_id in bad_steps
         ],
-        {"step_id": terminal, "route_id": route, "owner_id": owner, "action_kind": "terminal", "terminal_kind": "success", "prerequisite_step_ids": bad_steps},
+        {"step_id": task_model_step, "route_id": route, "owner_id": owner, "action_kind": "native", "terminal_kind": "", "prerequisite_step_ids": [good_step]},
+        {"step_id": terminal, "route_id": route, "owner_id": owner, "action_kind": "terminal", "terminal_kind": "success", "prerequisite_step_ids": [*bad_steps, task_model_step]},
         {"step_id": blocked, "route_id": route, "owner_id": owner, "action_kind": "terminal", "terminal_kind": "blocked", "prerequisite_step_ids": []},
     ]
     obligations = [
@@ -779,6 +784,12 @@ def _flowguard_export(
             }
             for row, step_id in zip(guard_contract["prevented_failure_classes"], bad_steps)
         ],
+        {
+            "obligation_id": f"obligation:{skill_id}:task-local-model-deepening",
+            "invariant_id": f"invariant:{skill_id}:task-local-model-deepening",
+            "owner_step_ids": [task_model_step],
+            "required": True,
+        },
     ]
     return {
         "schema_version": "skillguard.flowguard_model_export.v2",
@@ -790,7 +801,7 @@ def _flowguard_export(
         "steps": steps,
         "obligations": obligations,
         "invariant_ids": [row["invariant_id"] for row in obligations],
-        "claim_boundary": "This model proves only maintained family baseline regression. A concrete PhysicsGuard model requires a separate target-local current_model_purpose contract and proofs.",
+        "claim_boundary": "This model proves maintained family baseline regression and the presence of the strict task-local model-deepening check. A concrete PhysicsGuard model still requires target-owned current native receipts and exact candidate-bound evidence.",
     }
 
 
@@ -808,6 +819,10 @@ def _model_source(export: dict[str, Any]) -> str:
 def _managed_current_prompt(
     config: dict[str, Any], guard_contract: dict[str, Any]
 ) -> str:
+    skill_id = str(guard_contract["target_skill_id"])
+    owner = str(guard_contract["native_owner_id"])
+    route = str(guard_contract["native_route_id"])
+    task_model_check = f"check:{skill_id}:task-local-model-deepening"
     failures = "\n".join(
         f"- `{row['title']}` ({row['proof_strength']}): block when {row['block_when']}. "
         f"Claim boundary: {row['claim_boundary']}"
@@ -825,7 +840,13 @@ def _managed_current_prompt(
         f"{failures}\n\n"
         "These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.\n\n"
         "For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.\n\n"
-        "Task-local deepening is iterative: a candidate that passes regression but leaves native depth/predictive gaps is a continuation, not a closed result. Record the gap transition and next action, preserve the base identity, and rerun the exact candidate/holdout/predictive checks.\n\n"
+        "### Strict task-local model deepening\n\n"
+        f"This skill's task-local owner is `{owner}` on `{route}`; its declared closure check is `{task_model_check}`. The shared PhysicsGuard schema and evaluator provide the envelope, while this native owner keeps the route-specific physical/evidence judgment.\n\n"
+        "For every non-trivial task, use the existing `task-model plan -> observe -> revision` route with the strict current schema. The plan must declare a non-empty task purpose, an independently owned coverage-universe id and SHA-256, explicit assumptions and unknowns (empty is allowed only when written explicitly), iteration, an exact predecessor receipt after iteration zero, and a current `physicsguard_task_native_depth_receipt` bound to the plan model. Retired optional fields and compatibility shapes are invalid.\n\n"
+        "The native depth receipt must account for exactly six families: execution depth, mapping, residual, uncertainty, diagnosability, and predictive rollout. Open gaps, resolution classes, external input ids, and next actions come from that target-owned receipt; AI prose, `resolved=true`, caller-written gap lists, and self-reported understanding have no closure authority.\n\n"
+        "Freeze the prediction before observation and bind the observation to the exact plan fingerprint, selected probe, producer, source, independence group, and evidence SHA-256. If the observation contradicts every declared hypothesis, return `model_miss` and revise the hypothesis/model universe; never select a physical cause by elimination outside the declared space.\n\n"
+        "A candidate revision must preserve distinct base/candidate identities and consume base/candidate native-depth receipts plus exactly one typed regression receipt, one independent holdout receipt, and one predictive-rollout receipt. All three must bind the same task, plan, revision, coverage fingerprint, and candidate SHA-256; the holdout must be independent from candidate construction. PhysicsGuard derives resolved, persisted, and introduced gaps by comparing the two native receipts. Renaming or deleting a caller gap is not progress.\n\n"
+        "`model_closed_for_task` is legal only when the candidate identity is current, every typed check passes, and the candidate native receipt has zero open gaps. Otherwise preserve the exact non-success boundary: `continue_iteration`, `external_input_required`, `progress_stalled`, `iteration_limit`, `scope_excluded`, or `model_miss`. A passing regression with any native gap is continuation, not closure.\n\n"
         "Use `python -m physicsguard.guard_model_contract check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.\n\n"
         "`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.\n\n"
         "`physicsguard.guard_model_contract` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.\n"
@@ -920,6 +941,9 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
     contract_check = f"check:{skill_id}:family-baseline-contract"
     candidate_check = f"check:{skill_id}:family-baseline-candidate"
     good_check = f"check:{skill_id}:family-baseline-good"
+    task_model_obligation = f"obligation:{skill_id}:task-local-model-deepening"
+    task_model_check = f"check:{skill_id}:task-local-model-deepening"
+    task_model_pytest_id = skill_id.replace("-", "_")
     repository_prefix = f"skill/{skill_id}"
     contract_selectors = [
         {"kind": "path", "path": f"{repository_prefix}/guard-model/contract.json"},
@@ -1011,6 +1035,40 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
                 "input_selectors": candidate_selectors,
             }
         )
+    checks.append(
+        {
+            "check_id": task_model_check,
+            "semantic_check_id": f"semantic:{skill_id}:task-local-model-deepening",
+            "kind": "command",
+            "command": "python",
+            "args": [
+                "-m",
+                "pytest",
+                "tests/test_task_local_revision.py",
+                "tests/test_physicsguard_skill_prompts.py",
+                "-q",
+                "-k",
+                f"test_task_local_revision or {task_model_pytest_id}",
+            ],
+            "cwd_token": "target_root",
+            "expected": {"exit_code": 0},
+            "timeout_seconds": 240,
+            "evidence_class": "hard",
+            "evidence_domain_id": f"{skill_id}:task-local-model-deepening",
+            "execution_owner_id": f"owner:{skill_id}:task-local-model-deepening",
+            "covers_obligation_ids": [task_model_obligation],
+            "depends_on_check_ids": [good_check],
+            "input_selectors": [
+                {"kind": "path", "path": f"{repository_prefix}/SKILL.md"},
+                {"kind": "path", "path": f"{repository_prefix}/.skillguard/contract-source.json"},
+                {"kind": "path", "path": "src/physicsguard/schema/task_local_revision.py"},
+                {"kind": "path", "path": "src/physicsguard/core/task_local_revision.py"},
+                {"kind": "path", "path": "src/physicsguard/cli.py"},
+                {"kind": "path", "path": "tests/test_task_local_revision.py"},
+                {"kind": "path", "path": "tests/test_physicsguard_skill_prompts.py"},
+            ],
+        }
+    )
     for check in checks:
         check["maintenance_unit_id"] = "unit:physicsguard-family"
         check["member_skill_id"] = skill_id
@@ -1020,6 +1078,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
         candidate_obligation,
         good_obligation,
         *bad_obligations,
+        task_model_obligation,
     ]
     check_ids = [str(check["check_id"]) for check in checks]
     source_contract = {
@@ -1045,7 +1104,11 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
                     f"native-check:{skill_id}:"
                     f"{binding_id_fragment(str(check['check_id']))}"
                 ),
-                "evidence_source": "physicsguard.guard_model_contract",
+                "evidence_source": (
+                    "physicsguard.task_local_revision"
+                    if str(check["check_id"]) == task_model_check
+                    else "physicsguard.guard_model_contract"
+                ),
                 "native_check_id": str(check["check_id"]),
                 "required": True,
             }
@@ -1053,12 +1116,13 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
         ],
         "depth_profile": {
             "schema_version": "skillguard.depth_profile.v2",
-            "profile_id": f"profile:{skill_id}:family-baseline-regression",
+            "profile_id": f"profile:{skill_id}:current-closure",
             "target_skill_id": skill_id,
             "integration_mode": "native-integrated",
             "native_owner_id": owner,
             "native_route_ids": [route],
             "native_check_ids": check_ids,
+            "model_deepening_check_id": task_model_check,
             "skillguard_adds_domain_route": False,
             "enforcement_level": "enforced",
             "required_closure_profiles": ["enforced"],
@@ -1124,6 +1188,15 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
                 }
                 for row in guard_contract["prevented_failure_classes"]
             ],
+            {
+                "step_id": f"step:{skill_id}:task-local-model-deepening",
+                "check_ids": [task_model_check],
+                "output_artifact_ids": [],
+                "action": {
+                    "kind": "native",
+                    "summary": "Execute the target-declared strict task-local model-deepening closure checks.",
+                },
+            },
         ],
         "implementation_paths": [],
         "repository_role": "skill_maintainer_source",

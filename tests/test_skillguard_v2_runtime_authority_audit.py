@@ -171,7 +171,11 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
                 "native-check:physicsguard-model-dataset-validation:"
                 f"{check_id.replace(':', '-')}"
             ),
-            "evidence_source": "physicsguard.guard_model_contract",
+            "evidence_source": (
+                "physicsguard.task_local_revision"
+                if check_id.endswith(":task-local-model-deepening")
+                else "physicsguard.guard_model_contract"
+            ),
             "native_check_id": check_id,
             "required": True,
         }
@@ -181,6 +185,9 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
     assert depth["native_owner_id"] == owner
     assert depth["native_route_ids"] == [route]
     assert depth["native_check_ids"] == check_ids
+    assert depth["model_deepening_check_id"] == (
+        "check:physicsguard-model-dataset-validation:task-local-model-deepening"
+    )
     assert depth["enforcement_level"] == "enforced"
     assert depth["required_closure_profiles"] == ["enforced"]
     skill_prefix = "skill/physicsguard-model-dataset-validation"
@@ -194,6 +201,9 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
     guard_paths = {*contract_paths, candidate_path}
     assert guard_paths <= set(contract["implementation_paths"])
     for check in contract["checks"]:
+        is_task_model = str(check["check_id"]).endswith(
+            ":task-local-model-deepening"
+        )
         assert not {
             "depth_evidence_protocol",
             "calibration_evidence_protocol",
@@ -205,10 +215,21 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
             for item in check.get("input_selectors", [])
             if isinstance(item, dict) and item.get("kind") == "path"
         }
-        assert contract_paths <= selectors
-        if str(check["check_id"]).endswith(":family-baseline-contract"):
-            assert candidate_path not in selectors
+        if is_task_model:
+            assert {
+                f"{skill_prefix}/SKILL.md",
+                "src/physicsguard/schema/task_local_revision.py",
+                "src/physicsguard/core/task_local_revision.py",
+                "src/physicsguard/cli.py",
+                "tests/test_task_local_revision.py",
+                "tests/test_physicsguard_skill_prompts.py",
+            } <= selectors
+            assert check["args"][:2] == ["-m", "pytest"]
         else:
-            assert guard_paths <= selectors
-        assert runtime_authority_paths <= selectors
-        assert check["args"][:2] == ["-m", "physicsguard.guard_model_contract"]
+            assert contract_paths <= selectors
+            if str(check["check_id"]).endswith(":family-baseline-contract"):
+                assert candidate_path not in selectors
+            else:
+                assert guard_paths <= selectors
+            assert runtime_authority_paths <= selectors
+            assert check["args"][:2] == ["-m", "physicsguard.guard_model_contract"]

@@ -185,6 +185,9 @@ def test_every_skill_declares_one_canonical_package_runtime() -> None:
     canonical_sources = {
         "src/physicsguard/guard_model_contract.py",
         "src/physicsguard/skill_execution_depth.py",
+        "src/physicsguard/schema/task_local_revision.py",
+        "src/physicsguard/core/task_local_revision.py",
+        "src/physicsguard/cli.py",
     }
     for skill_root in SKILLS:
         requirement = json.loads(
@@ -217,13 +220,30 @@ def test_every_skill_declares_one_canonical_package_runtime() -> None:
             source_contract["implementation_paths"]
         )
         for check in source_contract["checks"]:
-            assert check["args"][:2] == ["-m", "physicsguard.guard_model_contract"]
+            is_task_model = str(check["check_id"]).endswith(
+                ":task-local-model-deepening"
+            )
+            assert check["args"][:2] == (
+                ["-m", "pytest"]
+                if is_task_model
+                else ["-m", "physicsguard.guard_model_contract"]
+            )
             selectors = {
                 str(row.get("path"))
                 for row in check.get("input_selectors", [])
                 if isinstance(row, dict) and row.get("kind") == "path"
             }
-            assert canonical_sources | {requirement_path} <= selectors, check["check_id"]
+            if is_task_model:
+                assert {
+                    f"skill/{skill_root.name}/SKILL.md",
+                    "src/physicsguard/schema/task_local_revision.py",
+                    "src/physicsguard/core/task_local_revision.py",
+                    "src/physicsguard/cli.py",
+                    "tests/test_task_local_revision.py",
+                    "tests/test_physicsguard_skill_prompts.py",
+                } <= selectors, check["check_id"]
+            else:
+                assert canonical_sources | {requirement_path} <= selectors, check["check_id"]
 
 
 def test_missing_canonical_package_authority_blocks_without_fallback(
@@ -276,7 +296,11 @@ def test_generic_skillguard_contract_contains_only_target_owned_native_integrati
                 "binding_id": (
                     f"native-check:{skill_root.name}:{check_id.replace(':', '-')}"
                 ),
-                "evidence_source": "physicsguard.guard_model_contract",
+                "evidence_source": (
+                    "physicsguard.task_local_revision"
+                    if check_id.endswith(":task-local-model-deepening")
+                    else "physicsguard.guard_model_contract"
+                ),
                 "native_check_id": check_id,
                 "required": True,
             }
@@ -289,6 +313,9 @@ def test_generic_skillguard_contract_contains_only_target_owned_native_integrati
         assert depth["native_owner_id"] == owner
         assert depth["native_route_ids"] == [route]
         assert depth["native_check_ids"] == check_ids
+        assert depth["model_deepening_check_id"] == (
+            f"check:{skill_root.name}:task-local-model-deepening"
+        )
         assert depth["skillguard_adds_domain_route"] is False
         assert depth["enforcement_level"] == "enforced"
         assert depth["required_closure_profiles"] == ["enforced"]
