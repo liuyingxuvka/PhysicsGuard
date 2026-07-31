@@ -123,7 +123,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-contract",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-project-adoption"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -193,7 +193,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-candidate",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-project-adoption"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -269,7 +269,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-good",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-project-adoption"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -345,7 +345,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-project-adoption",
         "--failure-id",
         "failure:physicsguard-project-adoption:adoption-record-stale"
       ],
@@ -423,7 +423,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-project-adoption",
         "--failure-id",
         "failure:physicsguard-project-adoption:toolchain-unsupported"
       ],
@@ -501,7 +501,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-project-adoption",
         "--failure-id",
         "failure:physicsguard-project-adoption:native-artifacts-incomplete"
       ],
@@ -579,7 +579,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-project-adoption",
         "--failure-id",
         "failure:physicsguard-project-adoption:blocker-or-revalidation-omitted"
       ],

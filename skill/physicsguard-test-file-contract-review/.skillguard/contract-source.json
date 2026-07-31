@@ -130,7 +130,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-contract",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-test-file-contract-review"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -200,7 +200,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-candidate",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-test-file-contract-review"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -276,7 +276,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-good",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-test-file-contract-review"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -352,7 +352,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-test-file-contract-review",
         "--failure-id",
         "failure:physicsguard-test-file-contract-review:file-or-field-identity-missing"
       ],
@@ -430,7 +430,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-test-file-contract-review",
         "--failure-id",
         "failure:physicsguard-test-file-contract-review:unit-or-timing-mismatch"
       ],
@@ -508,7 +508,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-test-file-contract-review",
         "--failure-id",
         "failure:physicsguard-test-file-contract-review:testbench-model-binding-wrong"
       ],
@@ -586,7 +586,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-test-file-contract-review",
         "--failure-id",
         "failure:physicsguard-test-file-contract-review:per-signal-evidence-shallow"
       ],
@@ -664,7 +664,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-test-file-contract-review",
         "--failure-id",
         "failure:physicsguard-test-file-contract-review:project-gap-hidden"
       ],

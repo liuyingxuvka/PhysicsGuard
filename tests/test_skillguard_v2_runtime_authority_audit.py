@@ -233,3 +233,5 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
                 assert guard_paths <= selectors
             assert runtime_authority_paths <= selectors
             assert check["args"][:2] == ["-m", "physicsguard.guard_model_contract"]
+            skill_root_index = check["args"].index("--skill-root") + 1
+            assert check["args"][skill_root_index] == skill_prefix

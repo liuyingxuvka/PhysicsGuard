@@ -130,7 +130,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-contract",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-ai-debugging"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -200,7 +200,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-candidate",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-ai-debugging"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -276,7 +276,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-good",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-ai-debugging"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -352,7 +352,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-ai-debugging",
         "--failure-id",
         "failure:physicsguard-ai-debugging:symptom-mislocalized"
       ],
@@ -430,7 +430,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-ai-debugging",
         "--failure-id",
         "failure:physicsguard-ai-debugging:physical-boundary-violation"
       ],
@@ -508,7 +508,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-ai-debugging",
         "--failure-id",
         "failure:physicsguard-ai-debugging:mapping-identity-wrong"
       ],
@@ -586,7 +586,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-ai-debugging",
         "--failure-id",
         "failure:physicsguard-ai-debugging:validation-too-shallow"
       ],
@@ -664,7 +664,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-ai-debugging",
         "--failure-id",
         "failure:physicsguard-ai-debugging:assumption-or-scope-overreach"
       ],

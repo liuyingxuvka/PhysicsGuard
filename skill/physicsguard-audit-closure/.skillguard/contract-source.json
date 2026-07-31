@@ -130,7 +130,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-contract",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-audit-closure"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -200,7 +200,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-candidate",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-audit-closure"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -276,7 +276,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-good",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-audit-closure"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -352,7 +352,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-audit-closure",
         "--failure-id",
         "failure:physicsguard-audit-closure:required-check-missing"
       ],
@@ -430,7 +430,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-audit-closure",
         "--failure-id",
         "failure:physicsguard-audit-closure:stale-or-skipped-promoted"
       ],
@@ -508,7 +508,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-audit-closure",
         "--failure-id",
         "failure:physicsguard-audit-closure:blocker-suppressed"
       ],
@@ -586,7 +586,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-audit-closure",
         "--failure-id",
         "failure:physicsguard-audit-closure:predictive-overclaim"
       ],
@@ -664,7 +664,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-audit-closure",
         "--failure-id",
         "failure:physicsguard-audit-closure:closure-scope-overreach"
       ],

@@ -123,7 +123,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-contract",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-signal-mapping-review"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -193,7 +193,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-candidate",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-signal-mapping-review"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -269,7 +269,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-good",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-signal-mapping-review"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -345,7 +345,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-signal-mapping-review",
         "--failure-id",
         "failure:physicsguard-signal-mapping-review:signal-target-mismatch"
       ],
@@ -423,7 +423,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-signal-mapping-review",
         "--failure-id",
         "failure:physicsguard-signal-mapping-review:unit-conversion-invalid"
       ],
@@ -501,7 +501,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-signal-mapping-review",
         "--failure-id",
         "failure:physicsguard-signal-mapping-review:revision-or-time-stale"
       ],
@@ -579,7 +579,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-signal-mapping-review",
         "--failure-id",
         "failure:physicsguard-signal-mapping-review:review-confidence-unresolved"
       ],

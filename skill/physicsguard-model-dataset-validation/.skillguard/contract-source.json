@@ -130,7 +130,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-contract",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-model-dataset-validation"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -200,7 +200,7 @@
         "physicsguard.guard_model_contract",
         "check-baseline-candidate",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-model-dataset-validation"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -276,7 +276,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-good",
         "--skill-root",
-        "{{target_root}}"
+        "skill/physicsguard-model-dataset-validation"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -352,7 +352,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-model-dataset-validation",
         "--failure-id",
         "failure:physicsguard-model-dataset-validation:validation-identity-wrong"
       ],
@@ -430,7 +430,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-model-dataset-validation",
         "--failure-id",
         "failure:physicsguard-model-dataset-validation:coverage-universe-shallow"
       ],
@@ -508,7 +508,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-model-dataset-validation",
         "--failure-id",
         "failure:physicsguard-model-dataset-validation:physical-relation-violated"
       ],
@@ -586,7 +586,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-model-dataset-validation",
         "--failure-id",
         "failure:physicsguard-model-dataset-validation:prediction-semantics-overclaimed"
       ],
@@ -664,7 +664,7 @@
         "physicsguard.guard_model_contract",
         "prove-baseline-bad",
         "--skill-root",
-        "{{target_root}}",
+        "skill/physicsguard-model-dataset-validation",
         "--failure-id",
         "failure:physicsguard-model-dataset-validation:validation-scope-overreach"
       ],
