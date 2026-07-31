@@ -78,6 +78,14 @@ def freeze_hypothesis_plan(
         "receipt_version": "1.0",
         "status": status,
         "plan_id": plan.plan_id,
+        "task_id": plan.task_id,
+        "purpose": plan.purpose,
+        "coverage_ids": list(plan.coverage_ids),
+        "assumptions": list(plan.assumptions),
+        "unknowns": list(plan.unknowns),
+        "iteration": plan.iteration,
+        "max_iterations": plan.max_iterations,
+        "native_depth_gap_ids": list(plan.native_depth_gap_ids),
         "prediction_sequence": plan.prediction_sequence,
         "model_identity": model,
         "plan_fingerprint": _fingerprint(content),
@@ -136,6 +144,25 @@ def evaluate_hypothesis_observation(
         )
 
     observation_content = observation.model_dump(mode="json")
+    open_gap_ids = sorted(
+        {
+            f"{row['hypothesis_id']}:{expectation_id}"
+            for row in hypothesis_results
+            for expectation_id in row["missing_expectation_ids"]
+        }
+        | set(plan.native_depth_gap_ids)
+    )
+    gap_transitions = dict(observation.gap_transitions)
+    next_actions = [
+        "acquire_native_observation" if gap_id not in plan.native_depth_gap_ids else "deepen_native_validation"
+        for gap_id in open_gap_ids
+    ]
+    if open_gap_ids:
+        terminal_reason = "continue_iteration"
+    elif observation.external_input_ids:
+        terminal_reason = "external_input_required"
+    else:
+        terminal_reason = "model_closed_for_task"
     return {
         "artifact_kind": "physicsguard_hypothesis_observation_receipt",
         "receipt_version": "1.0",
@@ -149,6 +176,16 @@ def evaluate_hypothesis_observation(
         "hypothesis_results": hypothesis_results,
         "mismatch_ids": mismatch_ids,
         "next_observation_candidates": frozen["ranked_observation_candidates"],
+        "task_id": plan.task_id,
+        "purpose": plan.purpose,
+        "coverage_ids": list(plan.coverage_ids),
+        "iteration": plan.iteration,
+        "open_gap_ids": open_gap_ids,
+        "gap_transitions": gap_transitions,
+        "next_actions": sorted(set(next_actions)),
+        "terminal_reason": terminal_reason,
+        "external_input_ids": list(observation.external_input_ids),
+        "progressed": bool(gap_transitions) or plan.iteration == 0,
         "claim_boundary": (
             "The comparison covers only the typed declared expectations and supplied observation; "
             "missing targets remain undetermined and no Guard source or threshold is modified."
@@ -262,11 +299,31 @@ def evaluate_candidate_model_revision(
         )
 
     failed = [item["check_id"] for item in checks if item["effective_status"] != "pass"]
+    remaining_gaps = sorted(set(revision.remaining_gap_ids) | set(revision.remaining_predictive_gap_ids))
+    gap_transitions = dict(revision.gap_transitions)
     rollback = None
+    terminal_reason = revision.terminal_reason
     if identity_findings:
         disposition = "blocked"
     elif not failed:
-        disposition = "accepted"
+        if revision.external_input_ids:
+            disposition = "continue_iteration"
+            terminal_reason = "external_input_required"
+        elif terminal_reason == "scope_excluded":
+            disposition = "continue_iteration"
+        elif remaining_gaps:
+            if revision.iteration >= revision.max_iterations:
+                disposition = "continue_iteration"
+                terminal_reason = "iteration_limit"
+            elif gap_transitions and set(gap_transitions) >= set(remaining_gaps):
+                disposition = "continue_iteration"
+                terminal_reason = "progress_stalled"
+            else:
+                disposition = "continue_iteration"
+                terminal_reason = "continue_iteration"
+        else:
+            disposition = "accepted"
+            terminal_reason = "model_closed_for_task"
     elif not revision.candidate_applied:
         disposition = "rejected"
     else:
@@ -298,6 +355,15 @@ def evaluate_candidate_model_revision(
         "required_check_ids": revision.required_check_ids,
         "check_results": checks,
         "failed_check_ids": failed,
+        "task_id": revision.task_id,
+        "iteration": revision.iteration,
+        "remaining_gap_ids": remaining_gaps,
+        "remaining_predictive_gap_ids": list(revision.remaining_predictive_gap_ids),
+        "gap_transitions": gap_transitions,
+        "next_actions": list(revision.next_actions),
+        "external_input_ids": list(revision.external_input_ids),
+        "terminal_reason": terminal_reason,
+        "progressed": bool(gap_transitions) or revision.iteration == 0,
         "identity_findings": identity_findings,
         "base_model_preserved": base["status"] == "current",
         "revision_fingerprint": _fingerprint(revision.model_dump(mode="json")),

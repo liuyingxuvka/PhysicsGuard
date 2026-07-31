@@ -1,0 +1,296 @@
+{
+  "added_ids": [],
+  "affected_closure_fingerprint": "sha256:1f74dd51056ba3856cea478deae18cf28bc64bd73619c64c1d955f39f85e41d4",
+  "affected_closure_ids": [
+    "coverage:universe",
+    "model_instance:model:guard_closure_contract",
+    "model_instance:model:interval_diagnosability",
+    "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+    "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+    "model_relation:relation:system-contains:guard_closure_contract",
+    "model_relation:relation:system-contains:interval_diagnosability",
+    "parent_closure:purpose:guard_closure_contract",
+    "parent_closure:purpose:interval_diagnosability",
+    "parent_closure:system:flowguard:model-regression-manifest",
+    "root:model:guard_closure_contract",
+    "system_property:subject_revision"
+  ],
+  "affected_edge_ids": [
+    "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+    "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+    "model_relation:relation:system-contains:guard_closure_contract",
+    "model_relation:relation:system-contains:interval_diagnosability"
+  ],
+  "affected_owner_bindings": [
+    {
+      "affected_id": "coverage:universe",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_instance:model:guard_closure_contract",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_instance:model:interval_diagnosability",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:guard_closure_contract",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:interval_diagnosability",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "parent_closure:purpose:guard_closure_contract",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:purpose:interval_diagnosability",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:system:flowguard:model-regression-manifest",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "root:model:guard_closure_contract",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "system_property:subject_revision",
+      "owner_route": "model_mesh_maintenance"
+    }
+  ],
+  "base_snapshot_fingerprint": "sha256:7eccb13b54a647f10a8e644c2679175d9a2417214d209e2689582159d5f359ef",
+  "candidate_snapshot_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+  "changed_commitment_ids": [],
+  "changed_contract_ids": [],
+  "changed_coverage_ids": [
+    "coverage:universe"
+  ],
+  "changed_field_ids": [],
+  "changed_gap_ids": [],
+  "changed_owner_artifact_ids": [
+    "parent_closure:purpose:guard_closure_contract",
+    "parent_closure:purpose:interval_diagnosability",
+    "parent_closure:system:flowguard:model-regression-manifest"
+  ],
+  "changed_relation_ids": [
+    "relation:model-realizes-purpose:guard_closure_contract",
+    "relation:model-realizes-purpose:interval_diagnosability",
+    "relation:system-contains:guard_closure_contract",
+    "relation:system-contains:interval_diagnosability"
+  ],
+  "changed_root_ids": [
+    "root:model:guard_closure_contract"
+  ],
+  "changed_side_effect_ids": [],
+  "changed_source_surface_ids": [],
+  "changed_system_property_ids": [
+    "system_property:subject_revision"
+  ],
+  "changed_test_ids": [],
+  "completed_evidence_refs": [
+    {
+      "affected_closure_fingerprint": "sha256:1f74dd51056ba3856cea478deae18cf28bc64bd73619c64c1d955f39f85e41d4",
+      "candidate_snapshot_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "covered_affected_ids": [
+        "coverage:universe",
+        "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+        "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+        "model_relation:relation:system-contains:guard_closure_contract",
+        "model_relation:relation:system-contains:interval_diagnosability",
+        "parent_closure:system:flowguard:model-regression-manifest",
+        "root:model:guard_closure_contract",
+        "system_property:subject_revision"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:e44d95ababc2211ab969c088f5a86977ae7f7746e78b53fef5e18371f88d93ff",
+      "obligation_ids": [
+        "obligation:physicsguard:model-regression:model-mesh"
+      ],
+      "owner_route": "model_mesh_maintenance",
+      "receipt_fingerprint": "sha256:3364d163e57ccbddf9c4f6ff1738f2591346faad73673f773bca57661252a5a0",
+      "receipt_id": "receipt:flowguard:model-regression-parent:20260731T133756Z-a7f3a53d",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "pass",
+      "subject_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "toolchain_fingerprint": "sha256:c358693b7e4d960cefe0e9007b425c24497543787aa7826c451533d9e6a8a52d"
+    },
+    {
+      "affected_closure_fingerprint": "sha256:1f74dd51056ba3856cea478deae18cf28bc64bd73619c64c1d955f39f85e41d4",
+      "candidate_snapshot_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "covered_affected_ids": [
+        "model_instance:model:guard_closure_contract",
+        "parent_closure:purpose:guard_closure_contract"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:e44d95ababc2211ab969c088f5a86977ae7f7746e78b53fef5e18371f88d93ff",
+      "obligation_ids": [
+        "obligation:physicsguard:model-regression:guard-closure"
+      ],
+      "owner_route": "model_test_alignment",
+      "receipt_fingerprint": "sha256:af89afe2ed19c9d9ea35d0e269241b2429dd036010b722557232c213bb8e4272",
+      "receipt_id": "receipt:flowguard:model:guard-closure:20260731T133756Z-a7f3a53d",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "pass",
+      "subject_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "toolchain_fingerprint": "sha256:c358693b7e4d960cefe0e9007b425c24497543787aa7826c451533d9e6a8a52d"
+    },
+    {
+      "affected_closure_fingerprint": "sha256:1f74dd51056ba3856cea478deae18cf28bc64bd73619c64c1d955f39f85e41d4",
+      "candidate_snapshot_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "covered_affected_ids": [
+        "model_instance:model:interval_diagnosability",
+        "parent_closure:purpose:interval_diagnosability"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:e44d95ababc2211ab969c088f5a86977ae7f7746e78b53fef5e18371f88d93ff",
+      "obligation_ids": [
+        "obligation:physicsguard:model-regression:interval-diagnosability"
+      ],
+      "owner_route": "model_test_alignment",
+      "receipt_fingerprint": "sha256:ab23591e2800933d304efd94395d5a978ec60b71b61a9f2c6424aa25b282700e",
+      "receipt_id": "receipt:flowguard:model:interval-diagnosability:20260731T133756Z-a7f3a53d",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "pass",
+      "subject_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "toolchain_fingerprint": "sha256:c358693b7e4d960cefe0e9007b425c24497543787aa7826c451533d9e6a8a52d"
+    }
+  ],
+  "decision_reason": "PhysicsGuard 0.14.0 current model regression passed for every required-public model and refreshed task-local revision inputs.",
+  "evidence_complete": true,
+  "expected_head_fingerprint": "sha256:87d2a479cb959ca2c58f4f004e8e29f42bb559f2ea6a692733187c50b1865f62",
+  "fingerprint": "sha256:55912273d91951328c1836de78681d18b31b7abad1868344509b148cc6b463b6",
+  "fingerprint_changed_ids": [
+    "coverage:universe",
+    "model_instance:model:guard_closure_contract",
+    "model_instance:model:interval_diagnosability",
+    "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+    "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+    "model_relation:relation:system-contains:guard_closure_contract",
+    "model_relation:relation:system-contains:interval_diagnosability",
+    "parent_closure:purpose:guard_closure_contract",
+    "parent_closure:purpose:interval_diagnosability",
+    "parent_closure:system:flowguard:model-regression-manifest",
+    "root:model:guard_closure_contract"
+  ],
+  "implementation_bundle_fingerprint": "",
+  "members": [
+    {
+      "base_instance_fingerprint": "sha256:5e792146585e77dc0810e160f43a367f1205e05966b4555fbac027c9892dd132",
+      "candidate_instance_fingerprint": "sha256:04293c502bc05989f3bfa866a86ff34217b1a4d673cfc5245a3296159c8d0c73",
+      "changed_element_ids": [
+        "model_instance:model:guard_closure_contract"
+      ],
+      "member_id": "guard_closure_contract",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    },
+    {
+      "base_instance_fingerprint": "sha256:4bb36775282019412445ce452c94b8a99c1990c43779e24326057dbd9fc7ae89",
+      "candidate_instance_fingerprint": "sha256:1a18858dadab2efb6d5d33888647f84abe4d484b5ce6df85de193a1c50bb8a5e",
+      "changed_element_ids": [
+        "model_instance:model:interval_diagnosability"
+      ],
+      "member_id": "interval_diagnosability",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    }
+  ],
+  "originating_activation_receipt_fingerprint": "",
+  "originating_revision_set_fingerprint": "",
+  "prediction_replay_refs": [],
+  "removal_dispositions": [],
+  "removed_ids": [],
+  "required_evidence_refs": [
+    {
+      "affected_closure_fingerprint": "sha256:1f74dd51056ba3856cea478deae18cf28bc64bd73619c64c1d955f39f85e41d4",
+      "candidate_snapshot_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "covered_affected_ids": [
+        "coverage:universe",
+        "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+        "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+        "model_relation:relation:system-contains:guard_closure_contract",
+        "model_relation:relation:system-contains:interval_diagnosability",
+        "parent_closure:system:flowguard:model-regression-manifest",
+        "root:model:guard_closure_contract",
+        "system_property:subject_revision"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:e44d95ababc2211ab969c088f5a86977ae7f7746e78b53fef5e18371f88d93ff",
+      "obligation_ids": [
+        "obligation:physicsguard:model-regression:model-mesh"
+      ],
+      "owner_route": "model_mesh_maintenance",
+      "receipt_fingerprint": "sha256:3364d163e57ccbddf9c4f6ff1738f2591346faad73673f773bca57661252a5a0",
+      "receipt_id": "receipt:flowguard:model-regression-parent:20260731T133756Z-a7f3a53d",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "required",
+      "subject_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "toolchain_fingerprint": "sha256:c358693b7e4d960cefe0e9007b425c24497543787aa7826c451533d9e6a8a52d"
+    },
+    {
+      "affected_closure_fingerprint": "sha256:1f74dd51056ba3856cea478deae18cf28bc64bd73619c64c1d955f39f85e41d4",
+      "candidate_snapshot_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "covered_affected_ids": [
+        "model_instance:model:guard_closure_contract",
+        "parent_closure:purpose:guard_closure_contract"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:e44d95ababc2211ab969c088f5a86977ae7f7746e78b53fef5e18371f88d93ff",
+      "obligation_ids": [
+        "obligation:physicsguard:model-regression:guard-closure"
+      ],
+      "owner_route": "model_test_alignment",
+      "receipt_fingerprint": "sha256:af89afe2ed19c9d9ea35d0e269241b2429dd036010b722557232c213bb8e4272",
+      "receipt_id": "receipt:flowguard:model:guard-closure:20260731T133756Z-a7f3a53d",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "required",
+      "subject_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "toolchain_fingerprint": "sha256:c358693b7e4d960cefe0e9007b425c24497543787aa7826c451533d9e6a8a52d"
+    },
+    {
+      "affected_closure_fingerprint": "sha256:1f74dd51056ba3856cea478deae18cf28bc64bd73619c64c1d955f39f85e41d4",
+      "candidate_snapshot_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "covered_affected_ids": [
+        "model_instance:model:interval_diagnosability",
+        "parent_closure:purpose:interval_diagnosability"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:e44d95ababc2211ab969c088f5a86977ae7f7746e78b53fef5e18371f88d93ff",
+      "obligation_ids": [
+        "obligation:physicsguard:model-regression:interval-diagnosability"
+      ],
+      "owner_route": "model_test_alignment",
+      "receipt_fingerprint": "sha256:ab23591e2800933d304efd94395d5a978ec60b71b61a9f2c6424aa25b282700e",
+      "receipt_id": "receipt:flowguard:model:interval-diagnosability:20260731T133756Z-a7f3a53d",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "required",
+      "subject_fingerprint": "sha256:a07efe2db0115b2d353d0435c70681d5f3543615520a1ffd80a7839fcf81483a",
+      "toolchain_fingerprint": "sha256:c358693b7e4d960cefe0e9007b425c24497543787aa7826c451533d9e6a8a52d"
+    }
+  ],
+  "revision_set_id": "revision:physicsguard:model-authority:0.14.0",
+  "rollback_contract_fingerprint": "",
+  "schema": "flowguard.model_revision_set.v2",
+  "snapshot_diff_fingerprint": "sha256:ea892d517318371f5c79ebb011c9774b1f89c0fd53f7a462389f7d7f4810955f",
+  "status": "accepted",
+  "task_id": "task:physicsguard:model-authority-refresh:0.14.0"
+}

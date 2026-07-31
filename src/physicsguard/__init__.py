@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.13.0"
+__version__ = "0.14.0"
 
 from physicsguard.core.signal_mapping import (
     BugFamilyFollowUp,

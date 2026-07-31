@@ -345,3 +345,40 @@ def test_task_local_revision_uses_the_canonical_package_runtime() -> None:
     assert not (
         ROOT / "skill" / "physicsguard-model-dataset-validation" / "runtime"
     ).exists()
+
+
+def test_task_local_plan_requires_independent_coverage_inventory(tmp_path: Path) -> None:
+    model = _write_model(tmp_path / "base.json", "base model")
+    data = _plan_data(model)
+    data["task_id"] = "task-1"
+    with pytest.raises(ValidationError, match="coverage_ids"):
+        HypothesisPlanSpec.model_validate(data)
+
+
+def test_observation_receipt_exposes_open_gaps_and_task_terminal_reason(tmp_path: Path) -> None:
+    model = _write_model(tmp_path / "base.json", "base model")
+    data = _plan_data(model)
+    data.update({"task_id": "task-1", "purpose": "localize pump fault", "coverage_ids": ["speed", "balance", "timing"]})
+    plan = HypothesisPlanSpec.model_validate(data)
+    observation = _observation().model_copy(update={"signals": {}, "residuals": {}, "timings": {}})
+    receipt = evaluate_hypothesis_observation(plan, observation, base_dir=tmp_path)
+    assert receipt["terminal_reason"] == "continue_iteration"
+    assert receipt["open_gap_ids"]
+    assert receipt["next_actions"]
+
+
+def test_candidate_with_predictive_gap_continues_instead_of_accepting(tmp_path: Path) -> None:
+    base = _write_model(tmp_path / "base.json", "base model")
+    candidate = _write_model(tmp_path / "candidate.json", "candidate model")
+    revision = _revision(base, candidate).model_copy(
+        update={
+            "task_id": "task-1",
+            "iteration": 1,
+            "remaining_predictive_gap_ids": ["holdout:unseen-regime"],
+            "next_actions": ["acquire_holdout"],
+        }
+    )
+    receipt = evaluate_candidate_model_revision(revision, base_dir=tmp_path)
+    assert receipt["disposition"] == "continue_iteration"
+    assert receipt["terminal_reason"] == "continue_iteration"
+    assert receipt["remaining_predictive_gap_ids"] == ["holdout:unseen-regime"]

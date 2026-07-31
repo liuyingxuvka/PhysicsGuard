@@ -34,6 +34,20 @@ RevisionKind = Literal[
 ]
 RevisionCheckKind = Literal["regression", "holdout", "predictive_rollout"]
 CheckStatus = Literal["pass", "fail", "blocked", "not_run"]
+ResolutionClass = Literal[
+    "model_edit",
+    "evidence_acquisition",
+    "external_input_required",
+    "scope_excluded",
+]
+TerminalReason = Literal[
+    "continue_iteration",
+    "model_closed_for_task",
+    "external_input_required",
+    "scope_excluded",
+    "progress_stalled",
+    "iteration_limit",
+]
 
 
 def _non_empty(value: str, field_name: str) -> str:
@@ -191,11 +205,33 @@ class HypothesisPlanSpec(BaseModel):
     selection_weights: ObservationSelectionWeightsSpec = Field(
         default_factory=ObservationSelectionWeightsSpec
     )
+    task_id: str = ""
+    purpose: str = ""
+    coverage_ids: list[str] = Field(default_factory=list)
+    assumptions: list[str] = Field(default_factory=list)
+    unknowns: list[str] = Field(default_factory=list)
+    iteration: int = Field(default=0, ge=0)
+    max_iterations: int = Field(default=8, ge=1)
+    prior_plan_fingerprint: str = ""
+    native_depth_gap_ids: list[str] = Field(default_factory=list)
 
     @field_validator("plan_id")
     @classmethod
     def _plan_id_valid(cls, value: str) -> str:
         return _non_empty(value, "plan_id")
+
+    @field_validator("task_id", "purpose")
+    @classmethod
+    def _optional_text_valid(cls, value: str, info) -> str:
+        return value.strip()
+
+    @field_validator("coverage_ids", "assumptions", "unknowns", "native_depth_gap_ids")
+    @classmethod
+    def _unique_text_list(cls, values: list[str], info) -> list[str]:
+        normalized = [_non_empty(value, info.field_name) for value in values]
+        if len(normalized) != len(set(normalized)):
+            raise ValueError(f"{info.field_name} must be unique")
+        return normalized
 
     @model_validator(mode="after")
     def _plan_valid(self) -> "HypothesisPlanSpec":
@@ -216,6 +252,8 @@ class HypothesisPlanSpec(BaseModel):
                 raise ValueError(
                     "every observation candidate must declare one outcome for every hypothesis"
                 )
+        if self.task_id and not self.coverage_ids:
+            raise ValueError("task-local plans require an explicit coverage_ids inventory")
         return self
 
 
@@ -244,6 +282,10 @@ class DiagnosticObservationSpec(BaseModel):
     signals: dict[str, ObservedSignalSpec] = Field(default_factory=dict)
     residuals: dict[str, float] = Field(default_factory=dict)
     timings: dict[str, float] = Field(default_factory=dict)
+    evidence_id: str = ""
+    evidence_fingerprint: str = ""
+    gap_transitions: dict[str, str] = Field(default_factory=dict)
+    external_input_ids: list[str] = Field(default_factory=list)
 
     @field_validator("observation_id", "plan_id", "source_ref")
     @classmethod
@@ -259,6 +301,27 @@ class DiagnosticObservationSpec(BaseModel):
             if not math.isfinite(value):
                 raise ValueError(f"{info.field_name} values must be finite")
             normalized[key] = float(value)
+        return normalized
+
+    @field_validator("evidence_id", "evidence_fingerprint")
+    @classmethod
+    def _optional_evidence_text(cls, value: str) -> str:
+        return value.strip()
+
+    @field_validator("gap_transitions")
+    @classmethod
+    def _gap_transitions_valid(cls, values: dict[str, str]) -> dict[str, str]:
+        return {
+            _non_empty(key, "gap transition id"): _non_empty(value, "gap transition disposition")
+            for key, value in values.items()
+        }
+
+    @field_validator("external_input_ids")
+    @classmethod
+    def _external_ids_valid(cls, values: list[str]) -> list[str]:
+        normalized = [_non_empty(value, "external_input_ids") for value in values]
+        if len(normalized) != len(set(normalized)):
+            raise ValueError("external_input_ids must be unique")
         return normalized
 
 
@@ -304,11 +367,25 @@ class CandidateModelRevisionSpec(BaseModel):
     checks: list[RevisionCheckSpec]
     candidate_applied: bool = False
     rollback_model: TaskModelIdentitySpec | None = None
+    task_id: str = ""
+    iteration: int = Field(default=0, ge=0)
+    max_iterations: int = Field(default=8, ge=1)
+    remaining_gap_ids: list[str] = Field(default_factory=list)
+    remaining_predictive_gap_ids: list[str] = Field(default_factory=list)
+    gap_transitions: dict[str, str] = Field(default_factory=dict)
+    next_actions: list[str] = Field(default_factory=list)
+    terminal_reason: TerminalReason = "continue_iteration"
+    external_input_ids: list[str] = Field(default_factory=list)
 
     @field_validator("revision_id", "plan_id")
     @classmethod
     def _text_valid(cls, value: str, info) -> str:
         return _non_empty(value, info.field_name)
+
+    @field_validator("task_id")
+    @classmethod
+    def _task_id_valid(cls, value: str) -> str:
+        return value.strip()
 
     @field_validator("triggering_mismatch_ids", "required_check_ids")
     @classmethod
@@ -317,6 +394,22 @@ class CandidateModelRevisionSpec(BaseModel):
         if not normalized or len(normalized) != len(set(normalized)):
             raise ValueError(f"{info.field_name} must be non-empty and unique")
         return normalized
+
+    @field_validator("remaining_gap_ids", "remaining_predictive_gap_ids", "next_actions", "external_input_ids")
+    @classmethod
+    def _optional_unique(cls, values: list[str], info) -> list[str]:
+        normalized = [_non_empty(value, info.field_name) for value in values]
+        if len(normalized) != len(set(normalized)):
+            raise ValueError(f"{info.field_name} must be unique")
+        return normalized
+
+    @field_validator("gap_transitions")
+    @classmethod
+    def _gap_transitions_valid(cls, values: dict[str, str]) -> dict[str, str]:
+        return {
+            _non_empty(key, "gap transition id"): _non_empty(value, "gap transition disposition")
+            for key, value in values.items()
+        }
 
     @model_validator(mode="after")
     def _inventory_valid(self) -> "CandidateModelRevisionSpec":
@@ -346,4 +439,6 @@ __all__ = [
     "ObservedSignalSpec",
     "RevisionCheckSpec",
     "TaskModelIdentitySpec",
+    "ResolutionClass",
+    "TerminalReason",
 ]
