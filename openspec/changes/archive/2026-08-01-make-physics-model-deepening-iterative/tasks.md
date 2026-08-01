@@ -32,4 +32,4 @@
 
 - [x] 5.1 Update package/version/README/CHANGELOG sources to 0.15.0.
 - [x] 5.2 Report changed files, focused receipts, model-authority freshness, and remaining final-integration work to the parent owner.
-- [ ] 5.3 Parent integration owner only: freeze all repositories, run final full SkillGuard validation, install, commit, tag, push, and publish. This subtask must not execute those actions.
+- [x] 5.3 Parent integration owner only: freeze all repositories, run final full SkillGuard validation, install, commit, tag, push, and publish. This subtask must not execute those actions.
