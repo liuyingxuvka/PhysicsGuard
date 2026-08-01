@@ -39,18 +39,30 @@ def test_exact_physicsguard_skill_inventory() -> None:
 def test_skill_prompt_requires_receipt_derived_task_model_closure(skill_id: str) -> None:
     skill_dir = SKILL_ROOT / skill_id
     prompt = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    depth = (skill_dir / "references" / "native-depth-and-purpose.md").read_text(
+        encoding="utf-8"
+    )
+    capsule = _load_json(skill_dir / "references" / "route-capsule.json")
     guard_contract = _load_json(skill_dir / "guard-model" / "contract.json")
 
-    assert "### Strict task-local model deepening" in prompt
+    assert len(prompt.encode("utf-8")) <= 6_000
+    assert "references/native-depth-and-purpose.md" in prompt
+    assert "references/template-pack-routing.md" in prompt
+    assert "BEGIN MANAGED VALIDATED TEMPLATE PACK" not in prompt
+    assert "BEGIN MANAGED PURPOSE AND BLOCKABILITY" not in prompt
+    assert "### Strict task-local model deepening" in depth
     assert str(guard_contract["native_owner_id"]) in prompt
     assert str(guard_contract["native_route_id"]) in prompt
-    assert f"check:{skill_id}:task-local-model-deepening" in prompt
-    assert "exactly six families" in prompt
-    assert "AI prose" in prompt
-    assert "model_miss" in prompt
-    assert "one independent holdout receipt" in prompt
-    assert "Renaming or deleting a caller gap is not progress" in prompt
-    assert "model_closed_for_task" in prompt
+    assert f"check:{skill_id}:task-local-model-deepening" in depth
+    assert "exactly six families" in depth
+    assert "AI prose" in depth
+    assert "model_miss" in depth
+    assert "one independent holdout receipt" in depth
+    assert "Renaming or deleting a caller gap is not progress" in depth
+    assert "model_closed_for_task" in depth
+    assert capsule["target_skill_id"] == skill_id
+    assert capsule["native_owner_id"] == guard_contract["native_owner_id"]
+    assert capsule["native_route_id"] == guard_contract["native_route_id"]
 
 
 @pytest.mark.parametrize(
@@ -80,6 +92,7 @@ def test_skill_author_contract_supervises_the_strict_task_model_check(
         "pytest",
         "tests/test_task_local_revision.py",
         "tests/test_physicsguard_skill_prompts.py",
+        "tests/test_physicsguard_skill_entry_loading.py",
         "-q",
         "-k",
         f"test_task_local_revision or {skill_id.replace('-', '_')}",
@@ -90,7 +103,15 @@ def test_skill_author_contract_supervises_the_strict_task_model_check(
         if row.get("kind") == "path"
     }
     assert f"skill/{skill_id}/SKILL.md" in selected_paths
+    assert f"skill/{skill_id}/agents/openai.yaml" in selected_paths
+    assert f"skill/{skill_id}/references/route-capsule.json" in selected_paths
+    assert f"skill/{skill_id}/references/native-route-protocol.md" in selected_paths
+    assert f"skill/{skill_id}/references/native-depth-and-purpose.md" in selected_paths
+    assert f"skill/{skill_id}/references/template-pack-routing.md" in selected_paths
     assert f"skill/{skill_id}/.skillguard/contract-source.json" in selected_paths
+    assert ".flowguard/physicsguard_skill_prompt_load_graph.json" in selected_paths
+    assert ".flowguard/check_physicsguard_skill_suite_mesh.py" in selected_paths
+    assert "tests/test_physicsguard_skill_entry_loading.py" in selected_paths
     assert not any(
         path.startswith("skill/")
         and not path.startswith(f"skill/{skill_id}/")

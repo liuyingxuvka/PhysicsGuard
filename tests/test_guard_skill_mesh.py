@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 import shutil
 
+from flowguard.model_purpose import ModelPurposeClosure
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKER = ROOT / ".flowguard/check_physicsguard_skill_suite_mesh.py"
@@ -46,6 +48,34 @@ def test_current_mesh_and_identity_known_bads() -> None:
     assert known_bads["missing_member"] == "blocked"
     assert known_bads["receipt_consuming_summary"] == "blocked"
     assert known_bads["copied_editable_simulator"] == "blocked"
+    assert known_bads["toolchain_identity_stale"] == "blocked"
+
+
+def test_current_toolchain_and_model_purpose_metadata_are_exact() -> None:
+    checker = _load_checker()
+    mesh = json.loads(MESH.read_text(encoding="utf-8"))
+    assert mesh["toolchain_identity"] == checker.EXPECTED_TOOLCHAIN_IDENTITY
+
+    manifest = json.loads(
+        (ROOT / ".flowguard/model-regression-manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    required_inputs = checker.ENTRY_SHARED_GOVERNED_INPUTS - {
+        ".flowguard/model-regression-manifest.json"
+    }
+    assert required_inputs <= set(manifest["governed_input_globs"])
+    task_model = next(
+        row
+        for row in manifest["models"]
+        if row["model_id"] == "task_local_model_deepening"
+    )
+    assert required_inputs <= set(task_model["input_globs"])
+    for row in manifest["models"]:
+        purpose = ModelPurposeClosure.from_dict(row["purpose_closure"])
+        assert purpose.model_instance_id == (
+            f"regression:{row['model_id']}:0.15.1"
+        )
 
 
 def test_native_integration_identity_mutations_block(tmp_path: Path) -> None:
@@ -128,8 +158,13 @@ def test_every_physics_skill_prompt_requires_exact_per_obligation_evidence() -> 
     assert len(skill_files) == 10
     for path in skill_files:
         raw_prompt = path.read_text(encoding="utf-8")
+        depth_path = path.parent / "references" / "native-depth-and-purpose.md"
+        capsule_path = path.parent / "references" / "route-capsule.json"
+        assert depth_path.is_file(), path
+        assert capsule_path.is_file(), path
+        raw_depth = depth_path.read_text(encoding="utf-8")
         assert "\n+Keep only" not in raw_prompt, path
-        prompt = " ".join(raw_prompt.split())
+        prompt = " ".join(raw_depth.split())
         assert "not per-obligation evidence" in prompt, path
         assert "family baseline regression" in prompt, path
         assert "AI must choose the purpose and one or more concrete prevented" in prompt, path
@@ -139,4 +174,4 @@ def test_every_physics_skill_prompt_requires_exact_per_obligation_evidence() -> 
         assert "python -m physicsguard.skill_execution_depth" in prompt, path
         assert "a missing package is a visible blocker and there is no bundled fallback" in prompt, path
         assert "never replaces current task evidence or PhysicsGuard domain judgment" in prompt, path
-        assert "SkillGuard" not in raw_prompt, path
+        assert "SkillGuard" not in raw_prompt + raw_depth, path

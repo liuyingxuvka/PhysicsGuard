@@ -1,0 +1,93 @@
+{
+  "schema_version": "physicsguard.skill_route_capsule.v1",
+  "target_skill_id": "physicsguard-candidate-model-blueprint",
+  "native_owner_id": "physicsguard.candidate-model-blueprint",
+  "native_route_id": "route:physicsguard-candidate-model-blueprint:build",
+  "route_role": "direct",
+  "broad_route_prerequisite": false,
+  "accept_when": [
+    "The user asks to build a candidate model from already validated PhysicsGuard evidence.",
+    "Generation readiness, interfaces, or rollout boundaries must be decided before target-model creation."
+  ],
+  "reject_handoffs": [
+    {
+      "condition": "The hierarchy or external-model boundary is not yet understood.",
+      "target_skill_id": "physicsguard-model-understanding-preflight"
+    },
+    {
+      "condition": "The model still lacks current dataset validation evidence.",
+      "target_skill_id": "physicsguard-model-dataset-validation"
+    }
+  ],
+  "minimum_inputs": [
+    "validated_hierarchy",
+    "ready_blocks",
+    "interface_inventory",
+    "model_semantics"
+  ],
+  "required_outputs": [
+    "candidate_blueprint",
+    "generation_eligibility",
+    "rollout_boundary",
+    "blockers"
+  ],
+  "initial_load": [
+    "agents/openai.yaml",
+    "SKILL.md",
+    "references/route-capsule.json"
+  ],
+  "conditional_references": [
+    {
+      "path": "references/native-route-protocol.md",
+      "load_when": [
+        "route_selected_and_domain_execution_required"
+      ],
+      "required_for": [
+        "target_native_domain_workflow"
+      ],
+      "sha256": "c7c7ffc26251bd50c224e55a9ffd5272231f20388b9968895418e1feb847945a"
+    },
+    {
+      "path": "references/native-depth-and-purpose.md",
+      "load_when": [
+        "create_task_local_model",
+        "materially_deepen_model",
+        "revise_candidate_model",
+        "claim_model_closure"
+      ],
+      "required_for": [
+        "execution_depth",
+        "mapping",
+        "residual",
+        "uncertainty",
+        "diagnosability",
+        "predictive_rollout",
+        "purpose_before_candidate",
+        "prediction_before_observation",
+        "model_miss",
+        "typed_regression",
+        "independent_holdout",
+        "exact_terminal_boundary"
+      ],
+      "sha256": "d96f24488b328bc49d12b5c84d3070659da8a446c0b8203831dc599da9fe9f73"
+    },
+    {
+      "path": "references/template-pack-routing.md",
+      "load_when": [
+        "select_template_pack",
+        "preview_template_pack",
+        "instantiate_template_pack",
+        "validate_template_pack",
+        "harvest_reusable_model"
+      ],
+      "required_for": [
+        "validated_template_pack_routing"
+      ],
+      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+    }
+  ],
+  "maximum_reference_depth": 1,
+  "cross_skill_reference_loading": "typed_handoff_only",
+  "entry_prompt_sha256": "67f236d64e07ee973aea55315034ffe27be512fc91d9dd4f718b44bbae211876",
+  "claim_boundary": "Generation eligibility covers only a candidate low-fidelity blueprint for the declared target and interfaces; it is not an implemented or validated high-fidelity model."
+}

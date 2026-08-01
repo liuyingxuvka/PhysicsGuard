@@ -1,0 +1,93 @@
+{
+  "schema_version": "physicsguard.skill_route_capsule.v1",
+  "target_skill_id": "physicsguard-audit-closure",
+  "native_owner_id": "physicsguard.audit-closure",
+  "native_route_id": "route:physicsguard-audit-closure:close",
+  "route_role": "direct",
+  "broad_route_prerequisite": false,
+  "accept_when": [
+    "The requested outcome is a final audit, localization, validation, reuse, handoff, or prediction-readiness claim.",
+    "Current native results must be reconciled into passed, partial, downgraded, or blocked closure."
+  ],
+  "reject_handoffs": [
+    {
+      "condition": "Evidence is still being generated or the physical fault is still being localized.",
+      "target_skill_id": "physicsguard-ai-debugging"
+    },
+    {
+      "condition": "The request is only to build the project evidence map.",
+      "target_skill_id": "physicsguard-project-evidence-registry"
+    }
+  ],
+  "minimum_inputs": [
+    "requested_claim",
+    "closure_plan",
+    "native_receipts",
+    "open_blockers"
+  ],
+  "required_outputs": [
+    "closure_status",
+    "safe_claim",
+    "blockers",
+    "next_actions"
+  ],
+  "initial_load": [
+    "agents/openai.yaml",
+    "SKILL.md",
+    "references/route-capsule.json"
+  ],
+  "conditional_references": [
+    {
+      "path": "references/native-route-protocol.md",
+      "load_when": [
+        "route_selected_and_domain_execution_required"
+      ],
+      "required_for": [
+        "target_native_domain_workflow"
+      ],
+      "sha256": "c844acb4c342924fe897d50e062d05fecd05e07a17c9d7904591239400f5299a"
+    },
+    {
+      "path": "references/native-depth-and-purpose.md",
+      "load_when": [
+        "create_task_local_model",
+        "materially_deepen_model",
+        "revise_candidate_model",
+        "claim_model_closure"
+      ],
+      "required_for": [
+        "execution_depth",
+        "mapping",
+        "residual",
+        "uncertainty",
+        "diagnosability",
+        "predictive_rollout",
+        "purpose_before_candidate",
+        "prediction_before_observation",
+        "model_miss",
+        "typed_regression",
+        "independent_holdout",
+        "exact_terminal_boundary"
+      ],
+      "sha256": "5b40926c530a35b8c800918b2397d99f4a3481c6d2539cc504a6043e0e42bacb"
+    },
+    {
+      "path": "references/template-pack-routing.md",
+      "load_when": [
+        "select_template_pack",
+        "preview_template_pack",
+        "instantiate_template_pack",
+        "validate_template_pack",
+        "harvest_reusable_model"
+      ],
+      "required_for": [
+        "validated_template_pack_routing"
+      ],
+      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+    }
+  ],
+  "maximum_reference_depth": 1,
+  "cross_skill_reference_loading": "typed_handoff_only",
+  "entry_prompt_sha256": "7603f97a46f1f1d5a5120a5dfd08e78e8361fba4bd896982f844010a972be9d6",
+  "claim_boundary": "Closure proves only the exact requested audit scope represented by current native receipts; skipped, stale, partial, and predictive gaps remain non-pass."
+}

@@ -1,145 +1,51 @@
 ---
 name: physicsguard-signal-mapping-review
-description: Use when external simulation signals are mapped into PhysicsGuard variables and confidence, unit evidence, review state, or stale conditions need inspection before residuals can support fault claims.
+description: "Use directly when external signals or parameters are mapped into PhysicsGuard variables and target identity, units, conversion, revision, confidence, reviewer state, temporal depth, interval bounds, or stale conditions must be checked before residual claims."
 ---
 
 # PhysicsGuard Signal Mapping Review
 
-Use this route when external model outputs are mapped into PhysicsGuard observed values.
-When the source is a concrete test data file with many fields, use
-`physicsguard-test-file-contract-review` first or in parallel so every file
-field has a catalog row, role/disposition, and evidence-backed mapping.
+## Entry boundary
 
-## Workflow
+Route: `route:physicsguard-signal-mapping-review:review`; native owner: `physicsguard.signal-mapping-review`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
 
-1. Create or review an intake file based on templates/external_model_intake.yaml.
-2. Run:
+Accept this route only when:
 
-   ```powershell
-   python -m physicsguard.cli intake review INTAKE.yaml --pretty
-   ```
+- The task concerns external-signal or parameter mapping identity, unit, conversion, confidence, review, timing, or staleness.
+- Mapping evidence must be resolved before residual, adequacy, or predictive checks can use it.
 
-3. If mappings are low confidence, missing conversion notes, review-required, or stale, review signal names, units, sign conventions, timing, and neighboring balance signals before blaming a physical parameter.
-4. If mapping or measurement error is bounded, preserve the lower and upper
-   bounds as an interval and identify the bound source. Do not replace a bounded
-   interval with its midpoint for robust residual or fault-signature analysis.
-   An interval that overlaps an acceptance boundary remains `indeterminate`.
+Reject or hand off when:
 
-For model-dataset validation depth, the current project evidence registry and
-named bundle are the consumed mapping review. Every required model input,
-validation output, diagnostic check, or redundant measurement must have an
-active bundle binding with unit evidence, confidence at or above the declared
-threshold, and an accepted reviewer state. Bind the registry by SHA-256.
-Missing units, low/unknown confidence, inactive bindings, review-required
-status, bundle absence, or a changed registry blocks the broad validation
-receipt or confines work to unaffected relations.
+- A concrete many-field test file first needs a complete field contract. Handoff: `physicsguard-test-file-contract-review`.
+- Mappings are current and the task is exact model/dataset validation. Handoff: `physicsguard-model-dataset-validation`.
 
-For quantitative adequacy, review the entire artifact-derived signal universe,
-not only the signals selected by the validation plan. Mark critical signals and
-subsystem/declared families, preserve source-row lineage and time alignment,
-and ensure each selected signal has enough valid points, distinct timestamps,
-span, and gap coverage for the requested scope. A missing signal needs an
-explicit project-specific exclusion or remains a blocker; repeating one generic
-reason across thousands of signals is not adequate coverage evidence.
+## Minimum workflow
 
-Classify model parameters separately from signals. A static parameter needs a
-current fact-to-parameter binding and classification source. A time-varying
-parameter needs a series mapping and must independently pass per-parameter
-point count/ratio, distinct timestamps, span, and maximum-gap floors; one mapped
-value is not temporal coverage.
+1. Bind every governed external object to its exact target, unit, conversion, revision, and evidence.
+2. Load the native route protocol and check confidence, review, time coverage, intervals, and stale conditions.
+3. Keep unresolved mappings visible and do not mutate observed values.
 
-Predictive targets must have exact units, scales, step/time alignment, and
-accepted mappings in both generated trajectory and future holdout. Mapping
-confidence alone does not make a pointwise relation stateful or predictive.
+Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
-Intake metadata does not convert or mutate observed values.
-Test-file contract mapping edges likewise record evidence only; they must not
-invent conversions or silently relabel observed values.
+## Conditional detail loading
 
-## Native skill-execution depth receipt gate
+- Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
+- Load `references/native-depth-and-purpose.md` before creating, materially deepening, revising, or closing a task-local model. Do not load it for an ordinary bounded action.
+- Load `references/template-pack-routing.md` only for target-owned template selection, preview, instantiation, validation, or harvest. Preview is not proof.
+- Do not load another PhysicsGuard skill's references merely because the skills are related. Use an explicit typed handoff.
 
-Before a broad mapping claim, issue
-`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`
-for target `physicsguard-signal-mapping-review`, owner
-`physicsguard.signal-mapping-review`, and route
-`route:physicsguard-signal-mapping-review:review`. Reconcile every governed
-mapping and bind unit, conversion, revision, confidence/review, temporal, and
-target-variable evidence. Each parameter or signal is classified static or
-time-varying. A static parameter needs one exact current binding; each
-time-varying parameter uses its own full time-point denominator, square-root
-dynamic floor (with early/middle/late strata), and maximum-gap gate. One point
-per parameter, a handful of convenient parameters, or aggregate success cannot
-license the full mapping universe.
-Declare critical mappings, signals, and parameters explicitly. Required or
-critical objects cannot be excluded; any other exclusion needs current hashed
-evidence and a closed non-contributing disposition with no mapping contribution.
+## Hard gates
 
-Counts, signal-name lists, catalog expansion, whole-receipt hashes, and ordinal
-time ranges are not per-obligation evidence. Every satisfied mapping, unit,
-conversion, revision, static-binding, and temporal-depth obligation must retain
-its exact target-native semantic object, `evidence_ref`, and lowercase content
-hash; missing, renamed, overlapping, mechanically generated, or summary-only
-mappings block the broad mapping claim.
+- Preserve the target's native judgment, exact evidence identities, explicit unknowns, and non-pass states.
+- Never treat AI self-report, prose completeness, progress, an inventory, or a template preview as native execution evidence.
+- Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.
+- Do not add a compatibility route, alias, fallback, copied runtime, or alternate success owner.
 
+## Required outputs
 
+- `mapping_status`
+- `review_gaps`
+- `temporal_boundary`
+- `safe_mapping_claim`
 
-<!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
-## Validated Template Pack Routing
-
-- Target families: `physicsguard`; native owner: `physicsguard.purpose-pack-selector.v1`.
-- Current catalogs: `physicsguard.purpose-template-packs` revision `1`.
-- Resolve the task through this Guard's native router first, then ask the target-owned adapter for a current neutral projection; never infer a template from wording or a skill name.
-- Preserve the adapter's complete candidate and rejection accounting. Zero candidates may use only the declared validated base; one candidate gets a read-only preview; many candidates require complete dependencies, pairwise compatibility, one field owner, and target-authored dominance or must block as ambiguous.
-- Recompute the projection immediately before applying a preview. A stale request, catalog, route, builder, validator, or content identity blocks all writes.
-- Hand the selected preview to the target-declared builder and consume every target-native validator receipt. Template structure is not domain validity, completion, installation, release, or publication evidence.
-- Record a harvest disposition after creating or materially deepening a reusable model, and keep no-match evidence visible.
-- Declared validated bases: `physicsguard.base.audit-work-package`.
-- Template inventory: `physicsguard.base.audit-work-package`, `physicsguard.dataset-validation-basic`, `physicsguard.dataset-validation-comprehensive`, `physicsguard.model-understanding-preflight`, `physicsguard.signal-mapping-core`, `physicsguard.signal-mapping-evidence`.
-- Native validator inventory: `physicsguard.template-pack-instance-validator.v1`, `physicsguard.template-pack-manifest-validator.v1`, `physicsguard.template-pack-selection-validator.v1`.
-- Claim boundaries: The catalog supports deterministic workflow-pack selection and structural native validation only; physical truth, dataset adequacy, audit_pass, installation, and release require separate current PhysicsGuard evidence.
-<!-- END MANAGED VALIDATED TEMPLATE PACK -->
-
-<!-- BEGIN MANAGED PURPOSE AND BLOCKABILITY -->
-## PhysicsGuard dynamic model-purpose and family baseline
-
-Family capability baseline purpose: Prevent an external signal from being treated as a PhysicsGuard variable unless target identity, unit/conversion, revision, confidence/review, temporal coverage, and mapping evidence are current.
-
-Family route bounded claim: A mapping pass licenses only the exact external signal, target variable, conversion, revision, temporal range, and reviewed confidence in the receipt.
-
-Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
-
-Shared simulator prerequisite: install the current `physicsguard==0.15.0` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
-
-Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
-
-The bundled `guard-model/` files declare these maintained family baseline regression classes:
-
-- `Candidate is not proven against signal and target variable mismatch` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the governed external signal does not bind to the intended PhysicsGuard variable. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against unit or conversion is invalid` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: unit evidence or conversion semantics are missing, inconsistent, or physically invalid. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against revision or temporal evidence is stale` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: revision identity or temporal coverage no longer matches the source data. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against review or confidence is unresolved` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: required review, evidence, or confidence disposition is incomplete. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-
-These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.
-
-For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.
-
-### Strict task-local model deepening
-
-This skill's task-local owner is `physicsguard.signal-mapping-review` on `route:physicsguard-signal-mapping-review:review`; its declared closure check is `check:physicsguard-signal-mapping-review:task-local-model-deepening`. The shared PhysicsGuard schema and evaluator provide the envelope, while this native owner keeps the route-specific physical/evidence judgment.
-
-For every non-trivial task, use the existing `task-model plan -> observe -> revision` route with the strict current schema. The plan must declare a non-empty task purpose, an independently owned coverage-universe id and SHA-256, explicit assumptions and unknowns (empty is allowed only when written explicitly), iteration, an exact predecessor receipt after iteration zero, and a current `physicsguard_task_native_depth_receipt` bound to the plan model. Retired optional fields and compatibility shapes are invalid.
-
-The native depth receipt must account for exactly six families: execution depth, mapping, residual, uncertainty, diagnosability, and predictive rollout. Open gaps, resolution classes, external input ids, and next actions come from that target-owned receipt; AI prose, `resolved=true`, caller-written gap lists, and self-reported understanding have no closure authority.
-
-Freeze the prediction before observation and bind the observation to the exact plan fingerprint, selected probe, producer, source, independence group, and evidence SHA-256. If the observation contradicts every declared hypothesis, return `model_miss` and revise the hypothesis/model universe; never select a physical cause by elimination outside the declared space.
-
-A candidate revision must preserve distinct base/candidate identities and consume base/candidate native-depth receipts plus exactly one typed regression receipt, one independent holdout receipt, and one predictive-rollout receipt. All three must bind the same task, plan, revision, coverage fingerprint, and candidate SHA-256; the holdout must be independent from candidate construction. PhysicsGuard derives resolved, persisted, and introduced gaps by comparing the two native receipts. Renaming or deleting a caller gap is not progress.
-
-`model_closed_for_task` is legal only when the candidate identity is current, every typed check passes, and the candidate native receipt has zero open gaps. Otherwise preserve the exact non-success boundary: `continue_iteration`, `external_input_required`, `progress_stalled`, `iteration_limit`, `scope_excluded`, or `model_miss`. A passing regression with any native gap is continuation, not closure.
-
-Use `python -m physicsguard.guard_model_contract check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.
-
-`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
-
-`physicsguard.guard_model_contract` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
-<!-- END MANAGED PURPOSE AND BLOCKABILITY -->
+Claim boundary: A mapping pass licenses only the exact external signal, target variable, conversion, revision, temporal range, and reviewed confidence in the receipt.

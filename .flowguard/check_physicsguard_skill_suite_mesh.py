@@ -9,6 +9,7 @@ receipts.
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -23,6 +24,49 @@ from physicsguard.guard_model_contract import (
 
 ROOT = Path(__file__).resolve().parents[1]
 MESH_PATH = Path(__file__).with_name("physicsguard_skill_suite_mesh.json")
+PROMPT_LOAD_GRAPH_PATH = Path(__file__).with_name(
+    "physicsguard_skill_prompt_load_graph.json"
+)
+ROUTE_CAPSULE_SCHEMA = "physicsguard.skill_route_capsule.v1"
+PROMPT_LOAD_GRAPH_SCHEMA = "physicsguard.skill_prompt_load_graph.v1"
+REQUIRED_DEEP_CAPABILITIES = {
+    "execution_depth",
+    "mapping",
+    "residual",
+    "uncertainty",
+    "diagnosability",
+    "predictive_rollout",
+    "purpose_before_candidate",
+    "prediction_before_observation",
+    "model_miss",
+    "typed_regression",
+    "independent_holdout",
+    "exact_terminal_boundary",
+}
+EXPECTED_TOOLCHAIN_IDENTITY = {
+    "physicsguard_version": (ROOT / "VERSION").read_text(encoding="utf-8").strip(),
+    "flowguard_version": "0.68.2",
+    "flowguard_schema_version": "1.0",
+    "skillguard_version": "0.7.2",
+}
+ENTRY_SHARED_GOVERNED_INPUTS = {
+    ".flowguard/check_physicsguard_skill_suite_mesh.py",
+    ".flowguard/physicsguard_skill_prompt_load_graph.json",
+    ".flowguard/physicsguard_skill_suite_mesh.json",
+    ".flowguard/model-regression-manifest.json",
+    "VERSION",
+    "pyproject.toml",
+    "src/physicsguard/__init__.py",
+    "scripts/check_installed_physicsguard_skills.py",
+    "scripts/upgrade_purpose_contracts.py",
+    "scripts/verify_guard_simulation_readiness.py",
+    "tests/test_guard_skill_mesh.py",
+    "tests/test_installed_skill_sync.py",
+    "tests/test_physicsguard_skill_entry_loading.py",
+    "tests/test_post_archive_retirement_authority.py",
+    "tests/test_skillguard_v2_runtime_authority_audit.py",
+    "tests/test_version_consistency.py",
+}
 CANONICAL_MODULES = {
     "src/physicsguard/guard_model_contract.py",
     "src/physicsguard/skill_execution_depth.py",
@@ -131,6 +175,221 @@ def _finding(findings: list[dict[str, str]], code: str, message: str) -> None:
 
 def _binding_id_fragment(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def check_prompt_load_graph(
+    graph: Mapping[str, Any], *, check_files: bool = True
+) -> dict[str, Any]:
+    findings: list[dict[str, str]] = []
+    if graph.get("schema_version") != PROMPT_LOAD_GRAPH_SCHEMA:
+        _finding(findings, "prompt_load_graph_schema_wrong", str(graph.get("schema_version", "")))
+    if graph.get("suite_version") != EXPECTED_TOOLCHAIN_IDENTITY["physicsguard_version"]:
+        _finding(findings, "prompt_load_suite_version_stale", str(graph.get("suite_version", "")))
+    if graph.get("toolchain_identity") != EXPECTED_TOOLCHAIN_IDENTITY:
+        _finding(findings, "prompt_load_toolchain_identity_stale", str(graph.get("toolchain_identity", "")))
+    if graph.get("route_count") != 10:
+        _finding(findings, "prompt_load_route_count_wrong", str(graph.get("route_count", "")))
+    if graph.get("initial_loading_rule") != "selected_metadata_plus_compact_skill_plus_route_capsule_only":
+        _finding(findings, "prompt_initial_loading_rule_wrong", "Only selected metadata, compact prompt, and capsule may load initially.")
+    if graph.get("all_reference_loading_forbidden") is not True:
+        _finding(findings, "eager_all_references_allowed", "All references must remain conditional.")
+    if graph.get("cross_skill_loading_rule") != "typed_handoff_only":
+        _finding(findings, "cross_skill_loading_not_typed", "Cross-skill material requires a typed handoff.")
+    if graph.get("maximum_reference_depth") != 1:
+        _finding(findings, "reference_depth_wrong", str(graph.get("maximum_reference_depth", "")))
+    if set(map(str, graph.get("required_deep_capabilities", []))) != REQUIRED_DEEP_CAPABILITIES:
+        _finding(findings, "deep_capability_inventory_wrong", "The full native depth surface must remain reachable.")
+
+    nodes = graph.get("nodes")
+    nodes = nodes if isinstance(nodes, list) else []
+    by_path: dict[str, Mapping[str, Any]] = {}
+    for row in nodes:
+        if not isinstance(row, Mapping):
+            _finding(findings, "prompt_load_node_invalid", "Nodes must be objects.")
+            continue
+        path = str(row.get("path", ""))
+        if not path or path in by_path:
+            _finding(findings, "prompt_load_node_duplicate", path)
+        by_path[path] = row
+        if check_files:
+            source = ROOT / path
+            if not source.is_file():
+                _finding(findings, "prompt_load_file_missing", path)
+            elif row.get("sha256") != _sha256(source) or row.get("bytes") != source.stat().st_size:
+                _finding(findings, "prompt_load_file_stale", path)
+
+    routes = graph.get("routes")
+    routes = routes if isinstance(routes, list) else []
+    route_by_target: dict[str, Mapping[str, Any]] = {}
+    expected_conditional_names = {
+        "references/native-route-protocol.md",
+        "references/native-depth-and-purpose.md",
+        "references/template-pack-routing.md",
+    }
+    for route_row in routes:
+        if not isinstance(route_row, Mapping):
+            _finding(findings, "prompt_load_route_invalid", "Routes must be objects.")
+            continue
+        target = str(route_row.get("target_skill_id", ""))
+        if target in route_by_target:
+            _finding(findings, "prompt_load_route_duplicate", target)
+        route_by_target[target] = route_row
+        if target not in EXPECTED:
+            _finding(findings, "prompt_load_foreign_route", target)
+            continue
+        owner, native_route, _ = EXPECTED[target]
+        if route_row.get("native_owner_id") != owner or route_row.get("native_route_id") != native_route:
+            _finding(findings, "prompt_load_route_owner_wrong", target)
+        expected_role = "composite" if target == "physicsguard-ai-debugging" else "direct"
+        if route_row.get("route_role") != expected_role:
+            _finding(findings, "prompt_load_route_role_wrong", target)
+        if route_row.get("broad_route_prerequisite") is not False:
+            _finding(findings, "broad_route_prerequisite_present", target)
+        fixture = route_row.get("selection_fixture")
+        if not isinstance(fixture, Mapping) or fixture.get("expected_skill_id") != target:
+            _finding(findings, "broad_route_captures_direct_request", target)
+        initial_paths = [str(value) for value in route_row.get("initial_paths", [])]
+        expected_initial = [
+            f"skill/{target}/agents/openai.yaml",
+            f"skill/{target}/SKILL.md",
+            f"skill/{target}/references/route-capsule.json",
+        ]
+        if initial_paths != expected_initial:
+            _finding(findings, "prompt_initial_inventory_wrong", target)
+        conditional = route_row.get("conditional_references")
+        conditional = conditional if isinstance(conditional, list) else []
+        conditional_paths = {str(row.get("path", "")) for row in conditional if isinstance(row, Mapping)}
+        if conditional_paths != expected_conditional_names:
+            _finding(findings, "conditional_reference_inventory_wrong", target)
+        if set(initial_paths) & {
+            f"skill/{target}/{value}" for value in conditional_paths
+        }:
+            _finding(findings, "eager_all_references", target)
+        if int(route_row.get("initial_bytes", -1)) > int(graph.get("max_initial_route_bytes", -1)):
+            _finding(findings, "initial_route_budget_exceeded", target)
+        if set(map(str, route_row.get("deep_capabilities", []))) != REQUIRED_DEEP_CAPABILITIES:
+            _finding(findings, "deep_capability_unreachable", target)
+        for reference in conditional:
+            if not isinstance(reference, Mapping):
+                continue
+            relative = str(reference.get("path", ""))
+            if not relative.startswith("references/") or ".." in Path(relative).parts:
+                _finding(findings, "conditional_reference_path_invalid", f"{target}:{relative}")
+                continue
+            full = f"skill/{target}/{relative}"
+            node = by_path.get(full)
+            if node is None:
+                _finding(findings, "conditional_reference_undeclared", full)
+            elif reference.get("sha256") != node.get("sha256"):
+                _finding(findings, "conditional_reference_hash_stale", full)
+            if relative == "references/native-depth-and-purpose.md" and not REQUIRED_DEEP_CAPABILITIES <= set(
+                map(str, reference.get("required_for", []))
+            ):
+                _finding(findings, "deep_capability_unreachable", target)
+            if check_files:
+                source = ROOT / full
+                if not source.is_file():
+                    _finding(findings, "conditional_reference_missing", full)
+                elif reference.get("sha256") != _sha256(source):
+                    _finding(findings, "conditional_reference_hash_stale", full)
+        if check_files:
+            capsule_path = ROOT / f"skill/{target}/references/route-capsule.json"
+            if capsule_path.is_file():
+                capsule = json.loads(capsule_path.read_text(encoding="utf-8"))
+                if capsule.get("schema_version") != ROUTE_CAPSULE_SCHEMA:
+                    _finding(findings, "route_capsule_schema_wrong", target)
+                if (
+                    capsule.get("target_skill_id") != target
+                    or capsule.get("native_owner_id") != owner
+                    or capsule.get("native_route_id") != native_route
+                    or capsule.get("route_role") != expected_role
+                ):
+                    _finding(findings, "route_capsule_identity_wrong", target)
+                skill_path = ROOT / f"skill/{target}/SKILL.md"
+                if capsule.get("entry_prompt_sha256") != _sha256(skill_path):
+                    _finding(findings, "route_capsule_prompt_stale", target)
+                prompt = skill_path.read_text(encoding="utf-8")
+                if skill_path.stat().st_size > int(graph.get("max_skill_entry_bytes", -1)):
+                    _finding(findings, "skill_entry_budget_exceeded", target)
+                if "BEGIN MANAGED VALIDATED TEMPLATE PACK" in prompt or "BEGIN MANAGED PURPOSE AND BLOCKABILITY" in prompt:
+                    _finding(findings, "eager_managed_protocol_in_entry", target)
+                depth = (ROOT / f"skill/{target}/references/native-depth-and-purpose.md").read_text(encoding="utf-8")
+                required_text = (
+                    "exactly six families",
+                    "Freeze the prediction before observation",
+                    "model_miss",
+                    "one independent holdout receipt",
+                    "one predictive-rollout receipt",
+                    "model_closed_for_task",
+                )
+                if any(value not in depth for value in required_text):
+                    _finding(findings, "deep_capability_text_missing", target)
+
+    if set(route_by_target) != set(EXPECTED) or len(routes) != len(EXPECTED):
+        _finding(findings, "prompt_load_route_inventory_wrong", "Exactly ten routes are required.")
+    expected_node_paths = {
+        path
+        for target in EXPECTED
+        for path in (
+            f"skill/{target}/agents/openai.yaml",
+            f"skill/{target}/SKILL.md",
+            f"skill/{target}/references/route-capsule.json",
+            f"skill/{target}/references/native-route-protocol.md",
+            f"skill/{target}/references/native-depth-and-purpose.md",
+            f"skill/{target}/references/template-pack-routing.md",
+        )
+    }
+    if set(by_path) != expected_node_paths:
+        _finding(findings, "prompt_load_node_inventory_wrong", "Exactly six prompt artifacts per skill are required.")
+    return {
+        "artifact_kind": "physicsguard_skill_prompt_load_graph_check",
+        "structure_status": "pass" if not findings else "blocked",
+        "route_count": len(route_by_target),
+        "findings": findings,
+        "claim_boundary": "This checks current prompt identities, routing, loading, and deep-capability reachability only; it does not prove future AI behavior.",
+    }
+
+
+def prompt_load_known_bad_results(graph: Mapping[str, Any]) -> dict[str, str]:
+    cases: dict[str, dict[str, Any]] = {}
+    wrong_owner = copy.deepcopy(graph)
+    wrong_owner["routes"][0]["native_owner_id"] = "physicsguard.foreign"
+    cases["wrong_route_owner"] = wrong_owner
+    broad_capture = copy.deepcopy(graph)
+    direct = next(row for row in broad_capture["routes"] if row["route_role"] == "direct")
+    direct["selection_fixture"]["expected_skill_id"] = "physicsguard-ai-debugging"
+    cases["broad_route_captures_direct_request"] = broad_capture
+    eager = copy.deepcopy(graph)
+    route = eager["routes"][0]
+    route["initial_paths"].append(
+        f"skill/{route['target_skill_id']}/references/native-depth-and-purpose.md"
+    )
+    cases["eager_all_references"] = eager
+    missing = copy.deepcopy(graph)
+    missing["routes"][0]["conditional_references"] = missing["routes"][0]["conditional_references"][1:]
+    cases["conditional_reference_missing"] = missing
+    cross_skill = copy.deepcopy(graph)
+    source = cross_skill["routes"][0]
+    other = cross_skill["routes"][1]["target_skill_id"]
+    source["conditional_references"][0]["path"] = f"../{other}/references/native-route-protocol.md"
+    cases["undeclared_or_cross_skill_reference"] = cross_skill
+    stale = copy.deepcopy(graph)
+    stale["routes"][0]["conditional_references"][0]["sha256"] = "0" * 64
+    cases["reference_hash_stale"] = stale
+    shallow = copy.deepcopy(graph)
+    shallow["routes"][0]["deep_capabilities"].remove("independent_holdout")
+    cases["deep_capability_unreachable"] = shallow
+    stale_toolchain = copy.deepcopy(graph)
+    stale_toolchain["toolchain_identity"]["flowguard_version"] = "0.68.1"
+    cases["toolchain_identity_stale"] = stale_toolchain
+    return {
+        name: check_prompt_load_graph(case, check_files=False)["structure_status"]
+        for name, case in cases.items()
+    }
 
 
 def _path_selectors(check: Mapping[str, Any]) -> set[str]:
@@ -277,6 +536,8 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
         required_modules = TASK_MODEL_MODULES if is_task_model else CANONICAL_MODULES
         if not required_modules <= selectors:
             _finding(findings, "canonical_simulator_input_missing", str(check.get("check_id", "")))
+        if is_task_model and not ENTRY_SHARED_GOVERNED_INPUTS <= selectors:
+            _finding(findings, "entry_governed_input_missing", str(check.get("check_id", "")))
         if any(
             path.endswith("/guard-model/verify.py")
             or path.endswith("/runtime/skill_execution_depth.py")
@@ -287,6 +548,8 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
     implementation_paths = set(map(str, source.get("implementation_paths", [])))
     if not CANONICAL_MODULES <= implementation_paths:
         _finding(findings, "canonical_simulator_implementation_missing", target)
+    if not ENTRY_SHARED_GOVERNED_INPUTS <= implementation_paths:
+        _finding(findings, "entry_governed_implementation_missing", target)
     if any(
         path.endswith("/guard-model/verify.py")
         or path.endswith("/runtime/skill_execution_depth.py")
@@ -331,6 +594,8 @@ def check_mesh(mesh: Mapping[str, Any], *, check_targets: bool = True) -> dict[s
     findings: list[dict[str, str]] = []
     if mesh.get("guard_model_contract") != EXPECTED_GUARD_MODEL:
         _finding(findings, "guard_model_contract_drift", "PhysicsGuard target semantics or proof order drifted.")
+    if mesh.get("toolchain_identity") != EXPECTED_TOOLCHAIN_IDENTITY:
+        _finding(findings, "toolchain_identity_stale", str(mesh.get("toolchain_identity", "")))
 
     boundary = mesh.get("maintenance_boundary")
     expected_boundary = {
@@ -388,6 +653,37 @@ def check_mesh(mesh: Mapping[str, Any], *, check_targets: bool = True) -> dict[s
             _finding(findings, "copied_editable_simulator_allowed", "Copied implementations cannot be editable authority.")
         if simulator.get("missing_dependency_behavior") != "fail_visible":
             _finding(findings, "runtime_fallback_allowed", "Missing canonical package must fail visibly.")
+        expected_version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        if simulator.get("consumer_dependency") != f"physicsguard=={expected_version}":
+            _finding(findings, "canonical_simulator_version_stale", str(simulator.get("consumer_dependency", "")))
+
+    entry_loading = mesh.get("entry_loading")
+    expected_entry_loading = {
+        "route_count": 10,
+        "direct_route_count": 9,
+        "composite_route_count": 1,
+        "composite_route_id": "route:physicsguard-ai-debugging:audit",
+        "composite_is_parent": False,
+        "route_capsule_schema": ROUTE_CAPSULE_SCHEMA,
+        "prompt_load_graph": ".flowguard/physicsguard_skill_prompt_load_graph.json",
+        "initial_loading_rule": "selected_metadata_plus_compact_skill_plus_route_capsule_only",
+        "conditional_reference_paths": [
+            "references/native-route-protocol.md",
+            "references/native-depth-and-purpose.md",
+            "references/template-pack-routing.md",
+        ],
+        "maximum_reference_depth": 1,
+        "required_deep_capabilities": sorted(REQUIRED_DEEP_CAPABILITIES),
+    }
+    if not isinstance(entry_loading, Mapping) or any(
+        (
+            sorted(map(str, entry_loading.get(field, []))) != expected
+            if field == "required_deep_capabilities"
+            else entry_loading.get(field) != expected
+        )
+        for field, expected in expected_entry_loading.items()
+    ):
+        _finding(findings, "entry_loading_model_wrong", "The ten-route narrow-entry model must remain exact.")
 
     architecture = mesh.get("architecture_reduction", {})
     candidate_ids = {
@@ -399,6 +695,7 @@ def check_mesh(mesh: Mapping[str, Any], *, check_targets: bool = True) -> dict[s
         "remove-cross-unit-parent-authority",
         "collapse-satellite-runtime-copies",
         "remove-dataset-bundled-runtime",
+        "contract-eager-skill-entry-prompts",
     }:
         _finding(findings, "architecture_reduction_inventory_wrong", "All contraction candidates must remain visible.")
 
@@ -437,6 +734,19 @@ def check_mesh(mesh: Mapping[str, Any], *, check_targets: bool = True) -> dict[s
         _check_local_runtime_copies(mesh, findings)
         for target in sorted(EXPECTED):
             _check_target_contract(target, findings)
+        if not PROMPT_LOAD_GRAPH_PATH.is_file():
+            _finding(findings, "prompt_load_graph_missing", PROMPT_LOAD_GRAPH_PATH.name)
+        else:
+            prompt_report = check_prompt_load_graph(
+                json.loads(PROMPT_LOAD_GRAPH_PATH.read_text(encoding="utf-8"))
+            )
+            findings.extend(
+                {
+                    "code": f"prompt_load:{row['code']}",
+                    "message": row["message"],
+                }
+                for row in prompt_report["findings"]
+            )
     return {
         "artifact_kind": "physicsguard_skill_suite_maintenance_mesh_check",
         "authoritative": False,
@@ -491,6 +801,9 @@ def known_bad_results(mesh: Mapping[str, Any]) -> dict[str, str]:
         "guard_model_contract"
     ]["current_model_authoring_order"][1:]
     cases["candidate_before_purpose"] = wrong_order
+    stale_toolchain = copy.deepcopy(mesh)
+    stale_toolchain["toolchain_identity"]["skillguard_version"] = "0.7.1"
+    cases["toolchain_identity_stale"] = stale_toolchain
     return {
         name: check_mesh(case, check_targets=False)["structure_status"]
         for name, case in cases.items()
@@ -501,9 +814,18 @@ def main() -> int:
     mesh = json.loads(MESH_PATH.read_text(encoding="utf-8"))
     result = check_mesh(mesh)
     result["known_bads"] = known_bad_results(mesh)
+    if PROMPT_LOAD_GRAPH_PATH.is_file():
+        result["prompt_load_known_bads"] = prompt_load_known_bad_results(
+            json.loads(PROMPT_LOAD_GRAPH_PATH.read_text(encoding="utf-8"))
+        )
+    else:
+        result["prompt_load_known_bads"] = {"prompt_load_graph_missing": "blocked"}
     if any(status != "blocked" for status in result["known_bads"].values()):
         result["structure_status"] = "blocked"
         _finding(result["findings"], "known_bad_not_blocked", "Every declared topology bad case must block.")
+    if any(status != "blocked" for status in result["prompt_load_known_bads"].values()):
+        result["structure_status"] = "blocked"
+        _finding(result["findings"], "prompt_load_known_bad_not_blocked", "Every declared prompt-loading bad case must block.")
     print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     return 0 if result["structure_status"] == "pass" else 1
 

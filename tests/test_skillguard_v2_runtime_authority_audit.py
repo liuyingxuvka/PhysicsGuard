@@ -133,7 +133,25 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
         "src/physicsguard/skill_execution_depth.py",
         "skill/physicsguard-model-dataset-validation/runtime-requirements.json",
     }
+    entry_governed_paths = {
+        ".flowguard/check_physicsguard_skill_suite_mesh.py",
+        ".flowguard/model-regression-manifest.json",
+        ".flowguard/physicsguard_skill_prompt_load_graph.json",
+        ".flowguard/physicsguard_skill_suite_mesh.json",
+        "VERSION",
+        "pyproject.toml",
+        "src/physicsguard/__init__.py",
+        "scripts/check_installed_physicsguard_skills.py",
+        "scripts/verify_guard_simulation_readiness.py",
+        "tests/test_guard_skill_mesh.py",
+        "tests/test_installed_skill_sync.py",
+        "tests/test_physicsguard_skill_entry_loading.py",
+        "tests/test_post_archive_retirement_authority.py",
+        "tests/test_skillguard_v2_runtime_authority_audit.py",
+        "tests/test_version_consistency.py",
+    }
     assert runtime_authority_paths <= set(contract["implementation_paths"])
+    assert entry_governed_paths <= set(contract["implementation_paths"])
     assert not (PRIMARY_ROOT / "runtime").exists()
     assert not (PRIMARY_ROOT / "guard-model/verify.py").exists()
     requirement = json.loads(
@@ -224,6 +242,7 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
                 "tests/test_task_local_revision.py",
                 "tests/test_physicsguard_skill_prompts.py",
             } <= selectors
+            assert entry_governed_paths <= selectors
             assert check["args"][:2] == ["-m", "pytest"]
         else:
             assert contract_paths <= selectors
@@ -235,3 +254,13 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
             assert check["args"][:2] == ["-m", "physicsguard.guard_model_contract"]
             skill_root_index = check["args"].index("--skill-root") + 1
             assert check["args"][skill_root_index] == skill_prefix
+
+
+def test_readiness_declares_current_three_toolchain_versions() -> None:
+    audit = _load_audit_module()
+    assert audit._declared_toolchain_identity() == {
+        "flowguard_schema_version": "1.0",
+        "flowguard_version": "0.68.2",
+        "physicsguard_version": "0.15.1",
+        "skillguard_version": "0.7.2",
+    }

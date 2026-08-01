@@ -1,0 +1,121 @@
+{
+  "schema_version": "physicsguard.skill_route_capsule.v1",
+  "target_skill_id": "physicsguard-ai-debugging",
+  "native_owner_id": "physicsguard.ai-debugging",
+  "native_route_id": "route:physicsguard-ai-debugging:audit",
+  "route_role": "composite",
+  "broad_route_prerequisite": false,
+  "accept_when": [
+    "The visible engineering fault spans several PhysicsGuard responsibilities and cannot be owned by one direct route.",
+    "The correct PhysicsGuard route remains genuinely ambiguous after comparing the ten route capsules.",
+    "Coarse-to-fine localization requires typed handoffs among preflight, mapping, validation, and closure owners."
+  ],
+  "reject_handoffs": [
+    {
+      "condition": "Repository adoption or upgrade is the whole request.",
+      "target_skill_id": "physicsguard-project-adoption"
+    },
+    {
+      "condition": "External-model boundary and inventory understanding is the whole request.",
+      "target_skill_id": "physicsguard-model-understanding-preflight"
+    },
+    {
+      "condition": "Signal identity, units, conversion, confidence, or temporal mapping is the whole request.",
+      "target_skill_id": "physicsguard-signal-mapping-review"
+    },
+    {
+      "condition": "A concrete test-data file contract is the whole request.",
+      "target_skill_id": "physicsguard-test-file-contract-review"
+    },
+    {
+      "condition": "Exact model/dataset validation is the whole request.",
+      "target_skill_id": "physicsguard-model-dataset-validation"
+    },
+    {
+      "condition": "Project evidence inventory and binding gaps are the whole request.",
+      "target_skill_id": "physicsguard-project-evidence-registry"
+    },
+    {
+      "condition": "Reusable model asset compatibility is the whole request.",
+      "target_skill_id": "physicsguard-model-library"
+    },
+    {
+      "condition": "Candidate blueprint generation is the whole request.",
+      "target_skill_id": "physicsguard-candidate-model-blueprint"
+    },
+    {
+      "condition": "Audit completion or localization closure is the whole request.",
+      "target_skill_id": "physicsguard-audit-closure"
+    }
+  ],
+  "minimum_inputs": [
+    "visible_symptom",
+    "physical_boundary_or_gap",
+    "route_ambiguity"
+  ],
+  "required_outputs": [
+    "selected_native_routes",
+    "localized_findings",
+    "next_required_evidence",
+    "bounded_claim"
+  ],
+  "initial_load": [
+    "agents/openai.yaml",
+    "SKILL.md",
+    "references/route-capsule.json"
+  ],
+  "conditional_references": [
+    {
+      "path": "references/native-route-protocol.md",
+      "load_when": [
+        "route_selected_and_domain_execution_required"
+      ],
+      "required_for": [
+        "target_native_domain_workflow"
+      ],
+      "sha256": "7ba68b213ed7743490db59304bff8c404dc1fb68f7f1a4a21c3f4f4563afb755"
+    },
+    {
+      "path": "references/native-depth-and-purpose.md",
+      "load_when": [
+        "create_task_local_model",
+        "materially_deepen_model",
+        "revise_candidate_model",
+        "claim_model_closure"
+      ],
+      "required_for": [
+        "execution_depth",
+        "mapping",
+        "residual",
+        "uncertainty",
+        "diagnosability",
+        "predictive_rollout",
+        "purpose_before_candidate",
+        "prediction_before_observation",
+        "model_miss",
+        "typed_regression",
+        "independent_holdout",
+        "exact_terminal_boundary"
+      ],
+      "sha256": "32d817c45ad12f62b389114bf95e2d81a69e782fa3ab03cdf0b3edff5b7c4272"
+    },
+    {
+      "path": "references/template-pack-routing.md",
+      "load_when": [
+        "select_template_pack",
+        "preview_template_pack",
+        "instantiate_template_pack",
+        "validate_template_pack",
+        "harvest_reusable_model"
+      ],
+      "required_for": [
+        "validated_template_pack_routing"
+      ],
+      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+    }
+  ],
+  "maximum_reference_depth": 1,
+  "cross_skill_reference_loading": "typed_handoff_only",
+  "entry_prompt_sha256": "1e1864ea183d5d47448894ce268d1c8a55557fe1d08cb185254d78a185613ab5",
+  "claim_boundary": "This route can license only a low-fidelity, evidence-bounded fault localization. It does not prove high-fidelity model truth or behavior outside the checked operating envelope."
+}

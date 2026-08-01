@@ -1,147 +1,51 @@
 ---
 name: physicsguard-project-adoption
-description: Use when adopting, auditing, upgrading, or checking a target repository's PhysicsGuard workflow records before AI-guided physical simulation debugging.
+description: "Use directly to audit, adopt, or upgrade a target repository's PhysicsGuard workflow records and current toolchain/artifact identity before non-trivial PhysicsGuard work; adoption is workflow evidence only, not physical validation or closure."
 ---
 
 # PhysicsGuard Project Adoption
 
-Use this route before non-trivial PhysicsGuard debugging or model-building work in a repository.
+## Entry boundary
 
-## Workflow
+Route: `route:physicsguard-project-adoption:audit`; native owner: `physicsguard.project-adoption`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
 
-1. Run a read-only audit first:
+Accept this route only when:
 
-   ```powershell
-   python -m physicsguard.cli project audit --pretty
-   ```
+- The task is to check, create, or upgrade PhysicsGuard repository adoption records.
+- Current toolchain, artifact inventory, blockers, or affected revalidation must be established.
 
-2. If the project is not adopted and the user authorized repository setup, run:
+Reject or hand off when:
 
-   ```powershell
-   python -m physicsguard.cli project adopt --pretty
-   ```
+- The project is adopted and the task is to map its files and evidence gaps. Handoff: `physicsguard-project-evidence-registry`.
+- The user asks whether a model result is validated or complete. Handoff: `physicsguard-audit-closure`.
 
-3. If the installed package version is newer than the record, run:
+## Minimum workflow
 
-   ```powershell
-   python -m physicsguard.cli project upgrade --pretty
-   ```
+1. Run the read-only project audit first and compare current runtime and repository records.
+2. Load the native route protocol; adopt or upgrade only when authorized and necessary.
+3. Report workflow readiness separately from physical execution, validation, installation, and release.
 
-4. Treat project adoption as workflow evidence only. It does not prove residual behavior, physical correctness, or localization.
-   Also distinguish repository source capability from the active installed
-   runtime: do not claim adequacy or predictive gates are available on the
-   machine until the invoked CLI exposes and executes them. Upgrade through
-   the repository's declared adoption route when authorized; do not replace it
-   with copied prompt text or a temporary checker.
-5. If the project contains test data, source documents, reusable model assets,
-   or multi-file evidence, also route through
-   `physicsguard-project-evidence-registry` so the AI can inspect the project
-   profile, file map, binding expectations, evidence bundles, and open gaps.
-6. If the user asks for multi-project history, reusable model discovery,
-   database-level maps, or cross-project comparison, do not answer from project
-   adoption alone. Project adoption only says the current repository has a
-   workflow record; it does not index or maintain a surrounding database.
-7. If the user asks whether the project is ready, complete, validated,
-   reusable, or safe for handoff, run or inspect project closure:
+Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
-   ```powershell
-   python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
-   ```
+## Conditional detail loading
 
-   Adoption pass only says the workflow record exists; it is not project
-   readiness.
-8. For non-snapshot validation, require current repository artifacts and the
-   native quantitative adequacy receipt. For prediction readiness, require the
-   stateful future-rollout route and its native receipt. An older adoption
-   record, a generated template, or maintenance-contract text cannot substitute
-   for those runtime checks.
+- Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
+- Load `references/native-depth-and-purpose.md` before creating, materially deepening, revising, or closing a task-local model. Do not load it for an ordinary bounded action.
+- Load `references/template-pack-routing.md` only for target-owned template selection, preview, instantiation, validation, or harvest. Preview is not proof.
+- Do not load another PhysicsGuard skill's references merely because the skills are related. Use an explicit typed handoff.
 
-## Claim Boundary
+## Hard gates
 
-Safe claim: the project has a discoverable PhysicsGuard workflow record.
+- Preserve the target's native judgment, exact evidence identities, explicit unknowns, and non-pass states.
+- Never treat AI self-report, prose completeness, progress, an inventory, or a template preview as native execution evidence.
+- Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.
+- Do not add a compatibility route, alias, fallback, copied runtime, or alternate success owner.
 
-Unsafe claim: the model is physically correct, the fault is localized, or a commercial model has been reconstructed.
+## Required outputs
 
-## Native skill-execution depth receipt gate
+- `adoption_status`
+- `toolchain_status`
+- `blockers`
+- `required_revalidation`
 
-Before claiming project adoption is current, issue
-`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`
-for target `physicsguard-project-adoption`, owner
-`physicsguard.project-adoption`, and route
-`route:physicsguard-project-adoption:audit`. Bind the current project record,
-supported toolchain, complete native artifact inventory, blockers, and required
-revalidation. Discovery alone is not adoption, and a fixture cannot close a
-scheduled production project. PhysicsGuard's exact current native receipt is
-the project-audit authority.
-The project package must declare critical adoption objects explicitly. Required
-or critical artifacts cannot be excluded; another exclusion needs current hashed
-evidence and a closed non-contributing disposition with no adoption contribution.
-
-Counts, artifact-name lists, catalog expansion, whole-receipt hashes, and ordinal
-ranges are not per-obligation evidence. Every satisfied adoption and required-
-revalidation obligation must retain its exact target-native semantic object,
-`evidence_ref`, and lowercase content hash; missing, renamed, overlapping,
-mechanically generated, or summary-only mappings block current adoption.
-
-
-
-<!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
-## Validated Template Pack Routing
-
-- Target families: `physicsguard`; native owner: `physicsguard.purpose-pack-selector.v1`.
-- Current catalogs: `physicsguard.purpose-template-packs` revision `1`.
-- Resolve the task through this Guard's native router first, then ask the target-owned adapter for a current neutral projection; never infer a template from wording or a skill name.
-- Preserve the adapter's complete candidate and rejection accounting. Zero candidates may use only the declared validated base; one candidate gets a read-only preview; many candidates require complete dependencies, pairwise compatibility, one field owner, and target-authored dominance or must block as ambiguous.
-- Recompute the projection immediately before applying a preview. A stale request, catalog, route, builder, validator, or content identity blocks all writes.
-- Hand the selected preview to the target-declared builder and consume every target-native validator receipt. Template structure is not domain validity, completion, installation, release, or publication evidence.
-- Record a harvest disposition after creating or materially deepening a reusable model, and keep no-match evidence visible.
-- Declared validated bases: `physicsguard.base.audit-work-package`.
-- Template inventory: `physicsguard.base.audit-work-package`, `physicsguard.dataset-validation-basic`, `physicsguard.dataset-validation-comprehensive`, `physicsguard.model-understanding-preflight`, `physicsguard.signal-mapping-core`, `physicsguard.signal-mapping-evidence`.
-- Native validator inventory: `physicsguard.template-pack-instance-validator.v1`, `physicsguard.template-pack-manifest-validator.v1`, `physicsguard.template-pack-selection-validator.v1`.
-- Claim boundaries: The catalog supports deterministic workflow-pack selection and structural native validation only; physical truth, dataset adequacy, audit_pass, installation, and release require separate current PhysicsGuard evidence.
-<!-- END MANAGED VALIDATED TEMPLATE PACK -->
-
-<!-- BEGIN MANAGED PURPOSE AND BLOCKABILITY -->
-## PhysicsGuard dynamic model-purpose and family baseline
-
-Family capability baseline purpose: Prevent a repository from claiming PhysicsGuard adoption when project records, supported toolchain identity, native artifact inventory, blockers, or required revalidation are absent or stale.
-
-Family route bounded claim: Adoption proves only current workflow records and toolchain/artifact readiness; it never substitutes for model execution, validation, closure, installation, or release evidence.
-
-Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
-
-Shared simulator prerequisite: install the current `physicsguard==0.15.0` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
-
-Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
-
-The bundled `guard-model/` files declare these maintained family baseline regression classes:
-
-- `Candidate is not proven against adoption record is stale` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: project adoption records do not match the current repository or toolchain. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against toolchain is unsupported` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the real PhysicsGuard/FlowGuard toolchain is missing or incompatible. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against native artifact inventory is incomplete` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: required project models, plans, registries, or receipts are missing. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against blocker or revalidation is omitted` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: known blockers or required affected checks are not preserved. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-
-These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.
-
-For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.
-
-### Strict task-local model deepening
-
-This skill's task-local owner is `physicsguard.project-adoption` on `route:physicsguard-project-adoption:audit`; its declared closure check is `check:physicsguard-project-adoption:task-local-model-deepening`. The shared PhysicsGuard schema and evaluator provide the envelope, while this native owner keeps the route-specific physical/evidence judgment.
-
-For every non-trivial task, use the existing `task-model plan -> observe -> revision` route with the strict current schema. The plan must declare a non-empty task purpose, an independently owned coverage-universe id and SHA-256, explicit assumptions and unknowns (empty is allowed only when written explicitly), iteration, an exact predecessor receipt after iteration zero, and a current `physicsguard_task_native_depth_receipt` bound to the plan model. Retired optional fields and compatibility shapes are invalid.
-
-The native depth receipt must account for exactly six families: execution depth, mapping, residual, uncertainty, diagnosability, and predictive rollout. Open gaps, resolution classes, external input ids, and next actions come from that target-owned receipt; AI prose, `resolved=true`, caller-written gap lists, and self-reported understanding have no closure authority.
-
-Freeze the prediction before observation and bind the observation to the exact plan fingerprint, selected probe, producer, source, independence group, and evidence SHA-256. If the observation contradicts every declared hypothesis, return `model_miss` and revise the hypothesis/model universe; never select a physical cause by elimination outside the declared space.
-
-A candidate revision must preserve distinct base/candidate identities and consume base/candidate native-depth receipts plus exactly one typed regression receipt, one independent holdout receipt, and one predictive-rollout receipt. All three must bind the same task, plan, revision, coverage fingerprint, and candidate SHA-256; the holdout must be independent from candidate construction. PhysicsGuard derives resolved, persisted, and introduced gaps by comparing the two native receipts. Renaming or deleting a caller gap is not progress.
-
-`model_closed_for_task` is legal only when the candidate identity is current, every typed check passes, and the candidate native receipt has zero open gaps. Otherwise preserve the exact non-success boundary: `continue_iteration`, `external_input_required`, `progress_stalled`, `iteration_limit`, `scope_excluded`, or `model_miss`. A passing regression with any native gap is continuation, not closure.
-
-Use `python -m physicsguard.guard_model_contract check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.
-
-`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
-
-`physicsguard.guard_model_contract` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
-<!-- END MANAGED PURPOSE AND BLOCKABILITY -->
+Claim boundary: Adoption proves only current workflow records and toolchain/artifact readiness; it never substitutes for model execution, validation, closure, installation, or release evidence.

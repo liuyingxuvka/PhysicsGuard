@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhysicsGuard Audit Closure"
+  short_description: "Close bounded PhysicsGuard audit claims"
+  default_prompt: "Use $physicsguard-audit-closure directly for its native PhysicsGuard Audit Closure route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."

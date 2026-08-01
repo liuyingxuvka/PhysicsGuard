@@ -1,226 +1,51 @@
 ---
 name: physicsguard-test-file-contract-review
-description: Use when a PhysicsGuard project includes concrete testbench/test-data files whose fields, units, timing, testbench version, parameter roles, mapping evidence, and model binding coverage must be checked before AI analysis claims.
+description: "Use directly when concrete testbench or test-data files require deterministic file/field identity, units, timing, testbench version, parameter roles, mapping evidence, model binding, temporal depth, and project-gap coverage before AI analysis or validation."
 ---
 
 # PhysicsGuard Test File Contract Review
 
-Use this route only when concrete test data files are in scope: CSV/TSV exports,
-database extracts already materialized as files, testbench logs, sensor tables,
-command/measurement files, calibration snapshots, or project fixtures that stand
-for those files. Do not require it for ordinary model-only PhysicsGuard work.
+## Entry boundary
 
-## Hard Rules
+Route: `route:physicsguard-test-file-contract-review:check`; native owner: `physicsguard.test-file-contract-review`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
 
-- One concrete test data file needs one resolved `TestFileContract`.
-- Field counts, names, row counts, time range, frequency, hashes, and extractor
-  identity must come from scripts, not AI narration.
-- Every manifest field must appear in the parameter catalog.
-- Every catalog entry must have a role/disposition row.
-- AI mappings must carry evidence: field name, label, unit, P&ID/topology,
-  testbench structure, code reference, datasheet, formula, or human-provided
-  evidence.
-- If the AI does not know what a field means or how to bind it, mark it
-  `review_required`, `planned_child_model`, or leave the contract failing. Do
-  not silently mark it `covered`.
-- If the file contains a field that the current model cannot represent, record a
-  model gap and request a child model/model extension or human evidence.
-- A passing contract is coverage evidence only; it does not prove physical
-  correctness and does not mutate observed values.
-- Before the contract feeds a broad validation-depth claim, preserve exact
-  hashes for the concrete data, manifest/field schema, testbench profile and
-  version, and parameter-role matrix. Any later content change makes the depth
-  receipt stale even if filenames remain unchanged.
-- Treat the current manifest row count and field catalog as the available
-  point/signal universe for downstream adequacy. Preserve row identities,
-  timestamps, operating-mode/event/peak/boundary evidence, and parameter roles;
-  do not let a validation plan redefine the universe as only its chosen rows or
-  signals.
-- Preserve enough evidence to classify every model parameter as static or
-  time-varying. Time-varying parameters require their own field/series mapping;
-  one catalog or binding row cannot establish temporal depth.
-- If a project evidence registry exists, the contract should declare
-  `project_evidence_registry` and `registered_artifact_id` so the file contract
-  appears in the project map. Covered fields should also have project-level
-  binding summaries or explicit binding exemptions in
-  `physicsguard-project-evidence-registry`.
+Accept this route only when:
 
-## Workflow
+- One or more concrete testbench, test-data, log, sensor, command, measurement, calibration, or fixture files are in scope.
+- File and field contracts must pass before broad AI analysis or dataset validation.
 
-1. Confirm this is a test-data workflow. If there is no concrete test data file,
-   return to the normal `physicsguard-ai-debugging` route.
-2. Generate or refresh the manifest:
+Reject or hand off when:
 
-   ```powershell
-   python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
-   ```
+- No concrete test-data file is in scope. Handoff: `physicsguard-model-understanding-preflight`.
+- Current file contracts pass and model/dataset consistency is now the request. Handoff: `physicsguard-model-dataset-validation`.
 
-3. Create or resolve the file-specific contract using these artifacts:
-   manifest, testbench profile, extractor profile, model binding, parameter
-   catalog, role matrix, mapping edges, and coverage policy.
-4. For each source field, classify its testbench role, physical role, model
-   role, owner block, verification role, and coverage status.
-5. For each mapping edge, record evidence. Acceptable evidence includes label or
-   parameter names, unit agreement, testbench topology, P&ID/topology, code
-   references, formulas, datasheets, or human-provided mapping records.
-6. Run the contract check:
+## Minimum workflow
 
-   ```powershell
-   python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
-   ```
+1. Generate deterministic file and field identity before AI mapping judgment.
+2. Load the native route protocol and reconcile every field, role, unit, timing, mapping, and model binding.
+3. Block broad analysis until the exact contract passes; hand validation to the dataset route afterward.
 
-7. Run coverage-only checks when debugging field coverage:
+Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
-   ```powershell
-   python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
-   ```
+## Conditional detail loading
 
-8. Run project-level checks when multiple files are in scope:
+- Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
+- Load `references/native-depth-and-purpose.md` before creating, materially deepening, revising, or closing a task-local model. Do not load it for an ordinary bounded action.
+- Load `references/template-pack-routing.md` only for target-owned template selection, preview, instantiation, validation, or harvest. Preview is not proof.
+- Do not load another PhysicsGuard skill's references merely because the skills are related. Use an explicit typed handoff.
 
-   ```powershell
-   python -m physicsguard.cli testfile project-check INDEX.yaml --pretty
-   ```
+## Hard gates
 
-9. When testbench files change, compare contracts:
+- Preserve the target's native judgment, exact evidence identities, explicit unknowns, and non-pass states.
+- Never treat AI self-report, prose completeness, progress, an inventory, or a template preview as native execution evidence.
+- Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.
+- Do not add a compatibility route, alias, fallback, copied runtime, or alternate success owner.
 
-   ```powershell
-   python -m physicsguard.cli testfile diff OLD_CONTRACT.yaml NEW_CONTRACT.yaml --pretty
-   ```
+## Required outputs
 
-10. Do not claim broad AI analysis readiness until contract status is `pass`.
-    For `partial` or `fail`, continue filling evidence, ask the user for
-    unknown mappings, or extend the PhysicsGuard model under the normal low-
-    fidelity module rules.
-    Contract pass is necessary but not sufficient for non-snapshot validation:
-    hand off the current manifest and roles to the native adequacy gate, which
-    checks quantitative selection ratio, temporal spread and gaps, per-signal
-    depth, critical/family coverage, and exclusions under a declared sampling
-    policy.
-11. If project-level evidence is in scope, run:
+- `contract_status`
+- `field_dispositions`
+- `mapping_gaps`
+- `safe_analysis_boundary`
 
-    ```powershell
-    python -m physicsguard.cli evidence gap-check EVIDENCE.yaml --pretty
-    python -m physicsguard.cli evidence map EVIDENCE.yaml --pretty
-    ```
-
-    Resolve or report missing project profile, file registration, test-field
-    binding, physical-parameter binding, and binding-exemption gaps.
-12. If the project is listed in an external database ledger, report the current
-    field coverage, binding state, and contract gaps as provider evidence only.
-    Do not update the ledger from this PhysicsGuard skill.
-13. For final analysis-readiness or validation-readiness claims, include the
-    passing contract in project closure. A passing file contract is coverage
-    evidence only; project closure checks whether the whole project is ready:
-
-    ```powershell
-    python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
-    ```
-
-## Safe Claim Boundary
-
-- `pass`: scoped AI analysis may proceed inside the contract's model binding and
-  known test-file boundary; temporal, predictive, or general model claims still
-  require the separate adequacy and, when applicable, stateful rollout gates.
-- `partial`: only limited claims are safe; list review-required mappings,
-  planned child models, known defects, or stale evidence.
-- `fail`: broad analysis is blocked. Fix missing manifest facts, catalog rows,
-  role/disposition gaps, mapping evidence, model targets, stale hashes, or model
-  binding errors first.
-
-## Recommended Visual
-
-For non-trivial test-file work, show a compact table or Mermaid map that connects:
-
-```text
-test file field -> catalog id -> role/disposition -> evidence -> model target
-```
-
-The visual explains coverage; the machine-readable contract check is the
-validation evidence.
-
-## Native skill-execution depth receipt gate
-
-Before claiming test-file contract coverage, issue
-`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`
-for target `physicsguard-test-file-contract-review`, owner
-`physicsguard.test-file-contract-review`, and route
-`route:physicsguard-test-file-contract-review:check`. The package must account
-for every selected file and field and bind units, timing, testbench/model
-relationships, per-signal depth, mapping evidence, and project gaps. Every
-eligible field receives a current per-object result; every time-varying field
-uses its own full point universe, dynamic floor, distributed strata, and gap
-gate. A passing schema check or sampled columns alone remains coverage-only.
-Declare critical files and fields explicitly. Required or critical objects
-cannot be excluded; any other exclusion needs current hashed evidence and a
-closed non-contributing disposition with no contract-coverage contribution.
-
-Counts, file/field-name lists, catalog expansion, whole-receipt hashes, and
-ordinal time ranges are not per-obligation evidence. Every satisfied file,
-field, mapping, timing, and temporal-depth obligation must retain its exact
-target-native semantic object, `evidence_ref`, and lowercase content hash;
-missing, renamed, overlapping, mechanically generated, or summary-only mappings
-block a complete test-file contract claim.
-
-
-
-<!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
-## Validated Template Pack Routing
-
-- Target families: `physicsguard`; native owner: `physicsguard.purpose-pack-selector.v1`.
-- Current catalogs: `physicsguard.purpose-template-packs` revision `1`.
-- Resolve the task through this Guard's native router first, then ask the target-owned adapter for a current neutral projection; never infer a template from wording or a skill name.
-- Preserve the adapter's complete candidate and rejection accounting. Zero candidates may use only the declared validated base; one candidate gets a read-only preview; many candidates require complete dependencies, pairwise compatibility, one field owner, and target-authored dominance or must block as ambiguous.
-- Recompute the projection immediately before applying a preview. A stale request, catalog, route, builder, validator, or content identity blocks all writes.
-- Hand the selected preview to the target-declared builder and consume every target-native validator receipt. Template structure is not domain validity, completion, installation, release, or publication evidence.
-- Record a harvest disposition after creating or materially deepening a reusable model, and keep no-match evidence visible.
-- Declared validated bases: `physicsguard.base.audit-work-package`.
-- Template inventory: `physicsguard.base.audit-work-package`, `physicsguard.dataset-validation-basic`, `physicsguard.dataset-validation-comprehensive`, `physicsguard.model-understanding-preflight`, `physicsguard.signal-mapping-core`, `physicsguard.signal-mapping-evidence`.
-- Native validator inventory: `physicsguard.template-pack-instance-validator.v1`, `physicsguard.template-pack-manifest-validator.v1`, `physicsguard.template-pack-selection-validator.v1`.
-- Claim boundaries: The catalog supports deterministic workflow-pack selection and structural native validation only; physical truth, dataset adequacy, audit_pass, installation, and release require separate current PhysicsGuard evidence.
-<!-- END MANAGED VALIDATED TEMPLATE PACK -->
-
-<!-- BEGIN MANAGED PURPOSE AND BLOCKABILITY -->
-## PhysicsGuard dynamic model-purpose and family baseline
-
-Family capability baseline purpose: Prevent a test file from authorizing validation unless file/field identities, units, timing, testbench/model bindings, per-signal depth, mappings, and project gaps are complete and current.
-
-Family route bounded claim: A pass covers only the exact test files, fields, units, timing, model/testbench versions, signal mappings, and depth represented in the receipt.
-
-Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
-
-Shared simulator prerequisite: install the current `physicsguard==0.15.0` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
-
-Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
-
-The bundled `guard-model/` files declare these maintained family baseline regression classes:
-
-- `Candidate is not proven against file or field identity is missing` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: a governed test file or required field is absent, stale, duplicated, or misidentified. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against unit or timing contract mismatches` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: field units, timestamps, step, duration, or temporal semantics are inconsistent. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against testbench or model binding is wrong` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the file is bound to the wrong testbench, model, version, or interface. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against per-signal evidence is shallow` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: required signal depth or mapping evidence is missing or inadequate. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against project-level gap is hidden` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: a current project evidence gap is omitted from the contract result. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-
-These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.
-
-For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.
-
-### Strict task-local model deepening
-
-This skill's task-local owner is `physicsguard.test-file-contract-review` on `route:physicsguard-test-file-contract-review:check`; its declared closure check is `check:physicsguard-test-file-contract-review:task-local-model-deepening`. The shared PhysicsGuard schema and evaluator provide the envelope, while this native owner keeps the route-specific physical/evidence judgment.
-
-For every non-trivial task, use the existing `task-model plan -> observe -> revision` route with the strict current schema. The plan must declare a non-empty task purpose, an independently owned coverage-universe id and SHA-256, explicit assumptions and unknowns (empty is allowed only when written explicitly), iteration, an exact predecessor receipt after iteration zero, and a current `physicsguard_task_native_depth_receipt` bound to the plan model. Retired optional fields and compatibility shapes are invalid.
-
-The native depth receipt must account for exactly six families: execution depth, mapping, residual, uncertainty, diagnosability, and predictive rollout. Open gaps, resolution classes, external input ids, and next actions come from that target-owned receipt; AI prose, `resolved=true`, caller-written gap lists, and self-reported understanding have no closure authority.
-
-Freeze the prediction before observation and bind the observation to the exact plan fingerprint, selected probe, producer, source, independence group, and evidence SHA-256. If the observation contradicts every declared hypothesis, return `model_miss` and revise the hypothesis/model universe; never select a physical cause by elimination outside the declared space.
-
-A candidate revision must preserve distinct base/candidate identities and consume base/candidate native-depth receipts plus exactly one typed regression receipt, one independent holdout receipt, and one predictive-rollout receipt. All three must bind the same task, plan, revision, coverage fingerprint, and candidate SHA-256; the holdout must be independent from candidate construction. PhysicsGuard derives resolved, persisted, and introduced gaps by comparing the two native receipts. Renaming or deleting a caller gap is not progress.
-
-`model_closed_for_task` is legal only when the candidate identity is current, every typed check passes, and the candidate native receipt has zero open gaps. Otherwise preserve the exact non-success boundary: `continue_iteration`, `external_input_required`, `progress_stalled`, `iteration_limit`, `scope_excluded`, or `model_miss`. A passing regression with any native gap is continuation, not closure.
-
-Use `python -m physicsguard.guard_model_contract check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.
-
-`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
-
-`physicsguard.guard_model_contract` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
-<!-- END MANAGED PURPOSE AND BLOCKABILITY -->
+Claim boundary: A pass covers only the exact test files, fields, units, timing, model/testbench versions, signal mappings, and depth represented in the receipt.

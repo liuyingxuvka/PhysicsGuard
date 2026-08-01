@@ -1,0 +1,914 @@
+{
+  "claim_boundary": "This snapshot is the sole finite project model-system view assembled from existing regression, ModelMesh, BehaviorCommitmentLedger, Model-Test Alignment, and TestMesh owner artifacts. Unresolved gaps remain explicit and cannot support a full-coverage claim.",
+  "coverage": {
+    "boundary_id": "flowguard:manifest-ledger-owner-boundary",
+    "claim_boundary": "Coverage is exhaustive only for the current regression manifest, the current behavior-commitment ledger, their resolved model inputs, and their declared contract and test references.",
+    "dimensions": [
+      {
+        "complete": true,
+        "covered_ids": [],
+        "dimension_id": "behavior_commitments",
+        "excluded_ids": [],
+        "extra_ids": [],
+        "missing_ids": [],
+        "required_ids": [],
+        "schema": "flowguard.coverage_dimension.v1",
+        "unresolved_ids": []
+      },
+      {
+        "complete": true,
+        "covered_ids": [
+          "contract:purpose:guard_closure_contract",
+          "contract:purpose:interval_diagnosability",
+          "contract:purpose:task_local_model_deepening"
+        ],
+        "dimension_id": "code_contracts",
+        "excluded_ids": [],
+        "extra_ids": [],
+        "missing_ids": [],
+        "required_ids": [
+          "contract:purpose:guard_closure_contract",
+          "contract:purpose:interval_diagnosability",
+          "contract:purpose:task_local_model_deepening"
+        ],
+        "schema": "flowguard.coverage_dimension.v1",
+        "unresolved_ids": []
+      },
+      {
+        "complete": true,
+        "covered_ids": [],
+        "dimension_id": "external_surfaces",
+        "excluded_ids": [],
+        "extra_ids": [],
+        "missing_ids": [],
+        "required_ids": [],
+        "schema": "flowguard.coverage_dimension.v1",
+        "unresolved_ids": []
+      },
+      {
+        "complete": true,
+        "covered_ids": [],
+        "dimension_id": "fields_state_side_effects",
+        "excluded_ids": [],
+        "extra_ids": [],
+        "missing_ids": [],
+        "required_ids": [],
+        "schema": "flowguard.coverage_dimension.v1",
+        "unresolved_ids": []
+      },
+      {
+        "complete": true,
+        "covered_ids": [
+          "guard_closure_contract",
+          "interval_diagnosability",
+          "task_local_model_deepening"
+        ],
+        "dimension_id": "model_instances",
+        "excluded_ids": [],
+        "extra_ids": [],
+        "missing_ids": [],
+        "required_ids": [
+          "guard_closure_contract",
+          "interval_diagnosability",
+          "task_local_model_deepening"
+        ],
+        "schema": "flowguard.coverage_dimension.v1",
+        "unresolved_ids": []
+      },
+      {
+        "complete": true,
+        "covered_ids": [
+          "check:model-regression:guard-closure",
+          "check:model-regression:interval-diagnosability",
+          "check:model-regression:task-local-model-deepening",
+          "check:physicsguard:diagnosability-tests",
+          "check:physicsguard:skill-prompt-task-model-tests",
+          "check:physicsguard:task-local-revision-tests"
+        ],
+        "dimension_id": "tests_evidence",
+        "excluded_ids": [],
+        "extra_ids": [],
+        "missing_ids": [],
+        "required_ids": [
+          "check:model-regression:guard-closure",
+          "check:model-regression:interval-diagnosability",
+          "check:model-regression:task-local-model-deepening",
+          "check:physicsguard:diagnosability-tests",
+          "check:physicsguard:skill-prompt-task-model-tests",
+          "check:physicsguard:task-local-revision-tests"
+        ],
+        "schema": "flowguard.coverage_dimension.v1",
+        "unresolved_ids": []
+      }
+    ],
+    "fingerprint": "sha256:59641ceab784385031d9ace832d90e4ff5eb2eecc0d6ec627f4e2a6bfc54d54a",
+    "schema": "flowguard.coverage_universe.v1",
+    "source_inventory_fingerprint": "sha256:d3f585c7867c6c87cf2ccf75e39d30e55b76b2fc96a19da579940149887f6323",
+    "status": "complete_within_declared_boundary"
+  },
+  "coverage_status": "complete_within_declared_boundary",
+  "fingerprint": "sha256:b0ac0713ae66d527f2906755ecb3a7d84dde6e9ae8e30854becf6b9c9f5a9249",
+  "lifecycle": "active",
+  "model_instances": [
+    {
+      "fingerprint": "sha256:160acf750ab6427db5eb01110783690d889f1dd8e1d5bd01fea93354eca849e3",
+      "input_inventory_fingerprint": "sha256:fe35deae65487ea433469f17775ca0fe0d238c8e91442e9a2ca7a601f2ebd596",
+      "inputs": [
+        {
+          "path": ".flowguard/guard_closure_contract/model.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa"
+        },
+        {
+          "path": ".flowguard/guard_closure_contract/run_checks.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:24cd4f1ba388f021880170f9acacb373f6605c987aae816938e25272e50cfac2"
+        }
+      ],
+      "logical_model_id": "guard_closure_contract",
+      "model_kind": "executable_workflow",
+      "model_path": ".flowguard/guard_closure_contract/model.py",
+      "model_sha256": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa",
+      "purpose_closure_fingerprint": "sha256:75616f3b4d12ec5fda33ee91a386eae74264affb24ca8a5b18da4b28a91678e3",
+      "runner_path": ".flowguard/guard_closure_contract/run_checks.py",
+      "runner_sha256": "sha256:24cd4f1ba388f021880170f9acacb373f6605c987aae816938e25272e50cfac2",
+      "schema": "flowguard.model_instance_ref.v2"
+    },
+    {
+      "fingerprint": "sha256:187a37b6734818220021beddef3b0a28e7d5f4a78ac99d0f22f820326b19805c",
+      "input_inventory_fingerprint": "sha256:d66a307be3fd1058b5b0759882c2eab50fad572a03a5e01074e315f9ba3172b8",
+      "inputs": [
+        {
+          "path": ".flowguard/interval_diagnosability/model.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c"
+        },
+        {
+          "path": ".flowguard/interval_diagnosability/run_checks.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:3514876e30f1cdad7bcf14dd50a4ad178456d47f45de4d9e1edbf0a36cca6fdc"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:61d4bc6de4bd909a2076464a2497cfbe2a30ddb93c68534d5b43304b23eaeeb2"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:f00cf41e2525f01764b7d9db9102ad06f50363a3281822e98f29400df81301e9"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:2e254883f06085d76818401a5f2f6c21aaf8de4258a389603d2d173b098c3047"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:41af6e3e9665419043141b8c0e16ea98575348562ea6af23b668068b9b10f72e"
+        },
+        {
+          "path": "src/physicsguard/cli.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:fffed555fb3c10b3f18ccd86f4105c1916040c4cf41afbc6bfc97d9b0155e7b5"
+        },
+        {
+          "path": "src/physicsguard/core/diagnosability.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:bf6f7e277db17c0feca02ad91c47f95299f129fa63332d6d5018ebcdae1eb3d4"
+        },
+        {
+          "path": "src/physicsguard/schema/diagnosability.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:4fba020e922a1aa568f30785479760ed1de8944d5acbce21442026005bd68330"
+        },
+        {
+          "path": "tests/test_diagnosability.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:f36463f551ef366ceada9372930f910704797716f58f87bd070c67143c741765"
+        }
+      ],
+      "logical_model_id": "interval_diagnosability",
+      "model_kind": "executable_workflow",
+      "model_path": ".flowguard/interval_diagnosability/model.py",
+      "model_sha256": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c",
+      "purpose_closure_fingerprint": "sha256:66de01fddc0ac224d9c24563a67fb3da3118a909e99242a4747c8103af8245a8",
+      "runner_path": ".flowguard/interval_diagnosability/run_checks.py",
+      "runner_sha256": "sha256:3514876e30f1cdad7bcf14dd50a4ad178456d47f45de4d9e1edbf0a36cca6fdc",
+      "schema": "flowguard.model_instance_ref.v2"
+    },
+    {
+      "fingerprint": "sha256:6a2f03d79c91e1f01fdee06f8ba172d6897f850426fda7d0b7a2f2e3bf2278b9",
+      "input_inventory_fingerprint": "sha256:7511eabb347d6f33d4f3e7b2b05112c2a6d0281dd5f8f1de2bcf7ab80d496b18",
+      "inputs": [
+        {
+          "path": ".flowguard/check_physicsguard_skill_suite_mesh.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:4db1f63036df0c2be53bc4e38508ce0c751e9c9b23e5848d588871c012f9eeb2"
+        },
+        {
+          "path": ".flowguard/physicsguard_skill_prompt_load_graph.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:e1d4131196c14e46bc33b6c6da79ae8b7ca7cacff52d31498f35880ab092bc59"
+        },
+        {
+          "path": ".flowguard/physicsguard_skill_suite_mesh.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:0f83aef913d929623cc39fc1637fad3c460fdbb2ade9c4f2ef1a3e668a55b004"
+        },
+        {
+          "path": ".flowguard/task_local_model_deepening/model.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:537c92eba9b05bb67fc6b00c173e14c5e746c63e4f40301bfbf7a35645f64b43"
+        },
+        {
+          "path": ".flowguard/task_local_model_deepening/run_checks.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:3914882a52d44722194d92e8a0d046f346e83e245eb78c9ccbc9dba29886bfc7"
+        },
+        {
+          "path": "VERSION",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:44abf66b02260179b3a509b0f10b5f26f431f316ef4ca50f18764c9e4b8cfd4a"
+        },
+        {
+          "path": "pyproject.toml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:2d6da83930ec2b91b3b29a2a66d5c6d6dba899af7dd4aa2bc8efe5357806bca3"
+        },
+        {
+          "path": "scripts/check_installed_physicsguard_skills.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:b7b7a434edbbfa4be43dadcdd2c1d2f2b94976ffad55ea88773c7cbe2fb5ce9d"
+        },
+        {
+          "path": "scripts/report_physicsguard_skill_suite.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:7f744407dc0b9915fadc861429099e7e6b6ca41dc96ef4842956ee48dc4647be"
+        },
+        {
+          "path": "scripts/upgrade_purpose_contracts.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:26f79a03d38777dc6a5cff544fefd180f02bd34e0f4c849b0345d2c529d4fcb6"
+        },
+        {
+          "path": "scripts/verify_guard_simulation_readiness.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:92d696aa467e476f1821a653edb102d0f15d40e5232a54cee57fafad2e4a2330"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:e904032fbaae0c0837765ce97400973428d011fc9198f00ec2de91cd95891201"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:61d4bc6de4bd909a2076464a2497cfbe2a30ddb93c68534d5b43304b23eaeeb2"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:522a44248631580da4cbf2f754b64f8f37c1f228cf3a5b2472af9c6581c68048"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:0fdfdda906ea4d451e58c85b9c877961b2f835b9e8638d31d5073038abbe70be"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:7ba68b213ed7743490db59304bff8c404dc1fb68f7f1a4a21c3f4f4563afb755"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:92fabbef9cfa171f58b7e72e02ac1641e483eb9dd9ede78026c07991041cce3c"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-ai-debugging/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:a247093791fec1a993c34effe03534bf458fecf9b2cff26bd3c21797ae82c6b6"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:a534351d54053b76f381671a0078078b7d0077f46befeb3332ef0b36965e3d1c"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:f00cf41e2525f01764b7d9db9102ad06f50363a3281822e98f29400df81301e9"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:44ba5f86aacc7cd5032b8ec75413185dd74d8611301c16b4b28124d329eb12c1"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:e072d9d25c00ea2864529f8b2e03c385a0858711462d5b3f483409ff11af5c4d"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c844acb4c342924fe897d50e062d05fecd05e07a17c9d7904591239400f5299a"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:fd922828e1d58c46a9bcb29210b76d180d85b88262a0fd808a8c12e908e215c5"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-audit-closure/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:625cca06f5e06cb6f8d7fcc76bf8f3ea47676dff1f913f83fe7b5a58d29ab9c4"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:4174c176e4f43b201861ed998c135faf653fdfe96022f2e414f10d3b23741a3c"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:bd4bf30a02291355d04b4cb86cf6054e9783b00fb0de081c07d5f24a7444976f"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:82b14a11950493ab3374976994e31b09fcc31ebca9880fbb38d90cf155aabc6a"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:33c716b5e1f6b936033e330eb1c29b452c7ddbff8325e051796609b213744626"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c7c7ffc26251bd50c224e55a9ffd5272231f20388b9968895418e1feb847945a"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:99ae4d64699ce95be72b7e57b2591de848fa5e3264c44fa40cee56a47528b1bb"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-candidate-model-blueprint/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:3efda16f72bc52e53a4d9e5f510d215cc5116bcaf0528a7381607b26b067d759"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:f10e2f854e8348e31ece85ebe521d0e6a4459cbdf0ab7b07b658276cb9f8b5e2"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:226034e316b9e08865bc7b71d6dc7272236bbefd02dfff92c0eae5f4b56f978f"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:a2fa00cc17e7dbd84893ce77f4a0f1bb98d83609588ffacf4a2a76abab647bc7"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:97c356e6c8aec099fff8d8d919d2abfe7863acf3e4c42a51563b9281e15d551e"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:5af0d169f4eef6ffe5e7d8d84dd440eca7fe52fcd1ad0be68b4061361c659ba0"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:caa97d7e84fc35ce1e938041ab3e264f0b7bbb262c99391585a0f410da480c35"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-model-dataset-validation/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:5ffaebd798bbf643b0038459d0e385a1e38146a0f2b8a024d831f20be71be9da"
+        },
+        {
+          "path": "skill/physicsguard-model-library/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:81481db92b5c0e0ab656f4a10581b75c3deb67d01ffe65e786138510e793220d"
+        },
+        {
+          "path": "skill/physicsguard-model-library/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:3f97a2f5e84bf92db9aa92b6fcbe6a2332f7d72034fa4723b69a0c528c7d8647"
+        },
+        {
+          "path": "skill/physicsguard-model-library/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:f3d5c9dd745515ceda527a3e1885923b65eceb8c96d7d7abdd199e4ee92df42f"
+        },
+        {
+          "path": "skill/physicsguard-model-library/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:dfe2b2ec3a1c25af500d0d8195a68a3d2e53e4b9381213fa66cda2f563257358"
+        },
+        {
+          "path": "skill/physicsguard-model-library/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:3e18eef32de14ec13233d50a4abed5240462fe4b8173786055ef3f9c23881af9"
+        },
+        {
+          "path": "skill/physicsguard-model-library/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:2dae27d5acb05ab49ca57d715746a659f0d9ee5f62ed54e0895efa7a95b92d13"
+        },
+        {
+          "path": "skill/physicsguard-model-library/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-model-library/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:17c3a74fdf0679734621a610698b100e61e0fcfede53adad01d92aa3aa3a7139"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c07ab35e585e49dc9bb08b18c504c4e85c44fc8b8cd9d7afd26e5853112474c4"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:2e254883f06085d76818401a5f2f6c21aaf8de4258a389603d2d173b098c3047"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:7dbe559fff66eee28b07afb83c3bf130d49f4f3b126c24a66ed7d686248856ff"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:6b93086bef33bb0b258b456e48a253b51e775f4e4718261db48e14c43746bcd4"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:06afcb7e05aed4cebb5e4b1457e5337ca729e27b92685ae87fe5423aab3433ab"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:199834cadec994ddf5024b115211bb19aabe00149be069863b22a0a36b4718cf"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-model-understanding-preflight/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:fb5be6e24e0b215a8eb02556459e2fb2dd3dd3eada1c04dad41ee6c7ecab77e3"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:bd5d57a55d8f069e27f656fc11f7a45fd43f6740fd5e904df01128ecdfb606a8"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:fd441984da5c777a42411efb4af1da5fdddfb7d12b1d05df9e6f26254cce06fc"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:8be4c33e9ddd467230bb13f33d4bc4b66b2b5a19b467bcd830feda19b35f0f39"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:825803758cbab53e11a2f113c7753094556f4b571b73b70ebcad3b74c4d1e4c0"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:1b9b48bae3f2b2ad44fb88e2c5b0f80df545acfd96319fbac3bbf1f20d1b29dc"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:e90b93246ef3d231b19aa674ab2714f902baa2d5eede028c0ddbca3af24c6555"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-project-adoption/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:cb2b0d12b7a6c8780f3b229cc8d90cb09a0a3db61ac9817a99732251bc4e2a36"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:4fd324f8c8b3ad64e4030b8f64f449ce9ec6154d8c90eb698d215929a1f97f9a"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:d1726354befb46c6abaac94f38ae4eac2bdf0d433b51f0cd64e3ca39bce9a642"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:6d24b639a80487dbcf0c18e56a58272d391c20751cc8a099ced9bd50fbc71820"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:54111cc4240eaf493599060efb26ed00a1de6aba55cfac81ed6a667e9c87605e"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:593aebe32576af67b5adaca498e792e3e6b8e50eb22399324f8e24f53c0cf852"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:9e11619177c77a5d689c082ba5942e0cfd050a6b3f41edf83f88aac1c99b926a"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-project-evidence-registry/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:9b95ece48d6c34773c83e5ecfb63f5c1000403afd7da43fc4a81739d50a2d936"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:a11728f6ad7127e0c176e6e2161b113a8f1ff6e39ee957981ebf86467966cbee"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:41af6e3e9665419043141b8c0e16ea98575348562ea6af23b668068b9b10f72e"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:ac34a843a8e1aa161bd3e8a86acf3c868a700d94a414cc354274710a07e2646a"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:47253aac0b22083e2b2e357e4a271f996039d87e306edfe100a559a9dfd9c426"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:ae95fa30f64de9ab955b8cf81035e97bd5d68cbbb7499ce584ccba10d7e53977"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:9b02cfa9779a5374b700e1bc215443e83ca189f3476d17906c52fb01d506c952"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-signal-mapping-review/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:bd8a75997088212a7b7b2e9ac9abe0099d42910570c30606fce2f50f15f94f38"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/.skillguard/contract-source.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:26272111971f4039a2e7469de2a13837c45632bc2eb5efe495f608977cf27d0e"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/SKILL.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:aa2f630d8e175bdc8b03743fee813d49b2793509a471d0dce5d8a2af65d161b8"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/agents/openai.yaml",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:28350d6c479a81237f1c40a1a420154c1790cf49338659c0fd11ecf5ce9157f9"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/references/native-depth-and-purpose.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:cc87c82723953c645f1aa3fa65d524df2290e1e7a38b4f281748483f57cf952d"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/references/native-route-protocol.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:a21d63f69a6dab20e76a154218af5b5050fca1724f2d2ae26a888959f891bab0"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/references/route-capsule.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:5b6ec9a98155cb7651647a0bfb4734d8a867c584369d62597be182494fb6570a"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/references/template-pack-routing.md",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:c889d3e3a474488dca0d2874e50eea270ab46eb1f009975fc321b7b44ae03ecc"
+        },
+        {
+          "path": "skill/physicsguard-test-file-contract-review/runtime-requirements.json",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:5fd30d680ed1e6aeace8e0f0de5bf6d2ce58893a4c5f90efdd1320351b87beb1"
+        },
+        {
+          "path": "src/physicsguard/__init__.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:6f25523ac700e1c904c9fef08aeb0da14be9caef8b42a275272f2ea7bd25a341"
+        },
+        {
+          "path": "src/physicsguard/cli.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:fffed555fb3c10b3f18ccd86f4105c1916040c4cf41afbc6bfc97d9b0155e7b5"
+        },
+        {
+          "path": "src/physicsguard/core/task_local_revision.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:4f2b2299c22d52b686e17ddaad0acc86a7f1538e54005e374beb2d69a107beb6"
+        },
+        {
+          "path": "src/physicsguard/schema/task_local_revision.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:186cdff439d1ecc1d8ca8e10f1fac058698d31a20cdf76d58f0f6ed9ee1eeaf8"
+        },
+        {
+          "path": "tests/test_guard_model_contract.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:6e68547a5b7b644ef36c3490a271abd32dda8733c0cf0a1c2e6f95bd3526f192"
+        },
+        {
+          "path": "tests/test_guard_skill_mesh.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:d5d115bd9c9daade43c892aef114ffbd3d77b033531f1dae9551c11232a90bcb"
+        },
+        {
+          "path": "tests/test_installed_skill_sync.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:9e105b95710157f79d28ad2ced42914bff4bc01dbb0c613b26b0b5ce9de84187"
+        },
+        {
+          "path": "tests/test_physicsguard_skill_entry_loading.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:27a406aef0bbbb1b6ada20f772b5ffc63a2890bb8522024c011de068f71e7c40"
+        },
+        {
+          "path": "tests/test_physicsguard_skill_prompts.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:1eadda5a13f677ff81306c03ca78bcd8783e9af64f75ba926ad8f68eba839b1f"
+        },
+        {
+          "path": "tests/test_post_archive_retirement_authority.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:539406ca2fd484472369457b1acebf778e75e374ec4c4def56b69d7df0e04d6e"
+        },
+        {
+          "path": "tests/test_skill_execution_depth.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:5583ba2f6ddc641121d6e082e1a916847a34a18d4e9d4abb82421f9d73effe42"
+        },
+        {
+          "path": "tests/test_skillguard_v2_runtime_authority_audit.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:2adaa1e24261b9daa51b3fa54787a6229ec4dbec07736bb6cad96b46268faf26"
+        },
+        {
+          "path": "tests/test_task_local_revision.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:748936d79569a1a6c88a13381c59e285df005457d8c99ec4f9572c01d9078a1c"
+        },
+        {
+          "path": "tests/test_version_consistency.py",
+          "schema": "flowguard.model_input_ref.v1",
+          "sha256": "sha256:cc1afe640a14f63d48a8e6c05f190ce9c0d3cc0c3ca21c5561ee8b641ab1f49d"
+        }
+      ],
+      "logical_model_id": "task_local_model_deepening",
+      "model_kind": "executable_workflow",
+      "model_path": ".flowguard/task_local_model_deepening/model.py",
+      "model_sha256": "sha256:537c92eba9b05bb67fc6b00c173e14c5e746c63e4f40301bfbf7a35645f64b43",
+      "purpose_closure_fingerprint": "sha256:d9504ada350fa45e139cf8993fb0df90d3ac66ce8f1b678c47386301c9ea5b9d",
+      "runner_path": ".flowguard/task_local_model_deepening/run_checks.py",
+      "runner_sha256": "sha256:3914882a52d44722194d92e8a0d046f346e83e245eb78c9ccbc9dba29886bfc7",
+      "schema": "flowguard.model_instance_ref.v2"
+    }
+  ],
+  "owner_artifact_refs": [
+    {
+      "endpoint_id": "purpose:guard_closure_contract",
+      "endpoint_kind": "parent_closure",
+      "fingerprint": "sha256:75616f3b4d12ec5fda33ee91a386eae74264affb24ca8a5b18da4b28a91678e3",
+      "owner_route": "model_test_alignment",
+      "schema": "flowguard.authority_endpoint_ref.v1"
+    },
+    {
+      "endpoint_id": "purpose:interval_diagnosability",
+      "endpoint_kind": "parent_closure",
+      "fingerprint": "sha256:66de01fddc0ac224d9c24563a67fb3da3118a909e99242a4747c8103af8245a8",
+      "owner_route": "model_test_alignment",
+      "schema": "flowguard.authority_endpoint_ref.v1"
+    },
+    {
+      "endpoint_id": "purpose:task_local_model_deepening",
+      "endpoint_kind": "parent_closure",
+      "fingerprint": "sha256:d9504ada350fa45e139cf8993fb0df90d3ac66ce8f1b678c47386301c9ea5b9d",
+      "owner_route": "model_test_alignment",
+      "schema": "flowguard.authority_endpoint_ref.v1"
+    },
+    {
+      "endpoint_id": "system:flowguard:model-regression-manifest",
+      "endpoint_kind": "parent_closure",
+      "fingerprint": "sha256:a5092f65d4d090ab8097087a54a4ee726048931be45b108d52df204b28646fe4",
+      "owner_route": "model_mesh_maintenance",
+      "schema": "flowguard.authority_endpoint_ref.v1"
+    }
+  ],
+  "relations": [
+    {
+      "evidence_fingerprints": [
+        "sha256:75616f3b4d12ec5fda33ee91a386eae74264affb24ca8a5b18da4b28a91678e3"
+      ],
+      "kind": "realizes",
+      "relation_id": "relation:model-realizes-purpose:guard_closure_contract",
+      "schema": "flowguard.model_relation.v1",
+      "source": {
+        "endpoint_id": "model:guard_closure_contract",
+        "endpoint_kind": "model_instance",
+        "fingerprint": "sha256:160acf750ab6427db5eb01110783690d889f1dd8e1d5bd01fea93354eca849e3",
+        "owner_route": "model_regression_manifest",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      },
+      "target": {
+        "endpoint_id": "purpose:guard_closure_contract",
+        "endpoint_kind": "parent_closure",
+        "fingerprint": "sha256:75616f3b4d12ec5fda33ee91a386eae74264affb24ca8a5b18da4b28a91678e3",
+        "owner_route": "model_test_alignment",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      }
+    },
+    {
+      "evidence_fingerprints": [
+        "sha256:66de01fddc0ac224d9c24563a67fb3da3118a909e99242a4747c8103af8245a8"
+      ],
+      "kind": "realizes",
+      "relation_id": "relation:model-realizes-purpose:interval_diagnosability",
+      "schema": "flowguard.model_relation.v1",
+      "source": {
+        "endpoint_id": "model:interval_diagnosability",
+        "endpoint_kind": "model_instance",
+        "fingerprint": "sha256:187a37b6734818220021beddef3b0a28e7d5f4a78ac99d0f22f820326b19805c",
+        "owner_route": "model_regression_manifest",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      },
+      "target": {
+        "endpoint_id": "purpose:interval_diagnosability",
+        "endpoint_kind": "parent_closure",
+        "fingerprint": "sha256:66de01fddc0ac224d9c24563a67fb3da3118a909e99242a4747c8103af8245a8",
+        "owner_route": "model_test_alignment",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      }
+    },
+    {
+      "evidence_fingerprints": [
+        "sha256:d9504ada350fa45e139cf8993fb0df90d3ac66ce8f1b678c47386301c9ea5b9d"
+      ],
+      "kind": "realizes",
+      "relation_id": "relation:model-realizes-purpose:task_local_model_deepening",
+      "schema": "flowguard.model_relation.v1",
+      "source": {
+        "endpoint_id": "model:task_local_model_deepening",
+        "endpoint_kind": "model_instance",
+        "fingerprint": "sha256:6a2f03d79c91e1f01fdee06f8ba172d6897f850426fda7d0b7a2f2e3bf2278b9",
+        "owner_route": "model_regression_manifest",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      },
+      "target": {
+        "endpoint_id": "purpose:task_local_model_deepening",
+        "endpoint_kind": "parent_closure",
+        "fingerprint": "sha256:d9504ada350fa45e139cf8993fb0df90d3ac66ce8f1b678c47386301c9ea5b9d",
+        "owner_route": "model_test_alignment",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      }
+    },
+    {
+      "evidence_fingerprints": [
+        "sha256:a5092f65d4d090ab8097087a54a4ee726048931be45b108d52df204b28646fe4"
+      ],
+      "kind": "contains",
+      "relation_id": "relation:system-contains:guard_closure_contract",
+      "schema": "flowguard.model_relation.v1",
+      "source": {
+        "endpoint_id": "system:flowguard:model-regression-manifest",
+        "endpoint_kind": "parent_closure",
+        "fingerprint": "sha256:a5092f65d4d090ab8097087a54a4ee726048931be45b108d52df204b28646fe4",
+        "owner_route": "model_mesh_maintenance",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      },
+      "target": {
+        "endpoint_id": "model:guard_closure_contract",
+        "endpoint_kind": "model_instance",
+        "fingerprint": "sha256:160acf750ab6427db5eb01110783690d889f1dd8e1d5bd01fea93354eca849e3",
+        "owner_route": "model_regression_manifest",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      }
+    },
+    {
+      "evidence_fingerprints": [
+        "sha256:a5092f65d4d090ab8097087a54a4ee726048931be45b108d52df204b28646fe4"
+      ],
+      "kind": "contains",
+      "relation_id": "relation:system-contains:interval_diagnosability",
+      "schema": "flowguard.model_relation.v1",
+      "source": {
+        "endpoint_id": "system:flowguard:model-regression-manifest",
+        "endpoint_kind": "parent_closure",
+        "fingerprint": "sha256:a5092f65d4d090ab8097087a54a4ee726048931be45b108d52df204b28646fe4",
+        "owner_route": "model_mesh_maintenance",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      },
+      "target": {
+        "endpoint_id": "model:interval_diagnosability",
+        "endpoint_kind": "model_instance",
+        "fingerprint": "sha256:187a37b6734818220021beddef3b0a28e7d5f4a78ac99d0f22f820326b19805c",
+        "owner_route": "model_regression_manifest",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      }
+    },
+    {
+      "evidence_fingerprints": [
+        "sha256:a5092f65d4d090ab8097087a54a4ee726048931be45b108d52df204b28646fe4"
+      ],
+      "kind": "contains",
+      "relation_id": "relation:system-contains:task_local_model_deepening",
+      "schema": "flowguard.model_relation.v1",
+      "source": {
+        "endpoint_id": "system:flowguard:model-regression-manifest",
+        "endpoint_kind": "parent_closure",
+        "fingerprint": "sha256:a5092f65d4d090ab8097087a54a4ee726048931be45b108d52df204b28646fe4",
+        "owner_route": "model_mesh_maintenance",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      },
+      "target": {
+        "endpoint_id": "model:task_local_model_deepening",
+        "endpoint_kind": "model_instance",
+        "fingerprint": "sha256:6a2f03d79c91e1f01fdee06f8ba172d6897f850426fda7d0b7a2f2e3bf2278b9",
+        "owner_route": "model_regression_manifest",
+        "schema": "flowguard.authority_endpoint_ref.v1"
+      }
+    }
+  ],
+  "root_instance_fingerprints": [
+    "sha256:160acf750ab6427db5eb01110783690d889f1dd8e1d5bd01fea93354eca849e3"
+  ],
+  "schema": "flowguard.model_system_snapshot.v2",
+  "snapshot_id": "observed:narrow-physicsguard-entry-loading:0.15.1",
+  "subject_lane": "observed_implementation",
+  "subject_revision": "source-inventory:2bde1d5b697512cb7beda67719c9c2069fb89beb5d349ea8dfcd61acdeb50823",
+  "system_id": "flowguard",
+  "unresolved_gap_ids": []
+}

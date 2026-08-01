@@ -1,6 +1,6 @@
 ledger_version: 1
 project: PhysicsGuard
-updated_for_version: 0.15.0
+updated_for_version: 0.15.1
 evidence_level: navigation
 purpose: >
   Current ownership map from FlowGuard model responsibilities to PhysicsGuard
@@ -35,14 +35,15 @@ entries:
     tests:
       - tests/test_task_local_revision.py
       - tests/test_physicsguard_skill_prompts.py
+      - tests/test_physicsguard_skill_entry_loading.py
     examples:
-      - openspec/changes/make-physics-model-deepening-iterative/specs/physics-model-deepening/spec.md
-      - openspec/changes/make-physics-model-deepening-iterative/design.md
+      - openspec/changes/archive/2026-08-01-make-physics-model-deepening-iterative/specs/physics-model-deepening/spec.md
+      - openspec/changes/archive/2026-08-01-make-physics-model-deepening-iterative/design.md
     validation_commands:
       - command: python .flowguard/task_local_model_deepening/run_checks.py
         covers: Strict plan, model-miss, native gap transition, closure, and all bounded non-success terminals.
-      - command: python -m pytest tests/test_task_local_revision.py tests/test_physicsguard_skill_prompts.py -q
-        covers: Runtime schemas, evaluator behavior, CLI receipts, and all ten maintained skill projections.
+      - command: python -m pytest tests/test_task_local_revision.py tests/test_physicsguard_skill_prompts.py tests/test_physicsguard_skill_entry_loading.py -q
+        covers: Runtime schemas, evaluator behavior, CLI receipts, compact entry projections, and conditional deep-reference loading across all ten maintained skills.
       - command: openspec validate make-physics-model-deepening-iterative --strict --json
         covers: Requirement, design, and task-artifact coherence.
     boundaries:

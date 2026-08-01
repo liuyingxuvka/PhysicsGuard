@@ -1,0 +1,94 @@
+{
+  "schema_version": "physicsguard.skill_route_capsule.v1",
+  "target_skill_id": "physicsguard-model-dataset-validation",
+  "native_owner_id": "physicsguard-model-dataset-validation",
+  "native_route_id": "route:physicsguard-model-dataset-validation",
+  "route_role": "direct",
+  "broad_route_prerequisite": false,
+  "accept_when": [
+    "A concrete model and contracted dataset must be checked for bounded consistency, validation, or prediction readiness.",
+    "Coverage adequacy, calibration/holdout separation, residual envelopes, or future rollout must be evaluated."
+  ],
+  "reject_handoffs": [
+    {
+      "condition": "A concrete data file lacks a current passing contract.",
+      "target_skill_id": "physicsguard-test-file-contract-review"
+    },
+    {
+      "condition": "Required mappings remain unresolved before validation.",
+      "target_skill_id": "physicsguard-signal-mapping-review"
+    }
+  ],
+  "minimum_inputs": [
+    "model",
+    "passing_test_file_contracts",
+    "dataset_identity",
+    "validation_plan",
+    "mapping_evidence"
+  ],
+  "required_outputs": [
+    "validation_status",
+    "depth_receipt",
+    "adequacy_findings",
+    "bounded_validation_claim"
+  ],
+  "initial_load": [
+    "agents/openai.yaml",
+    "SKILL.md",
+    "references/route-capsule.json"
+  ],
+  "conditional_references": [
+    {
+      "path": "references/native-route-protocol.md",
+      "load_when": [
+        "route_selected_and_domain_execution_required"
+      ],
+      "required_for": [
+        "target_native_domain_workflow"
+      ],
+      "sha256": "5af0d169f4eef6ffe5e7d8d84dd440eca7fe52fcd1ad0be68b4061361c659ba0"
+    },
+    {
+      "path": "references/native-depth-and-purpose.md",
+      "load_when": [
+        "create_task_local_model",
+        "materially_deepen_model",
+        "revise_candidate_model",
+        "claim_model_closure"
+      ],
+      "required_for": [
+        "execution_depth",
+        "mapping",
+        "residual",
+        "uncertainty",
+        "diagnosability",
+        "predictive_rollout",
+        "purpose_before_candidate",
+        "prediction_before_observation",
+        "model_miss",
+        "typed_regression",
+        "independent_holdout",
+        "exact_terminal_boundary"
+      ],
+      "sha256": "bf8a153e1f721591cdab0c3d774ccf4ddb1c397a9571183a4e59343d283a30f6"
+    },
+    {
+      "path": "references/template-pack-routing.md",
+      "load_when": [
+        "select_template_pack",
+        "preview_template_pack",
+        "instantiate_template_pack",
+        "validate_template_pack",
+        "harvest_reusable_model"
+      ],
+      "required_for": [
+        "validated_template_pack_routing"
+      ],
+      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+    }
+  ],
+  "maximum_reference_depth": 1,
+  "cross_skill_reference_loading": "typed_handoff_only",
+  "entry_prompt_sha256": "fd8b8dced3f91df7406104e0505e04fb299501f42486ec72aea6e66586c8d710",
+  "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt."
+}

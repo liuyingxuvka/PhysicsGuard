@@ -1,159 +1,51 @@
 ---
 name: physicsguard-model-library
-description: Use when indexing reusable PhysicsGuard model assets, validation reports, compatible testbench profiles, known limits, and reuse status without storing raw datasets or overclaiming model validity.
+description: "Use directly to index or select reusable PhysicsGuard model assets and check profile, testbench, validation-receipt, known-limit, gap, predictive-horizon, and bounded-reuse compatibility without storing raw datasets or implying universal validity."
 ---
 
 # PhysicsGuard Model Library
 
-Use this route after model-dataset validation reports exist. The model library
-is an evidence index, not a raw-data database and not proof of universal model
-validity.
+## Entry boundary
 
-For cross-project discovery, historical search, or "which projects/models have
-we tested before" questions, do not answer from one model library index alone.
-Model libraries can provide provider evidence to an external database ledger,
-but this PhysicsGuard route does not own database indexes, lifecycle, query, or
-freshness gates.
+Route: `route:physicsguard-model-library:reuse`; native owner: `physicsguard.model-library`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
 
-## Workflow
+Accept this route only when:
 
-1. Create or update a model library index:
+- The task is to index validated model assets or decide whether one is reusable for a named target context.
+- Asset, profile, testbench, validation, gap, or predictive-horizon compatibility must be checked.
 
-   ```yaml
-   library_id: example_model_library
-   entries:
-     - model_id: pump_loop_low_fidelity_v1
-       model_file: path/to/hierarchy.yaml
-       evidence_registry: path/to/project_evidence_registry.yaml
-       model_context: pump_loop_model_context
-       evidence_bundle_id: pump_loop_validation_bundle
-       validation_reports:
-         - reports/example_validation.yaml
-       reuse_status: partial
-   ```
+Reject or hand off when:
 
-2. Check the index:
+- The asset has no current model/dataset validation receipt. Handoff: `physicsguard-model-dataset-validation`.
+- The request is a cross-project database or historical-ledger query. Handoff: `none`.
 
-   ```powershell
-   python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
-   ```
+## Minimum workflow
 
-3. Treat missing model files, stale hashes, missing validation reports, or
-   invalid report references as blocking for broad reuse claims.
-   A `validated` reuse claim additionally requires a current passing native
-   validation-depth receipt with exact dataset/mapping/time/scenario/split and
-   report identity, compatible `covered_scope`, and a passing quantitative
-   adequacy receipt over the artifact-derived universe. A scalar-only,
-   snapshot, shallow, scope-incompatible, or partial receipt supports at most
-   partial, explicitly bounded reuse.
-   The receipt must classify every available parameter and show passing
-   per-parameter dynamic floors, strata, row-gap, and executable model-
-   contribution depth for each time-varying parameter; one static-looking
-   value or a disconnected observation cannot silently stand in for a time
-   history.
-4. When evidence registry and bundle references exist, run or trust the
-   `model-library check` gap gate. Blocking project evidence gaps prevent
-   validated reuse; review gaps must remain visible.
-5. For `validated` reuse or broad reuse-readiness claims, include the model
-   library in a project closure plan and run:
+1. Bind the selected asset and exact target profile/testbench context.
+2. Load the native route protocol and check current compatibility, validation, gaps, and known limits.
+3. Report only the exact reusable boundary; keep database-level discovery out of scope.
 
-   ```powershell
-   python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
-   ```
+Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
-   The closure report must be passed before broad reuse claims. Partial or
-   downgraded closure means only limited reuse wording is safe.
-6. Record predictive capability only when the entry references a current
-   `stateful_dynamic` future-rollout receipt with disjoint training/holdout,
-   passing metrics and stability, and an explicit checked horizon. Pointwise
-   validation or reuse evidence must never be relabeled predictive.
+## Conditional detail loading
 
-## Safe Claim Boundary
+- Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
+- Load `references/native-depth-and-purpose.md` before creating, materially deepening, revising, or closing a task-local model. Do not load it for an ordinary bounded action.
+- Load `references/template-pack-routing.md` only for target-owned template selection, preview, instantiation, validation, or harvest. Preview is not proof.
+- Do not load another PhysicsGuard skill's references merely because the skills are related. Use an explicit typed handoff.
 
-The library can say where a model has validation evidence and known limits. It
-must not store large raw data, invent fit, hide project evidence gaps,
-or imply validity outside the referenced validation reports, adequacy universe,
-prediction horizon, and evidence bundle.
+## Hard gates
 
-## Native skill-execution depth receipt gate
+- Preserve the target's native judgment, exact evidence identities, explicit unknowns, and non-pass states.
+- Never treat AI self-report, prose completeness, progress, an inventory, or a template preview as native execution evidence.
+- Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.
+- Do not add a compatibility route, alias, fallback, copied runtime, or alternate success owner.
 
-Before claiming an asset is reusable, issue
-`python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`
-for target `physicsguard-model-library`, owner `physicsguard.model-library`, and
-route `route:physicsguard-model-library:reuse`. Reconcile the complete selected
-asset/profile/testbench universe and provide current evidence for compatibility,
-the gap gate, validation receipt, and bounded reuse scope for every eligible
-item. Catalog presence or a name match is not compatibility evidence.
-PhysicsGuard binds the receipt and selects or validates the model asset.
-Declare critical assets and profiles explicitly. Required or critical items
-cannot be excluded; any other exclusion needs current hashed evidence and a
-closed non-contributing disposition that supplies no reuse evidence.
+## Required outputs
 
-Counts, asset-name lists, catalog expansion, whole-receipt hashes, and ordinal
-ranges are not per-obligation evidence. Every satisfied compatibility or reuse
-obligation must retain its exact target-native semantic object, `evidence_ref`,
-and lowercase content hash; missing, renamed, overlapping, mechanically generated,
-or summary-only mappings block a reuse claim.
+- `compatible_assets`
+- `reuse_status`
+- `gaps`
+- `bounded_reuse_scope`
 
-
-
-<!-- BEGIN MANAGED VALIDATED TEMPLATE PACK -->
-## Validated Template Pack Routing
-
-- Target families: `physicsguard`; native owner: `physicsguard.purpose-pack-selector.v1`.
-- Current catalogs: `physicsguard.purpose-template-packs` revision `1`.
-- Resolve the task through this Guard's native router first, then ask the target-owned adapter for a current neutral projection; never infer a template from wording or a skill name.
-- Preserve the adapter's complete candidate and rejection accounting. Zero candidates may use only the declared validated base; one candidate gets a read-only preview; many candidates require complete dependencies, pairwise compatibility, one field owner, and target-authored dominance or must block as ambiguous.
-- Recompute the projection immediately before applying a preview. A stale request, catalog, route, builder, validator, or content identity blocks all writes.
-- Hand the selected preview to the target-declared builder and consume every target-native validator receipt. Template structure is not domain validity, completion, installation, release, or publication evidence.
-- Record a harvest disposition after creating or materially deepening a reusable model, and keep no-match evidence visible.
-- Declared validated bases: `physicsguard.base.audit-work-package`.
-- Template inventory: `physicsguard.base.audit-work-package`, `physicsguard.dataset-validation-basic`, `physicsguard.dataset-validation-comprehensive`, `physicsguard.model-understanding-preflight`, `physicsguard.signal-mapping-core`, `physicsguard.signal-mapping-evidence`.
-- Native validator inventory: `physicsguard.template-pack-instance-validator.v1`, `physicsguard.template-pack-manifest-validator.v1`, `physicsguard.template-pack-selection-validator.v1`.
-- Claim boundaries: The catalog supports deterministic workflow-pack selection and structural native validation only; physical truth, dataset adequacy, audit_pass, installation, and release require separate current PhysicsGuard evidence.
-<!-- END MANAGED VALIDATED TEMPLATE PACK -->
-
-<!-- BEGIN MANAGED PURPOSE AND BLOCKABILITY -->
-## PhysicsGuard dynamic model-purpose and family baseline
-
-Family capability baseline purpose: Prevent reuse of a PhysicsGuard model asset unless its profile, testbench, compatibility evidence, gaps, validation receipt, and bounded reuse scope are current for the requested project.
-
-Family route bounded claim: Library readiness licenses only the selected asset/profile/testbench combination and exact bounded reuse scope; it does not validate a new project automatically.
-
-Family baseline proof boundary: This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.
-
-Shared simulator prerequisite: install the current `physicsguard==0.15.0` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
-
-Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
-
-The bundled `guard-model/` files declare these maintained family baseline regression classes:
-
-- `Candidate is not proven against library inventory is incomplete` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: selected assets, profiles, or testbenches are absent from the current inventory. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against compatibility is not proven` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the selected asset and target testbench/model interfaces are incompatible or unevaluated. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against validation or gap evidence is stale` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the validation receipt is stale, missing, or unresolved gaps are hidden. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-- `Candidate is not proven against reuse scope is overreached` (native_obligation_admission_gate): block when the candidate lacks current passing target-native obligation evidence for this bounded route condition: the requested reuse exceeds the validated compatibility boundary. Claim boundary: This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected.
-
-These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.
-
-For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.
-
-### Strict task-local model deepening
-
-This skill's task-local owner is `physicsguard.model-library` on `route:physicsguard-model-library:reuse`; its declared closure check is `check:physicsguard-model-library:task-local-model-deepening`. The shared PhysicsGuard schema and evaluator provide the envelope, while this native owner keeps the route-specific physical/evidence judgment.
-
-For every non-trivial task, use the existing `task-model plan -> observe -> revision` route with the strict current schema. The plan must declare a non-empty task purpose, an independently owned coverage-universe id and SHA-256, explicit assumptions and unknowns (empty is allowed only when written explicitly), iteration, an exact predecessor receipt after iteration zero, and a current `physicsguard_task_native_depth_receipt` bound to the plan model. Retired optional fields and compatibility shapes are invalid.
-
-The native depth receipt must account for exactly six families: execution depth, mapping, residual, uncertainty, diagnosability, and predictive rollout. Open gaps, resolution classes, external input ids, and next actions come from that target-owned receipt; AI prose, `resolved=true`, caller-written gap lists, and self-reported understanding have no closure authority.
-
-Freeze the prediction before observation and bind the observation to the exact plan fingerprint, selected probe, producer, source, independence group, and evidence SHA-256. If the observation contradicts every declared hypothesis, return `model_miss` and revise the hypothesis/model universe; never select a physical cause by elimination outside the declared space.
-
-A candidate revision must preserve distinct base/candidate identities and consume base/candidate native-depth receipts plus exactly one typed regression receipt, one independent holdout receipt, and one predictive-rollout receipt. All three must bind the same task, plan, revision, coverage fingerprint, and candidate SHA-256; the holdout must be independent from candidate construction. PhysicsGuard derives resolved, persisted, and introduced gaps by comparing the two native receipts. Renaming or deleting a caller gap is not progress.
-
-`model_closed_for_task` is legal only when the candidate identity is current, every typed check passes, and the candidate native receipt has zero open gaps. Otherwise preserve the exact non-success boundary: `continue_iteration`, `external_input_required`, `progress_stalled`, `iteration_limit`, `scope_excluded`, or `model_miss`. A passing regression with any native gap is continuation, not closure.
-
-Use `python -m physicsguard.guard_model_contract check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.
-
-`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.
-
-`physicsguard.guard_model_contract` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.
-<!-- END MANAGED PURPOSE AND BLOCKABILITY -->
+Claim boundary: Library readiness licenses only the selected asset/profile/testbench combination and exact bounded reuse scope; it does not validate a new project automatically.

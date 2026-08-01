@@ -8,6 +8,7 @@
     ".flowguard/task_local_model_deepening/model.py",
     ".flowguard/task_local_model_deepening/run_checks.py",
     ".flowguard/check_physicsguard_skill_suite_mesh.py",
+    ".flowguard/physicsguard_skill_prompt_load_graph.json",
     ".flowguard/physicsguard_skill_suite_mesh.json",
     "src/physicsguard/core/diagnosability.py",
     "src/physicsguard/schema/diagnosability.py",
@@ -17,15 +18,29 @@
     "scripts/upgrade_purpose_contracts.py",
     "scripts/report_physicsguard_skill_suite.py",
     "skill/*/SKILL.md",
+    "skill/*/agents/openai.yaml",
     "skill/*/.skillguard/contract-source.json",
+    "skill/*/references/native-route-protocol.md",
+    "skill/*/references/native-depth-and-purpose.md",
+    "skill/*/references/route-capsule.json",
+    "skill/*/references/template-pack-routing.md",
     "skill/*/runtime-requirements.json",
     "tests/test_diagnosability.py",
     "tests/test_task_local_revision.py",
     "tests/test_physicsguard_skill_prompts.py",
     "tests/test_guard_model_contract.py",
     "tests/test_guard_skill_mesh.py",
+    "tests/test_physicsguard_skill_entry_loading.py",
     "tests/test_skill_execution_depth.py",
-    "tests/test_skillguard_v2_runtime_authority_audit.py"
+    "tests/test_skillguard_v2_runtime_authority_audit.py",
+    "VERSION",
+    "pyproject.toml",
+    "src/physicsguard/__init__.py",
+    "scripts/check_installed_physicsguard_skills.py",
+    "scripts/verify_guard_simulation_readiness.py",
+    "tests/test_installed_skill_sync.py",
+    "tests/test_post_archive_retirement_authority.py",
+    "tests/test_version_consistency.py"
   ],
   "snapshot_only_input_globs": [
     ".flowguard/model-mesh/snapshots/*.json",
@@ -70,7 +85,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:guard_closure_contract:0.15.0",
+        "model_instance_id": "regression:guard_closure_contract:0.15.1",
         "reusable_model_type_id": "guard_closure_contract",
         "task_intent_id": "physicsguard-regression:guard-closure",
         "declaration_phase": "before_candidate",
@@ -99,8 +114,8 @@
         ],
         "model_sha256": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa",
         "runner_sha256": "sha256:24cd4f1ba388f021880170f9acacb373f6605c987aae816938e25272e50cfac2",
-        "declaration_fingerprint": "sha256:940e72174e9c9480af474b01d78cfd5d006f8841ee7b76f7e7973e66108027ae",
-        "closure_fingerprint": "sha256:42c1676e44a1847ddf3fff510cfc527bea4bc9f46199a5fe4554b3b09106d7f7"
+        "declaration_fingerprint": "sha256:df6c52c5b1b513031300b8d1b748163ee91191864701298986cc109b481368d9",
+        "closure_fingerprint": "sha256:75616f3b4d12ec5fda33ee91a386eae74264affb24ca8a5b18da4b28a91678e3"
       }
     },
     {
@@ -133,7 +148,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:interval_diagnosability:0.15.0",
+        "model_instance_id": "regression:interval_diagnosability:0.15.1",
         "reusable_model_type_id": "interval_diagnosability",
         "task_intent_id": "physicsguard-regression:interval-diagnosability",
         "declaration_phase": "before_candidate",
@@ -169,8 +184,8 @@
         ],
         "model_sha256": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c",
         "runner_sha256": "sha256:3514876e30f1cdad7bcf14dd50a4ad178456d47f45de4d9e1edbf0a36cca6fdc",
-        "declaration_fingerprint": "sha256:fa247a71569e483d34e1d954ea31641b889c23dc009f3e71d6b0485f809c53b3",
-        "closure_fingerprint": "sha256:65dcc556b76c656ddeea4fa6be9bf9c552c392479d86f54120528f13534cf1ce"
+        "declaration_fingerprint": "sha256:b8a3b30f1b07d02b2c3696c8a039d4d64952a8749b812abdf3cde1b77ed779c0",
+        "closure_fingerprint": "sha256:66de01fddc0ac224d9c24563a67fb3da3118a909e99242a4747c8103af8245a8"
       }
     },
     {
@@ -188,6 +203,7 @@
         ".flowguard/task_local_model_deepening/model.py",
         ".flowguard/task_local_model_deepening/run_checks.py",
         ".flowguard/check_physicsguard_skill_suite_mesh.py",
+        ".flowguard/physicsguard_skill_prompt_load_graph.json",
         ".flowguard/physicsguard_skill_suite_mesh.json",
         "src/physicsguard/schema/task_local_revision.py",
         "src/physicsguard/core/task_local_revision.py",
@@ -195,14 +211,28 @@
         "scripts/upgrade_purpose_contracts.py",
         "scripts/report_physicsguard_skill_suite.py",
         "skill/*/SKILL.md",
+        "skill/*/agents/openai.yaml",
         "skill/*/.skillguard/contract-source.json",
+        "skill/*/references/native-route-protocol.md",
+        "skill/*/references/native-depth-and-purpose.md",
+        "skill/*/references/route-capsule.json",
+        "skill/*/references/template-pack-routing.md",
         "skill/*/runtime-requirements.json",
         "tests/test_task_local_revision.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_guard_model_contract.py",
         "tests/test_guard_skill_mesh.py",
+        "tests/test_physicsguard_skill_entry_loading.py",
         "tests/test_skill_execution_depth.py",
-        "tests/test_skillguard_v2_runtime_authority_audit.py"
+        "tests/test_skillguard_v2_runtime_authority_audit.py",
+        "VERSION",
+        "pyproject.toml",
+        "src/physicsguard/__init__.py",
+        "scripts/check_installed_physicsguard_skills.py",
+        "scripts/verify_guard_simulation_readiness.py",
+        "tests/test_installed_skill_sync.py",
+        "tests/test_post_archive_retirement_authority.py",
+        "tests/test_version_consistency.py"
       ],
       "expected_artifacts": [],
       "exclusion_reason": "",
@@ -211,7 +241,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:task_local_model_deepening:0.15.0",
+        "model_instance_id": "regression:task_local_model_deepening:0.15.1",
         "reusable_model_type_id": "task_local_model_deepening",
         "task_intent_id": "physicsguard-regression:strict-task-local-model-deepening",
         "declaration_phase": "before_candidate",
@@ -248,8 +278,8 @@
         ],
         "model_sha256": "sha256:537c92eba9b05bb67fc6b00c173e14c5e746c63e4f40301bfbf7a35645f64b43",
         "runner_sha256": "sha256:3914882a52d44722194d92e8a0d046f346e83e245eb78c9ccbc9dba29886bfc7",
-        "declaration_fingerprint": "sha256:c034a28823c4bc20396464dd555fc329d5ec24fa6474fc1235d0da90b923b346",
-        "closure_fingerprint": "sha256:0a90debd456c22f5435ed93142da46a596b30ecead38e989d7e6b460c8b47555"
+        "declaration_fingerprint": "sha256:b116bb10c8cddbbdb21ca092cdb8369812d55f643adaf77789b0056b25b8829b",
+        "closure_fingerprint": "sha256:d9504ada350fa45e139cf8993fb0df90d3ac66ce8f1b678c47386301c9ea5b9d"
       }
     }
   ]

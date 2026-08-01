@@ -15,6 +15,11 @@ from typing import Any
 import shutil
 import tomllib
 
+from flowguard.model_purpose import (
+    build_model_purpose_closure,
+    file_fingerprint,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_ROOT = ROOT / "skill"
@@ -44,11 +49,66 @@ CANONICAL_RUNTIME_INPUTS = (
     "src/physicsguard/cli.py",
 )
 RUNTIME_REQUIREMENT_SCHEMA = "physicsguard.skill_runtime_requirement.v1"
+ROUTE_CAPSULE_SCHEMA = "physicsguard.skill_route_capsule.v1"
+PROMPT_LOAD_GRAPH_SCHEMA = "physicsguard.skill_prompt_load_graph.v1"
+PROMPT_LOAD_GRAPH_PATH = ROOT / ".flowguard" / "physicsguard_skill_prompt_load_graph.json"
+MODEL_REGRESSION_MANIFEST_PATH = (
+    ROOT / ".flowguard" / "model-regression-manifest.json"
+)
+NATIVE_ROUTE_REFERENCE = "references/native-route-protocol.md"
+NATIVE_DEPTH_REFERENCE = "references/native-depth-and-purpose.md"
+TEMPLATE_PACK_REFERENCE = "references/template-pack-routing.md"
+ROUTE_CAPSULE_REFERENCE = "references/route-capsule.json"
+MAX_SKILL_ENTRY_BYTES = 6_000
+MAX_INITIAL_ROUTE_BYTES = 12_000
+DEEP_CAPABILITIES = [
+    "execution_depth",
+    "mapping",
+    "residual",
+    "uncertainty",
+    "diagnosability",
+    "predictive_rollout",
+    "purpose_before_candidate",
+    "prediction_before_observation",
+    "model_miss",
+    "typed_regression",
+    "independent_holdout",
+    "exact_terminal_boundary",
+]
 PHYSICSGUARD_VERSION = str(
     tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"][
         "version"
     ]
 )
+FLOWGUARD_VERSION = "0.68.2"
+FLOWGUARD_SCHEMA_VERSION = "1.0"
+SKILLGUARD_VERSION = "0.7.2"
+ENTRY_SHARED_GOVERNED_INPUTS = (
+    ".flowguard/check_physicsguard_skill_suite_mesh.py",
+    ".flowguard/physicsguard_skill_prompt_load_graph.json",
+    ".flowguard/physicsguard_skill_suite_mesh.json",
+    "VERSION",
+    "pyproject.toml",
+    "src/physicsguard/__init__.py",
+    "scripts/check_installed_physicsguard_skills.py",
+    "scripts/upgrade_purpose_contracts.py",
+    "scripts/verify_guard_simulation_readiness.py",
+    "tests/test_guard_skill_mesh.py",
+    "tests/test_installed_skill_sync.py",
+    "tests/test_physicsguard_skill_entry_loading.py",
+    "tests/test_post_archive_retirement_authority.py",
+    "tests/test_skillguard_v2_runtime_authority_audit.py",
+    "tests/test_version_consistency.py",
+)
+
+
+def current_toolchain_identity() -> dict[str, str]:
+    return {
+        "physicsguard_version": PHYSICSGUARD_VERSION,
+        "flowguard_version": FLOWGUARD_VERSION,
+        "flowguard_schema_version": FLOWGUARD_SCHEMA_VERSION,
+        "skillguard_version": SKILLGUARD_VERSION,
+    }
 
 
 def failure(suffix: str, title: str, block_when: str) -> dict[str, str]:
@@ -281,6 +341,239 @@ TARGETS: dict[str, dict[str, Any]] = {
         "failure_by_obligation": {
             "file_inventory": "file-or-field-identity-missing", "field_inventory": "file-or-field-identity-missing", "unit_contract": "unit-or-timing-mismatch", "timing_contract": "unit-or-timing-mismatch", "testbench_binding": "testbench-model-binding-wrong", "model_binding": "testbench-model-binding-wrong", "per_signal_depth": "per-signal-evidence-shallow", "mapping_evidence": "per-signal-evidence-shallow", "project_gaps": "project-gap-hidden",
         },
+    },
+}
+
+
+ROUTE_ENTRIES: dict[str, dict[str, Any]] = {
+    "physicsguard-ai-debugging": {
+        "title": "PhysicsGuard AI Debugging",
+        "description": "Use only for mixed or unclear AI-guided engineering-simulation debugging that genuinely spans multiple specialized PhysicsGuard routes, including coarse-to-fine localization and candidate-model coordination. For a clear adoption, preflight, mapping, test-file, dataset-validation, library, evidence-registry, blueprint, or closure request, use that direct skill instead.",
+        "display_name": "PhysicsGuard AI Debugging",
+        "short_description": "Coordinate mixed PhysicsGuard debugging routes",
+        "role": "composite",
+        "accept_when": [
+            "The visible engineering fault spans several PhysicsGuard responsibilities and cannot be owned by one direct route.",
+            "The correct PhysicsGuard route remains genuinely ambiguous after comparing the ten route capsules.",
+            "Coarse-to-fine localization requires typed handoffs among preflight, mapping, validation, and closure owners.",
+        ],
+        "reject_handoffs": [
+            ("Repository adoption or upgrade is the whole request.", "physicsguard-project-adoption"),
+            ("External-model boundary and inventory understanding is the whole request.", "physicsguard-model-understanding-preflight"),
+            ("Signal identity, units, conversion, confidence, or temporal mapping is the whole request.", "physicsguard-signal-mapping-review"),
+            ("A concrete test-data file contract is the whole request.", "physicsguard-test-file-contract-review"),
+            ("Exact model/dataset validation is the whole request.", "physicsguard-model-dataset-validation"),
+            ("Project evidence inventory and binding gaps are the whole request.", "physicsguard-project-evidence-registry"),
+            ("Reusable model asset compatibility is the whole request.", "physicsguard-model-library"),
+            ("Candidate blueprint generation is the whole request.", "physicsguard-candidate-model-blueprint"),
+            ("Audit completion or localization closure is the whole request.", "physicsguard-audit-closure"),
+        ],
+        "minimum_inputs": ["visible_symptom", "physical_boundary_or_gap", "route_ambiguity"],
+        "required_outputs": ["selected_native_routes", "localized_findings", "next_required_evidence", "bounded_claim"],
+        "workflow": [
+            "Confirm that no single direct capsule owns the complete request; otherwise hand off and stop this composite route.",
+            "Verify the current PhysicsGuard runtime, then load the native route protocol only for the selected debugging work.",
+            "Keep every specialist's native judgment and evidence separate while coordinating the smallest necessary handoff chain.",
+            "Close only through the direct native owner that owns the requested final claim.",
+        ],
+    },
+    "physicsguard-audit-closure": {
+        "title": "PhysicsGuard Audit Closure",
+        "description": "Use directly before claiming a PhysicsGuard audit, localization, validation, reuse, or prediction result is complete; reconcile required native checks, blockers, stale or skipped evidence, mappings, refinements, holdout and rollout evidence, and the exact safe claim boundary.",
+        "display_name": "PhysicsGuard Audit Closure",
+        "short_description": "Close bounded PhysicsGuard audit claims",
+        "role": "direct",
+        "accept_when": [
+            "The requested outcome is a final audit, localization, validation, reuse, handoff, or prediction-readiness claim.",
+            "Current native results must be reconciled into passed, partial, downgraded, or blocked closure.",
+        ],
+        "reject_handoffs": [
+            ("Evidence is still being generated or the physical fault is still being localized.", "physicsguard-ai-debugging"),
+            ("The request is only to build the project evidence map.", "physicsguard-project-evidence-registry"),
+        ],
+        "minimum_inputs": ["requested_claim", "closure_plan", "native_receipts", "open_blockers"],
+        "required_outputs": ["closure_status", "safe_claim", "blockers", "next_actions"],
+        "workflow": [
+            "Bind the exact requested claim and current native receipt inventory.",
+            "Load the native route protocol and reconcile failures, skips, stale evidence, mappings, refinements, and predictive conditions.",
+            "Return one exact closure state and a claim that does not exceed current evidence.",
+        ],
+    },
+    "physicsguard-candidate-model-blueprint": {
+        "title": "PhysicsGuard Candidate Model Blueprint",
+        "description": "Use directly to turn a validated PhysicsGuard hierarchy into a bounded candidate model blueprint through an official target-model interface; require ready blocks, interfaces, mappings, model semantics, validation and rollout boundaries, without claiming recovered commercial-model equivalence.",
+        "display_name": "PhysicsGuard Candidate Blueprint",
+        "short_description": "Build a validated low-fidelity model blueprint",
+        "role": "direct",
+        "accept_when": [
+            "The user asks to build a candidate model from already validated PhysicsGuard evidence.",
+            "Generation readiness, interfaces, or rollout boundaries must be decided before target-model creation.",
+        ],
+        "reject_handoffs": [
+            ("The hierarchy or external-model boundary is not yet understood.", "physicsguard-model-understanding-preflight"),
+            ("The model still lacks current dataset validation evidence.", "physicsguard-model-dataset-validation"),
+        ],
+        "minimum_inputs": ["validated_hierarchy", "ready_blocks", "interface_inventory", "model_semantics"],
+        "required_outputs": ["candidate_blueprint", "generation_eligibility", "rollout_boundary", "blockers"],
+        "workflow": [
+            "Confirm the hierarchy, block, mapping, and interface readiness evidence.",
+            "Load the native route protocol and generate only through an official or user-owned interface.",
+            "Map outputs back to PhysicsGuard and accept only inside the checked validation and rollout boundary.",
+        ],
+    },
+    "physicsguard-model-dataset-validation": {
+        "title": "PhysicsGuard Model-Dataset Validation",
+        "description": "Use directly after current test-file contracts pass to validate a low-fidelity model against exact dataset, mapping, signal, parameter, time, scenario, envelope, holdout, and predictive-rollout identities with target-owned native receipts and bounded claims.",
+        "display_name": "PhysicsGuard Dataset Validation",
+        "short_description": "Validate models against exact project datasets",
+        "role": "direct",
+        "accept_when": [
+            "A concrete model and contracted dataset must be checked for bounded consistency, validation, or prediction readiness.",
+            "Coverage adequacy, calibration/holdout separation, residual envelopes, or future rollout must be evaluated.",
+        ],
+        "reject_handoffs": [
+            ("A concrete data file lacks a current passing contract.", "physicsguard-test-file-contract-review"),
+            ("Required mappings remain unresolved before validation.", "physicsguard-signal-mapping-review"),
+        ],
+        "minimum_inputs": ["model", "passing_test_file_contracts", "dataset_identity", "validation_plan", "mapping_evidence"],
+        "required_outputs": ["validation_status", "depth_receipt", "adequacy_findings", "bounded_validation_claim"],
+        "workflow": [
+            "Verify every referenced file contract and exact model, dataset, mapping, and plan identity.",
+            "Load the native route protocol and run direct residual, envelope, adequacy, split, and rollout checks required by the claim.",
+            "Return the native receipt, current blockers, and only the exact covered scope.",
+        ],
+    },
+    "physicsguard-model-library": {
+        "title": "PhysicsGuard Model Library",
+        "description": "Use directly to index or select reusable PhysicsGuard model assets and check profile, testbench, validation-receipt, known-limit, gap, predictive-horizon, and bounded-reuse compatibility without storing raw datasets or implying universal validity.",
+        "display_name": "PhysicsGuard Model Library",
+        "short_description": "Check bounded PhysicsGuard model reuse",
+        "role": "direct",
+        "accept_when": [
+            "The task is to index validated model assets or decide whether one is reusable for a named target context.",
+            "Asset, profile, testbench, validation, gap, or predictive-horizon compatibility must be checked.",
+        ],
+        "reject_handoffs": [
+            ("The asset has no current model/dataset validation receipt.", "physicsguard-model-dataset-validation"),
+            ("The request is a cross-project database or historical-ledger query.", "none"),
+        ],
+        "minimum_inputs": ["asset_inventory", "target_context", "validation_receipts", "known_limits"],
+        "required_outputs": ["compatible_assets", "reuse_status", "gaps", "bounded_reuse_scope"],
+        "workflow": [
+            "Bind the selected asset and exact target profile/testbench context.",
+            "Load the native route protocol and check current compatibility, validation, gaps, and known limits.",
+            "Report only the exact reusable boundary; keep database-level discovery out of scope.",
+        ],
+    },
+    "physicsguard-model-understanding-preflight": {
+        "title": "PhysicsGuard Model Understanding Preflight",
+        "description": "Use directly before a non-trivial external-model audit to capture the visible symptom, physical boundary, subsystem, signal, parameter, unit, assumption, access, model-semantics, and stop-condition universe; preflight is planning evidence, not residual validation.",
+        "display_name": "PhysicsGuard Model Preflight",
+        "short_description": "Bound external-model understanding before audit",
+        "role": "direct",
+        "accept_when": [
+            "A non-trivial external model must be understood before residual interpretation or blueprint work.",
+            "The physical boundary, inventory, assumptions, access gaps, semantics, or stop conditions need a current review.",
+        ],
+        "reject_handoffs": [
+            ("The request is only to resolve signal identity, unit, conversion, or confidence.", "physicsguard-signal-mapping-review"),
+            ("A concrete test-data file needs field-level coverage first.", "physicsguard-test-file-contract-review"),
+        ],
+        "minimum_inputs": ["visible_symptom", "external_source_of_truth", "physical_boundary", "known_inventory"],
+        "required_outputs": ["preflight_status", "understanding_record", "access_gaps", "next_route"],
+        "workflow": [
+            "Freeze the symptom, external authority, physical boundary, and required inventory.",
+            "Load the native route protocol and review subsystems, signals, parameters, assumptions, uncertainty, and prediction access.",
+            "Proceed only inside the passed planning boundary; send unresolved mappings or files to their direct owners.",
+        ],
+    },
+    "physicsguard-project-adoption": {
+        "title": "PhysicsGuard Project Adoption",
+        "description": "Use directly to audit, adopt, or upgrade a target repository's PhysicsGuard workflow records and current toolchain/artifact identity before non-trivial PhysicsGuard work; adoption is workflow evidence only, not physical validation or closure.",
+        "display_name": "PhysicsGuard Project Adoption",
+        "short_description": "Audit PhysicsGuard project workflow readiness",
+        "role": "direct",
+        "accept_when": [
+            "The task is to check, create, or upgrade PhysicsGuard repository adoption records.",
+            "Current toolchain, artifact inventory, blockers, or affected revalidation must be established.",
+        ],
+        "reject_handoffs": [
+            ("The project is adopted and the task is to map its files and evidence gaps.", "physicsguard-project-evidence-registry"),
+            ("The user asks whether a model result is validated or complete.", "physicsguard-audit-closure"),
+        ],
+        "minimum_inputs": ["project_root", "project_record", "runtime_identity"],
+        "required_outputs": ["adoption_status", "toolchain_status", "blockers", "required_revalidation"],
+        "workflow": [
+            "Run the read-only project audit first and compare current runtime and repository records.",
+            "Load the native route protocol; adopt or upgrade only when authorized and necessary.",
+            "Report workflow readiness separately from physical execution, validation, installation, and release.",
+        ],
+    },
+    "physicsguard-project-evidence-registry": {
+        "title": "PhysicsGuard Project Evidence Registry",
+        "description": "Use directly to create, audit, or navigate one PhysicsGuard project's evidence registry, profile, artifact map, binding expectations, evidence bundles, physical facts, critical gaps, and closure handoffs without replacing file contracts or model validation.",
+        "display_name": "PhysicsGuard Evidence Registry",
+        "short_description": "Map one project's PhysicsGuard evidence",
+        "role": "direct",
+        "accept_when": [
+            "One project's files, facts, bindings, bundles, and evidence gaps must be discovered or reconciled.",
+            "An AI onboarding map or project-level evidence handoff is required.",
+        ],
+        "reject_handoffs": [
+            ("One concrete test file needs its field contract checked.", "physicsguard-test-file-contract-review"),
+            ("The request is cross-project historical or database-ledger search.", "none"),
+        ],
+        "minimum_inputs": ["project_root", "declared_artifacts", "binding_expectations", "project_profile"],
+        "required_outputs": ["reconciled_inventory", "binding_map", "critical_gaps", "closure_handoff"],
+        "workflow": [
+            "Discover and reconcile the current project profile, artifacts, facts, and binding expectations.",
+            "Load the native route protocol and preserve required, critical, exempt, unknown, and unresolved rows explicitly.",
+            "Return the navigation map and gaps; send proof claims to their direct validation or closure owner.",
+        ],
+    },
+    "physicsguard-signal-mapping-review": {
+        "title": "PhysicsGuard Signal Mapping Review",
+        "description": "Use directly when external signals or parameters are mapped into PhysicsGuard variables and target identity, units, conversion, revision, confidence, reviewer state, temporal depth, interval bounds, or stale conditions must be checked before residual claims.",
+        "display_name": "PhysicsGuard Signal Mapping",
+        "short_description": "Review exact signal and parameter mappings",
+        "role": "direct",
+        "accept_when": [
+            "The task concerns external-signal or parameter mapping identity, unit, conversion, confidence, review, timing, or staleness.",
+            "Mapping evidence must be resolved before residual, adequacy, or predictive checks can use it.",
+        ],
+        "reject_handoffs": [
+            ("A concrete many-field test file first needs a complete field contract.", "physicsguard-test-file-contract-review"),
+            ("Mappings are current and the task is exact model/dataset validation.", "physicsguard-model-dataset-validation"),
+        ],
+        "minimum_inputs": ["governed_signal_or_parameter", "target_variable", "unit_and_conversion_evidence", "revision_identity"],
+        "required_outputs": ["mapping_status", "review_gaps", "temporal_boundary", "safe_mapping_claim"],
+        "workflow": [
+            "Bind every governed external object to its exact target, unit, conversion, revision, and evidence.",
+            "Load the native route protocol and check confidence, review, time coverage, intervals, and stale conditions.",
+            "Keep unresolved mappings visible and do not mutate observed values.",
+        ],
+    },
+    "physicsguard-test-file-contract-review": {
+        "title": "PhysicsGuard Test File Contract Review",
+        "description": "Use directly when concrete testbench or test-data files require deterministic file/field identity, units, timing, testbench version, parameter roles, mapping evidence, model binding, temporal depth, and project-gap coverage before AI analysis or validation.",
+        "display_name": "PhysicsGuard Test File Contract",
+        "short_description": "Check concrete test-file coverage contracts",
+        "role": "direct",
+        "accept_when": [
+            "One or more concrete testbench, test-data, log, sensor, command, measurement, calibration, or fixture files are in scope.",
+            "File and field contracts must pass before broad AI analysis or dataset validation.",
+        ],
+        "reject_handoffs": [
+            ("No concrete test-data file is in scope.", "physicsguard-model-understanding-preflight"),
+            ("Current file contracts pass and model/dataset consistency is now the request.", "physicsguard-model-dataset-validation"),
+        ],
+        "minimum_inputs": ["test_file", "testbench_profile", "field_inventory", "model_binding"],
+        "required_outputs": ["contract_status", "field_dispositions", "mapping_gaps", "safe_analysis_boundary"],
+        "workflow": [
+            "Generate deterministic file and field identity before AI mapping judgment.",
+            "Load the native route protocol and reconcile every field, role, unit, timing, mapping, and model binding.",
+            "Block broad analysis until the exact contract passes; hand validation to the dataset route afterward.",
+        ],
     },
 }
 
@@ -816,8 +1109,10 @@ def _model_source(export: dict[str, Any]) -> str:
     )
 
 
-def _managed_current_prompt(
-    config: dict[str, Any], guard_contract: dict[str, Any]
+def _native_depth_reference(
+    config: dict[str, Any],
+    guard_contract: dict[str, Any],
+    obligations: list[str],
 ) -> str:
     skill_id = str(guard_contract["target_skill_id"])
     owner = str(guard_contract["native_owner_id"])
@@ -828,8 +1123,10 @@ def _managed_current_prompt(
         f"Claim boundary: {row['claim_boundary']}"
         for row in guard_contract["prevented_failure_classes"]
     )
+    obligation_rows = "\n".join(f"- `{value}`" for value in obligations)
     return (
-        f"{PURPOSE_MARKER_START}\n"
+        "# Native Depth and Purpose\n\n"
+        "Load this reference only when the selected route creates, materially deepens, revises, or closes a task-local model. Ordinary bounded route execution does not eagerly load it.\n\n"
         "## PhysicsGuard dynamic model-purpose and family baseline\n\n"
         f"Family capability baseline purpose: {config['purpose']}\n\n"
         f"Family route bounded claim: {config['claim_boundary']}\n\n"
@@ -838,6 +1135,9 @@ def _managed_current_prompt(
         "Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.\n\n"
         "The bundled `guard-model/` files declare these maintained family baseline regression classes:\n\n"
         f"{failures}\n\n"
+        "The target-native obligation inventory for this route is:\n\n"
+        f"{obligation_rows}\n\n"
+        "Counts, object-name lists, catalog expansion, whole-receipt hashes, and ordinal ranges are not per-obligation evidence. Every satisfied obligation must retain its exact target-native semantic object, `evidence_ref`, and lowercase content hash; missing, renamed, overlapping, mechanically generated, or summary-only mappings block broad closure.\n\n"
         "These fixed files prove only that the maintained skill can exercise its baseline checks. They are examples and mandatory family regression; they never state what a concrete model being built now is intended to prevent and can never close that real modeling task.\n\n"
         "For every real model or route result, AI must choose the purpose and one or more concrete prevented physical/evidence failures for this modeling instance before it builds the candidate. It must freeze them under the target project at `.physicsguard/model-purpose/<model-id>/contract.json`, with the current physical/evidence boundary, native owner/route, one PhysicsGuard-native semantic oracle per failure, finding code, known limit, and bounded claim. It must then bind the actual candidate model file and exact failure universe in `candidate.json`; run every target-local known-good and known-bad case through those native oracles; write `proofs.json`; and pass current closure. Missing, stale, outside-root, baseline-only, mismatched, candidate-before-purpose, self-reported, or non-blocking evidence keeps the real model non-pass. There is one mandatory route and no selectable mode.\n\n"
         "### Strict task-local model deepening\n\n"
@@ -850,7 +1150,365 @@ def _managed_current_prompt(
         "Use `python -m physicsguard.guard_model_contract check-current-contract|check-current-candidate|prove-current|check-current-closure` with an explicit `--target-root` and explicit paths for `--contract`, `--candidate`, `--oracles`, `--known-good`, `--known-bad`, and `--proofs` as required. The verifier rejects implicit current directories and bundled baseline artifacts as current-model authority.\n\n"
         "`native_semantic_detection` is allowed only with an exact target-native fixture and asserted observation. `native_obligation_admission_gate` means only that a candidate without current target-native obligation proof is rejected; the generic `missing_target_obligation` result must never be presented as detection of the underlying domain defect.\n\n"
         "`physicsguard.guard_model_contract` is the PhysicsGuard-native verifier. It proves only the declared family baseline and never replaces current task evidence or PhysicsGuard domain judgment.\n"
-        f"{PURPOSE_MARKER_END}"
+    )
+
+
+def _file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _template_pack_reference() -> str:
+    return """# Validated Template Pack Routing
+
+Load this reference only when the selected PhysicsGuard route needs target-owned template selection, preview, instantiation, validation, or harvest. A preview is planning evidence, never domain proof.
+
+- Target families: `physicsguard`; native owner: `physicsguard.purpose-pack-selector.v1`.
+- Current catalogs: `physicsguard.purpose-template-packs` revision `1`.
+- Resolve the task through this skill's native route first, then ask the target-owned adapter for a current neutral projection; never infer a template from wording or a skill name.
+- Preserve the adapter's complete candidate and rejection accounting. Zero candidates may use only the declared validated base; one candidate gets a read-only preview; many candidates require complete dependencies, pairwise compatibility, one field owner, and target-authored dominance or must block as ambiguous.
+- Recompute the projection immediately before applying a preview. A stale request, catalog, route, builder, validator, or content identity blocks all writes.
+- Hand the selected preview to the target-declared builder and consume every target-native validator receipt. Template structure is not domain validity, completion, installation, release, or publication evidence.
+- Record a harvest disposition after creating or materially deepening a reusable model, and keep no-match evidence visible.
+- Declared validated bases: `physicsguard.base.audit-work-package`.
+- Template inventory: `physicsguard.base.audit-work-package`, `physicsguard.dataset-validation-basic`, `physicsguard.dataset-validation-comprehensive`, `physicsguard.model-understanding-preflight`, `physicsguard.signal-mapping-core`, `physicsguard.signal-mapping-evidence`.
+- Native validator inventory: `physicsguard.template-pack-instance-validator.v1`, `physicsguard.template-pack-manifest-validator.v1`, `physicsguard.template-pack-selection-validator.v1`.
+- Claim boundary: the catalog supports deterministic workflow-pack selection and structural native validation only; physical truth, dataset adequacy, `audit_pass`, installation, and release require separate current PhysicsGuard evidence.
+"""
+
+
+def _render_compact_skill(
+    skill_id: str,
+    entry: dict[str, Any],
+    guard_contract: dict[str, Any],
+) -> str:
+    accept_rows = "\n".join(f"- {value}" for value in entry["accept_when"])
+    reject_rows = "\n".join(
+        f"- {condition} Handoff: `{target}`."
+        for condition, target in entry["reject_handoffs"]
+    )
+    workflow_rows = "\n".join(
+        f"{index}. {value}" for index, value in enumerate(entry["workflow"], 1)
+    )
+    output_rows = "\n".join(f"- `{value}`" for value in entry["required_outputs"])
+    role_label = "mixed/unclear coordinator" if entry["role"] == "composite" else "independent direct route"
+    return (
+        "---\n"
+        f"name: {skill_id}\n"
+        f"description: {json.dumps(entry['description'], ensure_ascii=False)}\n"
+        "---\n\n"
+        f"# {entry['title']}\n\n"
+        "## Entry boundary\n\n"
+        f"Route: `{guard_contract['native_route_id']}`; native owner: `{guard_contract['native_owner_id']}`; role: `{role_label}`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.\n\n"
+        "Accept this route only when:\n\n"
+        f"{accept_rows}\n\n"
+        "Reject or hand off when:\n\n"
+        f"{reject_rows}\n\n"
+        "## Minimum workflow\n\n"
+        f"{workflow_rows}\n\n"
+        "Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.\n\n"
+        "## Conditional detail loading\n\n"
+        f"- Load `{NATIVE_ROUTE_REFERENCE}` after route selection when domain execution needs the detailed workflow.\n"
+        f"- Load `{NATIVE_DEPTH_REFERENCE}` before creating, materially deepening, revising, or closing a task-local model. Do not load it for an ordinary bounded action.\n"
+        f"- Load `{TEMPLATE_PACK_REFERENCE}` only for target-owned template selection, preview, instantiation, validation, or harvest. Preview is not proof.\n"
+        "- Do not load another PhysicsGuard skill's references merely because the skills are related. Use an explicit typed handoff.\n\n"
+        "## Hard gates\n\n"
+        "- Preserve the target's native judgment, exact evidence identities, explicit unknowns, and non-pass states.\n"
+        "- Never treat AI self-report, prose completeness, progress, an inventory, or a template preview as native execution evidence.\n"
+        "- Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.\n"
+        "- Do not add a compatibility route, alias, fallback, copied runtime, or alternate success owner.\n\n"
+        "## Required outputs\n\n"
+        f"{output_rows}\n\n"
+        f"Claim boundary: {TARGETS[skill_id]['claim_boundary']}\n"
+    )
+
+
+def _render_openai_yaml(skill_id: str, entry: dict[str, Any]) -> str:
+    short_description = str(entry["short_description"])
+    if not 25 <= len(short_description) <= 64:
+        raise ValueError(f"{skill_id}: short_description must be 25-64 characters")
+    prompt = (
+        f"Use ${skill_id} directly for its native {entry['title']} route; "
+        "confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."
+    )
+    return (
+        "interface:\n"
+        f"  display_name: {json.dumps(entry['display_name'], ensure_ascii=False)}\n"
+        f"  short_description: {json.dumps(short_description, ensure_ascii=False)}\n"
+        f"  default_prompt: {json.dumps(prompt, ensure_ascii=False)}\n"
+    )
+
+
+def _route_capsule(
+    skill_root: Path,
+    skill_id: str,
+    entry: dict[str, Any],
+    guard_contract: dict[str, Any],
+) -> dict[str, Any]:
+    reference_rows = [
+        {
+            "path": NATIVE_ROUTE_REFERENCE,
+            "load_when": ["route_selected_and_domain_execution_required"],
+            "required_for": ["target_native_domain_workflow"],
+        },
+        {
+            "path": NATIVE_DEPTH_REFERENCE,
+            "load_when": [
+                "create_task_local_model",
+                "materially_deepen_model",
+                "revise_candidate_model",
+                "claim_model_closure",
+            ],
+            "required_for": DEEP_CAPABILITIES,
+        },
+        {
+            "path": TEMPLATE_PACK_REFERENCE,
+            "load_when": [
+                "select_template_pack",
+                "preview_template_pack",
+                "instantiate_template_pack",
+                "validate_template_pack",
+                "harvest_reusable_model",
+            ],
+            "required_for": ["validated_template_pack_routing"],
+        },
+    ]
+    for row in reference_rows:
+        path = skill_root / str(row["path"])
+        if not path.is_file():
+            raise ValueError(f"{skill_id}: conditional reference missing: {row['path']}")
+        row["sha256"] = _file_sha256(path)
+    prompt_path = skill_root / "SKILL.md"
+    return {
+        "schema_version": ROUTE_CAPSULE_SCHEMA,
+        "target_skill_id": skill_id,
+        "native_owner_id": guard_contract["native_owner_id"],
+        "native_route_id": guard_contract["native_route_id"],
+        "route_role": entry["role"],
+        "broad_route_prerequisite": False,
+        "accept_when": list(entry["accept_when"]),
+        "reject_handoffs": [
+            {"condition": condition, "target_skill_id": target}
+            for condition, target in entry["reject_handoffs"]
+        ],
+        "minimum_inputs": list(entry["minimum_inputs"]),
+        "required_outputs": list(entry["required_outputs"]),
+        "initial_load": ["agents/openai.yaml", "SKILL.md", ROUTE_CAPSULE_REFERENCE],
+        "conditional_references": reference_rows,
+        "maximum_reference_depth": 1,
+        "cross_skill_reference_loading": "typed_handoff_only",
+        "entry_prompt_sha256": _file_sha256(prompt_path),
+        "claim_boundary": TARGETS[skill_id]["claim_boundary"],
+    }
+
+
+def _write_entry_projection(
+    skill_id: str,
+    config: dict[str, Any],
+    entry: dict[str, Any],
+    guard_contract: dict[str, Any],
+    obligations: list[str],
+) -> None:
+    skill_root = SKILL_ROOT / skill_id
+    references_root = skill_root / "references"
+    references_root.mkdir(parents=True, exist_ok=True)
+    route_protocol = references_root / "native-route-protocol.md"
+    if not route_protocol.is_file():
+        raise ValueError(f"{skill_id}: native route protocol must be preserved before contraction")
+    (references_root / "native-depth-and-purpose.md").write_text(
+        _native_depth_reference(config, guard_contract, obligations), encoding="utf-8"
+    )
+    (references_root / "template-pack-routing.md").write_text(
+        _template_pack_reference(), encoding="utf-8"
+    )
+    prompt = _render_compact_skill(skill_id, entry, guard_contract)
+    if len(prompt.encode("utf-8")) > MAX_SKILL_ENTRY_BYTES:
+        raise ValueError(f"{skill_id}: compact SKILL.md exceeds {MAX_SKILL_ENTRY_BYTES} bytes")
+    (skill_root / "SKILL.md").write_text(prompt, encoding="utf-8")
+    agents_root = skill_root / "agents"
+    agents_root.mkdir(parents=True, exist_ok=True)
+    (agents_root / "openai.yaml").write_text(
+        _render_openai_yaml(skill_id, entry), encoding="utf-8"
+    )
+    (references_root / "route-capsule.json").write_text(
+        stable_json(_route_capsule(skill_root, skill_id, entry, guard_contract)),
+        encoding="utf-8",
+    )
+
+
+def _write_prompt_load_graph() -> None:
+    nodes: list[dict[str, Any]] = []
+    routes: list[dict[str, Any]] = []
+    for skill_id in sorted(TARGETS):
+        skill_root = SKILL_ROOT / skill_id
+        capsule = json.loads(
+            (skill_root / ROUTE_CAPSULE_REFERENCE).read_text(encoding="utf-8")
+        )
+        initial_paths = [
+            f"skill/{skill_id}/agents/openai.yaml",
+            f"skill/{skill_id}/SKILL.md",
+            f"skill/{skill_id}/{ROUTE_CAPSULE_REFERENCE}",
+        ]
+        conditional_paths = [
+            f"skill/{skill_id}/{row['path']}"
+            for row in capsule["conditional_references"]
+        ]
+        for path, phase in [
+            *[(value, "initial") for value in initial_paths],
+            *[(value, "conditional") for value in conditional_paths],
+        ]:
+            file_path = ROOT / path
+            nodes.append(
+                {
+                    "node_id": f"artifact:{path}",
+                    "skill_id": skill_id,
+                    "path": path,
+                    "load_phase": phase,
+                    "bytes": file_path.stat().st_size,
+                    "sha256": _file_sha256(file_path),
+                }
+            )
+        routes.append(
+            {
+                "target_skill_id": skill_id,
+                "native_owner_id": capsule["native_owner_id"],
+                "native_route_id": capsule["native_route_id"],
+                "route_role": capsule["route_role"],
+                "broad_route_prerequisite": capsule["broad_route_prerequisite"],
+                "initial_paths": initial_paths,
+                "initial_bytes": sum((ROOT / path).stat().st_size for path in initial_paths),
+                "conditional_references": capsule["conditional_references"],
+                "selection_fixture": {
+                    "request_shape": ROUTE_ENTRIES[skill_id]["accept_when"][0],
+                    "expected_skill_id": skill_id,
+                },
+                "deep_capabilities": list(DEEP_CAPABILITIES),
+            }
+        )
+    graph = {
+        "schema_version": PROMPT_LOAD_GRAPH_SCHEMA,
+        "suite_version": PHYSICSGUARD_VERSION,
+        "toolchain_identity": current_toolchain_identity(),
+        "route_count": len(routes),
+        "initial_loading_rule": "selected_metadata_plus_compact_skill_plus_route_capsule_only",
+        "all_reference_loading_forbidden": True,
+        "cross_skill_loading_rule": "typed_handoff_only",
+        "maximum_reference_depth": 1,
+        "max_skill_entry_bytes": MAX_SKILL_ENTRY_BYTES,
+        "max_initial_route_bytes": MAX_INITIAL_ROUTE_BYTES,
+        "required_deep_capabilities": list(DEEP_CAPABILITIES),
+        "nodes": nodes,
+        "routes": routes,
+        "known_bad_cases": [
+            "wrong_route_owner",
+            "broad_route_captures_direct_request",
+            "eager_all_references",
+            "conditional_reference_missing",
+            "undeclared_or_cross_skill_reference",
+            "reference_hash_stale",
+            "deep_capability_unreachable",
+            "toolchain_identity_stale",
+        ],
+        "claim_boundary": "This graph proves current author prompt identities, direct-route ownership, bounded initial loading, and conditional deep-capability reachability. It does not prove future AI behavior or target-domain execution.",
+    }
+    PROMPT_LOAD_GRAPH_PATH.write_text(stable_json(graph), encoding="utf-8")
+
+
+def _update_suite_mesh() -> None:
+    path = ROOT / ".flowguard" / "physicsguard_skill_suite_mesh.json"
+    mesh = json.loads(path.read_text(encoding="utf-8"))
+    mesh["mesh_version"] = "4.1"
+    mesh["canonical_simulator"]["consumer_dependency"] = (
+        f"physicsguard=={PHYSICSGUARD_VERSION}"
+    )
+    mesh["toolchain_identity"] = current_toolchain_identity()
+    mesh["entry_loading"] = {
+        "route_count": 10,
+        "direct_route_count": 9,
+        "composite_route_count": 1,
+        "composite_route_id": "route:physicsguard-ai-debugging:audit",
+        "composite_is_parent": False,
+        "route_capsule_schema": ROUTE_CAPSULE_SCHEMA,
+        "prompt_load_graph": PROMPT_LOAD_GRAPH_PATH.relative_to(ROOT).as_posix(),
+        "initial_loading_rule": "selected_metadata_plus_compact_skill_plus_route_capsule_only",
+        "conditional_reference_paths": [
+            NATIVE_ROUTE_REFERENCE,
+            NATIVE_DEPTH_REFERENCE,
+            TEMPLATE_PACK_REFERENCE,
+        ],
+        "maximum_reference_depth": 1,
+        "required_deep_capabilities": list(DEEP_CAPABILITIES),
+    }
+    architecture = mesh["architecture_reduction"]
+    architecture["observable_contract"] = (
+        "Ten target-owned semantic inventories, direct route identities, and deep native capabilities remain reachable while initial entry loading contracts to one selected prompt and capsule; no suite-level closure is promised."
+    )
+    candidates = architecture["candidates"]
+    if not any(row.get("candidate_id") == "contract-eager-skill-entry-prompts" for row in candidates):
+        candidates.append(
+            {
+                "candidate_id": "contract-eager-skill-entry-prompts",
+                "candidate_type": "collapse_adapter",
+                "proof_status": "safe_by_equivalence",
+                "target_action": "collapse",
+                "compatibility_disposition": "direct_current_replacement",
+            }
+        )
+    path.write_text(stable_json(mesh), encoding="utf-8")
+
+
+def _append_missing(values: list[str], required: tuple[str, ...]) -> None:
+    for value in required:
+        if value not in values:
+            values.append(value)
+
+
+def _update_model_regression_manifest() -> None:
+    manifest = json.loads(
+        MODEL_REGRESSION_MANIFEST_PATH.read_text(encoding="utf-8")
+    )
+    governed = manifest.get("governed_input_globs")
+    if not isinstance(governed, list):
+        raise ValueError("model regression governed_input_globs must be a list")
+    _append_missing(governed, ENTRY_SHARED_GOVERNED_INPUTS)
+
+    models = manifest.get("models")
+    if not isinstance(models, list):
+        raise ValueError("model regression models must be a list")
+    for entry in models:
+        if not isinstance(entry, dict):
+            raise ValueError("model regression entries must be objects")
+        model_id = str(entry["model_id"])
+        if model_id == "task_local_model_deepening":
+            input_globs = entry.get("input_globs")
+            if not isinstance(input_globs, list):
+                raise ValueError(f"{model_id}: input_globs must be a list")
+            _append_missing(input_globs, ENTRY_SHARED_GOVERNED_INPUTS)
+
+        purpose = entry.get("purpose_closure")
+        if not isinstance(purpose, dict):
+            raise ValueError(f"{model_id}: purpose_closure must be an object")
+        runner = entry.get("runner")
+        if not isinstance(runner, list) or len(runner) < 2:
+            raise ValueError(f"{model_id}: runner must name the native script")
+        closure = build_model_purpose_closure(
+            model_instance_id=f"regression:{model_id}:{PHYSICSGUARD_VERSION}",
+            reusable_model_type_id=str(purpose["reusable_model_type_id"]),
+            task_intent_id=str(purpose["task_intent_id"]),
+            guarded_purpose=str(purpose["guarded_purpose"]),
+            protected_failure_ids=tuple(
+                map(str, purpose["protected_failure_ids"])
+            ),
+            known_good_case_id=str(purpose["known_good_case_id"]),
+            failure_bindings=tuple(purpose["failure_bindings"]),
+            claim_boundary=str(purpose["claim_boundary"]),
+            evidence_check_ids=tuple(map(str, purpose["evidence_check_ids"])),
+            model_sha256=file_fingerprint(ROOT / str(entry["model_path"])),
+            runner_sha256=file_fingerprint(ROOT / str(runner[1])),
+        )
+        entry["purpose_closure"] = closure.to_dict()
+
+    MODEL_REGRESSION_MANIFEST_PATH.write_text(
+        stable_json(manifest), encoding="utf-8"
     )
 
 
@@ -1072,6 +1730,7 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
                 "pytest",
                 "tests/test_task_local_revision.py",
                 "tests/test_physicsguard_skill_prompts.py",
+                "tests/test_physicsguard_skill_entry_loading.py",
                 "-q",
                 "-k",
                 f"test_task_local_revision or {task_model_pytest_id}",
@@ -1086,12 +1745,26 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
             "depends_on_check_ids": [good_check],
             "input_selectors": [
                 {"kind": "path", "path": f"{repository_prefix}/SKILL.md"},
+                {"kind": "path", "path": f"{repository_prefix}/agents/openai.yaml"},
+                {"kind": "path", "path": f"{repository_prefix}/{ROUTE_CAPSULE_REFERENCE}"},
+                {"kind": "path", "path": f"{repository_prefix}/{NATIVE_ROUTE_REFERENCE}"},
+                {"kind": "path", "path": f"{repository_prefix}/{NATIVE_DEPTH_REFERENCE}"},
+                {"kind": "path", "path": f"{repository_prefix}/{TEMPLATE_PACK_REFERENCE}"},
                 {"kind": "path", "path": f"{repository_prefix}/.skillguard/contract-source.json"},
+                *(
+                    {"kind": "path", "path": path}
+                    for path in ENTRY_SHARED_GOVERNED_INPUTS
+                ),
+                {
+                    "kind": "path",
+                    "path": ".flowguard/model-regression-manifest.json",
+                },
                 {"kind": "path", "path": "src/physicsguard/schema/task_local_revision.py"},
                 {"kind": "path", "path": "src/physicsguard/core/task_local_revision.py"},
                 {"kind": "path", "path": "src/physicsguard/cli.py"},
                 {"kind": "path", "path": "tests/test_task_local_revision.py"},
                 {"kind": "path", "path": "tests/test_physicsguard_skill_prompts.py"},
+                {"kind": "path", "path": "tests/test_physicsguard_skill_entry_loading.py"},
             ],
         }
     )
@@ -1238,30 +1911,20 @@ def upgrade_target_current(skill_id: str, config: dict[str, Any]) -> None:
     }
     source_path.write_text(stable_json(source_contract), encoding="utf-8")
 
-    skill_path = skill_root / "SKILL.md"
-    text = skill_path.read_text(encoding="utf-8")
-    text = text.replace(
-        "python runtime/skill_execution_depth.py",
-        "python -m physicsguard.skill_execution_depth",
+    _write_entry_projection(
+        skill_id,
+        config,
+        ROUTE_ENTRIES[skill_id],
+        guard_contract,
+        obligations,
     )
-    if SKILLGUARD_LAYER_START in text and SKILLGUARD_LAYER_END in text:
-        prefix, remainder = text.split(SKILLGUARD_LAYER_START, 1)
-        _, suffix = remainder.split(SKILLGUARD_LAYER_END, 1)
-        text = prefix.rstrip() + suffix
-    section = _managed_current_prompt(config, guard_contract)
-    if PURPOSE_MARKER_START in text and PURPOSE_MARKER_END in text:
-        prefix, remainder = text.split(PURPOSE_MARKER_START, 1)
-        _, suffix = remainder.split(PURPOSE_MARKER_END, 1)
-        text = prefix.rstrip() + "\n\n" + section + suffix
-    else:
-        text = text.rstrip() + "\n\n" + section + "\n"
-    skill_path.write_text(text, encoding="utf-8")
 
     source_contract["implementation_paths"] = sorted(
         {
             *_implementation_paths(skill_root),
             *CANONICAL_RUNTIME_INPUTS,
-            "scripts/upgrade_purpose_contracts.py",
+            *ENTRY_SHARED_GOVERNED_INPUTS,
+            ".flowguard/model-regression-manifest.json",
         }
     )
     source_contract["projection_consumers"] = [
@@ -1288,8 +1951,17 @@ def main() -> int:
         raise SystemExit(
             f"PhysicsGuard target inventory mismatch: missing={sorted(discovered - set(TARGETS))}; extra={sorted(set(TARGETS) - discovered)}"
         )
+    if set(ROUTE_ENTRIES) != set(TARGETS):
+        raise SystemExit(
+            "PhysicsGuard route-entry inventory mismatch: "
+            f"missing={sorted(set(TARGETS) - set(ROUTE_ENTRIES))}; "
+            f"extra={sorted(set(ROUTE_ENTRIES) - set(TARGETS))}"
+        )
     for skill_id in sorted(TARGETS):
         upgrade_target_current(skill_id, TARGETS[skill_id])
+    _write_prompt_load_graph()
+    _update_suite_mesh()
+    _update_model_regression_manifest()
     print(stable_json({"status": "pass", "updated_targets": sorted(TARGETS)}), end="")
     return 0
 

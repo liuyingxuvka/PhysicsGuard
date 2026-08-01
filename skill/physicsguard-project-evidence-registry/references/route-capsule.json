@@ -1,0 +1,93 @@
+{
+  "schema_version": "physicsguard.skill_route_capsule.v1",
+  "target_skill_id": "physicsguard-project-evidence-registry",
+  "native_owner_id": "physicsguard.project-evidence-registry",
+  "native_route_id": "route:physicsguard-project-evidence-registry:check",
+  "route_role": "direct",
+  "broad_route_prerequisite": false,
+  "accept_when": [
+    "One project's files, facts, bindings, bundles, and evidence gaps must be discovered or reconciled.",
+    "An AI onboarding map or project-level evidence handoff is required."
+  ],
+  "reject_handoffs": [
+    {
+      "condition": "One concrete test file needs its field contract checked.",
+      "target_skill_id": "physicsguard-test-file-contract-review"
+    },
+    {
+      "condition": "The request is cross-project historical or database-ledger search.",
+      "target_skill_id": "none"
+    }
+  ],
+  "minimum_inputs": [
+    "project_root",
+    "declared_artifacts",
+    "binding_expectations",
+    "project_profile"
+  ],
+  "required_outputs": [
+    "reconciled_inventory",
+    "binding_map",
+    "critical_gaps",
+    "closure_handoff"
+  ],
+  "initial_load": [
+    "agents/openai.yaml",
+    "SKILL.md",
+    "references/route-capsule.json"
+  ],
+  "conditional_references": [
+    {
+      "path": "references/native-route-protocol.md",
+      "load_when": [
+        "route_selected_and_domain_execution_required"
+      ],
+      "required_for": [
+        "target_native_domain_workflow"
+      ],
+      "sha256": "593aebe32576af67b5adaca498e792e3e6b8e50eb22399324f8e24f53c0cf852"
+    },
+    {
+      "path": "references/native-depth-and-purpose.md",
+      "load_when": [
+        "create_task_local_model",
+        "materially_deepen_model",
+        "revise_candidate_model",
+        "claim_model_closure"
+      ],
+      "required_for": [
+        "execution_depth",
+        "mapping",
+        "residual",
+        "uncertainty",
+        "diagnosability",
+        "predictive_rollout",
+        "purpose_before_candidate",
+        "prediction_before_observation",
+        "model_miss",
+        "typed_regression",
+        "independent_holdout",
+        "exact_terminal_boundary"
+      ],
+      "sha256": "93e932ca33a4362a03b5ad5d1e9c44e9f06544718b9c848ef2367ded922bb236"
+    },
+    {
+      "path": "references/template-pack-routing.md",
+      "load_when": [
+        "select_template_pack",
+        "preview_template_pack",
+        "instantiate_template_pack",
+        "validate_template_pack",
+        "harvest_reusable_model"
+      ],
+      "required_for": [
+        "validated_template_pack_routing"
+      ],
+      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+    }
+  ],
+  "maximum_reference_depth": 1,
+  "cross_skill_reference_loading": "typed_handoff_only",
+  "entry_prompt_sha256": "6a3fd5969bb46b89fab8b3a3d6d05b5f020b0b0260c2217cca26883aad37c930",
+  "claim_boundary": "Registry closure covers only the exact current project evidence bundle and declared roles/bindings; unresolved critical gaps or out-of-scope files remain blocking."
+}

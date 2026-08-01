@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhysicsGuard Candidate Blueprint"
+  short_description: "Build a validated low-fidelity model blueprint"
+  default_prompt: "Use $physicsguard-candidate-model-blueprint directly for its native PhysicsGuard Candidate Model Blueprint route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."

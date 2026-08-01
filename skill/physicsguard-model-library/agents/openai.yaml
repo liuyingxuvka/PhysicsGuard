@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhysicsGuard Model Library"
+  short_description: "Check bounded PhysicsGuard model reuse"
+  default_prompt: "Use $physicsguard-model-library directly for its native PhysicsGuard Model Library route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."

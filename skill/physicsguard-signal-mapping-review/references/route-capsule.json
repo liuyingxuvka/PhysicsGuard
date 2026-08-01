@@ -1,0 +1,93 @@
+{
+  "schema_version": "physicsguard.skill_route_capsule.v1",
+  "target_skill_id": "physicsguard-signal-mapping-review",
+  "native_owner_id": "physicsguard.signal-mapping-review",
+  "native_route_id": "route:physicsguard-signal-mapping-review:review",
+  "route_role": "direct",
+  "broad_route_prerequisite": false,
+  "accept_when": [
+    "The task concerns external-signal or parameter mapping identity, unit, conversion, confidence, review, timing, or staleness.",
+    "Mapping evidence must be resolved before residual, adequacy, or predictive checks can use it."
+  ],
+  "reject_handoffs": [
+    {
+      "condition": "A concrete many-field test file first needs a complete field contract.",
+      "target_skill_id": "physicsguard-test-file-contract-review"
+    },
+    {
+      "condition": "Mappings are current and the task is exact model/dataset validation.",
+      "target_skill_id": "physicsguard-model-dataset-validation"
+    }
+  ],
+  "minimum_inputs": [
+    "governed_signal_or_parameter",
+    "target_variable",
+    "unit_and_conversion_evidence",
+    "revision_identity"
+  ],
+  "required_outputs": [
+    "mapping_status",
+    "review_gaps",
+    "temporal_boundary",
+    "safe_mapping_claim"
+  ],
+  "initial_load": [
+    "agents/openai.yaml",
+    "SKILL.md",
+    "references/route-capsule.json"
+  ],
+  "conditional_references": [
+    {
+      "path": "references/native-route-protocol.md",
+      "load_when": [
+        "route_selected_and_domain_execution_required"
+      ],
+      "required_for": [
+        "target_native_domain_workflow"
+      ],
+      "sha256": "ae95fa30f64de9ab955b8cf81035e97bd5d68cbbb7499ce584ccba10d7e53977"
+    },
+    {
+      "path": "references/native-depth-and-purpose.md",
+      "load_when": [
+        "create_task_local_model",
+        "materially_deepen_model",
+        "revise_candidate_model",
+        "claim_model_closure"
+      ],
+      "required_for": [
+        "execution_depth",
+        "mapping",
+        "residual",
+        "uncertainty",
+        "diagnosability",
+        "predictive_rollout",
+        "purpose_before_candidate",
+        "prediction_before_observation",
+        "model_miss",
+        "typed_regression",
+        "independent_holdout",
+        "exact_terminal_boundary"
+      ],
+      "sha256": "5091f6d7e6bde7839ff76a90ef4c79cbced7a43cf393fee9ff6fcb3119770b9e"
+    },
+    {
+      "path": "references/template-pack-routing.md",
+      "load_when": [
+        "select_template_pack",
+        "preview_template_pack",
+        "instantiate_template_pack",
+        "validate_template_pack",
+        "harvest_reusable_model"
+      ],
+      "required_for": [
+        "validated_template_pack_routing"
+      ],
+      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+    }
+  ],
+  "maximum_reference_depth": 1,
+  "cross_skill_reference_loading": "typed_handoff_only",
+  "entry_prompt_sha256": "dc85e16d3f05ce86ea78938fc753168642a6fe7df7b6783bc1c074ed388be059",
+  "claim_boundary": "A mapping pass licenses only the exact external signal, target variable, conversion, revision, temporal range, and reviewed confidence in the receipt."
+}

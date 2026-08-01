@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhysicsGuard Signal Mapping"
+  short_description: "Review exact signal and parameter mappings"
+  default_prompt: "Use $physicsguard-signal-mapping-review directly for its native PhysicsGuard Signal Mapping Review route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."

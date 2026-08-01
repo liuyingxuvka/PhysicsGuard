@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.15.1 - 2026-08-01
+
+- Make all ten maintained PhysicsGuard skills narrow independent entrypoints;
+  keep `physicsguard-ai-debugging` only for genuinely mixed or unclear work.
+- Add machine-checkable route capsules and an executable prompt-load graph so
+  ordinary route selection loads only the selected compact entry and capsule.
+- Move complete native purpose/depth and validated-template-pack rules behind
+  conditional target-local references without weakening six-family depth,
+  prediction-before-observation, `model_miss`, independent holdout, predictive
+  rollout, or exact closure boundaries.
+- Refresh route-specific UI metadata, FlowGuard known-bad coverage, and all ten
+  generated author contracts for the contracted prompt surface.
+
 ## v0.15.0 - 2026-07-31
 
 - Make task-local model deepening strict and receipt-driven: every non-trivial

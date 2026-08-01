@@ -6,12 +6,15 @@ import importlib.metadata
 import json
 import os
 from pathlib import Path
+import tomllib
 from typing import Any, Mapping
 
 
 ROOT = Path(__file__).resolve().parents[1]
 HOME_SKILLS = Path.home() / ".codex" / "skills"
 PACKAGE_NAME = "physicsguard"
+SUITE_MESH_PATH = ROOT / ".flowguard" / "physicsguard_skill_suite_mesh.json"
+FLOWGUARD_PROJECT_PATH = ROOT / ".flowguard" / "project.toml"
 SKILLS = (
     ("physicsguard-ai-debugging", "skill/physicsguard-ai-debugging", "physicsguard-ai-debugging"),
     ("physicsguard-audit-closure", "skill/physicsguard-audit-closure", "physicsguard-audit-closure"),
@@ -147,18 +150,97 @@ def _is_within(path: Path, root: Path) -> bool:
     return True
 
 
-def _check_package_identity() -> dict[str, Any]:
+def _check_package_identity(expected_version: str = "") -> dict[str, Any]:
     module = importlib.import_module(PACKAGE_NAME)
     module_path = Path(module.__file__).resolve()
     metadata_version = importlib.metadata.version(PACKAGE_NAME)
     module_version = str(getattr(module, "__version__", ""))
     return {
         "check": "canonical_package_identity",
-        "ok": metadata_version == module_version and _is_within(module_path, ROOT),
+        "ok": (
+            metadata_version == module_version
+            and (not expected_version or module_version == expected_version)
+            and _is_within(module_path, ROOT)
+        ),
+        "expected_version": expected_version,
         "metadata_version": metadata_version,
         "module_version": module_version,
         "module_path": str(module_path),
         "expected_repository_root": str(ROOT.resolve()),
+    }
+
+
+def _metadata_version(package_name: str) -> str:
+    try:
+        return importlib.metadata.version(package_name)
+    except importlib.metadata.PackageNotFoundError:
+        return "missing"
+
+
+def _declared_toolchain_identity() -> dict[str, str]:
+    mesh = json.loads(SUITE_MESH_PATH.read_text(encoding="utf-8"))
+    declared = mesh.get("toolchain_identity")
+    if not isinstance(declared, Mapping):
+        raise ValueError("toolchain_identity_missing")
+    required = {
+        "physicsguard_version",
+        "flowguard_version",
+        "flowguard_schema_version",
+        "skillguard_version",
+    }
+    if set(map(str, declared)) != required:
+        raise ValueError("toolchain_identity_fields_wrong")
+    return {key: str(declared[key]) for key in sorted(required)}
+
+
+def _check_toolchain_identity() -> dict[str, Any]:
+    findings: list[str] = []
+    try:
+        declared = _declared_toolchain_identity()
+        project = tomllib.loads(FLOWGUARD_PROJECT_PATH.read_text(encoding="utf-8"))
+        pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+        source = {
+            "physicsguard_version": str(pyproject["project"]["version"]),
+            "flowguard_version": str(project["flowguard"]["adopted_package_version"]),
+            "flowguard_schema_version": str(project["flowguard"]["schema_version"]),
+            "skillguard_version": declared["skillguard_version"],
+        }
+        flowguard_module = importlib.import_module("flowguard")
+        observed = {
+            "physicsguard_version": _metadata_version("physicsguard"),
+            "flowguard_version": _metadata_version("flowguard"),
+            "flowguard_schema_version": str(
+                getattr(flowguard_module, "SCHEMA_VERSION", "missing")
+            ),
+            "skillguard_version": _metadata_version("skillguard"),
+        }
+        version_file = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        if source["physicsguard_version"] != version_file:
+            findings.append("physicsguard_source_version_drift")
+        if declared != source:
+            findings.append("declared_toolchain_identity_stale")
+        for key in sorted(declared):
+            if observed.get(key) != declared[key]:
+                findings.append(f"installed_toolchain_mismatch:{key}")
+    except (
+        ImportError,
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        KeyError,
+        ValueError,
+    ) as exc:
+        declared = {}
+        source = {}
+        observed = {}
+        findings.append(f"toolchain_identity_unreadable:{type(exc).__name__}:{exc}")
+    return {
+        "ok": not findings,
+        "status": "pass" if not findings else "blocked",
+        "declared": declared,
+        "source": source,
+        "observed": observed,
+        "findings": findings,
     }
 
 
@@ -377,12 +459,15 @@ def _skill_status(target_skill_id: str, source_relative: str, installed_name: st
 
 
 def main() -> int:
-    package = _check_package_identity()
+    toolchain = _check_toolchain_identity()
+    expected_version = str(toolchain.get("declared", {}).get("physicsguard_version", ""))
+    package = _check_package_identity(expected_version)
     skills = [_skill_status(*row) for row in SKILLS]
-    ok = package["ok"] and all(skill["ok"] for skill in skills)
+    ok = toolchain["ok"] and package["ok"] and all(skill["ok"] for skill in skills)
     result = {
         "artifact_kind": "guard_family_v2_runtime_authority_audit",
         "ok": ok,
+        "toolchain": toolchain,
         "package": package,
         "skills": skills,
         "installation_currentness": {
