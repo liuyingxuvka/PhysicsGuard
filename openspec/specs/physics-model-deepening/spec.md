@@ -1,7 +1,9 @@
 # physics-model-deepening Specification
 
 ## Purpose
-TBD - created by archiving change make-physics-model-deepening-iterative. Update Purpose after archive.
+Define how a PhysicsGuard task deepens competing hypotheses through independently
+bound coverage, target-native evidence, explicit gap transitions, and finite
+evidence-backed terminal decisions.
 ## Requirements
 ### Requirement: A non-trivial plan carries purpose and coverage identity
 
