@@ -313,14 +313,20 @@ def current_toolchain_identity(
         != skillguard_api.distribution_package_tree_sha256
     ):
         raise RuntimeError("skillguard_installed_distribution_authority_unproved")
-    project_sha256 = _sha256_bytes(project_path.read_bytes())
+    # The project record is the local adoption/currentness projection.  It is
+    # updated by FlowGuard model activation (snapshot, generation, and head
+    # fields), so including its whole-file hash here creates a self-invalidating
+    # loop: activating a model changes the declared toolchain fingerprint,
+    # which then makes the generated graph stale even though FlowGuard itself
+    # did not change.  Version/schema equality above still protects the
+    # adoption boundary; the bound package authority must remain stable across
+    # those ordinary model-pointer updates.
     flowguard_bound_authority = _canonical_identity_fingerprint(
         {
             "distribution_authority_sha256": flowguard_authority.authority_sha256,
             "package_tree_sha256": flowguard_tree_after_import.sha256,
             "package_file_count": flowguard_tree_after_import.file_count,
             "schema_version": observed_flowguard_schema,
-            "project_sha256": project_sha256,
             "project_version": declared_flowguard_version,
             "project_schema": declared_flowguard_schema,
         }
