@@ -1,0 +1,10 @@
+schema: physicsguard.project_unit_convention_registry.v1
+conventions:
+  - schema: physicsguard.project_unit_convention.v1
+    identity: physicsguard.project.si.v1
+    system: SI
+    internal_units: SI base and coherent derived units
+    time_basis: s
+    reference_policy: Each scalar uses the module-local direction and sign stated by its FunctionBlock and formula authority.
+    dimension_policy: Every symbol and residual binds an explicit physical dimension and canonical unit or the dimensionless meta-unit 1.
+

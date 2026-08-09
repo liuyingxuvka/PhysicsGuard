@@ -11,15 +11,23 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from physicsguard.io.test_file_contract_loader import (
+    load_spec,
     load_data_file_manifest,
     load_parameter_role_matrix,
     load_project_evidence_registry,
 )
+from physicsguard.io.physical_model_blueprint_loader import load_physical_model_blueprint
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
 from physicsguard.schema.parameter_coverage import ParameterRoleMatrixSpec
 from physicsguard.schema.project_evidence import EvidenceBindingRecordSpec
+from physicsguard.schema.physical_model_blueprint import (
+    BlueprintProjection,
+    PhysicalModelBlueprint,
+    canonical_blueprint_fingerprint,
+    fingerprint_blueprint,
+)
 from physicsguard.schema.validation_adequacy import (
     ANTI_DEGENERACY_FLOOR_ALGORITHM,
     FamilyQuotaPlanSpec,
@@ -123,6 +131,7 @@ def evaluate_validation_adequacy(
         series=series,
         residual_receipt=residual_receipt,
         bindings=bindings,
+        base_dir=base_dir,
     )
     return ValidationAdequacyEvaluation(
         receipt=result.receipt,
@@ -142,6 +151,7 @@ def evaluate_validation_adequacy_artifacts(
     series: ObservedSeriesSpec | None,
     residual_receipt: dict[str, Any],
     bindings: Iterable[EvidenceBindingRecordSpec] = (),
+    base_dir: Path | None = None,
 ) -> ValidationAdequacyEvaluation:
     """Pure evaluator used by the runtime integration and shallow-negative tests."""
 
@@ -853,6 +863,11 @@ def evaluate_validation_adequacy_artifacts(
     if adequacy.sampling_mode == "adaptive" and adequacy.adaptive_converged is not True:
         findings.append(_finding("error", "adaptive_sampling_not_converged", "adaptive sampling lacks convergence evidence"))
 
+    blueprint_coverage = _blueprint_validation_coverage(
+        adequacy,
+        base_dir=base_dir,
+        findings=findings,
+    )
     status = _status(findings)
     universe_payload = {
         "available_point_count": available_points,
@@ -895,6 +910,7 @@ def evaluate_validation_adequacy_artifacts(
         "signal_time_matrix": signal_time_matrix,
         "families": families,
         "subsystem_families": subsystem_families,
+        "blueprint_coverage": blueprint_coverage,
         "missing_critical_signals": missing_critical_signals,
         "missing_critical_parameters": missing_critical_parameters,
         "missing_parameter_temporal_classifications": missing_parameter_classifications,
@@ -1065,6 +1081,7 @@ def _not_applicable_receipt(series, residual_receipt) -> dict[str, Any]:
             "status": "not_applicable",
             "universe": payload,
             "temporal": _empty_temporal("not_applicable"),
+            "blueprint_coverage": _not_applicable_blueprint_coverage(),
             "claim_boundary": "snapshot-only evidence; no broad temporal, signal-family, or predictive adequacy claim",
         }
     ).model_dump(mode="json")
@@ -1083,10 +1100,443 @@ def _blocked_empty_receipt(series, residual_receipt, codes, adequacy=None) -> di
             "threshold_source": adequacy.threshold_source if adequacy else None,
             "universe": payload,
             "temporal": _empty_temporal("blocked"),
+            "blueprint_coverage": _not_applicable_blueprint_coverage(),
             "finding_codes": sorted(set(codes)),
             "claim_boundary": "adequacy could not be established from current target-owned artifacts",
         }
     ).model_dump(mode="json")
+
+
+def _not_applicable_blueprint_coverage() -> dict[str, Any]:
+    denominator = {"scope": "not_applicable", "elements": {}}
+    return {
+        "coverage_id": "blueprint-validation:not-applicable",
+        "status": "not_applicable",
+        "blueprint_fingerprint": None,
+        "scope": "not_applicable",
+        "affected_slice_fingerprint": None,
+        "denominator_source_id": "no-blueprint-validation-plan",
+        "denominator_fingerprint": canonical_blueprint_fingerprint(denominator),
+        "governed_element_ids": [],
+        "element_results": [],
+        "unresolved_element_ids": [],
+        "first_unresolved_id": None,
+        "maximum_licensed_claim": "no blueprint-element validation claim was requested",
+    }
+
+
+def _blueprint_validation_coverage(
+    adequacy: ValidationAdequacyPlanSpec,
+    *,
+    base_dir: Path | None,
+    findings: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Reconcile validation evidence against a blueprint-derived leaf denominator.
+
+    The plan may assign evidence, but it cannot choose the elements or obligations
+    that count.  Those are always derived from the current blueprint (and, for an
+    affected claim, from a current projection of that same blueprint).
+    """
+
+    validation = adequacy.blueprint_validation
+    if validation is None:
+        return _not_applicable_blueprint_coverage()
+
+    local_start = len(findings)
+    if base_dir is None:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_base_dir_missing",
+                "blueprint validation requires an explicit target artifact root",
+                validation.blueprint_path,
+            )
+        )
+        return _blocked_blueprint_coverage(validation, "blueprint artifact root is unavailable")
+
+    blueprint_path = _resolve_path(base_dir, validation.blueprint_path)
+    actual_blueprint_sha = _file_sha256_or_none(blueprint_path)
+    if actual_blueprint_sha is None:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_blueprint_missing",
+                "the exact physical blueprint file does not exist",
+                validation.blueprint_path,
+            )
+        )
+        return _blocked_blueprint_coverage(validation, "physical blueprint is missing")
+    if actual_blueprint_sha != validation.blueprint_sha256:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_blueprint_stale",
+                "the physical blueprint file hash differs from the planned identity",
+                validation.blueprint_path,
+                {"expected_sha256": validation.blueprint_sha256, "actual_sha256": actual_blueprint_sha},
+            )
+        )
+    try:
+        blueprint = load_physical_model_blueprint(blueprint_path)
+    except Exception as exc:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_blueprint_unreadable",
+                "the physical blueprint cannot be loaded by its native schema",
+                validation.blueprint_path,
+                {"error": str(exc)},
+            )
+        )
+        return _blocked_blueprint_coverage(validation, "physical blueprint is unreadable")
+
+    actual_blueprint_fingerprint = fingerprint_blueprint(blueprint)
+    if actual_blueprint_fingerprint != validation.blueprint_fingerprint:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_fingerprint_stale",
+                "the blueprint logical fingerprint differs from the planned authority",
+                blueprint.blueprint_id,
+                {
+                    "expected_fingerprint": validation.blueprint_fingerprint,
+                    "actual_fingerprint": actual_blueprint_fingerprint,
+                },
+            )
+        )
+
+    element_by_id = {item.element_id: item for item in blueprint.elements}
+    governed_ids = set(element_by_id)
+    affected_fingerprint: str | None = None
+    denominator_source = f"blueprint:{actual_blueprint_fingerprint}"
+    if validation.scope == "affected":
+        affected_fingerprint = validation.affected_slice_fingerprint
+        projection_ids = _affected_blueprint_element_ids(
+            validation,
+            blueprint,
+            base_dir=base_dir,
+            findings=findings,
+        )
+        if projection_ids is None:
+            # An unreadable affected slice must not permit the caller to shrink the
+            # denominator.  Keep all current elements visible and block the claim.
+            governed_ids = set(element_by_id)
+            denominator_source = f"blueprint:{actual_blueprint_fingerprint}:affected-slice-unresolved"
+        else:
+            governed_ids = projection_ids
+            denominator_source = f"projection:{affected_fingerprint}"
+
+    plan_by_element = {item.element_id: item for item in validation.elements}
+    if set(plan_by_element) != governed_ids:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_element_denominator_mismatch",
+                "planned element rows do not exactly equal the blueprint-derived denominator",
+                blueprint.blueprint_id,
+                {
+                    "missing_element_ids": sorted(governed_ids - set(plan_by_element)),
+                    "extra_element_ids": sorted(set(plan_by_element) - governed_ids),
+                },
+            )
+        )
+
+    denominator_payload: dict[str, list[str]] = {}
+    element_results: list[dict[str, Any]] = []
+    for element_id in sorted(governed_ids):
+        element = element_by_id[element_id]
+        obligation_ids = _blueprint_element_obligation_ids(blueprint, element_id)
+        denominator_payload[element_id] = obligation_ids
+        plan_row = plan_by_element.get(element_id)
+        planned_by_obligation = (
+            {item.obligation_id: item for item in plan_row.obligations}
+            if plan_row is not None
+            else {}
+        )
+        if set(planned_by_obligation) != set(obligation_ids):
+            findings.append(
+                _finding(
+                    "error",
+                    "blueprint_validation_obligation_denominator_mismatch",
+                    "planned obligations do not exactly equal the current element denominator",
+                    element_id,
+                    {
+                        "missing_obligation_ids": sorted(set(obligation_ids) - set(planned_by_obligation)),
+                        "extra_obligation_ids": sorted(set(planned_by_obligation) - set(obligation_ids)),
+                    },
+                )
+            )
+
+        evidence_rows: list[dict[str, Any]] = []
+        tested: list[str] = []
+        for obligation_id in obligation_ids:
+            obligation = planned_by_obligation.get(obligation_id)
+            if obligation is None:
+                continue
+            obligation_current = True
+            for evidence in obligation.evidence:
+                evidence_path = _resolve_path(base_dir, evidence.path)
+                actual_sha = _file_sha256_or_none(evidence_path)
+                if actual_sha is None:
+                    evidence_status = "missing"
+                elif (
+                    actual_sha != evidence.sha256
+                    or evidence.freshness_revision != blueprint.target.subject_revision
+                ):
+                    evidence_status = "stale"
+                else:
+                    evidence_status = "current"
+                if evidence_status != "current":
+                    obligation_current = False
+                    findings.append(
+                        _finding(
+                            "error",
+                            f"blueprint_validation_evidence_{evidence_status}",
+                            "blueprint obligation evidence is missing or stale",
+                            evidence.evidence_id,
+                            {
+                                "element_id": element_id,
+                                "obligation_id": obligation_id,
+                                "expected_sha256": evidence.sha256,
+                                "actual_sha256": actual_sha,
+                                "expected_revision": blueprint.target.subject_revision,
+                                "evidence_revision": evidence.freshness_revision,
+                            },
+                        )
+                    )
+                evidence_rows.append(
+                    {
+                        "evidence_id": evidence.evidence_id,
+                        "native_owner_id": evidence.native_owner_id,
+                        "native_operation_id": evidence.native_operation_id,
+                        "freshness_revision": evidence.freshness_revision,
+                        "expected_sha256": evidence.sha256,
+                        "actual_sha256": actual_sha,
+                        "status": evidence_status,
+                    }
+                )
+            if obligation_current:
+                tested.append(obligation_id)
+
+        unresolved = sorted(set(obligation_ids) - set(tested))
+        element_status = "pass" if not unresolved else "blocked"
+        if unresolved:
+            findings.append(
+                _finding(
+                    "error",
+                    "blueprint_element_validation_unresolved",
+                    "one blueprint element retains untested or stale obligations",
+                    element_id,
+                    {"unresolved_obligation_ids": unresolved},
+                )
+            )
+        element_results.append(
+            {
+                "element_id": element_id,
+                "governed_obligation_ids": obligation_ids,
+                "tested_obligation_ids": sorted(tested),
+                "evidence": evidence_rows,
+                "unresolved_obligation_ids": unresolved,
+                "status": element_status,
+                "maximum_licensed_claim": (
+                    f"current evidence covers exactly element {element_id} and its declared obligation denominator"
+                    if element_status == "pass"
+                    else f"no broad claim for element {element_id}; unresolved obligations remain"
+                ),
+            }
+        )
+
+    unresolved_elements = sorted(
+        item["element_id"] for item in element_results if item["status"] != "pass"
+    )
+    local_errors = any(
+        item["severity"] == "error" for item in findings[local_start:]
+    )
+    coverage_status = "pass" if not unresolved_elements and not local_errors else "blocked"
+    denominator_fingerprint = canonical_blueprint_fingerprint(
+        {
+            "blueprint_fingerprint": actual_blueprint_fingerprint,
+            "scope": validation.scope,
+            "affected_slice_fingerprint": affected_fingerprint,
+            "elements": denominator_payload,
+        }
+    )
+    return {
+        "coverage_id": f"blueprint-validation:{actual_blueprint_fingerprint}:{validation.scope}",
+        "status": coverage_status,
+        "blueprint_fingerprint": actual_blueprint_fingerprint,
+        "scope": validation.scope,
+        "affected_slice_fingerprint": affected_fingerprint,
+        "denominator_source_id": denominator_source,
+        "denominator_fingerprint": denominator_fingerprint,
+        "governed_element_ids": sorted(governed_ids),
+        "element_results": element_results,
+        "unresolved_element_ids": unresolved_elements,
+        "first_unresolved_id": unresolved_elements[0] if unresolved_elements else None,
+        "maximum_licensed_claim": (
+            "current evidence covers every governed blueprint element and obligation"
+            if coverage_status == "pass"
+            else "no aggregate blueprint validation claim; inspect the first unresolved element and current findings"
+        ),
+    }
+
+
+def _affected_blueprint_element_ids(
+    validation,
+    blueprint: PhysicalModelBlueprint,
+    *,
+    base_dir: Path,
+    findings: list[dict[str, Any]],
+) -> set[str] | None:
+    projection_path = _resolve_path(base_dir, validation.affected_projection_path)
+    actual_sha = _file_sha256_or_none(projection_path)
+    if actual_sha is None:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_projection_missing",
+                "the declared affected projection does not exist",
+                validation.affected_projection_path,
+            )
+        )
+        return None
+    if actual_sha != validation.affected_projection_sha256:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_projection_stale",
+                "the affected projection file hash differs from the planned identity",
+                validation.affected_projection_path,
+                {"expected_sha256": validation.affected_projection_sha256, "actual_sha256": actual_sha},
+            )
+        )
+    try:
+        projection = load_spec(projection_path, BlueprintProjection)
+    except Exception as exc:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_projection_unreadable",
+                "the affected projection cannot be loaded by its native schema",
+                validation.affected_projection_path,
+                {"error": str(exc)},
+            )
+        )
+        return None
+    actual_blueprint_fingerprint = fingerprint_blueprint(blueprint)
+    mismatches = {
+        "source_blueprint_fingerprint": (
+            projection.source_blueprint_fingerprint,
+            actual_blueprint_fingerprint,
+        ),
+        "projection_fingerprint": (
+            projection.projection_fingerprint,
+            validation.affected_slice_fingerprint,
+        ),
+        "target_system_id": (
+            projection.target_system_id,
+            blueprint.target.target_system_id,
+        ),
+        "subject_revision": (
+            projection.subject_revision,
+            blueprint.target.subject_revision,
+        ),
+    }
+    invalid = {
+        key: {"observed": observed, "expected": expected}
+        for key, (observed, expected) in mismatches.items()
+        if observed != expected
+    }
+    if invalid:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_projection_identity_mismatch",
+                "the affected projection is not a current slice of this blueprint",
+                validation.affected_projection_path,
+                invalid,
+            )
+        )
+        return None
+    element_ids = {item.element_id for item in blueprint.elements}
+    selected = {
+        node.owner_element_id
+        for node in projection.nodes
+        if node.owner_element_id in element_ids
+    }
+    if not selected:
+        findings.append(
+            _finding(
+                "error",
+                "blueprint_validation_projection_empty",
+                "the affected projection does not select a governed blueprint element",
+                validation.affected_projection_path,
+            )
+        )
+        return None
+    return selected
+
+
+def _blueprint_element_obligation_ids(
+    blueprint: PhysicalModelBlueprint,
+    element_id: str,
+) -> list[str]:
+    element = next(item for item in blueprint.elements if item.element_id == element_id)
+    obligations = {f"element:{element_id}"}
+    obligations.update(f"port:{item_id}" for item_id in element.port_ids)
+    obligations.update(f"semantic:{item_id}" for item_id in element.semantic_ids)
+    obligations.update(f"validity:{item_id}" for item_id in element.validity_boundary_ids)
+    obligations.update(f"behavior:{item_id}" for item_id in element.owned_behavior_ids)
+    binding_by_id = {item.binding_id: item for item in blueprint.bindings}
+    for binding_id in element.native_binding_ids:
+        obligations.add(f"binding:{binding_id}")
+        binding = binding_by_id[binding_id]
+        obligations.update(
+            f"native-obligation:{binding_id}:{item_id}"
+            for item_id in binding.obligation_ids
+        )
+    for refinement in blueprint.refinements:
+        if refinement.parent_element_id == element_id:
+            obligations.add(f"refinement:{refinement.refinement_id}")
+            obligations.update(
+                f"mapping:{refinement.refinement_id}:{item.mapping_id}"
+                for item in refinement.port_mappings
+            )
+            obligations.update(
+                f"contribution:{refinement.refinement_id}:{item.contribution_id}"
+                for item in refinement.semantic_contributions
+            )
+    return sorted(obligations)
+
+
+def _blocked_blueprint_coverage(validation, reason: str) -> dict[str, Any]:
+    denominator = {
+        "blueprint_fingerprint": validation.blueprint_fingerprint,
+        "scope": validation.scope,
+        "affected_slice_fingerprint": validation.affected_slice_fingerprint,
+        "unavailable": True,
+    }
+    return {
+        "coverage_id": f"blueprint-validation:{validation.blueprint_fingerprint}:{validation.scope}",
+        "status": "blocked",
+        "blueprint_fingerprint": validation.blueprint_fingerprint,
+        "scope": validation.scope,
+        "affected_slice_fingerprint": validation.affected_slice_fingerprint,
+        "denominator_source_id": "blueprint-authority-unavailable",
+        "denominator_fingerprint": canonical_blueprint_fingerprint(denominator),
+        "governed_element_ids": [],
+        "element_results": [],
+        "unresolved_element_ids": [],
+        "first_unresolved_id": None,
+        "maximum_licensed_claim": f"no blueprint validation claim: {reason}",
+    }
+
+
+def _file_sha256_or_none(path: Path) -> str | None:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return None
 
 
 def _empty_universe(selected: int, evaluated: int) -> dict[str, Any]:

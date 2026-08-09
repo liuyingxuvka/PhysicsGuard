@@ -23,11 +23,14 @@
     "asset_inventory",
     "target_context",
     "validation_receipts",
-    "known_limits"
+    "known_limits",
+    "current_blueprint_fingerprint_and_projection"
   ],
   "required_outputs": [
     "compatible_assets",
     "reuse_status",
+    "selected_blueprint_fingerprints",
+    "verified_reuse_limits",
     "gaps",
     "bounded_reuse_scope"
   ],
@@ -40,12 +43,16 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_summary_for_discovery_required",
+        "blueprint_affected_reuse_slice_required",
+        "whole_target_reuse_qualification_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "blueprint_reuse_compatibility_projection"
       ],
-      "sha256": "3e18eef32de14ec13233d50a4abed5240462fe4b8173786055ef3f9c23881af9"
+      "sha256": "787c6775e6398a0066354ccd7da1386f50f3eefc67ab65e7f788fc6b1e0eb55d"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -69,7 +76,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "4b146fa68d4e5d6a09e0e47e5e934059e718f41c66960f0dff17e8bdf6cfee3a"
+      "sha256": "780f3124298f539f57a1ee1cf160acd94694ebfd8edc03b6307a36687cad5e86"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -88,6 +95,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "582f37b5234793be900a95eb08183d944fc6aa435c770253b53c495bbe6d9771",
+  "entry_prompt_sha256": "7421c09bcb676a2622f8bc678975b7cf49dca6f340f0c2797d08ac027d38585e",
   "claim_boundary": "Library readiness licenses only the selected asset/profile/testbench combination and exact bounded reuse scope; it does not validate a new project automatically."
 }

@@ -1,0 +1,9 @@
+[
+  {
+    "schema": "flowguard.revision_removal_disposition.v1",
+    "removed_id": "root:model:guard_closure_contract",
+    "disposition": "replace",
+    "reason": "The repository self-DNA root is now the explicit authoritative_model_system model; guard_closure_contract remains a governed child model and is no longer the root owner.",
+    "replacement_id": "root:model:authoritative_model_system"
+  }
+]

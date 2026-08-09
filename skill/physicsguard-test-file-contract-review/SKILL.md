@@ -27,6 +27,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint slice
+
+Consume the affected slice for the concrete file/dataset/testbench path. Bind deterministic files and fields to exact blueprint input/output/state/effect ports, physical obligations, expected evidence, units, frames, and time semantics. The contract does not author or qualify the full blueprint. A missing, stale, foreign, or ambiguous slice blocks without broadening to all fields, all models, or the full blueprint.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -45,6 +49,8 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `contract_status`
 - `field_dispositions`
+- `blueprint_interface_bindings`
+- `affected_slice_fingerprint`
 - `mapping_gaps`
 - `safe_analysis_boundary`
 

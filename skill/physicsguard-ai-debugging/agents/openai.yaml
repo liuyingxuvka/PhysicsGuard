@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard AI Debugging"
   short_description: "Coordinate mixed PhysicsGuard debugging routes"
-  default_prompt: "Use $physicsguard-ai-debugging directly for its native PhysicsGuard AI Debugging route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."
+  default_prompt: "Use $physicsguard-ai-debugging only for genuinely mixed routing; consume current blueprint summary/affected/reverse trace, delegate to the minimum direct owners, and never become a second blueprint author or reviewer."

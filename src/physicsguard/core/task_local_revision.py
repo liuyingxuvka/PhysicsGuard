@@ -113,6 +113,7 @@ def freeze_hypothesis_plan(
         "task_id": plan.task_id,
         "purpose": plan.purpose,
         "coverage": plan.coverage.model_dump(mode="json"),
+        "blueprint": plan.blueprint.model_dump(mode="json"),
         "assumptions": list(plan.assumptions),
         "unknowns": list(plan.unknowns),
         "iteration": plan.iteration,
@@ -157,6 +158,10 @@ def evaluate_hypothesis_observation(
         raise ValueError("hypothesis plan model identity is not current")
     if observation.frozen_plan_fingerprint != frozen["plan_fingerprint"]:
         raise ValueError("observation frozen-plan fingerprint is stale or foreign")
+    if observation.blueprint_fingerprint != plan.blueprint.blueprint_fingerprint:
+        raise ValueError("observation blueprint fingerprint is stale or foreign")
+    if observation.affected_slice_fingerprint != plan.blueprint.affected_slice_fingerprint:
+        raise ValueError("observation affected blueprint slice is stale or foreign")
     candidate_ids = {item.candidate_id for item in plan.observation_candidates}
     if observation.selected_candidate_id not in candidate_ids:
         raise ValueError("observation does not identify a declared observation candidate")
@@ -205,6 +210,8 @@ def evaluate_hypothesis_observation(
     next_actions.extend(f"acquire_observation:{gap_id}" for gap_id in sorted(missing))
     if all_hypotheses_contradicted:
         next_actions.append("revise_hypothesis_universe_from_unexpected_observation")
+        next_actions.append("revise_blueprint_or_native_bindings_from_model_miss")
+        next_actions.append("rebind_native_depth_to_new_blueprint_revision")
         terminal_reason = "model_miss"
     else:
         native_external = _external_input_ids(native_gap_map.values())
@@ -229,6 +236,7 @@ def evaluate_hypothesis_observation(
         "observation_id": observation.observation_id,
         "selected_candidate_id": observation.selected_candidate_id,
         "observation_evidence": observation.evidence.model_dump(mode="json"),
+        "blueprint": plan.blueprint.model_dump(mode="json"),
         "observation_fingerprint": _fingerprint(observation.model_dump(mode="json")),
         "prediction_sequence": plan.prediction_sequence,
         "observation_sequence": observation.observation_sequence,
@@ -238,6 +246,17 @@ def evaluate_hypothesis_observation(
         "all_hypotheses_contradicted": all_hypotheses_contradicted,
         "model_miss_gap_id": (
             "model_miss:observation_outside_hypothesis_space"
+            if all_hypotheses_contradicted
+            else None
+        ),
+        "blueprint_revision_required": all_hypotheses_contradicted,
+        "invalidated_broad_claim_blueprint_fingerprints": (
+            [plan.blueprint.blueprint_fingerprint]
+            if all_hypotheses_contradicted
+            else []
+        ),
+        "model_miss_evidence_kind": (
+            observation.evidence.evidence_kind
             if all_hypotheses_contradicted
             else None
         ),
@@ -342,6 +361,8 @@ def evaluate_candidate_model_revision(
         or base["actual_sha256"] == candidate["actual_sha256"]
     ):
         identity_findings.append("candidate_not_distinct_from_base")
+    if revision.candidate_blueprint.review_status != "pass":
+        identity_findings.append("candidate_blueprint_not_qualified")
 
     checks: list[dict[str, Any]] = []
     for check in revision.checks:
@@ -359,6 +380,7 @@ def evaluate_candidate_model_revision(
                 "effective_status": effective_status,
                 "receipt_fingerprint": check.receipt_fingerprint,
                 "evidence": check.evidence.model_dump(mode="json"),
+                "blueprint": check.blueprint.model_dump(mode="json"),
                 "native_model_identity_status": native_model_identity_status,
             }
         )
@@ -446,6 +468,16 @@ def evaluate_candidate_model_revision(
         "rollback_model": rollback,
         "triggering_mismatch_ids": list(revision.triggering_mismatch_ids),
         "coverage": revision.coverage.model_dump(mode="json"),
+        "base_blueprint": revision.base_blueprint.model_dump(mode="json"),
+        "candidate_blueprint": revision.candidate_blueprint.model_dump(mode="json"),
+        "invalidated_broad_claim_blueprint_fingerprints": [
+            revision.base_blueprint.blueprint_fingerprint
+        ],
+        "broad_claim_blueprint_fingerprint": (
+            revision.candidate_blueprint.blueprint_fingerprint
+            if model_closed
+            else None
+        ),
         "base_native_depth_receipt_fingerprint": revision.base_native_depth_receipt.receipt_fingerprint,
         "candidate_native_depth_receipt_fingerprint": revision.candidate_native_depth_receipt.receipt_fingerprint,
         "required_check_ids": list(revision.required_check_ids),

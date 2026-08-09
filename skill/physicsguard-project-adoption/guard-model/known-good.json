@@ -10,6 +10,20 @@
     "blocker_inventory",
     "required_revalidation"
   ],
+  "blueprint_route_contract_fingerprint": "58C38A13A320EA4C4DF86874C972BD218D280918027B8F5B098DE87E8FBC1BA8",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_consumer_boundary",
+    "blueprint_identity_and_scope_recorded",
+    "blueprint_adoption_not_completeness",
+    "blueprint_adoption_gap_and_revalidation"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "summary"
+  ],
+  "executed_blueprint_operation_ids": [
+    "api:physicsguard.summary_physical_blueprint_projection"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

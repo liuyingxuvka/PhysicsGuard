@@ -69,6 +69,48 @@
       "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
     }
   ],
+  "blueprint_route_contract": {
+    "schema_version": "physicsguard.skill_blueprint_route_contract.v1",
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "summary",
+      "affected",
+      "full"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.summary_physical_blueprint_projection",
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.full_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_evidence_and_resource_binding",
+      "blueprint_binding_freshness",
+      "blueprint_missing_stale_gap_and_closure_handoff"
+    ],
+    "block_on": [
+      {
+        "finding_code": "blueprint_projection_missing_stale_foreign_or_ambiguous",
+        "condition": "a required blueprint projection or its blueprint, review, relation-set, recipe, target-revision, or evidence fingerprint is missing, stale, foreign, ambiguous, or caller-rehashed"
+      },
+      {
+        "finding_code": "blueprint_authority_boundary_violated",
+        "condition": "any route other than the sole author/full reviewer authors or fully reviews the blueprint"
+      },
+      {
+        "finding_code": "blueprint_required_obligation_unproved",
+        "condition": "any route-specific blueprint obligation lacks current target-native evidence or is replaced by AI prose or a self-declared pass"
+      },
+      {
+        "finding_code": "blueprint_gap_or_claim_boundary_unreconciled",
+        "condition": "the first gap, outside-scope branch, unsupported claim, closure handoff, or bounded claim required by this route is omitted or promoted to pass"
+      }
+    ],
+    "self_reported_status_allowed": false,
+    "missing_projection_behavior": "block_visible_no_fallback",
+    "claim_boundary": "Registry results bind exact current evidence, resources, oracles, receipts, freshness, and gaps to blueprint elements; they do not convert missing or stale evidence into a project-wide pass."
+  },
+  "blueprint_route_contract_fingerprint": "17B69F0B156F0A3B92239E48D6DAB3787D243010704A20A52A8CF0868DDBEB2C",
   "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
   "authoring_order": [
     "freeze_prevented_failure_contract",

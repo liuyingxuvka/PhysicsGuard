@@ -1,0 +1,501 @@
+{
+  "accepted_revision_fingerprint": "sha256:d8b76c04d68e5694009f8d9e93b445f68d88ce006ec33c90c59de8e41b1f499c",
+  "accepted_revision_schema": "flowguard.model_revision_set.v4",
+  "added_model_ids": [
+    "hierarchical_model_mesh",
+    "model_test_code_alignment"
+  ],
+  "affected_closure": {
+    "affected_ids": [
+      "coverage:code_contracts:contract:purpose:hierarchical_model_mesh",
+      "coverage:code_contracts:contract:purpose:model_test_code_alignment",
+      "coverage:model_instances:hierarchical_model_mesh",
+      "coverage:model_instances:model_test_code_alignment",
+      "coverage:tests_evidence:check:model-regression:guard-closure",
+      "coverage:tests_evidence:check:model-regression:guard_closure_contract",
+      "coverage:tests_evidence:check:model-regression:hierarchical_model_mesh",
+      "coverage:tests_evidence:check:model-regression:interval-diagnosability",
+      "coverage:tests_evidence:check:model-regression:interval_diagnosability",
+      "coverage:tests_evidence:check:model-regression:model_test_code_alignment",
+      "coverage:tests_evidence:check:model-regression:task-local-model-deepening",
+      "coverage:tests_evidence:check:model-regression:task_local_model_deepening",
+      "coverage:universe",
+      "model_instance:model:guard_closure_contract",
+      "model_instance:model:hierarchical_model_mesh",
+      "model_instance:model:interval_diagnosability",
+      "model_instance:model:model_test_code_alignment",
+      "model_instance:model:task_local_model_deepening",
+      "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+      "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+      "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+      "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+      "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+      "model_relation:relation:system-contains:guard_closure_contract",
+      "model_relation:relation:system-contains:hierarchical_model_mesh",
+      "model_relation:relation:system-contains:interval_diagnosability",
+      "model_relation:relation:system-contains:model_test_code_alignment",
+      "model_relation:relation:system-contains:task_local_model_deepening",
+      "parent_closure:purpose:guard_closure_contract",
+      "parent_closure:purpose:hierarchical_model_mesh",
+      "parent_closure:purpose:interval_diagnosability",
+      "parent_closure:purpose:model_test_code_alignment",
+      "parent_closure:purpose:task_local_model_deepening",
+      "parent_closure:system:flowguard:model-regression-manifest",
+      "root:model:guard_closure_contract",
+      "system_property:subject_revision"
+    ],
+    "edge_ids": [
+      "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+      "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+      "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+      "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+      "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+      "model_relation:relation:system-contains:guard_closure_contract",
+      "model_relation:relation:system-contains:hierarchical_model_mesh",
+      "model_relation:relation:system-contains:interval_diagnosability",
+      "model_relation:relation:system-contains:model_test_code_alignment",
+      "model_relation:relation:system-contains:task_local_model_deepening"
+    ],
+    "fingerprint": "sha256:6b224d45c974470c5d8c7dfdb5d121a5748ad07c6e9ef0e0a78323c2ce589236",
+    "owner_bindings": [
+      {
+        "affected_id": "coverage:code_contracts:contract:purpose:hierarchical_model_mesh",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:code_contracts:contract:purpose:model_test_code_alignment",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:model_instances:hierarchical_model_mesh",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:model_instances:model_test_code_alignment",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:guard-closure",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:guard_closure_contract",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:hierarchical_model_mesh",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:interval-diagnosability",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:interval_diagnosability",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:model_test_code_alignment",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:task-local-model-deepening",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:tests_evidence:check:model-regression:task_local_model_deepening",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "coverage:universe",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_instance:model:guard_closure_contract",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "model_instance:model:hierarchical_model_mesh",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "model_instance:model:interval_diagnosability",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "model_instance:model:model_test_code_alignment",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "model_instance:model:task_local_model_deepening",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:system-contains:guard_closure_contract",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:system-contains:hierarchical_model_mesh",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:system-contains:interval_diagnosability",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:system-contains:model_test_code_alignment",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:system-contains:task_local_model_deepening",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "parent_closure:purpose:guard_closure_contract",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "parent_closure:purpose:hierarchical_model_mesh",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "parent_closure:purpose:interval_diagnosability",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "parent_closure:purpose:model_test_code_alignment",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "parent_closure:purpose:task_local_model_deepening",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "parent_closure:system:flowguard:model-regression-manifest",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "root:model:guard_closure_contract",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "system_property:subject_revision",
+        "owner_route": "model_mesh_maintenance"
+      }
+    ]
+  },
+  "affected_closure_fingerprint": "sha256:6b224d45c974470c5d8c7dfdb5d121a5748ad07c6e9ef0e0a78323c2ce589236",
+  "base_effective_intent_view_fingerprint": "",
+  "base_model_count": 3,
+  "base_model_ids": [
+    "guard_closure_contract",
+    "interval_diagnosability",
+    "task_local_model_deepening"
+  ],
+  "base_snapshot_fingerprint": "sha256:1d4fd54d36c64caa6003b2c04ee57ec66491b58a108a88fa69411153c67bae2d",
+  "base_snapshot_id": "snapshot:physicsguard:domain-blueprint-preimplementation",
+  "blockers": [],
+  "candidate_model_count": 5,
+  "candidate_model_ids": [
+    "guard_closure_contract",
+    "hierarchical_model_mesh",
+    "interval_diagnosability",
+    "model_test_code_alignment",
+    "task_local_model_deepening"
+  ],
+  "candidate_model_owner_count": 5,
+  "candidate_model_owner_ids": [
+    "model-obligation:guard_closure_contract",
+    "model-obligation:hierarchical_model_mesh",
+    "model-obligation:interval_diagnosability",
+    "model-obligation:model_test_code_alignment",
+    "model-obligation:task_local_model_deepening"
+  ],
+  "candidate_model_owner_inventory_fingerprint": "sha256:a51878481573e98fff25f4e3d5c90e438e6a2685dda011c85c91091f3686eb22",
+  "candidate_model_owners": [
+    {
+      "logical_model_id": "guard_closure_contract",
+      "model_owner_id": "model-obligation:guard_closure_contract",
+      "realization_relation_fingerprint": "sha256:84d68c04d0a50f9a0ad72ee3bda0f84f1b03b2cc7b592ecb32e787332eef577c",
+      "realization_relation_id": "relation:model-realizes-purpose:guard_closure_contract"
+    },
+    {
+      "logical_model_id": "hierarchical_model_mesh",
+      "model_owner_id": "model-obligation:hierarchical_model_mesh",
+      "realization_relation_fingerprint": "sha256:4683c87b06f3fbcfba4bf522ec3446740183d816a34cc45c146278903550100e",
+      "realization_relation_id": "relation:model-realizes-purpose:hierarchical_model_mesh"
+    },
+    {
+      "logical_model_id": "interval_diagnosability",
+      "model_owner_id": "model-obligation:interval_diagnosability",
+      "realization_relation_fingerprint": "sha256:321f584f7ed901c49912b2485b9511e0c8f1e1acd06853170b9f67c00b6b7a75",
+      "realization_relation_id": "relation:model-realizes-purpose:interval_diagnosability"
+    },
+    {
+      "logical_model_id": "model_test_code_alignment",
+      "model_owner_id": "model-obligation:model_test_code_alignment",
+      "realization_relation_fingerprint": "sha256:25ada9645ca1dbef64591c2f6bb56f498b428d9ef4be840a4604c9d9991b1c68",
+      "realization_relation_id": "relation:model-realizes-purpose:model_test_code_alignment"
+    },
+    {
+      "logical_model_id": "task_local_model_deepening",
+      "model_owner_id": "model-obligation:task_local_model_deepening",
+      "realization_relation_fingerprint": "sha256:50ab815fd4774369b87f1fc5156c70d0bd4362223d66e3643e27679e817f8600",
+      "realization_relation_id": "relation:model-realizes-purpose:task_local_model_deepening"
+    }
+  ],
+  "candidate_snapshot_fingerprint": "sha256:e92a11d771c196d544693b4e11530e4f014a026932d58f972f3949baf11473ca",
+  "candidate_snapshot_id": "physicsguard-blueprint-v1-current-20260809",
+  "change_present": true,
+  "changed_entity_ids": [
+    "coverage:code_contracts:contract:purpose:hierarchical_model_mesh",
+    "coverage:code_contracts:contract:purpose:model_test_code_alignment",
+    "coverage:model_instances:hierarchical_model_mesh",
+    "coverage:model_instances:model_test_code_alignment",
+    "coverage:tests_evidence:check:model-regression:guard-closure",
+    "coverage:tests_evidence:check:model-regression:guard_closure_contract",
+    "coverage:tests_evidence:check:model-regression:hierarchical_model_mesh",
+    "coverage:tests_evidence:check:model-regression:interval-diagnosability",
+    "coverage:tests_evidence:check:model-regression:interval_diagnosability",
+    "coverage:tests_evidence:check:model-regression:model_test_code_alignment",
+    "coverage:tests_evidence:check:model-regression:task-local-model-deepening",
+    "coverage:tests_evidence:check:model-regression:task_local_model_deepening",
+    "coverage:universe",
+    "model_instance:model:guard_closure_contract",
+    "model_instance:model:hierarchical_model_mesh",
+    "model_instance:model:interval_diagnosability",
+    "model_instance:model:model_test_code_alignment",
+    "model_instance:model:task_local_model_deepening",
+    "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+    "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+    "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+    "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+    "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+    "model_relation:relation:system-contains:guard_closure_contract",
+    "model_relation:relation:system-contains:hierarchical_model_mesh",
+    "model_relation:relation:system-contains:interval_diagnosability",
+    "model_relation:relation:system-contains:model_test_code_alignment",
+    "model_relation:relation:system-contains:task_local_model_deepening",
+    "parent_closure:purpose:guard_closure_contract",
+    "parent_closure:purpose:hierarchical_model_mesh",
+    "parent_closure:purpose:interval_diagnosability",
+    "parent_closure:purpose:model_test_code_alignment",
+    "parent_closure:purpose:task_local_model_deepening",
+    "parent_closure:system:flowguard:model-regression-manifest",
+    "root:model:guard_closure_contract"
+  ],
+  "changed_model_ids": [
+    "guard_closure_contract",
+    "hierarchical_model_mesh",
+    "interval_diagnosability",
+    "model_test_code_alignment",
+    "task_local_model_deepening"
+  ],
+  "claim_boundary": "This is a read-only preview derived from the sole observed authority and one stable live manifest candidate. It writes no snapshot, receipt, revision set, lease, lock, or pointer; runs no model or validation owner; and supplies no acceptance, activation, release, or completion evidence.",
+  "intent_input_identity_fingerprint": "sha256:1d48b92bf96a18ba87b44ae307003a61c114b6de22ae0a4dbfb8c85302c6e3d6",
+  "intent_mode": "bootstrap_required",
+  "models_executed": false,
+  "observed_head_fingerprint": "sha256:34054f5606d199df912e96eaffaa8863275e4c192ab562f6dcb927462e041848",
+  "ok": true,
+  "removed_model_ids": [],
+  "replaced_model_ids": [
+    "guard_closure_contract",
+    "interval_diagnosability",
+    "task_local_model_deepening"
+  ],
+  "requested_snapshot_id": "physicsguard-blueprint-v1-current-20260809",
+  "required_command": "model-revision-intent-bootstrap",
+  "required_intent_input_kinds": [
+    "receipt_id",
+    "rationale",
+    "claim_boundary",
+    "current_design_contributions",
+    "legacy_entry_dispositions"
+  ],
+  "required_legacy_intent_entries": [
+    {
+      "contribution_fingerprint": "sha256:63abe03c4ee4b03554cb099b0a942c041ee1c0a025de1abf4a368dc0b94f9966",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:preimplementation",
+      "generation": 6,
+      "revision_set_fingerprint": "sha256:d8b76c04d68e5694009f8d9e93b445f68d88ce006ec33c90c59de8e41b1f499c",
+      "schema": "flowguard.legacy_intent_audit_entry.v1"
+    }
+  ],
+  "required_legacy_intent_entry_count": 1,
+  "required_legacy_intent_entry_inventory_fingerprint": "sha256:a1735e43611d8f894632c772d45e345d1901d7929c8fef09a7a45c9423315142",
+  "required_owner_routes": [
+    "model_mesh_maintenance",
+    "model_test_alignment"
+  ],
+  "required_transition_predecessor_count": 0,
+  "required_transition_predecessor_inventory_fingerprint": "",
+  "required_transition_predecessors": [],
+  "root": "C:\\Users\\liu_y\\Documents\\PhysicGuard_20260501",
+  "schema": "flowguard.model_revision_plan.v2",
+  "snapshot_diff": {
+    "added_ids": [
+      "coverage:code_contracts:contract:purpose:hierarchical_model_mesh",
+      "coverage:code_contracts:contract:purpose:model_test_code_alignment",
+      "coverage:model_instances:hierarchical_model_mesh",
+      "coverage:model_instances:model_test_code_alignment",
+      "coverage:tests_evidence:check:model-regression:guard_closure_contract",
+      "coverage:tests_evidence:check:model-regression:hierarchical_model_mesh",
+      "coverage:tests_evidence:check:model-regression:interval_diagnosability",
+      "coverage:tests_evidence:check:model-regression:model_test_code_alignment",
+      "coverage:tests_evidence:check:model-regression:task_local_model_deepening",
+      "model_instance:model:hierarchical_model_mesh",
+      "model_instance:model:model_test_code_alignment",
+      "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+      "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+      "model_relation:relation:system-contains:hierarchical_model_mesh",
+      "model_relation:relation:system-contains:model_test_code_alignment",
+      "parent_closure:purpose:hierarchical_model_mesh",
+      "parent_closure:purpose:model_test_code_alignment"
+    ],
+    "changed_commitment_ids": [],
+    "changed_contract_ids": [],
+    "changed_coverage_ids": [
+      "coverage:code_contracts:contract:purpose:hierarchical_model_mesh",
+      "coverage:code_contracts:contract:purpose:model_test_code_alignment",
+      "coverage:model_instances:hierarchical_model_mesh",
+      "coverage:model_instances:model_test_code_alignment",
+      "coverage:tests_evidence:check:model-regression:guard-closure",
+      "coverage:tests_evidence:check:model-regression:guard_closure_contract",
+      "coverage:tests_evidence:check:model-regression:hierarchical_model_mesh",
+      "coverage:tests_evidence:check:model-regression:interval-diagnosability",
+      "coverage:tests_evidence:check:model-regression:interval_diagnosability",
+      "coverage:tests_evidence:check:model-regression:model_test_code_alignment",
+      "coverage:tests_evidence:check:model-regression:task-local-model-deepening",
+      "coverage:tests_evidence:check:model-regression:task_local_model_deepening",
+      "coverage:universe"
+    ],
+    "changed_field_ids": [],
+    "changed_gap_ids": [],
+    "changed_owner_artifact_ids": [
+      "parent_closure:purpose:guard_closure_contract",
+      "parent_closure:purpose:hierarchical_model_mesh",
+      "parent_closure:purpose:interval_diagnosability",
+      "parent_closure:purpose:model_test_code_alignment",
+      "parent_closure:purpose:task_local_model_deepening",
+      "parent_closure:system:flowguard:model-regression-manifest"
+    ],
+    "changed_relation_ids": [
+      "relation:model-realizes-purpose:guard_closure_contract",
+      "relation:model-realizes-purpose:hierarchical_model_mesh",
+      "relation:model-realizes-purpose:interval_diagnosability",
+      "relation:model-realizes-purpose:model_test_code_alignment",
+      "relation:model-realizes-purpose:task_local_model_deepening",
+      "relation:system-contains:guard_closure_contract",
+      "relation:system-contains:hierarchical_model_mesh",
+      "relation:system-contains:interval_diagnosability",
+      "relation:system-contains:model_test_code_alignment",
+      "relation:system-contains:task_local_model_deepening"
+    ],
+    "changed_root_ids": [
+      "root:model:guard_closure_contract"
+    ],
+    "changed_side_effect_ids": [],
+    "changed_source_surface_ids": [],
+    "changed_system_property_ids": [
+      "system_property:subject_revision"
+    ],
+    "changed_test_ids": [],
+    "fingerprint_changed_ids": [
+      "coverage:universe",
+      "model_instance:model:guard_closure_contract",
+      "model_instance:model:interval_diagnosability",
+      "model_instance:model:task_local_model_deepening",
+      "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+      "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+      "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+      "model_relation:relation:system-contains:guard_closure_contract",
+      "model_relation:relation:system-contains:interval_diagnosability",
+      "model_relation:relation:system-contains:task_local_model_deepening",
+      "parent_closure:purpose:guard_closure_contract",
+      "parent_closure:purpose:interval_diagnosability",
+      "parent_closure:purpose:task_local_model_deepening",
+      "parent_closure:system:flowguard:model-regression-manifest",
+      "root:model:guard_closure_contract"
+    ],
+    "members": [
+      {
+        "base_instance_fingerprint": "sha256:160acf750ab6427db5eb01110783690d889f1dd8e1d5bd01fea93354eca849e3",
+        "candidate_instance_fingerprint": "sha256:bb9b40655b7bfa411bd1849d4188ece254b48be64a7b98c11ed4f01845826db7",
+        "changed_element_ids": [
+          "model_instance:model:guard_closure_contract"
+        ],
+        "member_id": "guard_closure_contract",
+        "operation": "replace",
+        "schema": "flowguard.model_revision_member.v1"
+      },
+      {
+        "base_instance_fingerprint": "",
+        "candidate_instance_fingerprint": "sha256:a36bd5895b0d4fef11b75b102d7863183416780afcd71ef79916bc34dd6e1127",
+        "changed_element_ids": [
+          "model_instance:model:hierarchical_model_mesh"
+        ],
+        "member_id": "hierarchical_model_mesh",
+        "operation": "add",
+        "schema": "flowguard.model_revision_member.v1"
+      },
+      {
+        "base_instance_fingerprint": "sha256:187a37b6734818220021beddef3b0a28e7d5f4a78ac99d0f22f820326b19805c",
+        "candidate_instance_fingerprint": "sha256:92efe625000cfd52f0962c24efc2c8a40f8b5d2817ebeef3455f6443c74872db",
+        "changed_element_ids": [
+          "model_instance:model:interval_diagnosability"
+        ],
+        "member_id": "interval_diagnosability",
+        "operation": "replace",
+        "schema": "flowguard.model_revision_member.v1"
+      },
+      {
+        "base_instance_fingerprint": "",
+        "candidate_instance_fingerprint": "sha256:afe60fb5b579cd98253645b4d39ce11f861ae1c9121ea43db8b30541d5b60b77",
+        "changed_element_ids": [
+          "model_instance:model:model_test_code_alignment"
+        ],
+        "member_id": "model_test_code_alignment",
+        "operation": "add",
+        "schema": "flowguard.model_revision_member.v1"
+      },
+      {
+        "base_instance_fingerprint": "sha256:6a2f03d79c91e1f01fdee06f8ba172d6897f850426fda7d0b7a2f2e3bf2278b9",
+        "candidate_instance_fingerprint": "sha256:2ae2461dc1c198da8d67f120c113ec802effddfabcfaa6eceff172f18819b97a",
+        "changed_element_ids": [
+          "model_instance:model:task_local_model_deepening"
+        ],
+        "member_id": "task_local_model_deepening",
+        "operation": "replace",
+        "schema": "flowguard.model_revision_member.v1"
+      }
+    ],
+    "removed_ids": [
+      "coverage:tests_evidence:check:model-regression:guard-closure",
+      "coverage:tests_evidence:check:model-regression:interval-diagnosability",
+      "coverage:tests_evidence:check:model-regression:task-local-model-deepening"
+    ]
+  },
+  "snapshot_diff_fingerprint": "sha256:7e59789a5ca59f48fbab99cba64e900e67de72252959e5208a1879d4d3dca828",
+  "status": "pass",
+  "writes_performed": false
+}

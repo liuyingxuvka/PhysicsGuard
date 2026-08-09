@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Dataset Validation"
   short_description: "Validate models against exact project datasets"
-  default_prompt: "Use $physicsguard-model-dataset-validation directly for its native PhysicsGuard Model-Dataset Validation route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."
+  default_prompt: "Use $physicsguard-model-dataset-validation directly; consume the current affected or whole blueprint projection and report per-element obligations, validation modes, validity, residual/oracle, evidence fingerprints, and unsupported claims."

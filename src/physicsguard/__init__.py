@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.15.1"
+__version__ = "0.15.3"
 
 from physicsguard.core.signal_mapping import (
     BugFamilyFollowUp,
@@ -15,6 +15,7 @@ from physicsguard.core.signal_mapping import (
     build_signal_mapping_ledger,
     derive_bug_family_followups,
     mapping_warnings,
+    review_signal_mapping_ledger,
 )
 from physicsguard.core.data_file_manifest import (
     field_signature_hash,
@@ -30,6 +31,20 @@ from physicsguard.core.dataset_identity import check_logical_dataset_record, che
 from physicsguard.core.evidence_mesh import check_evidence_mesh
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.model_library import check_model_library_index
+from physicsguard.core.physical_model_blueprint import review_physical_model_blueprint
+from physicsguard.core.physical_blueprint_trace import (
+    affected_physical_blueprint_projection,
+    full_physical_blueprint_projection,
+    reverse_trace_physical_blueprint_projection,
+    summary_physical_blueprint_projection,
+)
+from physicsguard.core.physical_blueprint_bundle import (
+    build_module_behavior_contract_index,
+    build_physical_blueprint_export_bundle,
+    load_physical_blueprint_export_bundle,
+    materialize_physical_blueprint_export_bundle,
+    query_physical_blueprint_export_bundle,
+)
 from physicsguard.core.project_closure import run_project_closure
 from physicsguard.core.project_evidence import (
     build_project_evidence_map,
@@ -37,6 +52,7 @@ from physicsguard.core.project_evidence import (
     check_evidence_gaps,
     check_project_evidence_registry,
     scan_project_evidence_candidates,
+    review_project_profile_authority,
 )
 from physicsguard.core.task_local_revision import (
     evaluate_candidate_model_revision,
@@ -48,6 +64,16 @@ from physicsguard.core.diagnosability import (
     evaluate_diagnosability,
     evaluate_interval_residual,
 )
+from physicsguard.schema.physical_model_blueprint import (
+    PhysicalModelBlueprint,
+    PhysicalModelBlueprintReview,
+    TargetInventoryAuthority,
+)
+from physicsguard.schema.physical_blueprint_bundle import (
+    ModuleBehaviorContractIndex,
+    PhysicalBlueprintExportBundle,
+    PortableBundleQueryResult,
+)
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -57,7 +83,11 @@ __all__ = [
     "DiagnosticReporter",
     "ResidualDiagnostic",
     "SignalMappingRecord",
+    "TargetInventoryAuthority",
     "build_signal_mapping_ledger",
+    "build_module_behavior_contract_index",
+    "build_physical_blueprint_export_bundle",
+    "affected_physical_blueprint_projection",
     "build_project_evidence_map",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
@@ -71,11 +101,19 @@ __all__ = [
     "check_test_file_relation_index",
     "derive_bug_family_followups",
     "field_signature_hash",
+    "full_physical_blueprint_projection",
     "generate_delimited_manifest",
     "mapping_warnings",
+    "review_signal_mapping_ledger",
+    "PhysicalModelBlueprint",
+    "PhysicalModelBlueprintReview",
+    "PhysicalBlueprintExportBundle",
+    "ModuleBehaviorContractIndex",
+    "PortableBundleQueryResult",
     "run_project_closure",
     "sha256_file",
     "scan_project_evidence_candidates",
+    "review_project_profile_authority",
     "validate_model_dataset",
     "evaluate_candidate_model_revision",
     "evaluate_hypothesis_observation",
@@ -83,6 +121,12 @@ __all__ = [
     "evaluate_interval_residual",
     "freeze_hypothesis_plan",
     "rank_observation_candidates",
+    "reverse_trace_physical_blueprint_projection",
+    "review_physical_model_blueprint",
+    "summary_physical_blueprint_projection",
+    "load_physical_blueprint_export_bundle",
+    "materialize_physical_blueprint_export_bundle",
+    "query_physical_blueprint_export_bundle",
 ]
 
 _DIAGNOSTIC_EXPORTS = set(__all__)

@@ -1,0 +1,47 @@
+schema: physicsguard.project_formula.v1
+module_type: TorqueSpeedPowerModule
+owner: physicsguard.module_semantics.mechanical_draft.TorqueSpeedPowerModule
+purpose: Mechanically describe the current rotational torque-speed power relation and exact scenario roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale_W, dimension: power, unit: W, required: false, default: 1000.0, constraints: [residual_scale_W > 0]}
+scenario_inputs:
+  - {name: torque_Nm, dimension: torque, unit: N*m}
+  - {name: omega_rad_s, dimension: angular_velocity, unit: rad/s}
+scenario_outputs:
+  - {name: P_W, dimension: power, unit: W}
+residuals:
+  - name: torque_speed_power
+    expression: P_W - torque_Nm * omega_rad_s
+    dimension: power
+    unit: W
+    dimensional_derivation: Newton-metres times radians per second yields watts when radians are dimensionless.
+    scale_expression: residual_scale_W
+    zero_condition: Power equals torque times angular speed under the current sign convention.
+    source_intermediates:
+      - {symbol: torque, expression: torque_Nm}
+      - {symbol: omega, expression: omega_rad_s}
+      - {symbol: power, expression: P_W}
+constraints:
+  constructor:
+    - {predicate: residual_scale_W > 0, guard_signature: "_positive_float(parameters.get('residual_scale_W', 1000.0), 'residual_scale_W')", failure_type: ValueError, message_selector: residual_scale_W, on_violation: Reject non-positive power normalization., cases: [{kind: inside, inputs: {residual_scale_W: 1000.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_W: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: residual_scale_W > 0, meaning: Current rotational power audit with positive normalization., cases: [{kind: inside, inputs: {residual_scale_W: 1000.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_W: -1.0}, expected: fail}]}
+  invalid:
+    - {predicate: residual_scale_W <= 0, meaning: Invalid power normalization., cases: [{kind: inside, inputs: {residual_scale_W: -1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 0.0}, expected: pass}, {kind: outside, inputs: {residual_scale_W: 1000.0}, expected: fail}]}
+assumptions: [Algebraic rotational power check only, Torque and angular speed share the current sign convention, No drivetrain losses are represented]
+validity: [Use only for the exact current low-fidelity relation]
+invariants: [Torque and angular speed are read-only and power is checked without mutation]
+effects: [Emit one torque_speed_power residual]
+postconditions: [Residual equals power minus torque times angular speed]
+termination: One multiplication and subtraction terminate.
+oracle_cases:
+  - {case_id: balanced, inputs: {torque_Nm: 100.0, omega_rad_s: 100.0, P_W: 10000.0, residual_scale_W: 1000.0}, expected: {torque_speed_power: 0.0}, tolerance: 1.0e-09}
+  - {case_id: power_offset, inputs: {torque_Nm: 100.0, omega_rad_s: 100.0, P_W: 9000.0, residual_scale_W: 1000.0}, expected: {torque_speed_power: -1000.0}, tolerance: 1.0e-09}
+claim_boundary: This current algebraic draft does not validate drivetrain losses, sign convention, torque data, angular speed data, or physical correctness.

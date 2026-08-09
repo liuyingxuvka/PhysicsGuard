@@ -9,7 +9,7 @@ from typing import Any, Iterable, Optional
 import yaml
 
 from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
-from physicsguard.io.test_file_contract_loader import load_project_evidence_registry, load_yaml_mapping
+from physicsguard.io.test_file_contract_loader import load_project_evidence_registry, load_spec, load_yaml_mapping
 from physicsguard.schema.project_evidence import (
     ArtifactKind,
     BindingExpectationSpec,
@@ -19,6 +19,7 @@ from physicsguard.schema.project_evidence import (
     EvidenceGapSpec,
     GapSeverity,
     ProjectEvidenceRegistrySpec,
+    ProjectProfileAuthoritySpec,
 )
 
 
@@ -90,6 +91,70 @@ class ProjectEvidenceMapReport:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+def review_project_profile_authority(path: str | Path) -> ContractReview:
+    """Review one standalone profile authority without borrowing registry identity."""
+
+    profile_path = Path(path)
+    authority = load_spec(profile_path, ProjectProfileAuthoritySpec)
+    profile = authority.profile
+    findings: list[ContractFinding] = []
+    if profile.project_name is None:
+        findings.append(
+            ContractFinding(
+                severity="warning" if profile.project_name_unknown_reason else "error",
+                type="project_profile_project_name_unknown",
+                message=profile.project_name_unknown_reason or "project name is absent without an unknown reason",
+                target=authority.profile_id,
+            )
+        )
+    if profile.run_period.unknown_reason:
+        findings.append(
+            ContractFinding(
+                severity="warning",
+                type="project_profile_run_period_unknown",
+                message=profile.run_period.unknown_reason,
+                target=authority.profile_id,
+            )
+        )
+    if not profile.locations:
+        findings.append(
+            ContractFinding(
+                severity="warning" if profile.location_unknown_reason else "error",
+                type="project_profile_location_unknown",
+                message=profile.location_unknown_reason or "project location is absent without an unknown reason",
+                target=authority.profile_id,
+            )
+        )
+    if not profile.source_refs:
+        findings.append(
+            ContractFinding(
+                severity="warning",
+                type="project_profile_source_missing",
+                message="standalone project profile has no source reference",
+                target=authority.profile_id,
+            )
+        )
+    status = (
+        "fail"
+        if any(item.severity == "error" for item in findings)
+        else ("partial" if findings else "pass")
+    )
+    return ContractReview(
+        artifact_kind="project_profile_authority_review",
+        status=status,
+        ok=status == "pass",
+        findings=findings,
+        summary={
+            "profile_id": authority.profile_id,
+            "target_system_id": authority.target_system_id,
+            "subject_revision": authority.subject_revision,
+            "profile_fingerprint": authority.profile_fingerprint,
+            "finding_count": len(findings),
+        },
+        next_actions=([] if status == "pass" else ["resolve project-profile identity or evidence gaps"]),
+    )
 
 
 def check_project_evidence_registry(path: str | Path) -> ContractReview:

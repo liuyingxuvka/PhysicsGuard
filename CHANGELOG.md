@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.15.3 - 2026-08-09
+
+- Complete the PhysicsGuard family self-DNA spine with current model, code,
+  test, physical-blueprint, and installation bindings.
+
+## v0.15.2 - 2026-08-08
+
+- Synchronized the current PhysicsGuard package, model-regression identities, and maintained-skill contracts for the patch release.
+- Added the hierarchical model-mesh and model/test-alignment governance models to the current regression spine.
+
 ## v0.15.1 - 2026-08-01
 
 - Make all ten maintained PhysicsGuard skills narrow independent entrypoints;

@@ -4,6 +4,12 @@ Use this route after model-dataset validation reports exist. The model library
 is an evidence index, not a raw-data database and not proof of universal model
 validity.
 
+## Blueprint reuse projection
+
+Index and select by exact current blueprint fingerprint, physical obligation, target profile, validity boundary, testbench, native validation receipt, and verified reuse limit. Summary supports discovery; affected supports one bounded reuse decision; full is reserved for whole-target qualification. Loose similarity, matching names, or an old validation report is not compatibility. Missing/stale projection identity blocks without scanning or validating unrelated assets.
+
+Executable projection entry: use `physicsguard.summary_physical_blueprint_projection(blueprint, review)` for discovery, `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for one reuse decision, and `physicsguard.full_physical_blueprint_projection(blueprint, review)` only for explicit whole-target qualification. The affected query reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result before licensing the bounded reuse scope.
+
 For cross-project discovery, historical search, or "which projects/models have
 we tested before" questions, do not answer from one model library index alone.
 Model libraries can provide provider evidence to an external database ledger,

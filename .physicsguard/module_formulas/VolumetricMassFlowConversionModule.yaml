@@ -1,0 +1,47 @@
+schema: physicsguard.project_formula.v1
+module_type: VolumetricMassFlowConversionModule
+owner: physicsguard.module_semantics.mechanical_draft.VolumetricMassFlowConversionModule
+purpose: Mechanically describe the current constant-density volumetric-to-mass-flow relation and exact scenario roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: rho_kg_m3, dimension: density, unit: kg/m^3, required: true, default: null, constraints: [rho_kg_m3 > 0]}
+  - {name: residual_scale_kg_s, dimension: mass_flow, unit: kg/s, required: false, default: 0.01, constraints: [residual_scale_kg_s > 0]}
+scenario_inputs:
+  - {name: V_dot_m3_s, dimension: volume_flow, unit: m^3/s}
+scenario_outputs:
+  - {name: m_dot_kg_s, dimension: mass_flow, unit: kg/s}
+residuals:
+  - name: volumetric_mass_flow_conversion
+    expression: m_dot_kg_s - rho_kg_m3 * V_dot_m3_s
+    dimension: mass_flow
+    unit: kg/s
+    dimensional_derivation: Kilograms per cubic metre times cubic metres per second yields kilograms per second.
+    scale_expression: residual_scale_kg_s
+    zero_condition: Mass flow equals constant density times volumetric flow.
+    source_intermediates:
+      - {symbol: m_dot, expression: m_dot_kg_s}
+      - {symbol: v_dot, expression: V_dot_m3_s}
+constraints:
+  constructor:
+    - {predicate: rho_kg_m3 > 0, guard_signature: "required_positive(parameters, 'rho_kg_m3')", failure_type: ValueError, message_selector: rho_kg_m3, on_violation: Reject missing or non-positive density., cases: [{kind: inside, inputs: {rho_kg_m3: 1000.0}, expected: pass}, {kind: boundary, inputs: {rho_kg_m3: 0.0}, expected: fail}, {kind: outside, inputs: {rho_kg_m3: -1.0}, expected: fail}]}
+    - {predicate: residual_scale_kg_s > 0, guard_signature: "positive_float(parameters.get('residual_scale_kg_s', 0.01), 'residual_scale_kg_s')", failure_type: ValueError, message_selector: residual_scale_kg_s, on_violation: Reject non-positive mass-flow normalization., cases: [{kind: inside, inputs: {residual_scale_kg_s: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg_s: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_kg_s: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "rho_kg_m3 > 0 and residual_scale_kg_s > 0", meaning: Positive constant density and mass-flow normalization., cases: [{kind: inside, inputs: {rho_kg_m3: 1000.0, residual_scale_kg_s: 0.01}, expected: pass}, {kind: boundary, inputs: {rho_kg_m3: 0.0, residual_scale_kg_s: 0.01}, expected: fail}, {kind: outside, inputs: {rho_kg_m3: -1.0, residual_scale_kg_s: 0.01}, expected: fail}]}
+  invalid:
+    - {predicate: "rho_kg_m3 <= 0 or residual_scale_kg_s <= 0", meaning: Invalid density or mass-flow normalization., cases: [{kind: inside, inputs: {rho_kg_m3: -1.0, residual_scale_kg_s: 0.01}, expected: pass}, {kind: boundary, inputs: {rho_kg_m3: 0.0, residual_scale_kg_s: 0.01}, expected: pass}, {kind: outside, inputs: {rho_kg_m3: 1000.0, residual_scale_kg_s: 0.01}, expected: fail}]}
+assumptions: [Constant density, No compressibility or multiphase flow, Flow directions use the current sign convention]
+validity: [Use only for the exact current low-fidelity conversion]
+invariants: [Volumetric flow is read-only and mass flow is checked without mutation]
+effects: [Emit one volumetric_mass_flow_conversion residual]
+postconditions: [Residual equals mass flow minus density times volumetric flow]
+termination: One multiplication and subtraction terminate.
+oracle_cases:
+  - {case_id: balanced, inputs: {rho_kg_m3: 1000.0, V_dot_m3_s: 0.001, m_dot_kg_s: 1.0, residual_scale_kg_s: 0.01}, expected: {volumetric_mass_flow_conversion: 0.0}, tolerance: 1.0e-12}
+  - {case_id: mass_flow_offset, inputs: {rho_kg_m3: 1000.0, V_dot_m3_s: 0.001, m_dot_kg_s: 0.9, residual_scale_kg_s: 0.01}, expected: {volumetric_mass_flow_conversion: -0.1}, tolerance: 1.0e-12}
+claim_boundary: This constant-density arithmetic draft does not validate density data, compressibility, phase behavior, flow sign convention, or physical correctness.

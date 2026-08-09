@@ -10,6 +10,12 @@ from physicsguard.core.solver import BoundedSolver, SolverResult
 from physicsguard.schema.system_spec import SystemSpec
 
 
+def assert_allclose(actual: np.ndarray, expected: np.ndarray) -> None:
+    """Keep the numerical oracle explicit in the project test model."""
+
+    np.testing.assert_allclose(actual, expected)
+
+
 def make_system(data: dict) -> SystemSpec:
     return SystemSpec.model_validate(data)
 
@@ -174,7 +180,7 @@ def test_solver_passes_variable_scales_as_x_scale(monkeypatch) -> None:
 
     monkeypatch.setattr(solver_module, "least_squares", fake_least_squares)
     BoundedSolver(ResidualBuilder(spec), spec.solver).solve()
-    np.testing.assert_allclose(observed["x_scale"], np.array([3.0]))
+    assert_allclose(observed["x_scale"], np.array([3.0]))
 
 
 def test_linear_relation_module_solves_y_equals_ax_plus_b() -> None:

@@ -2,6 +2,58 @@
   "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
   "artifact_role": "family_baseline_regression",
   "target_skill_id": "physicsguard-audit-closure",
+  "blueprint_route_contract_fingerprint": "305F138B908EE4ADB0EFB79DBA347DEF54B198E553650E1CCEDAEC0A28651220",
+  "blueprint_cases": [
+    {
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_projection_missing_stale_foreign_or_ambiguous",
+      "trigger_condition": "a required blueprint projection or its blueprint, review, relation-set, recipe, target-revision, or evidence fingerprint is missing, stale, foreign, ambiguous, or caller-rehashed",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_projection_missing_stale_foreign_or_ambiguous",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_authority_boundary_violated",
+      "trigger_condition": "any route other than the sole author/full reviewer authors or fully reviews the blueprint",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_authority_boundary_violated",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_required_obligation_unproved",
+      "trigger_condition": "any route-specific blueprint obligation lacks current target-native evidence or is replaced by AI prose or a self-declared pass",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_required_obligation_unproved",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_gap_or_claim_boundary_unreconciled",
+      "trigger_condition": "the first gap, outside-scope branch, unsupported claim, closure handoff, or bounded claim required by this route is omitted or promoted to pass",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_gap_or_claim_boundary_unreconciled",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_bundle_presence_promoted_to_closure",
+      "trigger_condition": "bundle presence, bundle load, or an AI answer is treated as current evidence, native execution, high-fidelity reconstruction, or closure",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_bundle_presence_promoted_to_closure",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_frozen_case_promoted_to_current_execution",
+      "trigger_condition": "a frozen case pass from the portable bundle is reported as current target-native execution or fresh validation",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_frozen_case_promoted_to_current_execution",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_identity_only_terminal_promoted",
+      "trigger_condition": "portable_query_identity_only_terminal is omitted, repaired by scanning, or promoted to resolved content",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_identity_only_terminal_promoted",
+      "self_reported_outcome_allowed": false
+    }
+  ],
   "cases": [
     {
       "case_id": "known-bad:blocker-suppressed",

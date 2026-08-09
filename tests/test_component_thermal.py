@@ -42,7 +42,6 @@ def test_radiator_simple_zero_residual_and_invalid_parameters() -> None:
             "m.T_coolant_out_K": 320.0,
             "m.T_air_in_K": 300.0,
             "m.Q_rejected_W": 10000.0,
-            "m.fan_power_W": 0.0,
         },
     )
     assert all(record.value == pytest.approx(0.0) for record in records)

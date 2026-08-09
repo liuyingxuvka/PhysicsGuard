@@ -19,16 +19,48 @@ def run_template(slug: str, name: str):
     return HierarchicalAuditRunner(spec).run(top_n_residuals=20, top_n_blocks=10)
 
 
-@pytest.mark.parametrize("pack", PACKS)
-def test_expanded_domain_level_0_templates_pass(pack: dict[str, object]) -> None:
+@pytest.mark.parametrize(
+    "pack_slug",
+    [
+        "cross_domain_audit_primitives",
+        "oil_gas_pipeline_storage",
+        "water_supply_network",
+        "manufacturing_thermal_process",
+        "mining_metallurgy",
+        "combustion_boiler_furnace",
+        "geothermal_underground_wells",
+        "cold_chain_logistics",
+        "robotics_mechatronics",
+        "aerospace_satellite_thermal",
+        "medical_bioprocess_equipment",
+    ],
+)
+def test_expanded_domain_level_0_templates_pass(pack_slug: str) -> None:
+    pack = next(item for item in PACKS if item["slug"] == pack_slug)
     report = run_template(pack["slug"], pack["level0"])
     assert report.optimization_success
     assert report.audit_pass
     assert report.top_blocks[0].block_id == pack["root"]
 
 
-@pytest.mark.parametrize("pack", PACKS)
-def test_expanded_domain_level_0_conflicts_recommend_refinement(pack: dict[str, object]) -> None:
+@pytest.mark.parametrize(
+    "pack_slug",
+    [
+        "cross_domain_audit_primitives",
+        "oil_gas_pipeline_storage",
+        "water_supply_network",
+        "manufacturing_thermal_process",
+        "mining_metallurgy",
+        "combustion_boiler_furnace",
+        "geothermal_underground_wells",
+        "cold_chain_logistics",
+        "robotics_mechatronics",
+        "aerospace_satellite_thermal",
+        "medical_bioprocess_equipment",
+    ],
+)
+def test_expanded_domain_level_0_conflicts_recommend_refinement(pack_slug: str) -> None:
+    pack = next(item for item in PACKS if item["slug"] == pack_slug)
     report = run_template(pack["slug"], pack["conflict"])
     assert report.optimization_success
     assert not report.audit_pass
@@ -38,8 +70,24 @@ def test_expanded_domain_level_0_conflicts_recommend_refinement(pack: dict[str, 
     assert report.recommended_refinements
 
 
-@pytest.mark.parametrize("pack", PACKS)
-def test_expanded_domain_level_1_templates_pass(pack: dict[str, object]) -> None:
+@pytest.mark.parametrize(
+    "pack_slug",
+    [
+        "cross_domain_audit_primitives",
+        "oil_gas_pipeline_storage",
+        "water_supply_network",
+        "manufacturing_thermal_process",
+        "mining_metallurgy",
+        "combustion_boiler_furnace",
+        "geothermal_underground_wells",
+        "cold_chain_logistics",
+        "robotics_mechatronics",
+        "aerospace_satellite_thermal",
+        "medical_bioprocess_equipment",
+    ],
+)
+def test_expanded_domain_level_1_templates_pass(pack_slug: str) -> None:
+    pack = next(item for item in PACKS if item["slug"] == pack_slug)
     report = run_template(pack["slug"], pack["level1"])
     assert report.optimization_success
     assert report.audit_pass
@@ -47,8 +95,24 @@ def test_expanded_domain_level_1_templates_pass(pack: dict[str, object]) -> None
     assert set(pack["blocks"]).issubset(block_ids)
 
 
-@pytest.mark.parametrize("pack", PACKS)
-def test_expanded_domain_templates_use_real_mapped_or_signal_modules(pack: dict[str, object]) -> None:
+@pytest.mark.parametrize(
+    "pack_slug",
+    [
+        "cross_domain_audit_primitives",
+        "oil_gas_pipeline_storage",
+        "water_supply_network",
+        "manufacturing_thermal_process",
+        "mining_metallurgy",
+        "combustion_boiler_furnace",
+        "geothermal_underground_wells",
+        "cold_chain_logistics",
+        "robotics_mechatronics",
+        "aerospace_satellite_thermal",
+        "medical_bioprocess_equipment",
+    ],
+)
+def test_expanded_domain_templates_use_real_mapped_or_signal_modules(pack_slug: str) -> None:
+    pack = next(item for item in PACKS if item["slug"] == pack_slug)
     for path in (BASE / pack["slug"]).glob("*.yaml"):
         text = path.read_text(encoding="utf-8")
         assert "DummyResidualModule" not in text

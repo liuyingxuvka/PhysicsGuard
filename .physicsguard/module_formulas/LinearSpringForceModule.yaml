@@ -1,0 +1,36 @@
+schema: physicsguard.project_formula.v1
+module_type: LinearSpringForceModule
+owner: physicsguard.project_formula.linear_spring_force.v1
+purpose: Independently state the bounded Hooke-law force relation used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: stiffness_N_m, dimension: specific_stiffness, unit: N/m, required: true, default: null, constraints: [stiffness_N_m >= 0]}
+  - {name: residual_scale_N, dimension: force, unit: N, required: false, default: 1.0, constraints: [residual_scale_N > 0]}
+scenario_inputs: [{name: displacement_m, dimension: displacement, unit: m}]
+scenario_outputs: [{name: force_N, dimension: force, unit: N}]
+residuals:
+  - name: linear_spring_force
+    expression: force_N - stiffness_N_m * displacement_m
+    dimension: force
+    unit: N
+    dimensional_derivation: N/m multiplied by m equals N, matching the force term.
+    scale_expression: residual_scale_N
+    zero_condition: Spring force equals stiffness multiplied by displacement under one sign convention.
+    source_intermediates: [{symbol: displacement, expression: displacement_m}, {symbol: force, expression: force_N}]
+constraints:
+  constructor:
+    - {predicate: stiffness_N_m >= 0, guard_signature: "nonnegative_float(required(parameters, 'stiffness_N_m'), 'stiffness_N_m')", failure_type: ValueError, message_selector: stiffness_N_m, on_violation: Reject negative stiffness_N_m., cases: [{kind: inside, inputs: {stiffness_N_m: 100.0}, expected: pass}, {kind: boundary, inputs: {stiffness_N_m: 0.0}, expected: pass}, {kind: outside, inputs: {stiffness_N_m: -1.0}, expected: fail}]}
+    - {predicate: residual_scale_N > 0, guard_signature: "positive_float(parameters.get('residual_scale_N', 1.0), 'residual_scale_N')", failure_type: ValueError, message_selector: residual_scale_N, on_violation: Reject non-positive residual_scale_N., cases: [{kind: inside, inputs: {residual_scale_N: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_N: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_N: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "stiffness_N_m >= 0 and residual_scale_N > 0", meaning: Linear signed force-displacement region with nonnegative stiffness and positive normalization., cases: [{kind: inside, inputs: {stiffness_N_m: 100.0, residual_scale_N: 1.0}, expected: pass}, {kind: boundary, inputs: {stiffness_N_m: 0.0, residual_scale_N: 1.0}, expected: pass}, {kind: outside, inputs: {stiffness_N_m: -1.0, residual_scale_N: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "stiffness_N_m < 0 or residual_scale_N <= 0", meaning: Invalid negative stiffness or non-positive normalization., cases: [{kind: inside, inputs: {stiffness_N_m: -1.0, residual_scale_N: 1.0}, expected: pass}, {kind: boundary, inputs: {stiffness_N_m: 0.0, residual_scale_N: 1.0}, expected: fail}, {kind: outside, inputs: {stiffness_N_m: 100.0, residual_scale_N: 1.0}, expected: fail}]}
+assumptions: [Linear stiffness, No preload unless separately modeled, No damping hysteresis or nonlinear stiffness]
+validity: [Displacement and force use one signed axis, Scenario roles are one boundary assignment]
+oracle_cases:
+  - {case_id: balanced, inputs: {stiffness_N_m: 100.0, residual_scale_N: 1.0, displacement_m: 0.1, force_N: 10.0}, expected: {linear_spring_force: 0.0}, tolerance: 1e-12}
+  - {case_id: force_offset, inputs: {stiffness_N_m: 100.0, residual_scale_N: 1.0, displacement_m: 0.1, force_N: 9.0}, expected: {linear_spring_force: -1.0}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity linear spring relation, not a preload damping hysteresis or nonlinear material model.

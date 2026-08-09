@@ -1,0 +1,47 @@
+schema: physicsguard.project_formula.v1
+module_type: RatioModule
+owner: physicsguard.module_semantics.mechanical_draft.RatioModule
+purpose: Mechanically describe the exact mass-flow ratio audit over three externally observed values.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [residual_scale > 0]}
+  - {name: denominator_min_abs, dimension: mass_flow, unit: kg/s, required: false, default: 1.0e-12, constraints: [denominator_min_abs > 0]}
+scenario_inputs:
+  - {name: numerator, dimension: mass_flow, unit: kg/s, source_kind: external, source_attribute: numerator_variable, source_reference: drainage_return_mass_flow.value}
+  - {name: denominator, dimension: mass_flow, unit: kg/s, source_kind: external, source_attribute: denominator_variable, source_reference: irrigation_supply_mass_flow.value}
+  - {name: output, dimension: dimensionless, unit: '1', source_kind: external, source_attribute: output_variable, source_reference: drainage_return_fraction.value}
+scenario_outputs: []
+residuals:
+  - name: ratio_relation
+    expression: output - numerator / denominator
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: kg per second divided by kg per second is dimensionless.
+    scale_expression: residual_scale
+    zero_condition: The observed output equals numerator divided by denominator outside the deadband.
+    source_intermediates: []
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive normalization., cases: [{kind: inside, inputs: {residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+    - {predicate: denominator_min_abs > 0, guard_signature: "_positive_float(parameters.get('denominator_min_abs', 1e-12), 'denominator_min_abs')", failure_type: ValueError, message_selector: denominator_min_abs, on_violation: Reject non-positive denominator protection., cases: [{kind: inside, inputs: {denominator_min_abs: 1.0e-12}, expected: pass}, {kind: boundary, inputs: {denominator_min_abs: 0.0}, expected: fail}, {kind: outside, inputs: {denominator_min_abs: -1.0}, expected: fail}]}
+  evaluation:
+    - {predicate: "abs(denominator) >= denominator_min_abs", guard_signature: "if abs(denominator) < self.denominator_min_abs", failure_type: ValueError, message_selector: denominator_min_abs, on_violation: Reject a denominator inside the protected deadband., cases: [{kind: inside, inputs: {denominator: 10.0, denominator_min_abs: 1.0e-12}, expected: pass}, {kind: boundary, inputs: {denominator: 1.0e-12, denominator_min_abs: 1.0e-12}, expected: pass}, {kind: outside, inputs: {denominator: 0.0, denominator_min_abs: 1.0e-12}, expected: fail}]}
+regions:
+  valid:
+    - {predicate: "abs(denominator) >= denominator_min_abs and residual_scale > 0", meaning: Exact current ratio audit outside the protected denominator deadband., cases: [{kind: inside, inputs: {denominator: 10.0, denominator_min_abs: 1.0e-12, residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {denominator: 1.0e-12, denominator_min_abs: 1.0e-12, residual_scale: 0.01}, expected: pass}, {kind: outside, inputs: {denominator: 0.0, denominator_min_abs: 1.0e-12, residual_scale: 0.01}, expected: fail}]}
+  invalid:
+    - {predicate: "abs(denominator) < denominator_min_abs or residual_scale <= 0", meaning: Unsafe denominator or unusable normalization., cases: [{kind: inside, inputs: {denominator: 0.0, denominator_min_abs: 1.0e-12, residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {denominator: 1.0e-12, denominator_min_abs: 1.0e-12, residual_scale: 0.01}, expected: fail}, {kind: outside, inputs: {denominator: 10.0, denominator_min_abs: 1.0e-12, residual_scale: 0.01}, expected: fail}]}
+assumptions: [Numerator and denominator use the same mass-flow unit, All three references resolve in the exact example]
+validity: [Use only outside the protected denominator deadband, Treat all referenced variables as read-only observations]
+invariants: [The relation remains direction-neutral]
+effects: [Emit one ratio_relation residual]
+postconditions: [Residual equals output minus numerator divided by denominator]
+termination: One protected-denominator branch and finite division terminate.
+oracle_cases:
+  - {case_id: exact_example_zero, inputs: {numerator: 2.5, denominator: 10.0, output: 0.25, residual_scale: 0.01, denominator_min_abs: 1.0e-12}, expected: {ratio_relation: 0.0}, tolerance: 1.0e-12}
+  - {case_id: offset, inputs: {numerator: 2.0, denominator: 10.0, output: 0.25, residual_scale: 0.01, denominator_min_abs: 1.0e-12}, expected: {ratio_relation: 0.05}, tolerance: 1.0e-12}
+claim_boundary: This draft reproduces one current mass-flow ratio check; it does not license a drainage model, a causal interpretation, or independent physical correctness.

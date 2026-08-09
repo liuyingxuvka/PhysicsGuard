@@ -1,0 +1,362 @@
+schema: physicsguard.project_formula.v1
+module_type: FuelCellCathodeAirSupplyModule
+owner: physicsguard.module_semantics.source_first.FuelCellCathodeAirSupplyModule
+purpose: Source-first reconstruction of the exact maintained implementation, configuration, scenario ports, state roles, residuals,
+  and protected failure.
+authoring_status: source_first_reconstruction_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_source_first_reconstruction
+relation_directionality: direction_neutral
+configuration:
+- name: current_initial_guess
+  dimension: electric_current
+  unit: A
+  required: false
+  default: 100.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''current_initial_guess'', 100.0), ''current_initial_guess'')'
+- name: current_lower_bound
+  dimension: electric_current
+  unit: A
+  required: false
+  default: 0.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''current_lower_bound'', 0.0), ''current_lower_bound'')'
+- name: current_scale
+  dimension: electric_current
+  unit: A
+  required: false
+  default: 100.0
+  constraints:
+  - 'Maintained source guard: positive_float(parameters.get(''current_scale'', 100.0), ''current_scale'')'
+- name: current_upper_bound
+  dimension: electric_current
+  unit: A
+  required: false
+  default: 100000.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''current_upper_bound'', 100000.0), ''current_upper_bound'')'
+- name: faradaic_efficiency
+  dimension: dimensionless
+  unit: '1'
+  required: false
+  default: 1.0
+  constraints:
+  - 'Maintained source guard: validate_efficiency(parameters.get(''faradaic_efficiency'', 1.0), ''faradaic_efficiency'')'
+- name: m_dot_air_feed_initial_guess
+  dimension: mass_flow
+  unit: kg/s
+  required: false
+  default: 0.001
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''m_dot_air_feed_initial_guess'', 0.001), ''m_dot_air_feed_initial_guess'')'
+- name: m_dot_air_feed_lower_bound
+  dimension: mass_flow
+  unit: kg/s
+  required: false
+  default: 0.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''m_dot_air_feed_lower_bound'', 0.0), ''m_dot_air_feed_lower_bound'')'
+- name: m_dot_air_feed_scale
+  dimension: mass_flow
+  unit: kg/s
+  required: false
+  default: 1.0
+  constraints:
+  - 'Maintained source guard: positive_float(parameters.get(''m_dot_air_feed_scale'', 1.0), ''m_dot_air_feed_scale'')'
+- name: m_dot_air_feed_upper_bound
+  dimension: mass_flow
+  unit: kg/s
+  required: false
+  default: 10000.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''m_dot_air_feed_upper_bound'', 10000.0), ''m_dot_air_feed_upper_bound'')'
+- name: molar_mass_air_kg_mol
+  dimension: molar_mass
+  unit: kg/mol
+  required: false
+  default: 0.0289652
+  constraints:
+  - 'Maintained source guard: required_positive(parameters, ''molar_mass_air_kg_mol'')'
+- name: n_cells
+  dimension: count
+  unit: count
+  required: true
+  default: null
+  constraints:
+  - 'Maintained source guard: required_positive(parameters, ''n_cells'')'
+- name: n_dot_O2_consumed_initial_guess
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 0.001
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''n_dot_O2_consumed_initial_guess'', 0.001), ''n_dot_O2_consumed_initial_guess'')'
+- name: n_dot_O2_consumed_lower_bound
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 0.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''n_dot_O2_consumed_lower_bound'', 0.0), ''n_dot_O2_consumed_lower_bound'')'
+- name: n_dot_O2_consumed_scale
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 0.001
+  constraints:
+  - 'Maintained source guard: positive_float(parameters.get(''n_dot_O2_consumed_scale'', 0.001), ''n_dot_O2_consumed_scale'')'
+- name: n_dot_O2_consumed_upper_bound
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 1000000.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''n_dot_O2_consumed_upper_bound'', 1000000.0), ''n_dot_O2_consumed_upper_bound'')'
+- name: n_dot_air_feed_initial_guess
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 0.01
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''n_dot_air_feed_initial_guess'', 0.01), ''n_dot_air_feed_initial_guess'')'
+- name: n_dot_air_feed_lower_bound
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 0.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''n_dot_air_feed_lower_bound'', 0.0), ''n_dot_air_feed_lower_bound'')'
+- name: n_dot_air_feed_scale
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 0.001
+  constraints:
+  - 'Maintained source guard: positive_float(parameters.get(''n_dot_air_feed_scale'', 0.001), ''n_dot_air_feed_scale'')'
+- name: n_dot_air_feed_upper_bound
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 1000000.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''n_dot_air_feed_upper_bound'', 1000000.0), ''n_dot_air_feed_upper_bound'')'
+- name: oxygen_mole_fraction
+  dimension: dimensionless
+  unit: '1'
+  required: false
+  default: 0.21
+  constraints:
+  - 'Maintained source guard: validate_fraction_value(parameters.get(''oxygen_mole_fraction'', 0.21), ''oxygen_mole_fraction'',
+    allow_zero=False)'
+- name: oxygen_stoichiometry_initial_guess
+  dimension: dimensionless
+  unit: '1'
+  required: false
+  default: 2.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''oxygen_stoichiometry_initial_guess'', 2.0), ''oxygen_stoichiometry_initial_guess'')'
+- name: oxygen_stoichiometry_lower_bound
+  dimension: dimensionless
+  unit: '1'
+  required: false
+  default: 0.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''oxygen_stoichiometry_lower_bound'', 0.0), ''oxygen_stoichiometry_lower_bound'')'
+- name: oxygen_stoichiometry_scale
+  dimension: dimensionless
+  unit: '1'
+  required: false
+  default: 1.0
+  constraints:
+  - 'Maintained source guard: positive_float(parameters.get(''oxygen_stoichiometry_scale'', 1.0), ''oxygen_stoichiometry_scale'')'
+- name: oxygen_stoichiometry_upper_bound
+  dimension: dimensionless
+  unit: '1'
+  required: false
+  default: 100.0
+  constraints:
+  - 'Maintained source guard: finite_float(parameters.get(''oxygen_stoichiometry_upper_bound'', 100.0), ''oxygen_stoichiometry_upper_bound'')'
+- name: residual_scale_kg_s
+  dimension: mass_flow
+  unit: kg/s
+  required: false
+  default: 0.001
+  constraints:
+  - 'Maintained source guard: positive_float(parameters.get(''residual_scale_kg_s'', 0.001), ''residual_scale_kg_s'')'
+- name: residual_scale_mol_s
+  dimension: molar_flow
+  unit: mol/s
+  required: false
+  default: 0.001
+  constraints:
+  - 'Maintained source guard: positive_float(parameters.get(''residual_scale_mol_s'', 0.001), ''residual_scale_mol_s'')'
+scenario_inputs:
+- name: current_A
+  dimension: electric_current
+  unit: A
+  role: input
+- name: oxygen_stoichiometry
+  dimension: dimensionless
+  unit: '1'
+  role: input
+scenario_outputs:
+- name: n_dot_O2_consumed_mol_s
+  dimension: molar_flow
+  unit: mol/s
+  role: output
+- name: n_dot_air_feed_mol_s
+  dimension: molar_flow
+  unit: mol/s
+  role: output
+- name: m_dot_air_feed_kg_s
+  dimension: mass_flow
+  unit: kg/s
+  role: output
+residuals:
+- name: fc_cathode_o2_consumption
+  expression: n_dot_O2_consumed_mol_s - faradaic_efficiency * n_cells * current_A / (4.0 * 96485.33212)
+  dimension: molar_flow
+  unit: mol/s
+  dimensional_derivation: The exact maintained-source relation is normalized in mol/s; physical meaning remains pending separate
+    review.
+  scale_expression: residual_scale_mol_s
+  zero_condition: The exact source-first relation fc_cathode_o2_consumption evaluates to zero.
+- name: fc_cathode_air_molar_feed
+  expression: n_dot_air_feed_mol_s - oxygen_stoichiometry * n_dot_O2_consumed_mol_s / oxygen_mole_fraction
+  dimension: molar_flow
+  unit: mol/s
+  dimensional_derivation: The exact maintained-source relation is normalized in mol/s; physical meaning remains pending separate
+    review.
+  scale_expression: residual_scale_mol_s
+  zero_condition: The exact source-first relation fc_cathode_air_molar_feed evaluates to zero.
+- name: fc_cathode_air_mass_feed
+  expression: m_dot_air_feed_kg_s - n_dot_air_feed_mol_s * molar_mass_air_kg_mol
+  dimension: mass_flow
+  unit: kg/s
+  dimensional_derivation: The exact maintained-source relation is normalized in kg/s; physical meaning remains pending separate
+    review.
+  scale_expression: residual_scale_kg_s
+  zero_condition: The exact source-first relation fc_cathode_air_mass_feed evaluates to zero.
+constraints:
+  constructor:
+  - predicate: residual_scale_kg_s > 0
+    guard_signature: positive_float(parameters.get('residual_scale_kg_s', 0.001), 'residual_scale_kg_s')
+    failure_type: ValueError
+    message_selector: residual_scale_kg_s
+    on_violation: Reject non-positive residual_scale_kg_s through the maintained source guard.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_kg_s: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_kg_s: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_kg_s: -1.0
+      expected: fail
+  evaluation: []
+regions:
+  valid:
+  - predicate: residual_scale_kg_s > 0
+    meaning: The protected maintained constructor guard accepts this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_kg_s: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_kg_s: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_kg_s: -1.0
+      expected: fail
+  invalid:
+  - predicate: not (residual_scale_kg_s > 0)
+    meaning: The protected maintained constructor guard rejects this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_kg_s: -1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_kg_s: 0.0
+      expected: pass
+    - kind: outside
+      inputs:
+        residual_scale_kg_s: 1.0
+      expected: fail
+assumptions:
+- This reconstruction describes the exact bound current source and example only.
+- No physical truth or cross-target generalization is licensed by source agreement.
+validity:
+- Use only while the bound implementation, exact instantiation, formula, ports, and tests retain matching fingerprints.
+invariants:
+- All maintained constructor parameters have explicit source provenance.
+- Scenario ports exactly cover every current local declaration and referenced external variable.
+effects:
+- Read the exact bound scenario ports and emit 3 named residual record(s) without mutating the solver vector.
+postconditions:
+- Every emitted record keeps its source name, role, positive scale, diagnostic key, and source-bound arithmetic.
+termination: Finite algebraic source-first evaluation terminates without retry or hidden iteration.
+behavior_contract:
+  kind: residual_equations
+  residuals:
+  - fc_cathode_o2_consumption
+  - fc_cathode_air_molar_feed
+  - fc_cathode_air_mass_feed
+  input_ports:
+  - current_A
+  - oxygen_stoichiometry
+  output_ports:
+  - n_dot_O2_consumed_mol_s
+  - n_dot_air_feed_mol_s
+  - m_dot_air_feed_kg_s
+oracle_cases:
+- case_id: exact_bound_current_source
+  inputs:
+    n_cells: 400.0
+    oxygen_mole_fraction: 0.21
+    molar_mass_air_kg_mol: 0.0289652
+    residual_scale_mol_s: 0.001
+    residual_scale_kg_s: 0.001
+    faradaic_efficiency: 1.0
+    current_lower_bound: 0.0
+    current_upper_bound: 100000.0
+    current_initial_guess: 100.0
+    current_scale: 100.0
+    n_dot_O2_consumed_lower_bound: 0.0
+    n_dot_O2_consumed_upper_bound: 1000000.0
+    n_dot_O2_consumed_initial_guess: 0.001
+    n_dot_O2_consumed_scale: 0.001
+    n_dot_air_feed_lower_bound: 0.0
+    n_dot_air_feed_upper_bound: 1000000.0
+    n_dot_air_feed_initial_guess: 0.01
+    n_dot_air_feed_scale: 0.001
+    m_dot_air_feed_lower_bound: 0.0
+    m_dot_air_feed_upper_bound: 10000.0
+    m_dot_air_feed_initial_guess: 0.001
+    m_dot_air_feed_scale: 1.0
+    oxygen_stoichiometry_lower_bound: 0.0
+    oxygen_stoichiometry_upper_bound: 100.0
+    oxygen_stoichiometry_initial_guess: 2.0
+    oxygen_stoichiometry_scale: 1.0
+    current_A: 100.0
+    oxygen_stoichiometry: 2.0
+    n_dot_O2_consumed_mol_s: 0.001
+    n_dot_air_feed_mol_s: 0.01
+    m_dot_air_feed_kg_s: 0.001
+  expected:
+    fc_cathode_o2_consumption: -0.10264269656617729
+    fc_cathode_air_molar_feed: 0.00047619047619047554
+    fc_cathode_air_mass_feed: 0.000710348
+  tolerance: 1.0e-09
+claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It does not prove
+  physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate evidence accepts those claims.

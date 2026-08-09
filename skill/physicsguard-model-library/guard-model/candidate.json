@@ -4,7 +4,28 @@
   "target_skill_id": "physicsguard-model-library",
   "candidate_id": "candidate:physicsguard-model-library:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "FE7B34A406760377C56B312987B63403F2D177AB7DFB01AB00E70D62F9A12CA7",
+  "purpose_contract_fingerprint": "30A0809E6102BB76EF96D447EAB7427C89B655971C32D74A8516102ED44C1F96",
+  "blueprint_route_contract_fingerprint": "A21785A74F84D262FF67E47CA39E86C1882EFC90CCEA06C07347F8F766DD9FAB",
+  "blueprint_projection_contract": {
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "summary",
+      "affected",
+      "full"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.summary_physical_blueprint_projection",
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.full_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_fingerprint_and_projection_consumption",
+      "blueprint_asset_reuse_limit",
+      "blueprint_compatibility_gap_accounting"
+    ],
+    "claim_boundary": "Library reuse is limited to exact current blueprint fingerprints, physical obligations, profiles, validity boundaries, testbenches, receipts, and verified reuse limits; similarity is not compatibility."
+  },
   "candidate_definition": {
     "native_owner_id": "physicsguard.model-library",
     "native_route_id": "route:physicsguard-model-library:reuse",
@@ -22,6 +43,7 @@
       "validation_receipt",
       "bounded_reuse_scope"
     ],
+    "blueprint_route_contract_fingerprint": "A21785A74F84D262FF67E47CA39E86C1882EFC90CCEA06C07347F8F766DD9FAB",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -29,15 +51,15 @@
       "event_id": "event:physicsguard-model-library:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "FE7B34A406760377C56B312987B63403F2D177AB7DFB01AB00E70D62F9A12CA7"
+      "purpose_contract_fingerprint": "30A0809E6102BB76EF96D447EAB7427C89B655971C32D74A8516102ED44C1F96"
     },
     {
       "event_id": "event:physicsguard-model-library:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "FE7B34A406760377C56B312987B63403F2D177AB7DFB01AB00E70D62F9A12CA7",
-      "previous_event_fingerprint": "4021BC12E267F984F2488B364E11567BA30049D159B8403E0091F6216FE567F5",
-      "candidate_definition_fingerprint": "475F4B19535A15F742286E5B839DA2F11A22FB9AA58F1FCF9438AFA0654A45BC"
+      "purpose_contract_fingerprint": "30A0809E6102BB76EF96D447EAB7427C89B655971C32D74A8516102ED44C1F96",
+      "previous_event_fingerprint": "B49D07DCA1BB8CFE42111C5FF5BAAC6743556A239EEB5AD45329C0F465AF5099",
+      "candidate_definition_fingerprint": "95B1A6D1282835510181B17CA8814E3C09D102A238A92AF3B57267FB6CAB7535"
     }
   ]
 }

@@ -1,0 +1,45 @@
+schema: physicsguard.project_formula.v1
+module_type: SumModule
+owner: physicsguard.module_semantics.mechanical_draft.SumModule
+purpose: Mechanically describe the exact one-input unit-weight sum audit over two externally observed mass rates.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: bias, dimension: mass_flow, unit: kg/s, required: false, default: 0.0, constraints: []}
+  - {name: residual_scale, dimension: mass_flow, unit: kg/s, required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: input_0, dimension: mass_flow, unit: kg/s, source_kind: external, source_attribute: input_variables, source_index: 0, source_reference: dryer_water_evaporation_mass_flow.value}
+  - {name: output, dimension: mass_flow, unit: kg/s, source_kind: external, source_attribute: output_variable, source_reference: dryer_exhaust_water_mass_flow.value}
+scenario_outputs: []
+residuals:
+  - name: sum_relation
+    expression: output - input_0 - bias
+    dimension: mass_flow
+    unit: kg/s
+    dimensional_derivation: Output, exact unit-weight input, bias, residual, and scale are mass rates.
+    scale_expression: residual_scale
+    zero_condition: Output equals the one exact unit-weight input plus bias.
+    source_intermediates:
+      - {symbol: weighted_sum, expression: input_0}
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive mass-rate normalization., cases: [{kind: inside, inputs: {residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: residual_scale > 0, meaning: Exact one-input default-weight audit with positive mass-rate normalization., cases: [{kind: inside, inputs: {residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  invalid:
+    - {predicate: residual_scale <= 0, meaning: Invalid mass-rate normalization., cases: [{kind: inside, inputs: {residual_scale: -1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: pass}, {kind: outside, inputs: {residual_scale: 0.01}, expected: fail}]}
+assumptions: [The exact instance omits weights so the implementation creates one unit weight, Input and output references use kg per second]
+validity: [Use only for this exact one-input default-weight instantiation, Do not generalize to arbitrary vectors]
+invariants: [Both external values are read-only]
+effects: [Emit one sum_relation residual]
+postconditions: [Residual equals output minus input_0 minus bias]
+termination: A fixed finite arithmetic expression terminates.
+oracle_cases:
+  - {case_id: exact_example_zero, inputs: {input_0: 1.0, output: 1.0, bias: 0.0, residual_scale: 0.01}, expected: {sum_relation: 0.0}, tolerance: 1.0e-12}
+  - {case_id: shortfall, inputs: {input_0: 1.2, output: 1.0, bias: 0.0, residual_scale: 0.01}, expected: {sum_relation: -0.2}, tolerance: 1.0e-12}
+claim_boundary: This exact one-input default-weight draft is not a universal vector sum, mass-conservation assertion, or independent physical oracle.

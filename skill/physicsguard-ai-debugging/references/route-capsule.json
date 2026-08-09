@@ -51,11 +51,14 @@
   "minimum_inputs": [
     "visible_symptom",
     "physical_boundary_or_gap",
-    "route_ambiguity"
+    "route_ambiguity",
+    "current_blueprint_summary_affected_or_reverse_trace"
   ],
   "required_outputs": [
     "selected_native_routes",
     "localized_findings",
+    "blueprint_trace_projection",
+    "delegated_blueprint_owner",
     "next_required_evidence",
     "bounded_claim"
   ],
@@ -68,12 +71,15 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_summary_for_route_selection_required",
+        "blueprint_affected_or_reverse_trace_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "blueprint_mixed_route_coordination"
       ],
-      "sha256": "7ba68b213ed7743490db59304bff8c404dc1fb68f7f1a4a21c3f4f4563afb755"
+      "sha256": "38b729586afa23551ab2dc6553182604995a94973c7dd39209ce60352b402216"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -97,7 +103,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "32d817c45ad12f62b389114bf95e2d81a69e782fa3ab03cdf0b3edff5b7c4272"
+      "sha256": "25109387b07ef75cc255d11226eaee3d349a1cd2a1467dde82ffb6a90e703ee2"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -116,6 +122,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "1e1864ea183d5d47448894ce268d1c8a55557fe1d08cb185254d78a185613ab5",
+  "entry_prompt_sha256": "255a8ca0b2248116113e36b6ced846a6622cff1598102a03a2af162fd415312d",
   "claim_boundary": "This route can license only a low-fidelity, evidence-bounded fault localization. It does not prove high-fidelity model truth or behavior outside the checked operating envelope."
 }

@@ -1,0 +1,442 @@
+{
+  "contributions": [
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:self-dna-20260809",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "fingerprint": "sha256:d125e733ef297e9acf3865b609a417b27e6dda262f2359a76dcdfec66f7fe781",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:authoritative_model_system",
+      "native_owner_id": "",
+      "rationale": "The current PhysicsGuard self-model is an explicit executable owner of the accepted domain blueprint spine; the contribution binds source, model, code-structure, and test-evidence ownership without external-AI reconstruction or a claim of physical truth.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:self-dna-20260809",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "fingerprint": "sha256:24867823ed3ddfeba3c8124ebca17056de450eb930bf5bd5ceceadab1dead26e",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:compositional_verification_kernel",
+      "native_owner_id": "",
+      "rationale": "The current PhysicsGuard self-model is an explicit executable owner of the accepted domain blueprint spine; the contribution binds source, model, code-structure, and test-evidence ownership without external-AI reconstruction or a claim of physical truth.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:compositional_verification_kernel",
+        "relation:system-contains:compositional_verification_kernel"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:self-dna-20260809",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "fingerprint": "sha256:c557d5e3078556a234d4ac74b84efcfe6735bb30d69c334afbadf000d436734f",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:guard_closure_contract",
+      "native_owner_id": "",
+      "rationale": "The accepted PhysicsGuard design contribution is explicitly rebound to the current executable model owner while preserving the prior contribution as immutable lineage; this change records model/source/evidence ownership only and does not request external-AI reconstruction or a claim of physical truth.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:guard_closure_contract",
+        "relation:system-contains:guard_closure_contract"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:self-dna-20260809",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "fingerprint": "sha256:4b898b85acbef35dbd87151b8e866e6657624759e9fc42f388d08d8315ae9c15",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:hierarchical_model_mesh",
+      "native_owner_id": "",
+      "rationale": "The accepted PhysicsGuard design contribution is explicitly rebound to the current executable model owner while preserving the prior contribution as immutable lineage; this change records model/source/evidence ownership only and does not request external-AI reconstruction or a claim of physical truth.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "relation:system-contains:hierarchical_model_mesh"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:self-dna-20260809",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "fingerprint": "sha256:fc1c262097fc9291765e9893d2716e1262e5b69c8e99945eeb402b47af5429e0",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:interval_diagnosability",
+      "native_owner_id": "",
+      "rationale": "The accepted PhysicsGuard design contribution is explicitly rebound to the current executable model owner while preserving the prior contribution as immutable lineage; this change records model/source/evidence ownership only and does not request external-AI reconstruction or a claim of physical truth.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:interval_diagnosability",
+        "relation:system-contains:interval_diagnosability"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:self-dna-20260809",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "fingerprint": "sha256:d836c95b59016708c123d2d036978023b08f8be5648f4a850a023b8d2434ed50",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:model_test_code_alignment",
+      "native_owner_id": "",
+      "rationale": "The accepted PhysicsGuard design contribution is explicitly rebound to the current executable model owner while preserving the prior contribution as immutable lineage; this change records model/source/evidence ownership only and does not request external-AI reconstruction or a claim of physical truth.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:model_test_code_alignment",
+        "relation:system-contains:model_test_code_alignment"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:self-dna-20260809",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "fingerprint": "sha256:3aba339ee8f0e334b8bce896886ec6ccdd2d4358ba0810c15b271bfbd22c8992",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:task_local_model_deepening",
+      "native_owner_id": "",
+      "rationale": "The accepted PhysicsGuard design contribution is explicitly rebound to the current executable model owner while preserving the prior contribution as immutable lineage; this change records model/source/evidence ownership only and does not request external-AI reconstruction or a claim of physical truth.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:task_local_model_deepening",
+        "relation:system-contains:task_local_model_deepening"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    }
+  ],
+  "dispositions": [
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:d125e733ef297e9acf3865b609a417b27e6dda262f2359a76dcdfec66f7fe781",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:self-dna-20260809",
+      "disposition": "accepted",
+      "fingerprint": "sha256:6209d2f29f267dd26d9b92353566be94a5eed12a7da12b8ec591308e6c8d83b5",
+      "reason": "The current PhysicsGuard self-model is accepted as an executable owner of source, model, code-structure, and test-evidence bindings; it does not invoke external AI or reconstruction.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:compositional_verification_kernel",
+        "relation:system-contains:compositional_verification_kernel"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:24867823ed3ddfeba3c8124ebca17056de450eb930bf5bd5ceceadab1dead26e",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:self-dna-20260809",
+      "disposition": "accepted",
+      "fingerprint": "sha256:57bbf6c9e76e53088cad6cacd0bc7dc2bcd6cf971486fe7aa7ffb723876c7d53",
+      "reason": "The current PhysicsGuard self-model is accepted as an executable owner of source, model, code-structure, and test-evidence bindings; it does not invoke external AI or reconstruction.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:guard_closure_contract"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:c557d5e3078556a234d4ac74b84efcfe6735bb30d69c334afbadf000d436734f",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:self-dna-20260809",
+      "disposition": "accepted",
+      "fingerprint": "sha256:afa033892c20a325243c065e19172614b45fa57401a9dc50c5fa87c356804de5",
+      "reason": "The current PhysicsGuard self-model is accepted as an executable owner of source, model, code-structure, and test-evidence bindings; it does not invoke external AI or reconstruction.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "relation:system-contains:hierarchical_model_mesh"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:4b898b85acbef35dbd87151b8e866e6657624759e9fc42f388d08d8315ae9c15",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:self-dna-20260809",
+      "disposition": "accepted",
+      "fingerprint": "sha256:a4c2e928bde01d3f1f2bc9d44c27ead42aa63379d5a2e05df087ad0d02c19adb",
+      "reason": "The current PhysicsGuard self-model is accepted as an executable owner of source, model, code-structure, and test-evidence bindings; it does not invoke external AI or reconstruction.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:interval_diagnosability"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:fc1c262097fc9291765e9893d2716e1262e5b69c8e99945eeb402b47af5429e0",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:self-dna-20260809",
+      "disposition": "accepted",
+      "fingerprint": "sha256:97e940383f1d96cf902b7ae00a348fc6653b114785ace0d8b3f1b4960c24980a",
+      "reason": "The current PhysicsGuard self-model is accepted as an executable owner of source, model, code-structure, and test-evidence bindings; it does not invoke external AI or reconstruction.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:model_test_code_alignment",
+        "relation:system-contains:model_test_code_alignment"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:d836c95b59016708c123d2d036978023b08f8be5648f4a850a023b8d2434ed50",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:self-dna-20260809",
+      "disposition": "accepted",
+      "fingerprint": "sha256:8be0404098d1c11997e860426b217eed4ec5f35f5a0c2e27e3491d135de1b09c",
+      "reason": "The current PhysicsGuard self-model is accepted as an executable owner of source, model, code-structure, and test-evidence bindings; it does not invoke external AI or reconstruction.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:task_local_model_deepening",
+        "relation:system-contains:task_local_model_deepening"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:3aba339ee8f0e334b8bce896886ec6ccdd2d4358ba0810c15b271bfbd22c8992",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:self-dna-20260809",
+      "disposition": "accepted",
+      "fingerprint": "sha256:17e116873ac6328f3d283ca1f57b804da6790e3e3ddc1d62e7cd6248fbb33e0e",
+      "reason": "The current PhysicsGuard self-model is accepted as an executable owner of source, model, code-structure, and test-evidence bindings; it does not invoke external AI or reconstruction.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    }
+  ],
+  "effective_intent_transitions": [
+    {
+      "action": "supersede",
+      "fingerprint": "sha256:53b77fc3e13597d3677368055ae6b021c6a114e457373d1dd697c85b23f17bd7",
+      "prior_contribution_fingerprint": "sha256:9b3908c657f53c17b310372df241340b07bc8a44288078564d8f9a01c30bc01f",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract",
+      "reason": "Rebind the existing accepted domain intent to the current executable model owner while preserving immutable lineage; no domain behavior or external-AI proof path is introduced.",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:self-dna-20260809"
+      ],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "supersede",
+      "fingerprint": "sha256:6eebb1c139360a4b7e0328ac77aae1714b4f115b4549d25226e775868114f5de",
+      "prior_contribution_fingerprint": "sha256:7f100acffe21b898d5a280b98b3724264b855e7e171e380b0e0f2f68fef655dd",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh",
+      "reason": "Rebind the existing accepted domain intent to the current executable model owner while preserving immutable lineage; no domain behavior or external-AI proof path is introduced.",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:self-dna-20260809"
+      ],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "supersede",
+      "fingerprint": "sha256:036681f9db5876f623ce202f232e64fd161627b1b47a2c98f94bfbbf1e4542a4",
+      "prior_contribution_fingerprint": "sha256:5225b269efaba73813129ef7be69cff8ad2d66a5cfce9cd32ea051bf61398322",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability",
+      "reason": "Rebind the existing accepted domain intent to the current executable model owner while preserving immutable lineage; no domain behavior or external-AI proof path is introduced.",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:self-dna-20260809"
+      ],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "supersede",
+      "fingerprint": "sha256:dae8178bfa030f2ca5055d63958f35d748643b9bf321418278e3ab42601dd98c",
+      "prior_contribution_fingerprint": "sha256:ccf9ecb3e38d7b3e2fac5c9abc636bf5f4442c1bbe204176d2be6484b23053ac",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment",
+      "reason": "Rebind the existing accepted domain intent to the current executable model owner while preserving immutable lineage; no domain behavior or external-AI proof path is introduced.",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:self-dna-20260809"
+      ],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "supersede",
+      "fingerprint": "sha256:741e21290aed6e756c4c8279dc577e2eb02ad34c9bb9baadd067021f747609aa",
+      "prior_contribution_fingerprint": "sha256:528d417775964944267e5ff610e5f64e5177427aae39c7a3866fa98c111025d2",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening",
+      "reason": "Rebind the existing accepted domain intent to the current executable model owner while preserving immutable lineage; no domain behavior or external-AI proof path is introduced.",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:self-dna-20260809"
+      ],
+      "schema": "flowguard.effective_intent_transition.v1"
+    }
+  ]
+}

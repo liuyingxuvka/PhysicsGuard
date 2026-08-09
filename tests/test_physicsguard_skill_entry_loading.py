@@ -8,6 +8,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from scripts import upgrade_purpose_contracts as purpose_contract_generator
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_ROOT = ROOT / "skill"
@@ -25,11 +27,17 @@ EXPECTED_SKILLS = {
     "physicsguard-signal-mapping-review",
     "physicsguard-test-file-contract-review",
 }
-EXPECTED_TOOLCHAIN_IDENTITY = {
-    "physicsguard_version": "0.15.1",
-    "flowguard_version": "0.68.2",
-    "flowguard_schema_version": "1.0",
-    "skillguard_version": "0.7.2",
+EXPECTED_OPENAI_DEFAULT_PROMPTS = {
+    "physicsguard-candidate-model-blueprint": "Use $physicsguard-candidate-model-blueprint as the sole PhysicalModelBlueprint author/full reviewer; resolve blueprint_directory versus explicit_material_root and --material-root, run the canonical review, and only when requested export or query one portable-bundle selector while keeping frozen status, identity gaps, and native execution separate.",
+    "physicsguard-model-understanding-preflight": "Use $physicsguard-model-understanding-preflight directly to freeze target identity, boundary, inventory providers, capabilities, and the first useful blueprint layer; consume only the current summary or affected slice and do not claim full blueprint qualification.",
+    "physicsguard-project-evidence-registry": "Use $physicsguard-project-evidence-registry directly; bind current evidence/resource identities and freshness to exact blueprint elements in the summary or affected slice, and return missing or stale gaps without a project-wide pass.",
+    "physicsguard-test-file-contract-review": "Use $physicsguard-test-file-contract-review directly; bind deterministic files, fields, datasets, and testbench I/O to the exact affected blueprint interfaces, state, obligations, and evidence, with no full-blueprint fallback.",
+    "physicsguard-signal-mapping-review": "Use $physicsguard-signal-mapping-review directly on the exact affected interface slice; validate source/target identity, units, frames, conversion, time semantics, revision, evidence, and downstream blueprint consumers.",
+    "physicsguard-model-dataset-validation": "Use $physicsguard-model-dataset-validation directly; consume the current affected or whole blueprint projection and report per-element obligations, validation modes, validity, residual/oracle, evidence fingerprints, and unsupported claims.",
+    "physicsguard-model-library": "Use $physicsguard-model-library directly; index or select assets by current blueprint fingerprint, obligation, profile, validity boundary, testbench, receipt, and verified reuse limits, never by loose similarity.",
+    "physicsguard-project-adoption": "Use $physicsguard-project-adoption directly; record the current blueprint identity, target scope, artifact-root meaning, native authorities, and projection kind while keeping adoption separate from completeness or physical truth.",
+    "physicsguard-audit-closure": "Use $physicsguard-audit-closure directly; consume the exact whole or affected review and any supplied portable-bundle status, preserve observed_at_export_unlicensed and identity-only gaps, and keep frozen-case pass separate from current native execution and closure.",
+    "physicsguard-ai-debugging": "Use $physicsguard-ai-debugging only for genuinely mixed routing; consume current blueprint summary/affected/reverse trace, delegate to the minimum direct owners, and never become a second blueprint author or reviewer.",
 }
 DEEP_TOKENS = (
     "exactly six families",
@@ -62,10 +70,27 @@ def _load_checker():
     return module
 
 
+def _current_toolchain_identity() -> dict[str, str]:
+    return purpose_contract_generator.current_toolchain_identity(
+        repository_root=ROOT,
+        flowguard_project_path=ROOT / ".flowguard" / "project.toml",
+    )
+
+
 @pytest.mark.parametrize(
     "skill_id",
-    sorted(EXPECTED_SKILLS),
-    ids=lambda value: value.replace("-", "_"),
+    [
+        "physicsguard-ai-debugging",
+        "physicsguard-audit-closure",
+        "physicsguard-candidate-model-blueprint",
+        "physicsguard-model-dataset-validation",
+        "physicsguard-model-library",
+        "physicsguard-model-understanding-preflight",
+        "physicsguard-project-adoption",
+        "physicsguard-project-evidence-registry",
+        "physicsguard-signal-mapping-review",
+        "physicsguard-test-file-contract-review",
+    ],
 )
 def test_route_capsule_is_direct_current_and_prompt_is_compact(skill_id: str) -> None:
     skill_root = SKILL_ROOT / skill_id
@@ -95,8 +120,18 @@ def test_route_capsule_is_direct_current_and_prompt_is_compact(skill_id: str) ->
 
 @pytest.mark.parametrize(
     "skill_id",
-    sorted(EXPECTED_SKILLS),
-    ids=lambda value: value.replace("-", "_"),
+    [
+        "physicsguard-ai-debugging",
+        "physicsguard-audit-closure",
+        "physicsguard-candidate-model-blueprint",
+        "physicsguard-model-dataset-validation",
+        "physicsguard-model-library",
+        "physicsguard-model-understanding-preflight",
+        "physicsguard-project-adoption",
+        "physicsguard-project-evidence-registry",
+        "physicsguard-signal-mapping-review",
+        "physicsguard-test-file-contract-review",
+    ],
 )
 def test_conditional_references_are_current_and_preserve_deep_capability(skill_id: str) -> None:
     skill_root = SKILL_ROOT / skill_id
@@ -130,8 +165,18 @@ def test_conditional_references_are_current_and_preserve_deep_capability(skill_i
 
 @pytest.mark.parametrize(
     "skill_id",
-    sorted(EXPECTED_SKILLS),
-    ids=lambda value: value.replace("-", "_"),
+    [
+        "physicsguard-ai-debugging",
+        "physicsguard-audit-closure",
+        "physicsguard-candidate-model-blueprint",
+        "physicsguard-model-dataset-validation",
+        "physicsguard-model-library",
+        "physicsguard-model-understanding-preflight",
+        "physicsguard-project-adoption",
+        "physicsguard-project-evidence-registry",
+        "physicsguard-signal-mapping-review",
+        "physicsguard-test-file-contract-review",
+    ],
 )
 def test_openai_metadata_invokes_only_the_selected_direct_skill(skill_id: str) -> None:
     metadata = yaml.safe_load(
@@ -139,7 +184,7 @@ def test_openai_metadata_invokes_only_the_selected_direct_skill(skill_id: str) -
     )
     interface = metadata["interface"]
     assert 25 <= len(interface["short_description"]) <= 64
-    assert f"${skill_id}" in interface["default_prompt"]
+    assert interface["default_prompt"] == EXPECTED_OPENAI_DEFAULT_PROMPTS[skill_id]
     if skill_id != "physicsguard-ai-debugging":
         assert "$physicsguard-ai-debugging" not in interface["default_prompt"]
 
@@ -147,11 +192,12 @@ def test_openai_metadata_invokes_only_the_selected_direct_skill(skill_id: str) -
 def test_prompt_load_graph_and_all_known_bads() -> None:
     checker = _load_checker()
     graph = _load_json(GRAPH_PATH)
+    expected_toolchain_identity = _current_toolchain_identity()
     report = checker.check_prompt_load_graph(graph)
     assert report["structure_status"] == "pass", report["findings"]
     assert report["route_count"] == 10
-    assert graph["suite_version"] == "0.15.1"
-    assert graph["toolchain_identity"] == EXPECTED_TOOLCHAIN_IDENTITY
+    assert graph["suite_version"] == expected_toolchain_identity["physicsguard_version"]
+    assert graph["toolchain_identity"] == expected_toolchain_identity
     known_bads = checker.prompt_load_known_bad_results(graph)
     assert set(known_bads) == set(graph["known_bad_cases"])
     assert set(known_bads.values()) == {"blocked"}

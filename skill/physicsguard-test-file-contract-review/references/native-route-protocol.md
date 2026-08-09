@@ -5,6 +5,12 @@ database extracts already materialized as files, testbench logs, sensor tables,
 command/measurement files, calibration snapshots, or project fixtures that stand
 for those files. Do not require it for ordinary model-only PhysicsGuard work.
 
+## Blueprint contract projection
+
+For each concrete file or dataset, consume the current affected slice and bind file/manifest/field/testbench identities to the exact blueprint input/output/state/effect ports, physical obligations, units, frames, time semantics, and expected evidence. Preserve the affected projection fingerprint and every unmatched endpoint. This route neither authors nor fully qualifies the blueprint. Missing/stale/ambiguous projection identity blocks without broadening to every file, every model, or the full blueprint.
+
+Executable projection entry: call `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` with the exact file path, manifest, dataset, binding, port, or obligation identity. It first reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result; non-current review identity and unknown or mixed-validity seeds fail atomically and do not authorize a partial contract review.
+
 ## Hard Rules
 
 - One concrete test data file needs one resolved `TestFileContract`.

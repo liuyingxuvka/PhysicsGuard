@@ -1,0 +1,49 @@
+schema: physicsguard.project_formula.v1
+module_type: RangeCheckModule
+owner: physicsguard.module_semantics.mechanical_draft.RangeCheckModule
+purpose: Mechanically describe the exact temperature range post-check over one externally observed value.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: lower_bound, dimension: temperature, unit: K, required: false, default: null, constraints: [lower_bound <= upper_bound]}
+  - {name: upper_bound, dimension: temperature, unit: K, required: false, default: null, constraints: [upper_bound >= lower_bound]}
+  - {name: residual_scale, dimension: temperature, unit: K, required: false, default: 1.0, constraints: [residual_scale > 0]}
+  - {name: role, dimension: enum, unit: enum, required: false, default: post_check, constraints: [role == 'post_check' or role == 'soft_check']}
+  - {name: include_in_solver, dimension: boolean, unit: boolean, required: false, default: false, constraints: []}
+scenario_inputs:
+  - {name: value, dimension: temperature, unit: K, source_kind: external, source_attribute: variable, source_reference: bus_temperature.value}
+scenario_outputs: []
+residuals:
+  - name: range_check
+    expression: value - lower_bound if value < lower_bound else (value - upper_bound if value > upper_bound else 0.0)
+    dimension: temperature
+    unit: K
+    dimensional_derivation: Value, bounds, residual, and normalization all use kelvin differences.
+    scale_expression: residual_scale
+    zero_condition: Residual is zero inside the inclusive configured temperature interval.
+    source_intermediates:
+      - {symbol: residual, expression: "value - lower_bound if value < lower_bound else (value - upper_bound if value > upper_bound else 0.0)"}
+constraints:
+  constructor:
+    - {predicate: lower_bound <= upper_bound, guard_signature: "if self.lower_bound is not None and self.upper_bound is not None and self.lower_bound > self.upper_bound", failure_type: ValueError, message_selector: lower_bound, on_violation: Reject reversed bounds in the exact two-sided example., cases: [{kind: inside, inputs: {lower_bound: 250.0, upper_bound: 330.0}, expected: pass}, {kind: boundary, inputs: {lower_bound: 300.0, upper_bound: 300.0}, expected: pass}, {kind: outside, inputs: {lower_bound: 331.0, upper_bound: 330.0}, expected: fail}]}
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive temperature normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+    - {predicate: "role == 'post_check' or role == 'soft_check'", guard_signature: "if self.role not in {'post_check', 'soft_check'}", failure_type: ValueError, message_selector: role, on_violation: Reject an unsupported residual role., cases: [{kind: inside, inputs: {role: post_check}, expected: pass}, {kind: boundary, inputs: {role: soft_check}, expected: pass}, {kind: outside, inputs: {role: equation}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "lower_bound <= upper_bound and value >= lower_bound and value <= upper_bound and residual_scale > 0", meaning: Temperature is inside the exact two-sided range with positive normalization., cases: [{kind: inside, inputs: {lower_bound: 250.0, upper_bound: 330.0, value: 300.0, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {lower_bound: 250.0, upper_bound: 330.0, value: 330.0, residual_scale: 1.0}, expected: pass}, {kind: outside, inputs: {lower_bound: 250.0, upper_bound: 330.0, value: 340.0, residual_scale: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "lower_bound > upper_bound or value < lower_bound or value > upper_bound or residual_scale <= 0", meaning: Reversed bounds, out-of-range temperature, or invalid normalization., cases: [{kind: inside, inputs: {lower_bound: 250.0, upper_bound: 330.0, value: 340.0, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {lower_bound: 250.0, upper_bound: 330.0, value: 330.0, residual_scale: 1.0}, expected: fail}, {kind: outside, inputs: {lower_bound: 250.0, upper_bound: 330.0, value: 300.0, residual_scale: 1.0}, expected: fail}]}
+assumptions: [This exact instance supplies both bounds, The referenced temperature uses kelvin, The role remains post_check]
+validity: [Use only for the exact current two-sided temperature example]
+invariants: [The referenced temperature is read-only]
+effects: [Emit one post_check residual that remains outside the solver]
+postconditions: [Residual is signed distance to the violated bound or zero inside]
+termination: A finite two-branch comparison terminates.
+oracle_cases:
+  - {case_id: in_range, inputs: {value: 300.0, lower_bound: 250.0, upper_bound: 330.0, residual_scale: 1.0, role: post_check, include_in_solver: false}, expected: {range_check: 0.0}, tolerance: 1.0e-12}
+  - {case_id: high, inputs: {value: 335.0, lower_bound: 250.0, upper_bound: 330.0, residual_scale: 1.0, role: post_check, include_in_solver: false}, expected: {range_check: 5.0}, tolerance: 1.0e-12}
+claim_boundary: This exact temperature-range implementation draft is not a general one-sided-range specification, safety limit, or independently reviewed physical rule.

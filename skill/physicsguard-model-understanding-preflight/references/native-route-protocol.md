@@ -5,6 +5,12 @@ If a concrete testbench data file is part of the work, record the file/bench
 boundary and route to `physicsguard-test-file-contract-review` before broad
 analysis claims.
 
+## Blueprint preflight projection
+
+Freeze target id/revision, boundary fingerprint, provider capabilities, independent inventory inputs, intended artifact root, and first useful understanding layer. Use the current summary for ordinary preflight or the exact affected slice for one known boundary/inventory gap. Preserve blueprint/review/projection fingerprints and first gap when supplied. This route does not author or fully review the blueprint; that is a typed handoff to `physicsguard-candidate-model-blueprint`. Missing/stale identity blocks without loading the full blueprint or scanning the target as fallback.
+
+Executable projection entry: call `physicsguard.summary_physical_blueprint_projection(blueprint, review)` for ordinary preflight or `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for one named boundary or inventory gap. The affected query reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result before graph compilation; it never silently refreshes a stale review.
+
 ## Workflow
 
 1. Create or review a preflight file based on templates/model_understanding_preflight.yaml.

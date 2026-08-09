@@ -215,13 +215,35 @@ def _positive_package(target: str) -> dict:
     }
 
 
-@pytest.mark.parametrize("case", CASES, ids=lambda case: case["target_skill_id"])
-def test_every_satellite_positive_and_genuinely_shallow_calibration(case: dict) -> None:
+@pytest.mark.parametrize(
+    "target_skill_id",
+    [
+        "physicsguard-ai-debugging",
+        "physicsguard-audit-closure",
+        "physicsguard-candidate-model-blueprint",
+        "physicsguard-model-dataset-validation",
+        "physicsguard-model-library",
+        "physicsguard-model-understanding-preflight",
+        "physicsguard-project-adoption",
+        "physicsguard-project-evidence-registry",
+        "physicsguard-signal-mapping-review",
+        "physicsguard-test-file-contract-review",
+    ],
+)
+def test_every_satellite_positive_and_genuinely_shallow_calibration(target_skill_id: str) -> None:
+    case = next(item for item in CASES if item["target_skill_id"] == target_skill_id)
     package = _positive_package(case["target_skill_id"])
     positive = evaluate_skill_execution_package(package)
     assert positive["status"] == "pass", positive["errors"]
     assert positive["target_skill_id"] == case["target_skill_id"]
     assert positive["receipt_sha256"]
+    policy = ROUTE_POLICIES[case["target_skill_id"]]
+    assert positive["blueprint_policy"] == {
+        "authority_mode": policy.blueprint_authority_mode,
+        "projection_kinds": list(policy.blueprint_projection_kinds),
+        "required_operation_ids": list(policy.blueprint_required_operation_ids),
+        "required_obligation_ids": list(policy.blueprint_required_obligation_ids),
+    }
 
     shallow = copy.deepcopy(package)
     shallow["run_id"] = shallow["run_id"].replace("positive", "shallow")
@@ -233,6 +255,44 @@ def test_every_satellite_positive_and_genuinely_shallow_calibration(case: dict) 
     blocked = evaluate_skill_execution_package(shallow)
     assert blocked["status"] == "blocked"
     assert "missing_target_obligation" in {item["code"] for item in blocked["errors"]}
+
+    blueprint_shallow = copy.deepcopy(package)
+    blueprint_shallow["run_id"] = blueprint_shallow["run_id"].replace(
+        "positive", "blueprint-shallow"
+    )
+    blueprint_shallow["obligation_results"] = [
+        row
+        for row in blueprint_shallow["obligation_results"]
+        if row["obligation_id"]
+        != case["shallow_missing_blueprint_obligation_id"]
+    ]
+    # Caller prose or a self-declared status cannot replace target-native evidence.
+    blueprint_shallow["blueprint_status"] = "pass"
+    blueprint_shallow["blueprint_claim"] = "all blueprint obligations complete"
+    blueprint_blocked = evaluate_skill_execution_package(blueprint_shallow)
+    assert blueprint_blocked["status"] == "blocked"
+    assert "missing_target_obligation" in {
+        item["code"] for item in blueprint_blocked["errors"]
+    }
+
+
+def test_blueprint_execution_policy_is_closed_over_all_ten_current_skills() -> None:
+    assert {case["target_skill_id"] for case in CASES} == set(ROUTE_POLICIES)
+    assert len(ROUTE_POLICIES) == 10
+    assert {
+        target
+        for target, policy in ROUTE_POLICIES.items()
+        if policy.blueprint_authority_mode == "sole_author_full_reviewer"
+    } == {"physicsguard-candidate-model-blueprint"}
+    for target, policy in ROUTE_POLICIES.items():
+        assert policy.blueprint_projection_kinds, target
+        assert policy.blueprint_required_operation_ids, target
+        assert policy.blueprint_required_obligation_ids, target
+        assert set(policy.blueprint_required_obligation_ids) <= set(
+            policy.required_obligation_ids
+        )
+        if target != "physicsguard-candidate-model-blueprint":
+            assert policy.blueprint_authority_mode == "consumer_only"
 
 
 def test_each_time_varying_parameter_uses_its_own_dynamic_floor_and_distribution() -> None:

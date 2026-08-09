@@ -2,7 +2,21 @@
   "schema_version": "physicsguard.skill_runtime_requirement.v1",
   "target_skill_id": "physicsguard-model-dataset-validation",
   "package_name": "physicsguard",
-  "package_version": "0.15.1",
+  "package_version": "0.15.3",
+  "toolchain_identity": {
+    "physicsguard_version": "0.15.3",
+    "physicsguard_authority_sha256": "sha256:0513e924b92e45de0ccfcd2c4afa547914dba98e73a71cd3a79ea3d908a447c3",
+    "flowguard_version": "0.68.9",
+    "flowguard_schema_version": "1.0",
+    "flowguard_package_tree_sha256": "sha256:4e4733d942f52de84c25f93bab30d4a910ec3b55059c5330e3e6c1a95c77d8e4",
+    "flowguard_direct_url_sha256": "sha256:35738303a58827bda346d458850eb99718f2b382c3ef138cb9036c07db24de9d",
+    "flowguard_authority_sha256": "sha256:2ed96bd5054c54facfc661d4eb7bf8e56e35a222b3312f64da2a97246a12fb39",
+    "skillguard_version": "0.7.2",
+    "skillguard_api_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
+    "skillguard_distribution_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
+    "skillguard_direct_url_sha256": "sha256:7236a685f8f921d9a5f4444658caa372abdba29c9e5ed6ad62f5f7b84d060558",
+    "skillguard_authority_sha256": "sha256:aa816fbc8145c43f06c4ab5dec91015fedf2232e18b58bc33545346cffbb4bed"
+  },
   "entrypoints": [
     "physicsguard.cli",
     "physicsguard.guard_model_contract",

@@ -1,0 +1,50 @@
+schema: physicsguard.project_formula.v1
+module_type: ChemicalPowerLHVModule
+owner: physicsguard.project_formula.chemical_power_lhv.v1
+purpose: Independently state the mass-flow times lower-heating-value relation used by the exact chemical-power scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: LHV_J_kg, dimension: specific_energy, unit: J/kg, required: true, default: null, constraints: [LHV_J_kg > 0]}
+  - {name: residual_scale_W, dimension: power, unit: W, required: false, default: 1000.0, constraints: [residual_scale_W > 0]}
+scenario_inputs: [{name: m_dot_fuel_kg_s, dimension: mass_flow, unit: kg/s}]
+scenario_outputs: [{name: P_chemical_W, dimension: power, unit: W}]
+residuals:
+  - name: chemical_power_lhv
+    expression: P_chemical_W - m_dot_fuel_kg_s * LHV_J_kg
+    dimension: power
+    unit: W
+    dimensional_derivation: kg/s multiplied by J/kg reduces to J/s, which is W.
+    scale_expression: residual_scale_W
+    zero_condition: Chemical power equals fuel mass flow multiplied by configured lower heating value.
+    source_intermediates: [{symbol: m_dot, expression: m_dot_fuel_kg_s}, {symbol: power, expression: P_chemical_W}]
+constraints:
+  constructor:
+    - predicate: LHV_J_kg > 0
+      guard_signature: required_positive(parameters, 'LHV_J_kg')
+      failure_type: ValueError
+      message_selector: LHV_J_kg
+      on_violation: Reject non-positive LHV_J_kg.
+      cases: [{kind: inside, inputs: {LHV_J_kg: 120000000.0}, expected: pass}, {kind: boundary, inputs: {LHV_J_kg: 0.0}, expected: fail}, {kind: outside, inputs: {LHV_J_kg: -1.0}, expected: fail}]
+    - predicate: residual_scale_W > 0
+      guard_signature: positive_float(parameters.get('residual_scale_W', 1000.0), 'residual_scale_W')
+      failure_type: ValueError
+      message_selector: residual_scale_W
+      on_violation: Reject non-positive residual_scale_W.
+      cases: [{kind: inside, inputs: {residual_scale_W: 1000.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_W: -1.0}, expected: fail}]
+  evaluation: []
+regions:
+  valid:
+    - predicate: LHV_J_kg > 0 and residual_scale_W > 0 and m_dot_fuel_kg_s >= 0 and P_chemical_W >= 0
+      meaning: Nonnegative LHV-based chemical-power magnitude relation with positive LHV and scale.
+      cases: [{kind: inside, inputs: {LHV_J_kg: 120000000.0, residual_scale_W: 1000.0, m_dot_fuel_kg_s: 0.001, P_chemical_W: 120000.0}, expected: pass}, {kind: boundary, inputs: {LHV_J_kg: 1.0, residual_scale_W: 1.0, m_dot_fuel_kg_s: 0.0, P_chemical_W: 0.0}, expected: pass}, {kind: outside, inputs: {LHV_J_kg: 0.0, residual_scale_W: 1000.0, m_dot_fuel_kg_s: 0.001, P_chemical_W: 120000.0}, expected: fail}]
+  invalid:
+    - predicate: LHV_J_kg <= 0 or residual_scale_W <= 0 or m_dot_fuel_kg_s < 0 or P_chemical_W < 0
+      meaning: Invalid configuration or signed values outside the declared chemical-power magnitude boundary.
+      cases: [{kind: inside, inputs: {LHV_J_kg: 0.0, residual_scale_W: 1000.0, m_dot_fuel_kg_s: 0.001, P_chemical_W: 120000.0}, expected: pass}, {kind: boundary, inputs: {LHV_J_kg: 1.0, residual_scale_W: 1.0, m_dot_fuel_kg_s: 0.0, P_chemical_W: 0.0}, expected: fail}, {kind: outside, inputs: {LHV_J_kg: 120000000.0, residual_scale_W: 1000.0, m_dot_fuel_kg_s: 0.001, P_chemical_W: 120000.0}, expected: fail}]
+assumptions: [Configured LHV is constant, Fuel composition and HHV are outside scope, Thermal losses and reaction dynamics are outside scope]
+validity: [Use for a pointwise LHV-based chemical-power calculation, Scenario port roles are one boundary assignment only]
+oracle_cases:
+  - {case_id: balanced, inputs: {LHV_J_kg: 100.0, residual_scale_W: 10.0, m_dot_fuel_kg_s: 2.0, P_chemical_W: 200.0}, expected: {chemical_power_lhv: 0.0}, tolerance: 1e-12}
+  - {case_id: under_reported_power, inputs: {LHV_J_kg: 100.0, residual_scale_W: 10.0, m_dot_fuel_kg_s: 2.0, P_chemical_W: 190.0}, expected: {chemical_power_lhv: -10.0}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity LHV algebraic relation for one exact scenario, not a composition model, HHV model, reaction model, or empirical validation.

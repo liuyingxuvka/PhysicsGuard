@@ -1,0 +1,47 @@
+schema: physicsguard.project_formula.v1
+module_type: ViscousDamperForceModule
+owner: physicsguard.module_semantics.mechanical_draft.ViscousDamperForceModule
+purpose: Mechanically describe the current linear viscous damping relation and exact scenario roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: damping_N_s_m, dimension: damping, unit: N*s/m, required: true, default: null, constraints: [damping_N_s_m >= 0]}
+  - {name: residual_scale_N, dimension: force, unit: N, required: false, default: 1.0, constraints: [residual_scale_N > 0]}
+scenario_inputs:
+  - {name: velocity_m_s, dimension: velocity, unit: m/s}
+scenario_outputs:
+  - {name: force_N, dimension: force, unit: N}
+residuals:
+  - name: viscous_damper_force
+    expression: force_N - damping_N_s_m * velocity_m_s
+    dimension: force
+    unit: N
+    dimensional_derivation: Newton-seconds per metre times metres per second yields newtons.
+    scale_expression: residual_scale_N
+    zero_condition: Force equals damping coefficient times velocity under the current sign convention.
+    source_intermediates:
+      - {symbol: velocity, expression: velocity_m_s}
+      - {symbol: force, expression: force_N}
+constraints:
+  constructor:
+    - {predicate: damping_N_s_m >= 0, guard_signature: "nonnegative_float(required(parameters, 'damping_N_s_m'), 'damping_N_s_m')", failure_type: ValueError, message_selector: damping_N_s_m, on_violation: Reject missing or negative damping., cases: [{kind: inside, inputs: {damping_N_s_m: 50.0}, expected: pass}, {kind: boundary, inputs: {damping_N_s_m: 0.0}, expected: pass}, {kind: outside, inputs: {damping_N_s_m: -1.0}, expected: fail}]}
+    - {predicate: residual_scale_N > 0, guard_signature: "positive_float(parameters.get('residual_scale_N', 1.0), 'residual_scale_N')", failure_type: ValueError, message_selector: residual_scale_N, on_violation: Reject non-positive force normalization., cases: [{kind: inside, inputs: {residual_scale_N: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_N: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_N: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "damping_N_s_m >= 0 and residual_scale_N > 0", meaning: Nonnegative linear damping and positive force normalization., cases: [{kind: inside, inputs: {damping_N_s_m: 50.0, residual_scale_N: 1.0}, expected: pass}, {kind: boundary, inputs: {damping_N_s_m: 0.0, residual_scale_N: 1.0}, expected: pass}, {kind: outside, inputs: {damping_N_s_m: -1.0, residual_scale_N: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "damping_N_s_m < 0 or residual_scale_N <= 0", meaning: Negative damping or invalid force normalization., cases: [{kind: inside, inputs: {damping_N_s_m: -1.0, residual_scale_N: 1.0}, expected: pass}, {kind: boundary, inputs: {damping_N_s_m: 0.0, residual_scale_N: 1.0}, expected: fail}, {kind: outside, inputs: {damping_N_s_m: 50.0, residual_scale_N: 1.0}, expected: fail}]}
+assumptions: [Linear viscous damping, No nonlinear damping or friction model, Current force and velocity sign convention is shared]
+validity: [Use only for the exact current low-fidelity relation]
+invariants: [Velocity is read-only and force is checked without mutation]
+effects: [Emit one viscous_damper_force residual]
+postconditions: [Residual equals force minus damping times velocity]
+termination: One multiplication and subtraction terminate.
+oracle_cases:
+  - {case_id: balanced, inputs: {damping_N_s_m: 50.0, velocity_m_s: 2.0, force_N: 100.0, residual_scale_N: 1.0}, expected: {viscous_damper_force: 0.0}, tolerance: 1.0e-12}
+  - {case_id: force_offset, inputs: {damping_N_s_m: 50.0, velocity_m_s: 2.0, force_N: 90.0, residual_scale_N: 1.0}, expected: {viscous_damper_force: -10.0}, tolerance: 1.0e-12}
+claim_boundary: This current linear arithmetic draft does not validate damping data, sign convention, nonlinear effects, friction, or physical correctness.

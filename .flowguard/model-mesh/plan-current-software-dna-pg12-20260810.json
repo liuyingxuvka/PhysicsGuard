@@ -1,0 +1,245 @@
+{
+  "accepted_revision_fingerprint": "sha256:0cbf5d18643448252dd2d61aa28d4f416452142763344028d92219c8503ed5b9",
+  "accepted_revision_schema": "flowguard.model_revision_set.v5",
+  "added_model_ids": [],
+  "affected_closure": {
+    "affected_ids": [
+      "coverage:universe",
+      "model_instance:model:task_local_model_deepening",
+      "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+      "model_relation:relation:system-contains:task_local_model_deepening",
+      "parent_closure:purpose:task_local_model_deepening",
+      "parent_closure:system:flowguard:model-regression-manifest",
+      "system_property:subject_revision"
+    ],
+    "edge_ids": [
+      "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+      "model_relation:relation:system-contains:task_local_model_deepening"
+    ],
+    "fingerprint": "sha256:e0a04d2c38181810aa7ddd68a1376f90da9e117e90fa9894cce8b7d78e76c9f4",
+    "owner_bindings": [
+      {
+        "affected_id": "coverage:universe",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_instance:model:task_local_model_deepening",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:system-contains:task_local_model_deepening",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "parent_closure:purpose:task_local_model_deepening",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "parent_closure:system:flowguard:model-regression-manifest",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "system_property:subject_revision",
+        "owner_route": "model_mesh_maintenance"
+      }
+    ]
+  },
+  "affected_closure_fingerprint": "sha256:e0a04d2c38181810aa7ddd68a1376f90da9e117e90fa9894cce8b7d78e76c9f4",
+  "base_effective_intent_view_fingerprint": "sha256:7c49fcdc9a87c345573eec28329e79c4a1ec7e2a691cdad51d695a362b1e1d24",
+  "base_model_count": 7,
+  "base_model_ids": [
+    "authoritative_model_system",
+    "compositional_verification_kernel",
+    "guard_closure_contract",
+    "hierarchical_model_mesh",
+    "interval_diagnosability",
+    "model_test_code_alignment",
+    "task_local_model_deepening"
+  ],
+  "base_snapshot_fingerprint": "sha256:cd97a474508ee528eae534d97baef8e2c0d11b826706d2920d5fed5f4d3afbeb",
+  "base_snapshot_id": "snapshot:physicsguard:software-dna-pg11-20260809",
+  "blockers": [],
+  "candidate_model_count": 7,
+  "candidate_model_ids": [
+    "authoritative_model_system",
+    "compositional_verification_kernel",
+    "guard_closure_contract",
+    "hierarchical_model_mesh",
+    "interval_diagnosability",
+    "model_test_code_alignment",
+    "task_local_model_deepening"
+  ],
+  "candidate_model_owner_count": 7,
+  "candidate_model_owner_ids": [
+    "model-obligation:authoritative_model_system",
+    "model-obligation:compositional_verification_kernel",
+    "model-obligation:guard_closure_contract",
+    "model-obligation:hierarchical_model_mesh",
+    "model-obligation:interval_diagnosability",
+    "model-obligation:model_test_code_alignment",
+    "model-obligation:task_local_model_deepening"
+  ],
+  "candidate_model_owner_inventory_fingerprint": "sha256:bdbff27c06094735b561ed78c1dfcbb4ec9470870e04fa49bf466712fff59db4",
+  "candidate_model_owners": [
+    {
+      "logical_model_id": "authoritative_model_system",
+      "model_owner_id": "model-obligation:authoritative_model_system",
+      "realization_relation_fingerprint": "sha256:1cea74b8b7d1cda77ea5a97784e61b1e211e7ab8e265ce65cb704867485d7c3a",
+      "realization_relation_id": "relation:model-realizes-purpose:authoritative_model_system"
+    },
+    {
+      "logical_model_id": "compositional_verification_kernel",
+      "model_owner_id": "model-obligation:compositional_verification_kernel",
+      "realization_relation_fingerprint": "sha256:d4b15ac95404dda59995b148a12547f04f0a4f915907c1cefed5a924e9d0fb11",
+      "realization_relation_id": "relation:model-realizes-purpose:compositional_verification_kernel"
+    },
+    {
+      "logical_model_id": "guard_closure_contract",
+      "model_owner_id": "model-obligation:guard_closure_contract",
+      "realization_relation_fingerprint": "sha256:be34093bd882df40755d3ef902c96fef7b096877637e9b347779a3582ed313e0",
+      "realization_relation_id": "relation:model-realizes-purpose:guard_closure_contract"
+    },
+    {
+      "logical_model_id": "hierarchical_model_mesh",
+      "model_owner_id": "model-obligation:hierarchical_model_mesh",
+      "realization_relation_fingerprint": "sha256:8fa69dc428a3d850849d078faafadd7f978679c490a0bc3c493b8020a2c3dd32",
+      "realization_relation_id": "relation:model-realizes-purpose:hierarchical_model_mesh"
+    },
+    {
+      "logical_model_id": "interval_diagnosability",
+      "model_owner_id": "model-obligation:interval_diagnosability",
+      "realization_relation_fingerprint": "sha256:2f522709748a42ebf5d7aeda65eedce97f5a850bbae5f8bc8b85a3e6b2be0695",
+      "realization_relation_id": "relation:model-realizes-purpose:interval_diagnosability"
+    },
+    {
+      "logical_model_id": "model_test_code_alignment",
+      "model_owner_id": "model-obligation:model_test_code_alignment",
+      "realization_relation_fingerprint": "sha256:e96cbf93eef16eb9ad14a1017ad1b9f95bb4f88e1ab20480a1dc030a2953b989",
+      "realization_relation_id": "relation:model-realizes-purpose:model_test_code_alignment"
+    },
+    {
+      "logical_model_id": "task_local_model_deepening",
+      "model_owner_id": "model-obligation:task_local_model_deepening",
+      "realization_relation_fingerprint": "sha256:3cb6d150e29f4b20ce27138ace3904ab4d4313226066cea07fa222dc89bd5937",
+      "realization_relation_id": "relation:model-realizes-purpose:task_local_model_deepening"
+    }
+  ],
+  "candidate_snapshot_fingerprint": "sha256:d3b2d4e0133625e320f03f472f910d8d56327d22a47680125057968976ab3c78",
+  "candidate_snapshot_id": "snapshot:physicsguard:software-dna-pg12-20260810",
+  "change_present": true,
+  "changed_entity_ids": [
+    "coverage:universe",
+    "model_instance:model:task_local_model_deepening",
+    "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+    "model_relation:relation:system-contains:task_local_model_deepening"
+  ],
+  "changed_model_ids": [
+    "task_local_model_deepening"
+  ],
+  "claim_boundary": "This is a read-only preview derived from the sole observed authority and one stable live manifest candidate. It writes no snapshot, receipt, revision set, lease, lock, or pointer; runs no model or validation owner; and supplies no acceptance, activation, release, or completion evidence.",
+  "intent_input_identity_fingerprint": "sha256:8c3b9300150d137b1f746a810b475ae16135c67c315c06570b59e33c77ff7310",
+  "intent_mode": "refine",
+  "models_executed": false,
+  "observed_head_fingerprint": "sha256:0275a5839d395d6d0e4e4e3fe5680bccb7d895af06aa440806fb4124eb542ea8",
+  "ok": true,
+  "removed_model_ids": [],
+  "replaced_model_ids": [
+    "task_local_model_deepening"
+  ],
+  "requested_snapshot_id": "snapshot:physicsguard:software-dna-pg12-20260810",
+  "required_command": "model-revision-build",
+  "required_intent_input_kinds": [
+    "contributions",
+    "dispositions",
+    "effective_intent_transitions"
+  ],
+  "required_legacy_intent_entries": [],
+  "required_legacy_intent_entry_count": 0,
+  "required_legacy_intent_entry_inventory_fingerprint": "",
+  "required_owner_routes": [
+    "model_mesh_maintenance",
+    "model_test_alignment"
+  ],
+  "required_transition_predecessor_count": 7,
+  "required_transition_predecessor_inventory_fingerprint": "sha256:b93ad914b37bc34a391517c66a822b97a9b9e3c1c75c72483799faceb1469299",
+  "required_transition_predecessors": [
+    {
+      "prior_contribution_fingerprint": "sha256:d125e733ef297e9acf3865b609a417b27e6dda262f2359a76dcdfec66f7fe781",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:24867823ed3ddfeba3c8124ebca17056de450eb930bf5bd5ceceadab1dead26e",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:c557d5e3078556a234d4ac74b84efcfe6735bb30d69c334afbadf000d436734f",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:4b898b85acbef35dbd87151b8e866e6657624759e9fc42f388d08d8315ae9c15",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:fc1c262097fc9291765e9893d2716e1262e5b69c8e99945eeb402b47af5429e0",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:d836c95b59016708c123d2d036978023b08f8be5648f4a850a023b8d2434ed50",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:3aba339ee8f0e334b8bce896886ec6ccdd2d4358ba0810c15b271bfbd22c8992",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:self-dna-20260809"
+    }
+  ],
+  "root": "C:\\Users\\liu_y\\Documents\\PhysicGuard_20260501",
+  "schema": "flowguard.model_revision_plan.v2",
+  "snapshot_diff": {
+    "added_ids": [],
+    "changed_commitment_ids": [],
+    "changed_contract_ids": [],
+    "changed_coverage_ids": [
+      "coverage:universe"
+    ],
+    "changed_field_ids": [],
+    "changed_gap_ids": [],
+    "changed_owner_artifact_ids": [],
+    "changed_relation_ids": [
+      "relation:model-realizes-purpose:task_local_model_deepening",
+      "relation:system-contains:task_local_model_deepening"
+    ],
+    "changed_root_ids": [],
+    "changed_side_effect_ids": [],
+    "changed_source_surface_ids": [],
+    "changed_system_property_ids": [
+      "system_property:subject_revision"
+    ],
+    "changed_test_ids": [],
+    "fingerprint_changed_ids": [
+      "coverage:universe",
+      "model_instance:model:task_local_model_deepening",
+      "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+      "model_relation:relation:system-contains:task_local_model_deepening"
+    ],
+    "members": [
+      {
+        "base_instance_fingerprint": "sha256:4077edce454fd0828d683c132f0baed1a8cdde86b0afe7870e79c77495f5212a",
+        "candidate_instance_fingerprint": "sha256:84844c57f21de56fd33f0b3691e7905db5c2a27d07e45ae957d5c87049709554",
+        "changed_element_ids": [
+          "model_instance:model:task_local_model_deepening"
+        ],
+        "member_id": "task_local_model_deepening",
+        "operation": "replace",
+        "schema": "flowguard.model_revision_member.v1"
+      }
+    ],
+    "removed_ids": []
+  },
+  "snapshot_diff_fingerprint": "sha256:f94779086feab3cb059efdaffab2a95d9807c072d54cd1768864a25aec171798",
+  "status": "pass",
+  "writes_performed": false
+}

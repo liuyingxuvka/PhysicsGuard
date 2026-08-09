@@ -214,6 +214,35 @@ def test_map_monotonicity_post_check_reports_violation_without_solver_pull() -> 
 
 
 @pytest.mark.parametrize(
+    ("expected", "expected_value", "expected_normalized"),
+    [
+        ("increasing", 2.5, 1.0),
+        ("decreasing", 2.5, 1.0),
+        ("nondecreasing", 0.0, 0.0),
+        ("nonincreasing", 0.0, 0.0),
+    ],
+)
+def test_map_monotonicity_equality_penalty_uses_residual_scale(
+    expected: str,
+    expected_value: float,
+    expected_normalized: float,
+) -> None:
+    builder = ResidualBuilder(
+        one_module(
+            "MapMonotonicityCheckModule",
+            {"values": [1000.0, 1000.0], "expected": expected, "residual_scale": 2.5},
+        )
+    )
+    record = builder.diagnostic_residual_records(builder.build_registry().initial_vector())[0]
+    assert record.name == "m.map_monotonicity"
+    assert record.value == pytest.approx(expected_value)
+    assert record.scale == pytest.approx(2.5)
+    assert record.role == "post_check"
+    assert record.diagnostic_key == "map_monotonicity_violation"
+    assert record.normalized_value == pytest.approx(expected_normalized)
+
+
+@pytest.mark.parametrize(
     ("module_type", "values", "expected_key"),
     [
         ("ActuatorDeadZoneModule", {"m.command": 0.05, "m.output": 0.0}, "actuator_dead_zone_mismatch"),
@@ -230,3 +259,44 @@ def test_piecewise_control_relations_zero_residual(module_type: str, values: dic
     records = builder.diagnostic_residual_records(vector)
     assert records[0].diagnostic_key == expected_key
     assert records[0].normalized_value == pytest.approx(0.0)
+
+
+@pytest.mark.parametrize(
+    ("values", "expected_value"),
+    [
+        pytest.param(
+            {
+                "m.input_current": 10.0,
+                "m.output_previous": 4.0,
+                "m.output_current": 10.0,
+                "m.hold_flag": 1.0,
+            },
+            6.0,
+            id="held-output-followed-current",
+        ),
+        pytest.param(
+            {
+                "m.input_current": 10.0,
+                "m.output_previous": 4.0,
+                "m.output_current": 4.0,
+                "m.hold_flag": 0.0,
+            },
+            -6.0,
+            id="released-output-stayed-held",
+        ),
+    ],
+)
+def test_sample_and_hold_conflict_reports_scaled_residual(
+    values: dict[str, float],
+    expected_value: float,
+) -> None:
+    builder = ResidualBuilder(one_module("SampleAndHoldModule", {"residual_scale": 3.0}))
+    registry = builder.build_registry()
+    vector = registry.dict_to_vector(values)
+    record = builder.diagnostic_residual_records(vector)[0]
+    assert record.name == "m.sample_and_hold"
+    assert record.value == pytest.approx(expected_value)
+    assert record.scale == pytest.approx(3.0)
+    assert record.role == "equation"
+    assert record.diagnostic_key == "sample_and_hold_mismatch"
+    assert record.normalized_value == pytest.approx(expected_value / 3.0)

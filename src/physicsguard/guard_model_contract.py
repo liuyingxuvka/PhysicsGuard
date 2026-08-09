@@ -42,10 +42,45 @@ BASELINE_ROLE = "family_baseline_regression"
 DYNAMIC_ROLE = "current_model_purpose"
 SEMANTIC_PROOF = "native_semantic_detection"
 ADMISSION_PROOF = "native_obligation_admission_gate"
+BLUEPRINT_ROUTE_CONTRACT_SCHEMA = "physicsguard.skill_blueprint_route_contract.v1"
+BLUEPRINT_PROJECTION_KINDS = {"summary", "affected", "reverse_trace", "full"}
+BLUEPRINT_BLOCK_CODES = {
+    "blueprint_projection_missing_stale_foreign_or_ambiguous",
+    "blueprint_authority_boundary_violated",
+    "blueprint_required_obligation_unproved",
+    "blueprint_gap_or_claim_boundary_unreconciled",
+}
+ROUTE_SPECIFIC_BLUEPRINT_BLOCK_CODES = {
+    "physicsguard-candidate-model-blueprint": {
+        "blueprint_material_root_boundary_violated",
+        "blueprint_fmi_oracle_independence_violated",
+        "blueprint_portable_query_contract_violated",
+        "blueprint_portable_execution_promoted",
+    },
+    "physicsguard-audit-closure": {
+        "blueprint_bundle_presence_promoted_to_closure",
+        "blueprint_frozen_case_promoted_to_current_execution",
+        "blueprint_identity_only_terminal_promoted",
+    },
+}
+CANONICAL_BLUEPRINT_REVIEW_OPERATION = (
+    "command:python -m physicsguard.cli blueprint review BLUEPRINT "
+    "--target-authority AUTHORITY --pretty"
+)
+BLUEPRINT_OPERATION_PREFIX = "command:python -m physicsguard.cli blueprint "
+SUPPORTED_BLUEPRINT_SCHEMA_OPERATIONS = frozenset(
+    {"schema:physicsguard.fmi-observation-request.v1"}
+)
 
 
 class GuardModelContractError(ValueError):
     """The PhysicsGuard-owned contract or proof bundle is invalid."""
+
+
+def _blueprint_block_codes(target: str) -> set[str]:
+    return set(BLUEPRINT_BLOCK_CODES) | set(
+        ROUTE_SPECIFIC_BLUEPRINT_BLOCK_CODES.get(target, set())
+    )
 
 
 def _canonical_bytes(value: object) -> bytes:
@@ -100,6 +135,171 @@ def _canonical_runtime_identity() -> dict[str, Any]:
         "guard_model_entrypoint": "physicsguard.guard_model_contract",
         "execution_depth_entrypoint": "physicsguard.skill_execution_depth",
         "fallback": False,
+    }
+
+
+def _validate_baseline_blueprint_contract(
+    *,
+    target: str,
+    contract: Mapping[str, Any],
+    oracle_set: Mapping[str, Any],
+    known_good: Mapping[str, Any],
+    known_bad: Mapping[str, Any],
+) -> dict[str, Any]:
+    blueprint = contract.get("blueprint_route_contract")
+    if not isinstance(blueprint, Mapping):
+        raise GuardModelContractError("blueprint_route_contract_missing")
+    if blueprint.get("schema_version") != BLUEPRINT_ROUTE_CONTRACT_SCHEMA:
+        raise GuardModelContractError("blueprint_route_contract_schema_invalid")
+    expected_mode = (
+        "sole_author_full_reviewer"
+        if target == "physicsguard-candidate-model-blueprint"
+        else "consumer_only"
+    )
+    if blueprint.get("authority_mode") != expected_mode:
+        raise GuardModelContractError("blueprint_authority_boundary_invalid")
+
+    projection_kinds = blueprint.get("projection_kinds")
+    if (
+        not isinstance(projection_kinds, list)
+        or not projection_kinds
+        or len(projection_kinds) != len(set(projection_kinds))
+        or not set(projection_kinds) <= BLUEPRINT_PROJECTION_KINDS
+    ):
+        raise GuardModelContractError("blueprint_projection_inventory_invalid")
+    operation_ids = blueprint.get("required_operation_ids")
+    if (
+        not isinstance(operation_ids, list)
+        or not operation_ids
+        or len(operation_ids) != len(set(operation_ids))
+    ):
+        raise GuardModelContractError("blueprint_operation_inventory_invalid")
+    if expected_mode == "sole_author_full_reviewer":
+        if set(projection_kinds) != BLUEPRINT_PROJECTION_KINDS:
+            raise GuardModelContractError("blueprint_full_reviewer_projection_set_incomplete")
+        if CANONICAL_BLUEPRINT_REVIEW_OPERATION not in operation_ids:
+            raise GuardModelContractError("canonical_blueprint_review_operation_missing")
+    elif CANONICAL_BLUEPRINT_REVIEW_OPERATION in operation_ids:
+        raise GuardModelContractError("consumer_declares_blueprint_full_review_operation")
+
+    import physicsguard
+
+    for operation_id in operation_ids:
+        if operation_id.startswith("api:physicsguard."):
+            function_name = operation_id.removeprefix("api:physicsguard.")
+            if not callable(getattr(physicsguard, function_name, None)):
+                raise GuardModelContractError(
+                    f"blueprint_operation_not_current:{function_name}"
+                )
+        elif (
+            operation_id != CANONICAL_BLUEPRINT_REVIEW_OPERATION
+            and not operation_id.startswith(BLUEPRINT_OPERATION_PREFIX)
+            and operation_id not in SUPPORTED_BLUEPRINT_SCHEMA_OPERATIONS
+        ):
+            raise GuardModelContractError(
+                f"blueprint_operation_not_current:{operation_id}"
+            )
+
+    obligation_ids = blueprint.get("required_obligation_ids")
+    if (
+        not isinstance(obligation_ids, list)
+        or not obligation_ids
+        or len(obligation_ids) != len(set(obligation_ids))
+        or any(not str(item).startswith("blueprint_") for item in obligation_ids)
+    ):
+        raise GuardModelContractError("blueprint_obligation_inventory_invalid")
+    block_rows = blueprint.get("block_on")
+    expected_block_codes = _blueprint_block_codes(target)
+    if not isinstance(block_rows, list) or len(block_rows) != len(
+        expected_block_codes
+    ):
+        raise GuardModelContractError("blueprint_blocking_inventory_invalid")
+    block_by_code: dict[str, str] = {}
+    for row in block_rows:
+        if not isinstance(row, Mapping):
+            raise GuardModelContractError("blueprint_blocking_row_invalid")
+        code = str(row.get("finding_code", ""))
+        condition = str(row.get("condition", ""))
+        if not code or code in block_by_code or not condition:
+            raise GuardModelContractError("blueprint_blocking_row_invalid")
+        block_by_code[code] = condition
+    if set(block_by_code) != expected_block_codes:
+        raise GuardModelContractError("blueprint_blocking_codes_incomplete")
+    if (
+        blueprint.get("self_reported_status_allowed") is not False
+        or blueprint.get("missing_projection_behavior")
+        != "block_visible_no_fallback"
+        or not str(blueprint.get("claim_boundary", ""))
+    ):
+        raise GuardModelContractError("blueprint_claim_or_block_boundary_invalid")
+
+    fingerprint = _fingerprint(dict(blueprint))
+    if contract.get("blueprint_route_contract_fingerprint") != fingerprint:
+        raise GuardModelContractError("blueprint_route_contract_fingerprint_mismatch")
+
+    if oracle_set.get("blueprint_route_contract_fingerprint") != fingerprint:
+        raise GuardModelContractError("blueprint_oracle_contract_fingerprint_mismatch")
+    blueprint_oracles = oracle_set.get("blueprint_oracles")
+    if not isinstance(blueprint_oracles, list):
+        raise GuardModelContractError("blueprint_oracles_missing")
+    oracle_by_obligation: dict[str, Mapping[str, Any]] = {}
+    for row in blueprint_oracles:
+        if not isinstance(row, Mapping):
+            raise GuardModelContractError("blueprint_oracle_row_invalid")
+        obligation_id = str(row.get("obligation_id", ""))
+        if obligation_id in oracle_by_obligation:
+            raise GuardModelContractError("blueprint_oracle_row_invalid")
+        if (
+            row.get("predicate_kind") != "native_blueprint_obligation_must_pass"
+            or row.get("expected_finding_code")
+            != "blueprint_required_obligation_unproved"
+            or not str(row.get("predicate", ""))
+        ):
+            raise GuardModelContractError("blueprint_oracle_row_invalid")
+        oracle_by_obligation[obligation_id] = row
+    if set(oracle_by_obligation) != set(obligation_ids):
+        raise GuardModelContractError("blueprint_oracle_coverage_incomplete")
+
+    if (
+        known_good.get("blueprint_route_contract_fingerprint") != fingerprint
+        or set(known_good.get("covered_blueprint_obligation_ids", []))
+        != set(obligation_ids)
+        or list(known_good.get("covered_blueprint_projection_kinds", []))
+        != list(projection_kinds)
+        or list(known_good.get("executed_blueprint_operation_ids", []))
+        != list(operation_ids)
+        or known_good.get("expected_blueprint_status") != "pass"
+        or known_good.get("self_reported_outcome_allowed") is not False
+    ):
+        raise GuardModelContractError("blueprint_known_good_incomplete")
+
+    if known_bad.get("blueprint_route_contract_fingerprint") != fingerprint:
+        raise GuardModelContractError("blueprint_known_bad_contract_fingerprint_mismatch")
+    blueprint_cases = known_bad.get("blueprint_cases")
+    if not isinstance(blueprint_cases, list):
+        raise GuardModelContractError("blueprint_known_bad_cases_missing")
+    case_by_code: dict[str, Mapping[str, Any]] = {}
+    for row in blueprint_cases:
+        if not isinstance(row, Mapping):
+            raise GuardModelContractError("blueprint_known_bad_case_invalid")
+        code = str(row.get("expected_finding_code", ""))
+        if (
+            code in case_by_code
+            or row.get("expected_native_status") != "blocked"
+            or row.get("self_reported_outcome_allowed") is not False
+            or str(row.get("trigger_condition", "")) != block_by_code.get(code, "")
+        ):
+            raise GuardModelContractError("blueprint_known_bad_case_invalid")
+        case_by_code[code] = row
+    if set(case_by_code) != expected_block_codes:
+        raise GuardModelContractError("blueprint_known_bad_coverage_incomplete")
+
+    return {
+        "blueprint_route_contract": dict(blueprint),
+        "blueprint_route_contract_fingerprint": fingerprint,
+        "blueprint_obligation_ids": list(obligation_ids),
+        "blueprint_projection_kinds": list(projection_kinds),
+        "blueprint_operation_ids": list(operation_ids),
     }
 
 
@@ -268,6 +468,13 @@ def validate_baseline_contract_bundle(skill_root: Path) -> dict[str, Any]:
         case_by_failure[failure_id] = case
     if set(case_by_failure) != set(failure_by_id):
         raise GuardModelContractError("every declared prevented failure must be proven")
+    blueprint_bundle = _validate_baseline_blueprint_contract(
+        target=target,
+        contract=contract,
+        oracle_set=oracle_set,
+        known_good=good,
+        known_bad=bad_set,
+    )
     runtime = _canonical_runtime_identity()
     return {
         "target_skill_id": target,
@@ -281,6 +488,7 @@ def validate_baseline_contract_bundle(skill_root: Path) -> dict[str, Any]:
         "claim_boundary": contract["claim_boundary"],
         "runtime": runtime,
         "artifact_role": BASELINE_ROLE,
+        **blueprint_bundle,
     }
 
 
@@ -313,8 +521,25 @@ def validate_baseline_candidate_binding(
         "native_route_id": bundle["native_route_id"],
         "protected_failure_ids": sorted(bundle["failure_by_id"]),
         "required_obligation_ids": list(bundle["required_obligation_ids"]),
+        "blueprint_route_contract_fingerprint": bundle[
+            "blueprint_route_contract_fingerprint"
+        ],
         "claim_boundary": bundle["claim_boundary"],
     }
+    expected_blueprint_projection_contract = {
+        "authority_mode": bundle["blueprint_route_contract"]["authority_mode"],
+        "projection_kinds": list(bundle["blueprint_projection_kinds"]),
+        "required_operation_ids": list(bundle["blueprint_operation_ids"]),
+        "required_obligation_ids": list(bundle["blueprint_obligation_ids"]),
+        "claim_boundary": bundle["blueprint_route_contract"]["claim_boundary"],
+    }
+    if (
+        candidate.get("blueprint_route_contract_fingerprint")
+        != bundle["blueprint_route_contract_fingerprint"]
+        or candidate.get("blueprint_projection_contract")
+        != expected_blueprint_projection_contract
+    ):
+        raise GuardModelContractError("candidate_blueprint_contract_binding_invalid")
     definition = candidate.get("candidate_definition")
     if definition != expected_definition:
         raise GuardModelContractError("candidate_definition_not_complete_for_frozen_contract")

@@ -1,0 +1,20 @@
+schema: physicsguard.project_formula.v1
+module_type: InverterSimpleModule
+owner: physicsguard.project_formula.low_fidelity_inverter_efficiency.v1
+purpose: Independently state the low-fidelity algebraic inverter-efficiency relation used for semantic review.
+inputs:
+  - {name: P_dc_W, dimension: power, unit: W, direction: input}
+  - {name: efficiency, dimension: ratio, unit: '1', direction: input}
+outputs:
+  - {name: P_ac_W, dimension: power, unit: W, direction: output}
+residuals:
+  - name: inverter_efficiency_power
+    expression: P_ac_W - efficiency * P_dc_W
+    dimension: power
+    unit: W
+    zero_condition: P_ac_W equals efficiency multiplied by P_dc_W
+assumptions:
+  - Pointwise algebraic power conversion; phase behavior, PWM, switching losses, and thermal derating are outside this low-fidelity boundary.
+validity:
+  - DC and AC power magnitudes are nonnegative, physical efficiency is greater than zero and at most one, and the normalization scale is positive.
+claim_boundary: This project formula is a source-independent low-fidelity relation, not measured inverter performance or a switching-level electrical model.

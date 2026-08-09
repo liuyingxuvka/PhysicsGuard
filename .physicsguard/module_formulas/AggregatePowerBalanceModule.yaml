@@ -1,0 +1,198 @@
+schema: physicsguard.project_formula.v1
+module_type: AggregatePowerBalanceModule
+owner: physicsguard.module_semantics.source_first.AggregatePowerBalanceModule
+purpose: Source-first reconstruction of the exact maintained implementation, configuration, scenario ports, state roles, residuals,
+  and protected failure.
+authoring_status: source_first_reconstruction_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_source_first_reconstruction
+relation_directionality: direction_neutral
+configuration:
+- name: load_power_variables
+  dimension: enum
+  unit: enum
+  required: false
+  default: []
+  constraints:
+  - 'Maintained source guard: _variable_list(parameters, ''load_power_variables'', required=False)'
+- name: loss_power_variables
+  dimension: enum
+  unit: enum
+  required: false
+  default: []
+  constraints:
+  - 'Maintained source guard: _variable_list(parameters, ''loss_power_variables'', required=False)'
+- name: residual_scale_W
+  dimension: power
+  unit: W
+  required: false
+  default: 1000.0
+  constraints:
+  - 'Maintained source guard: _positive_float(parameters.get(''residual_scale_W'', 1000.0), ''residual_scale_W'')'
+- name: source_power_variables
+  dimension: enum
+  unit: enum
+  required: false
+  default: []
+  constraints:
+  - 'Maintained source guard: _variable_list(parameters, ''source_power_variables'', required=False)'
+- name: storage_power_variables
+  dimension: enum
+  unit: enum
+  required: false
+  default: []
+  constraints:
+  - 'Maintained source guard: _variable_list(parameters, ''storage_power_variables'', required=False)'
+scenario_inputs:
+- name: source_0
+  dimension: power
+  unit: W
+  role: input
+  source_kind: external
+  source_attribute: sources
+  source_reference: solar_array_power.value
+  source_index: 0
+- name: load_0
+  dimension: power
+  unit: W
+  role: input
+  source_kind: external
+  source_attribute: loads
+  source_reference: payload_power.value
+  source_index: 0
+- name: load_1
+  dimension: power
+  unit: W
+  role: input
+  source_kind: external
+  source_attribute: loads
+  source_reference: avionics_power.value
+  source_index: 1
+- name: load_2
+  dimension: power
+  unit: W
+  role: input
+  source_kind: external
+  source_attribute: loads
+  source_reference: battery_charge_power.value
+  source_index: 2
+- name: load_3
+  dimension: power
+  unit: W
+  role: input
+  source_kind: external
+  source_attribute: loads
+  source_reference: power_conversion_loss.value
+  source_index: 3
+scenario_outputs: []
+residuals:
+- name: aggregate_power_balance
+  expression: source_0 - load_0 - load_1 - load_2 - load_3
+  dimension: power
+  unit: W
+  dimensional_derivation: The exact maintained-source relation is normalized in W; physical meaning remains pending separate
+    review.
+  scale_expression: residual_scale_W
+  zero_condition: The exact source-first relation aggregate_power_balance evaluates to zero.
+constraints:
+  constructor:
+  - predicate: residual_scale_W > 0
+    guard_signature: _positive_float(parameters.get('residual_scale_W', 1000.0), 'residual_scale_W')
+    failure_type: ValueError
+    message_selector: residual_scale_W
+    on_violation: Reject non-positive residual_scale_W through the maintained source guard.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_W: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_W: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_W: -1.0
+      expected: fail
+  evaluation: []
+regions:
+  valid:
+  - predicate: residual_scale_W > 0
+    meaning: The protected maintained constructor guard accepts this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_W: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_W: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_W: -1.0
+      expected: fail
+  invalid:
+  - predicate: not (residual_scale_W > 0)
+    meaning: The protected maintained constructor guard rejects this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_W: -1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_W: 0.0
+      expected: pass
+    - kind: outside
+      inputs:
+        residual_scale_W: 1.0
+      expected: fail
+assumptions:
+- This reconstruction describes the exact bound current source and example only.
+- No physical truth or cross-target generalization is licensed by source agreement.
+validity:
+- Use only while the bound implementation, exact instantiation, formula, ports, and tests retain matching fingerprints.
+invariants:
+- All maintained constructor parameters have explicit source provenance.
+- Scenario ports exactly cover every current local declaration and referenced external variable.
+effects:
+- Read the exact bound scenario ports and emit 1 named residual record(s) without mutating the solver vector.
+postconditions:
+- Every emitted record keeps its source name, role, positive scale, diagnostic key, and source-bound arithmetic.
+termination: Finite algebraic source-first evaluation terminates without retry or hidden iteration.
+behavior_contract:
+  kind: residual_equations
+  residuals:
+  - aggregate_power_balance
+  input_ports:
+  - source_0
+  - load_0
+  - load_1
+  - load_2
+  - load_3
+  output_ports: []
+oracle_cases:
+- case_id: exact_bound_current_source
+  inputs:
+    source_power_variables:
+    - solar_array_power.value
+    load_power_variables:
+    - payload_power.value
+    - avionics_power.value
+    - battery_charge_power.value
+    - power_conversion_loss.value
+    loss_power_variables: []
+    storage_power_variables: []
+    residual_scale_W: 100.0
+    source_0: 1.0
+    load_0: 1.0
+    load_1: 1.0
+    load_2: 1.0
+    load_3: 1.0
+  expected:
+    aggregate_power_balance: -3.0
+  tolerance: 1.0e-09
+claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It does not prove
+  physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate evidence accepts those claims.

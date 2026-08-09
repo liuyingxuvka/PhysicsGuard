@@ -1,0 +1,45 @@
+schema: physicsguard.project_formula.v1
+module_type: IdealGasDensityModule
+owner: physicsguard.project_formula.ideal_gas_density.v1
+purpose: Independently state the ideal-gas density relation used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: molar_mass_kg_mol, dimension: molar_mass, unit: kg/mol, required: true, default: null, constraints: [molar_mass_kg_mol > 0]}
+  - {name: residual_scale_kg_m3, dimension: density, unit: kg/m^3, required: false, default: 0.1, constraints: [residual_scale_kg_m3 > 0]}
+  - {name: temperature_min_abs, dimension: temperature, unit: K, required: false, default: 1e-12, constraints: [temperature_min_abs > 0]}
+scenario_inputs:
+  - {name: p_Pa, dimension: pressure, unit: Pa}
+  - {name: T_K, dimension: temperature, unit: K}
+scenario_outputs: [{name: rho_kg_m3, dimension: density, unit: kg/m^3}]
+residuals:
+  - name: ideal_gas_density
+    expression: rho_kg_m3 - p_Pa * molar_mass_kg_mol / (8.314462618 * T_K)
+    dimension: density
+    unit: kg/m^3
+    dimensional_derivation: Pa*kg/mol divided by J/(mol*K)*K reduces to kg/m^3.
+    scale_expression: residual_scale_kg_m3
+    zero_condition: Density equals pressure times molar mass divided by the universal gas constant and absolute temperature.
+    source_intermediates:
+      - {symbol: pressure, expression: p_Pa}
+      - {symbol: temperature, expression: T_K}
+      - {symbol: density, expression: rho_kg_m3}
+      - {symbol: expected, expression: "pressure * molar_mass_kg_mol / (8.314462618 * temperature)"}
+constraints:
+  constructor:
+    - {predicate: molar_mass_kg_mol > 0, guard_signature: "required_positive(parameters, 'molar_mass_kg_mol')", failure_type: ValueError, message_selector: molar_mass_kg_mol, on_violation: Reject non-positive molar_mass_kg_mol., cases: [{kind: inside, inputs: {molar_mass_kg_mol: 0.0289652}, expected: pass}, {kind: boundary, inputs: {molar_mass_kg_mol: 0.0}, expected: fail}, {kind: outside, inputs: {molar_mass_kg_mol: -1.0}, expected: fail}]}
+    - {predicate: residual_scale_kg_m3 > 0, guard_signature: "positive_float(parameters.get('residual_scale_kg_m3', 0.1), 'residual_scale_kg_m3')", failure_type: ValueError, message_selector: residual_scale_kg_m3, on_violation: Reject non-positive residual_scale_kg_m3., cases: [{kind: inside, inputs: {residual_scale_kg_m3: 0.1}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg_m3: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_kg_m3: -1.0}, expected: fail}]}
+    - {predicate: temperature_min_abs > 0, guard_signature: "positive_float(parameters.get('temperature_min_abs', 1e-12), 'temperature_min_abs')", failure_type: ValueError, message_selector: temperature_min_abs, on_violation: Reject non-positive temperature_min_abs., cases: [{kind: inside, inputs: {temperature_min_abs: 1e-12}, expected: pass}, {kind: boundary, inputs: {temperature_min_abs: 0.0}, expected: fail}, {kind: outside, inputs: {temperature_min_abs: -1.0}, expected: fail}]}
+  evaluation:
+    - {predicate: "abs(T_K) >= temperature_min_abs", guard_signature: "if abs(temperature) < self.temperature_min_abs", failure_type: ValueError, message_selector: T_K, on_violation: Reject temperature inside the protected denominator deadband., cases: [{kind: inside, inputs: {T_K: 300.0, temperature_min_abs: 1e-12}, expected: pass}, {kind: boundary, inputs: {T_K: 1e-12, temperature_min_abs: 1e-12}, expected: pass}, {kind: outside, inputs: {T_K: 0.0, temperature_min_abs: 1e-12}, expected: fail}]}
+regions:
+  valid:
+    - {predicate: "p_Pa >= 0 and T_K >= temperature_min_abs and rho_kg_m3 >= 0 and molar_mass_kg_mol > 0 and residual_scale_kg_m3 > 0", meaning: Positive-temperature ideal-gas magnitude region with positive molar mass and scale., cases: [{kind: inside, inputs: {p_Pa: 8314.462618, T_K: 100.0, rho_kg_m3: 10.0, temperature_min_abs: 1e-12, molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1}, expected: pass}, {kind: boundary, inputs: {p_Pa: 0.0, T_K: 1e-12, rho_kg_m3: 0.0, temperature_min_abs: 1e-12, molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1}, expected: pass}, {kind: outside, inputs: {p_Pa: 1000.0, T_K: 0.0, rho_kg_m3: 1.0, temperature_min_abs: 1e-12, molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1}, expected: fail}]}
+  invalid:
+    - {predicate: "p_Pa < 0 or T_K < temperature_min_abs or rho_kg_m3 < 0 or molar_mass_kg_mol <= 0 or residual_scale_kg_m3 <= 0", meaning: Invalid ideal-gas magnitude or protected denominator region., cases: [{kind: inside, inputs: {p_Pa: 1000.0, T_K: 0.0, rho_kg_m3: 1.0, temperature_min_abs: 1e-12, molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1}, expected: pass}, {kind: boundary, inputs: {p_Pa: 0.0, T_K: 1e-12, rho_kg_m3: 0.0, temperature_min_abs: 1e-12, molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1}, expected: fail}, {kind: outside, inputs: {p_Pa: 8314.462618, T_K: 100.0, rho_kg_m3: 10.0, temperature_min_abs: 1e-12, molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1}, expected: fail}]}
+assumptions: [Ideal gas only, Constant molar mass, Universal gas constant is 8.314462618 J per mol K, No real-gas or phase correction]
+validity: [Temperature is absolute and outside the protected denominator deadband, Scenario roles are one boundary assignment]
+oracle_cases:
+  - {case_id: balanced, inputs: {molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1, temperature_min_abs: 1e-12, p_Pa: 8314.462618, T_K: 100.0, rho_kg_m3: 10.0}, expected: {ideal_gas_density: 0.0}, tolerance: 1e-12}
+  - {case_id: density_offset, inputs: {molar_mass_kg_mol: 1.0, residual_scale_kg_m3: 0.1, temperature_min_abs: 1e-12, p_Pa: 8314.462618, T_K: 100.0, rho_kg_m3: 11.0}, expected: {ideal_gas_density: 1.0}, tolerance: 1e-12}
+claim_boundary: This is the ideal-gas algebraic relation only, not a real-gas model or empirical validation.

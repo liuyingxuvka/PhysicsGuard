@@ -59,11 +59,20 @@ def apply_catalog_mutation(raw: dict, mutation: dict) -> dict:
 
 
 @pytest.mark.parametrize(
-    "case",
-    load_yaml(FIXTURE_ROOT / "known-good.yaml")["cases"],
-    ids=lambda case: case["case_id"],
+    "case_id",
+    [
+        "model-understanding-single",
+        "signal-mapping-composed",
+        "base-no-match",
+        "dataset-validation-strict-dominance",
+    ],
 )
-def test_known_good_template_pack_cases_are_current_and_deterministic(case: dict) -> None:
+def test_known_good_template_pack_cases_are_current_and_deterministic(case_id: str) -> None:
+    case = next(
+        item
+        for item in load_yaml(FIXTURE_ROOT / "known-good.yaml")["cases"]
+        if item["case_id"] == case_id
+    )
     manifest = load_default_manifest()
     request = request_from_data(case["request"])
 
@@ -98,15 +107,19 @@ def test_known_good_template_pack_cases_are_current_and_deterministic(case: dict
 
 
 @pytest.mark.parametrize(
-    "case",
+    "case_id",
     [
-        case
-        for case in load_yaml(FIXTURE_ROOT / "known-bad.yaml")["cases"]
-        if case["kind"] == "blocked_decision"
+        "no-base-blocks",
+        "incompatible-many-blocks",
+        "field-owner-collision-blocks",
     ],
-    ids=lambda case: case["case_id"],
 )
-def test_known_bad_selection_cases_block_without_alternate_success(case: dict) -> None:
+def test_known_bad_selection_cases_block_without_alternate_success(case_id: str) -> None:
+    case = next(
+        item
+        for item in load_yaml(FIXTURE_ROOT / "known-bad.yaml")["cases"]
+        if item["kind"] == "blocked_decision" and item["case_id"] == case_id
+    )
     raw = load_yaml(MANIFEST_PATH)
     manifest = manifest_from_data(
         apply_catalog_mutation(raw, case["mutation"]),

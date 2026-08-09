@@ -1,0 +1,254 @@
+{
+  "accepted_revision_fingerprint": "sha256:4d6ae4e1d44e1f17bfa4878b0719a73db1095eef3c892955d36854e8bf116c14",
+  "accepted_revision_schema": "flowguard.model_revision_set.v5",
+  "added_model_ids": [],
+  "affected_closure": {
+    "affected_ids": [
+      "coverage:universe",
+      "model_instance:model:authoritative_model_system",
+      "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+      "model_relation:relation:system-contains:authoritative_model_system",
+      "parent_closure:purpose:authoritative_model_system",
+      "parent_closure:system:flowguard:model-regression-manifest",
+      "root:model:authoritative_model_system",
+      "system_property:subject_revision"
+    ],
+    "edge_ids": [
+      "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+      "model_relation:relation:system-contains:authoritative_model_system"
+    ],
+    "fingerprint": "sha256:f80f25b888bf2aa5ef38514d882e70015497d84a19b429bfc65e42e1ab0b508e",
+    "owner_bindings": [
+      {
+        "affected_id": "coverage:universe",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_instance:model:authoritative_model_system",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "model_relation:relation:system-contains:authoritative_model_system",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "parent_closure:purpose:authoritative_model_system",
+        "owner_route": "model_test_alignment"
+      },
+      {
+        "affected_id": "parent_closure:system:flowguard:model-regression-manifest",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "root:model:authoritative_model_system",
+        "owner_route": "model_mesh_maintenance"
+      },
+      {
+        "affected_id": "system_property:subject_revision",
+        "owner_route": "model_mesh_maintenance"
+      }
+    ]
+  },
+  "affected_closure_fingerprint": "sha256:f80f25b888bf2aa5ef38514d882e70015497d84a19b429bfc65e42e1ab0b508e",
+  "base_effective_intent_view_fingerprint": "sha256:7c45b7ab18d4b4348a281f4a0b0d46785be56c43510ed6fb7f747b1279d0b0ac",
+  "base_model_count": 7,
+  "base_model_ids": [
+    "authoritative_model_system",
+    "compositional_verification_kernel",
+    "guard_closure_contract",
+    "hierarchical_model_mesh",
+    "interval_diagnosability",
+    "model_test_code_alignment",
+    "task_local_model_deepening"
+  ],
+  "base_snapshot_fingerprint": "sha256:cf74ef4d8fd33719b64d4952db7bbf52945c7e6bdbfbef9e319e7e880e9fdbee",
+  "base_snapshot_id": "snapshot:physicsguard:software-dna-pg9-20260809",
+  "blockers": [],
+  "candidate_model_count": 7,
+  "candidate_model_ids": [
+    "authoritative_model_system",
+    "compositional_verification_kernel",
+    "guard_closure_contract",
+    "hierarchical_model_mesh",
+    "interval_diagnosability",
+    "model_test_code_alignment",
+    "task_local_model_deepening"
+  ],
+  "candidate_model_owner_count": 7,
+  "candidate_model_owner_ids": [
+    "model-obligation:authoritative_model_system",
+    "model-obligation:compositional_verification_kernel",
+    "model-obligation:guard_closure_contract",
+    "model-obligation:hierarchical_model_mesh",
+    "model-obligation:interval_diagnosability",
+    "model-obligation:model_test_code_alignment",
+    "model-obligation:task_local_model_deepening"
+  ],
+  "candidate_model_owner_inventory_fingerprint": "sha256:271708100cf420535bc18608b64e9d41b3c204252e17518a6eb777701778c2c6",
+  "candidate_model_owners": [
+    {
+      "logical_model_id": "authoritative_model_system",
+      "model_owner_id": "model-obligation:authoritative_model_system",
+      "realization_relation_fingerprint": "sha256:1563f0b5c1060f0e23341e6c6077baa886f3f10f4170ef150fc8e95a04fe9f0b",
+      "realization_relation_id": "relation:model-realizes-purpose:authoritative_model_system"
+    },
+    {
+      "logical_model_id": "compositional_verification_kernel",
+      "model_owner_id": "model-obligation:compositional_verification_kernel",
+      "realization_relation_fingerprint": "sha256:d4b15ac95404dda59995b148a12547f04f0a4f915907c1cefed5a924e9d0fb11",
+      "realization_relation_id": "relation:model-realizes-purpose:compositional_verification_kernel"
+    },
+    {
+      "logical_model_id": "guard_closure_contract",
+      "model_owner_id": "model-obligation:guard_closure_contract",
+      "realization_relation_fingerprint": "sha256:be34093bd882df40755d3ef902c96fef7b096877637e9b347779a3582ed313e0",
+      "realization_relation_id": "relation:model-realizes-purpose:guard_closure_contract"
+    },
+    {
+      "logical_model_id": "hierarchical_model_mesh",
+      "model_owner_id": "model-obligation:hierarchical_model_mesh",
+      "realization_relation_fingerprint": "sha256:8fa69dc428a3d850849d078faafadd7f978679c490a0bc3c493b8020a2c3dd32",
+      "realization_relation_id": "relation:model-realizes-purpose:hierarchical_model_mesh"
+    },
+    {
+      "logical_model_id": "interval_diagnosability",
+      "model_owner_id": "model-obligation:interval_diagnosability",
+      "realization_relation_fingerprint": "sha256:2f522709748a42ebf5d7aeda65eedce97f5a850bbae5f8bc8b85a3e6b2be0695",
+      "realization_relation_id": "relation:model-realizes-purpose:interval_diagnosability"
+    },
+    {
+      "logical_model_id": "model_test_code_alignment",
+      "model_owner_id": "model-obligation:model_test_code_alignment",
+      "realization_relation_fingerprint": "sha256:e96cbf93eef16eb9ad14a1017ad1b9f95bb4f88e1ab20480a1dc030a2953b989",
+      "realization_relation_id": "relation:model-realizes-purpose:model_test_code_alignment"
+    },
+    {
+      "logical_model_id": "task_local_model_deepening",
+      "model_owner_id": "model-obligation:task_local_model_deepening",
+      "realization_relation_fingerprint": "sha256:513a40476de4e21bffd0d30c2eda7c2b7d722d3b4f836d8ff4dedda86f66d67f",
+      "realization_relation_id": "relation:model-realizes-purpose:task_local_model_deepening"
+    }
+  ],
+  "candidate_snapshot_fingerprint": "sha256:678e8be6e8df705a12b6c5e82003bd26af4970cb3ed60b891765dfee4833a38e",
+  "candidate_snapshot_id": "snapshot:physicsguard:software-dna-pg10-20260809",
+  "change_present": true,
+  "changed_entity_ids": [
+    "coverage:universe",
+    "model_instance:model:authoritative_model_system",
+    "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+    "model_relation:relation:system-contains:authoritative_model_system",
+    "root:model:authoritative_model_system"
+  ],
+  "changed_model_ids": [
+    "authoritative_model_system"
+  ],
+  "claim_boundary": "This is a read-only preview derived from the sole observed authority and one stable live manifest candidate. It writes no snapshot, receipt, revision set, lease, lock, or pointer; runs no model or validation owner; and supplies no acceptance, activation, release, or completion evidence.",
+  "intent_input_identity_fingerprint": "sha256:7ac67824c73685bd4bbe779ce23d42db3849777c7d0333c522bbc89ea0c0060f",
+  "intent_mode": "refine",
+  "models_executed": false,
+  "observed_head_fingerprint": "sha256:9ef6102eda5cf5096b8df4462bc401915d472b7407c58f4a4a6f8979f630c0a9",
+  "ok": true,
+  "removed_model_ids": [],
+  "replaced_model_ids": [
+    "authoritative_model_system"
+  ],
+  "requested_snapshot_id": "snapshot:physicsguard:software-dna-pg10-20260809",
+  "required_command": "model-revision-build",
+  "required_intent_input_kinds": [
+    "contributions",
+    "dispositions",
+    "effective_intent_transitions"
+  ],
+  "required_legacy_intent_entries": [],
+  "required_legacy_intent_entry_count": 0,
+  "required_legacy_intent_entry_inventory_fingerprint": "",
+  "required_owner_routes": [
+    "model_mesh_maintenance",
+    "model_test_alignment"
+  ],
+  "required_transition_predecessor_count": 7,
+  "required_transition_predecessor_inventory_fingerprint": "sha256:b93ad914b37bc34a391517c66a822b97a9b9e3c1c75c72483799faceb1469299",
+  "required_transition_predecessors": [
+    {
+      "prior_contribution_fingerprint": "sha256:d125e733ef297e9acf3865b609a417b27e6dda262f2359a76dcdfec66f7fe781",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:24867823ed3ddfeba3c8124ebca17056de450eb930bf5bd5ceceadab1dead26e",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:c557d5e3078556a234d4ac74b84efcfe6735bb30d69c334afbadf000d436734f",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:4b898b85acbef35dbd87151b8e866e6657624759e9fc42f388d08d8315ae9c15",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:fc1c262097fc9291765e9893d2716e1262e5b69c8e99945eeb402b47af5429e0",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:d836c95b59016708c123d2d036978023b08f8be5648f4a850a023b8d2434ed50",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:self-dna-20260809"
+    },
+    {
+      "prior_contribution_fingerprint": "sha256:3aba339ee8f0e334b8bce896886ec6ccdd2d4358ba0810c15b271bfbd22c8992",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:self-dna-20260809"
+    }
+  ],
+  "root": "C:\\Users\\liu_y\\Documents\\PhysicGuard_20260501",
+  "schema": "flowguard.model_revision_plan.v2",
+  "snapshot_diff": {
+    "added_ids": [],
+    "changed_commitment_ids": [],
+    "changed_contract_ids": [],
+    "changed_coverage_ids": [
+      "coverage:universe"
+    ],
+    "changed_field_ids": [],
+    "changed_gap_ids": [],
+    "changed_owner_artifact_ids": [],
+    "changed_relation_ids": [
+      "relation:model-realizes-purpose:authoritative_model_system",
+      "relation:system-contains:authoritative_model_system"
+    ],
+    "changed_root_ids": [
+      "root:model:authoritative_model_system"
+    ],
+    "changed_side_effect_ids": [],
+    "changed_source_surface_ids": [],
+    "changed_system_property_ids": [
+      "system_property:subject_revision"
+    ],
+    "changed_test_ids": [],
+    "fingerprint_changed_ids": [
+      "coverage:universe",
+      "model_instance:model:authoritative_model_system",
+      "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+      "model_relation:relation:system-contains:authoritative_model_system",
+      "root:model:authoritative_model_system"
+    ],
+    "members": [
+      {
+        "base_instance_fingerprint": "sha256:0767a0d1bdc2d3daea6b26b49b7ee8b0e1ef6c4f9bcbd439a5431e5a6fc8feaa",
+        "candidate_instance_fingerprint": "sha256:79e68efea67a363c6583075144049334fffcb25ba60f2ae30c3ef04498ec916b",
+        "changed_element_ids": [
+          "model_instance:model:authoritative_model_system"
+        ],
+        "member_id": "authoritative_model_system",
+        "operation": "replace",
+        "schema": "flowguard.model_revision_member.v1"
+      }
+    ],
+    "removed_ids": []
+  },
+  "snapshot_diff_fingerprint": "sha256:ef386cf871c2e1ea27a27c1fe7534f01098ee5b605e428ecf9dd496ba02bc325",
+  "status": "pass",
+  "writes_performed": false
+}

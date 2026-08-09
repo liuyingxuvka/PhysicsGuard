@@ -68,5 +68,71 @@
       "predicate": "The target-native result for 'safe_claim_boundary' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
       "expected_finding_code": "missing_target_obligation"
     }
+  ],
+  "blueprint_route_contract_fingerprint": "305F138B908EE4ADB0EFB79DBA347DEF54B198E553650E1CCEDAEC0A28651220",
+  "blueprint_oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_consumer_boundary",
+      "obligation_id": "blueprint_consumer_boundary",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_consumer_boundary' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_whole_or_affected_review_consumption",
+      "obligation_id": "blueprint_whole_or_affected_review_consumption",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_whole_or_affected_review_consumption' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_denominator_depth_first_gap",
+      "obligation_id": "blueprint_denominator_depth_first_gap",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_denominator_depth_first_gap' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_closure_and_gap_accounting",
+      "obligation_id": "blueprint_closure_and_gap_accounting",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_closure_and_gap_accounting' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_portable_bundle_identity_consumption",
+      "obligation_id": "blueprint_portable_bundle_identity_consumption",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_portable_bundle_identity_consumption' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_portable_frozen_case_status_accounting",
+      "obligation_id": "blueprint_portable_frozen_case_status_accounting",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_portable_frozen_case_status_accounting' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_frozen_case_vs_current_execution",
+      "obligation_id": "blueprint_frozen_case_vs_current_execution",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_frozen_case_vs_current_execution' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_identity_only_terminal_accounting",
+      "obligation_id": "blueprint_identity_only_terminal_accounting",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_identity_only_terminal_accounting' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-audit-closure:blueprint_portable_execution_claim_boundary",
+      "obligation_id": "blueprint_portable_execution_claim_boundary",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_portable_execution_claim_boundary' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    }
   ]
 }

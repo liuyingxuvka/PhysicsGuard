@@ -1,0 +1,39 @@
+schema: physicsguard.project_formula.v1
+module_type: PressureRatioModule
+owner: physicsguard.project_formula.pressure_ratio.v1
+purpose: Independently state the bounded outlet-to-inlet pressure ratio used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 0.1, constraints: [residual_scale > 0]}
+  - {name: denominator_min_abs, dimension: pressure, unit: Pa, required: false, default: 1e-12, constraints: [denominator_min_abs > 0]}
+scenario_inputs:
+  - {name: p_in_Pa, dimension: pressure, unit: Pa}
+  - {name: p_out_Pa, dimension: pressure, unit: Pa}
+scenario_outputs: [{name: pressure_ratio, dimension: dimensionless, unit: '1'}]
+residuals:
+  - name: pressure_ratio
+    expression: pressure_ratio - p_out_Pa / p_in_Pa
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: Pa divided by Pa is dimensionless, matching pressure_ratio.
+    scale_expression: residual_scale
+    zero_condition: Pressure ratio equals outlet pressure divided by nonzero inlet pressure.
+    source_intermediates: [{symbol: p_in, expression: p_in_Pa}, {symbol: p_out, expression: p_out_Pa}, {symbol: ratio, expression: pressure_ratio}]
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 0.1), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive residual_scale., cases: [{kind: inside, inputs: {residual_scale: 0.1}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+    - {predicate: denominator_min_abs > 0, guard_signature: "_positive_float(parameters.get('denominator_min_abs', 1e-12), 'denominator_min_abs')", failure_type: ValueError, message_selector: denominator_min_abs, on_violation: Reject non-positive denominator_min_abs., cases: [{kind: inside, inputs: {denominator_min_abs: 1e-12}, expected: pass}, {kind: boundary, inputs: {denominator_min_abs: 0.0}, expected: fail}, {kind: outside, inputs: {denominator_min_abs: -1.0}, expected: fail}]}
+  evaluation:
+    - {predicate: "abs(p_in_Pa) >= denominator_min_abs", guard_signature: "if abs(p_in) < self.denominator_min_abs", failure_type: ValueError, message_selector: p_in_Pa, on_violation: Reject inlet pressure inside the protected denominator deadband., cases: [{kind: inside, inputs: {p_in_Pa: 100000.0, denominator_min_abs: 1e-12}, expected: pass}, {kind: boundary, inputs: {p_in_Pa: 1e-12, denominator_min_abs: 1e-12}, expected: pass}, {kind: outside, inputs: {p_in_Pa: 0.0, denominator_min_abs: 1e-12}, expected: fail}]}
+regions:
+  valid:
+    - {predicate: "p_in_Pa >= denominator_min_abs and p_out_Pa >= 0 and pressure_ratio >= 0 and residual_scale > 0", meaning: Positive-pressure ratio scenario outside the inlet-pressure deadband., cases: [{kind: inside, inputs: {p_in_Pa: 100000.0, p_out_Pa: 200000.0, pressure_ratio: 2.0, denominator_min_abs: 1e-12, residual_scale: 0.1}, expected: pass}, {kind: boundary, inputs: {p_in_Pa: 1e-12, p_out_Pa: 0.0, pressure_ratio: 0.0, denominator_min_abs: 1e-12, residual_scale: 0.1}, expected: pass}, {kind: outside, inputs: {p_in_Pa: 0.0, p_out_Pa: 0.0, pressure_ratio: 0.0, denominator_min_abs: 1e-12, residual_scale: 0.1}, expected: fail}]}
+  invalid:
+    - {predicate: "p_in_Pa < denominator_min_abs or p_out_Pa < 0 or pressure_ratio < 0 or residual_scale <= 0", meaning: Invalid pressure magnitude denominator or normalization region., cases: [{kind: inside, inputs: {p_in_Pa: 0.0, p_out_Pa: 0.0, pressure_ratio: 0.0, denominator_min_abs: 1e-12, residual_scale: 0.1}, expected: pass}, {kind: boundary, inputs: {p_in_Pa: 1e-12, p_out_Pa: 0.0, pressure_ratio: 0.0, denominator_min_abs: 1e-12, residual_scale: 0.1}, expected: fail}, {kind: outside, inputs: {p_in_Pa: 100000.0, p_out_Pa: 200000.0, pressure_ratio: 2.0, denominator_min_abs: 1e-12, residual_scale: 0.1}, expected: fail}]}
+assumptions: [Algebraic pressure ratio, Inlet and outlet use absolute pressure, Flow losses and compressibility are outside this relation]
+validity: [Inlet pressure is outside the protected denominator deadband, Scenario roles are one boundary assignment]
+oracle_cases:
+  - {case_id: balanced, inputs: {residual_scale: 0.1, denominator_min_abs: 1e-12, p_in_Pa: 100000.0, p_out_Pa: 200000.0, pressure_ratio: 2.0}, expected: {pressure_ratio: 0.0}, tolerance: 1e-12}
+  - {case_id: ratio_offset, inputs: {residual_scale: 0.1, denominator_min_abs: 1e-12, p_in_Pa: 100000.0, p_out_Pa: 200000.0, pressure_ratio: 1.9}, expected: {pressure_ratio: -0.1}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity algebraic pressure ratio, not a pressure-loss or compressible-flow model.

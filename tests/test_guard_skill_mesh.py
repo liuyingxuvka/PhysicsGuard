@@ -54,7 +54,11 @@ def test_current_mesh_and_identity_known_bads() -> None:
 def test_current_toolchain_and_model_purpose_metadata_are_exact() -> None:
     checker = _load_checker()
     mesh = json.loads(MESH.read_text(encoding="utf-8"))
-    assert mesh["toolchain_identity"] == checker.EXPECTED_TOOLCHAIN_IDENTITY
+    expected_toolchain, authority_error = (
+        checker._current_toolchain_identity_resolution()
+    )
+    assert authority_error is None
+    assert mesh["toolchain_identity"] == expected_toolchain
 
     manifest = json.loads(
         (ROOT / ".flowguard/model-regression-manifest.json").read_text(
@@ -74,7 +78,7 @@ def test_current_toolchain_and_model_purpose_metadata_are_exact() -> None:
     for row in manifest["models"]:
         purpose = ModelPurposeClosure.from_dict(row["purpose_closure"])
         assert purpose.model_instance_id == (
-            f"regression:{row['model_id']}:0.15.1"
+            f"regression:{row['model_id']}:0.15.3"
         )
 
 
@@ -112,7 +116,7 @@ def test_source_structure_report_is_non_authoritative_and_receipt_free() -> None
     assert report["authoritative"] is False
     assert report["maintenance_unit_id"] == "unit:physicsguard-family"
     assert report["member_count"] == 10
-    assert report["declared_check_count"] == 84
+    assert report["declared_check_count"] == 85
     assert report["findings"] == []
     assert set(report) == {
         "artifact_kind",

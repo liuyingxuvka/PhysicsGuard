@@ -69,6 +69,83 @@
       "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
     }
   ],
+  "blueprint_route_contract": {
+    "schema_version": "physicsguard.skill_blueprint_route_contract.v1",
+    "authority_mode": "sole_author_full_reviewer",
+    "projection_kinds": [
+      "summary",
+      "affected",
+      "reverse_trace",
+      "full"
+    ],
+    "required_operation_ids": [
+      "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --pretty",
+      "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --material-root ROOT --pretty",
+      "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --output BUNDLE --pretty",
+      "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --material-root ROOT --output BUNDLE --pretty",
+      "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty",
+      "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --module|--element|--case|--impact|--reverse ID --pretty",
+      "schema:physicsguard.fmi-observation-request.v1",
+      "api:physicsguard.summary_physical_blueprint_projection",
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.reverse_trace_physical_blueprint_projection",
+      "api:physicsguard.full_physical_blueprint_projection",
+      "api:physicsguard.build_physical_blueprint_export_bundle",
+      "api:physicsguard.materialize_physical_blueprint_export_bundle",
+      "api:physicsguard.query_physical_blueprint_export_bundle"
+    ],
+    "required_obligation_ids": [
+      "blueprint_author_and_full_review",
+      "blueprint_canonical_review",
+      "blueprint_impact_and_reverse_trace",
+      "blueprint_projection_identity_current",
+      "blueprint_depth_first_gap_and_safe_claim",
+      "blueprint_material_root_resolution",
+      "blueprint_external_resource_not_run_boundary",
+      "blueprint_generic_fmi_observation_and_independent_oracle",
+      "blueprint_portable_bundle_export_identity",
+      "blueprint_portable_compact_or_single_selector",
+      "blueprint_portable_execution_claim_boundary"
+    ],
+    "block_on": [
+      {
+        "finding_code": "blueprint_projection_missing_stale_foreign_or_ambiguous",
+        "condition": "a required blueprint projection or its blueprint, review, relation-set, recipe, target-revision, or evidence fingerprint is missing, stale, foreign, ambiguous, or caller-rehashed"
+      },
+      {
+        "finding_code": "blueprint_authority_boundary_violated",
+        "condition": "the canonical author/full-review route is replaced, bypassed, or duplicated"
+      },
+      {
+        "finding_code": "blueprint_required_obligation_unproved",
+        "condition": "any route-specific blueprint obligation lacks current target-native evidence or is replaced by AI prose or a self-declared pass"
+      },
+      {
+        "finding_code": "blueprint_gap_or_claim_boundary_unreconciled",
+        "condition": "the first gap, outside-scope branch, unsupported claim, closure handoff, or bounded claim required by this route is omitted or promoted to pass"
+      },
+      {
+        "finding_code": "blueprint_material_root_boundary_violated",
+        "condition": "explicit_material_root is treated as the blueprint directory, searched, downloaded, or reviewed without the caller-selected --material-root, or external_resource_not_run is promoted"
+      },
+      {
+        "finding_code": "blueprint_fmi_oracle_independence_violated",
+        "condition": "FMI caller expectations or native outputs replace the restricted source-independent oracle or are conflated with its result"
+      },
+      {
+        "finding_code": "blueprint_portable_query_contract_violated",
+        "condition": "the full bundle is emitted as the default prompt payload, more than one deep selector is accepted, a byte budget is bypassed, or an identity-only terminal is silently repaired"
+      },
+      {
+        "finding_code": "blueprint_portable_execution_promoted",
+        "condition": "bundle presence, observed-at-export status, a frozen-case pass, or an AI answer is promoted to current native execution, fresh evidence, or high-fidelity reconstruction"
+      }
+    ],
+    "self_reported_status_allowed": false,
+    "missing_projection_behavior": "block_visible_no_fallback",
+    "claim_boundary": "This is the sole PhysicsGuard author/full-review authority for the declared physical target and inventory. Explicit external material is never inferred, FMI observations remain bound to a restricted independent oracle, and portable bundle status remains frozen interpretation with execution_claim_licensed=false; none proves fresh native execution or unsupported high-fidelity truth."
+  },
+  "blueprint_route_contract_fingerprint": "24EF4BB6D6A2FE86A48F77A0F020517DB9F7CBB2FA3FC49B177B7CA48BF0A4D2",
   "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
   "authoring_order": [
     "freeze_prevented_failure_contract",

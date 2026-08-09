@@ -1,0 +1,50 @@
+schema: physicsguard.project_formula.v1
+module_type: CurrentDensityModule
+owner: physicsguard.project_formula.current_density.v1
+purpose: Independently state the current divided by active-area relation used by the exact current-density scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: active_area_m2, dimension: area, unit: m^2, required: true, default: null, constraints: [active_area_m2 > 0]}
+  - {name: residual_scale_A_m2, dimension: current_density, unit: A/m^2, required: false, default: 100.0, constraints: [residual_scale_A_m2 > 0]}
+scenario_inputs: [{name: current_A, dimension: electric_current, unit: A}]
+scenario_outputs: [{name: current_density_A_m2, dimension: current_density, unit: A/m^2}]
+residuals:
+  - name: current_density
+    expression: current_density_A_m2 - current_A / active_area_m2
+    dimension: current_density
+    unit: A/m^2
+    dimensional_derivation: A divided by m^2 equals A/m^2.
+    scale_expression: residual_scale_A_m2
+    zero_condition: Current density equals electric current divided by configured active area.
+    source_intermediates: [{symbol: current, expression: current_A}, {symbol: density, expression: current_density_A_m2}]
+constraints:
+  constructor:
+    - predicate: active_area_m2 > 0
+      guard_signature: _required_positive(parameters, 'active_area_m2')
+      failure_type: ValueError
+      message_selector: active_area_m2
+      on_violation: Reject non-positive active_area_m2.
+      cases: [{kind: inside, inputs: {active_area_m2: 0.1}, expected: pass}, {kind: boundary, inputs: {active_area_m2: 0.0}, expected: fail}, {kind: outside, inputs: {active_area_m2: -1.0}, expected: fail}]
+    - predicate: residual_scale_A_m2 > 0
+      guard_signature: _positive_float(parameters.get('residual_scale_A_m2', 100.0), 'residual_scale_A_m2')
+      failure_type: ValueError
+      message_selector: residual_scale_A_m2
+      on_violation: Reject non-positive residual_scale_A_m2.
+      cases: [{kind: inside, inputs: {residual_scale_A_m2: 100.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_A_m2: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_A_m2: -1.0}, expected: fail}]
+  evaluation: []
+regions:
+  valid:
+    - predicate: active_area_m2 > 0 and residual_scale_A_m2 > 0 and current_A >= 0 and current_density_A_m2 >= 0
+      meaning: Nonnegative current-density magnitude relation with a positive active area and scale.
+      cases: [{kind: inside, inputs: {active_area_m2: 0.1, residual_scale_A_m2: 100.0, current_A: 100.0, current_density_A_m2: 1000.0}, expected: pass}, {kind: boundary, inputs: {active_area_m2: 1.0, residual_scale_A_m2: 1.0, current_A: 0.0, current_density_A_m2: 0.0}, expected: pass}, {kind: outside, inputs: {active_area_m2: 0.0, residual_scale_A_m2: 100.0, current_A: 100.0, current_density_A_m2: 1000.0}, expected: fail}]
+  invalid:
+    - predicate: active_area_m2 <= 0 or residual_scale_A_m2 <= 0 or current_A < 0 or current_density_A_m2 < 0
+      meaning: Invalid configuration or signed values outside the declared current-density magnitude boundary.
+      cases: [{kind: inside, inputs: {active_area_m2: 0.0, residual_scale_A_m2: 100.0, current_A: 100.0, current_density_A_m2: 1000.0}, expected: pass}, {kind: boundary, inputs: {active_area_m2: 1.0, residual_scale_A_m2: 1.0, current_A: 0.0, current_density_A_m2: 0.0}, expected: fail}, {kind: outside, inputs: {active_area_m2: 0.1, residual_scale_A_m2: 100.0, current_A: 100.0, current_density_A_m2: 1000.0}, expected: fail}]
+assumptions: [Active area is constant and positive, Current is distributed uniformly in this lumped relation, Electrochemical polarization is outside scope]
+validity: [Use only for the configured active area, Scenario ports are one boundary assignment rather than an intrinsic direction]
+oracle_cases:
+  - {case_id: balanced, inputs: {active_area_m2: 0.5, residual_scale_A_m2: 1.0, current_A: 10.0, current_density_A_m2: 20.0}, expected: {current_density: 0.0}, tolerance: 1e-12}
+  - {case_id: high_density, inputs: {active_area_m2: 0.5, residual_scale_A_m2: 1.0, current_A: 10.0, current_density_A_m2: 22.0}, expected: {current_density: 2.0}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity algebraic current-density relation for one exact scenario, not a spatial distribution, polarization model, or empirical validation.

@@ -27,6 +27,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint slice
+
+Consume only the exact affected interface projection and its downstream consumers. Check source/target identity, unit, reference frame, sign convention, conversion semantic, time basis, revision, evidence fingerprint, and every selected consumer. This route does not author or fully review the blueprint. Omitted branches are outside scope, not passed. A missing/stale/ambiguous projection blocks and never triggers a full-blueprint or repository scan.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -45,6 +49,8 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `mapping_status`
 - `review_gaps`
+- `affected_slice_fingerprint`
+- `downstream_blueprint_consumers`
 - `temporal_boundary`
 - `safe_mapping_claim`
 

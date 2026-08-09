@@ -1,0 +1,30 @@
+[
+  {
+    "disposition": "replace",
+    "reason": "The legacy hyphenated model-regression coverage identity is replaced by the current canonical underscore model identity for guard_closure_contract.",
+    "removed_id": "coverage:tests_evidence:check:model-regression:guard-closure",
+    "replacement_id": "coverage:tests_evidence:check:model-regression:guard_closure_contract",
+    "schema": "flowguard.revision_removal_disposition.v1"
+  },
+  {
+    "disposition": "replace",
+    "reason": "The legacy hyphenated model-regression coverage identity is replaced by the current canonical underscore model identity for interval_diagnosability.",
+    "removed_id": "coverage:tests_evidence:check:model-regression:interval-diagnosability",
+    "replacement_id": "coverage:tests_evidence:check:model-regression:interval_diagnosability",
+    "schema": "flowguard.revision_removal_disposition.v1"
+  },
+  {
+    "disposition": "replace",
+    "reason": "The legacy hyphenated model-regression coverage identity is replaced by the current canonical underscore model identity for task_local_model_deepening.",
+    "removed_id": "coverage:tests_evidence:check:model-regression:task-local-model-deepening",
+    "replacement_id": "coverage:tests_evidence:check:model-regression:task_local_model_deepening",
+    "schema": "flowguard.revision_removal_disposition.v1"
+  },
+  {
+    "disposition": "replace",
+    "reason": "The repository self-DNA root is now the explicit authoritative_model_system model; guard_closure_contract remains a governed child model and is no longer the root owner.",
+    "removed_id": "root:model:guard_closure_contract",
+    "replacement_id": "root:model:authoritative_model_system",
+    "schema": "flowguard.revision_removal_disposition.v1"
+  }
+]

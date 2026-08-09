@@ -1,0 +1,21 @@
+schema: physicsguard.project_formula.v1
+module_type: BrakeSimpleModule
+owner: physicsguard.project_formula.low_fidelity_brake_power.v1
+purpose: Independently state the low-fidelity algebraic brake-power relation used for semantic review.
+inputs:
+  - {name: brake_force_N, dimension: force, unit: N, direction: input}
+  - {name: vehicle_speed_m_s, dimension: speed, unit: m/s, direction: input}
+outputs:
+  - {name: brake_power_W, dimension: power, unit: W, direction: output}
+residuals:
+  - name: brake_power
+    expression: brake_power_W - brake_force_N * vehicle_speed_m_s
+    dimension: power
+    unit: W
+    zero_condition: brake_power_W equals brake_force_N multiplied by vehicle_speed_m_s
+assumptions:
+  - Algebraic magnitude relation; rotational inertia, tire slip, ABS control, and brake thermal dynamics are outside this low-fidelity boundary.
+validity:
+  - Brake force, vehicle speed, and dissipated brake-power magnitudes are nonnegative and the normalization scale is positive.
+claim_boundary: This project formula is a source-independent low-fidelity relation, not empirical validation or a high-fidelity brake model.
+

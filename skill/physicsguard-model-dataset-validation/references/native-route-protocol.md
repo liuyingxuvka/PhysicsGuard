@@ -4,6 +4,12 @@ Use this route after concrete test data has passed
 `physicsguard-test-file-contract-review`. Do not use it to bypass failed,
 partial, stale, or review-required contracts.
 
+## Blueprint validation projection
+
+Use the current affected projection for bounded validation and full only when the requested claim covers the entire declared target. The receipt must account per blueprint element and obligation: validation mode, validity boundary, residual/oracle, dataset and evidence fingerprints, tested and untested members, deepest validation-supported layer, first unresolved gap, and bounded safe claim. Aggregate counts never cover an omitted element. A missing/stale/ambiguous projection blocks without run-all or source-scan fallback.
+
+Executable projection entry: call `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for bounded validation, or `physicsguard.full_physical_blueprint_projection(blueprint, review)` only when the requested validation claim names the whole target boundary. The affected query reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result before graph compilation.
+
 ## Workflow
 
 1. Check every referenced test-file contract:

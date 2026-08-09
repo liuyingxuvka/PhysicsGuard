@@ -12,6 +12,22 @@
     "temporal_coverage",
     "target_variable_binding"
   ],
+  "blueprint_route_contract_fingerprint": "6ED28A71B76AD689CE6AB6BA44364BBC3C2EF0EE98D9BA2E0E0C6CEFD679047D",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_consumer_boundary",
+    "blueprint_affected_interface_consumption",
+    "blueprint_downstream_reverse_consumers",
+    "blueprint_mapping_gap_and_safe_claim"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "affected",
+    "reverse_trace"
+  ],
+  "executed_blueprint_operation_ids": [
+    "api:physicsguard.affected_physical_blueprint_projection",
+    "api:physicsguard.reverse_trace_physical_blueprint_projection"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

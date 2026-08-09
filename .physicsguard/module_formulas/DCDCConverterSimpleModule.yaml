@@ -1,0 +1,34 @@
+schema: physicsguard.project_formula.v1
+module_type: DCDCConverterSimpleModule
+owner: physicsguard.project_formula.low_fidelity_dcdc_power.v1
+purpose: Independently state the low-fidelity algebraic DC/DC power relations used for semantic review.
+inputs:
+  - {name: V_in_V, dimension: voltage, unit: V, direction: input}
+  - {name: I_in_A, dimension: current, unit: A, direction: input}
+  - {name: V_out_V, dimension: voltage, unit: V, direction: input}
+  - {name: I_out_A, dimension: current, unit: A, direction: input}
+  - {name: efficiency, dimension: ratio, unit: '1', direction: input}
+outputs:
+  - {name: P_in_W, dimension: power, unit: W, direction: output}
+  - {name: P_out_W, dimension: power, unit: W, direction: output}
+residuals:
+  - name: dcdc_input_power
+    expression: P_in_W - V_in_V * I_in_A
+    dimension: power
+    unit: W
+    zero_condition: P_in_W equals V_in_V multiplied by I_in_A
+  - name: dcdc_output_power
+    expression: P_out_W - V_out_V * I_out_A
+    dimension: power
+    unit: W
+    zero_condition: P_out_W equals V_out_V multiplied by I_out_A
+  - name: dcdc_efficiency_power
+    expression: P_out_W - efficiency * P_in_W
+    dimension: power
+    unit: W
+    zero_condition: P_out_W equals efficiency multiplied by P_in_W
+assumptions:
+  - Pointwise algebraic magnitude relations; switching, ripple, thermal derating, and control dynamics are outside this low-fidelity boundary.
+validity:
+  - Voltage, current, and power magnitudes are nonnegative, physical efficiency is greater than zero and at most one, and the normalization scale is positive.
+claim_boundary: This project formula is a source-independent low-fidelity relation, not measured converter performance or a switching-level electrical model.

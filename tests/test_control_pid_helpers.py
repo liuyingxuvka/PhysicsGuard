@@ -185,7 +185,9 @@ def test_threshold_state_check_correct_wrong_and_invalid() -> None:
     ok = record_for(spec, {"m.input": 6.0, "m.state": 1.0})
     bad = record_for(spec, {"m.input": 6.0, "m.state": 0.0})
     assert ok.value == pytest.approx(0.0)
-    assert bad.value == pytest.approx(-1.0)
+    assert bad.value == pytest.approx(-0.75)
+    assert bad.scale == pytest.approx(0.25)
+    assert bad.normalized_value == pytest.approx(-3.0)
     assert bad.diagnostic_key == "threshold_state_violation"
     assert bad.role == "post_check"
 

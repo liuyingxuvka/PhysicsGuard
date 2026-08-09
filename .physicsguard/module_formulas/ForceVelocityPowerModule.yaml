@@ -1,0 +1,36 @@
+schema: physicsguard.project_formula.v1
+module_type: ForceVelocityPowerModule
+owner: physicsguard.project_formula.force_velocity_power.v1
+purpose: Independently state the signed translational power relation used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale_W, dimension: power, unit: W, required: false, default: 1000.0, constraints: [residual_scale_W > 0]}
+scenario_inputs:
+  - {name: force_N, dimension: force, unit: N}
+  - {name: velocity_m_s, dimension: velocity, unit: m/s}
+scenario_outputs: [{name: P_W, dimension: power, unit: W}]
+residuals:
+  - name: force_velocity_power
+    expression: P_W - force_N * velocity_m_s
+    dimension: power
+    unit: W
+    dimensional_derivation: N multiplied by m/s equals N*m/s, which is W.
+    scale_expression: residual_scale_W
+    zero_condition: Translational power equals force multiplied by velocity under one sign convention.
+    source_intermediates: [{symbol: force, expression: force_N}, {symbol: velocity, expression: velocity_m_s}, {symbol: power, expression: P_W}]
+constraints:
+  constructor:
+    - {predicate: residual_scale_W > 0, guard_signature: "positive_float(parameters.get('residual_scale_W', 1000.0), 'residual_scale_W')", failure_type: ValueError, message_selector: residual_scale_W, on_violation: Reject non-positive residual_scale_W., cases: [{kind: inside, inputs: {residual_scale_W: 1000.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_W: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: residual_scale_W > 0, meaning: Finite signed force velocity and power values with a positive normalization scale., cases: [{kind: inside, inputs: {residual_scale_W: 1000.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_W: -1.0}, expected: fail}]}
+  invalid:
+    - {predicate: residual_scale_W <= 0, meaning: Invalid non-positive normalization scale., cases: [{kind: inside, inputs: {residual_scale_W: 0.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 1e-12}, expected: fail}, {kind: outside, inputs: {residual_scale_W: 1000.0}, expected: fail}]}
+assumptions: [One translational sign convention, Algebraic relation with no dynamics, Mechanical losses are outside this relation]
+validity: [Force velocity and power are finite signed scalars, Scenario roles do not make the equation intrinsically directional]
+oracle_cases:
+  - {case_id: balanced, inputs: {residual_scale_W: 1000.0, force_N: 10.0, velocity_m_s: 2.0, P_W: 20.0}, expected: {force_velocity_power: 0.0}, tolerance: 1e-12}
+  - {case_id: power_offset, inputs: {residual_scale_W: 1000.0, force_N: 10.0, velocity_m_s: 2.0, P_W: 19.0}, expected: {force_velocity_power: -1.0}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity signed algebraic power relation, not a loss or dynamic mechanical model.

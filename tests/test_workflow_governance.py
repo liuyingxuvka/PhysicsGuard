@@ -8,6 +8,9 @@ import sys
 import yaml
 
 from physicsguard.workflow import (
+    MODULE_SEMANTIC_LEDGER_SCHEMA,
+    MODULE_SEMANTIC_PHYSICAL_DENOMINATOR,
+    MODULE_SEMANTIC_REGISTRY_DENOMINATOR,
     adopt_project,
     audit_project,
     review_external_model_intake,
@@ -37,8 +40,40 @@ def test_project_adopt_writes_record_and_log(tmp_path: Path) -> None:
 
     assert result["action"] == "adopt"
     assert audit["ok"]
-    assert (tmp_path / ".physicsguard" / "project.yaml").exists()
+    project_path = tmp_path / ".physicsguard" / "project.yaml"
+    assert project_path.exists()
     assert (tmp_path / "docs" / "physicsguard_adoption_log.md").exists()
+    payload = yaml.safe_load(project_path.read_text(encoding="utf-8"))
+    policy = payload["policy"]
+    assert policy["require_current_module_semantic_ledger"] is True
+    assert policy["module_semantic_ledger_schema"] == MODULE_SEMANTIC_LEDGER_SCHEMA
+    assert (
+        policy["module_semantic_registry_denominator"]
+        == MODULE_SEMANTIC_REGISTRY_DENOMINATOR
+    )
+    assert (
+        policy["module_semantic_physical_denominator"]
+        == MODULE_SEMANTIC_PHYSICAL_DENOMINATOR
+    )
+    assert policy["dummy_module_physical_claim_licensed"] is False
+    assert "ledger_is_navigation_not_physics_proof" not in policy
+
+
+def test_project_audit_rejects_retired_navigation_policy(tmp_path: Path) -> None:
+    (tmp_path / "AGENTS.md").write_text("rules", encoding="utf-8")
+    skill = tmp_path / "skill" / "physicsguard-ai-debugging"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text("name: physicsguard-ai-debugging", encoding="utf-8")
+    adopt_project(tmp_path)
+    project_path = tmp_path / ".physicsguard" / "project.yaml"
+    payload = yaml.safe_load(project_path.read_text(encoding="utf-8"))
+    payload["policy"]["ledger_is_navigation_not_physics_proof"] = True
+    project_path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+
+    audit = audit_project(tmp_path)
+
+    assert not audit["ok"]
+    assert any("ledger_is_navigation_not_physics_proof is retired" in error for error in audit["errors"])
 
 
 def test_model_understanding_preflight_template_passes() -> None:

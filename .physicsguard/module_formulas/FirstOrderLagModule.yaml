@@ -1,0 +1,49 @@
+schema: physicsguard.project_formula.v1
+module_type: FirstOrderLagModule
+owner: physicsguard.module_semantics.mechanical_draft.FirstOrderLagModule
+purpose: Mechanically describe the current single-step first-order lag residual with explicit previous and next state roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: tau_s, dimension: duration, unit: s, required: true, default: null, constraints: [tau_s > 0]}
+  - {name: dt_s, dimension: duration, unit: s, required: true, default: null, constraints: [dt_s > 0]}
+  - {name: residual_scale, dimension: reciprocal_time, unit: 1/s, required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: u_current, dimension: dimensionless, unit: '1'}
+  - {name: y_previous, dimension: dimensionless, unit: '1', role: state_previous}
+scenario_outputs:
+  - {name: y_current, dimension: dimensionless, unit: '1', role: state_next}
+residuals:
+  - name: first_order_lag
+    expression: (y_current - y_previous) / dt_s - (u_current - y_current) / tau_s
+    dimension: reciprocal_time
+    unit: 1/s
+    dimensional_derivation: Each unitless signal difference divided by seconds has unit reciprocal seconds.
+    scale_expression: residual_scale
+    zero_condition: The discrete state rate equals the first-order lag response rate for this one step.
+    source_intermediates:
+      - {symbol: residual, expression: "(y_current - y_previous) / dt_s - (u_current - y_current) / tau_s"}
+constraints:
+  constructor:
+    - {predicate: tau_s > 0, guard_signature: "_required_positive(parameters, 'tau_s')", failure_type: ValueError, message_selector: tau_s, on_violation: Reject missing or non-positive time constant., cases: [{kind: inside, inputs: {tau_s: 2.0}, expected: pass}, {kind: boundary, inputs: {tau_s: 0.0}, expected: fail}, {kind: outside, inputs: {tau_s: -1.0}, expected: fail}]}
+    - {predicate: dt_s > 0, guard_signature: "_required_positive(parameters, 'dt_s')", failure_type: ValueError, message_selector: dt_s, on_violation: Reject missing or non-positive step duration., cases: [{kind: inside, inputs: {dt_s: 1.0}, expected: pass}, {kind: boundary, inputs: {dt_s: 0.0}, expected: fail}, {kind: outside, inputs: {dt_s: -1.0}, expected: fail}]}
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive rate normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "tau_s > 0 and dt_s > 0 and residual_scale > 0", meaning: One bounded lag step with positive time constant, duration, and normalization., cases: [{kind: inside, inputs: {tau_s: 2.0, dt_s: 1.0, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {tau_s: 2.0, dt_s: 0.0, residual_scale: 1.0}, expected: fail}, {kind: outside, inputs: {tau_s: -1.0, dt_s: 1.0, residual_scale: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "tau_s <= 0 or dt_s <= 0 or residual_scale <= 0", meaning: Invalid time constant, step duration, or rate normalization., cases: [{kind: inside, inputs: {tau_s: -1.0, dt_s: 1.0, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {tau_s: 2.0, dt_s: 0.0, residual_scale: 1.0}, expected: pass}, {kind: outside, inputs: {tau_s: 2.0, dt_s: 1.0, residual_scale: 1.0}, expected: fail}]}
+assumptions: [Previous state is known, This is one-step auditing rather than a full dynamic simulation, Signals are unitless in the exact example]
+validity: [Use only for the exact current single-step relation]
+invariants: [y_previous is read-only and y_current is checked without hidden state mutation]
+effects: [Emit one first_order_lag residual]
+postconditions: [Residual equals the difference between the observed discrete rate and lag response rate]
+termination: Two finite divisions and fixed arithmetic terminate.
+oracle_cases:
+  - {case_id: balanced_step, inputs: {u_current: 1.0, y_previous: 0.0, y_current: 0.3333333333333333, tau_s: 2.0, dt_s: 1.0, residual_scale: 1.0}, expected: {first_order_lag: 0.0}, tolerance: 1.0e-12}
+  - {case_id: offset, inputs: {u_current: 1.0, y_previous: 0.0, y_current: 0.5, tau_s: 2.0, dt_s: 1.0, residual_scale: 1.0}, expected: {first_order_lag: 0.25}, tolerance: 1.0e-12}
+claim_boundary: This draft expresses one current discrete lag check only; it is not a continuous-time proof, stability analysis, or independently reviewed dynamics model.

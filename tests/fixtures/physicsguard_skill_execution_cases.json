@@ -1,14 +1,15 @@
 {
   "fixture_version": "physicsguard.skill-execution-cases.v1",
   "cases": [
-    {"target_skill_id":"physicsguard-ai-debugging","shallow_missing_obligation_id":"validation_depth"},
-    {"target_skill_id":"physicsguard-audit-closure","shallow_missing_obligation_id":"stale_and_skipped_accounted"},
-    {"target_skill_id":"physicsguard-candidate-model-blueprint","shallow_missing_obligation_id":"generation_eligibility"},
-    {"target_skill_id":"physicsguard-model-library","shallow_missing_obligation_id":"testbench_compatibility"},
-    {"target_skill_id":"physicsguard-model-understanding-preflight","shallow_missing_obligation_id":"parameter_inventory"},
-    {"target_skill_id":"physicsguard-project-adoption","shallow_missing_obligation_id":"required_revalidation"},
-    {"target_skill_id":"physicsguard-project-evidence-registry","shallow_missing_obligation_id":"binding_edges"},
-    {"target_skill_id":"physicsguard-signal-mapping-review","shallow_missing_obligation_id":"temporal_coverage"},
-    {"target_skill_id":"physicsguard-test-file-contract-review","shallow_missing_obligation_id":"per_signal_depth"}
+    {"target_skill_id":"physicsguard-ai-debugging","shallow_missing_obligation_id":"validation_depth","shallow_missing_blueprint_obligation_id":"blueprint_summary_affected_reverse_consumption"},
+    {"target_skill_id":"physicsguard-audit-closure","shallow_missing_obligation_id":"stale_and_skipped_accounted","shallow_missing_blueprint_obligation_id":"blueprint_closure_and_gap_accounting"},
+    {"target_skill_id":"physicsguard-candidate-model-blueprint","shallow_missing_obligation_id":"generation_eligibility","shallow_missing_blueprint_obligation_id":"blueprint_canonical_review"},
+    {"target_skill_id":"physicsguard-model-dataset-validation","shallow_missing_obligation_id":"validation_depth","shallow_missing_blueprint_obligation_id":"blueprint_per_element_coverage"},
+    {"target_skill_id":"physicsguard-model-library","shallow_missing_obligation_id":"testbench_compatibility","shallow_missing_blueprint_obligation_id":"blueprint_asset_reuse_limit"},
+    {"target_skill_id":"physicsguard-model-understanding-preflight","shallow_missing_obligation_id":"parameter_inventory","shallow_missing_blueprint_obligation_id":"blueprint_first_useful_layer"},
+    {"target_skill_id":"physicsguard-project-adoption","shallow_missing_obligation_id":"required_revalidation","shallow_missing_blueprint_obligation_id":"blueprint_adoption_not_completeness"},
+    {"target_skill_id":"physicsguard-project-evidence-registry","shallow_missing_obligation_id":"binding_edges","shallow_missing_blueprint_obligation_id":"blueprint_binding_freshness"},
+    {"target_skill_id":"physicsguard-signal-mapping-review","shallow_missing_obligation_id":"temporal_coverage","shallow_missing_blueprint_obligation_id":"blueprint_downstream_reverse_consumers"},
+    {"target_skill_id":"physicsguard-test-file-contract-review","shallow_missing_obligation_id":"per_signal_depth","shallow_missing_blueprint_obligation_id":"blueprint_file_field_interface_binding"}
   ]
 }

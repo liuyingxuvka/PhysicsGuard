@@ -1,0 +1,45 @@
+schema: physicsguard.project_formula.v1
+module_type: ConservationSumModule
+owner: physicsguard.module_semantics.mechanical_draft.ConservationSumModule
+purpose: Mechanically describe the exact one-input generic conservation-sum audit without assigning physical meaning.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: target, dimension: dimensionless, unit: '1', required: false, default: 0.0, constraints: []}
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: input_0, dimension: dimensionless, unit: '1', source_kind: external, source_attribute: input_variables, source_index: 0, source_reference: rel.y}
+scenario_outputs: []
+residuals:
+  - name: conservation_sum
+    expression: input_0 - target
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: The exact generic example uses one unitless input and a unitless target.
+    scale_expression: residual_scale
+    zero_condition: The one observed input equals the configured target in this exact instantiation.
+    source_intermediates:
+      - {symbol: input_sum, expression: input_0}
+      - {symbol: output_sum, expression: '0.0'}
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject a non-positive residual scale., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: residual_scale > 0, meaning: Exact current generic audit with positive normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  invalid:
+    - {predicate: residual_scale <= 0, meaning: Invalid residual normalization., cases: [{kind: inside, inputs: {residual_scale: -1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: pass}, {kind: outside, inputs: {residual_scale: 1.0}, expected: fail}]}
+assumptions: [The exact example contains one input reference and no output references, This module is explicitly framework validation only]
+validity: [Use only for the bound one-input example shape, Do not generalize this scalar draft to arbitrary list lengths]
+invariants: [The referenced rel.y value is read-only]
+effects: [Emit one conservation_sum residual record]
+postconditions: [The residual equals input_0 minus target]
+termination: One finite subtraction terminates.
+oracle_cases:
+  - {case_id: target_met, inputs: {input_0: 5.0, target: 5.0, residual_scale: 1.0}, expected: {conservation_sum: 0.0}, tolerance: 1.0e-12}
+  - {case_id: target_missed, inputs: {input_0: 4.0, target: 5.0, residual_scale: 1.0}, expected: {conservation_sum: -1.0}, tolerance: 1.0e-12}
+claim_boundary: This is a non-physical exact-instantiation draft for the current one-input list shape; it is not an independent semantic oracle.

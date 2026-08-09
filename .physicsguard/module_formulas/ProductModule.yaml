@@ -1,0 +1,44 @@
+schema: physicsguard.project_formula.v1
+module_type: ProductModule
+owner: physicsguard.module_semantics.mechanical_draft.ProductModule
+purpose: Mechanically describe the exact irradiance-times-area product audit over three externally observed values.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale, dimension: power, unit: W, required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: x1, dimension: irradiance, unit: W/m^2, source_kind: external, source_attribute: x1_variable, source_reference: pv_irradiance.value}
+  - {name: x2, dimension: area, unit: m^2, source_kind: external, source_attribute: x2_variable, source_reference: pv_area.value}
+  - {name: output, dimension: power, unit: W, source_kind: external, source_attribute: output_variable, source_reference: pv_solar_input.value}
+scenario_outputs: []
+residuals:
+  - name: product_relation
+    expression: output - x1 * x2
+    dimension: power
+    unit: W
+    dimensional_derivation: W per square metre multiplied by square metres yields watts.
+    scale_expression: residual_scale
+    zero_condition: The observed output equals the product of the two observed factors.
+    source_intermediates: []
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject a non-positive power normalization., cases: [{kind: inside, inputs: {residual_scale: 100.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: residual_scale > 0, meaning: Exact current product audit with positive power normalization., cases: [{kind: inside, inputs: {residual_scale: 100.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  invalid:
+    - {predicate: residual_scale <= 0, meaning: Invalid power normalization., cases: [{kind: inside, inputs: {residual_scale: -1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: pass}, {kind: outside, inputs: {residual_scale: 100.0}, expected: fail}]}
+assumptions: [The exact example assigns irradiance, area, and power units to the three references, All referenced values are read-only]
+validity: [Use only for the exact current product relation and bindings]
+invariants: [This audit owns a residual but owns none of the three external values]
+effects: [Emit one product_relation residual]
+postconditions: [Residual equals output minus x1 times x2]
+termination: One multiplication and subtraction terminate.
+oracle_cases:
+  - {case_id: exact_example_zero, inputs: {x1: 800.0, x2: 250.0, output: 200000.0, residual_scale: 100.0}, expected: {product_relation: 0.0}, tolerance: 1.0e-09}
+  - {case_id: output_shortfall, inputs: {x1: 800.0, x2: 250.0, output: 199000.0, residual_scale: 100.0}, expected: {product_relation: -1000.0}, tolerance: 1.0e-09}
+claim_boundary: This draft captures the current arithmetic and exact units only; it does not establish irradiance physics, conversion losses, or an independently reviewed product model.

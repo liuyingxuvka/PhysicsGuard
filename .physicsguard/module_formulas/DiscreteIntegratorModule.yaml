@@ -1,0 +1,51 @@
+schema: physicsguard.project_formula.v1
+module_type: DiscreteIntegratorModule
+owner: physicsguard.module_semantics.mechanical_draft.DiscreteIntegratorModule
+purpose: Mechanically describe the current single-step explicit integrator consistency relation and explicit prior/current state roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: dt_s, dimension: duration, unit: s, required: true, default: null, constraints: [dt_s > 0]}
+  - {name: gain, dimension: reciprocal_time, unit: 1/s, required: false, default: 1.0, constraints: []}
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: state_previous, dimension: dimensionless, unit: '1', role: state_previous}
+  - {name: input, dimension: dimensionless, unit: '1'}
+scenario_outputs:
+  - {name: state_current, dimension: dimensionless, unit: '1', role: state_next}
+residuals:
+  - name: discrete_integrator
+    expression: state_current - (state_previous + gain * input * dt_s)
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: The draft assigns reciprocal-second gain so gain times unitless input times seconds matches unitless state.
+    scale_expression: residual_scale
+    zero_condition: Current state equals previous state plus the exact one-step increment.
+    source_intermediates:
+      - {symbol: previous, expression: state_previous}
+      - {symbol: input_value, expression: input}
+      - {symbol: current, expression: state_current}
+      - {symbol: expected, expression: previous + gain * input_value * dt_s}
+constraints:
+  constructor:
+    - {predicate: dt_s > 0, guard_signature: "_required_positive(parameters, 'dt_s')", failure_type: ValueError, message_selector: dt_s, on_violation: Reject a missing or non-positive step duration., cases: [{kind: inside, inputs: {dt_s: 0.5}, expected: pass}, {kind: boundary, inputs: {dt_s: 0.0}, expected: fail}, {kind: outside, inputs: {dt_s: -1.0}, expected: fail}]}
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "dt_s > 0 and residual_scale > 0", meaning: One explicit step with positive duration and normalization., cases: [{kind: inside, inputs: {dt_s: 0.5, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {dt_s: 0.0, residual_scale: 1.0}, expected: fail}, {kind: outside, inputs: {dt_s: -1.0, residual_scale: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "dt_s <= 0 or residual_scale <= 0", meaning: Invalid step duration or normalization., cases: [{kind: inside, inputs: {dt_s: -1.0, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {dt_s: 0.0, residual_scale: 1.0}, expected: pass}, {kind: outside, inputs: {dt_s: 0.5, residual_scale: 1.0}, expected: fail}]}
+assumptions: [Previous state is supplied explicitly, This is one-step consistency checking rather than time-series simulation, Gain dimensional meaning remains pending independent review]
+validity: [Use only for the exact current unitless state and input example]
+invariants: [state_previous is read-only and state_current is only checked, not mutated]
+effects: [Emit one discrete_integrator residual]
+postconditions: [Residual equals current state minus the explicit Euler-style expected state]
+termination: One fixed finite step expression terminates.
+oracle_cases:
+  - {case_id: exact_step_zero, inputs: {state_previous: 1.0, input: 2.0, state_current: 3.0, dt_s: 0.5, gain: 2.0, residual_scale: 1.0}, expected: {discrete_integrator: 0.0}, tolerance: 1.0e-12}
+  - {case_id: state_offset, inputs: {state_previous: 1.0, input: 2.0, state_current: 2.5, dt_s: 0.5, gain: 2.0, residual_scale: 1.0}, expected: {discrete_integrator: -0.5}, tolerance: 1.0e-12}
+claim_boundary: This draft reproduces one explicit current step and proposes only the algebraically required gain dimension; it is not a validated integrator, stability claim, or independent dynamics review.

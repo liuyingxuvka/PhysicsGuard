@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Candidate Blueprint"
   short_description: "Build a validated low-fidelity model blueprint"
-  default_prompt: "Use $physicsguard-candidate-model-blueprint directly for its native PhysicsGuard Candidate Model Blueprint route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."
+  default_prompt: "Use $physicsguard-candidate-model-blueprint as the sole PhysicalModelBlueprint author/full reviewer; resolve blueprint_directory versus explicit_material_root and --material-root, run the canonical review, and only when requested export or query one portable-bundle selector while keeping frozen status, identity gaps, and native execution separate."

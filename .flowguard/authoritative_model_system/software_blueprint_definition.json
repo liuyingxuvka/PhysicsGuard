@@ -1,0 +1,445 @@
+{
+  "schema_version": "flowguard.self_blueprint_definition.v5",
+  "blueprint_id": "physicsguard-software-dna-v1",
+  "inventory_id": "physicsguard-software-dna-inventory-v1",
+  "boundary": {
+    "boundary_id": "physicsguard-software-boundary-v1",
+    "production_patterns": [
+      "src/**/*.py",
+      "scripts/**/*.py",
+      ".flowguard/existing_model_preflight/*.py",
+      ".flowguard/*/model.py",
+      ".flowguard/*/run_checks.py"
+    ],
+    "build_patterns": [
+      "pyproject.toml",
+      ".github/**/*"
+    ],
+    "config_patterns": [
+      ".flowguard/project.toml",
+      ".skillguard/**/*",
+      ".gitignore",
+      "AGENTS.md",
+      "VERSION",
+      ".gitattributes",
+      ".physicsguard/project.yaml",
+      ".physicsguard/project_unit_conventions.yaml"
+    ],
+    "schema_patterns": [
+      ".flowguard/*.json",
+      ".flowguard/authoritative_model_system/*.json",
+      "models/**/*",
+      "purpose_packs/**/*.json",
+      ".flowguard/model_code_ledger.yaml",
+      ".physicsguard/module_equation_ledger.yaml",
+      ".physicsguard/module_runtime_port_contracts.yaml",
+      ".physicsguard/module_semantics_reviewer_provider_registry.json"
+    ],
+    "data_patterns": [
+      "examples/**/*",
+      "kb/**/*"
+    ],
+    "asset_patterns": [
+      "assets/**/*",
+      ".agents/**/*",
+      "docs/**/*",
+      "skill/**/*",
+      "templates/**/*",
+      "openspec/specs/**/*",
+      "openspec/config.yaml",
+      ".flowguard/*.py",
+      ".physicsguard/module_formulas/**/*",
+      "purpose_packs/**/*.yaml",
+      "README.md",
+      "CHANGELOG.md",
+      "LICENSE"
+    ],
+    "migration_patterns": [
+      "openspec/changes/**/*"
+    ],
+    "test_oracle_patterns": [
+      "tests/**/*"
+    ],
+    "generated_patterns": [
+      "build/**/*",
+      ".flowguard/model-mesh/**/*",
+      ".flowguard/evidence/**/*",
+      ".flowguard/retirement-receipts/**/*",
+      ".flowguard/model_miss_reviews/**/*"
+    ],
+    "external_patterns": []
+  },
+  "scan_python_patterns": [
+    "src/**/*.py",
+    "scripts/**/*.py",
+    ".flowguard/existing_model_preflight/*.py",
+    ".flowguard/*/model.py",
+    ".flowguard/*/run_checks.py"
+  ],
+  "scoped_out_patterns": [
+    "build/**/*",
+    ".flowguard/model-mesh/**/*",
+    ".flowguard/evidence/**/*",
+    ".flowguard/retirement-receipts/**/*",
+    ".flowguard/model_miss_reviews/**/*"
+  ],
+  "bounded_dynamic_prefixes": [
+    "getattr",
+    "setattr",
+    "delattr",
+    "__import__",
+    "importlib.import_module",
+    "locals"
+  ],
+  "dynamic_allowances": [],
+  "dynamic_selector_contracts": [],
+  "composite_behavior_contracts": [
+    {
+      "owner_id": "authoritative_model_system",
+      "surface_key": ".flowguard/authoritative_model_system/model.py#<module>",
+      "contracts": {
+        "input": "composite-contract:authoritative_model_system:input",
+        "state": "composite-contract:authoritative_model_system:state",
+        "effect": "composite-contract:authoritative_model_system:effect",
+        "output": "composite-contract:authoritative_model_system:output",
+        "completion": "composite-contract:authoritative_model_system:completion",
+        "semantics": "composite-contract:authoritative_model_system:semantics"
+      },
+      "source_identity": {
+        "purpose_source_id": ".flowguard/model-regression-manifest.json#model:authoritative_model_system:purpose-declaration",
+        "purpose_source_owner_id": "model-purpose-declaration:authoritative_model_system",
+        "model_path": ".flowguard/authoritative_model_system/model.py",
+        "model_source_fingerprint": "sha256:1ee9c8fd4eb1ff8d168766977c8289cd90e608e827c4869138891093649fc035",
+        "runner_path": ".flowguard/authoritative_model_system/run_checks.py",
+        "runner_source_fingerprint": "sha256:1205d833bb34a5842775fa1704f92539b05d1362b74a6f3a5cf46ee91165423c",
+        "purpose_declaration_fingerprint": "sha256:345b1b813fd748a31c7c9297517f011cf56cd0cd8f5b9fd84e9a6147390d5f2a",
+        "purpose_closure_fingerprint": "sha256:d67811fad2f8b9aa51aafeee81486b56b03695d0a9f8e6ee69ba0f8f10c5c99c"
+      }
+    },
+    {
+      "owner_id": "compositional_verification_kernel",
+      "surface_key": ".flowguard/compositional_verification_kernel/model.py#<module>",
+      "contracts": {
+        "input": "composite-contract:compositional_verification_kernel:input",
+        "state": "composite-contract:compositional_verification_kernel:state",
+        "effect": "composite-contract:compositional_verification_kernel:effect",
+        "output": "composite-contract:compositional_verification_kernel:output",
+        "completion": "composite-contract:compositional_verification_kernel:completion",
+        "semantics": "composite-contract:compositional_verification_kernel:semantics"
+      },
+      "source_identity": {
+        "purpose_source_id": ".flowguard/model-regression-manifest.json#model:compositional_verification_kernel:purpose-declaration",
+        "purpose_source_owner_id": "model-purpose-declaration:compositional_verification_kernel",
+        "model_path": ".flowguard/compositional_verification_kernel/model.py",
+        "model_source_fingerprint": "sha256:d232fd9d1897b4228788b1064eff4eded6659a1b3615d08fac2f1d0b575a430b",
+        "runner_path": ".flowguard/compositional_verification_kernel/run_checks.py",
+        "runner_source_fingerprint": "sha256:ac35608aaa0545b41c084d2af6cb4709755c480bdefd134e081ad8e3b9115dc5",
+        "purpose_declaration_fingerprint": "sha256:cf2e419314c34b99333227b3853002ace51fd83667ffaab00eec57d3453afe65",
+        "purpose_closure_fingerprint": "sha256:7f4bbcf377628a560c0f4b7bd7e41554da115dd084114afa25f6f48dbebf9aa9"
+      }
+    },
+    {
+      "owner_id": "guard_closure_contract",
+      "surface_key": ".flowguard/guard_closure_contract/model.py#<module>",
+      "contracts": {
+        "input": "composite-contract:guard_closure_contract:input",
+        "state": "composite-contract:guard_closure_contract:state",
+        "effect": "composite-contract:guard_closure_contract:effect",
+        "output": "composite-contract:guard_closure_contract:output",
+        "completion": "composite-contract:guard_closure_contract:completion",
+        "semantics": "composite-contract:guard_closure_contract:semantics"
+      },
+      "source_identity": {
+        "purpose_source_id": ".flowguard/model-regression-manifest.json#model:guard_closure_contract:purpose-declaration",
+        "purpose_source_owner_id": "model-purpose-declaration:guard_closure_contract",
+        "model_path": ".flowguard/guard_closure_contract/model.py",
+        "model_source_fingerprint": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa",
+        "runner_path": ".flowguard/guard_closure_contract/run_checks.py",
+        "runner_source_fingerprint": "sha256:24cd4f1ba388f021880170f9acacb373f6605c987aae816938e25272e50cfac2",
+        "purpose_declaration_fingerprint": "sha256:808dd6487d5e673523ff66ab3ab7390166ddd7e073dee5dc7c4b320d34c1a2d2",
+        "purpose_closure_fingerprint": "sha256:ccb22dbea6e27c1c1765df5f59fe3fb6311887d2759d540ee47aba3b4e316c0c"
+      }
+    },
+    {
+      "owner_id": "interval_diagnosability",
+      "surface_key": ".flowguard/interval_diagnosability/model.py#<module>",
+      "contracts": {
+        "input": "composite-contract:interval_diagnosability:input",
+        "state": "composite-contract:interval_diagnosability:state",
+        "effect": "composite-contract:interval_diagnosability:effect",
+        "output": "composite-contract:interval_diagnosability:output",
+        "completion": "composite-contract:interval_diagnosability:completion",
+        "semantics": "composite-contract:interval_diagnosability:semantics"
+      },
+      "source_identity": {
+        "purpose_source_id": ".flowguard/model-regression-manifest.json#model:interval_diagnosability:purpose-declaration",
+        "purpose_source_owner_id": "model-purpose-declaration:interval_diagnosability",
+        "model_path": ".flowguard/interval_diagnosability/model.py",
+        "model_source_fingerprint": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c",
+        "runner_path": ".flowguard/interval_diagnosability/run_checks.py",
+        "runner_source_fingerprint": "sha256:3514876e30f1cdad7bcf14dd50a4ad178456d47f45de4d9e1edbf0a36cca6fdc",
+        "purpose_declaration_fingerprint": "sha256:a8f076ea5b5e21bf9fc9e78f161af3b0220f2563ec6743bbb90f4258aa2aad3b",
+        "purpose_closure_fingerprint": "sha256:36c51999ca17cf5fec7e9fd0e765f024ff548ce2a4bd38ffb82ad36a240528b7"
+      }
+    },
+    {
+      "owner_id": "task_local_model_deepening",
+      "surface_key": ".flowguard/task_local_model_deepening/model.py#<module>",
+      "contracts": {
+        "input": "composite-contract:task_local_model_deepening:input",
+        "state": "composite-contract:task_local_model_deepening:state",
+        "effect": "composite-contract:task_local_model_deepening:effect",
+        "output": "composite-contract:task_local_model_deepening:output",
+        "completion": "composite-contract:task_local_model_deepening:completion",
+        "semantics": "composite-contract:task_local_model_deepening:semantics"
+      },
+      "source_identity": {
+        "purpose_source_id": ".flowguard/model-regression-manifest.json#model:task_local_model_deepening:purpose-declaration",
+        "purpose_source_owner_id": "model-purpose-declaration:task_local_model_deepening",
+        "model_path": ".flowguard/task_local_model_deepening/model.py",
+        "model_source_fingerprint": "sha256:537c92eba9b05bb67fc6b00c173e14c5e746c63e4f40301bfbf7a35645f64b43",
+        "runner_path": ".flowguard/task_local_model_deepening/run_checks.py",
+        "runner_source_fingerprint": "sha256:3914882a52d44722194d92e8a0d046f346e83e245eb78c9ccbc9dba29886bfc7",
+        "purpose_declaration_fingerprint": "sha256:7f013958cdc6967807bf6b8e8d4a28583272448231f1a7d4b25b31b3f293db48",
+        "purpose_closure_fingerprint": "sha256:7f78e7a70784d0042b652af9963e290d6145d5504528d9805d35ac5602d75cdb"
+      }
+    },
+    {
+      "owner_id": "hierarchical_model_mesh",
+      "surface_key": ".flowguard/hierarchical_model_mesh/model.py#<module>",
+      "contracts": {
+        "input": "composite-contract:hierarchical_model_mesh:input",
+        "state": "composite-contract:hierarchical_model_mesh:state",
+        "effect": "composite-contract:hierarchical_model_mesh:effect",
+        "output": "composite-contract:hierarchical_model_mesh:output",
+        "completion": "composite-contract:hierarchical_model_mesh:completion",
+        "semantics": "composite-contract:hierarchical_model_mesh:semantics"
+      },
+      "source_identity": {
+        "purpose_source_id": ".flowguard/model-regression-manifest.json#model:hierarchical_model_mesh:purpose-declaration",
+        "purpose_source_owner_id": "model-purpose-declaration:hierarchical_model_mesh",
+        "model_path": ".flowguard/hierarchical_model_mesh/model.py",
+        "model_source_fingerprint": "sha256:d47a38aff8c8a131b41ee55a4e64d2c5e7b0a557df75f1d9b8c921e8b6ebbf3c",
+        "runner_path": ".flowguard/hierarchical_model_mesh/run_checks.py",
+        "runner_source_fingerprint": "sha256:351bee292e4da38186552ab73cf758b61cbfcd90650dde45f6fa41571a00d4fe",
+        "purpose_declaration_fingerprint": "sha256:cc94e06d3d35be3e7b0698a58fef7e9afa258ab8a51c14f1313115e1f1fa5ddc",
+        "purpose_closure_fingerprint": "sha256:d5ae46fcec85e824a3cd387546c86761a721b0d8373ad049101d943b6dff4c0f"
+      }
+    },
+    {
+      "owner_id": "model_test_code_alignment",
+      "surface_key": ".flowguard/model_test_code_alignment/model.py#<module>",
+      "contracts": {
+        "input": "composite-contract:model_test_code_alignment:input",
+        "state": "composite-contract:model_test_code_alignment:state",
+        "effect": "composite-contract:model_test_code_alignment:effect",
+        "output": "composite-contract:model_test_code_alignment:output",
+        "completion": "composite-contract:model_test_code_alignment:completion",
+        "semantics": "composite-contract:model_test_code_alignment:semantics"
+      },
+      "source_identity": {
+        "purpose_source_id": ".flowguard/model-regression-manifest.json#model:model_test_code_alignment:purpose-declaration",
+        "purpose_source_owner_id": "model-purpose-declaration:model_test_code_alignment",
+        "model_path": ".flowguard/model_test_code_alignment/model.py",
+        "model_source_fingerprint": "sha256:f5f1e4c802ddbde84b68bc596cbed2c1140b0c1ce3fc051d4594edc7ce28cd10",
+        "runner_path": ".flowguard/model_test_code_alignment/run_checks.py",
+        "runner_source_fingerprint": "sha256:351bee292e4da38186552ab73cf758b61cbfcd90650dde45f6fa41571a00d4fe",
+        "purpose_declaration_fingerprint": "sha256:c32a66b8041731ac4dbf1ce7c673a2adf31c4b886f3d85adc5d8cf87d6cc7d5d",
+        "purpose_closure_fingerprint": "sha256:4a8e4763a604a18ae285490f4df7a7fe77a490ede152dca1e272b601a187309e"
+      }
+    }
+  ],
+  "owner_overrides": {
+    ".flowguard/existing_model_preflight/dynamic_model_purpose_preflight.py": "authoritative_model_system",
+    ".flowguard/existing_model_preflight/execution_depth_preflight.py": "authoritative_model_system",
+    "scripts/build_module_runtime_port_contracts.py": "model_test_code_alignment",
+    "scripts/check_installed_physicsguard_skills.py": "task_local_model_deepening",
+    "scripts/check_model_code_ledger.py": "model_test_code_alignment",
+    "scripts/check_module_equation_ledger.py": "model_test_code_alignment",
+    "scripts/check_parameter_coverage_contract.py": "model_test_code_alignment",
+    "scripts/check_physicsguard_test_mesh.py": "model_test_code_alignment",
+    "scripts/check_test_file_contract.py": "model_test_code_alignment",
+    "scripts/compile_module_semantics.py": "authoritative_model_system",
+    "scripts/extract_test_file_manifest.py": "model_test_code_alignment",
+    "scripts/generate_expanded_starter_packs.py": "authoritative_model_system",
+    "scripts/install_physicsguard_skills.py": "task_local_model_deepening",
+    "scripts/issue_guard_retirement_receipts.py": "authoritative_model_system",
+    "scripts/module_semantics_review_producer.py": "authoritative_model_system",
+    "scripts/physicsguard_skill_install_authority.py": "task_local_model_deepening",
+    "scripts/portable_model_headers.py": "task_local_model_deepening",
+    "scripts/report_physicsguard_skill_suite.py": "task_local_model_deepening",
+    "scripts/upgrade_purpose_contracts.py": "model_test_code_alignment",
+    "scripts/verify_guard_simulation_readiness.py": "task_local_model_deepening",
+    "scripts/verify_skill_suite_markers.py": "task_local_model_deepening",
+    "src/physicsguard/__init__.py": "guard_closure_contract",
+    "src/physicsguard/cli.py": "guard_closure_contract",
+    "src/physicsguard/core/__init__.py": "guard_closure_contract",
+    "src/physicsguard/core/assumptions.py": "guard_closure_contract",
+    "src/physicsguard/core/contract_diff.py": "guard_closure_contract",
+    "src/physicsguard/core/data_file_manifest.py": "guard_closure_contract",
+    "src/physicsguard/core/dataset_identity.py": "guard_closure_contract",
+    "src/physicsguard/core/diagnosability.py": "interval_diagnosability",
+    "src/physicsguard/core/diagnostics.py": "guard_closure_contract",
+    "src/physicsguard/core/evaluator.py": "guard_closure_contract",
+    "src/physicsguard/core/evidence_mesh.py": "guard_closure_contract",
+    "src/physicsguard/core/fmi_observation.py": "guard_closure_contract",
+    "src/physicsguard/core/hierarchy.py": "hierarchical_model_mesh",
+    "src/physicsguard/core/model_dataset_validation.py": "task_local_model_deepening",
+    "src/physicsguard/core/model_library.py": "task_local_model_deepening",
+    "src/physicsguard/core/parameter_coverage.py": "guard_closure_contract",
+    "src/physicsguard/core/physical_blueprint_bundle.py": "hierarchical_model_mesh",
+    "src/physicsguard/core/physical_blueprint_trace.py": "hierarchical_model_mesh",
+    "src/physicsguard/core/physical_model_blueprint.py": "hierarchical_model_mesh",
+    "src/physicsguard/core/physical_model_blueprint_adapters.py": "hierarchical_model_mesh",
+    "src/physicsguard/core/predictive_rollout.py": "task_local_model_deepening",
+    "src/physicsguard/core/project_closure.py": "task_local_model_deepening",
+    "src/physicsguard/core/project_evidence.py": "task_local_model_deepening",
+    "src/physicsguard/core/registry.py": "guard_closure_contract",
+    "src/physicsguard/core/residual.py": "guard_closure_contract",
+    "src/physicsguard/core/signal_mapping.py": "guard_closure_contract",
+    "src/physicsguard/core/solver.py": "guard_closure_contract",
+    "src/physicsguard/core/target_inventory_authority.py": "guard_closure_contract",
+    "src/physicsguard/core/task_local_revision.py": "task_local_model_deepening",
+    "src/physicsguard/core/test_file_contract.py": "model_test_code_alignment",
+    "src/physicsguard/core/validation_adequacy.py": "guard_closure_contract",
+    "src/physicsguard/core/validation_depth.py": "task_local_model_deepening",
+    "src/physicsguard/guard_model_contract.py": "guard_closure_contract",
+    "src/physicsguard/io/__init__.py": "guard_closure_contract",
+    "src/physicsguard/io/hierarchy_loader.py": "hierarchical_model_mesh",
+    "src/physicsguard/io/observation_loader.py": "guard_closure_contract",
+    "src/physicsguard/io/physical_model_blueprint_loader.py": "hierarchical_model_mesh",
+    "src/physicsguard/io/test_file_contract_loader.py": "model_test_code_alignment",
+    "src/physicsguard/io/yaml_loader.py": "guard_closure_contract",
+    "src/physicsguard/modules/__init__.py": "guard_closure_contract",
+    "src/physicsguard/modules/aggregate.py": "guard_closure_contract",
+    "src/physicsguard/modules/base.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/__init__.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/_common.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/battery_hv.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/control.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/control_sensor_actuator.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/drivetrain_vehicle.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/electric.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/electrochemical_bop.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/electrochemical_components.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/engine.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/engine_aftertreatment.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/fluid_machines.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/fluid_network.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/maps.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/thermal_components.py": "guard_closure_contract",
+    "src/physicsguard/modules/components/thermal_management.py": "guard_closure_contract",
+    "src/physicsguard/modules/control.py": "guard_closure_contract",
+    "src/physicsguard/modules/dummy.py": "guard_closure_contract",
+    "src/physicsguard/modules/generic.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/__init__.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/_common.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/additional.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/constants.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/electrical.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/electrochemical.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/electrochemical_extra.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/fluid.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/gas.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/humidity.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/mechanical.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/rotating.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/tank.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/thermal.py": "guard_closure_contract",
+    "src/physicsguard/modules/physical/thermodynamics.py": "guard_closure_contract",
+    "src/physicsguard/modules/registry.py": "guard_closure_contract",
+    "src/physicsguard/modules/signal.py": "guard_closure_contract",
+    "src/physicsguard/schema/__init__.py": "guard_closure_contract",
+    "src/physicsguard/schema/assumption_spec.py": "guard_closure_contract",
+    "src/physicsguard/schema/data_file_manifest.py": "guard_closure_contract",
+    "src/physicsguard/schema/dataset_identity.py": "guard_closure_contract",
+    "src/physicsguard/schema/diagnosability.py": "interval_diagnosability",
+    "src/physicsguard/schema/evidence_mesh.py": "guard_closure_contract",
+    "src/physicsguard/schema/fmi_observation.py": "guard_closure_contract",
+    "src/physicsguard/schema/hierarchy_spec.py": "hierarchical_model_mesh",
+    "src/physicsguard/schema/model_dataset_validation.py": "task_local_model_deepening",
+    "src/physicsguard/schema/model_library.py": "task_local_model_deepening",
+    "src/physicsguard/schema/module_spec.py": "guard_closure_contract",
+    "src/physicsguard/schema/observation_spec.py": "guard_closure_contract",
+    "src/physicsguard/schema/parameter_coverage.py": "guard_closure_contract",
+    "src/physicsguard/schema/physical_blueprint_bundle.py": "hierarchical_model_mesh",
+    "src/physicsguard/schema/physical_model_blueprint.py": "hierarchical_model_mesh",
+    "src/physicsguard/schema/predictive_rollout.py": "task_local_model_deepening",
+    "src/physicsguard/schema/project_closure.py": "task_local_model_deepening",
+    "src/physicsguard/schema/project_evidence.py": "task_local_model_deepening",
+    "src/physicsguard/schema/signal_mapping.py": "guard_closure_contract",
+    "src/physicsguard/schema/system_spec.py": "guard_closure_contract",
+    "src/physicsguard/schema/task_local_revision.py": "task_local_model_deepening",
+    "src/physicsguard/schema/test_file_contract.py": "model_test_code_alignment",
+    "src/physicsguard/schema/validation_adequacy.py": "guard_closure_contract",
+    "src/physicsguard/schema/validation_depth.py": "task_local_model_deepening",
+    "src/physicsguard/schema/variable.py": "guard_closure_contract",
+    "src/physicsguard/self_dna.py": "authoritative_model_system",
+    "src/physicsguard/skill_execution_depth.py": "task_local_model_deepening",
+    "src/physicsguard/skillguard_template_adapter.py": "guard_closure_contract",
+    "src/physicsguard/template_packs.py": "task_local_model_deepening",
+    "src/physicsguard/workflow.py": "task_local_model_deepening"
+  },
+  "resource_groups": {
+    "asset": [
+      "assets/**/*",
+      ".agents/**/*",
+      "docs/**/*",
+      "skill/**/*",
+      "templates/**/*",
+      "openspec/specs/**/*",
+      "openspec/config.yaml",
+      ".flowguard/*.py",
+      ".physicsguard/module_formulas/**/*",
+      "purpose_packs/**/*.yaml",
+      "README.md",
+      "CHANGELOG.md",
+      "LICENSE"
+    ],
+    "build": [
+      "pyproject.toml",
+      ".github/**/*"
+    ],
+    "configuration": [
+      ".flowguard/project.toml",
+      ".skillguard/**/*",
+      ".gitignore",
+      "AGENTS.md",
+      "VERSION",
+      ".gitattributes",
+      ".physicsguard/project.yaml",
+      ".physicsguard/project_unit_conventions.yaml"
+    ],
+    "data": [
+      "examples/**/*",
+      "kb/**/*"
+    ],
+    "dependency": [
+      "pyproject.toml"
+    ],
+    "migration": [
+      "openspec/changes/**/*"
+    ],
+    "runtime": [
+      "src/**/*.py",
+      "scripts/**/*.py",
+      ".flowguard/existing_model_preflight/*.py",
+      ".flowguard/*/model.py",
+      ".flowguard/*/run_checks.py"
+    ],
+      "schema": [
+        ".flowguard/*.json",
+        ".flowguard/authoritative_model_system/*.json",
+        "models/**/*",
+        "purpose_packs/**/*.json",
+        ".flowguard/model_code_ledger.yaml",
+        ".physicsguard/module_equation_ledger.yaml",
+        ".physicsguard/module_runtime_port_contracts.yaml",
+        ".physicsguard/module_semantics_reviewer_provider_registry.json"
+    ],
+    "verification": [
+      "tests/**/*"
+    ]
+  },
+  "claim_boundary": "This exact physicsguard repository boundary is represented by current model owners, their code and runner bindings, the test/evidence inventory, and the accepted FlowGuard authority; no external reconstruction claim is made."
+}

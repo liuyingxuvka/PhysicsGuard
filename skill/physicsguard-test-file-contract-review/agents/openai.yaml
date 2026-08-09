@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Test File Contract"
   short_description: "Check concrete test-file coverage contracts"
-  default_prompt: "Use $physicsguard-test-file-contract-review directly for its native PhysicsGuard Test File Contract Review route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."
+  default_prompt: "Use $physicsguard-test-file-contract-review directly; bind deterministic files, fields, datasets, and testbench I/O to the exact affected blueprint interfaces, state, obligations, and evidence, with no full-blueprint fallback."

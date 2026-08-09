@@ -1,0 +1,55 @@
+{
+  "contributions": [
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:preimplementation",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:3713ed7e7494bb1d09809c63ef07e0a98e019c3006464f98bbc2afd169c9e99b",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "",
+      "unresolved_owner_id": "owner:physics-domain-blueprint-model-pending",
+      "supersedes_contribution_ids": [],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "The accepted OpenSpec design defines the pending native PhysicsGuard domain blueprint and later separate FlowGuard software self-DNA; this snapshot records intent without claiming implementation.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:63abe03c4ee4b03554cb099b0a942c041ee1c0a025de1abf4a368dc0b94f9966"
+    }
+  ],
+  "dispositions": [
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:preimplementation",
+      "contribution_fingerprint": "sha256:63abe03c4ee4b03554cb099b0a942c041ee1c0a025de1abf4a368dc0b94f9966",
+      "disposition": "deferred",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [],
+      "scoped_gap_ids": [
+        "gap:physicsguard-domain-blueprint-implementation-pending"
+      ],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Implementation is deferred to the OpenSpec apply phase; this revision refreshes current project and planning authority only.",
+      "fingerprint": "sha256:4c1b46428594ae807e8347c3ad52e91e9590bf3f22adc8a66428388a7ae3821b"
+    }
+  ]
+}

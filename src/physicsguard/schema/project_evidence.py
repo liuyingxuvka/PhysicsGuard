@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from typing import Any, Literal, Optional
@@ -235,6 +236,59 @@ class ProjectProfileSpec(BaseModel):
     @model_validator(mode="after")
     def _profile_valid(self) -> "ProjectProfileSpec":
         _ensure_json_serializable(self.metadata, "project profile metadata")
+        return self
+
+
+def fingerprint_project_profile_authority(value: Any) -> str:
+    """Fingerprint one standalone project-profile authority without self-signing."""
+
+    payload = (
+        value.model_dump(mode="json", exclude_none=True)
+        if isinstance(value, BaseModel)
+        else dict(value)
+    )
+    payload.pop("profile_fingerprint", None)
+    encoded = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+class ProjectProfileAuthoritySpec(BaseModel):
+    """Standalone native project-profile identity used by blueprint adapters."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    artifact_kind: Literal["physicsguard_project_profile"]
+    profile_version: Literal["1.0"] = "1.0"
+    profile_id: str
+    target_system_id: str
+    subject_revision: str
+    profile: ProjectProfileSpec
+    profile_fingerprint: str
+
+    @field_validator("profile_id", "target_system_id", "subject_revision")
+    @classmethod
+    def _identity_valid(cls, value: str, info) -> str:
+        return ensure_non_empty(value, info.field_name)
+
+    @field_validator("profile_fingerprint")
+    @classmethod
+    def _fingerprint_valid(cls, value: str) -> str:
+        normalized = ensure_non_empty(value, "profile_fingerprint").lower()
+        if len(normalized) != 64 or any(character not in "0123456789abcdef" for character in normalized):
+            raise ValueError("profile_fingerprint must be a lowercase SHA-256 digest")
+        return normalized
+
+    @model_validator(mode="after")
+    def _authority_current(self) -> "ProjectProfileAuthoritySpec":
+        expected = fingerprint_project_profile_authority(self)
+        if self.profile_fingerprint != expected:
+            raise ValueError("project profile authority fingerprint is stale or invalid")
         return self
 
 
@@ -941,6 +995,7 @@ __all__ = [
     "ModelPartSpec",
     "PiecewiseSegmentSpec",
     "ProjectLocationSpec",
+    "ProjectProfileAuthoritySpec",
     "ProjectProfileSpec",
     "ProjectRunPeriodSpec",
     "ProjectEvidenceRegistrySpec",
@@ -953,4 +1008,5 @@ __all__ = [
     "TestObjectContextCardSpec",
     "TestbenchContextCardSpec",
     "TimeContextSpec",
+    "fingerprint_project_profile_authority",
 ]

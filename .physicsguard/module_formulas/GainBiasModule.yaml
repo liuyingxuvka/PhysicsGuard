@@ -1,0 +1,47 @@
+schema: physicsguard.project_formula.v1
+module_type: GainBiasModule
+owner: physicsguard.module_semantics.mechanical_draft.GainBiasModule
+purpose: Mechanically describe the current unitless gain-and-bias signal relation and exact example roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: gain, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: []}
+  - {name: bias, dimension: dimensionless, unit: '1', required: false, default: 0.0, constraints: []}
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: x, dimension: dimensionless, unit: '1'}
+scenario_outputs:
+  - {name: y, dimension: dimensionless, unit: '1'}
+residuals:
+  - name: gain_bias
+    expression: y - (gain * x + bias)
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: The exact example declares both signals, gain, and bias as unitless.
+    scale_expression: residual_scale
+    zero_condition: y equals gain times x plus bias.
+    source_intermediates:
+      - {symbol: x_value, expression: x}
+      - {symbol: y_value, expression: y}
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: residual_scale > 0, meaning: Current unitless affine relation with usable normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  invalid:
+    - {predicate: residual_scale <= 0, meaning: Invalid residual normalization., cases: [{kind: inside, inputs: {residual_scale: -1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: pass}, {kind: outside, inputs: {residual_scale: 1.0}, expected: fail}]}
+assumptions: [No unit conversion is implied unless callers encode it in gain and bias, The relation is algebraic and stateless]
+validity: [Use only for the current unitless exact example]
+invariants: [Evaluation does not modify x or y]
+effects: [Emit one gain_bias residual]
+postconditions: [Residual equals y minus gain times x plus bias]
+termination: A fixed finite affine expression terminates.
+oracle_cases:
+  - {case_id: exact_example_zero, inputs: {x: 2.0, y: 5.0, gain: 2.0, bias: 1.0, residual_scale: 1.0}, expected: {gain_bias: 0.0}, tolerance: 1.0e-12}
+  - {case_id: offset, inputs: {x: 2.0, y: 4.5, gain: 2.0, bias: 1.0, residual_scale: 1.0}, expected: {gain_bias: -0.5}, tolerance: 1.0e-12}
+claim_boundary: This unitless affine implementation draft does not establish a unit conversion, calibration, or independently reviewed signal model.

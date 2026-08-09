@@ -10,6 +10,24 @@
     "critical_gaps",
     "bundle_scope"
   ],
+  "blueprint_route_contract_fingerprint": "17B69F0B156F0A3B92239E48D6DAB3787D243010704A20A52A8CF0868DDBEB2C",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_consumer_boundary",
+    "blueprint_evidence_and_resource_binding",
+    "blueprint_binding_freshness",
+    "blueprint_missing_stale_gap_and_closure_handoff"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "summary",
+    "affected",
+    "full"
+  ],
+  "executed_blueprint_operation_ids": [
+    "api:physicsguard.summary_physical_blueprint_projection",
+    "api:physicsguard.affected_physical_blueprint_projection",
+    "api:physicsguard.full_physical_blueprint_projection"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

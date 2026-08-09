@@ -9,7 +9,9 @@ receipts.
 from __future__ import annotations
 
 import copy
+from functools import lru_cache
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -27,6 +29,9 @@ MESH_PATH = Path(__file__).with_name("physicsguard_skill_suite_mesh.json")
 PROMPT_LOAD_GRAPH_PATH = Path(__file__).with_name(
     "physicsguard_skill_prompt_load_graph.json"
 )
+PURPOSE_CONTRACT_GENERATOR_PATH = (
+    ROOT / "scripts" / "upgrade_purpose_contracts.py"
+)
 ROUTE_CAPSULE_SCHEMA = "physicsguard.skill_route_capsule.v1"
 PROMPT_LOAD_GRAPH_SCHEMA = "physicsguard.skill_prompt_load_graph.v1"
 REQUIRED_DEEP_CAPABILITIES = {
@@ -43,21 +48,19 @@ REQUIRED_DEEP_CAPABILITIES = {
     "independent_holdout",
     "exact_terminal_boundary",
 }
-EXPECTED_TOOLCHAIN_IDENTITY = {
-    "physicsguard_version": (ROOT / "VERSION").read_text(encoding="utf-8").strip(),
-    "flowguard_version": "0.68.2",
-    "flowguard_schema_version": "1.0",
-    "skillguard_version": "0.7.2",
-}
 ENTRY_SHARED_GOVERNED_INPUTS = {
     ".flowguard/check_physicsguard_skill_suite_mesh.py",
+    ".flowguard/model-regression-manifest.json",
     ".flowguard/physicsguard_skill_prompt_load_graph.json",
     ".flowguard/physicsguard_skill_suite_mesh.json",
-    ".flowguard/model-regression-manifest.json",
     "VERSION",
     "pyproject.toml",
     "src/physicsguard/__init__.py",
     "scripts/check_installed_physicsguard_skills.py",
+    # These author-side helpers are imported by the shared entry/loading
+    # checks.  They belong to the common governed spine, not to the
+    # family-only maintenance owner.
+    "scripts/physicsguard_skill_install_authority.py",
     "scripts/upgrade_purpose_contracts.py",
     "scripts/verify_guard_simulation_readiness.py",
     "tests/test_guard_skill_mesh.py",
@@ -67,6 +70,40 @@ ENTRY_SHARED_GOVERNED_INPUTS = {
     "tests/test_skillguard_v2_runtime_authority_audit.py",
     "tests/test_version_consistency.py",
 }
+FAMILY_MAINTENANCE_MEMBER_ID = "physicsguard-audit-closure"
+FAMILY_MAINTENANCE_CHECK_ID = "check:physicsguard-family:distribution-authority"
+FAMILY_MAINTENANCE_OWNER_ID = "owner:physicsguard-family:distribution-authority"
+FAMILY_MAINTENANCE_PROJECTION_ID = (
+    "projection:physicsguard-family-maintenance-definition"
+)
+FAMILY_MAINTENANCE_INPUTS = {
+    ".flowguard/check_physicsguard_skill_suite_mesh.py",
+    ".flowguard/model-regression-manifest.json",
+    ".flowguard/physicsguard_skill_prompt_load_graph.json",
+    ".flowguard/physicsguard_skill_suite_mesh.json",
+    ".skillguard/test-mesh.json",
+    "VERSION",
+    "pyproject.toml",
+    "scripts/check_physicsguard_test_mesh.py",
+    "scripts/check_installed_physicsguard_skills.py",
+    "scripts/install_physicsguard_skills.py",
+    "scripts/physicsguard_skill_install_authority.py",
+    "scripts/report_physicsguard_skill_suite.py",
+    "scripts/upgrade_purpose_contracts.py",
+    "scripts/verify_guard_simulation_readiness.py",
+    "src/physicsguard/__init__.py",
+    "tests/test_guard_skill_mesh.py",
+    "tests/test_installed_skill_sync.py",
+    "tests/test_install_physicsguard_skills.py",
+    "tests/test_physicsguard_family_maintenance.py",
+    "tests/test_physicsguard_skill_install_authority.py",
+    "tests/test_post_archive_retirement_authority.py",
+    "tests/test_skillguard_v2_runtime_authority_audit.py",
+    "tests/test_version_consistency.py",
+}
+FAMILY_MAINTENANCE_EXCLUSIVE_INPUTS = (
+    FAMILY_MAINTENANCE_INPUTS - ENTRY_SHARED_GOVERNED_INPUTS
+)
 CANONICAL_MODULES = {
     "src/physicsguard/guard_model_contract.py",
     "src/physicsguard/skill_execution_depth.py",
@@ -88,7 +125,7 @@ EXPECTED: dict[str, tuple[str, str, int]] = {
     "physicsguard-audit-closure": (
         "physicsguard.audit-closure",
         "route:physicsguard-audit-closure:close",
-        9,
+        10,
     ),
     "physicsguard-candidate-model-blueprint": (
         "physicsguard.candidate-model-blueprint",
@@ -181,15 +218,52 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+@lru_cache(maxsize=1)
+def _current_toolchain_identity_resolution() -> tuple[dict[str, str] | None, str | None]:
+    """Freeze the same direct-current identity used by the official generator.
+
+    Resolution failures are returned as an explicit blocker.  The checker never
+    substitutes a historical version literal or treats the generated mesh as
+    its own authority.
+    """
+
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "physicsguard_purpose_contract_generator_for_suite_check",
+            PURPOSE_CONTRACT_GENERATOR_PATH,
+        )
+        if spec is None or spec.loader is None:
+            raise ImportError("purpose_contract_generator_loader_missing")
+        generator = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(generator)
+        identity = generator.current_toolchain_identity(
+            repository_root=ROOT,
+            flowguard_project_path=ROOT / ".flowguard" / "project.toml",
+            skillguard_root=generator.DEFAULT_SKILLGUARD_ROOT,
+        )
+        if not isinstance(identity, Mapping) or not identity:
+            raise TypeError("current_toolchain_identity_not_object")
+        return {str(key): str(value) for key, value in identity.items()}, None
+    except Exception as exc:
+        return None, f"{type(exc).__name__}:{exc}"
+
+
 def check_prompt_load_graph(
     graph: Mapping[str, Any], *, check_files: bool = True
 ) -> dict[str, Any]:
     findings: list[dict[str, str]] = []
+    expected_toolchain, authority_error = _current_toolchain_identity_resolution()
+    if authority_error is not None:
+        _finding(
+            findings,
+            "toolchain_authority_unresolved",
+            authority_error,
+        )
     if graph.get("schema_version") != PROMPT_LOAD_GRAPH_SCHEMA:
         _finding(findings, "prompt_load_graph_schema_wrong", str(graph.get("schema_version", "")))
-    if graph.get("suite_version") != EXPECTED_TOOLCHAIN_IDENTITY["physicsguard_version"]:
+    if expected_toolchain is not None and graph.get("suite_version") != expected_toolchain["physicsguard_version"]:
         _finding(findings, "prompt_load_suite_version_stale", str(graph.get("suite_version", "")))
-    if graph.get("toolchain_identity") != EXPECTED_TOOLCHAIN_IDENTITY:
+    if expected_toolchain is not None and graph.get("toolchain_identity") != expected_toolchain:
         _finding(findings, "prompt_load_toolchain_identity_stale", str(graph.get("toolchain_identity", "")))
     if graph.get("route_count") != 10:
         _finding(findings, "prompt_load_route_count_wrong", str(graph.get("route_count", "")))
@@ -459,6 +533,10 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
     subject_ids = [str(row.get("evidence_subject_id", "")) for row in checks]
     if len(checks) != expected_count:
         _finding(findings, "declared_check_count_wrong", f"{target}:{len(checks)}")
+    if (FAMILY_MAINTENANCE_CHECK_ID in check_ids) != (
+        target == FAMILY_MAINTENANCE_MEMBER_ID
+    ):
+        _finding(findings, "family_maintenance_check_cardinality_wrong", target)
     if any(len(set(rows)) != len(rows) for rows in (check_ids, semantic_ids, owner_ids, subject_ids)):
         _finding(findings, "member_check_identity_not_unique", target)
     if source.get("maintenance_unit_id") != "unit:physicsguard-family":
@@ -504,9 +582,13 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
         {
             "binding_id": f"native-check:{target}:{_binding_id_fragment(check_id)}",
             "evidence_source": (
-                "physicsguard.task_local_revision"
-                if check_id.endswith(":task-local-model-deepening")
-                else "physicsguard.guard_model_contract"
+                "physicsguard.family_distribution_authority"
+                if check_id == FAMILY_MAINTENANCE_CHECK_ID
+                else (
+                    "physicsguard.task_local_revision"
+                    if check_id.endswith(":task-local-model-deepening")
+                    else "physicsguard.guard_model_contract"
+                )
             ),
             "native_check_id": check_id,
             "required": True,
@@ -525,19 +607,42 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
         is_task_model = str(check.get("check_id", "")).endswith(
             ":task-local-model-deepening"
         )
+        is_family_maintenance = (
+            str(check.get("check_id", "")) == FAMILY_MAINTENANCE_CHECK_ID
+        )
         expected_entrypoint = (
             ["-m", "pytest"]
-            if is_task_model
+            if is_task_model or is_family_maintenance
             else ["-m", "physicsguard.guard_model_contract"]
         )
         if args[:2] != expected_entrypoint:
             _finding(findings, "noncanonical_native_entrypoint", str(check.get("check_id", "")))
         selectors = _path_selectors(check)
-        required_modules = TASK_MODEL_MODULES if is_task_model else CANONICAL_MODULES
+        required_modules = (
+            set()
+            if is_family_maintenance
+            else (TASK_MODEL_MODULES if is_task_model else CANONICAL_MODULES)
+        )
         if not required_modules <= selectors:
             _finding(findings, "canonical_simulator_input_missing", str(check.get("check_id", "")))
         if is_task_model and not ENTRY_SHARED_GOVERNED_INPUTS <= selectors:
             _finding(findings, "entry_governed_input_missing", str(check.get("check_id", "")))
+        if is_task_model and FAMILY_MAINTENANCE_EXCLUSIVE_INPUTS & selectors:
+            _finding(
+                findings,
+                "family_maintenance_leaked_into_member_model_owner",
+                str(check.get("check_id", "")),
+            )
+        if is_family_maintenance and (
+            target != FAMILY_MAINTENANCE_MEMBER_ID
+            or check.get("execution_owner_id") != FAMILY_MAINTENANCE_OWNER_ID
+            or selectors != FAMILY_MAINTENANCE_INPUTS
+        ):
+            _finding(
+                findings,
+                "family_maintenance_owner_or_inputs_invalid",
+                str(check.get("check_id", "")),
+            )
         if any(
             path.endswith("/guard-model/verify.py")
             or path.endswith("/runtime/skill_execution_depth.py")
@@ -550,6 +655,45 @@ def _check_target_contract(target: str, findings: list[dict[str, str]]) -> None:
         _finding(findings, "canonical_simulator_implementation_missing", target)
     if not ENTRY_SHARED_GOVERNED_INPUTS <= implementation_paths:
         _finding(findings, "entry_governed_implementation_missing", target)
+    if target == FAMILY_MAINTENANCE_MEMBER_ID:
+        if not FAMILY_MAINTENANCE_INPUTS <= implementation_paths:
+            _finding(findings, "family_maintenance_implementation_missing", target)
+    elif FAMILY_MAINTENANCE_EXCLUSIVE_INPUTS & implementation_paths:
+        _finding(findings, "family_maintenance_implementation_duplicated", target)
+
+    projection_consumers = source.get("projection_consumers", [])
+    if target == FAMILY_MAINTENANCE_MEMBER_ID:
+        projection_is_exact = (
+            isinstance(projection_consumers, list)
+            and len(projection_consumers) == 1
+            and isinstance(projection_consumers[0], Mapping)
+            and projection_consumers[0].get("consumer_id")
+            == FAMILY_MAINTENANCE_PROJECTION_ID
+            and projection_consumers[0].get("kind") == "source_maintenance"
+            and _path_selectors(projection_consumers[0])
+            == FAMILY_MAINTENANCE_INPUTS
+        )
+    else:
+        projection_is_exact = projection_consumers == []
+    if not projection_is_exact:
+        _finding(findings, "family_maintenance_projection_wrong", target)
+
+    expected_overrides = [
+        {
+            "path": f"skill/{target}/.skillguard",
+            "role": "contract_schema",
+            "install_disposition": "source_only",
+            "reason": "author_control_source_only",
+        },
+        {
+            "path": f"skill/{target}/guard-model",
+            "role": "test_dev",
+            "install_disposition": "source_only",
+            "reason": "author_only_guard_contract",
+        },
+    ]
+    if source.get("content_role_overrides") != expected_overrides:
+        _finding(findings, "member_author_control_override_drifted", target)
     if any(
         path.endswith("/guard-model/verify.py")
         or path.endswith("/runtime/skill_execution_depth.py")
@@ -592,9 +736,16 @@ def _check_local_runtime_copies(mesh: Mapping[str, Any], findings: list[dict[str
 
 def check_mesh(mesh: Mapping[str, Any], *, check_targets: bool = True) -> dict[str, Any]:
     findings: list[dict[str, str]] = []
+    expected_toolchain, authority_error = _current_toolchain_identity_resolution()
+    if authority_error is not None:
+        _finding(
+            findings,
+            "toolchain_authority_unresolved",
+            authority_error,
+        )
     if mesh.get("guard_model_contract") != EXPECTED_GUARD_MODEL:
         _finding(findings, "guard_model_contract_drift", "PhysicsGuard target semantics or proof order drifted.")
-    if mesh.get("toolchain_identity") != EXPECTED_TOOLCHAIN_IDENTITY:
+    if expected_toolchain is not None and mesh.get("toolchain_identity") != expected_toolchain:
         _finding(findings, "toolchain_identity_stale", str(mesh.get("toolchain_identity", "")))
 
     boundary = mesh.get("maintenance_boundary")

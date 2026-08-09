@@ -163,6 +163,105 @@ def test_aggregate_power_balance_conflict_residual_is_finite() -> None:
     assert np.isfinite(record.normalized_value)
 
 
+@pytest.mark.parametrize(
+    (
+        "module_type",
+        "parameters",
+        "values",
+        "expected_name",
+        "expected_value",
+        "expected_scale",
+        "expected_key",
+    ),
+    [
+        pytest.param(
+            "AggregateThermalBalanceModule",
+            {
+                "heat_in_variables": ["heat_in.x"],
+                "heat_out_variables": ["heat_out.x"],
+                "target_storage_rate_W": 2.0,
+                "residual_scale_W": 2.0,
+            },
+            {"heat_in.x": 10.0, "heat_out.x": 7.0},
+            "aggregate.aggregate_thermal_balance",
+            1.0,
+            2.0,
+            "aggregate_thermal_balance_mismatch",
+            id="thermal",
+        ),
+        pytest.param(
+            "AggregateMassBalanceModule",
+            {
+                "mass_in_variables": ["mass_in.x"],
+                "mass_out_variables": ["mass_out.x"],
+                "target_storage_rate_kg_s": 0.2,
+                "residual_scale_kg_s": 0.2,
+            },
+            {"mass_in.x": 1.0, "mass_out.x": 0.7},
+            "aggregate.aggregate_mass_balance",
+            0.1,
+            0.2,
+            "aggregate_mass_balance_mismatch",
+            id="mass",
+        ),
+        pytest.param(
+            "AggregateSpeciesBalanceModule",
+            {
+                "species_in_variables": ["species_in.x"],
+                "species_out_variables": ["species_out.x"],
+                "species_consumption_variables": ["consumption.x"],
+                "species_production_variables": ["production.x"],
+                "target_storage_rate_mol_s": 0.2,
+                "residual_scale_mol_s": 0.2,
+            },
+            {
+                "species_in.x": 1.0,
+                "species_out.x": 0.8,
+                "consumption.x": 0.1,
+                "production.x": 0.2,
+            },
+            "aggregate.aggregate_species_balance",
+            0.1,
+            0.2,
+            "aggregate_species_balance_mismatch",
+            id="species",
+        ),
+        pytest.param(
+            "AggregateElectricalBusBalanceModule",
+            {
+                "generation_power_variables": ["generation.x"],
+                "consumption_power_variables": ["consumption.x"],
+                "storage_power_variables": ["storage.x"],
+                "loss_power_variables": ["loss.x"],
+                "residual_scale_W": 2.0,
+            },
+            {"generation.x": 10.0, "consumption.x": 5.0, "storage.x": 2.0, "loss.x": 2.0},
+            "aggregate.aggregate_electrical_bus_balance",
+            1.0,
+            2.0,
+            "aggregate_electrical_bus_balance_mismatch",
+            id="electrical_bus",
+        ),
+    ],
+)
+def test_aggregate_balance_conflicts_report_scaled_residual(
+    module_type: str,
+    parameters: dict,
+    values: dict[str, float],
+    expected_name: str,
+    expected_value: float,
+    expected_scale: float,
+    expected_key: str,
+) -> None:
+    record = aggregate_record(module_type, parameters, values)
+    assert record.name == expected_name
+    assert record.value == pytest.approx(expected_value)
+    assert record.scale == pytest.approx(expected_scale)
+    assert record.role == "equation"
+    assert record.diagnostic_key == expected_key
+    assert record.normalized_value == pytest.approx(expected_value / expected_scale)
+
+
 def test_aggregate_references_unknown_variable_fail_clearly() -> None:
     spec = system(
         [

@@ -1,0 +1,444 @@
+schema_version: physicsguard.fmi-observation-request.v1
+observation_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+target_system_id: reference-fmus.bouncing-ball
+subject_revision: v0.0.40-fmi3
+source:
+  provider_id: modelica.reference-fmus
+  source_uri: https://github.com/modelica/Reference-FMUs
+  release_uri: https://github.com/modelica/Reference-FMUs/releases/tag/v0.0.40
+  release_version: v0.0.40
+  license_id: BSD-2-Clause
+  claim_boundary: Source labels are independently supplied metadata; the observer verifies only the exact local bytes frozen by this request.
+fmi_version: '3.0'
+interface_kind: model_exchange
+expected_model_name: BouncingBall
+expected_model_identifier: BouncingBall
+artifacts:
+  - artifact_id: reference-fmus-release-zip
+    role: release_archive
+    relative_path: Reference-FMUs.zip
+    sha256: 6efe688afe1b2802fe0f011259788396a370f78f2f115b7897285503a884741c
+    size_bytes: 3030247
+  - artifact_id: bouncing-ball-fmi3
+    role: fmu
+    relative_path: expanded/3.0/BouncingBall.fmu
+    sha256: 4b6c1034f644122e10faa346b2c44549d8634d427a32a28eebcf0d893a66efec
+    size_bytes: 240103
+    container_artifact_id: reference-fmus-release-zip
+    container_member_path: 3.0/BouncingBall.fmu
+  - artifact_id: reference-fmus-license
+    role: license
+    relative_path: expanded/LICENSE.txt
+    sha256: 3bd19affe120c783d1bb63f423ba1e5b31fed892d98d583001aac013a3432041
+    size_bytes: 1551
+    container_artifact_id: reference-fmus-release-zip
+    container_member_path: LICENSE.txt
+fmu_artifact_id: bouncing-ball-fmi3
+expected_members:
+  - member_id: model-description
+    role: model_description
+    member_path: modelDescription.xml
+    sha256: ff69c36f46b7cf9ac3af6c0ada2cfb0dc54abf099398ddd3256cf06ef64cf4cd
+    size_bytes: 3743
+  - member_id: model-source
+    role: source
+    member_path: sources/model.c
+    sha256: 0009784ec47467c48c6891cc5983919c47bfe5356ef736b1ae7abdc659486a47
+    size_bytes: 5446
+  - member_id: fmi3-entrypoint-source
+    role: source
+    member_path: sources/fmi3Functions.c
+    sha256: 7e74ff5ed2e416524457beb0f5e5f35001b1c2edbbe81279dc44f147482379fc
+    size_bytes: 41181
+  - member_id: model-documentation
+    role: documentation
+    member_path: documentation/index.html
+    sha256: 6a2fa30a7f8e9bc886365113bbaf9a009b609d88804e94f38685fa866983d406
+    size_bytes: 4338
+  - member_id: reference-result
+    role: result
+    member_path: documentation/result.svg
+    sha256: 55824973366012bfa6892050e9d526cb8503afdd9340a7d2919c7c36699b6879
+    size_bytes: 55212
+  - member_id: windows-x86-64-binary
+    role: binary
+    member_path: binaries/x86_64-windows/BouncingBall.dll
+    sha256: a97031d386644434d34dcff385d13f4b5f6862eb2fcc913796a3008b61787af3
+    size_bytes: 171520
+expected_variables:
+  - variable_name: time
+    value_reference: 0
+    variable_type: Float64
+    causality: independent
+    variability: continuous
+    physical_quantity_id: simulation_time
+    source_state_role: time
+  - variable_name: h
+    value_reference: 1
+    variable_type: Float64
+    causality: output
+    variability: continuous
+    unit: m
+    start: 1.0
+    reinit: true
+    physical_quantity_id: height
+    source_state_role: continuous_state
+  - variable_name: der(h)
+    value_reference: 2
+    variable_type: Float64
+    causality: local
+    variability: continuous
+    unit: m/s
+    derivative_of_value_reference: 1
+    physical_quantity_id: height_derivative
+    source_state_role: continuous_derivative
+  - variable_name: v
+    value_reference: 3
+    variable_type: Float64
+    causality: output
+    variability: continuous
+    unit: m/s
+    start: 0.0
+    reinit: true
+    physical_quantity_id: vertical_velocity
+    source_state_role: continuous_state
+  - variable_name: der(v)
+    value_reference: 4
+    variable_type: Float64
+    causality: local
+    variability: continuous
+    unit: m/s2
+    derivative_of_value_reference: 3
+    physical_quantity_id: velocity_derivative
+    source_state_role: continuous_derivative
+  - variable_name: g
+    value_reference: 5
+    variable_type: Float64
+    causality: parameter
+    variability: fixed
+    unit: m/s2
+    start: -9.81
+    physical_quantity_id: gravitational_acceleration
+    source_state_role: parameter
+  - variable_name: e
+    value_reference: 6
+    variable_type: Float64
+    causality: parameter
+    variability: tunable
+    start: 0.7
+    minimum: 0.5
+    maximum: 1.0
+    physical_quantity_id: coefficient_of_restitution
+    source_state_role: parameter
+  - variable_name: v_min
+    value_reference: 7
+    variable_type: Float64
+    causality: local
+    variability: constant
+    unit: m/s
+    start: 0.1
+    physical_quantity_id: stop_speed_threshold
+    source_state_role: constant
+semantic_selectors:
+  - selector_id: selector.sem.root.initial
+    source_member_id: model-source
+    function_name: setStartValues
+    source_fragment: 'M(h) = 1; M(v) = 0; M(g) = -9.81; M(e) = 0.7;'
+    semantic_kind: parameter
+    semantic_statement: Initial h=1 m, v=0 m/s, and effective gravity equals the FMI g parameter.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.root.free
+    source_member_id: model-source
+    function_name: getDerivatives
+    source_fragment: 'dx[0] = M(v); dx[1] = M(g);'
+    semantic_kind: equation
+    semantic_statement: Outside a contact event, height and velocity follow dh/dt=v and dv/dt=g_effective.
+    semantic_expression: 'dh_dt = v; dv_dt = g_effective'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.root.update
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'M(h) = DBL_MIN; // slightly above 0 to avoid zero-crossing M(v) = -M(v) * M(e);'
+    semantic_kind: state_update
+    semantic_statement: The model integrates free-flight states and atomically applies the declared contact branch.
+    semantic_expression: '(h,v,g)_next = integrate_or_contact(h,v,g,e,v_min)'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.root.impact
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'if (M(h) <= 0 && M(v) < 0) {'
+    semantic_kind: guarantee
+    semantic_statement: At h<=0 with v<0, the rebound candidate is -e*v; if it is below v_min, v and effective gravity become zero.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.root.protected
+    source_member_id: model-source
+    function_name: setFloat64
+    source_fragment: 'case vr_v_min: logError(comp, "Variable v_min (value reference %u) is constant and cannot be set.", vr_v_min); return Error;'
+    semantic_kind: protected_failure
+    semantic_statement: Attempts to mutate constant v_min return FMI error instead of changing the threshold.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.root.termination
+    source_member_id: fmi3-entrypoint-source
+    function_name: fmi3Terminate
+    source_fragment: 'S->state = Terminated;'
+    semantic_kind: termination
+    semantic_statement: An explicit FMI terminate call moves the wrapper into its terminal state.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.free.dh
+    source_member_id: model-source
+    function_name: getDerivatives
+    source_fragment: 'dx[0] = M(v);'
+    semantic_kind: equation
+    semantic_statement: Height derivative equals vertical velocity.
+    semantic_expression: 'dh_dt = v'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.free.dv
+    source_member_id: model-source
+    function_name: getDerivatives
+    source_fragment: 'dx[1] = M(g);'
+    semantic_kind: equation
+    semantic_statement: Velocity derivative equals effective gravity.
+    semantic_expression: 'dv_dt = g'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.free.e_independent
+    source_member_id: model-source
+    function_name: getDerivatives
+    source_fragment: 'dx[0] = M(v); dx[1] = M(g);'
+    semantic_kind: invariant
+    semantic_statement: The restitution coefficient is inert in free flight and does not enter either derivative equation.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.free.protected
+    source_member_id: fmi3-entrypoint-source
+    function_name: fmi3GetContinuousStateDerivatives
+    source_fragment: 'BEGIN_FUNCTION(GetContinuousStateDerivatives);'
+    semantic_kind: protected_failure
+    semantic_statement: The FMI wrapper checks the call sequence before executing the continuous-state derivative function.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.free.termination
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'if (M(h) <= 0 && M(v) < 0) {'
+    semantic_kind: termination
+    semantic_statement: Free flight hands off to the contact branch when h<=0 and v<0.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.impact.trigger
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'if (M(h) <= 0 && M(v) < 0) {'
+    semantic_kind: constraint
+    semantic_statement: The event branch is enabled only when h<=0 and v<0.
+    semantic_expression: 'event = (h <= 0) and (v < 0)'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.impact.rebound
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'M(v) = -M(v) * M(e);'
+    semantic_kind: equation
+    semantic_statement: The rebound-speed candidate is -e times pre-impact velocity.
+    semantic_expression: 'candidate = -e * v'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.impact.update
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'M(h) = DBL_MIN; // slightly above 0 to avoid zero-crossing M(v) = -M(v) * M(e);'
+    semantic_kind: state_update
+    semantic_statement: Contact resets height to DBL_MIN and publishes the rebound candidate as post-impact velocity.
+    semantic_expression: 'h_post = DBL_MIN; v_post = -e*v; g_post = g'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.impact.stop
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'M(v) = 0; M(g) = 0;'
+    semantic_kind: constraint
+    semantic_statement: When the rebound candidate is below v_min, both post velocity and effective gravity are zero.
+    semantic_expression: 'if -e*v < v_min: v_post=0; g_post=0'
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.impact.protected
+    source_member_id: model-source
+    function_name: setFloat64
+    source_fragment: 'case vr_v_min: logError(comp, "Variable v_min (value reference %u) is constant and cannot be set.", vr_v_min); return Error;'
+    semantic_kind: protected_failure
+    semantic_statement: v_min is an FMI constant and a mutation attempt returns FMI error instead of changing the threshold.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+  - selector_id: selector.sem.impact.termination
+    source_member_id: model-source
+    function_name: eventUpdate
+    source_fragment: 'comp->nextEventTimeDefined = false; return OK;'
+    semantic_kind: termination
+    semantic_statement: The event iteration hands post-state back to the parent after the rebound or stopped branch is settled.
+    claim_boundary: Verified only for this exact function and source fragment in the governed FMU member.
+oracles:
+  - oracle_id: oracle.impact-momentum-reflection
+    purpose: Independently recompute rebound and stop outputs from the declared impact equations.
+    input_names: [v, e, vmin, g]
+    expressions:
+      - result_name: candidate
+        expression: -e * v
+      - result_name: v_post
+        expression: 0.0 if candidate < vmin else candidate
+      - result_name: g_post
+        expression: 0.0 if candidate < vmin else g
+    source_member_ids: [model-source, model-documentation]
+    claim_boundary: Restricted arithmetic replays only the frozen ground-contact branch and is not the FMI implementation.
+  - oracle_id: oracle.stop-threshold
+    purpose: Independently recompute the rebound candidate and threshold stop branch.
+    input_names: [v, e, vmin, g]
+    expressions:
+      - result_name: candidate
+        expression: -e * v
+      - result_name: v_post
+        expression: 0.0 if candidate < vmin else candidate
+      - result_name: g_post
+        expression: 0.0 if candidate < vmin else g
+    source_member_ids: [model-source, model-documentation]
+    claim_boundary: Restricted arithmetic replays only the frozen ground-contact branch and is not the FMI implementation.
+  - oracle_id: oracle.free-flight-kinematics
+    purpose: Independently recompute free-flight derivatives without reading the implementation output.
+    input_names: [v, g]
+    expressions:
+      - result_name: dh
+        expression: v
+      - result_name: dv
+        expression: g
+    source_member_ids: [model-source, model-documentation]
+    claim_boundary: Restricted arithmetic covers only dh=v and dv=g inside the frozen continuous-time branch.
+  - oracle_id: oracle.fmi-constant-contract
+    purpose: Ground the protected constant-set case in the frozen FMI variable contract and source.
+    input_names: [vmin]
+    expressions:
+      - result_name: declared_vmin
+        expression: vmin
+    source_member_ids: [model-description, model-source]
+    claim_boundary: The FMI terminal status, not this numeric identity expression, proves rejection of the constant-set operation.
+behavior_cases:
+  - case_id: impact-restitution-e-0.7
+    operation: event_update
+    independent_oracle_id: oracle.impact-momentum-reflection
+    oracle_input_bindings:
+      v: v
+      e: e
+      vmin: v_min
+      g: g
+    oracle_output_bindings:
+      v: v_post
+      g: g_post
+    purpose: At ground contact a downward speed of one is reflected with coefficient e=0.7.
+    start_time: 0.0
+    assignments:
+      - variable_name: h
+        value: 0.0
+      - variable_name: v
+        value: -1.0
+      - variable_name: e
+        value: 0.7
+    read_variable_names: [v, g]
+    expected_values:
+      - variable_name: v
+        value: 0.7
+        absolute_tolerance: 1.0e-15
+      - variable_name: g
+        value: -9.81
+        absolute_tolerance: 1.0e-15
+    expected_terminal_status: ok
+  - case_id: impact-below-stop-threshold
+    operation: event_update
+    independent_oracle_id: oracle.stop-threshold
+    oracle_input_bindings:
+      v: v
+      e: e
+      vmin: v_min
+      g: g
+    oracle_output_bindings:
+      v: v_post
+      g: g_post
+    purpose: The rebound candidate 0.07 is below v_min=0.1, so the terminal state sets v and g to zero.
+    start_time: 0.0
+    assignments:
+      - variable_name: h
+        value: 0.0
+      - variable_name: v
+        value: -0.1
+      - variable_name: e
+        value: 0.7
+    read_variable_names: [v, g]
+    expected_values:
+      - variable_name: v
+        value: 0.0
+        absolute_tolerance: 0.0
+      - variable_name: g
+        value: 0.0
+        absolute_tolerance: 0.0
+    expected_terminal_status: ok
+  - case_id: free-flight-e-min
+    operation: read_after_initialization
+    independent_oracle_id: oracle.free-flight-kinematics
+    oracle_input_bindings:
+      v: v
+      g: g
+    oracle_output_bindings:
+      der(h): dh
+      der(v): dv
+    purpose: Changing e does not change free-flight derivatives.
+    start_time: 0.0
+    assignments:
+      - variable_name: h
+        value: 1.0
+      - variable_name: v
+        value: 2.0
+      - variable_name: g
+        value: -9.81
+      - variable_name: e
+        value: 0.5
+    read_variable_names: [der(h), der(v)]
+    expected_values:
+      - variable_name: der(h)
+        value: 2.0
+        absolute_tolerance: 0.0
+      - variable_name: der(v)
+        value: -9.81
+        absolute_tolerance: 1.0e-15
+    expected_terminal_status: ok
+  - case_id: free-flight-e-max
+    operation: read_after_initialization
+    independent_oracle_id: oracle.free-flight-kinematics
+    oracle_input_bindings:
+      v: v
+      g: g
+    oracle_output_bindings:
+      der(h): dh
+      der(v): dv
+    purpose: Changing e does not change free-flight derivatives.
+    start_time: 0.0
+    assignments:
+      - variable_name: h
+        value: 1.0
+      - variable_name: v
+        value: 2.0
+      - variable_name: g
+        value: -9.81
+      - variable_name: e
+        value: 1.0
+    read_variable_names: [der(h), der(v)]
+    expected_values:
+      - variable_name: der(h)
+        value: 2.0
+        absolute_tolerance: 0.0
+      - variable_name: der(v)
+        value: -9.81
+        absolute_tolerance: 1.0e-15
+    expected_terminal_status: ok
+  - case_id: v-min-is-constant
+    operation: rejected_set
+    independent_oracle_id: oracle.fmi-constant-contract
+    oracle_input_bindings:
+      vmin: v_min
+    oracle_output_bindings: {}
+    purpose: The FMI rejects attempts to mutate the constant stop threshold.
+    start_time: 0.0
+    assignments:
+      - variable_name: v_min
+        value: 0.2
+    read_variable_names: []
+    expected_values: []
+    expected_terminal_status: error
+request_fingerprint: 78e66958a75e1b8b6e3b6d076e7f8033d4849b9bfc039917f4e4eb098996a90f

@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Iterable
 
 from physicsguard.core.diagnostics import ResidualDiagnostic
+from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
 from physicsguard.core.registry import VariableRegistry
+from physicsguard.io.test_file_contract_loader import load_spec
 from physicsguard.schema.observation_spec import ObservedValueSpec, ObservedValuesSpec
+from physicsguard.schema.signal_mapping import SignalMappingLedgerSpec
 from physicsguard.schema.system_spec import SystemSpec
 
 
@@ -127,6 +131,48 @@ def build_signal_mapping_ledger(
             )
         )
     return tuple(rows)
+
+
+def review_signal_mapping_ledger(path: str | Path) -> ContractReview:
+    """Replay the native signal-mapping owner over one stable ledger artifact."""
+
+    ledger = load_spec(Path(path), SignalMappingLedgerSpec)
+    findings: list[ContractFinding] = []
+    for entry in ledger.entries:
+        for issue_code in entry.issue_codes:
+            findings.append(
+                ContractFinding(
+                    severity="error" if ledger.status == "blocked" else "warning",
+                    type=issue_code,
+                    message=f"signal mapping {entry.mapping_id} requires review: {issue_code}",
+                    target=entry.physics_variable,
+                    details={
+                        "mapping_id": entry.mapping_id,
+                        "external_signal": entry.external_signal,
+                        "source_revision": entry.source_revision,
+                        "temporal_boundary": entry.temporal_boundary,
+                    },
+                )
+            )
+    effective_status = (
+        "fail"
+        if any(item.severity == "error" for item in findings)
+        else ("partial" if findings else "pass")
+    )
+    return ContractReview(
+        artifact_kind="signal_mapping_ledger_review",
+        status=effective_status,
+        ok=effective_status == "pass",
+        findings=findings,
+        summary={
+            "ledger_id": ledger.ledger_id,
+            "target_system_id": ledger.target_system_id,
+            "subject_revision": ledger.subject_revision,
+            "entry_count": len(ledger.entries),
+            "ledger_fingerprint": ledger.ledger_fingerprint,
+        },
+        next_actions=([] if effective_status == "pass" else ["resolve exact signal mapping gaps"]),
+    )
 
 
 def mapping_warnings(records: Iterable[SignalMappingRecord]) -> tuple[str, ...]:
@@ -298,4 +344,5 @@ __all__ = [
     "build_signal_mapping_ledger",
     "derive_bug_family_followups",
     "mapping_warnings",
+    "review_signal_mapping_ledger",
 ]

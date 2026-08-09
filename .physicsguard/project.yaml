@@ -1,8 +1,8 @@
 physicsguard:
   repository: https://github.com/liuyingxuvka/PhysicsGuard
-  adopted_package_version: 0.15.1
+  adopted_package_version: 0.15.3
   schema_version: '1.0'
-  last_verified_at: '2026-07-30T23:55:20+00:00'
+  last_verified_at: '2026-08-05T00:14:41+00:00'
   last_verified_by: PhysicsGuard project-upgrade
   rules_path: AGENTS.md
 paths:
@@ -22,7 +22,11 @@ policy:
   require_signal_mapping_review_before_fault_claims: true
   require_closure_before_localization_claim: true
   require_project_closure_before_broad_claims: true
-  ledger_is_navigation_not_physics_proof: true
+  require_current_module_semantic_ledger: true
+  module_semantic_ledger_schema: physicsguard.module_semantics_ledger.v2
+  module_semantic_registry_denominator: 152
+  module_semantic_physical_denominator: 151
+  dummy_module_physical_claim_licensed: false
 skill_routes:
 - physicsguard-ai-debugging
 - physicsguard-project-adoption

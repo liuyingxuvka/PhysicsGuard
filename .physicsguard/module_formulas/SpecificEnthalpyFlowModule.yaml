@@ -1,0 +1,43 @@
+schema: physicsguard.project_formula.v1
+module_type: SpecificEnthalpyFlowModule
+owner: physicsguard.project_formula.sensible_enthalpy_flow.v1
+purpose: Independently state the constant-cp sensible enthalpy-flow relation used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: cp_J_kgK, dimension: specific_heat, unit: 'J/(kg*K)', required: true, default: null, constraints: [cp_J_kgK > 0]}
+  - {name: T_ref_K, dimension: temperature, unit: K, required: false, default: 0.0, constraints: []}
+  - {name: residual_scale_W, dimension: power, unit: W, required: false, default: 1000.0, constraints: [residual_scale_W > 0]}
+scenario_inputs:
+  - {name: m_dot_kg_s, dimension: mass_flow, unit: kg/s}
+  - {name: T_K, dimension: temperature, unit: K}
+scenario_outputs: [{name: H_dot_W, dimension: power, unit: W}]
+residuals:
+  - name: specific_enthalpy_flow
+    expression: H_dot_W - m_dot_kg_s * cp_J_kgK * (T_K - T_ref_K)
+    dimension: power
+    unit: W
+    dimensional_derivation: kg/s multiplied by J/(kg*K) and K reduces to J/s, which is W.
+    scale_expression: residual_scale_W
+    zero_condition: Sensible enthalpy flow equals mass flow times constant cp times temperature rise from the reference.
+    source_intermediates:
+      - {symbol: m_dot, expression: m_dot_kg_s}
+      - {symbol: temperature, expression: T_K}
+      - {symbol: h_dot, expression: H_dot_W}
+      - {symbol: expected, expression: "m_dot * cp_J_kgK * (temperature - T_ref_K)"}
+constraints:
+  constructor:
+    - {predicate: cp_J_kgK > 0, guard_signature: "required_positive(parameters, 'cp_J_kgK')", failure_type: ValueError, message_selector: cp_J_kgK, on_violation: Reject non-positive cp_J_kgK., cases: [{kind: inside, inputs: {cp_J_kgK: 1000.0}, expected: pass}, {kind: boundary, inputs: {cp_J_kgK: 0.0}, expected: fail}, {kind: outside, inputs: {cp_J_kgK: -1.0}, expected: fail}]}
+    - {predicate: residual_scale_W > 0, guard_signature: "positive_float(parameters.get('residual_scale_W', 1000.0), 'residual_scale_W')", failure_type: ValueError, message_selector: residual_scale_W, on_violation: Reject non-positive residual_scale_W., cases: [{kind: inside, inputs: {residual_scale_W: 1000.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_W: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_W: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "cp_J_kgK > 0 and residual_scale_W > 0 and T_K > 0", meaning: Positive-absolute-temperature sensible enthalpy relation with positive cp and normalization., cases: [{kind: inside, inputs: {cp_J_kgK: 1000.0, residual_scale_W: 1000.0, T_K: 310.0}, expected: pass}, {kind: boundary, inputs: {cp_J_kgK: 1000.0, residual_scale_W: 1000.0, T_K: 1e-12}, expected: pass}, {kind: outside, inputs: {cp_J_kgK: 1000.0, residual_scale_W: 1000.0, T_K: 0.0}, expected: fail}]}
+  invalid:
+    - {predicate: "cp_J_kgK <= 0 or residual_scale_W <= 0 or T_K <= 0", meaning: Invalid heat capacity normalization or absolute-temperature region., cases: [{kind: inside, inputs: {cp_J_kgK: 1000.0, residual_scale_W: 1000.0, T_K: 0.0}, expected: pass}, {kind: boundary, inputs: {cp_J_kgK: 1000.0, residual_scale_W: 1000.0, T_K: 1e-12}, expected: fail}, {kind: outside, inputs: {cp_J_kgK: 1000.0, residual_scale_W: 1000.0, T_K: 310.0}, expected: fail}]}
+assumptions: [Constant cp, Sensible enthalpy only, Arbitrary configured reference temperature, No phase change]
+validity: [Temperature is absolute and finite, Mass and enthalpy flows use one signed direction, Scenario roles are one boundary assignment]
+oracle_cases:
+  - {case_id: balanced, inputs: {cp_J_kgK: 1000.0, T_ref_K: 300.0, residual_scale_W: 1000.0, m_dot_kg_s: 0.1, T_K: 310.0, H_dot_W: 1000.0}, expected: {specific_enthalpy_flow: 0.0}, tolerance: 1e-12}
+  - {case_id: enthalpy_offset, inputs: {cp_J_kgK: 1000.0, T_ref_K: 300.0, residual_scale_W: 1000.0, m_dot_kg_s: 0.1, T_K: 310.0, H_dot_W: 900.0}, expected: {specific_enthalpy_flow: -100.0}, tolerance: 1e-12}
+claim_boundary: This is a constant-cp sensible-enthalpy relation, not a phase-change property-table or transport model.

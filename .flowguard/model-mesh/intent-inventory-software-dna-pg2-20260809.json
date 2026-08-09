@@ -1,0 +1,51 @@
+{
+  "contributions": [],
+  "dispositions": [],
+  "effective_intent_transitions": [
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract",
+      "prior_contribution_fingerprint": "sha256:9b3908c657f53c17b310372df241340b07bc8a44288078564d8f9a01c30bc01f",
+      "action": "retain",
+      "replacement_contribution_ids": [],
+      "reason": "Retain each accepted current PhysicsGuard intent contribution; this revision refreshes executable source ownership and model evidence only, without changing domain intent.",
+      "fingerprint": "sha256:394f877c493dcf7f84716497d7f29cee614d5ebbca0cc854ef5980e643b2852a"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh",
+      "prior_contribution_fingerprint": "sha256:7f100acffe21b898d5a280b98b3724264b855e7e171e380b0e0f2f68fef655dd",
+      "action": "retain",
+      "replacement_contribution_ids": [],
+      "reason": "Retain each accepted current PhysicsGuard intent contribution; this revision refreshes executable source ownership and model evidence only, without changing domain intent.",
+      "fingerprint": "sha256:ef116d5fab317398a9febe0b3b3ca3c80c8cb4dfedc137a397b026be25ee99e4"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability",
+      "prior_contribution_fingerprint": "sha256:5225b269efaba73813129ef7be69cff8ad2d66a5cfce9cd32ea051bf61398322",
+      "action": "retain",
+      "replacement_contribution_ids": [],
+      "reason": "Retain each accepted current PhysicsGuard intent contribution; this revision refreshes executable source ownership and model evidence only, without changing domain intent.",
+      "fingerprint": "sha256:10a58433cb33bc69b76aa69e1af4af49251ecc7af04be56459cead51a9f384ba"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment",
+      "prior_contribution_fingerprint": "sha256:ccf9ecb3e38d7b3e2fac5c9abc636bf5f4442c1bbe204176d2be6484b23053ac",
+      "action": "retain",
+      "replacement_contribution_ids": [],
+      "reason": "Retain each accepted current PhysicsGuard intent contribution; this revision refreshes executable source ownership and model evidence only, without changing domain intent.",
+      "fingerprint": "sha256:29669bf64e5fc232d92e20007368749f042cd77e65b51c50106b1dd5a25eb609"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening",
+      "prior_contribution_fingerprint": "sha256:528d417775964944267e5ff610e5f64e5177427aae39c7a3866fa98c111025d2",
+      "action": "retain",
+      "replacement_contribution_ids": [],
+      "reason": "Retain each accepted current PhysicsGuard intent contribution; this revision refreshes executable source ownership and model evidence only, without changing domain intent.",
+      "fingerprint": "sha256:b47151a528b818024b2328e278a0f1ca809b0c6c2223f870fbb78621fa8c5629"
+    }
+  ]
+}

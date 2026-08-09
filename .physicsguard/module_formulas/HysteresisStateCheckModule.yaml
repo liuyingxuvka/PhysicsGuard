@@ -1,0 +1,54 @@
+schema: physicsguard.project_formula.v1
+module_type: HysteresisStateCheckModule
+owner: physicsguard.module_semantics.mechanical_draft.HysteresisStateCheckModule
+purpose: Mechanically describe the current stateless hysteresis-consistency post-check over explicit input and state observations.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: low_threshold, dimension: dimensionless, unit: '1', required: true, default: null, constraints: [low_threshold < high_threshold]}
+  - {name: high_threshold, dimension: dimensionless, unit: '1', required: true, default: null, constraints: [high_threshold > low_threshold]}
+  - {name: state_on_value, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: []}
+  - {name: state_off_value, dimension: dimensionless, unit: '1', required: false, default: 0.0, constraints: []}
+  - {name: state_tolerance, dimension: dimensionless, unit: '1', required: false, default: 0.25, constraints: [state_tolerance > 0]}
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: input, dimension: dimensionless, unit: '1'}
+  - {name: state, dimension: dimensionless, unit: '1'}
+scenario_outputs: []
+residuals:
+  - name: hysteresis_state_check
+    expression: "low_threshold - input if abs(state - state_on_value) <= state_tolerance and input < low_threshold else (input - high_threshold if abs(state - state_off_value) <= state_tolerance and input > high_threshold else (min(abs(state - state_on_value), abs(state - state_off_value)) if min(abs(state - state_on_value), abs(state - state_off_value)) > state_tolerance else 0.0))"
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: Input, thresholds, state values, deadband, residual, and normalization are unitless.
+    scale_expression: residual_scale
+    zero_condition: Observed state is consistent with the current threshold region or is inside the accepted state deadband.
+    source_intermediates:
+      - {symbol: input_value, expression: input}
+      - {symbol: on_distance, expression: "abs(state - state_on_value)"}
+      - {symbol: off_distance, expression: "abs(state - state_off_value)"}
+      - {symbol: residual, expression: "low_threshold - input_value if on_distance <= state_tolerance and input_value < low_threshold else (input_value - high_threshold if off_distance <= state_tolerance and input_value > high_threshold else (min(on_distance, off_distance) if min(on_distance, off_distance) > state_tolerance else 0.0))"}
+constraints:
+  constructor:
+    - {predicate: low_threshold < high_threshold, guard_signature: "if self.low_threshold >= self.high_threshold", failure_type: ValueError, message_selector: low_threshold, on_violation: Reject an empty or reversed hysteresis interval., cases: [{kind: inside, inputs: {low_threshold: 4.0, high_threshold: 6.0}, expected: pass}, {kind: boundary, inputs: {low_threshold: 5.0, high_threshold: 5.0}, expected: fail}, {kind: outside, inputs: {low_threshold: 7.0, high_threshold: 6.0}, expected: fail}]}
+    - {predicate: state_tolerance > 0, guard_signature: "_positive_float(parameters.get('state_tolerance', 0.25), 'state_tolerance')", failure_type: ValueError, message_selector: state_tolerance, on_violation: Reject a non-positive state deadband., cases: [{kind: inside, inputs: {state_tolerance: 0.25}, expected: pass}, {kind: boundary, inputs: {state_tolerance: 0.0}, expected: fail}, {kind: outside, inputs: {state_tolerance: -1.0}, expected: fail}]}
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "low_threshold < high_threshold and state_tolerance > 0 and residual_scale > 0", meaning: Current post-check configuration has ordered thresholds and positive deadband and normalization., cases: [{kind: inside, inputs: {low_threshold: 4.0, high_threshold: 6.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {low_threshold: 5.0, high_threshold: 5.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: fail}, {kind: outside, inputs: {low_threshold: 7.0, high_threshold: 6.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "low_threshold >= high_threshold or state_tolerance <= 0 or residual_scale <= 0", meaning: Invalid threshold ordering, state deadband, or normalization., cases: [{kind: inside, inputs: {low_threshold: 7.0, high_threshold: 6.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {low_threshold: 5.0, high_threshold: 5.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: pass}, {kind: outside, inputs: {low_threshold: 4.0, high_threshold: 6.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: fail}]}
+assumptions: [Input and state are explicit current observations, This check has no state memory and performs no automatic switching]
+validity: [Use only as the current exact post-check]
+invariants: [Neither input nor state is mutated or advanced]
+effects: [Emit one post_check residual]
+postconditions: [Residual follows the three current source branches exactly]
+termination: A fixed finite branch tree terminates.
+oracle_cases:
+  - {case_id: valid_on_state, inputs: {input: 7.0, state: 1.0, low_threshold: 4.0, high_threshold: 6.0, state_on_value: 1.0, state_off_value: 0.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: {hysteresis_state_check: 0.0}, tolerance: 1.0e-12}
+  - {case_id: on_below_low, inputs: {input: 3.0, state: 1.0, low_threshold: 4.0, high_threshold: 6.0, state_on_value: 1.0, state_off_value: 0.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: {hysteresis_state_check: 1.0}, tolerance: 1.0e-12}
+claim_boundary: This draft reproduces a stateless consistency post-check; it does not model hysteretic memory, automatic switching, or independently reviewed control behavior.

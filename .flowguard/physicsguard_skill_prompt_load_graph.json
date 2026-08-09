@@ -1,11 +1,19 @@
 {
   "schema_version": "physicsguard.skill_prompt_load_graph.v1",
-  "suite_version": "0.15.1",
+  "suite_version": "0.15.3",
   "toolchain_identity": {
-    "physicsguard_version": "0.15.1",
-    "flowguard_version": "0.68.2",
+    "physicsguard_version": "0.15.3",
+    "physicsguard_authority_sha256": "sha256:0513e924b92e45de0ccfcd2c4afa547914dba98e73a71cd3a79ea3d908a447c3",
+    "flowguard_version": "0.68.9",
     "flowguard_schema_version": "1.0",
-    "skillguard_version": "0.7.2"
+    "flowguard_package_tree_sha256": "sha256:4e4733d942f52de84c25f93bab30d4a910ec3b55059c5330e3e6c1a95c77d8e4",
+    "flowguard_direct_url_sha256": "sha256:35738303a58827bda346d458850eb99718f2b382c3ef138cb9036c07db24de9d",
+    "flowguard_authority_sha256": "sha256:2ed96bd5054c54facfc661d4eb7bf8e56e35a222b3312f64da2a97246a12fb39",
+    "skillguard_version": "0.7.2",
+    "skillguard_api_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
+    "skillguard_distribution_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
+    "skillguard_direct_url_sha256": "sha256:7236a685f8f921d9a5f4444658caa372abdba29c9e5ed6ad62f5f7b84d060558",
+    "skillguard_authority_sha256": "sha256:aa816fbc8145c43f06c4ab5dec91015fedf2232e18b58bc33545346cffbb4bed"
   },
   "route_count": 10,
   "initial_loading_rule": "selected_metadata_plus_compact_skill_plus_route_capsule_only",
@@ -34,32 +42,32 @@
       "skill_id": "physicsguard-ai-debugging",
       "path": "skill/physicsguard-ai-debugging/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 371,
-      "sha256": "cab29ed937ebc0f66e4e4b5df637e21328df301315a0928194892ccb9ad14e50"
+      "bytes": 367,
+      "sha256": "6e1f72d72445569919aade007cca97b54639e9bf44155b9ce19a9de63860ef09"
     },
     {
       "node_id": "artifact:skill/physicsguard-ai-debugging/SKILL.md",
       "skill_id": "physicsguard-ai-debugging",
       "path": "skill/physicsguard-ai-debugging/SKILL.md",
       "load_phase": "initial",
-      "bytes": 4206,
-      "sha256": "1e1864ea183d5d47448894ce268d1c8a55557fe1d08cb185254d78a185613ab5"
+      "bytes": 4779,
+      "sha256": "255a8ca0b2248116113e36b6ced846a6622cff1598102a03a2af162fd415312d"
     },
     {
       "node_id": "artifact:skill/physicsguard-ai-debugging/references/route-capsule.json",
       "skill_id": "physicsguard-ai-debugging",
       "path": "skill/physicsguard-ai-debugging/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 4422,
-      "sha256": "926ca1bbc9209794bf233b297f378fb6a6a4806053206f6acc665573902a350e"
+      "bytes": 4714,
+      "sha256": "f31b31f00eb8434dcd4fcfd36d5e8f24703a282bde45b4e8503d7a24083a4a89"
     },
     {
       "node_id": "artifact:skill/physicsguard-ai-debugging/references/native-route-protocol.md",
       "skill_id": "physicsguard-ai-debugging",
       "path": "skill/physicsguard-ai-debugging/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 18092,
-      "sha256": "7ba68b213ed7743490db59304bff8c404dc1fb68f7f1a4a21c3f4f4563afb755"
+      "bytes": 19571,
+      "sha256": "38b729586afa23551ab2dc6553182604995a94973c7dd39209ce60352b402216"
     },
     {
       "node_id": "artifact:skill/physicsguard-ai-debugging/references/native-depth-and-purpose.md",
@@ -67,7 +75,7 @@
       "path": "skill/physicsguard-ai-debugging/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 9570,
-      "sha256": "32d817c45ad12f62b389114bf95e2d81a69e782fa3ab03cdf0b3edff5b7c4272"
+      "sha256": "25109387b07ef75cc255d11226eaee3d349a1cd2a1467dde82ffb6a90e703ee2"
     },
     {
       "node_id": "artifact:skill/physicsguard-ai-debugging/references/template-pack-routing.md",
@@ -82,32 +90,32 @@
       "skill_id": "physicsguard-audit-closure",
       "path": "skill/physicsguard-audit-closure/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 367,
-      "sha256": "9ef204cd8664e6f2ffe44650f279fc7cff97efb2304afc45c69329959725a29e"
+      "bytes": 410,
+      "sha256": "31dc1f1672ad3a025d696b1307728e8b9c1c196f2bb1cdb00ee51e93f3e9a287"
     },
     {
       "node_id": "artifact:skill/physicsguard-audit-closure/SKILL.md",
       "skill_id": "physicsguard-audit-closure",
       "path": "skill/physicsguard-audit-closure/SKILL.md",
       "load_phase": "initial",
-      "bytes": 3002,
-      "sha256": "7603f97a46f1f1d5a5120a5dfd08e78e8361fba4bd896982f844010a972be9d6"
+      "bytes": 4128,
+      "sha256": "511439afc042ef6bc2f0dacedada287625d569beb3ef903714f3863f51525655"
     },
     {
       "node_id": "artifact:skill/physicsguard-audit-closure/references/route-capsule.json",
       "skill_id": "physicsguard-audit-closure",
       "path": "skill/physicsguard-audit-closure/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3111,
-      "sha256": "439fa46576833c4836aa7dae7454dc25939d784306e33730da350f5202a2e217"
+      "bytes": 3732,
+      "sha256": "36f18bec3be946c864601af86e24fc4d69a16fd492781bac41e965e9b75ff903"
     },
     {
       "node_id": "artifact:skill/physicsguard-audit-closure/references/native-route-protocol.md",
       "skill_id": "physicsguard-audit-closure",
       "path": "skill/physicsguard-audit-closure/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 4675,
-      "sha256": "c844acb4c342924fe897d50e062d05fecd05e07a17c9d7904591239400f5299a"
+      "bytes": 8118,
+      "sha256": "6857d014c9d6c3b8a0db3278e0211ab06e938198f958689cabe26be16afecccd"
     },
     {
       "node_id": "artifact:skill/physicsguard-audit-closure/references/native-depth-and-purpose.md",
@@ -115,7 +123,7 @@
       "path": "skill/physicsguard-audit-closure/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 9408,
-      "sha256": "5b40926c530a35b8c800918b2397d99f4a3481c6d2539cc504a6043e0e42bacb"
+      "sha256": "8f2c0860b7c9b66d45d40df004dc2b48a27962c5347079d00eb5da98e8d5b68b"
     },
     {
       "node_id": "artifact:skill/physicsguard-audit-closure/references/template-pack-routing.md",
@@ -130,32 +138,32 @@
       "skill_id": "physicsguard-candidate-model-blueprint",
       "path": "skill/physicsguard-candidate-model-blueprint/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 404,
-      "sha256": "193dfb7b401ecb654d3b690f472364407ffc05198d6bfa66ef360b1d228cd274"
+      "bytes": 506,
+      "sha256": "2061b0a76f4db097303f034e34fbae0fa0f214db96b546d086814169e64d2306"
     },
     {
       "node_id": "artifact:skill/physicsguard-candidate-model-blueprint/SKILL.md",
       "skill_id": "physicsguard-candidate-model-blueprint",
       "path": "skill/physicsguard-candidate-model-blueprint/SKILL.md",
       "load_phase": "initial",
-      "bytes": 3074,
-      "sha256": "67f236d64e07ee973aea55315034ffe27be512fc91d9dd4f718b44bbae211876"
+      "bytes": 5296,
+      "sha256": "0512efab7a13d2b5e3e3dfd793238ea8ed2f95deca4c4b1d68e1c02028e4f0c7"
     },
     {
       "node_id": "artifact:skill/physicsguard-candidate-model-blueprint/references/route-capsule.json",
       "skill_id": "physicsguard-candidate-model-blueprint",
       "path": "skill/physicsguard-candidate-model-blueprint/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3175,
-      "sha256": "ca0e55a1d6ae4d327b7f7ad1c62a2e11bff81675046bb97554fd7c1c76cfaa50"
+      "bytes": 4106,
+      "sha256": "1d04dc7dc95270b1605dbf47337bbb20346d05de0861471a5980caf837528d4e"
     },
     {
       "node_id": "artifact:skill/physicsguard-candidate-model-blueprint/references/native-route-protocol.md",
       "skill_id": "physicsguard-candidate-model-blueprint",
       "path": "skill/physicsguard-candidate-model-blueprint/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 2326,
-      "sha256": "c7c7ffc26251bd50c224e55a9ffd5272231f20388b9968895418e1feb847945a"
+      "bytes": 8916,
+      "sha256": "662ee63b6d283d82a2f6bba2d00ab364a69427b767e999bf6b477835887cc2a1"
     },
     {
       "node_id": "artifact:skill/physicsguard-candidate-model-blueprint/references/native-depth-and-purpose.md",
@@ -163,7 +171,7 @@
       "path": "skill/physicsguard-candidate-model-blueprint/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8979,
-      "sha256": "d96f24488b328bc49d12b5c84d3070659da8a446c0b8203831dc599da9fe9f73"
+      "sha256": "3618079b63ce4042a6953ccd5850b5ea36df193b4a5d49ae549313f2b4f76e36"
     },
     {
       "node_id": "artifact:skill/physicsguard-candidate-model-blueprint/references/template-pack-routing.md",
@@ -178,32 +186,32 @@
       "skill_id": "physicsguard-model-dataset-validation",
       "path": "skill/physicsguard-model-dataset-validation/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 401,
-      "sha256": "7d840d9cbccd58754b0c9ebe812cf8e0134ba68ca1b002b37dec752a40d5d920"
+      "bytes": 395,
+      "sha256": "4235346233050c9e2d6b3a32b7bcac2585e71f4d98255748d928345b31bd6747"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-dataset-validation/SKILL.md",
       "skill_id": "physicsguard-model-dataset-validation",
       "path": "skill/physicsguard-model-dataset-validation/SKILL.md",
       "load_phase": "initial",
-      "bytes": 3073,
-      "sha256": "fd8b8dced3f91df7406104e0505e04fb299501f42486ec72aea6e66586c8d710"
+      "bytes": 3730,
+      "sha256": "06270e247c59ff8b0a0bc65a82a82340f70b0629030c96f965d35f4de210b087"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-dataset-validation/references/route-capsule.json",
       "skill_id": "physicsguard-model-dataset-validation",
       "path": "skill/physicsguard-model-dataset-validation/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3205,
-      "sha256": "8a48984c431cee0f5caa1a986ba36ab83694b4e620ed0a7cfb22c8ad32cce136"
+      "bytes": 3516,
+      "sha256": "4a2d30596dd01117f2fe5d22a71ed9e41238756fc2f2f3741fd5b48a244ac373"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-dataset-validation/references/native-route-protocol.md",
       "skill_id": "physicsguard-model-dataset-validation",
       "path": "skill/physicsguard-model-dataset-validation/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 10745,
-      "sha256": "5af0d169f4eef6ffe5e7d8d84dd440eca7fe52fcd1ad0be68b4061361c659ba0"
+      "bytes": 11930,
+      "sha256": "fe2b3a7df973fec4a97ac9adbf35f281a78f92ce3937789a7ccdfc9a26a19dcf"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-dataset-validation/references/native-depth-and-purpose.md",
@@ -211,7 +219,7 @@
       "path": "skill/physicsguard-model-dataset-validation/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8821,
-      "sha256": "bf8a153e1f721591cdab0c3d774ccf4ddb1c397a9571183a4e59343d283a30f6"
+      "sha256": "7b48a3853bc208ede7643cc046b1114e94567d8dcdd4acab645ffcd6d1d3e695"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-dataset-validation/references/template-pack-routing.md",
@@ -226,32 +234,32 @@
       "skill_id": "physicsguard-model-library",
       "path": "skill/physicsguard-model-library/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 366,
-      "sha256": "6276520db547337506c0e6209da7e47534a6f92ddb53db91482bf5c5bbcc0396"
+      "bytes": 355,
+      "sha256": "089b5758557be4358e9d3c1007c01c18f564ae447a5b2bc404f00bbc81678368"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-library/SKILL.md",
       "skill_id": "physicsguard-model-library",
       "path": "skill/physicsguard-model-library/SKILL.md",
       "load_phase": "initial",
-      "bytes": 2925,
-      "sha256": "582f37b5234793be900a95eb08183d944fc6aa435c770253b53c495bbe6d9771"
+      "bytes": 3514,
+      "sha256": "7421c09bcb676a2622f8bc678975b7cf49dca6f340f0c2797d08ac027d38585e"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-library/references/route-capsule.json",
       "skill_id": "physicsguard-model-library",
       "path": "skill/physicsguard-model-library/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3094,
-      "sha256": "86ba9909ac7d819737a74afe052539c158d0c45f3391827827eabb38600ad41d"
+      "bytes": 3429,
+      "sha256": "f1060c104234ab8209d6950fa8e04cb3901bedd9905c17c432580ad03a603931"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-library/references/native-route-protocol.md",
       "skill_id": "physicsguard-model-library",
       "path": "skill/physicsguard-model-library/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 3152,
-      "sha256": "3e18eef32de14ec13233d50a4abed5240462fe4b8173786055ef3f9c23881af9"
+      "bytes": 4352,
+      "sha256": "787c6775e6398a0066354ccd7da1386f50f3eefc67ab65e7f788fc6b1e0eb55d"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-library/references/native-depth-and-purpose.md",
@@ -259,7 +267,7 @@
       "path": "skill/physicsguard-model-library/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8871,
-      "sha256": "4b146fa68d4e5d6a09e0e47e5e934059e718f41c66960f0dff17e8bdf6cfee3a"
+      "sha256": "780f3124298f539f57a1ee1cf160acd94694ebfd8edc03b6307a36687cad5e86"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-library/references/template-pack-routing.md",
@@ -274,32 +282,32 @@
       "skill_id": "physicsguard-model-understanding-preflight",
       "path": "skill/physicsguard-model-understanding-preflight/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 409,
-      "sha256": "41f22922c4016133c22f0e346558c3235b4494347be338ca08b74aa2812bac7c"
+      "bytes": 418,
+      "sha256": "31b3d755405225df96ccda753a5d468e50b4b1e577c4ec1959eb20342b3d5fa9"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-understanding-preflight/SKILL.md",
       "skill_id": "physicsguard-model-understanding-preflight",
       "path": "skill/physicsguard-model-understanding-preflight/SKILL.md",
       "load_phase": "initial",
-      "bytes": 3135,
-      "sha256": "d74b447377fb434f236831391e0ee07581f526f0798298c1227372db13baf7cb"
+      "bytes": 3674,
+      "sha256": "796cea4180b15bbe5558ce8f934348ea2e9bbe75550c609518b512b58bbb6924"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-understanding-preflight/references/route-capsule.json",
       "skill_id": "physicsguard-model-understanding-preflight",
       "path": "skill/physicsguard-model-understanding-preflight/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3220,
-      "sha256": "daf9f337c6c372a26f17ee2bf4407677fa6fa1af40ab93d78815f0a7e7e916d1"
+      "bytes": 3503,
+      "sha256": "1f6b0a54eaae74cde3c82f16fd4daccb3ab8b5ae8c2f7816d65c70acc9f34cca"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-understanding-preflight/references/native-route-protocol.md",
       "skill_id": "physicsguard-model-understanding-preflight",
       "path": "skill/physicsguard-model-understanding-preflight/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 1911,
-      "sha256": "06afcb7e05aed4cebb5e4b1457e5337ca729e27b92685ae87fe5423aab3433ab"
+      "bytes": 3163,
+      "sha256": "41e6fd2b79f4b14776889ba1e5e8dd24f4e5945d03a1c30027204cf667467e40"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-understanding-preflight/references/native-depth-and-purpose.md",
@@ -307,7 +315,7 @@
       "path": "skill/physicsguard-model-understanding-preflight/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8917,
-      "sha256": "c5a58466be4429f3ee75f726a14c4295cb944e0d2454d65fe559d019a330afb2"
+      "sha256": "dc481523f628bf84be3081ac7fdfb8bd59ae66cf730e117d1f0a97fd0c6f8b24"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-understanding-preflight/references/template-pack-routing.md",
@@ -323,31 +331,31 @@
       "path": "skill/physicsguard-project-adoption/agents/openai.yaml",
       "load_phase": "initial",
       "bytes": 382,
-      "sha256": "ef57ffea2dd8b4defde1845280589bb142dba0d77d006736ced64a3de14d604c"
+      "sha256": "2e493c3b322d58aa55787ff141c2cf2ae2c2a0be1ac40901d46ba19b40613d29"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-adoption/SKILL.md",
       "skill_id": "physicsguard-project-adoption",
       "path": "skill/physicsguard-project-adoption/SKILL.md",
       "load_phase": "initial",
-      "bytes": 2988,
-      "sha256": "282043acc00d98297950b2ba2d3875e1b673977f6db97ca7be9357b73446fc9d"
+      "bytes": 3575,
+      "sha256": "ea80592ea11603ad0faaf75889a635c53ff5a069b340c4d4dff8e3b7ea1fea13"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-adoption/references/route-capsule.json",
       "skill_id": "physicsguard-project-adoption",
       "path": "skill/physicsguard-project-adoption/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3109,
-      "sha256": "d138332236e403bdbe696f19c21905d86c0d468f3d924537dceacfe920dd0073"
+      "bytes": 3299,
+      "sha256": "34b252b16a74d5652e8ee32de28000e3347b6b5bd3f9526f0f708641e540f0e5"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-adoption/references/native-route-protocol.md",
       "skill_id": "physicsguard-project-adoption",
       "path": "skill/physicsguard-project-adoption/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 2511,
-      "sha256": "1b9b48bae3f2b2ad44fb88e2c5b0f80df545acfd96319fbac3bbf1f20d1b29dc"
+      "bytes": 3234,
+      "sha256": "8cc4d6ece009676544effbfe0113d0a4390a51859558ffa1e1566861f5ea56eb"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-adoption/references/native-depth-and-purpose.md",
@@ -355,7 +363,7 @@
       "path": "skill/physicsguard-project-adoption/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8866,
-      "sha256": "48c7c43211021b3acd3601ebe37b8e75f22476e42bf76dad307faf811ba481be"
+      "sha256": "c986199fe1ba1e4bd83d5fd27095b106657018a4c929d8c0136866a48dd2c979"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-adoption/references/template-pack-routing.md",
@@ -370,32 +378,32 @@
       "skill_id": "physicsguard-project-evidence-registry",
       "path": "skill/physicsguard-project-evidence-registry/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 395,
-      "sha256": "8e1585993cec9a9716c74a0d622c43bfad60ed60a7d25fb15124d850538110ab"
+      "bytes": 381,
+      "sha256": "d60b7f6f91452ed27e5d4cd5487e49d99a6943f1a5a673e4b662ca9ae976b855"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-evidence-registry/SKILL.md",
       "skill_id": "physicsguard-project-evidence-registry",
       "path": "skill/physicsguard-project-evidence-registry/SKILL.md",
       "load_phase": "initial",
-      "bytes": 3009,
-      "sha256": "6a3fd5969bb46b89fab8b3a3d6d05b5f020b0b0260c2217cca26883aad37c930"
+      "bytes": 3645,
+      "sha256": "ae632e7ab94f088b6924bea056281bc3d9ccbb5fcec6c2ac526a92c7d32e3036"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-evidence-registry/references/route-capsule.json",
       "skill_id": "physicsguard-project-evidence-registry",
       "path": "skill/physicsguard-project-evidence-registry/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3106,
-      "sha256": "c4aff34bdc28dc7ac3cffa895caa25b741576b97918a73718b86fa28c1c0e659"
+      "bytes": 3412,
+      "sha256": "9b27df1fd41bc2f92f692583c03097d1057b52b4b2e511983557df06cdbd6401"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-evidence-registry/references/native-route-protocol.md",
       "skill_id": "physicsguard-project-evidence-registry",
       "path": "skill/physicsguard-project-evidence-registry/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 6212,
-      "sha256": "593aebe32576af67b5adaca498e792e3e6b8e50eb22399324f8e24f53c0cf852"
+      "bytes": 7572,
+      "sha256": "48df602c5530e9124256e5290f2103c02cc383b3aec331c326377be7f873e208"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-evidence-registry/references/native-depth-and-purpose.md",
@@ -403,7 +411,7 @@
       "path": "skill/physicsguard-project-evidence-registry/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8820,
-      "sha256": "93e932ca33a4362a03b5ad5d1e9c44e9f06544718b9c848ef2367ded922bb236"
+      "sha256": "d91ddd497bd4487ed02bc0a8c409d2032eab74ecefbb30f5677144abace178c0"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-evidence-registry/references/template-pack-routing.md",
@@ -418,32 +426,32 @@
       "skill_id": "physicsguard-signal-mapping-review",
       "path": "skill/physicsguard-signal-mapping-review/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 387,
-      "sha256": "12474401ada99f72e8771fe54a6a605aad1c6a7935b9a2fe836c9dc914672eff"
+      "bytes": 367,
+      "sha256": "e4caa64d921926ea4af29f6e39c4963a776b2d4b4fb11e894c1cb4cd5637d120"
     },
     {
       "node_id": "artifact:skill/physicsguard-signal-mapping-review/SKILL.md",
       "skill_id": "physicsguard-signal-mapping-review",
       "path": "skill/physicsguard-signal-mapping-review/SKILL.md",
       "load_phase": "initial",
-      "bytes": 3052,
-      "sha256": "dc85e16d3f05ce86ea78938fc753168642a6fe7df7b6783bc1c074ed388be059"
+      "bytes": 3598,
+      "sha256": "2ed2951a5e7c98e7121fa561f6ecf98b29ef632bd2b235a94d3a592c39329667"
     },
     {
       "node_id": "artifact:skill/physicsguard-signal-mapping-review/references/route-capsule.json",
       "skill_id": "physicsguard-signal-mapping-review",
       "path": "skill/physicsguard-signal-mapping-review/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3207,
-      "sha256": "a3fcfaa00f20ed080014f7dab3903a3680c29d6790c93907ebf2afef4f000727"
+      "bytes": 3479,
+      "sha256": "1c00f273a1094c64a231980364a3afb4a0f9e3467bd4c01619e4ffeff629b326"
     },
     {
       "node_id": "artifact:skill/physicsguard-signal-mapping-review/references/native-route-protocol.md",
       "skill_id": "physicsguard-signal-mapping-review",
       "path": "skill/physicsguard-signal-mapping-review/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 2942,
-      "sha256": "ae95fa30f64de9ab955b8cf81035e97bd5d68cbbb7499ce584ccba10d7e53977"
+      "bytes": 4040,
+      "sha256": "6b6d8a620af6506ca471aa4040e2c66999c5575f426dc933033a0c515bc79136"
     },
     {
       "node_id": "artifact:skill/physicsguard-signal-mapping-review/references/native-depth-and-purpose.md",
@@ -451,7 +459,7 @@
       "path": "skill/physicsguard-signal-mapping-review/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8950,
-      "sha256": "5091f6d7e6bde7839ff76a90ef4c79cbced7a43cf393fee9ff6fcb3119770b9e"
+      "sha256": "2ad247d326109e9c8140d482281a3426f846a82da94a40179ad2550a669a2506"
     },
     {
       "node_id": "artifact:skill/physicsguard-signal-mapping-review/references/template-pack-routing.md",
@@ -466,32 +474,32 @@
       "skill_id": "physicsguard-test-file-contract-review",
       "path": "skill/physicsguard-test-file-contract-review/agents/openai.yaml",
       "load_phase": "initial",
-      "bytes": 400,
-      "sha256": "ebd68035d948c446f597004a8bbc2894fa23aeb4f187ea9521d9ecfea463b5e6"
+      "bytes": 379,
+      "sha256": "dbf747252731bf96adefeda38e30897984941b08fffca59475c4a7d848209a93"
     },
     {
       "node_id": "artifact:skill/physicsguard-test-file-contract-review/SKILL.md",
       "skill_id": "physicsguard-test-file-contract-review",
       "path": "skill/physicsguard-test-file-contract-review/SKILL.md",
       "load_phase": "initial",
-      "bytes": 3042,
-      "sha256": "40166bc8ad8e1da5b91b61f447f3d3ab669e650200d18ffcd33280447b490d13"
+      "bytes": 3552,
+      "sha256": "f57954a6ee8789a14bfb43f0019a6b7a79cc7a1942d108d9f5911e552d886587"
     },
     {
       "node_id": "artifact:skill/physicsguard-test-file-contract-review/references/route-capsule.json",
       "skill_id": "physicsguard-test-file-contract-review",
       "path": "skill/physicsguard-test-file-contract-review/references/route-capsule.json",
       "load_phase": "initial",
-      "bytes": 3153,
-      "sha256": "d23b61f3f81beaf7303ae0185cf1a68a1baddc4a065d9b2bcb2642f291fc7cf3"
+      "bytes": 3369,
+      "sha256": "43634055dfb0eae04771c39e8ed2e38b20c253b5ecf9b50eedcecaacc4b9bc38"
     },
     {
       "node_id": "artifact:skill/physicsguard-test-file-contract-review/references/native-route-protocol.md",
       "skill_id": "physicsguard-test-file-contract-review",
       "path": "skill/physicsguard-test-file-contract-review/references/native-route-protocol.md",
       "load_phase": "conditional",
-      "bytes": 6344,
-      "sha256": "a21d63f69a6dab20e76a154218af5b5050fca1724f2d2ae26a888959f891bab0"
+      "bytes": 7515,
+      "sha256": "9a5c3b377fb8be6c26cda0b755020c3538636c04b4d8bccb2ae8b054ec264344"
     },
     {
       "node_id": "artifact:skill/physicsguard-test-file-contract-review/references/native-depth-and-purpose.md",
@@ -499,7 +507,7 @@
       "path": "skill/physicsguard-test-file-contract-review/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 9443,
-      "sha256": "972dc6a140dd17c462f1ef52b47f4cbc67cd6cf3f79fe3c5f63e8563a39a067b"
+      "sha256": "054eb7d54828bceceab3e6d458b76cbcab4d53bf528445f502fde7c9bfc5b434"
     },
     {
       "node_id": "artifact:skill/physicsguard-test-file-contract-review/references/template-pack-routing.md",
@@ -522,17 +530,20 @@
         "skill/physicsguard-ai-debugging/SKILL.md",
         "skill/physicsguard-ai-debugging/references/route-capsule.json"
       ],
-      "initial_bytes": 8999,
+      "initial_bytes": 9860,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_summary_for_route_selection_required",
+            "blueprint_affected_or_reverse_trace_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_mixed_route_coordination"
           ],
-          "sha256": "7ba68b213ed7743490db59304bff8c404dc1fb68f7f1a4a21c3f4f4563afb755"
+          "sha256": "38b729586afa23551ab2dc6553182604995a94973c7dd39209ce60352b402216"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -556,7 +567,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "32d817c45ad12f62b389114bf95e2d81a69e782fa3ab03cdf0b3edff5b7c4272"
+          "sha256": "25109387b07ef75cc255d11226eaee3d349a1cd2a1467dde82ffb6a90e703ee2"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -603,17 +614,22 @@
         "skill/physicsguard-audit-closure/SKILL.md",
         "skill/physicsguard-audit-closure/references/route-capsule.json"
       ],
-      "initial_bytes": 6480,
+      "initial_bytes": 8270,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_affected_closure_required",
+            "blueprint_whole_boundary_closure_required",
+            "portable_blueprint_bundle_closure_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_closure_projection",
+            "portable_blueprint_bundle_claim_boundary"
           ],
-          "sha256": "c844acb4c342924fe897d50e062d05fecd05e07a17c9d7904591239400f5299a"
+          "sha256": "6857d014c9d6c3b8a0db3278e0211ab06e938198f958689cabe26be16afecccd"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -637,7 +653,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "5b40926c530a35b8c800918b2397d99f4a3481c6d2539cc504a6043e0e42bacb"
+          "sha256": "8f2c0860b7c9b66d45d40df004dc2b48a27962c5347079d00eb5da98e8d5b68b"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -684,17 +700,24 @@
         "skill/physicsguard-candidate-model-blueprint/SKILL.md",
         "skill/physicsguard-candidate-model-blueprint/references/route-capsule.json"
       ],
-      "initial_bytes": 6653,
+      "initial_bytes": 9908,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_summary_required",
+            "blueprint_affected_slice_required",
+            "blueprint_author_or_full_review_required",
+            "explicit_material_root_or_fmi_observation_required",
+            "portable_blueprint_bundle_export_or_query_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "canonical_physical_blueprint_authority",
+            "portable_physical_blueprint_interchange"
           ],
-          "sha256": "c7c7ffc26251bd50c224e55a9ffd5272231f20388b9968895418e1feb847945a"
+          "sha256": "662ee63b6d283d82a2f6bba2d00ab364a69427b767e999bf6b477835887cc2a1"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -718,7 +741,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "d96f24488b328bc49d12b5c84d3070659da8a446c0b8203831dc599da9fe9f73"
+          "sha256": "3618079b63ce4042a6953ccd5850b5ea36df193b4a5d49ae549313f2b4f76e36"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -765,17 +788,20 @@
         "skill/physicsguard-model-dataset-validation/SKILL.md",
         "skill/physicsguard-model-dataset-validation/references/route-capsule.json"
       ],
-      "initial_bytes": 6679,
+      "initial_bytes": 7641,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_affected_validation_slice_required",
+            "whole_target_validation_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_validation_coverage_projection"
           ],
-          "sha256": "5af0d169f4eef6ffe5e7d8d84dd440eca7fe52fcd1ad0be68b4061361c659ba0"
+          "sha256": "fe2b3a7df973fec4a97ac9adbf35f281a78f92ce3937789a7ccdfc9a26a19dcf"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -799,7 +825,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "bf8a153e1f721591cdab0c3d774ccf4ddb1c397a9571183a4e59343d283a30f6"
+          "sha256": "7b48a3853bc208ede7643cc046b1114e94567d8dcdd4acab645ffcd6d1d3e695"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -846,17 +872,21 @@
         "skill/physicsguard-model-library/SKILL.md",
         "skill/physicsguard-model-library/references/route-capsule.json"
       ],
-      "initial_bytes": 6385,
+      "initial_bytes": 7298,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_summary_for_discovery_required",
+            "blueprint_affected_reuse_slice_required",
+            "whole_target_reuse_qualification_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_reuse_compatibility_projection"
           ],
-          "sha256": "3e18eef32de14ec13233d50a4abed5240462fe4b8173786055ef3f9c23881af9"
+          "sha256": "787c6775e6398a0066354ccd7da1386f50f3eefc67ab65e7f788fc6b1e0eb55d"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -880,7 +910,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "4b146fa68d4e5d6a09e0e47e5e934059e718f41c66960f0dff17e8bdf6cfee3a"
+          "sha256": "780f3124298f539f57a1ee1cf160acd94694ebfd8edc03b6307a36687cad5e86"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -927,17 +957,20 @@
         "skill/physicsguard-model-understanding-preflight/SKILL.md",
         "skill/physicsguard-model-understanding-preflight/references/route-capsule.json"
       ],
-      "initial_bytes": 6764,
+      "initial_bytes": 7595,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_summary_required",
+            "blueprint_affected_boundary_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_preflight_projection"
           ],
-          "sha256": "06afcb7e05aed4cebb5e4b1457e5337ca729e27b92685ae87fe5423aab3433ab"
+          "sha256": "41e6fd2b79f4b14776889ba1e5e8dd24f4e5945d03a1c30027204cf667467e40"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -961,7 +994,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "c5a58466be4429f3ee75f726a14c4295cb944e0d2454d65fe559d019a330afb2"
+          "sha256": "dc481523f628bf84be3081ac7fdfb8bd59ae66cf730e117d1f0a97fd0c6f8b24"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1008,17 +1041,19 @@
         "skill/physicsguard-project-adoption/SKILL.md",
         "skill/physicsguard-project-adoption/references/route-capsule.json"
       ],
-      "initial_bytes": 6479,
+      "initial_bytes": 7256,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_adoption_identity_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_adoption_boundary"
           ],
-          "sha256": "1b9b48bae3f2b2ad44fb88e2c5b0f80df545acfd96319fbac3bbf1f20d1b29dc"
+          "sha256": "8cc4d6ece009676544effbfe0113d0a4390a51859558ffa1e1566861f5ea56eb"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -1042,7 +1077,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "48c7c43211021b3acd3601ebe37b8e75f22476e42bf76dad307faf811ba481be"
+          "sha256": "c986199fe1ba1e4bd83d5fd27095b106657018a4c929d8c0136866a48dd2c979"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1089,17 +1124,21 @@
         "skill/physicsguard-project-evidence-registry/SKILL.md",
         "skill/physicsguard-project-evidence-registry/references/route-capsule.json"
       ],
-      "initial_bytes": 6510,
+      "initial_bytes": 7438,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_summary_required",
+            "blueprint_affected_evidence_slice_required",
+            "whole_boundary_handoff_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_evidence_binding_projection"
           ],
-          "sha256": "593aebe32576af67b5adaca498e792e3e6b8e50eb22399324f8e24f53c0cf852"
+          "sha256": "48df602c5530e9124256e5290f2103c02cc383b3aec331c326377be7f873e208"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -1123,7 +1162,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "93e932ca33a4362a03b5ad5d1e9c44e9f06544718b9c848ef2367ded922bb236"
+          "sha256": "d91ddd497bd4487ed02bc0a8c409d2032eab74ecefbb30f5677144abace178c0"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1170,17 +1209,20 @@
         "skill/physicsguard-signal-mapping-review/SKILL.md",
         "skill/physicsguard-signal-mapping-review/references/route-capsule.json"
       ],
-      "initial_bytes": 6646,
+      "initial_bytes": 7444,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_affected_interface_slice_required",
+            "blueprint_reverse_trace_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_interface_mapping_projection"
           ],
-          "sha256": "ae95fa30f64de9ab955b8cf81035e97bd5d68cbbb7499ce584ccba10d7e53977"
+          "sha256": "6b6d8a620af6506ca471aa4040e2c66999c5575f426dc933033a0c515bc79136"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -1204,7 +1246,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "5091f6d7e6bde7839ff76a90ef4c79cbced7a43cf393fee9ff6fcb3119770b9e"
+          "sha256": "2ad247d326109e9c8140d482281a3426f846a82da94a40179ad2550a669a2506"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1251,17 +1293,19 @@
         "skill/physicsguard-test-file-contract-review/SKILL.md",
         "skill/physicsguard-test-file-contract-review/references/route-capsule.json"
       ],
-      "initial_bytes": 6595,
+      "initial_bytes": 7300,
       "conditional_references": [
         {
           "path": "references/native-route-protocol.md",
           "load_when": [
-            "route_selected_and_domain_execution_required"
+            "route_selected_and_domain_execution_required",
+            "blueprint_affected_file_slice_required"
           ],
           "required_for": [
-            "target_native_domain_workflow"
+            "target_native_domain_workflow",
+            "blueprint_test_file_contract_projection"
           ],
-          "sha256": "a21d63f69a6dab20e76a154218af5b5050fca1724f2d2ae26a888959f891bab0"
+          "sha256": "9a5c3b377fb8be6c26cda0b755020c3538636c04b4d8bccb2ae8b054ec264344"
         },
         {
           "path": "references/native-depth-and-purpose.md",
@@ -1285,7 +1329,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "972dc6a140dd17c462f1ef52b47f4cbc67cd6cf3f79fe3c5f63e8563a39a067b"
+          "sha256": "054eb7d54828bceceab3e6d458b76cbcab4d53bf528445f502fde7c9bfc5b434"
         },
         {
           "path": "references/template-pack-routing.md",

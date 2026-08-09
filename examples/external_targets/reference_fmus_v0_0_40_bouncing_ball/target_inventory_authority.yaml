@@ -1,0 +1,499 @@
+schema_version: physicsguard.target-inventory-authority.v1
+authority_id: authority.reference-fmus.bouncing-ball.v0.0.40-fmi3
+status: current
+owner_id: physicsguard.target-material-inventory
+request_id: request.target-material.c5180630d21e84290b8147bbc713ad833dce5cc8565078fb2cabc0ce6fd81e43
+provider_id: provider.modelica-reference-fmus
+target_system_id: reference-fmus.bouncing-ball
+subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+boundary_fingerprint: 9bafbe49325fe1dd845837c85dd73047c79ad5491c3b331414f4a7c75b25fd57
+input_references:
+- reference_id: target_material
+  artifact:
+    repo_path: target_material.json
+    external_uri: null
+    sha256: 30d4dc799aafc31202968e9aeb25c4062b6deca28a84ae1def94a32669abc721
+inventory:
+  inventory_id: inventory.reference-fmus.bouncing-ball.v0.0.40-fmi3
+  provider_id: provider.modelica-reference-fmus
+  target_system_id: reference-fmus.bouncing-ball
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  boundary_fingerprint: 9bafbe49325fe1dd845837c85dd73047c79ad5491c3b331414f4a7c75b25fd57
+  members:
+  - member_id: bouncing_ball
+    member_kind: physical_element
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: free_flight
+    member_kind: physical_element
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: impact_event
+    member_kind: physical_element
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.g
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.e
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.v_min
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.h
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.v
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.g_effective
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.dh
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.dv
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.contact
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.stopped
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.rejected
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.h
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.v
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.g
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.e
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.dh
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.dv
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.h
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.v
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.g
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.e
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.v_min
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.h_post
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.v_post
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.g_post
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.rebound_candidate
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.contact
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.stopped
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.rejected
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.initial
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.free
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.update
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.impact
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.protected
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.termination
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.dh
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.dv
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.e_independent
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.protected
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.termination
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.trigger
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.rebound
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.update
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.stop
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.protected
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.termination
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: validity.root
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: validity.free
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: validity.impact
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: material.01
+    member_kind: provider_artifact
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.release
+    - binding.free_flight.release
+    - binding.impact_event.release
+    reason: null
+    disposition_evidence: []
+  - member_id: material.02
+    member_kind: module
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.binary
+    - binding.free_flight.binary
+    - binding.impact_event.binary
+    reason: null
+    disposition_evidence: []
+  - member_id: material.03
+    member_kind: resource
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.resource_docs
+    - binding.free_flight.resource_docs
+    - binding.impact_event.resource_docs
+    reason: null
+    disposition_evidence: []
+  - member_id: material.04
+    member_kind: observation
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.result
+    - binding.free_flight.result
+    - binding.impact_event.result
+    reason: null
+    disposition_evidence: []
+  - member_id: material.05
+    member_kind: resource
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.resource_xml
+    - binding.free_flight.resource_xml
+    - binding.impact_event.resource_xml
+    reason: null
+    disposition_evidence: []
+  - member_id: material.06
+    member_kind: file
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.source
+    - binding.free_flight.source
+    - binding.impact_event.source
+    reason: null
+    disposition_evidence: []
+  - member_id: material.07
+    member_kind: module
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.fmu
+    - binding.free_flight.fmu
+    - binding.impact_event.fmu
+    reason: null
+    disposition_evidence: []
+  - member_id: material.08
+    member_kind: file
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.license
+    - binding.free_flight.license
+    - binding.impact_event.license
+    reason: null
+    disposition_evidence: []
+  - member_id: material.09
+    member_kind: test
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.evidence
+    - binding.bouncing_ball.oracle
+    - binding.bouncing_ball.test
+    - binding.free_flight.evidence
+    - binding.free_flight.oracle
+    - binding.free_flight.test
+    - binding.impact_event.evidence
+    - binding.impact_event.oracle
+    - binding.impact_event.test
+    reason: null
+    disposition_evidence: []
+  inventory_fingerprint: fa27a4e1530af596c7dfdd498918c83b31c3af2cd4988d28f7b783d8903dd7c5
+execution:
+  execution_id: execution.reference-fmus.bouncing-ball.target-inventory.v0.0.40
+  owner_id: physicsguard.target-material-inventory
+  request_id: request.target-material.c5180630d21e84290b8147bbc713ad833dce5cc8565078fb2cabc0ce6fd81e43
+  input_reference_ids:
+  - target_material
+  target_system_id: reference-fmus.bouncing-ball
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  adapter_tool_id: physicsguard.target-material-inventory
+  adapter_tool_version: '1'
+  result_status: pass
+  terminal_status: success
+  result_fingerprint: fa27a4e1530af596c7dfdd498918c83b31c3af2cd4988d28f7b783d8903dd7c5
+  terminal_receipt_fingerprint: ff13433333116152d597a0053f06f14b8f9e35dbab8ed06735f540caf515b813
+  execution_fingerprint: 69c6c922d73b09e6d131942253f4851aec88c895c902a549d19577aff2e29661
+authority_fingerprint: c27fd88bb6d2e4e446d385f58f07951fe3166450d81b34cf5db782f5a808657c

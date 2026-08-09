@@ -1,0 +1,47 @@
+schema: physicsguard.project_formula.v1
+module_type: MassBalanceRateModule
+owner: physicsguard.module_semantics.mechanical_draft.MassBalanceRateModule
+purpose: Mechanically describe the exact one-inlet one-outlet mass-rate balance with the current zero accumulation target.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: target_dm_dt_kg_s, dimension: mass_flow, unit: kg/s, required: false, default: 0.0, constraints: []}
+  - {name: residual_scale_kg_s, dimension: mass_flow, unit: kg/s, required: false, default: 0.01, constraints: [residual_scale_kg_s > 0]}
+scenario_inputs:
+  - {name: input_0, dimension: mass_flow, unit: kg/s, source_kind: external, source_attribute: input_variables, source_index: 0, source_reference: inlet.x}
+  - {name: output_0, dimension: mass_flow, unit: kg/s, source_kind: external, source_attribute: output_variables, source_index: 0, source_reference: outlet.x}
+scenario_outputs: []
+residuals:
+  - name: mass_balance_rate
+    expression: input_0 - output_0 - target_dm_dt_kg_s
+    dimension: mass_flow
+    unit: kg/s
+    dimensional_derivation: Inlet, outlet, accumulation target, and residual are all mass rates.
+    scale_expression: residual_scale_kg_s
+    zero_condition: Inlet mass rate minus outlet mass rate equals the configured accumulation target.
+    source_intermediates:
+      - {symbol: input_sum, expression: input_0}
+      - {symbol: output_sum, expression: output_0}
+      - {symbol: dm_dt, expression: target_dm_dt_kg_s}
+constraints:
+  constructor:
+    - {predicate: residual_scale_kg_s > 0, guard_signature: "_positive_float(parameters.get('residual_scale_kg_s', 0.01), 'residual_scale_kg_s')", failure_type: ValueError, message_selector: residual_scale_kg_s, on_violation: Reject a non-positive mass-rate normalization., cases: [{kind: inside, inputs: {residual_scale_kg_s: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg_s: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_kg_s: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: residual_scale_kg_s > 0, meaning: Exact one-inlet one-outlet current example with positive mass-rate normalization., cases: [{kind: inside, inputs: {residual_scale_kg_s: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg_s: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_kg_s: -1.0}, expected: fail}]}
+  invalid:
+    - {predicate: residual_scale_kg_s <= 0, meaning: Invalid mass-rate normalization., cases: [{kind: inside, inputs: {residual_scale_kg_s: -1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg_s: 0.0}, expected: pass}, {kind: outside, inputs: {residual_scale_kg_s: 0.01}, expected: fail}]}
+assumptions: [The exact example has one inlet and one outlet reference, No dm_dt_variable is configured so the target scalar is used]
+validity: [Use only for the exact bound list shape and sign convention]
+invariants: [Both external mass-rate values are read-only]
+effects: [Emit one mass_balance_rate residual]
+postconditions: [Residual equals inlet minus outlet minus target accumulation]
+termination: A fixed finite arithmetic expression terminates.
+oracle_cases:
+  - {case_id: balanced, inputs: {input_0: 2.0, output_0: 2.0, target_dm_dt_kg_s: 0.0, residual_scale_kg_s: 0.01}, expected: {mass_balance_rate: 0.0}, tolerance: 1.0e-12}
+  - {case_id: accumulating, inputs: {input_0: 3.0, output_0: 2.0, target_dm_dt_kg_s: 0.25, residual_scale_kg_s: 0.01}, expected: {mass_balance_rate: 0.75}, tolerance: 1.0e-12}
+claim_boundary: This exact one-inlet one-outlet implementation draft does not establish a universal conservation model, sign convention, or independently reviewed physical law.

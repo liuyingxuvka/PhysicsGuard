@@ -1,0 +1,21 @@
+schema: physicsguard.project_formula.v1
+module_type: ChargerSimpleModule
+owner: physicsguard.project_formula.low_fidelity_charger_efficiency.v1
+purpose: Independently state the low-fidelity algebraic charger-efficiency relation used for semantic review.
+inputs:
+  - {name: P_grid_W, dimension: power, unit: W, direction: input}
+  - {name: efficiency, dimension: ratio, unit: '1', direction: input}
+outputs:
+  - {name: P_battery_W, dimension: power, unit: W, direction: output}
+residuals:
+  - name: charger_efficiency_power
+    expression: P_battery_W - efficiency * P_grid_W
+    dimension: power
+    unit: W
+    zero_condition: P_battery_W equals efficiency multiplied by P_grid_W
+assumptions:
+  - Pointwise algebraic conversion; AC phase behavior, charge-control dynamics, and thermal derating are outside this low-fidelity boundary.
+validity:
+  - Grid and battery power magnitudes are nonnegative, physical efficiency is between zero and one inclusive, and the normalization scale is positive.
+claim_boundary: This project formula is a source-independent low-fidelity relation, not measured charger performance or a high-fidelity electrical model.
+

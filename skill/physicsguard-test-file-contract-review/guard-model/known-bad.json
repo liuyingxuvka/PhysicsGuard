@@ -2,6 +2,37 @@
   "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
   "artifact_role": "family_baseline_regression",
   "target_skill_id": "physicsguard-test-file-contract-review",
+  "blueprint_route_contract_fingerprint": "D42B4880B5F7D150C25241DADD8086D8593BFB1E0AD1014FE92C727EDF3749E3",
+  "blueprint_cases": [
+    {
+      "case_id": "known-bad:physicsguard-test-file-contract-review:blueprint_projection_missing_stale_foreign_or_ambiguous",
+      "trigger_condition": "a required blueprint projection or its blueprint, review, relation-set, recipe, target-revision, or evidence fingerprint is missing, stale, foreign, ambiguous, or caller-rehashed",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_projection_missing_stale_foreign_or_ambiguous",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-test-file-contract-review:blueprint_authority_boundary_violated",
+      "trigger_condition": "any route other than the sole author/full reviewer authors or fully reviews the blueprint",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_authority_boundary_violated",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-test-file-contract-review:blueprint_required_obligation_unproved",
+      "trigger_condition": "any route-specific blueprint obligation lacks current target-native evidence or is replaced by AI prose or a self-declared pass",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_required_obligation_unproved",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-test-file-contract-review:blueprint_gap_or_claim_boundary_unreconciled",
+      "trigger_condition": "the first gap, outside-scope branch, unsupported claim, closure handoff, or bounded claim required by this route is omitted or promoted to pass",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_gap_or_claim_boundary_unreconciled",
+      "self_reported_outcome_allowed": false
+    }
+  ],
   "cases": [
     {
       "case_id": "known-bad:file-or-field-identity-missing",

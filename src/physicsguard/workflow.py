@@ -18,6 +18,9 @@ PHYSICSGUARD_WORKFLOW_SCHEMA_VERSION = "1.0"
 DEFAULT_PROJECT_RECORD = Path(".physicsguard") / "project.yaml"
 DEFAULT_ADOPTION_LOG = Path("docs") / "physicsguard_adoption_log.md"
 DEFAULT_MODULE_LEDGER = Path(".physicsguard") / "module_equation_ledger.yaml"
+MODULE_SEMANTIC_LEDGER_SCHEMA = "physicsguard.module_semantics_ledger.v2"
+MODULE_SEMANTIC_REGISTRY_DENOMINATOR = 152
+MODULE_SEMANTIC_PHYSICAL_DENOMINATOR = 151
 
 
 @dataclass(frozen=True)
@@ -99,7 +102,11 @@ def project_record_payload(root: Path) -> dict[str, Any]:
             "require_signal_mapping_review_before_fault_claims": True,
             "require_closure_before_localization_claim": True,
             "require_project_closure_before_broad_claims": True,
-            "ledger_is_navigation_not_physics_proof": True,
+            "require_current_module_semantic_ledger": True,
+            "module_semantic_ledger_schema": MODULE_SEMANTIC_LEDGER_SCHEMA,
+            "module_semantic_registry_denominator": MODULE_SEMANTIC_REGISTRY_DENOMINATOR,
+            "module_semantic_physical_denominator": MODULE_SEMANTIC_PHYSICAL_DENOMINATOR,
+            "dummy_module_physical_claim_licensed": False,
         },
         "skill_routes": [
             "physicsguard-ai-debugging",
@@ -219,9 +226,23 @@ def audit_project(root: Path) -> dict[str, Any]:
             "require_signal_mapping_review_before_fault_claims",
             "require_closure_before_localization_claim",
             "require_project_closure_before_broad_claims",
+            "require_current_module_semantic_ledger",
         ):
             if policy.get(key) is not True:
                 errors.append(f"policy.{key} must be true")
+        expected_module_policy = {
+            "module_semantic_ledger_schema": MODULE_SEMANTIC_LEDGER_SCHEMA,
+            "module_semantic_registry_denominator": MODULE_SEMANTIC_REGISTRY_DENOMINATOR,
+            "module_semantic_physical_denominator": MODULE_SEMANTIC_PHYSICAL_DENOMINATOR,
+            "dummy_module_physical_claim_licensed": False,
+        }
+        for key, expected in expected_module_policy.items():
+            if policy.get(key) != expected:
+                errors.append(f"policy.{key} must be {expected!r}")
+        if "ledger_is_navigation_not_physics_proof" in policy:
+            errors.append(
+                "policy.ledger_is_navigation_not_physics_proof is retired; use the current module semantic ledger policy"
+            )
 
     status = "fail" if errors else "pass_with_gaps" if warnings else "pass"
     return {
@@ -437,6 +458,9 @@ def _preflight_next_actions(
 
 __all__ = [
     "DEFAULT_PROJECT_RECORD",
+    "MODULE_SEMANTIC_LEDGER_SCHEMA",
+    "MODULE_SEMANTIC_PHYSICAL_DENOMINATOR",
+    "MODULE_SEMANTIC_REGISTRY_DENOMINATOR",
     "PHYSICSGUARD_REPOSITORY",
     "PHYSICSGUARD_WORKFLOW_SCHEMA_VERSION",
     "WorkflowFinding",

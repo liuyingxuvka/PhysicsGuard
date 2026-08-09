@@ -4,7 +4,34 @@
   "target_skill_id": "physicsguard-audit-closure",
   "candidate_id": "candidate:physicsguard-audit-closure:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "416203577BA56049747F90A1910F924AD7C28DBCC58815E4E3A478D7EBF2A3BD",
+  "purpose_contract_fingerprint": "6EF16A8D1A9571F9248A5065F70F0A33740CC024105D72AB77097FE30E74C658",
+  "blueprint_route_contract_fingerprint": "305F138B908EE4ADB0EFB79DBA347DEF54B198E553650E1CCEDAEC0A28651220",
+  "blueprint_projection_contract": {
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "affected",
+      "full"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.full_physical_blueprint_projection",
+      "api:physicsguard.query_physical_blueprint_export_bundle",
+      "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty",
+      "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --module|--element|--case|--impact|--reverse ID --pretty"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_whole_or_affected_review_consumption",
+      "blueprint_denominator_depth_first_gap",
+      "blueprint_closure_and_gap_accounting",
+      "blueprint_portable_bundle_identity_consumption",
+      "blueprint_portable_frozen_case_status_accounting",
+      "blueprint_frozen_case_vs_current_execution",
+      "blueprint_identity_only_terminal_accounting",
+      "blueprint_portable_execution_claim_boundary"
+    ],
+    "claim_boundary": "Closure is limited to the exact current affected or full review denominator, achieved depth, first gap, native evidence, outside-scope rows, and safe claim. A portable bundle is frozen interpretation content with observed-at-export execution unlicensed; it cannot author, requalify, refresh, or prove current native execution."
+  },
   "candidate_definition": {
     "native_owner_id": "physicsguard.audit-closure",
     "native_route_id": "route:physicsguard-audit-closure:close",
@@ -24,6 +51,7 @@
       "predictive_rollout_if_requested",
       "safe_claim_boundary"
     ],
+    "blueprint_route_contract_fingerprint": "305F138B908EE4ADB0EFB79DBA347DEF54B198E553650E1CCEDAEC0A28651220",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -31,15 +59,15 @@
       "event_id": "event:physicsguard-audit-closure:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "416203577BA56049747F90A1910F924AD7C28DBCC58815E4E3A478D7EBF2A3BD"
+      "purpose_contract_fingerprint": "6EF16A8D1A9571F9248A5065F70F0A33740CC024105D72AB77097FE30E74C658"
     },
     {
       "event_id": "event:physicsguard-audit-closure:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "416203577BA56049747F90A1910F924AD7C28DBCC58815E4E3A478D7EBF2A3BD",
-      "previous_event_fingerprint": "96C5FB47A0B8393EE04EC0AC95C6082AAFD963783059ED771BDABF386FCE0874",
-      "candidate_definition_fingerprint": "60F643146AEF6D21292C4962B0ED9F9D97097E5AD5F48F27C94498BEB8E3831A"
+      "purpose_contract_fingerprint": "6EF16A8D1A9571F9248A5065F70F0A33740CC024105D72AB77097FE30E74C658",
+      "previous_event_fingerprint": "D38CE988E5FAA0325A5E21B91B045E153B47D684B3B1345246BD09DD023A43A9",
+      "candidate_definition_fingerprint": "6A8730415C0BEFF63A189EA0D46AD3F026E4EA1C33AD6243C9BA95D3A46D317F"
     }
   ]
 }

@@ -14,6 +14,20 @@
     "mapping_evidence",
     "project_gaps"
   ],
+  "blueprint_route_contract_fingerprint": "D42B4880B5F7D150C25241DADD8086D8593BFB1E0AD1014FE92C727EDF3749E3",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_consumer_boundary",
+    "blueprint_file_field_interface_binding",
+    "blueprint_affected_file_slice_consumption",
+    "blueprint_mapping_gap_and_safe_boundary"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "affected"
+  ],
+  "executed_blueprint_operation_ids": [
+    "api:physicsguard.affected_physical_blueprint_projection"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

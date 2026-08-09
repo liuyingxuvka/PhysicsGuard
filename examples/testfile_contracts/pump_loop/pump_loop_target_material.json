@@ -1,0 +1,89 @@
+{
+  "boundary_fingerprint": "4d6ff39f9cbad95443a88137a172e7c51629f024bd7c526d8b2881f46acaa051",
+  "elements": [
+    {"element_id": "pump_loop_fixture"},
+    {"element_id": "fixture_validation_path"},
+    {"element_id": "pump_signal_relation"},
+    {"element_id": "valve_mode_context"}
+  ],
+  "inventory_id": "inventory.pump-loop-contract-fixture.r1",
+  "material_revision_fingerprint": "5825e99b6946aeda9476aeca6c7150a64a8c1e4e9537bb18e9089cf264ff9bb7",
+  "materials": [
+    {
+      "binding_ids": ["binding.root.implementation", "binding.path.implementation", "binding.signal.implementation", "binding.mode.implementation"],
+      "material_id": "artifact.hierarchy",
+      "material_kind": "workflow"
+    },
+    {
+      "binding_ids": ["binding.root.test", "binding.path.test", "binding.signal.test", "binding.mode.test"],
+      "material_id": "artifact.test-contract",
+      "material_kind": "test"
+    },
+    {
+      "binding_ids": ["binding.root.resource", "binding.path.resource", "binding.signal.resource", "binding.mode.resource"],
+      "material_id": "artifact.resource-manifest",
+      "material_kind": "resource"
+    },
+    {
+      "binding_ids": ["binding.root.oracle", "binding.path.oracle", "binding.signal.oracle", "binding.mode.oracle"],
+      "material_id": "artifact.validation-plan",
+      "material_kind": "oracle"
+    },
+    {
+      "binding_ids": ["binding.root.evidence", "binding.path.evidence", "binding.signal.evidence", "binding.mode.evidence"],
+      "material_id": "artifact.evidence-mesh",
+      "material_kind": "evidence"
+    },
+    {"binding_ids": ["binding.root.dataset"], "material_id": "artifact.clean-csv", "material_kind": "dataset"},
+    {"binding_ids": ["binding.root.project-record"], "material_id": "artifact.project-registry", "material_kind": "evidence"},
+    {"binding_ids": ["binding.root.model-library"], "material_id": "artifact.model-library", "material_kind": "resource"}
+  ],
+  "ports": [
+    {"owner_element_id": "pump_loop_fixture", "port_id": "port.root.speed"},
+    {"owner_element_id": "pump_loop_fixture", "port_id": "port.root.valve"},
+    {"owner_element_id": "pump_loop_fixture", "port_id": "port.root.flow"},
+    {"owner_element_id": "pump_loop_fixture", "port_id": "port.root.valve_state"},
+    {"owner_element_id": "pump_loop_fixture", "port_id": "port.root.diagnostic"},
+    {"owner_element_id": "fixture_validation_path", "port_id": "port.path.speed"},
+    {"owner_element_id": "fixture_validation_path", "port_id": "port.path.valve"},
+    {"owner_element_id": "fixture_validation_path", "port_id": "port.path.flow"},
+    {"owner_element_id": "fixture_validation_path", "port_id": "port.path.valve_state"},
+    {"owner_element_id": "fixture_validation_path", "port_id": "port.path.diagnostic"},
+    {"owner_element_id": "pump_signal_relation", "port_id": "port.signal.speed"},
+    {"owner_element_id": "pump_signal_relation", "port_id": "port.signal.flow"},
+    {"owner_element_id": "valve_mode_context", "port_id": "port.mode.valve"},
+    {"owner_element_id": "valve_mode_context", "port_id": "port.mode.valve_state"},
+    {"owner_element_id": "valve_mode_context", "port_id": "port.mode.diagnostic"}
+  ],
+  "provider_id": "provider.pump-loop-repository",
+  "request_id": "request.target-material.5825e99b6946aeda9476aeca6c7150a64a8c1e4e9537bb18e9089cf264ff9bb7",
+  "schema_version": "physicsguard.target-material.v1",
+  "semantics": [
+    {"owner_element_id": "pump_loop_fixture", "semantic_id": "sem.root.relation"},
+    {"owner_element_id": "pump_loop_fixture", "semantic_id": "sem.root.mode_constraint"},
+    {"member_kind": "parameter", "owner_element_id": "pump_loop_fixture", "semantic_id": "sem.root.initial_mode"},
+    {"owner_element_id": "pump_loop_fixture", "semantic_id": "sem.root.mode_step"},
+    {"owner_element_id": "pump_loop_fixture", "semantic_id": "sem.root.termination"},
+    {"owner_element_id": "pump_loop_fixture", "semantic_id": "sem.root.pointwise_assumption"},
+    {"owner_element_id": "fixture_validation_path", "semantic_id": "sem.path.relation"},
+    {"owner_element_id": "fixture_validation_path", "semantic_id": "sem.path.mode_constraint"},
+    {"member_kind": "parameter", "owner_element_id": "fixture_validation_path", "semantic_id": "sem.path.initial_mode"},
+    {"owner_element_id": "fixture_validation_path", "semantic_id": "sem.path.mode_step"},
+    {"owner_element_id": "fixture_validation_path", "semantic_id": "sem.path.termination"},
+    {"owner_element_id": "fixture_validation_path", "semantic_id": "sem.path.pointwise_assumption"},
+    {"owner_element_id": "pump_signal_relation", "semantic_id": "sem.signal.relation"},
+    {"owner_element_id": "valve_mode_context", "semantic_id": "sem.mode.constraint"},
+    {"member_kind": "parameter", "owner_element_id": "valve_mode_context", "semantic_id": "sem.mode.initial"},
+    {"owner_element_id": "valve_mode_context", "semantic_id": "sem.mode.step"},
+    {"owner_element_id": "valve_mode_context", "semantic_id": "sem.mode.termination"},
+    {"owner_element_id": "valve_mode_context", "semantic_id": "sem.mode.pointwise_assumption"}
+  ],
+  "subject_revision": "fixture-r1",
+  "target_system_id": "pump-loop-contract-fixture",
+  "validity_boundaries": [
+    {"boundary_id": "validity.root", "owner_element_id": "pump_loop_fixture"},
+    {"boundary_id": "validity.path", "owner_element_id": "fixture_validation_path"},
+    {"boundary_id": "validity.signal", "owner_element_id": "pump_signal_relation"},
+    {"boundary_id": "validity.mode", "owner_element_id": "valve_mode_context"}
+  ]
+}

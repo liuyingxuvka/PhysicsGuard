@@ -21,11 +21,17 @@ Reject or hand off when:
 
 ## Minimum workflow
 
-1. Confirm the hierarchy, block, mapping, and interface readiness evidence.
-2. Load the native route protocol and generate only through an official or user-owned interface.
-3. Map outputs back to PhysicsGuard and accept only inside the checked validation and rollout boundary.
+1. Bind one independently inventoried target, resolve `blueprint_directory` versus `explicit_material_root`, and author or load its canonical `PhysicalModelBlueprint`.
+2. Run the canonical review with `--material-root ROOT` only when the blueprint declares `explicit_material_root`; reconcile hierarchy/refinement, typed interfaces/state/effects, independent physical semantics, and exact native model/code/test/resource/oracle bindings.
+3. For FMI targets, use the provider-neutral `physicsguard.fmi-observation-request.v1` contract and its restricted source-independent oracle; keep caller expectations, native outputs, and oracle results distinct.
+4. Use the full projection only for authoring or a whole-boundary review. On explicit request, materialize one portable bundle, return compact status by default, or query exactly one selector while preserving every identity-only and execution-licensing gap.
+5. Generate a target-model candidate only through an official or user-owned interface, map outputs back to PhysicsGuard, and accept only inside the checked validation and rollout boundary.
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+
+## Blueprint ownership and loading
+
+This is the sole PhysicsGuard route that authors or fully reviews `PhysicalModelBlueprint`. Resolve `artifact_root` before review: `blueprint_directory` binds local `repo_path` values below the blueprint directory, while `explicit_material_root` requires the caller-selected `--material-root` and never triggers discovery, download, or repository fallback. Without that material, return the concise `external_resource_not_run` boundary and `native_execution_status=not_run`. Only when requested, export the deterministic portable bundle, keep the full bundle on disk, return its compact projection, and accept exactly one `module`, `element`, `case`, `impact`, or `reverse` selector for a deep query. Preserve `observed_at_export_unlicensed`, `portable_query_identity_only_terminal`, frozen-case status, and `execution_claim_licensed=false`; portable content is interpretation evidence, not fresh native execution or high-fidelity reconstruction. Run the canonical review with `python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --pretty`.
 
 ## Conditional detail loading
 
@@ -44,6 +50,16 @@ Before executing a native command, verify the installed `physicsguard` version a
 ## Required outputs
 
 - `candidate_blueprint`
+- `physical_blueprint_review`
+- `blueprint_fingerprint`
+- `material_root_disposition`
+- `native_execution_status`
+- `deepest_licensed_layer`
+- `first_gap`
+- `safe_claim`
+- `portable_bundle_status_and_identity`
+- `portable_query_identity_and_gaps`
+- `execution_claim_licensed`
 - `generation_eligibility`
 - `rollout_boundary`
 - `blockers`

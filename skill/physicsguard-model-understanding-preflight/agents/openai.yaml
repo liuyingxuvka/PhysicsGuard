@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Model Preflight"
   short_description: "Bound external-model understanding before audit"
-  default_prompt: "Use $physicsguard-model-understanding-preflight directly for its native PhysicsGuard Model Understanding Preflight route; confirm the route capsule, run only the target-owned checks required by the exact scope, and keep the result inside current evidence."
+  default_prompt: "Use $physicsguard-model-understanding-preflight directly to freeze target identity, boundary, inventory providers, capabilities, and the first useful blueprint layer; consume only the current summary or affected slice and do not claim full blueprint qualification."

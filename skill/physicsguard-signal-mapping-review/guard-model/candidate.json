@@ -4,7 +4,26 @@
   "target_skill_id": "physicsguard-signal-mapping-review",
   "candidate_id": "candidate:physicsguard-signal-mapping-review:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "867F4633752D62B40C057E261FF41CE2B0FCF1E59AB99CBD67BC50D960061D55",
+  "purpose_contract_fingerprint": "F6805CE09F0282BAB35ADEF331F5F78B108EFAE9265BFBCEFEE82FACB19D2B8D",
+  "blueprint_route_contract_fingerprint": "6ED28A71B76AD689CE6AB6BA44364BBC3C2EF0EE98D9BA2E0E0C6CEFD679047D",
+  "blueprint_projection_contract": {
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "affected",
+      "reverse_trace"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.reverse_trace_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_affected_interface_consumption",
+      "blueprint_downstream_reverse_consumers",
+      "blueprint_mapping_gap_and_safe_claim"
+    ],
+    "claim_boundary": "Mapping review covers only the exact affected interface and reverse-traced downstream consumers with current identity, units, frames, conversion, time, revision, and evidence; omitted branches are outside scope, not passed."
+  },
   "candidate_definition": {
     "native_owner_id": "physicsguard.signal-mapping-review",
     "native_route_id": "route:physicsguard-signal-mapping-review:review",
@@ -23,6 +42,7 @@
       "temporal_coverage",
       "target_variable_binding"
     ],
+    "blueprint_route_contract_fingerprint": "6ED28A71B76AD689CE6AB6BA44364BBC3C2EF0EE98D9BA2E0E0C6CEFD679047D",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -30,15 +50,15 @@
       "event_id": "event:physicsguard-signal-mapping-review:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "867F4633752D62B40C057E261FF41CE2B0FCF1E59AB99CBD67BC50D960061D55"
+      "purpose_contract_fingerprint": "F6805CE09F0282BAB35ADEF331F5F78B108EFAE9265BFBCEFEE82FACB19D2B8D"
     },
     {
       "event_id": "event:physicsguard-signal-mapping-review:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "867F4633752D62B40C057E261FF41CE2B0FCF1E59AB99CBD67BC50D960061D55",
-      "previous_event_fingerprint": "3C1849B3AECFCA95FC2356DF9F0217DD88A1DBB0961E26E1293DFA729DE41CE0",
-      "candidate_definition_fingerprint": "147F578DC44A7415D8E2B64B2AAD5DB16B977C128CECA5A85AB5A53563E8545F"
+      "purpose_contract_fingerprint": "F6805CE09F0282BAB35ADEF331F5F78B108EFAE9265BFBCEFEE82FACB19D2B8D",
+      "previous_event_fingerprint": "CD0288DA6CE85F86D929E40A823ADF4546815EAF6955C12552FAE4252AED0C49",
+      "candidate_definition_fingerprint": "F958309496835CE858267E2943D131297BC960EFAA50DD76E7837CDA536D6D5D"
     }
   ]
 }

@@ -27,6 +27,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint slice
+
+Consume the summary for navigation and the exact affected slice when an evidence or resource identity changes. Bind each current artifact, resource, oracle, receipt, and freshness result to its exact blueprint element/semantic/obligation; return missing or stale bindings as explicit gaps, never as a project-wide pass. This route does not author or fully review the blueprint. Full blueprint loading is reserved for a whole-boundary handoff or closure. Projection fingerprints and target revision must be current; no source-scan fallback is allowed.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -45,6 +49,8 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `reconciled_inventory`
 - `binding_map`
+- `affected_slice_fingerprint`
+- `blueprint_binding_gaps`
 - `critical_gaps`
 - `closure_handoff`
 

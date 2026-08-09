@@ -105,3 +105,42 @@ def test_regenerative_brake_split_residual_key_and_role() -> None:
     assert "friction_brake_power_split_mismatch" in keys
     assert "brake_power_balance_mismatch" in keys
     assert all(record.role == "equation" for record in records)
+
+
+def test_regenerative_brake_split_conflict_reports_scaled_equations() -> None:
+    builder = ResidualBuilder(one_module("RegenerativeBrakeSplitModule", {"residual_scale_W": 100.0}))
+    registry = builder.build_registry()
+    vector = registry.dict_to_vector(
+        {
+            "m.brake_power_total_W": 1000.0,
+            "m.regen_power_W": 500.0,
+            "m.friction_brake_power_W": 400.0,
+            "m.regen_fraction": 0.4,
+        }
+    )
+    records = builder.diagnostic_residual_records(vector)
+    expected = [
+        (
+            "m.regen_brake_power_split",
+            100.0,
+            "regen_brake_power_split_mismatch",
+        ),
+        (
+            "m.friction_brake_power_split",
+            -200.0,
+            "friction_brake_power_split_mismatch",
+        ),
+        (
+            "m.brake_power_balance",
+            100.0,
+            "brake_power_balance_mismatch",
+        ),
+    ]
+    assert len(records) == len(expected)
+    for record, (name, value, diagnostic_key) in zip(records, expected, strict=True):
+        assert record.name == name
+        assert record.value == pytest.approx(value)
+        assert record.scale == pytest.approx(100.0)
+        assert record.role == "equation"
+        assert record.diagnostic_key == diagnostic_key
+        assert record.normalized_value == pytest.approx(value / 100.0)

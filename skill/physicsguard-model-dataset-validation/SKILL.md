@@ -27,6 +27,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint slice
+
+Consume the current affected projection for bounded validation and the full qualified projection only when the requested claim covers the whole target. Report coverage per blueprint element and obligation, including validation mode, validity boundary, residual/oracle identity, dataset and evidence fingerprints, and every unsupported claim. This route does not author or fully review the blueprint. Aggregate pass counts cannot hide an uncovered member. Stale or missing projection identity blocks without a run-all or full-scan fallback.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -46,6 +50,9 @@ Before executing a native command, verify the installed `physicsguard` version a
 - `validation_status`
 - `depth_receipt`
 - `adequacy_findings`
+- `per_blueprint_element_coverage`
+- `affected_slice_fingerprint`
+- `unsupported_claims`
 - `bounded_validation_claim`
 
 Claim boundary: A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt.

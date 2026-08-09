@@ -1,0 +1,49 @@
+schema: physicsguard.project_formula.v1
+module_type: AggregateEfficiencyModule
+owner: physicsguard.module_semantics.mechanical_draft.AggregateEfficiencyModule
+purpose: Mechanically describe the exact current aggregate efficiency consistency check and its three externally observed values.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: denominator_min_abs, dimension: power, unit: W, required: false, default: 1.0e-09, constraints: [denominator_min_abs > 0]}
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 0.01, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: useful_output_power_W, dimension: power, unit: W, source_kind: external, source_attribute: useful_output, source_reference: chiller_cooling_output.value}
+  - {name: input_power, dimension: power, unit: W, source_kind: external, source_attribute: input_power, source_reference: chiller_electric_power.value}
+  - {name: efficiency, dimension: dimensionless, unit: '1', source_kind: external, source_attribute: efficiency, source_reference: chiller_cop.value}
+scenario_outputs: []
+residuals:
+  - name: aggregate_efficiency
+    expression: efficiency - useful_output_power_W / input_power
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: W divided by W is dimensionless, matching the observed efficiency value.
+    scale_expression: residual_scale
+    zero_condition: The observed efficiency equals useful output divided by input power outside the protected denominator deadband.
+    source_intermediates:
+      - {symbol: useful, expression: useful_output_power_W}
+      - {symbol: residual, expression: efficiency - useful / input_power}
+constraints:
+  constructor:
+    - {predicate: denominator_min_abs > 0, guard_signature: "_positive_float(parameters.get('denominator_min_abs', 1e-9), 'denominator_min_abs')", failure_type: ValueError, message_selector: denominator_min_abs, on_violation: Reject a non-positive protected denominator magnitude., cases: [{kind: inside, inputs: {denominator_min_abs: 1.0e-09}, expected: pass}, {kind: boundary, inputs: {denominator_min_abs: 0.0}, expected: fail}, {kind: outside, inputs: {denominator_min_abs: -1.0}, expected: fail}]}
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 0.01), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject a non-positive residual scale., cases: [{kind: inside, inputs: {residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation:
+    - {predicate: "abs(input_power) >= denominator_min_abs", guard_signature: "if abs(input_power) < self.denominator_min_abs", failure_type: ValueError, message_selector: denominator_min_abs, on_violation: Reject input power inside the protected denominator deadband., cases: [{kind: inside, inputs: {input_power: 8000.0, denominator_min_abs: 1.0e-09}, expected: pass}, {kind: boundary, inputs: {input_power: 1.0e-09, denominator_min_abs: 1.0e-09}, expected: pass}, {kind: outside, inputs: {input_power: 0.0, denominator_min_abs: 1.0e-09}, expected: fail}]}
+regions:
+  valid:
+    - {predicate: "abs(input_power) >= denominator_min_abs and residual_scale > 0", meaning: Exact current algebraic audit region with a usable denominator and positive normalization., cases: [{kind: inside, inputs: {input_power: 8000.0, denominator_min_abs: 1.0e-09, residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {input_power: 1.0e-09, denominator_min_abs: 1.0e-09, residual_scale: 0.01}, expected: pass}, {kind: outside, inputs: {input_power: 0.0, denominator_min_abs: 1.0e-09, residual_scale: 0.01}, expected: fail}]}
+  invalid:
+    - {predicate: "abs(input_power) < denominator_min_abs or residual_scale <= 0", meaning: The current evaluator rejects an unsafe denominator or unusable normalization., cases: [{kind: inside, inputs: {input_power: 0.0, denominator_min_abs: 1.0e-09, residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {input_power: 1.0e-09, denominator_min_abs: 1.0e-09, residual_scale: 0.01}, expected: fail}, {kind: outside, inputs: {input_power: 8000.0, denominator_min_abs: 1.0e-09, residual_scale: 0.01}, expected: fail}]}
+assumptions: [All three qualified references resolve in the exact example registry, Useful output and input power use watts, This relation is an audit and does not own the referenced values]
+validity: [Use only for the exact bound example and current implementation, Keep physical interpretation pending a separate reviewer]
+invariants: [All externally referenced values are read-only inputs to this residual builder]
+effects: [Emit one aggregate_efficiency residual record]
+postconditions: [The residual value equals the declared direction-neutral expression for the same input vector]
+termination: One finite expression evaluation with one protected-denominator branch terminates.
+oracle_cases:
+  - {case_id: exact_example_zero, inputs: {residual_scale: 0.01, useful_output_power_W: 25000.0, input_power: 8000.0, efficiency: 3.125}, expected: {aggregate_efficiency: 0.0}, tolerance: 1.0e-12}
+  - {case_id: offset, inputs: {residual_scale: 0.01, useful_output_power_W: 24000.0, input_power: 8000.0, efficiency: 3.125}, expected: {aggregate_efficiency: 0.125}, tolerance: 1.0e-12}
+claim_boundary: This mechanical draft reproduces the current exact-example computation and bindings only; it is not independently reviewed and licenses no physical efficiency claim.

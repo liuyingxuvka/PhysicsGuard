@@ -1,0 +1,161 @@
+schema: physicsguard.project_formula.v1
+module_type: MappedSignalModule
+owner: physicsguard.module_semantics.source_first.MappedSignalModule
+purpose: Source-first reconstruction of the exact maintained implementation, configuration, scenario ports, state roles, residuals,
+  and protected failure.
+authoring_status: source_first_reconstruction_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_source_first_reconstruction
+relation_directionality: direction_neutral
+configuration:
+- name: description
+  dimension: enum
+  unit: enum
+  required: false
+  default: null
+  constraints:
+  - 'Maintained source guard: parameters.get(''description'')'
+- name: external_signal
+  dimension: enum
+  unit: enum
+  required: false
+  default: null
+  constraints:
+  - 'Maintained source guard: parameters.get(''external_signal'')'
+- name: initial_guess
+  dimension: power
+  unit: W
+  required: false
+  default: 0.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''initial_guess'', 0.0), ''initial_guess'')'
+- name: local_name
+  dimension: enum
+  unit: enum
+  required: false
+  default: value
+  constraints:
+  - 'Maintained source guard: _local_name(parameters.get(''local_name'', ''value''), ''local_name'')'
+- name: lower_bound
+  dimension: power
+  unit: W
+  required: false
+  default: -1000000000.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''lower_bound'', -1000000000.0), ''lower_bound'')'
+- name: mapping_confidence
+  dimension: enum
+  unit: enum
+  required: false
+  default: null
+  constraints:
+  - 'Maintained source guard: parameters.get(''mapping_confidence'')'
+- name: scale
+  dimension: power
+  unit: W
+  required: false
+  default: 1.0
+  constraints:
+  - 'Maintained source guard: _positive_float(parameters.get(''scale'', 1.0), ''scale'')'
+- name: unit
+  dimension: enum
+  unit: enum
+  required: false
+  default: null
+  constraints:
+  - 'Maintained source guard: parameters.get(''unit'')'
+- name: upper_bound
+  dimension: power
+  unit: W
+  required: false
+  default: 1000000000.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''upper_bound'', 1000000000.0), ''upper_bound'')'
+scenario_inputs: []
+scenario_outputs:
+- name: value
+  dimension: power
+  unit: W
+  role: output
+residuals: []
+constraints:
+  constructor:
+  - predicate: scale > 0
+    guard_signature: _positive_float(parameters.get('scale', 1.0), 'scale')
+    failure_type: ValueError
+    message_selector: scale
+    on_violation: Reject non-positive scale through the maintained source guard.
+    cases:
+    - kind: inside
+      inputs:
+        scale: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        scale: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        scale: -1.0
+      expected: fail
+  evaluation: []
+regions:
+  valid:
+  - predicate: scale > 0
+    meaning: The protected maintained constructor guard accepts this region.
+    cases:
+    - kind: inside
+      inputs:
+        scale: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        scale: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        scale: -1.0
+      expected: fail
+  invalid:
+  - predicate: not (scale > 0)
+    meaning: The protected maintained constructor guard rejects this region.
+    cases:
+    - kind: inside
+      inputs:
+        scale: -1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        scale: 0.0
+      expected: pass
+    - kind: outside
+      inputs:
+        scale: 1.0
+      expected: fail
+assumptions:
+- This reconstruction describes the exact bound current source and example only.
+- No physical truth or cross-target generalization is licensed by source agreement.
+validity:
+- Use only while the bound implementation, exact instantiation, formula, ports, and tests retain matching fingerprints.
+invariants:
+- All maintained constructor parameters have explicit source provenance.
+- Scenario ports exactly cover every current local declaration and referenced external variable.
+effects: &id001
+- Declare the exact mapped variable and return no residual records.
+postconditions: &id002
+- The mapped declaration remains present and the residual inventory is empty.
+termination: One finite declaration pass terminates without an equation loop.
+behavior_contract:
+  kind: declaration_only
+  declared_variables:
+  - value
+  mapped_variables:
+  - value
+  residual_count: 0
+  effects: *id001
+  postconditions: *id002
+  termination: One finite declaration pass terminates without an equation loop.
+oracle_cases: []
+claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It does not prove
+  physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate evidence accepts those claims.

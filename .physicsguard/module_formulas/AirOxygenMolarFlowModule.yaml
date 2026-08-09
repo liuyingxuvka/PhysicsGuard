@@ -1,0 +1,85 @@
+schema: physicsguard.project_formula.v1
+module_type: AirOxygenMolarFlowModule
+owner: physicsguard.project_formula.dry_air_oxygen_flow.v1
+purpose: Independently state the bounded dry-air oxygen, total molar-flow, and mass-flow relations used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: oxygen_mole_fraction, dimension: mole_fraction, unit: '1', required: false, default: 0.21, constraints: ['0 < oxygen_mole_fraction <= 1']}
+  - {name: molar_mass_air_kg_mol, dimension: molar_mass, unit: kg/mol, required: false, default: 0.0289652, constraints: [molar_mass_air_kg_mol > 0]}
+  - {name: molar_residual_scale_mol_s, dimension: molar_flow, unit: mol/s, required: false, default: 0.001, constraints: [molar_residual_scale_mol_s > 0]}
+  - {name: mass_residual_scale_kg_s, dimension: mass_flow, unit: kg/s, required: false, default: 0.001, constraints: [mass_residual_scale_kg_s > 0]}
+scenario_inputs:
+  - {name: n_dot_O2_mol_s, dimension: molar_flow, unit: mol/s}
+scenario_outputs:
+  - {name: n_dot_air_mol_s, dimension: molar_flow, unit: mol/s}
+  - {name: m_dot_air_kg_s, dimension: mass_flow, unit: kg/s}
+residuals:
+  - name: air_oxygen_molar_flow
+    expression: n_dot_air_mol_s - n_dot_O2_mol_s / oxygen_mole_fraction
+    dimension: molar_flow
+    unit: mol/s
+    dimensional_derivation: mol/s divided by a dimensionless mole fraction remains mol/s.
+    scale_expression: molar_residual_scale_mol_s
+    zero_condition: Dry-air molar flow equals oxygen molar-flow demand divided by the configured oxygen mole fraction.
+    source_intermediates:
+      - {symbol: n_o2, expression: n_dot_O2_mol_s}
+      - {symbol: n_air, expression: n_dot_air_mol_s}
+  - name: air_mass_flow_from_molar_flow
+    expression: m_dot_air_kg_s - n_dot_air_mol_s * molar_mass_air_kg_mol
+    dimension: mass_flow
+    unit: kg/s
+    dimensional_derivation: mol/s multiplied by kg/mol reduces to kg/s.
+    scale_expression: mass_residual_scale_kg_s
+    zero_condition: Dry-air mass flow equals dry-air molar flow multiplied by configured molar mass.
+    source_intermediates:
+      - {symbol: n_air, expression: n_dot_air_mol_s}
+      - {symbol: m_air, expression: m_dot_air_kg_s}
+constraints:
+  constructor:
+    - predicate: oxygen_mole_fraction > 0
+      guard_signature: positive_float(parameters.get('oxygen_mole_fraction', 0.21), 'oxygen_mole_fraction')
+      failure_type: ValueError
+      message_selector: oxygen_mole_fraction
+      on_violation: Reject non-positive oxygen_mole_fraction.
+      cases: [{kind: inside, inputs: {oxygen_mole_fraction: 0.21}, expected: pass}, {kind: boundary, inputs: {oxygen_mole_fraction: 0.0}, expected: fail}, {kind: outside, inputs: {oxygen_mole_fraction: -0.1}, expected: fail}]
+    - predicate: oxygen_mole_fraction <= 1
+      guard_signature: if self.oxygen_mole_fraction > 1.0
+      failure_type: ValueError
+      message_selector: oxygen_mole_fraction
+      on_violation: Reject oxygen_mole_fraction greater than one.
+      cases: [{kind: inside, inputs: {oxygen_mole_fraction: 0.21}, expected: pass}, {kind: boundary, inputs: {oxygen_mole_fraction: 1.0}, expected: pass}, {kind: outside, inputs: {oxygen_mole_fraction: 1.1}, expected: fail}]
+    - predicate: molar_mass_air_kg_mol > 0
+      guard_signature: positive_float(parameters.get('molar_mass_air_kg_mol', 0.0289652), 'molar_mass_air_kg_mol')
+      failure_type: ValueError
+      message_selector: molar_mass_air_kg_mol
+      on_violation: Reject non-positive molar_mass_air_kg_mol.
+      cases: [{kind: inside, inputs: {molar_mass_air_kg_mol: 0.0289652}, expected: pass}, {kind: boundary, inputs: {molar_mass_air_kg_mol: 0.0}, expected: fail}, {kind: outside, inputs: {molar_mass_air_kg_mol: -1.0}, expected: fail}]
+    - predicate: molar_residual_scale_mol_s > 0
+      guard_signature: positive_float(parameters.get('molar_residual_scale_mol_s', 1e-3), 'molar_residual_scale_mol_s')
+      failure_type: ValueError
+      message_selector: molar_residual_scale_mol_s
+      on_violation: Reject non-positive molar_residual_scale_mol_s.
+      cases: [{kind: inside, inputs: {molar_residual_scale_mol_s: 0.001}, expected: pass}, {kind: boundary, inputs: {molar_residual_scale_mol_s: 0.0}, expected: fail}, {kind: outside, inputs: {molar_residual_scale_mol_s: -1.0}, expected: fail}]
+    - predicate: mass_residual_scale_kg_s > 0
+      guard_signature: positive_float(parameters.get('mass_residual_scale_kg_s', 1e-3), 'mass_residual_scale_kg_s')
+      failure_type: ValueError
+      message_selector: mass_residual_scale_kg_s
+      on_violation: Reject non-positive mass_residual_scale_kg_s.
+      cases: [{kind: inside, inputs: {mass_residual_scale_kg_s: 0.001}, expected: pass}, {kind: boundary, inputs: {mass_residual_scale_kg_s: 0.0}, expected: fail}, {kind: outside, inputs: {mass_residual_scale_kg_s: -1.0}, expected: fail}]
+  evaluation: []
+regions:
+  valid:
+    - predicate: oxygen_mole_fraction > 0 and oxygen_mole_fraction <= 1 and molar_mass_air_kg_mol > 0 and molar_residual_scale_mol_s > 0 and mass_residual_scale_kg_s > 0 and n_dot_O2_mol_s >= 0 and n_dot_air_mol_s >= 0 and m_dot_air_kg_s >= 0
+      meaning: Bounded dry-air magnitude relation with positive conversion constants and scales.
+      cases: [{kind: inside, inputs: {oxygen_mole_fraction: 0.21, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.21, n_dot_air_mol_s: 1.0, m_dot_air_kg_s: 0.0289652}, expected: pass}, {kind: boundary, inputs: {oxygen_mole_fraction: 1.0, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.0, n_dot_air_mol_s: 0.0, m_dot_air_kg_s: 0.0}, expected: pass}, {kind: outside, inputs: {oxygen_mole_fraction: 1.1, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.21, n_dot_air_mol_s: 1.0, m_dot_air_kg_s: 0.0289652}, expected: fail}]
+  invalid:
+    - predicate: oxygen_mole_fraction <= 0 or oxygen_mole_fraction > 1 or molar_mass_air_kg_mol <= 0 or molar_residual_scale_mol_s <= 0 or mass_residual_scale_kg_s <= 0 or n_dot_O2_mol_s < 0 or n_dot_air_mol_s < 0 or m_dot_air_kg_s < 0
+      meaning: Invalid configuration or values outside the declared nonnegative dry-air magnitude boundary.
+      cases: [{kind: inside, inputs: {oxygen_mole_fraction: 0.0, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.21, n_dot_air_mol_s: 1.0, m_dot_air_kg_s: 0.0289652}, expected: pass}, {kind: boundary, inputs: {oxygen_mole_fraction: 1.0, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.0, n_dot_air_mol_s: 0.0, m_dot_air_kg_s: 0.0}, expected: fail}, {kind: outside, inputs: {oxygen_mole_fraction: 0.21, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.21, n_dot_air_mol_s: 1.0, m_dot_air_kg_s: 0.0289652}, expected: fail}]
+assumptions: [Dry-air approximation, Fixed oxygen mole fraction and molar mass, Humidity and pressure-temperature state effects are outside this relation]
+validity: [Use only for the configured dry-air composition, Interpret scenario ports as one solvable boundary assignment rather than an intrinsic equation direction]
+oracle_cases:
+  - {case_id: balanced, inputs: {oxygen_mole_fraction: 0.21, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.21, n_dot_air_mol_s: 1.0, m_dot_air_kg_s: 0.0289652}, expected: {air_oxygen_molar_flow: 0.0, air_mass_flow_from_molar_flow: 0.0}, tolerance: 1e-12}
+  - {case_id: mass_flow_offset, inputs: {oxygen_mole_fraction: 0.21, molar_mass_air_kg_mol: 0.0289652, molar_residual_scale_mol_s: 0.001, mass_residual_scale_kg_s: 0.001, n_dot_O2_mol_s: 0.21, n_dot_air_mol_s: 1.0, m_dot_air_kg_s: 0.0299652}, expected: {air_oxygen_molar_flow: 0.0, air_mass_flow_from_molar_flow: 0.001}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity dry-air algebraic formula for one exact scenario; it is not a humidity model, state equation, empirical validation, or fixed equation direction.

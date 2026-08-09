@@ -310,15 +310,18 @@ class ThresholdStateCheckModule(BaseModule):
         input_value = _owned_value(x, registry, self.component_id, "input")
         state = _owned_value(x, registry, self.component_id, "state")
         expected = self.on_value if input_value >= self.threshold else self.off_value
+        mismatch = state - expected
+        excess = max(abs(mismatch) - self.state_tolerance, 0.0)
+        signed_excess = 0.0 if excess == 0.0 else excess * (1.0 if mismatch > 0.0 else -1.0)
         return [
             ResidualRecord(
                 name=f"{self.component_id}.threshold_state_check",
-                value=state - expected,
-                scale=self.residual_scale,
+                value=signed_excess,
+                scale=self.state_tolerance * self.residual_scale,
                 source=self.component_id,
                 role="post_check",
                 diagnostic_key="threshold_state_violation",
-                description="Threshold state post-check residual state - expected_state.",
+                description="Threshold state post-check residual as signed state mismatch beyond the accepted deadband.",
             )
         ]
 
@@ -329,6 +332,8 @@ class ThresholdStateCheckModule(BaseModule):
                 "diagnostic check only",
                 "no hysteresis",
                 "no temporal memory",
+                "state_tolerance defines the accepted absolute state deadband",
+                "residual_scale is a dimensionless multiplier on the state-tolerance scale",
                 "post_check residual does not pull solver solution",
             ],
         )

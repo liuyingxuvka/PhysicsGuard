@@ -1,0 +1,572 @@
+# Canonical PhysicsGuard physical-model blueprint.
+# This models the maintained pump-loop contract fixture, not a real pump or a
+# commercial-tool reconstruction.  Its physical claim remains the repository's
+# declared low-fidelity relation y = 2*x plus the explicit sampled valve context.
+schema_version: physicsguard.physical-model-blueprint.v1
+blueprint_id: blueprint.pump-loop-contract-fixture.r1
+qualification_target: external_physical_target
+understanding_target: declared_consistency
+artifact_root: blueprint_directory
+target:
+  target_system_id: pump-loop-contract-fixture
+  target_kind: mixed_physical_workflow
+  subject_revision: fixture-r1
+  boundary_fingerprint: 4d6ff39f9cbad95443a88137a172e7c51629f024bd7c526d8b2881f46acaa051
+  purpose: Qualify the maintained external pump-loop contract fixture as a three-layer physical workflow blueprint.
+  claim_boundary: Fixture relation y = 2*x and sampled valve context only; no real-pump fidelity or between-sample dynamics.
+required_capability_ids: [artifact_inventory, interface_topology, native_binding_observation]
+capability_owners:
+  artifact_inventory: provider.pump-loop-repository
+  interface_topology: provider.pump-loop-repository
+  native_binding_observation: provider.pump-loop-repository
+providers:
+  - provider_id: provider.pump-loop-repository
+    provider_kind: maintained-repository-manifest
+    provider_version: "1"
+    target_system_id: pump-loop-contract-fixture
+    subject_revision: fixture-r1
+    capability_ids: [artifact_inventory, interface_topology, native_binding_observation]
+    input_fingerprints:
+      target_boundary: 4d6ff39f9cbad95443a88137a172e7c51629f024bd7c526d8b2881f46acaa051
+    payload_fingerprint: 0287e9822d54d731caec859b273178c2b6259f7eb54f88786e8a062b45331cf0
+    status: current
+    claim_boundary: Repository-visible fixture artifacts and their exact content identities only.
+inventory:
+  inventory_id: inventory.pump-loop-contract-fixture.r1
+  provider_id: provider.pump-loop-repository
+  target_system_id: pump-loop-contract-fixture
+  subject_revision: fixture-r1
+  boundary_fingerprint: 4d6ff39f9cbad95443a88137a172e7c51629f024bd7c526d8b2881f46acaa051
+  members:
+    - {member_id: pump_loop_fixture, member_kind: physical_element, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: fixture_validation_path, member_kind: physical_element, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: pump_signal_relation, member_kind: physical_element, disposition: modeled, blueprint_element_id: pump_signal_relation}
+    - {member_id: valve_mode_context, member_kind: physical_element, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: port.root.speed, member_kind: interface, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: port.root.valve, member_kind: interface, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: port.root.flow, member_kind: interface, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: port.root.valve_state, member_kind: interface, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: port.root.diagnostic, member_kind: interface, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: port.path.speed, member_kind: interface, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: port.path.valve, member_kind: interface, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: port.path.flow, member_kind: interface, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: port.path.valve_state, member_kind: interface, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: port.path.diagnostic, member_kind: interface, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: port.signal.speed, member_kind: interface, disposition: modeled, blueprint_element_id: pump_signal_relation}
+    - {member_id: port.signal.flow, member_kind: interface, disposition: modeled, blueprint_element_id: pump_signal_relation}
+    - {member_id: port.mode.valve, member_kind: interface, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: port.mode.valve_state, member_kind: interface, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: port.mode.diagnostic, member_kind: interface, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: sem.root.relation, member_kind: equation, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: sem.root.mode_constraint, member_kind: equation, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: sem.root.initial_mode, member_kind: parameter, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: sem.root.mode_step, member_kind: equation, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: sem.root.termination, member_kind: equation, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: sem.root.pointwise_assumption, member_kind: equation, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: sem.path.relation, member_kind: equation, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: sem.path.mode_constraint, member_kind: equation, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: sem.path.initial_mode, member_kind: parameter, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: sem.path.mode_step, member_kind: equation, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: sem.path.termination, member_kind: equation, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: sem.path.pointwise_assumption, member_kind: equation, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: sem.signal.relation, member_kind: equation, disposition: modeled, blueprint_element_id: pump_signal_relation}
+    - {member_id: sem.mode.constraint, member_kind: equation, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: sem.mode.initial, member_kind: parameter, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: sem.mode.step, member_kind: equation, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: sem.mode.termination, member_kind: equation, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: sem.mode.pointwise_assumption, member_kind: equation, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - {member_id: validity.root, member_kind: parameter, disposition: modeled, blueprint_element_id: pump_loop_fixture}
+    - {member_id: validity.path, member_kind: parameter, disposition: modeled, blueprint_element_id: fixture_validation_path}
+    - {member_id: validity.signal, member_kind: parameter, disposition: modeled, blueprint_element_id: pump_signal_relation}
+    - {member_id: validity.mode, member_kind: parameter, disposition: modeled, blueprint_element_id: valve_mode_context}
+    - member_id: artifact.hierarchy
+      member_kind: workflow
+      disposition: supporting
+      binding_ids: [binding.root.implementation, binding.path.implementation, binding.signal.implementation, binding.mode.implementation]
+    - member_id: artifact.test-contract
+      member_kind: test
+      disposition: supporting
+      binding_ids: [binding.root.test, binding.path.test, binding.signal.test, binding.mode.test]
+    - member_id: artifact.resource-manifest
+      member_kind: resource
+      disposition: supporting
+      binding_ids: [binding.root.resource, binding.path.resource, binding.signal.resource, binding.mode.resource]
+    - member_id: artifact.validation-plan
+      member_kind: oracle
+      disposition: supporting
+      binding_ids: [binding.root.oracle, binding.path.oracle, binding.signal.oracle, binding.mode.oracle]
+    - member_id: artifact.evidence-mesh
+      member_kind: evidence
+      disposition: supporting
+      binding_ids: [binding.root.evidence, binding.path.evidence, binding.signal.evidence, binding.mode.evidence]
+    - {member_id: artifact.clean-csv, member_kind: dataset, disposition: supporting, binding_ids: [binding.root.dataset]}
+    - {member_id: artifact.project-registry, member_kind: evidence, disposition: supporting, binding_ids: [binding.root.project-record]}
+    - {member_id: artifact.model-library, member_kind: resource, disposition: supporting, binding_ids: [binding.root.model-library]}
+  inventory_fingerprint: 0287e9822d54d731caec859b273178c2b6259f7eb54f88786e8a062b45331cf0
+elements:
+  - element_id: pump_loop_fixture
+    name: Pump-loop contract fixture
+    element_kind: system
+    depth: 0
+    description: Top-level bounded fixture behavior and sampled mode context.
+    port_ids: [port.root.speed, port.root.valve, port.root.flow, port.root.valve_state, port.root.diagnostic]
+    semantic_ids: [sem.root.relation, sem.root.mode_constraint, sem.root.initial_mode, sem.root.mode_step, sem.root.termination, sem.root.pointwise_assumption]
+    validity_boundary_ids: [validity.root]
+    native_binding_ids: [binding.root.implementation, binding.root.test, binding.root.resource, binding.root.oracle, binding.root.evidence, binding.root.dataset, binding.root.project-record, binding.root.model-library]
+    owned_behavior_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - element_id: fixture_validation_path
+    name: Fixture validation path
+    element_kind: subsystem
+    parent_id: pump_loop_fixture
+    depth: 1
+    description: Composes the signal relation with the sampled valve-mode context.
+    port_ids: [port.path.speed, port.path.valve, port.path.flow, port.path.valve_state, port.path.diagnostic]
+    semantic_ids: [sem.path.relation, sem.path.mode_constraint, sem.path.initial_mode, sem.path.mode_step, sem.path.termination, sem.path.pointwise_assumption]
+    validity_boundary_ids: [validity.path]
+    native_binding_ids: [binding.path.implementation, binding.path.test, binding.path.resource, binding.path.oracle, binding.path.evidence]
+    owned_behavior_ids: [behavior.path.signal-relation, behavior.path.sampled-mode]
+  - element_id: pump_signal_relation
+    name: Pump signal relation
+    element_kind: model
+    parent_id: fixture_validation_path
+    depth: 2
+    description: Maintained low-fidelity pointwise relation y = 2*x.
+    port_ids: [port.signal.speed, port.signal.flow]
+    semantic_ids: [sem.signal.relation]
+    validity_boundary_ids: [validity.signal]
+    native_binding_ids: [binding.signal.implementation, binding.signal.test, binding.signal.resource, binding.signal.oracle, binding.signal.evidence]
+    owned_behavior_ids: [behavior.signal.y-equals-two-x]
+  - element_id: valve_mode_context
+    name: Sampled valve-mode context
+    element_kind: physical_workflow
+    parent_id: fixture_validation_path
+    depth: 2
+    description: Carries the explicitly observed valve_open field across the bounded sample sequence.
+    port_ids: [port.mode.valve, port.mode.valve_state, port.mode.diagnostic]
+    semantic_ids: [sem.mode.constraint, sem.mode.initial, sem.mode.step, sem.mode.termination, sem.mode.pointwise_assumption]
+    validity_boundary_ids: [validity.mode]
+    native_binding_ids: [binding.mode.implementation, binding.mode.test, binding.mode.resource, binding.mode.oracle, binding.mode.evidence]
+    owned_behavior_ids: [behavior.mode.sampled-valve-context]
+ports:
+  - &root_speed {port_id: port.root.speed, owner_element_id: pump_loop_fixture, direction: input, quantity_id: commanded_speed, unit: rad/s, time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-signal-frame, sign_convention: nonnegative-command, uncertainty: bounded-fixture-measurement, validity_boundary_id: validity.root}
+  - &root_valve {port_id: port.root.valve, owner_element_id: pump_loop_fixture, direction: input, quantity_id: valve_open, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-mode-frame, sign_convention: one-is-open, uncertainty: exact-fixture-boolean, validity_boundary_id: validity.root}
+  - &root_flow {port_id: port.root.flow, owner_element_id: pump_loop_fixture, direction: output, quantity_id: flow_readback, unit: kg/s, time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-signal-frame, sign_convention: nonnegative-readback, uncertainty: bounded-fixture-measurement, validity_boundary_id: validity.root}
+  - {port_id: port.root.valve_state, owner_element_id: pump_loop_fixture, direction: state, quantity_id: valve_open, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-mode-frame, sign_convention: one-is-open, validity_boundary_id: validity.root, initial_state_semantic_id: sem.root.initial_mode, termination_semantic_id: sem.root.termination}
+  - {port_id: port.root.diagnostic, owner_element_id: pump_loop_fixture, direction: effect, quantity_id: validation_diagnostic, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-diagnostic-frame, sign_convention: one-is-violation, validity_boundary_id: validity.root}
+  - {port_id: port.path.speed, owner_element_id: fixture_validation_path, direction: input, quantity_id: commanded_speed, unit: rad/s, time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-signal-frame, sign_convention: nonnegative-command, uncertainty: bounded-fixture-measurement, validity_boundary_id: validity.path}
+  - {port_id: port.path.valve, owner_element_id: fixture_validation_path, direction: input, quantity_id: valve_open, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-mode-frame, sign_convention: one-is-open, uncertainty: exact-fixture-boolean, validity_boundary_id: validity.path}
+  - {port_id: port.path.flow, owner_element_id: fixture_validation_path, direction: output, quantity_id: flow_readback, unit: kg/s, time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-signal-frame, sign_convention: nonnegative-readback, uncertainty: bounded-fixture-measurement, validity_boundary_id: validity.path}
+  - {port_id: port.path.valve_state, owner_element_id: fixture_validation_path, direction: state, quantity_id: valve_open, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-mode-frame, sign_convention: one-is-open, validity_boundary_id: validity.path, initial_state_semantic_id: sem.path.initial_mode, termination_semantic_id: sem.path.termination}
+  - {port_id: port.path.diagnostic, owner_element_id: fixture_validation_path, direction: effect, quantity_id: validation_diagnostic, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-diagnostic-frame, sign_convention: one-is-violation, validity_boundary_id: validity.path}
+  - {port_id: port.signal.speed, owner_element_id: pump_signal_relation, direction: input, quantity_id: commanded_speed, unit: rad/s, time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-signal-frame, sign_convention: nonnegative-command, uncertainty: bounded-fixture-measurement, validity_boundary_id: validity.signal}
+  - {port_id: port.signal.flow, owner_element_id: pump_signal_relation, direction: output, quantity_id: flow_readback, unit: kg/s, time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-signal-frame, sign_convention: nonnegative-readback, uncertainty: bounded-fixture-measurement, validity_boundary_id: validity.signal}
+  - {port_id: port.mode.valve, owner_element_id: valve_mode_context, direction: input, quantity_id: valve_open, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-mode-frame, sign_convention: one-is-open, uncertainty: exact-fixture-boolean, validity_boundary_id: validity.mode}
+  - {port_id: port.mode.valve_state, owner_element_id: valve_mode_context, direction: state, quantity_id: valve_open, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-mode-frame, sign_convention: one-is-open, validity_boundary_id: validity.mode, initial_state_semantic_id: sem.mode.initial, termination_semantic_id: sem.mode.termination}
+  - {port_id: port.mode.diagnostic, owner_element_id: valve_mode_context, direction: effect, quantity_id: validation_diagnostic, unit: "1", time_basis: sampled:10Hz, value_shape: scalar, reference_frame: fixture-diagnostic-frame, sign_convention: one-is-violation, validity_boundary_id: validity.mode}
+semantics:
+  - &root_relation
+    semantic_id: sem.root.relation
+    owner_element_id: pump_loop_fixture
+    semantic_kind: equation
+    statement: The maintained fixture output is twice the commanded-speed input at each declared sample.
+    expression: flow_readback = 2 * commanded_speed
+    input_port_ids: [port.root.speed]
+    output_port_ids: [port.root.flow]
+    effect_port_ids: [port.root.diagnostic]
+    validity_boundary_ids: [validity.root]
+    assumption_ids: [sem.root.pointwise_assumption]
+    preconditions: [A declared fixture sample is present.]
+    postconditions: [The pointwise relation residual is available to the oracle.]
+  - {semantic_id: sem.root.mode_constraint, owner_element_id: pump_loop_fixture, semantic_kind: constraint, statement: The sampled valve context is boolean., expression: "valve_open in {0, 1}", input_port_ids: [port.root.valve], state_port_ids: [port.root.valve_state], effect_port_ids: [port.root.diagnostic], validity_boundary_ids: [validity.root]}
+  - {semantic_id: sem.root.initial_mode, owner_element_id: pump_loop_fixture, semantic_kind: parameter, statement: The first declared valve_open sample initializes the root mode state., state_port_ids: [port.root.valve_state], validity_boundary_ids: [validity.root]}
+  - {semantic_id: sem.root.mode_step, owner_element_id: pump_loop_fixture, semantic_kind: state_update, statement: Each declared sample replaces the root valve-mode state., expression: valve_state_next = valve_open_sample, input_port_ids: [port.root.valve], state_port_ids: [port.root.valve_state], validity_boundary_ids: [validity.root], preconditions: [The next timestamp belongs to the declared fixture series.], postconditions: [The state equals the current valve_open sample.]}
+  - {semantic_id: sem.root.termination, owner_element_id: pump_loop_fixture, semantic_kind: termination, statement: The root state terminates at the final declared sample., state_port_ids: [port.root.valve_state], validity_boundary_ids: [validity.root]}
+  - {semantic_id: sem.root.pointwise_assumption, owner_element_id: pump_loop_fixture, semantic_kind: assumption, statement: No dynamics are inferred between declared samples., validity_boundary_ids: [validity.root]}
+  - {semantic_id: sem.path.relation, owner_element_id: fixture_validation_path, semantic_kind: equation, statement: The validation path exposes the maintained pointwise relation., expression: flow_readback = 2 * commanded_speed, input_port_ids: [port.path.speed], output_port_ids: [port.path.flow], effect_port_ids: [port.path.diagnostic], validity_boundary_ids: [validity.path], assumption_ids: [sem.path.pointwise_assumption]}
+  - {semantic_id: sem.path.mode_constraint, owner_element_id: fixture_validation_path, semantic_kind: constraint, statement: The validation path preserves the boolean valve context., expression: "valve_open in {0, 1}", input_port_ids: [port.path.valve], state_port_ids: [port.path.valve_state], effect_port_ids: [port.path.diagnostic], validity_boundary_ids: [validity.path]}
+  - {semantic_id: sem.path.initial_mode, owner_element_id: fixture_validation_path, semantic_kind: parameter, statement: The first declared valve_open sample initializes the path state., state_port_ids: [port.path.valve_state], validity_boundary_ids: [validity.path]}
+  - {semantic_id: sem.path.mode_step, owner_element_id: fixture_validation_path, semantic_kind: state_update, statement: Each declared sample replaces the path valve-mode state., expression: valve_state_next = valve_open_sample, input_port_ids: [port.path.valve], state_port_ids: [port.path.valve_state], validity_boundary_ids: [validity.path]}
+  - {semantic_id: sem.path.termination, owner_element_id: fixture_validation_path, semantic_kind: termination, statement: The path state terminates at the final declared sample., state_port_ids: [port.path.valve_state], validity_boundary_ids: [validity.path]}
+  - {semantic_id: sem.path.pointwise_assumption, owner_element_id: fixture_validation_path, semantic_kind: assumption, statement: No dynamics are inferred between declared samples., validity_boundary_ids: [validity.path]}
+  - {semantic_id: sem.signal.relation, owner_element_id: pump_signal_relation, semantic_kind: equation, statement: The maintained fixture relation is y = 2*x., expression: flow_readback = 2 * commanded_speed, input_port_ids: [port.signal.speed], output_port_ids: [port.signal.flow], validity_boundary_ids: [validity.signal], preconditions: [The command lies in the declared fixture envelope.], postconditions: [The output equals twice the input inside numeric tolerance.]}
+  - {semantic_id: sem.mode.constraint, owner_element_id: valve_mode_context, semantic_kind: constraint, statement: Valve context accepts only the declared boolean values., expression: "valve_open in {0, 1}", input_port_ids: [port.mode.valve], state_port_ids: [port.mode.valve_state], effect_port_ids: [port.mode.diagnostic], validity_boundary_ids: [validity.mode], assumption_ids: [sem.mode.pointwise_assumption]}
+  - {semantic_id: sem.mode.initial, owner_element_id: valve_mode_context, semantic_kind: parameter, statement: The first valve_open field initializes the sampled context., state_port_ids: [port.mode.valve_state], validity_boundary_ids: [validity.mode]}
+  - {semantic_id: sem.mode.step, owner_element_id: valve_mode_context, semantic_kind: state_update, statement: The context advances exactly at the declared timestamps., expression: valve_state_next = valve_open_sample, input_port_ids: [port.mode.valve], state_port_ids: [port.mode.valve_state], validity_boundary_ids: [validity.mode]}
+  - {semantic_id: sem.mode.termination, owner_element_id: valve_mode_context, semantic_kind: termination, statement: The sampled context hands off at the final declared timestamp., state_port_ids: [port.mode.valve_state], validity_boundary_ids: [validity.mode]}
+  - {semantic_id: sem.mode.pointwise_assumption, owner_element_id: valve_mode_context, semantic_kind: assumption, statement: The fixture does not claim a continuous valve dynamic., validity_boundary_ids: [validity.mode]}
+validity_boundaries:
+  - boundary_id: validity.root
+    owner_element_id: pump_loop_fixture
+    statement: Three maintained samples from 0.0 s through 0.2 s; commanded speed 10 to 11 rad/s; fixture relation only.
+    parameter_bounds: {commanded_speed: [0.0, 100.0], flow_readback: [0.0, 300.0]}
+  - {boundary_id: validity.path, owner_element_id: fixture_validation_path, statement: Same maintained three-sample fixture and no between-sample dynamic claim.}
+  - {boundary_id: validity.signal, owner_element_id: pump_signal_relation, statement: Pointwise y = 2*x relation within the declared command and output envelopes.}
+  - {boundary_id: validity.mode, owner_element_id: valve_mode_context, statement: Boolean valve_open context at the three declared timestamps only.}
+refinements:
+  - refinement_id: refinement.root-to-path
+    parent_element_id: pump_loop_fixture
+    child_element_ids: [fixture_validation_path]
+    port_mappings:
+      - {mapping_id: map.root-speed.path-speed, mapping_kind: parent_input_to_child_input, source_port_id: port.root.speed, target_port_id: port.path.speed}
+      - {mapping_id: map.root-valve.path-valve, mapping_kind: parent_input_to_child_input, source_port_id: port.root.valve, target_port_id: port.path.valve}
+      - {mapping_id: map.path-flow.root-flow, mapping_kind: child_output_to_parent_output, source_port_id: port.path.flow, target_port_id: port.root.flow}
+      - {mapping_id: map.path-state.root-state, mapping_kind: child_state_to_parent_state, source_port_id: port.path.valve_state, target_port_id: port.root.valve_state}
+      - {mapping_id: map.path-diagnostic.root-diagnostic, mapping_kind: child_effect_to_parent_effect, source_port_id: port.path.diagnostic, target_port_id: port.root.diagnostic}
+    semantic_contributions:
+      - {contribution_id: contribution.path-relation.root-relation, child_semantic_id: sem.path.relation, parent_semantic_id: sem.root.relation, relation: preserves, rationale: The child path preserves the exact pointwise relation.}
+      - {contribution_id: contribution.path-constraint.root-constraint, child_semantic_id: sem.path.mode_constraint, parent_semantic_id: sem.root.mode_constraint, relation: preserves, rationale: The child preserves the boolean mode constraint.}
+      - {contribution_id: contribution.path-initial.root-initial, child_semantic_id: sem.path.initial_mode, parent_semantic_id: sem.root.initial_mode, relation: preserves, rationale: The root initial state is the path initial state.}
+      - {contribution_id: contribution.path-step.root-step, child_semantic_id: sem.path.mode_step, parent_semantic_id: sem.root.mode_step, relation: preserves, rationale: The root sampled transition is the path transition.}
+      - {contribution_id: contribution.path-termination.root-termination, child_semantic_id: sem.path.termination, parent_semantic_id: sem.root.termination, relation: preserves, rationale: The root termination is the path final-sample handoff.}
+    propagated_validity_boundary_ids: [validity.path]
+  - refinement_id: refinement.path-to-signal-and-mode
+    parent_element_id: fixture_validation_path
+    child_element_ids: [pump_signal_relation, valve_mode_context]
+    port_mappings:
+      - {mapping_id: map.path-speed.signal-speed, mapping_kind: parent_input_to_child_input, source_port_id: port.path.speed, target_port_id: port.signal.speed}
+      - {mapping_id: map.path-valve.mode-valve, mapping_kind: parent_input_to_child_input, source_port_id: port.path.valve, target_port_id: port.mode.valve}
+      - {mapping_id: map.signal-flow.path-flow, mapping_kind: child_output_to_parent_output, source_port_id: port.signal.flow, target_port_id: port.path.flow}
+      - {mapping_id: map.mode-state.path-state, mapping_kind: child_state_to_parent_state, source_port_id: port.mode.valve_state, target_port_id: port.path.valve_state}
+      - {mapping_id: map.mode-diagnostic.path-diagnostic, mapping_kind: child_effect_to_parent_effect, source_port_id: port.mode.diagnostic, target_port_id: port.path.diagnostic}
+    semantic_contributions:
+      - {contribution_id: contribution.signal-relation.path-relation, child_semantic_id: sem.signal.relation, parent_semantic_id: sem.path.relation, relation: preserves, rationale: The signal child is the exact relation summarized by the path.}
+      - {contribution_id: contribution.mode-constraint.path-constraint, child_semantic_id: sem.mode.constraint, parent_semantic_id: sem.path.mode_constraint, relation: preserves, rationale: The mode child is the exact constraint summarized by the path.}
+      - {contribution_id: contribution.mode-initial.path-initial, child_semantic_id: sem.mode.initial, parent_semantic_id: sem.path.initial_mode, relation: preserves, rationale: The path initial mode comes from the sampled context.}
+      - {contribution_id: contribution.mode-step.path-step, child_semantic_id: sem.mode.step, parent_semantic_id: sem.path.mode_step, relation: preserves, rationale: The path mode transition comes from the sampled context.}
+      - {contribution_id: contribution.mode-termination.path-termination, child_semantic_id: sem.mode.termination, parent_semantic_id: sem.path.termination, relation: preserves, rationale: The path terminates with the sampled context.}
+    propagated_validity_boundary_ids: [validity.signal, validity.mode]
+unresolved_relations: []
+native_executions:
+  - execution_id: execution.pump-loop.test_file_contract.fixture-r1
+    native_owner_id: physicsguard.test-file-contract-review
+    operation_id: test_file_contract.check
+    native_schema: test_file_contract
+    input_artifact_sha256: 6d0a63f657727b2b5cec8bd9b456dd8dd72290254333c27beda890d356f09176
+    target_system_id: pump-loop-contract-fixture
+    subject_revision: fixture-r1
+    tool_id: physicsguard
+    tool_version: "0.15.2"
+    expected_terminal_status: pass
+    terminal_receipt_fingerprint: 55b7f7bb9ac48a0cfa3f69b4f485ea78945ba7512645958fd462c496bee381df
+    execution_fingerprint: 7aa84181ce017a8e0173a75effb3fe875a48c020f32efe6bccdcb40daab5c5db
+  - execution_id: execution.pump-loop.model_validation_plan.fixture-r1
+    native_owner_id: physicsguard-model-dataset-validation
+    operation_id: model_dataset_validation.validate
+    native_schema: model_validation_plan
+    input_artifact_sha256: ac886eb3798bcf91663ffe58819c454dace35e4812730563239b3703d9513832
+    target_system_id: pump-loop-contract-fixture
+    subject_revision: fixture-r1
+    tool_id: physicsguard
+    tool_version: "0.15.2"
+    expected_terminal_status: pass
+    terminal_receipt_fingerprint: 1d8a88416edd1450dfc173e80dca3eea08384fc4714ab8f954d84b6fe24eb57a
+    execution_fingerprint: 15bfb139030562f0c243761c9394fb7d99a9e44b3550f4bf2da74dc668c75b38
+  - execution_id: execution.pump-loop.evidence_mesh.fixture-r1
+    native_owner_id: physicsguard.audit-closure
+    operation_id: evidence_mesh.check
+    native_schema: evidence_mesh
+    input_artifact_sha256: db1e15ee385b009b6edb48dcb76214ec465cd4cea89b8c98c1c704459677ca08
+    target_system_id: pump-loop-contract-fixture
+    subject_revision: fixture-r1
+    tool_id: physicsguard
+    tool_version: "0.15.2"
+    expected_terminal_status: pass
+    terminal_receipt_fingerprint: 4f2777f02ccf39a08334f855f2961044b695ab198cb4e1b1155037ebbf0fd2d6
+    execution_fingerprint: 9cae5ddd5d493188050c71d8736b03d3c667ccd8fdf5ece9601ce37665607914
+  - execution_id: execution.pump-loop.project_evidence_registry.fixture-r1
+    native_owner_id: physicsguard.project-evidence-registry
+    operation_id: project_evidence_registry.check
+    native_schema: project_evidence_registry
+    input_artifact_sha256: 80582208774ab97de5a098e6192241e7a70f4ebae88e06ea5d27dda6d7612232
+    target_system_id: pump-loop-contract-fixture
+    subject_revision: fixture-r1
+    tool_id: physicsguard
+    tool_version: "0.15.2"
+    expected_terminal_status: pass
+    terminal_receipt_fingerprint: ba91fa2f0eb8ad2efacadee5798b7ad3d78d00ffee17f1c2066c853eb02c88ff
+    execution_fingerprint: 8af4b7bd2e173cf9cd3c82fec64980b315b00ec6d349921d54c1693dc1fcffb8
+  - execution_id: execution.pump-loop.model_library_index.fixture-r1
+    native_owner_id: physicsguard.model-library
+    operation_id: model_library.check
+    native_schema: model_library_index
+    input_artifact_sha256: 609d676cadb65e3a0510b02af83b2ba71e998538ce53e0b63eb1da2b20ced05d
+    target_system_id: pump-loop-contract-fixture
+    subject_revision: fixture-r1
+    tool_id: physicsguard
+    tool_version: "0.15.2"
+    expected_terminal_status: pass
+    terminal_receipt_fingerprint: a37e08315c9aa245e5488524a9047d7c72837db80838e38fbf1b656224f5b808
+    execution_fingerprint: 61ab4b0c65a1bfed8eeacaa49f85b09e7ade844773a189e29c99949d2cee489d
+bindings:
+  - binding_id: binding.root.implementation
+    owner_element_id: pump_loop_fixture
+    binding_kind: implementation
+    native_schema: hierarchical_audit
+    subject_id: pump_loop_contract_fixture
+    subject_revision: fixture-r1
+    artifact: &hierarchy_ref {repo_path: model/pump_loop_hierarchy.yaml, sha256: 4d6ff39f9cbad95443a88137a172e7c51629f024bd7c526d8b2881f46acaa051}
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: &root_semantics [sem.root.relation, sem.root.mode_constraint, sem.root.initial_mode, sem.root.mode_step, sem.root.termination, sem.root.pointwise_assumption]
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - binding_id: binding.root.test
+    owner_element_id: pump_loop_fixture
+    binding_kind: test
+    native_schema: test_file_contract
+    subject_id: pump_loop_clean_contract
+    subject_revision: fixture-r1
+    artifact: &contract_ref {repo_path: contracts/clean_contract.yaml, sha256: 6d0a63f657727b2b5cec8bd9b456dd8dd72290254333c27beda890d356f09176}
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.test_file_contract.fixture-r1
+    status: current
+    semantic_ids: *root_semantics
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+    validation_modes: [pointwise, temporal_stateful, interface_unit, boundary_invalid_region]
+  - binding_id: binding.root.resource
+    owner_element_id: pump_loop_fixture
+    binding_kind: resource
+    native_schema: generic_artifact
+    subject_id: clean
+    subject_revision: fixture-r1
+    artifact: &manifest_ref {repo_path: data/clean_manifest.yaml, sha256: 104d08dcfc017eb598d94f27b319b732d388cb8a60cee24a2710b32ad2bf72a6}
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: *root_semantics
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - binding_id: binding.root.oracle
+    owner_element_id: pump_loop_fixture
+    binding_kind: oracle
+    native_schema: model_validation_plan
+    subject_id: pump_loop_clean_validation
+    subject_revision: fixture-r1
+    artifact: &validation_ref {repo_path: validation/clean_validation_plan.yaml, sha256: ac886eb3798bcf91663ffe58819c454dace35e4812730563239b3703d9513832}
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.model_validation_plan.fixture-r1
+    status: current
+    semantic_ids: *root_semantics
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - binding_id: binding.root.evidence
+    owner_element_id: pump_loop_fixture
+    binding_kind: evidence
+    native_schema: evidence_mesh
+    subject_id: pump_loop_validation_evidence_mesh
+    subject_revision: fixture-r1
+    artifact: &mesh_ref {repo_path: evidence_mesh.yaml, sha256: db1e15ee385b009b6edb48dcb76214ec465cd4cea89b8c98c1c704459677ca08}
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.evidence_mesh.fixture-r1
+    status: current
+    semantic_ids: *root_semantics
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - binding_id: binding.root.dataset
+    owner_element_id: pump_loop_fixture
+    binding_kind: dataset
+    native_schema: generic_artifact
+    subject_id: sha256:a187027e2b4251c607c72405051574034f0ec35b40dec26f8ad8d6b6a0a78a84
+    subject_revision: fixture-r1
+    artifact: &csv_ref {repo_path: data/clean.csv, sha256: a187027e2b4251c607c72405051574034f0ec35b40dec26f8ad8d6b6a0a78a84}
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: *root_semantics
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - binding_id: binding.root.project-record
+    owner_element_id: pump_loop_fixture
+    binding_kind: project_record
+    native_schema: project_evidence_registry
+    subject_id: pump_loop_fixture_evidence
+    subject_revision: fixture-r1
+    artifact: &registry_ref {repo_path: evidence/project_evidence_registry.yaml, sha256: 80582208774ab97de5a098e6192241e7a70f4ebae88e06ea5d27dda6d7612232}
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.project_evidence_registry.fixture-r1
+    status: current
+    semantic_ids: *root_semantics
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - binding_id: binding.root.model-library
+    owner_element_id: pump_loop_fixture
+    binding_kind: model_library
+    native_schema: model_library_index
+    subject_id: pump_loop_fixture_library
+    subject_revision: fixture-r1
+    artifact: &library_ref {repo_path: model_library.yaml, sha256: 609d676cadb65e3a0510b02af83b2ba71e998538ce53e0b63eb1da2b20ced05d}
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.model_library_index.fixture-r1
+    status: current
+    semantic_ids: *root_semantics
+    obligation_ids: [behavior.root.signal-relation, behavior.root.sampled-mode]
+  - &path_implementation
+    binding_id: binding.path.implementation
+    owner_element_id: fixture_validation_path
+    binding_kind: implementation
+    native_schema: hierarchical_audit
+    subject_id: pump_loop_contract_fixture
+    subject_revision: fixture-r1
+    artifact: *hierarchy_ref
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: &path_semantics [sem.path.relation, sem.path.mode_constraint, sem.path.initial_mode, sem.path.mode_step, sem.path.termination, sem.path.pointwise_assumption]
+    obligation_ids: [behavior.path.signal-relation, behavior.path.sampled-mode]
+  - binding_id: binding.path.test
+    owner_element_id: fixture_validation_path
+    binding_kind: test
+    native_schema: test_file_contract
+    subject_id: pump_loop_clean_contract
+    subject_revision: fixture-r1
+    artifact: *contract_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.test_file_contract.fixture-r1
+    status: current
+    semantic_ids: *path_semantics
+    obligation_ids: [behavior.path.signal-relation, behavior.path.sampled-mode]
+    validation_modes: [pointwise, temporal_stateful, interface_unit, boundary_invalid_region, cross_coupling]
+  - binding_id: binding.path.resource
+    owner_element_id: fixture_validation_path
+    binding_kind: resource
+    native_schema: generic_artifact
+    subject_id: clean
+    subject_revision: fixture-r1
+    artifact: *manifest_ref
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: *path_semantics
+    obligation_ids: [behavior.path.signal-relation, behavior.path.sampled-mode]
+  - binding_id: binding.path.oracle
+    owner_element_id: fixture_validation_path
+    binding_kind: oracle
+    native_schema: model_validation_plan
+    subject_id: pump_loop_clean_validation
+    subject_revision: fixture-r1
+    artifact: *validation_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.model_validation_plan.fixture-r1
+    status: current
+    semantic_ids: *path_semantics
+    obligation_ids: [behavior.path.signal-relation, behavior.path.sampled-mode]
+  - binding_id: binding.path.evidence
+    owner_element_id: fixture_validation_path
+    binding_kind: evidence
+    native_schema: evidence_mesh
+    subject_id: pump_loop_validation_evidence_mesh
+    subject_revision: fixture-r1
+    artifact: *mesh_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.evidence_mesh.fixture-r1
+    status: current
+    semantic_ids: *path_semantics
+    obligation_ids: [behavior.path.signal-relation, behavior.path.sampled-mode]
+  - binding_id: binding.signal.implementation
+    owner_element_id: pump_signal_relation
+    binding_kind: implementation
+    native_schema: hierarchical_audit
+    subject_id: pump_loop_contract_fixture
+    subject_revision: fixture-r1
+    artifact: *hierarchy_ref
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: &signal_semantics [sem.signal.relation]
+    obligation_ids: [behavior.signal.y-equals-two-x]
+  - binding_id: binding.signal.test
+    owner_element_id: pump_signal_relation
+    binding_kind: test
+    native_schema: test_file_contract
+    subject_id: pump_loop_clean_contract
+    subject_revision: fixture-r1
+    artifact: *contract_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.test_file_contract.fixture-r1
+    status: current
+    semantic_ids: *signal_semantics
+    obligation_ids: [behavior.signal.y-equals-two-x]
+    validation_modes: [pointwise, interface_unit, boundary_invalid_region]
+  - binding_id: binding.signal.resource
+    owner_element_id: pump_signal_relation
+    binding_kind: resource
+    native_schema: generic_artifact
+    subject_id: clean
+    subject_revision: fixture-r1
+    artifact: *manifest_ref
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: *signal_semantics
+    obligation_ids: [behavior.signal.y-equals-two-x]
+  - binding_id: binding.signal.oracle
+    owner_element_id: pump_signal_relation
+    binding_kind: oracle
+    native_schema: model_validation_plan
+    subject_id: pump_loop_clean_validation
+    subject_revision: fixture-r1
+    artifact: *validation_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.model_validation_plan.fixture-r1
+    status: current
+    semantic_ids: *signal_semantics
+    obligation_ids: [behavior.signal.y-equals-two-x]
+  - binding_id: binding.signal.evidence
+    owner_element_id: pump_signal_relation
+    binding_kind: evidence
+    native_schema: evidence_mesh
+    subject_id: pump_loop_validation_evidence_mesh
+    subject_revision: fixture-r1
+    artifact: *mesh_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.evidence_mesh.fixture-r1
+    status: current
+    semantic_ids: *signal_semantics
+    obligation_ids: [behavior.signal.y-equals-two-x]
+  - binding_id: binding.mode.implementation
+    owner_element_id: valve_mode_context
+    binding_kind: implementation
+    native_schema: hierarchical_audit
+    subject_id: pump_loop_contract_fixture
+    subject_revision: fixture-r1
+    artifact: *hierarchy_ref
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: &mode_semantics [sem.mode.constraint, sem.mode.initial, sem.mode.step, sem.mode.termination, sem.mode.pointwise_assumption]
+    obligation_ids: [behavior.mode.sampled-valve-context]
+  - binding_id: binding.mode.test
+    owner_element_id: valve_mode_context
+    binding_kind: test
+    native_schema: test_file_contract
+    subject_id: pump_loop_clean_contract
+    subject_revision: fixture-r1
+    artifact: *contract_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.test_file_contract.fixture-r1
+    status: current
+    semantic_ids: *mode_semantics
+    obligation_ids: [behavior.mode.sampled-valve-context]
+    validation_modes: [pointwise, temporal_stateful, interface_unit, boundary_invalid_region]
+  - binding_id: binding.mode.resource
+    owner_element_id: valve_mode_context
+    binding_kind: resource
+    native_schema: generic_artifact
+    subject_id: clean
+    subject_revision: fixture-r1
+    artifact: *manifest_ref
+    provider_id: provider.pump-loop-repository
+    status: current
+    semantic_ids: *mode_semantics
+    obligation_ids: [behavior.mode.sampled-valve-context]
+  - binding_id: binding.mode.oracle
+    owner_element_id: valve_mode_context
+    binding_kind: oracle
+    native_schema: model_validation_plan
+    subject_id: pump_loop_clean_validation
+    subject_revision: fixture-r1
+    artifact: *validation_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.model_validation_plan.fixture-r1
+    status: current
+    semantic_ids: *mode_semantics
+    obligation_ids: [behavior.mode.sampled-valve-context]
+  - binding_id: binding.mode.evidence
+    owner_element_id: valve_mode_context
+    binding_kind: evidence
+    native_schema: evidence_mesh
+    subject_id: pump_loop_validation_evidence_mesh
+    subject_revision: fixture-r1
+    artifact: *mesh_ref
+    provider_id: provider.pump-loop-repository
+    native_execution_id: execution.pump-loop.evidence_mesh.fixture-r1
+    status: current
+    semantic_ids: *mode_semantics
+    obligation_ids: [behavior.mode.sampled-valve-context]

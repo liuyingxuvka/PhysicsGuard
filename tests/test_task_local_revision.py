@@ -37,6 +37,26 @@ FAMILIES = (
 COVERAGE_FINGERPRINT = hashlib.sha256(b"coverage-universe-v1").hexdigest()
 
 
+def _blueprint(label: str = "base") -> dict:
+    return {
+        "blueprint_id": f"blueprint:pump-loop:{label}",
+        "target_system_id": "pump-loop",
+        "subject_revision": "target-r1",
+        "blueprint_fingerprint": hashlib.sha256(
+            f"blueprint:{label}".encode()
+        ).hexdigest(),
+        "blueprint_review_fingerprint": hashlib.sha256(
+            f"blueprint-review:{label}".encode()
+        ).hexdigest(),
+        "scope": "whole",
+        "affected_slice_fingerprint": None,
+        "affected_element_ids": [],
+        "deepest_licensed_layer": "resource_oracle",
+        "first_gap_id": None,
+        "review_status": "pass",
+    }
+
+
 def _write_model(path: Path, content: str, *, model_id: str = "pump-loop") -> dict[str, str]:
     path.write_text(content, encoding="utf-8")
     return {
@@ -80,6 +100,7 @@ def _native_depth(
     gaps: list[dict] | None = None,
     task_id: str = "task-1",
     plan_id: str = "diagnosis-1",
+    blueprint: dict | None = None,
 ) -> dict:
     gaps = list(gaps or [])
     payload = {
@@ -92,6 +113,7 @@ def _native_depth(
         "iteration": iteration,
         "model_sha256": model["sha256"],
         "coverage_universe_fingerprint": COVERAGE_FINGERPRINT,
+        "blueprint": dict(blueprint or _blueprint()),
         "source_receipt_ids": {family: f"receipt:{family}:{iteration}" for family in FAMILIES},
         "source_receipt_fingerprints": {
             family: hashlib.sha256(f"{family}:{iteration}".encode()).hexdigest()
@@ -140,6 +162,7 @@ def _plan_data(
     gaps: list[dict] | None = None,
     predecessor: dict | None = None,
 ) -> dict:
+    blueprint = _blueprint()
     return {
         "plan_id": "diagnosis-1",
         "task_id": "task-1",
@@ -147,6 +170,7 @@ def _plan_data(
         "non_trivial": True,
         "model": model,
         "coverage": _coverage(),
+        "blueprint": blueprint,
         "assumptions": [],
         "unknowns": ["true physical cause is not yet known"],
         "prediction_sequence": 4,
@@ -184,7 +208,7 @@ def _plan_data(
         "max_iterations": 4,
         "predecessor": predecessor,
         "native_depth_receipt": _native_depth(
-            model, iteration=iteration, gaps=gaps
+            model, iteration=iteration, gaps=gaps, blueprint=blueprint
         ),
     }
 
@@ -193,13 +217,14 @@ def _plan(model: dict[str, str], *, gaps: list[dict] | None = None) -> Hypothesi
     return HypothesisPlanSpec.model_validate(_plan_data(model, gaps=gaps))
 
 
-def _evidence(evidence_id: str, group: str) -> dict:
+def _evidence(evidence_id: str, group: str, *, evidence_kind: str = "test") -> dict:
     return {
         "evidence_id": evidence_id,
         "evidence_fingerprint": hashlib.sha256(evidence_id.encode()).hexdigest(),
         "producer_id": f"producer:{evidence_id}",
         "source_ref": f"test:{evidence_id}",
         "independence_group": group,
+        "evidence_kind": evidence_kind,
     }
 
 
@@ -212,6 +237,7 @@ def _observation(
     residuals: dict | None = None,
     timings: dict | None = None,
     external_input_ids: list[str] | None = None,
+    evidence_kind: str = "test",
 ) -> DiagnosticObservationSpec:
     frozen = freeze_hypothesis_plan(plan, base_dir=tmp_path)
     return DiagnosticObservationSpec.model_validate(
@@ -220,9 +246,15 @@ def _observation(
             "task_id": plan.task_id,
             "plan_id": plan.plan_id,
             "frozen_plan_fingerprint": frozen["plan_fingerprint"],
+            "blueprint_fingerprint": plan.blueprint.blueprint_fingerprint,
+            "affected_slice_fingerprint": plan.blueprint.affected_slice_fingerprint,
             "selected_candidate_id": "discriminating",
             "observation_sequence": sequence,
-            "evidence": _evidence("observation-1", "external-testbench-run-1"),
+            "evidence": _evidence(
+                "observation-1",
+                "external-testbench-run-1",
+                evidence_kind=evidence_kind,
+            ),
             "signals": (
                 {"speed": {"value": 10.0, "trend": "increase"}}
                 if signals is None
@@ -277,6 +309,7 @@ def _check(
     independent_of: list[str] | None = None,
     group: str | None = None,
     predictive: dict | None = None,
+    blueprint: dict | None = None,
 ) -> dict:
     check_id = {
         "regression": "regression",
@@ -294,6 +327,7 @@ def _check(
         "revision_id": revision_id,
         "candidate_model_sha256": candidate["sha256"],
         "coverage_universe_fingerprint": COVERAGE_FINGERPRINT,
+        "blueprint": dict(blueprint or _blueprint("candidate")),
         "evidence": _evidence(
             f"evidence-{check_id}", group or f"independent-{check_id}"
         ),
@@ -322,15 +356,28 @@ def _revision_data(
     rollback: dict[str, str] | None = None,
 ) -> dict:
     predictive = predictive or _predictive_receipt(candidate)
+    base_blueprint = _blueprint("base")
+    candidate_blueprint = _blueprint("candidate")
     checks = [
-        _check("regression", candidate, status=check_status),
+        _check(
+            "regression",
+            candidate,
+            status=check_status,
+            blueprint=candidate_blueprint,
+        ),
         _check(
             "holdout",
             candidate,
             independent_of=["construction-1"],
             group="independent-future-holdout",
+            blueprint=candidate_blueprint,
         ),
-        _check("predictive_rollout", candidate, predictive=predictive),
+        _check(
+            "predictive_rollout",
+            candidate,
+            predictive=predictive,
+            blueprint=candidate_blueprint,
+        ),
     ]
     return {
         "revision_id": "revision-1",
@@ -343,11 +390,19 @@ def _revision_data(
         "base_model": base,
         "candidate_model": candidate,
         "coverage": _coverage(),
+        "base_blueprint": base_blueprint,
+        "candidate_blueprint": candidate_blueprint,
         "base_native_depth_receipt": _native_depth(
-            base, iteration=iteration - 1, gaps=base_gaps
+            base,
+            iteration=iteration - 1,
+            gaps=base_gaps,
+            blueprint=base_blueprint,
         ),
         "candidate_native_depth_receipt": _native_depth(
-            candidate, iteration=iteration, gaps=candidate_gaps
+            candidate,
+            iteration=iteration,
+            gaps=candidate_gaps,
+            blueprint=candidate_blueprint,
         ),
         "revision_kind": "mapping_update",
         "triggering_mismatch_ids": ["H2:h2-signal"],
@@ -399,6 +454,24 @@ def test_native_depth_receipt_requires_all_six_families_and_current_fingerprint(
     stale["source_receipt_ids"]["mapping"] = "receipt:mapping:changed"
     with pytest.raises(ValidationError, match="fingerprint"):
         NativeDepthReceiptSpec.model_validate(stale)
+
+
+def test_plan_rejects_stale_blueprint_depth_or_first_gap_binding(tmp_path: Path) -> None:
+    model = _write_model(tmp_path / "base.json", "base model")
+    data = _plan_data(model)
+    data["blueprint"]["deepest_licensed_layer"] = "native_model_code_test"
+    with pytest.raises(ValidationError, match="blueprint identity or depth mismatch"):
+        HypothesisPlanSpec.model_validate(data)
+
+    data = _plan_data(model)
+    data["blueprint"].update(
+        {
+            "review_status": "blocked",
+            "first_gap_id": "gap:resource-oracle",
+        }
+    )
+    with pytest.raises(ValidationError, match="blueprint identity or depth mismatch"):
+        HypothesisPlanSpec.model_validate(data)
 
 
 def test_later_iteration_requires_exact_predecessor(tmp_path: Path) -> None:
@@ -454,6 +527,16 @@ def test_observation_must_bind_current_frozen_plan(tmp_path: Path) -> None:
         evaluate_hypothesis_observation(plan, observation, base_dir=tmp_path)
 
 
+def test_observation_from_stale_blueprint_cannot_update_current_task(tmp_path: Path) -> None:
+    model = _write_model(tmp_path / "base.json", "base model")
+    plan = _plan(model)
+    observation = _observation(plan, tmp_path).model_copy(
+        update={"blueprint_fingerprint": "0" * 64}
+    )
+    with pytest.raises(ValueError, match="blueprint fingerprint is stale"):
+        evaluate_hypothesis_observation(plan, observation, base_dir=tmp_path)
+
+
 def test_observation_weakens_one_hypothesis_and_preserves_another(tmp_path: Path) -> None:
     model = _write_model(tmp_path / "base.json", "base model")
     plan = _plan(model)
@@ -478,7 +561,14 @@ def test_missing_target_remains_undetermined_and_open(tmp_path: Path) -> None:
     assert any(gap.startswith("observation_missing:") for gap in receipt["open_gap_ids"])
 
 
-def test_all_hypotheses_contradicted_creates_model_miss(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "evidence_kind",
+    ["runtime", "test", "replay", "manual", "production"],
+)
+def test_all_hypotheses_contradicted_creates_model_miss(
+    tmp_path: Path,
+    evidence_kind: str,
+) -> None:
     model = _write_model(tmp_path / "base.json", "base model")
     plan = _plan(model)
     receipt = evaluate_hypothesis_observation(
@@ -489,12 +579,24 @@ def test_all_hypotheses_contradicted_creates_model_miss(tmp_path: Path) -> None:
             signals={"speed": {"value": 0.0, "trend": "stable"}},
             residuals={"balance": 2.0},
             timings={"temperature_change": 2.0, "speed_change": 1.0},
+            evidence_kind=evidence_kind,
         ),
         base_dir=tmp_path,
     )
     assert receipt["all_hypotheses_contradicted"]
     assert receipt["terminal_reason"] == "model_miss"
     assert receipt["model_miss_gap_id"] in receipt["open_gap_ids"]
+    assert receipt["blueprint_revision_required"]
+    assert receipt["invalidated_broad_claim_blueprint_fingerprints"] == [
+        plan.blueprint.blueprint_fingerprint
+    ]
+    assert receipt["model_miss_evidence_kind"] == evidence_kind
+    assert "revise_blueprint_or_native_bindings_from_model_miss" in receipt[
+        "required_next_actions"
+    ]
+    assert "rebind_native_depth_to_new_blueprint_revision" in receipt[
+        "required_next_actions"
+    ]
     assert not receipt["physical_cause_licensed"]
 
 
@@ -535,6 +637,23 @@ def test_candidate_check_bound_to_another_candidate_is_rejected_by_schema(tmp_pa
         data["checks"][0]
     )
     with pytest.raises(ValidationError, match="identity mismatch"):
+        CandidateModelRevisionSpec.model_validate(data)
+
+
+def test_candidate_revision_requires_a_new_blueprint_revision(tmp_path: Path) -> None:
+    base = _write_model(tmp_path / "base.json", "base model")
+    candidate = _write_model(tmp_path / "candidate.json", "candidate model")
+    data = _revision_data(base, candidate)
+    base_blueprint = data["base_blueprint"]
+    data["candidate_blueprint"] = dict(base_blueprint)
+    data["candidate_native_depth_receipt"]["blueprint"] = dict(base_blueprint)
+    data["candidate_native_depth_receipt"]["receipt_fingerprint"] = (
+        fingerprint_native_depth_receipt(data["candidate_native_depth_receipt"])
+    )
+    for check in data["checks"]:
+        check["blueprint"] = dict(base_blueprint)
+        check["receipt_fingerprint"] = fingerprint_revision_check_receipt(check)
+    with pytest.raises(ValidationError, match="new blueprint fingerprint"):
         CandidateModelRevisionSpec.model_validate(data)
 
 

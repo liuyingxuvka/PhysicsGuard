@@ -36,6 +36,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint coordination boundary
+
+Consume a current summary to choose the minimum direct route, an affected or reverse-trace projection to localize a named symptom, and never author or fully review `PhysicalModelBlueprint`. Whole-blueprint work belongs to `physicsguard-candidate-model-blueprint`; final claims belong to the relevant direct owner. A missing/stale/ambiguous projection blocks the handoff and does not authorize loading every skill, every blueprint member, or the repository as fallback.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -54,6 +58,8 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `selected_native_routes`
 - `localized_findings`
+- `blueprint_trace_projection`
+- `delegated_blueprint_owner`
 - `next_required_evidence`
 - `bounded_claim`
 

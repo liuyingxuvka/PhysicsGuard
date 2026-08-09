@@ -1,0 +1,185 @@
+schema: physicsguard.project_formula.v1
+module_type: AggregateMassBalanceModule
+owner: physicsguard.module_semantics.source_first.AggregateMassBalanceModule
+purpose: Source-first reconstruction of the exact maintained implementation, configuration, scenario ports, state roles, residuals,
+  and protected failure.
+authoring_status: source_first_reconstruction_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_source_first_reconstruction
+relation_directionality: direction_neutral
+configuration:
+- name: mass_in_variables
+  dimension: enum
+  unit: enum
+  required: false
+  default: []
+  constraints:
+  - 'Maintained source guard: _variable_list(parameters, ''mass_in_variables'', required=False)'
+- name: mass_out_variables
+  dimension: enum
+  unit: enum
+  required: false
+  default: []
+  constraints:
+  - 'Maintained source guard: _variable_list(parameters, ''mass_out_variables'', required=False)'
+- name: mass_storage_rate_variable
+  dimension: enum
+  unit: enum
+  required: false
+  default: null
+  constraints:
+  - 'Maintained source guard: _optional_variable(parameters.get(''mass_storage_rate_variable''), ''mass_storage_rate_variable'')'
+- name: residual_scale_kg_s
+  dimension: mass_flow
+  unit: kg/s
+  required: false
+  default: 0.01
+  constraints:
+  - 'Maintained source guard: _positive_float(parameters.get(''residual_scale_kg_s'', 0.01), ''residual_scale_kg_s'')'
+- name: target_storage_rate_kg_s
+  dimension: mass_flow
+  unit: kg/s
+  required: false
+  default: 0.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''target_storage_rate_kg_s'', 0.0), ''target_storage_rate_kg_s'')'
+scenario_inputs:
+- name: mass_in_0
+  dimension: mass_flow
+  unit: kg/s
+  role: input
+  source_kind: external
+  source_attribute: mass_in
+  source_reference: irrigation_supply_mass_flow.value
+  source_index: 0
+- name: mass_out_0
+  dimension: mass_flow
+  unit: kg/s
+  role: input
+  source_kind: external
+  source_attribute: mass_out
+  source_reference: crop_evapotranspiration_mass_flow.value
+  source_index: 0
+- name: mass_out_1
+  dimension: mass_flow
+  unit: kg/s
+  role: input
+  source_kind: external
+  source_attribute: mass_out
+  source_reference: drainage_return_mass_flow.value
+  source_index: 1
+- name: storage_0
+  dimension: mass_flow
+  unit: kg/s
+  role: input
+  source_kind: external
+  source_attribute: storage_variable
+  source_reference: crop_water_storage_rate.value
+scenario_outputs: []
+residuals:
+- name: aggregate_mass_balance
+  expression: mass_in_0 - mass_out_0 - mass_out_1 - storage_0
+  dimension: mass_flow
+  unit: kg/s
+  dimensional_derivation: The exact maintained-source relation is normalized in kg/s; physical meaning remains pending separate
+    review.
+  scale_expression: residual_scale_kg_s
+  zero_condition: The exact source-first relation aggregate_mass_balance evaluates to zero.
+constraints:
+  constructor:
+  - predicate: residual_scale_kg_s > 0
+    guard_signature: _positive_float(parameters.get('residual_scale_kg_s', 0.01), 'residual_scale_kg_s')
+    failure_type: ValueError
+    message_selector: residual_scale_kg_s
+    on_violation: Reject non-positive residual_scale_kg_s through the maintained source guard.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_kg_s: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_kg_s: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_kg_s: -1.0
+      expected: fail
+  evaluation: []
+regions:
+  valid:
+  - predicate: residual_scale_kg_s > 0
+    meaning: The protected maintained constructor guard accepts this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_kg_s: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_kg_s: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_kg_s: -1.0
+      expected: fail
+  invalid:
+  - predicate: not (residual_scale_kg_s > 0)
+    meaning: The protected maintained constructor guard rejects this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_kg_s: -1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_kg_s: 0.0
+      expected: pass
+    - kind: outside
+      inputs:
+        residual_scale_kg_s: 1.0
+      expected: fail
+assumptions:
+- This reconstruction describes the exact bound current source and example only.
+- No physical truth or cross-target generalization is licensed by source agreement.
+validity:
+- Use only while the bound implementation, exact instantiation, formula, ports, and tests retain matching fingerprints.
+invariants:
+- All maintained constructor parameters have explicit source provenance.
+- Scenario ports exactly cover every current local declaration and referenced external variable.
+effects:
+- Read the exact bound scenario ports and emit 1 named residual record(s) without mutating the solver vector.
+postconditions:
+- Every emitted record keeps its source name, role, positive scale, diagnostic key, and source-bound arithmetic.
+termination: Finite algebraic source-first evaluation terminates without retry or hidden iteration.
+behavior_contract:
+  kind: residual_equations
+  residuals:
+  - aggregate_mass_balance
+  input_ports:
+  - mass_in_0
+  - mass_out_0
+  - mass_out_1
+  - storage_0
+  output_ports: []
+oracle_cases:
+- case_id: exact_bound_current_source
+  inputs:
+    mass_in_variables:
+    - irrigation_supply_mass_flow.value
+    mass_out_variables:
+    - crop_evapotranspiration_mass_flow.value
+    - drainage_return_mass_flow.value
+    mass_storage_rate_variable: crop_water_storage_rate.value
+    target_storage_rate_kg_s: 0.0
+    residual_scale_kg_s: 0.01
+    mass_in_0: 1.0
+    mass_out_0: 1.0
+    mass_out_1: 1.0
+    storage_0: 1.0
+  expected:
+    aggregate_mass_balance: -2.0
+  tolerance: 1.0e-09
+claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It does not prove
+  physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate evidence accepts those claims.

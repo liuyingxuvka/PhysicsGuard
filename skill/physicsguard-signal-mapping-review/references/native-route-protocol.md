@@ -5,6 +5,12 @@ When the source is a concrete test data file with many fields, use
 `physicsguard-test-file-contract-review` first or in parallel so every file
 field has a catalog row, role/disposition, and evidence-backed mapping.
 
+## Blueprint interface projection
+
+Consume the exact affected interface projection and its downstream dependency closure. Verify source and target identities, units, reference frames, sign conventions, conversion semantics, time basis, revision, evidence fingerprint, and all selected consumers. Preserve omitted branches as outside scope. A missing, stale, ambiguous, or foreign projection blocks this route and never triggers full-blueprint or repository scanning.
+
+Executable projection entry: call `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` with the exact mapped interface, conversion semantic, source binding, or consumer identity. It first reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result; non-current review identity and mixed valid/invalid seeds fail atomically rather than returning a partial mapping boundary.
+
 ## Workflow
 
 1. Create or review an intake file based on templates/external_model_intake.yaml.

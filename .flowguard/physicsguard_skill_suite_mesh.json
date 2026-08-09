@@ -80,7 +80,7 @@
       "python -m physicsguard.guard_model_contract",
       "python -m physicsguard.cli"
     ],
-    "consumer_dependency": "physicsguard==0.15.1",
+    "consumer_dependency": "physicsguard==0.15.3",
     "missing_dependency_behavior": "fail_visible",
     "copied_editable_implementations_allowed": false,
     "dataset_bundle_reduction_gate": "isolated_package_install_and_entrypoint_equivalence_required",
@@ -114,7 +114,7 @@
       "target_skill_id": "physicsguard-audit-closure",
       "native_owner_id": "physicsguard.audit-closure",
       "native_route_id": "route:physicsguard-audit-closure:close",
-      "declared_check_count": 9,
+      "declared_check_count": 10,
       "inputs": [
         "closure_plan",
         "native_check_receipts",
@@ -362,20 +362,20 @@
   "test_mesh": {
     "mesh_id": "physicsguard.skillguard-family-validation.v4",
     "source_model_id": "physicsguard.skill-suite-maintenance.v4",
-    "inventory_revision": "ten-members-84-semantic-checks",
+    "inventory_revision": "ten-members-85-exact-check-owners",
     "diagnostic_boundary": "declared_in_progress",
-    "planned": 84,
-    "executed": 74,
+    "planned": 85,
+    "executed": 0,
     "failed": 0,
-    "not_run": 10,
-    "not_run_reason": "The ten new task-local model-deepening owners await the parent integration owner's final frozen SkillGuard run.",
+    "not_run": 85,
+    "not_run_reason": "Current generated source defines the owner topology only; no frozen SkillGuard owner execution receipt is embedded as source.",
     "parent_gate": "ten frozen same-unit member plans; no suite-parent receipt",
     "child_evidence_owner": "each member semantic check projection",
     "supervisor_run_count": 10,
     "read_only_reuse_review": {
-      "selected_owner_count": 84,
+      "selected_owner_count": 85,
       "reusable_owner_count": 0,
-      "would_execute_owner_count": 84
+      "would_execute_owner_count": 85
     },
     "release_scope": "deferred_not_requested"
   },
@@ -492,9 +492,17 @@
     ]
   },
   "toolchain_identity": {
-    "physicsguard_version": "0.15.1",
-    "flowguard_version": "0.68.2",
+    "physicsguard_version": "0.15.3",
+    "physicsguard_authority_sha256": "sha256:0513e924b92e45de0ccfcd2c4afa547914dba98e73a71cd3a79ea3d908a447c3",
+    "flowguard_version": "0.68.9",
     "flowguard_schema_version": "1.0",
-    "skillguard_version": "0.7.2"
+    "flowguard_package_tree_sha256": "sha256:4e4733d942f52de84c25f93bab30d4a910ec3b55059c5330e3e6c1a95c77d8e4",
+    "flowguard_direct_url_sha256": "sha256:35738303a58827bda346d458850eb99718f2b382c3ef138cb9036c07db24de9d",
+    "flowguard_authority_sha256": "sha256:2ed96bd5054c54facfc661d4eb7bf8e56e35a222b3312f64da2a97246a12fb39",
+    "skillguard_version": "0.7.2",
+    "skillguard_api_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
+    "skillguard_distribution_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
+    "skillguard_direct_url_sha256": "sha256:7236a685f8f921d9a5f4444658caa372abdba29c9e5ed6ad62f5f7b84d060558",
+    "skillguard_authority_sha256": "sha256:aa816fbc8145c43f06c4ab5dec91015fedf2232e18b58bc33545346cffbb4bed"
   }
 }

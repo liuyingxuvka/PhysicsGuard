@@ -24,12 +24,16 @@
     "passing_test_file_contracts",
     "dataset_identity",
     "validation_plan",
-    "mapping_evidence"
+    "mapping_evidence",
+    "current_affected_or_whole_blueprint_projection"
   ],
   "required_outputs": [
     "validation_status",
     "depth_receipt",
     "adequacy_findings",
+    "per_blueprint_element_coverage",
+    "affected_slice_fingerprint",
+    "unsupported_claims",
     "bounded_validation_claim"
   ],
   "initial_load": [
@@ -41,12 +45,15 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_affected_validation_slice_required",
+        "whole_target_validation_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "blueprint_validation_coverage_projection"
       ],
-      "sha256": "5af0d169f4eef6ffe5e7d8d84dd440eca7fe52fcd1ad0be68b4061361c659ba0"
+      "sha256": "fe2b3a7df973fec4a97ac9adbf35f281a78f92ce3937789a7ccdfc9a26a19dcf"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -70,7 +77,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "bf8a153e1f721591cdab0c3d774ccf4ddb1c397a9571183a4e59343d283a30f6"
+      "sha256": "7b48a3853bc208ede7643cc046b1114e94567d8dcdd4acab645ffcd6d1d3e695"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -89,6 +96,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "fd8b8dced3f91df7406104e0505e04fb299501f42486ec72aea6e66586c8d710",
+  "entry_prompt_sha256": "06270e247c59ff8b0a0bc65a82a82340f70b0629030c96f965d35f4de210b087",
   "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt."
 }

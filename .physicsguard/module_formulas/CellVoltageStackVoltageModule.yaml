@@ -1,0 +1,50 @@
+schema: physicsguard.project_formula.v1
+module_type: CellVoltageStackVoltageModule
+owner: physicsguard.project_formula.cell_stack_voltage.v1
+purpose: Independently state the low-fidelity cell-count multiplication relation used by the exact stack-voltage scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: n_cells, dimension: count, unit: count, required: true, default: null, constraints: [n_cells > 0]}
+  - {name: residual_scale_V, dimension: voltage, unit: V, required: false, default: 1.0, constraints: [residual_scale_V > 0]}
+scenario_inputs: [{name: V_cell_V, dimension: voltage, unit: V}]
+scenario_outputs: [{name: V_stack_V, dimension: voltage, unit: V}]
+residuals:
+  - name: cell_stack_voltage
+    expression: V_stack_V - n_cells * V_cell_V
+    dimension: voltage
+    unit: V
+    dimensional_derivation: A dimensionless cell count multiplied by V remains V.
+    scale_expression: residual_scale_V
+    zero_condition: Stack voltage equals configured cell count multiplied by cell voltage.
+    source_intermediates: [{symbol: cell_voltage, expression: V_cell_V}, {symbol: stack_voltage, expression: V_stack_V}]
+constraints:
+  constructor:
+    - predicate: n_cells > 0
+      guard_signature: _required_positive(parameters, 'n_cells')
+      failure_type: ValueError
+      message_selector: n_cells
+      on_violation: Reject non-positive n_cells.
+      cases: [{kind: inside, inputs: {n_cells: 400.0}, expected: pass}, {kind: boundary, inputs: {n_cells: 0.0}, expected: fail}, {kind: outside, inputs: {n_cells: -1.0}, expected: fail}]
+    - predicate: residual_scale_V > 0
+      guard_signature: _positive_float(parameters.get('residual_scale_V', 1.0), 'residual_scale_V')
+      failure_type: ValueError
+      message_selector: residual_scale_V
+      on_violation: Reject non-positive residual_scale_V.
+      cases: [{kind: inside, inputs: {residual_scale_V: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_V: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_V: -1.0}, expected: fail}]
+  evaluation: []
+regions:
+  valid:
+    - predicate: n_cells > 0 and residual_scale_V > 0 and V_cell_V >= 0 and V_stack_V >= 0
+      meaning: Nonnegative lumped stack-voltage magnitude relation with a positive cell count and scale.
+      cases: [{kind: inside, inputs: {n_cells: 400.0, residual_scale_V: 1.0, V_cell_V: 0.7, V_stack_V: 280.0}, expected: pass}, {kind: boundary, inputs: {n_cells: 1.0, residual_scale_V: 1.0, V_cell_V: 0.0, V_stack_V: 0.0}, expected: pass}, {kind: outside, inputs: {n_cells: 0.0, residual_scale_V: 1.0, V_cell_V: 0.7, V_stack_V: 280.0}, expected: fail}]
+  invalid:
+    - predicate: n_cells <= 0 or residual_scale_V <= 0 or V_cell_V < 0 or V_stack_V < 0
+      meaning: Invalid configuration or signed values outside the declared voltage-magnitude boundary.
+      cases: [{kind: inside, inputs: {n_cells: 0.0, residual_scale_V: 1.0, V_cell_V: 0.7, V_stack_V: 280.0}, expected: pass}, {kind: boundary, inputs: {n_cells: 1.0, residual_scale_V: 1.0, V_cell_V: 0.0, V_stack_V: 0.0}, expected: fail}, {kind: outside, inputs: {n_cells: 400.0, residual_scale_V: 1.0, V_cell_V: 0.7, V_stack_V: 280.0}, expected: fail}]
+assumptions: [All cells share one representative cell voltage, Cell count is a positive lumped scalar, Cell polarization and imbalance are outside this relation]
+validity: [Use only as a lumped algebraic stack-voltage relation, Scenario input and output roles do not make the equation intrinsically directional]
+oracle_cases:
+  - {case_id: balanced, inputs: {n_cells: 4.0, residual_scale_V: 1.0, V_cell_V: 2.0, V_stack_V: 8.0}, expected: {cell_stack_voltage: 0.0}, tolerance: 1e-12}
+  - {case_id: low_stack_voltage, inputs: {n_cells: 4.0, residual_scale_V: 1.0, V_cell_V: 2.0, V_stack_V: 7.0}, expected: {cell_stack_voltage: -1.0}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity lumped cell-count relation for one exact scenario, not a cell-voltage model, imbalance model, or empirical validation.

@@ -1,0 +1,2806 @@
+schema_version: physicsguard.physical-model-blueprint.v1
+blueprint_id: blueprint.reference-fmus.bouncing-ball.v0.0.40-fmi3
+qualification_target: external_physical_target
+understanding_target: object_dna
+artifact_root: explicit_material_root
+target:
+  target_system_id: reference-fmus.bouncing-ball
+  target_kind: simulation_model
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  boundary_fingerprint: 9bafbe49325fe1dd845837c85dd73047c79ad5491c3b331414f4a7c75b25fd57
+  purpose: Qualify the frozen official BouncingBall FMI 3 package as a layered physical-model
+    DNA target.
+  claim_boundary: Static and executable behavior for the frozen v0.0.40 FMI 3 package
+    and declared event branches only.
+required_capability_ids:
+- artifact_inventory
+- interface_topology
+- native_binding_observation
+capability_owners:
+  artifact_inventory: provider.modelica-reference-fmus
+  interface_topology: provider.modelica-reference-fmus
+  native_binding_observation: provider.modelica-reference-fmus
+providers:
+- provider_id: provider.modelica-reference-fmus
+  provider_kind: official-fmi-exchange-package
+  provider_version: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  target_system_id: reference-fmus.bouncing-ball
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  capability_ids:
+  - artifact_inventory
+  - interface_topology
+  - native_binding_observation
+  input_fingerprints:
+    release_zip: 6efe688afe1b2802fe0f011259788396a370f78f2f115b7897285503a884741c
+    fmu: 4b6c1034f644122e10faa346b2c44549d8634d427a32a28eebcf0d893a66efec
+    observation_request: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  payload_fingerprint: fa27a4e1530af596c7dfdd498918c83b31c3af2cd4988d28f7b783d8903dd7c5
+  status: current
+  binding_observations: []
+  findings: []
+  claim_boundary: Exact official-package bytes and caller-declared topology only;
+    PhysicsGuard independently derives all qualification layers.
+inventory:
+  inventory_id: inventory.reference-fmus.bouncing-ball.v0.0.40-fmi3
+  provider_id: provider.modelica-reference-fmus
+  target_system_id: reference-fmus.bouncing-ball
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  boundary_fingerprint: 9bafbe49325fe1dd845837c85dd73047c79ad5491c3b331414f4a7c75b25fd57
+  members:
+  - member_id: bouncing_ball
+    member_kind: physical_element
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: free_flight
+    member_kind: physical_element
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: impact_event
+    member_kind: physical_element
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.g
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.e
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.v_min
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.h
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.v
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.g_effective
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.dh
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.dv
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.contact
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.stopped
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.root.rejected
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.h
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.v
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.g
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.e
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.dh
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.free.dv
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.h
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.v
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.g
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.e
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.v_min
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.h_post
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.v_post
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.g_post
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.rebound_candidate
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.contact
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.stopped
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: port.impact.rejected
+    member_kind: interface
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.initial
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.free
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.update
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.impact
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.protected
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.root.termination
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.dh
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.dv
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.e_independent
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.protected
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.free.termination
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.trigger
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.rebound
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.update
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.stop
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.protected
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: sem.impact.termination
+    member_kind: equation
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: validity.root
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: bouncing_ball
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: validity.free
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: free_flight
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: validity.impact
+    member_kind: parameter
+    disposition: modeled
+    blueprint_element_id: impact_event
+    binding_ids: []
+    reason: null
+    disposition_evidence: []
+  - member_id: material.01
+    member_kind: provider_artifact
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.release
+    - binding.free_flight.release
+    - binding.impact_event.release
+    reason: null
+    disposition_evidence: []
+  - member_id: material.02
+    member_kind: module
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.binary
+    - binding.free_flight.binary
+    - binding.impact_event.binary
+    reason: null
+    disposition_evidence: []
+  - member_id: material.03
+    member_kind: resource
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.resource_docs
+    - binding.free_flight.resource_docs
+    - binding.impact_event.resource_docs
+    reason: null
+    disposition_evidence: []
+  - member_id: material.04
+    member_kind: observation
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.result
+    - binding.free_flight.result
+    - binding.impact_event.result
+    reason: null
+    disposition_evidence: []
+  - member_id: material.05
+    member_kind: resource
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.resource_xml
+    - binding.free_flight.resource_xml
+    - binding.impact_event.resource_xml
+    reason: null
+    disposition_evidence: []
+  - member_id: material.06
+    member_kind: file
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.source
+    - binding.free_flight.source
+    - binding.impact_event.source
+    reason: null
+    disposition_evidence: []
+  - member_id: material.07
+    member_kind: module
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.fmu
+    - binding.free_flight.fmu
+    - binding.impact_event.fmu
+    reason: null
+    disposition_evidence: []
+  - member_id: material.08
+    member_kind: file
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.license
+    - binding.free_flight.license
+    - binding.impact_event.license
+    reason: null
+    disposition_evidence: []
+  - member_id: material.09
+    member_kind: test
+    disposition: supporting
+    blueprint_element_id: null
+    binding_ids:
+    - binding.bouncing_ball.evidence
+    - binding.bouncing_ball.oracle
+    - binding.bouncing_ball.test
+    - binding.free_flight.evidence
+    - binding.free_flight.oracle
+    - binding.free_flight.test
+    - binding.impact_event.evidence
+    - binding.impact_event.oracle
+    - binding.impact_event.test
+    reason: null
+    disposition_evidence: []
+  inventory_fingerprint: fa27a4e1530af596c7dfdd498918c83b31c3af2cd4988d28f7b783d8903dd7c5
+elements:
+- element_id: bouncing_ball
+  name: BouncingBall FMI 3 model
+  element_kind: model
+  parent_id: null
+  depth: 0
+  description: Coarse parent contract for state, free flight, contact, stop, and protected
+    FMI behavior.
+  port_ids:
+  - port.root.g
+  - port.root.e
+  - port.root.v_min
+  - port.root.h
+  - port.root.v
+  - port.root.g_effective
+  - port.root.dh
+  - port.root.dv
+  - port.root.contact
+  - port.root.stopped
+  - port.root.rejected
+  semantic_ids:
+  - sem.root.initial
+  - sem.root.free
+  - sem.root.update
+  - sem.root.impact
+  - sem.root.protected
+  - sem.root.termination
+  validity_boundary_ids:
+  - validity.root
+  native_binding_ids:
+  - binding.bouncing_ball.fmu
+  - binding.bouncing_ball.source
+  - binding.bouncing_ball.test
+  - binding.bouncing_ball.resource_docs
+  - binding.bouncing_ball.resource_xml
+  - binding.bouncing_ball.oracle
+  - binding.bouncing_ball.evidence
+  - binding.bouncing_ball.result
+  - binding.bouncing_ball.binary
+  - binding.bouncing_ball.release
+  - binding.bouncing_ball.license
+  owned_behavior_ids:
+  - behavior.bouncing_ball
+  supporting_only: false
+- element_id: free_flight
+  name: Free-flight derivative block
+  element_kind: component
+  parent_id: bouncing_ball
+  depth: 1
+  description: Detailed stateless block for dh=v and dv=g, explicitly independent
+    of e.
+  port_ids:
+  - port.free.h
+  - port.free.v
+  - port.free.g
+  - port.free.e
+  - port.free.dh
+  - port.free.dv
+  semantic_ids:
+  - sem.free.dh
+  - sem.free.dv
+  - sem.free.e_independent
+  - sem.free.protected
+  - sem.free.termination
+  validity_boundary_ids:
+  - validity.free
+  native_binding_ids:
+  - binding.free_flight.fmu
+  - binding.free_flight.source
+  - binding.free_flight.test
+  - binding.free_flight.resource_docs
+  - binding.free_flight.resource_xml
+  - binding.free_flight.oracle
+  - binding.free_flight.evidence
+  - binding.free_flight.result
+  - binding.free_flight.binary
+  - binding.free_flight.release
+  - binding.free_flight.license
+  owned_behavior_ids:
+  - behavior.free_flight
+  supporting_only: false
+- element_id: impact_event
+  name: Ground-contact event block
+  element_kind: component
+  parent_id: bouncing_ball
+  depth: 1
+  description: Detailed contact, restitution, threshold-stop, and constant-protection
+    block.
+  port_ids:
+  - port.impact.h
+  - port.impact.v
+  - port.impact.g
+  - port.impact.e
+  - port.impact.v_min
+  - port.impact.h_post
+  - port.impact.v_post
+  - port.impact.g_post
+  - port.impact.rebound_candidate
+  - port.impact.contact
+  - port.impact.stopped
+  - port.impact.rejected
+  semantic_ids:
+  - sem.impact.trigger
+  - sem.impact.rebound
+  - sem.impact.update
+  - sem.impact.stop
+  - sem.impact.protected
+  - sem.impact.termination
+  validity_boundary_ids:
+  - validity.impact
+  native_binding_ids:
+  - binding.impact_event.fmu
+  - binding.impact_event.source
+  - binding.impact_event.test
+  - binding.impact_event.resource_docs
+  - binding.impact_event.resource_xml
+  - binding.impact_event.oracle
+  - binding.impact_event.evidence
+  - binding.impact_event.result
+  - binding.impact_event.binary
+  - binding.impact_event.release
+  - binding.impact_event.license
+  owned_behavior_ids:
+  - behavior.impact_event
+  supporting_only: false
+ports:
+- port_id: port.root.g
+  owner_element_id: bouncing_ball
+  direction: input
+  quantity_id: gravitational_acceleration
+  unit: m/s2
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.root.e
+  owner_element_id: bouncing_ball
+  direction: input
+  quantity_id: coefficient_of_restitution
+  unit: '1'
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.root.v_min
+  owner_element_id: bouncing_ball
+  direction: input
+  quantity_id: stop_speed_threshold
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.root.h
+  owner_element_id: bouncing_ball
+  direction: state
+  quantity_id: height
+  unit: m
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: sem.root.initial
+  termination_semantic_id: sem.root.termination
+- port_id: port.root.v
+  owner_element_id: bouncing_ball
+  direction: state
+  quantity_id: vertical_velocity
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: sem.root.initial
+  termination_semantic_id: sem.root.termination
+- port_id: port.root.g_effective
+  owner_element_id: bouncing_ball
+  direction: state
+  quantity_id: effective_gravity
+  unit: m/s2
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: sem.root.initial
+  termination_semantic_id: sem.root.termination
+- port_id: port.root.dh
+  owner_element_id: bouncing_ball
+  direction: output
+  quantity_id: height_derivative
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.root.dv
+  owner_element_id: bouncing_ball
+  direction: output
+  quantity_id: velocity_derivative
+  unit: m/s2
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.root.contact
+  owner_element_id: bouncing_ball
+  direction: effect
+  quantity_id: contact_event
+  unit: '1'
+  time_basis: event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.root.stopped
+  owner_element_id: bouncing_ball
+  direction: effect
+  quantity_id: stopped_mode
+  unit: '1'
+  time_basis: event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.root.rejected
+  owner_element_id: bouncing_ball
+  direction: effect
+  quantity_id: protected_failure
+  unit: '1'
+  time_basis: event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.root
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.free.h
+  owner_element_id: free_flight
+  direction: input
+  quantity_id: height
+  unit: m
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.free
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.free.v
+  owner_element_id: free_flight
+  direction: input
+  quantity_id: vertical_velocity
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.free
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.free.g
+  owner_element_id: free_flight
+  direction: input
+  quantity_id: effective_gravity
+  unit: m/s2
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.free
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.free.e
+  owner_element_id: free_flight
+  direction: input
+  quantity_id: coefficient_of_restitution
+  unit: '1'
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.free
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.free.dh
+  owner_element_id: free_flight
+  direction: output
+  quantity_id: height_derivative
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.free
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.free.dv
+  owner_element_id: free_flight
+  direction: output
+  quantity_id: velocity_derivative
+  unit: m/s2
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.free
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.h
+  owner_element_id: impact_event
+  direction: input
+  quantity_id: height
+  unit: m
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.v
+  owner_element_id: impact_event
+  direction: input
+  quantity_id: vertical_velocity
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.g
+  owner_element_id: impact_event
+  direction: input
+  quantity_id: effective_gravity
+  unit: m/s2
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.e
+  owner_element_id: impact_event
+  direction: input
+  quantity_id: coefficient_of_restitution
+  unit: '1'
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.v_min
+  owner_element_id: impact_event
+  direction: input
+  quantity_id: stop_speed_threshold
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.h_post
+  owner_element_id: impact_event
+  direction: output
+  quantity_id: height
+  unit: m
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.v_post
+  owner_element_id: impact_event
+  direction: output
+  quantity_id: vertical_velocity
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.g_post
+  owner_element_id: impact_event
+  direction: output
+  quantity_id: effective_gravity
+  unit: m/s2
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.rebound_candidate
+  owner_element_id: impact_event
+  direction: output
+  quantity_id: rebound_speed_candidate
+  unit: m/s
+  time_basis: continuous-or-event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.contact
+  owner_element_id: impact_event
+  direction: effect
+  quantity_id: contact_event
+  unit: '1'
+  time_basis: event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.stopped
+  owner_element_id: impact_event
+  direction: effect
+  quantity_id: stopped_mode
+  unit: '1'
+  time_basis: event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+- port_id: port.impact.rejected
+  owner_element_id: impact_event
+  direction: effect
+  quantity_id: protected_failure
+  unit: '1'
+  time_basis: event
+  value_shape: scalar
+  required: true
+  reference_frame: vertical-positive-upward
+  sign_convention: positive-upward
+  uncertainty: null
+  validity_boundary_id: validity.impact
+  initial_state_semantic_id: null
+  termination_semantic_id: null
+semantics:
+- semantic_id: sem.root.initial
+  owner_element_id: bouncing_ball
+  semantic_kind: parameter
+  statement: Initial h=1 m, v=0 m/s, and effective gravity equals the FMI g parameter.
+  expression: null
+  input_port_ids: []
+  output_port_ids: []
+  state_port_ids:
+  - port.root.h
+  - port.root.v
+  - port.root.g_effective
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.root
+  assumption_ids: []
+  preconditions: []
+  postconditions:
+  - h=1
+  - v=0
+  - g_effective=g
+- semantic_id: sem.root.free
+  owner_element_id: bouncing_ball
+  semantic_kind: equation
+  statement: Outside a contact event, height and velocity follow dh/dt=v and dv/dt=g_effective.
+  expression: dh_dt = v; dv_dt = g_effective
+  input_port_ids:
+  - port.root.g
+  - port.root.e
+  output_port_ids:
+  - port.root.dh
+  - port.root.dv
+  state_port_ids:
+  - port.root.h
+  - port.root.v
+  - port.root.g_effective
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.root
+  assumption_ids: []
+  preconditions:
+  - continuous-time mode
+  - no active ground-contact event
+  postconditions: []
+- semantic_id: sem.root.update
+  owner_element_id: bouncing_ball
+  semantic_kind: state_update
+  statement: The model integrates free-flight states and atomically applies the declared
+    contact branch.
+  expression: (h,v,g)_next = integrate_or_contact(h,v,g,e,v_min)
+  input_port_ids:
+  - port.root.g
+  - port.root.e
+  - port.root.v_min
+  output_port_ids: []
+  state_port_ids:
+  - port.root.h
+  - port.root.v
+  - port.root.g_effective
+  effect_port_ids:
+  - port.root.contact
+  - port.root.stopped
+  validity_boundary_ids:
+  - validity.root
+  assumption_ids: []
+  preconditions: []
+  postconditions:
+  - contact sets h to DBL_MIN
+  - a sub-threshold rebound sets v=0 and g_effective=0
+- semantic_id: sem.root.impact
+  owner_element_id: bouncing_ball
+  semantic_kind: guarantee
+  statement: At h<=0 with v<0, the rebound candidate is -e*v; if it is below v_min,
+    v and effective gravity become zero.
+  expression: null
+  input_port_ids:
+  - port.root.e
+  - port.root.v_min
+  output_port_ids: []
+  state_port_ids:
+  - port.root.h
+  - port.root.v
+  - port.root.g_effective
+  effect_port_ids:
+  - port.root.contact
+  - port.root.stopped
+  validity_boundary_ids:
+  - validity.root
+  assumption_ids: []
+  preconditions:
+  - h<=0
+  - v<0
+  postconditions:
+  - candidate=-e*v
+  - candidate<v_min implies v=0 and g_effective=0
+- semantic_id: sem.root.protected
+  owner_element_id: bouncing_ball
+  semantic_kind: protected_failure
+  statement: Attempts to mutate constant v_min return FMI error instead of changing
+    the threshold.
+  expression: null
+  input_port_ids:
+  - port.root.v_min
+  output_port_ids: []
+  state_port_ids: []
+  effect_port_ids:
+  - port.root.rejected
+  validity_boundary_ids:
+  - validity.root
+  assumption_ids: []
+  preconditions:
+  - exact FMI 3 Model Exchange lifecycle
+  postconditions:
+  - invalid constant mutation returns FMI error
+- semantic_id: sem.root.termination
+  owner_element_id: bouncing_ball
+  semantic_kind: termination
+  statement: An explicit FMI terminate call moves the wrapper into its terminal state.
+  expression: null
+  input_port_ids: []
+  output_port_ids: []
+  state_port_ids:
+  - port.root.h
+  - port.root.v
+  - port.root.g_effective
+  effect_port_ids:
+  - port.root.stopped
+  validity_boundary_ids:
+  - validity.root
+  assumption_ids: []
+  preconditions: []
+  postconditions: []
+- semantic_id: sem.free.dh
+  owner_element_id: free_flight
+  semantic_kind: equation
+  statement: Height derivative equals vertical velocity.
+  expression: dh_dt = v
+  input_port_ids:
+  - port.free.v
+  output_port_ids:
+  - port.free.dh
+  state_port_ids: []
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.free
+  assumption_ids: []
+  preconditions: []
+  postconditions: []
+- semantic_id: sem.free.dv
+  owner_element_id: free_flight
+  semantic_kind: equation
+  statement: Velocity derivative equals effective gravity.
+  expression: dv_dt = g
+  input_port_ids:
+  - port.free.g
+  output_port_ids:
+  - port.free.dv
+  state_port_ids: []
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.free
+  assumption_ids: []
+  preconditions: []
+  postconditions: []
+- semantic_id: sem.free.e_independent
+  owner_element_id: free_flight
+  semantic_kind: invariant
+  statement: The restitution coefficient is inert in free flight and does not enter
+    either derivative equation.
+  expression: null
+  input_port_ids:
+  - port.free.e
+  output_port_ids:
+  - port.free.dh
+  - port.free.dv
+  state_port_ids: []
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.free
+  assumption_ids: []
+  preconditions: []
+  postconditions:
+  - changing e alone leaves dh and dv unchanged
+- semantic_id: sem.free.protected
+  owner_element_id: free_flight
+  semantic_kind: protected_failure
+  statement: The FMI wrapper checks the call sequence before executing the continuous-state
+    derivative function.
+  expression: null
+  input_port_ids:
+  - port.free.h
+  - port.free.v
+  output_port_ids: []
+  state_port_ids: []
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.free
+  assumption_ids: []
+  preconditions:
+  - continuous-time mode
+  postconditions: []
+- semantic_id: sem.free.termination
+  owner_element_id: free_flight
+  semantic_kind: termination
+  statement: Free flight hands off to the contact branch when h<=0 and v<0.
+  expression: null
+  input_port_ids:
+  - port.free.h
+  - port.free.v
+  output_port_ids: []
+  state_port_ids: []
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.free
+  assumption_ids: []
+  preconditions:
+  - h<=0
+  - v<0
+  postconditions: []
+- semantic_id: sem.impact.trigger
+  owner_element_id: impact_event
+  semantic_kind: constraint
+  statement: The event branch is enabled only when h<=0 and v<0.
+  expression: event = (h <= 0) and (v < 0)
+  input_port_ids:
+  - port.impact.h
+  - port.impact.v
+  output_port_ids: []
+  state_port_ids: []
+  effect_port_ids:
+  - port.impact.contact
+  validity_boundary_ids:
+  - validity.impact
+  assumption_ids: []
+  preconditions: []
+  postconditions: []
+- semantic_id: sem.impact.rebound
+  owner_element_id: impact_event
+  semantic_kind: equation
+  statement: The rebound-speed candidate is -e times pre-impact velocity.
+  expression: candidate = -e * v
+  input_port_ids:
+  - port.impact.v
+  - port.impact.e
+  output_port_ids:
+  - port.impact.rebound_candidate
+  - port.impact.v_post
+  state_port_ids: []
+  effect_port_ids: []
+  validity_boundary_ids:
+  - validity.impact
+  assumption_ids: []
+  preconditions:
+  - h<=0
+  - v<0
+  postconditions: []
+- semantic_id: sem.impact.update
+  owner_element_id: impact_event
+  semantic_kind: state_update
+  statement: Contact resets height to DBL_MIN and publishes the rebound candidate
+    as post-impact velocity.
+  expression: h_post = DBL_MIN; v_post = -e*v; g_post = g
+  input_port_ids:
+  - port.impact.h
+  - port.impact.v
+  - port.impact.g
+  - port.impact.e
+  output_port_ids:
+  - port.impact.h_post
+  - port.impact.v_post
+  - port.impact.g_post
+  state_port_ids: []
+  effect_port_ids:
+  - port.impact.contact
+  validity_boundary_ids:
+  - validity.impact
+  assumption_ids: []
+  preconditions: []
+  postconditions: []
+- semantic_id: sem.impact.stop
+  owner_element_id: impact_event
+  semantic_kind: constraint
+  statement: When the rebound candidate is below v_min, both post velocity and effective
+    gravity are zero.
+  expression: 'if -e*v < v_min: v_post=0; g_post=0'
+  input_port_ids:
+  - port.impact.v
+  - port.impact.e
+  - port.impact.v_min
+  - port.impact.g
+  output_port_ids:
+  - port.impact.v_post
+  - port.impact.g_post
+  state_port_ids: []
+  effect_port_ids:
+  - port.impact.stopped
+  validity_boundary_ids:
+  - validity.impact
+  assumption_ids: []
+  preconditions: []
+  postconditions: []
+- semantic_id: sem.impact.protected
+  owner_element_id: impact_event
+  semantic_kind: protected_failure
+  statement: v_min is an FMI constant and a mutation attempt returns FMI error instead
+    of changing the threshold.
+  expression: null
+  input_port_ids:
+  - port.impact.v_min
+  output_port_ids: []
+  state_port_ids: []
+  effect_port_ids:
+  - port.impact.rejected
+  validity_boundary_ids:
+  - validity.impact
+  assumption_ids: []
+  preconditions: []
+  postconditions:
+  - FMI terminal status is error
+- semantic_id: sem.impact.termination
+  owner_element_id: impact_event
+  semantic_kind: termination
+  statement: The event iteration hands post-state back to the parent after the rebound
+    or stopped branch is settled.
+  expression: null
+  input_port_ids: []
+  output_port_ids:
+  - port.impact.h_post
+  - port.impact.v_post
+  - port.impact.g_post
+  state_port_ids: []
+  effect_port_ids:
+  - port.impact.contact
+  - port.impact.stopped
+  validity_boundary_ids:
+  - validity.impact
+  assumption_ids: []
+  preconditions: []
+  postconditions: []
+behavior_cases:
+- case_id: case.free.e-min
+  owner_element_id: free_flight
+  native_case_id: free-flight-e-min
+  case_kind: positive
+  purpose: Free-flight derivatives at e=0.5.
+  input_values:
+    port.free.h: 1.0
+    port.free.v: 2.0
+    port.free.g: -9.81
+    port.free.e: 0.5
+  pre_state_values: {}
+  expected_output_values:
+    port.free.dh: 2.0
+    port.free.dv: -9.81
+  expected_post_state_values: {}
+  expected_effect_port_ids: []
+  expected_terminal_status: ok
+  observed_output_values:
+    port.free.dh: 2.0
+    port.free.dv: -9.81
+  observed_post_state_values: {}
+  observed_effect_port_ids: []
+  observed_terminal_status: ok
+  native_result_binding_id: binding.free_flight.test
+  native_value_bindings:
+  - port_id: port.free.dh
+    native_variable_name: der(h)
+    absolute_tolerance: 0.0
+  - port_id: port.free.dv
+    native_variable_name: der(v)
+    absolute_tolerance: 1.0e-15
+  semantic_ids:
+  - sem.free.dh
+  - sem.free.dv
+  - sem.free.e_independent
+  test_binding_ids:
+  - binding.free_flight.test
+  evidence_binding_ids:
+  - binding.free_flight.evidence
+  oracle_binding_ids:
+  - binding.free_flight.oracle
+  status: pass
+  first_gap_code: null
+  case_fingerprint: f8bf74f03cb75261ec06c71078dc47e3fcca1aee2e0be1368daeb58f9299467d
+- case_id: case.free.e-max
+  owner_element_id: free_flight
+  native_case_id: free-flight-e-max
+  case_kind: boundary
+  purpose: Free-flight derivatives stay unchanged at the upper official e bound.
+  input_values:
+    port.free.h: 1.0
+    port.free.v: 2.0
+    port.free.g: -9.81
+    port.free.e: 1.0
+  pre_state_values: {}
+  expected_output_values:
+    port.free.dh: 2.0
+    port.free.dv: -9.81
+  expected_post_state_values: {}
+  expected_effect_port_ids: []
+  expected_terminal_status: ok
+  observed_output_values:
+    port.free.dh: 2.0
+    port.free.dv: -9.81
+  observed_post_state_values: {}
+  observed_effect_port_ids: []
+  observed_terminal_status: ok
+  native_result_binding_id: binding.free_flight.test
+  native_value_bindings:
+  - port_id: port.free.dh
+    native_variable_name: der(h)
+    absolute_tolerance: 0.0
+  - port_id: port.free.dv
+    native_variable_name: der(v)
+    absolute_tolerance: 1.0e-15
+  semantic_ids:
+  - sem.free.dh
+  - sem.free.dv
+  - sem.free.e_independent
+  test_binding_ids:
+  - binding.free_flight.test
+  evidence_binding_ids:
+  - binding.free_flight.evidence
+  oracle_binding_ids:
+  - binding.free_flight.oracle
+  status: pass
+  first_gap_code: null
+  case_fingerprint: 155b243b2273bd1e81d03458c3cc39dc44b24644f0f851d0293417cf2a41f5fa
+- case_id: case.impact.restitution
+  owner_element_id: impact_event
+  native_case_id: impact-restitution-e-0.7
+  case_kind: positive
+  purpose: At h=0,v=-1,e=0.7, the independent oracle and FMI both produce v_post=0.7
+    while gravity remains active.
+  input_values:
+    port.impact.h: 0.0
+    port.impact.v: -1.0
+    port.impact.g: -9.81
+    port.impact.e: 0.7
+    port.impact.v_min: 0.1
+  pre_state_values: {}
+  expected_output_values:
+    port.impact.v_post: 0.7
+    port.impact.g_post: -9.81
+  expected_post_state_values: {}
+  expected_effect_port_ids:
+  - port.impact.contact
+  expected_terminal_status: ok
+  observed_output_values:
+    port.impact.v_post: 0.7
+    port.impact.g_post: -9.81
+  observed_post_state_values: {}
+  observed_effect_port_ids:
+  - port.impact.contact
+  observed_terminal_status: ok
+  native_result_binding_id: binding.impact_event.test
+  native_value_bindings:
+  - port_id: port.impact.v_post
+    native_variable_name: v
+    absolute_tolerance: 1.0e-15
+  - port_id: port.impact.g_post
+    native_variable_name: g
+    absolute_tolerance: 1.0e-15
+  semantic_ids:
+  - sem.impact.trigger
+  - sem.impact.rebound
+  - sem.impact.update
+  test_binding_ids:
+  - binding.impact_event.test
+  evidence_binding_ids:
+  - binding.impact_event.evidence
+  oracle_binding_ids:
+  - binding.impact_event.oracle
+  status: pass
+  first_gap_code: null
+  case_fingerprint: fed93c4d46ef53cdf97016890838eeb7016e8d7b925c2055bb7fc51e99e181ad
+- case_id: case.impact.stop
+  owner_element_id: impact_event
+  native_case_id: impact-below-stop-threshold
+  case_kind: boundary
+  purpose: At h=0,v=-0.1,e=0.7 the candidate 0.07 is below v_min=0.1, so v_post=0
+    and g_post=0.
+  input_values:
+    port.impact.h: 0.0
+    port.impact.v: -0.1
+    port.impact.g: -9.81
+    port.impact.e: 0.7
+    port.impact.v_min: 0.1
+  pre_state_values: {}
+  expected_output_values:
+    port.impact.v_post: 0.0
+    port.impact.g_post: 0.0
+  expected_post_state_values: {}
+  expected_effect_port_ids:
+  - port.impact.contact
+  - port.impact.stopped
+  expected_terminal_status: ok
+  observed_output_values:
+    port.impact.v_post: 0.0
+    port.impact.g_post: 0.0
+  observed_post_state_values: {}
+  observed_effect_port_ids:
+  - port.impact.contact
+  - port.impact.stopped
+  observed_terminal_status: ok
+  native_result_binding_id: binding.impact_event.test
+  native_value_bindings:
+  - port_id: port.impact.v_post
+    native_variable_name: v
+    absolute_tolerance: 0.0
+  - port_id: port.impact.g_post
+    native_variable_name: g
+    absolute_tolerance: 0.0
+  semantic_ids:
+  - sem.impact.trigger
+  - sem.impact.rebound
+  - sem.impact.update
+  - sem.impact.stop
+  test_binding_ids:
+  - binding.impact_event.test
+  evidence_binding_ids:
+  - binding.impact_event.evidence
+  oracle_binding_ids:
+  - binding.impact_event.oracle
+  status: pass
+  first_gap_code: null
+  case_fingerprint: a557b5c028a7ff26e9ae0cc10999f79a70b85d1f24bd3847ca6259198d4d9954
+- case_id: case.impact.v-min-constant
+  owner_element_id: impact_event
+  native_case_id: v-min-is-constant
+  case_kind: protected_failure
+  purpose: A standard FMI write to constant v_min is rejected with error.
+  input_values:
+    port.impact.v_min: 0.2
+  pre_state_values: {}
+  expected_output_values: {}
+  expected_post_state_values: {}
+  expected_effect_port_ids:
+  - port.impact.rejected
+  expected_terminal_status: error
+  observed_output_values: {}
+  observed_post_state_values: {}
+  observed_effect_port_ids:
+  - port.impact.rejected
+  observed_terminal_status: error
+  native_result_binding_id: binding.impact_event.test
+  native_value_bindings: []
+  semantic_ids:
+  - sem.impact.protected
+  test_binding_ids:
+  - binding.impact_event.test
+  evidence_binding_ids:
+  - binding.impact_event.evidence
+  oracle_binding_ids:
+  - binding.impact_event.oracle
+  status: pass
+  first_gap_code: null
+  case_fingerprint: f75c5d693d2159721dead263eb50dcd348e792eda58f7ce022f2f788f8880c59
+validity_boundaries:
+- boundary_id: validity.root
+  owner_element_id: bouncing_ball
+  statement: Frozen Reference-FMUs v0.0.40 BouncingBall FMI 3 Model Exchange behavior;
+    e uses the official XML interval and v_min remains the official constant 0.1 m/s.
+  parameter_bounds:
+    e:
+    - 0.5
+    - 1.0
+    v_min:
+    - 0.1
+    - 0.1
+- boundary_id: validity.free
+  owner_element_id: free_flight
+  statement: Continuous-time derivative evaluation before the ground-contact event.
+  parameter_bounds:
+    e:
+    - 0.5
+    - 1.0
+- boundary_id: validity.impact
+  owner_element_id: impact_event
+  statement: Ground contact h<=0,v<0 with the official e interval and fixed v_min=0.1
+    m/s.
+  parameter_bounds:
+    e:
+    - 0.5
+    - 1.0
+    v_min:
+    - 0.1
+    - 0.1
+refinements:
+- refinement_id: refinement.bouncing-ball.blocks
+  parent_element_id: bouncing_ball
+  child_element_ids:
+  - free_flight
+  - impact_event
+  port_mappings:
+  - mapping_id: map.root-h.free-h
+    mapping_kind: parent_state_to_child_input
+    source_port_id: port.root.h
+    external_source_id: null
+    target_port_id: port.free.h
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-v.free-v
+    mapping_kind: parent_state_to_child_input
+    source_port_id: port.root.v
+    external_source_id: null
+    target_port_id: port.free.v
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-g.free-g
+    mapping_kind: parent_state_to_child_input
+    source_port_id: port.root.g_effective
+    external_source_id: null
+    target_port_id: port.free.g
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-e.free-e
+    mapping_kind: parent_input_to_child_input
+    source_port_id: port.root.e
+    external_source_id: null
+    target_port_id: port.free.e
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.free-dh.root-dh
+    mapping_kind: child_output_to_parent_output
+    source_port_id: port.free.dh
+    external_source_id: null
+    target_port_id: port.root.dh
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.free-dv.root-dv
+    mapping_kind: child_output_to_parent_output
+    source_port_id: port.free.dv
+    external_source_id: null
+    target_port_id: port.root.dv
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-h.impact-h
+    mapping_kind: parent_state_to_child_input
+    source_port_id: port.root.h
+    external_source_id: null
+    target_port_id: port.impact.h
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-v.impact-v
+    mapping_kind: parent_state_to_child_input
+    source_port_id: port.root.v
+    external_source_id: null
+    target_port_id: port.impact.v
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-g.impact-g
+    mapping_kind: parent_state_to_child_input
+    source_port_id: port.root.g_effective
+    external_source_id: null
+    target_port_id: port.impact.g
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-e.impact-e
+    mapping_kind: parent_input_to_child_input
+    source_port_id: port.root.e
+    external_source_id: null
+    target_port_id: port.impact.e
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.root-vmin.impact-vmin
+    mapping_kind: parent_input_to_child_input
+    source_port_id: port.root.v_min
+    external_source_id: null
+    target_port_id: port.impact.v_min
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.impact-h.root-h
+    mapping_kind: child_output_to_parent_state
+    source_port_id: port.impact.h_post
+    external_source_id: null
+    target_port_id: port.root.h
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.impact-v.root-v
+    mapping_kind: child_output_to_parent_state
+    source_port_id: port.impact.v_post
+    external_source_id: null
+    target_port_id: port.root.v
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.impact-g.root-g
+    mapping_kind: child_output_to_parent_state
+    source_port_id: port.impact.g_post
+    external_source_id: null
+    target_port_id: port.root.g_effective
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.impact-contact.root-contact
+    mapping_kind: child_effect_to_parent_effect
+    source_port_id: port.impact.contact
+    external_source_id: null
+    target_port_id: port.root.contact
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.impact-stopped.root-stopped
+    mapping_kind: child_effect_to_parent_effect
+    source_port_id: port.impact.stopped
+    external_source_id: null
+    target_port_id: port.root.stopped
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  - mapping_id: map.impact-rejected.root-rejected
+    mapping_kind: child_effect_to_parent_effect
+    source_port_id: port.impact.rejected
+    external_source_id: null
+    target_port_id: port.root.rejected
+    conversion_semantic_id: null
+    evidence_binding_ids: []
+  semantic_contributions:
+  - contribution_id: contrib.free-dh
+    child_semantic_id: sem.free.dh
+    parent_semantic_id: sem.root.free
+    relation: preserves
+    rationale: The child derivative equation instantiates the parent free-flight equation.
+    evidence_binding_ids: []
+  - contribution_id: contrib.free-dv
+    child_semantic_id: sem.free.dv
+    parent_semantic_id: sem.root.free
+    relation: preserves
+    rationale: The child acceleration equation instantiates the parent free-flight
+      equation.
+    evidence_binding_ids: []
+  - contribution_id: contrib.free-e
+    child_semantic_id: sem.free.e_independent
+    parent_semantic_id: sem.root.free
+    relation: constrains
+    rationale: The child explicitly excludes e from the free-flight derivative path.
+    evidence_binding_ids: []
+  - contribution_id: contrib.free-protected
+    child_semantic_id: sem.free.protected
+    parent_semantic_id: sem.root.protected
+    relation: constrains
+    rationale: The child lifecycle boundary narrows the parent protected behavior.
+    evidence_binding_ids: []
+  - contribution_id: contrib.free-termination
+    child_semantic_id: sem.free.termination
+    parent_semantic_id: sem.root.termination
+    relation: preserves
+    rationale: The child handoff is one parent termination branch.
+    evidence_binding_ids: []
+  - contribution_id: contrib.impact-trigger
+    child_semantic_id: sem.impact.trigger
+    parent_semantic_id: sem.root.impact
+    relation: constrains
+    rationale: The child event guard narrows the parent impact claim.
+    evidence_binding_ids: []
+  - contribution_id: contrib.impact-rebound
+    child_semantic_id: sem.impact.rebound
+    parent_semantic_id: sem.root.impact
+    relation: preserves
+    rationale: The child rebound equation instantiates the parent guarantee.
+    evidence_binding_ids: []
+  - contribution_id: contrib.impact-update
+    child_semantic_id: sem.impact.update
+    parent_semantic_id: sem.root.update
+    relation: preserves
+    rationale: The child post-state refines the parent event update.
+    evidence_binding_ids: []
+  - contribution_id: contrib.impact-stop
+    child_semantic_id: sem.impact.stop
+    parent_semantic_id: sem.root.impact
+    relation: preserves
+    rationale: The child threshold branch instantiates the parent stop guarantee.
+    evidence_binding_ids: []
+  - contribution_id: contrib.impact-protected
+    child_semantic_id: sem.impact.protected
+    parent_semantic_id: sem.root.protected
+    relation: preserves
+    rationale: The constant write rejection is one parent protected failure.
+    evidence_binding_ids: []
+  - contribution_id: contrib.impact-termination
+    child_semantic_id: sem.impact.termination
+    parent_semantic_id: sem.root.termination
+    relation: preserves
+    rationale: The child event handoff is one parent lifecycle terminal.
+    evidence_binding_ids: []
+  child_local_state_ids: []
+  terminal_output_ids:
+  - port.impact.rebound_candidate
+  terminal_effect_ids: []
+  propagated_validity_boundary_ids:
+  - validity.free
+  - validity.impact
+unresolved_relations: []
+native_executions:
+- execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  native_owner_id: physicsguard.fmi-observation
+  operation_id: fmi_observation.review
+  native_schema: fmi_observation_request
+  input_artifact_sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  target_system_id: reference-fmus.bouncing-ball
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  tool_id: physicsguard
+  tool_version: 0.15.2
+  expected_terminal_status: pass
+  terminal_receipt_fingerprint: eef69f84952ca7c8097bb7d18c9d43f87600425d4944c0faaa9bd8281b53cdad
+  execution_fingerprint: d1fb7b2a556e22408b94584afbaad7b6a85f7ab9b923f0de7a29878b31f21b94
+bindings:
+- binding_id: binding.bouncing_ball.fmu
+  owner_element_id: bouncing_ball
+  binding_kind: implementation
+  native_schema: generic_artifact
+  subject_id: official-fmu
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: expanded/3.0/BouncingBall.fmu
+    external_uri: null
+    sha256: 4b6c1034f644122e10faa346b2c44549d8634d427a32a28eebcf0d893a66efec
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.source
+  owner_element_id: bouncing_ball
+  binding_kind: source
+  native_schema: generic_artifact
+  subject_id: official-model-c
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/sources/model.c
+    external_uri: null
+    sha256: 0009784ec47467c48c6891cc5983919c47bfe5356ef736b1ae7abdc659486a47
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids:
+  - sem.root.initial
+  - sem.root.free
+  - sem.root.update
+  - sem.root.impact
+  - sem.root.protected
+  - sem.root.termination
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.test
+  owner_element_id: bouncing_ball
+  binding_kind: test
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids:
+  - sem.root.initial
+  - sem.root.free
+  - sem.root.update
+  - sem.root.impact
+  - sem.root.protected
+  - sem.root.termination
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes:
+  - pointwise
+  - interface_unit
+  - boundary_invalid_region
+  - temporal_stateful
+  - cross_coupling
+- binding_id: binding.bouncing_ball.resource_docs
+  owner_element_id: bouncing_ball
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-documentation
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/documentation/index.html
+    external_uri: null
+    sha256: 6a2fa30a7f8e9bc886365113bbaf9a009b609d88804e94f38685fa866983d406
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.resource_xml
+  owner_element_id: bouncing_ball
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-model-description
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/modelDescription.xml
+    external_uri: null
+    sha256: ff69c36f46b7cf9ac3af6c0ada2cfb0dc54abf099398ddd3256cf06ef64cf4cd
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.oracle
+  owner_element_id: bouncing_ball
+  binding_kind: oracle
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids:
+  - sem.root.initial
+  - sem.root.free
+  - sem.root.update
+  - sem.root.impact
+  - sem.root.protected
+  - sem.root.termination
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.evidence
+  owner_element_id: bouncing_ball
+  binding_kind: evidence
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.result
+  owner_element_id: bouncing_ball
+  binding_kind: observation
+  native_schema: generic_artifact
+  subject_id: official-reference-result
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/documentation/result.svg
+    external_uri: null
+    sha256: 55824973366012bfa6892050e9d526cb8503afdd9340a7d2919c7c36699b6879
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.binary
+  owner_element_id: bouncing_ball
+  binding_kind: implementation
+  native_schema: generic_artifact
+  subject_id: official-windows-binary
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/binaries/x86_64-windows/BouncingBall.dll
+    external_uri: null
+    sha256: a97031d386644434d34dcff385d13f4b5f6862eb2fcc913796a3008b61787af3
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.release
+  owner_element_id: bouncing_ball
+  binding_kind: project_record
+  native_schema: generic_artifact
+  subject_id: official-release-archive
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: Reference-FMUs.zip
+    external_uri: null
+    sha256: 6efe688afe1b2802fe0f011259788396a370f78f2f115b7897285503a884741c
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.bouncing_ball.license
+  owner_element_id: bouncing_ball
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-license
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: expanded/LICENSE.txt
+    external_uri: null
+    sha256: 3bd19affe120c783d1bb63f423ba1e5b31fed892d98d583001aac013a3432041
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.bouncing_ball
+  validation_modes: []
+- binding_id: binding.free_flight.fmu
+  owner_element_id: free_flight
+  binding_kind: implementation
+  native_schema: generic_artifact
+  subject_id: official-fmu
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: expanded/3.0/BouncingBall.fmu
+    external_uri: null
+    sha256: 4b6c1034f644122e10faa346b2c44549d8634d427a32a28eebcf0d893a66efec
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.source
+  owner_element_id: free_flight
+  binding_kind: source
+  native_schema: generic_artifact
+  subject_id: official-model-c
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/sources/model.c
+    external_uri: null
+    sha256: 0009784ec47467c48c6891cc5983919c47bfe5356ef736b1ae7abdc659486a47
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids:
+  - sem.free.dh
+  - sem.free.dv
+  - sem.free.e_independent
+  - sem.free.protected
+  - sem.free.termination
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.test
+  owner_element_id: free_flight
+  binding_kind: test
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids:
+  - sem.free.dh
+  - sem.free.dv
+  - sem.free.e_independent
+  - sem.free.protected
+  - sem.free.termination
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes:
+  - pointwise
+  - interface_unit
+  - boundary_invalid_region
+- binding_id: binding.free_flight.resource_docs
+  owner_element_id: free_flight
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-documentation
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/documentation/index.html
+    external_uri: null
+    sha256: 6a2fa30a7f8e9bc886365113bbaf9a009b609d88804e94f38685fa866983d406
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.resource_xml
+  owner_element_id: free_flight
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-model-description
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/modelDescription.xml
+    external_uri: null
+    sha256: ff69c36f46b7cf9ac3af6c0ada2cfb0dc54abf099398ddd3256cf06ef64cf4cd
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.oracle
+  owner_element_id: free_flight
+  binding_kind: oracle
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids:
+  - sem.free.dh
+  - sem.free.dv
+  - sem.free.e_independent
+  - sem.free.protected
+  - sem.free.termination
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.evidence
+  owner_element_id: free_flight
+  binding_kind: evidence
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.result
+  owner_element_id: free_flight
+  binding_kind: observation
+  native_schema: generic_artifact
+  subject_id: official-reference-result
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/documentation/result.svg
+    external_uri: null
+    sha256: 55824973366012bfa6892050e9d526cb8503afdd9340a7d2919c7c36699b6879
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.binary
+  owner_element_id: free_flight
+  binding_kind: implementation
+  native_schema: generic_artifact
+  subject_id: official-windows-binary
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/binaries/x86_64-windows/BouncingBall.dll
+    external_uri: null
+    sha256: a97031d386644434d34dcff385d13f4b5f6862eb2fcc913796a3008b61787af3
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.release
+  owner_element_id: free_flight
+  binding_kind: project_record
+  native_schema: generic_artifact
+  subject_id: official-release-archive
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: Reference-FMUs.zip
+    external_uri: null
+    sha256: 6efe688afe1b2802fe0f011259788396a370f78f2f115b7897285503a884741c
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.free_flight.license
+  owner_element_id: free_flight
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-license
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: expanded/LICENSE.txt
+    external_uri: null
+    sha256: 3bd19affe120c783d1bb63f423ba1e5b31fed892d98d583001aac013a3432041
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.free_flight
+  validation_modes: []
+- binding_id: binding.impact_event.fmu
+  owner_element_id: impact_event
+  binding_kind: implementation
+  native_schema: generic_artifact
+  subject_id: official-fmu
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: expanded/3.0/BouncingBall.fmu
+    external_uri: null
+    sha256: 4b6c1034f644122e10faa346b2c44549d8634d427a32a28eebcf0d893a66efec
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.source
+  owner_element_id: impact_event
+  binding_kind: source
+  native_schema: generic_artifact
+  subject_id: official-model-c
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/sources/model.c
+    external_uri: null
+    sha256: 0009784ec47467c48c6891cc5983919c47bfe5356ef736b1ae7abdc659486a47
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids:
+  - sem.impact.trigger
+  - sem.impact.rebound
+  - sem.impact.update
+  - sem.impact.stop
+  - sem.impact.protected
+  - sem.impact.termination
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.test
+  owner_element_id: impact_event
+  binding_kind: test
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids:
+  - sem.impact.trigger
+  - sem.impact.rebound
+  - sem.impact.update
+  - sem.impact.stop
+  - sem.impact.protected
+  - sem.impact.termination
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes:
+  - pointwise
+  - interface_unit
+  - boundary_invalid_region
+- binding_id: binding.impact_event.resource_docs
+  owner_element_id: impact_event
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-documentation
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/documentation/index.html
+    external_uri: null
+    sha256: 6a2fa30a7f8e9bc886365113bbaf9a009b609d88804e94f38685fa866983d406
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.resource_xml
+  owner_element_id: impact_event
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-model-description
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/modelDescription.xml
+    external_uri: null
+    sha256: ff69c36f46b7cf9ac3af6c0ada2cfb0dc54abf099398ddd3256cf06ef64cf4cd
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.oracle
+  owner_element_id: impact_event
+  binding_kind: oracle
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids:
+  - sem.impact.trigger
+  - sem.impact.rebound
+  - sem.impact.update
+  - sem.impact.stop
+  - sem.impact.protected
+  - sem.impact.termination
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.evidence
+  owner_element_id: impact_event
+  binding_kind: evidence
+  native_schema: fmi_observation_request
+  subject_id: reference-fmus.v0.0.40.bouncing-ball.fmi3
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: fmi_observation_request.yaml
+    external_uri: null
+    sha256: 84bee0404c7504f14de8a80db8b4f30a5cc0f339a846357da5d318e5a9e58ca4
+  provider_id: null
+  native_execution_id: execution.reference-fmus.bouncing-ball.fmi3-observation.v0.0.40
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.result
+  owner_element_id: impact_event
+  binding_kind: observation
+  native_schema: generic_artifact
+  subject_id: official-reference-result
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/documentation/result.svg
+    external_uri: null
+    sha256: 55824973366012bfa6892050e9d526cb8503afdd9340a7d2919c7c36699b6879
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.binary
+  owner_element_id: impact_event
+  binding_kind: implementation
+  native_schema: generic_artifact
+  subject_id: official-windows-binary
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: bouncingball-fmi3/binaries/x86_64-windows/BouncingBall.dll
+    external_uri: null
+    sha256: a97031d386644434d34dcff385d13f4b5f6862eb2fcc913796a3008b61787af3
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.release
+  owner_element_id: impact_event
+  binding_kind: project_record
+  native_schema: generic_artifact
+  subject_id: official-release-archive
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: Reference-FMUs.zip
+    external_uri: null
+    sha256: 6efe688afe1b2802fe0f011259788396a370f78f2f115b7897285503a884741c
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+- binding_id: binding.impact_event.license
+  owner_element_id: impact_event
+  binding_kind: resource
+  native_schema: generic_artifact
+  subject_id: official-license
+  subject_revision: reference-fmus.v0.0.40.fmi3.bouncing-ball
+  artifact:
+    repo_path: expanded/LICENSE.txt
+    external_uri: null
+    sha256: 3bd19affe120c783d1bb63f423ba1e5b31fed892d98d583001aac013a3432041
+  provider_id: null
+  native_execution_id: null
+  status: current
+  semantic_ids: []
+  obligation_ids:
+  - behavior.impact_event
+  validation_modes: []
+source_mappings:
+- mapping_id: source-map.001
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.artifact:bouncing-ball-fmi3
+  relation: realizes
+  target_ids: [material.07, bouncing_ball, free_flight, impact_event]
+  reason: The observed FMU bytes realize the three-level physical model hierarchy.
+- mapping_id: source-map.002
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.artifact:reference-fmus-license
+  relation: supports
+  target_ids: [material.08]
+  reason: The observed license artifact supports the bounded reuse claim.
+- mapping_id: source-map.003
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.artifact:reference-fmus-release-zip
+  relation: supports
+  target_ids: [material.01]
+  reason: The observed release archive grounds the provider release identity.
+- mapping_id: source-map.004
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.case:free-flight-e-max
+  relation: exercises
+  target_ids: [case.free.e-max]
+  reason: The native case exercises the upper restitution boundary in free flight.
+- mapping_id: source-map.005
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.case:free-flight-e-min
+  relation: exercises
+  target_ids: [case.free.e-min]
+  reason: The native case exercises the lower restitution boundary in free flight.
+- mapping_id: source-map.006
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.case:impact-below-stop-threshold
+  relation: exercises
+  target_ids: [case.impact.stop, port.impact.rebound_candidate, port.impact.contact, port.impact.stopped, port.root.contact, port.root.stopped]
+  reason: The native event result exercises the contact and stopped effects.
+- mapping_id: source-map.007
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.case:impact-restitution-e-0.7
+  relation: exercises
+  target_ids: [case.impact.restitution, port.impact.rebound_candidate, port.impact.contact, port.root.contact]
+  reason: The native event result exercises the ordinary rebound transition.
+- mapping_id: source-map.008
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.case:v-min-is-constant
+  relation: exercises
+  target_ids: [case.impact.v-min-constant, port.impact.rejected, port.root.rejected]
+  reason: The native rejected-set result exercises the protected constant boundary.
+- mapping_id: source-map.009
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:binaries/aarch64-darwin/BouncingBall.dylib
+  relation: supports
+  target_ids: [material.02]
+  reason: The observed platform binary is a supporting FMU implementation member.
+- mapping_id: source-map.010
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:binaries/aarch64-linux/BouncingBall.so
+  relation: supports
+  target_ids: [material.02]
+  reason: The observed platform binary is a supporting FMU implementation member.
+- mapping_id: source-map.011
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:binaries/x86-windows/BouncingBall.dll
+  relation: supports
+  target_ids: [material.02]
+  reason: The observed platform binary is a supporting FMU implementation member.
+- mapping_id: source-map.012
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:binaries/x86_64-darwin/BouncingBall.dylib
+  relation: supports
+  target_ids: [material.02]
+  reason: The observed platform binary is a supporting FMU implementation member.
+- mapping_id: source-map.013
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:binaries/x86_64-linux/BouncingBall.so
+  relation: supports
+  target_ids: [material.02]
+  reason: The observed platform binary is a supporting FMU implementation member.
+- mapping_id: source-map.014
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:binaries/x86_64-windows/BouncingBall.dll
+  relation: supports
+  target_ids: [material.02]
+  reason: The observed platform binary is a supporting FMU implementation member.
+- mapping_id: source-map.015
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:documentation/index.html
+  relation: supports
+  target_ids: [material.03]
+  reason: The observed documentation explains the governed model boundary.
+- mapping_id: source-map.016
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:documentation/result.svg
+  relation: supports
+  target_ids: [material.04]
+  reason: The observed reference plot is bounded supporting result material.
+- mapping_id: source-map.017
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:modelDescription.xml
+  relation: realizes
+  target_ids: [material.05]
+  reason: The observed XML owns the FMI interface and variable contracts.
+- mapping_id: source-map.018
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:sources/buildDescription.xml
+  relation: supports
+  target_ids: [material.06]
+  reason: The observed build description supports source realization.
+- mapping_id: source-map.019
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:sources/config.h
+  relation: supports
+  target_ids: [material.06]
+  reason: The observed configuration header supports source realization.
+- mapping_id: source-map.020
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:sources/cosimulation.c
+  relation: supports
+  target_ids: [material.06]
+  reason: The observed co-simulation source is a supporting implementation member.
+- mapping_id: source-map.021
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:sources/cosimulation.h
+  relation: supports
+  target_ids: [material.06]
+  reason: The observed co-simulation header is a supporting implementation member.
+- mapping_id: source-map.022
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:sources/fmi3Functions.c
+  relation: supports
+  target_ids: [material.06, sem.root.termination, sem.free.protected]
+  reason: The observed FMI entry-point source supports the native interface and owns the wrapper lifecycle selectors.
+  semantic_contracts:
+  - target_semantic_id: sem.root.termination
+    selector_id: selector.sem.root.termination
+    expected_selector_fingerprint: 98ba48404da55ea8d3e6e1b1f6f58301b1e24a38a41b464f6e4f8925cfbbc17c
+  - target_semantic_id: sem.free.protected
+    selector_id: selector.sem.free.protected
+    expected_selector_fingerprint: 044852a62902973d3ee7450d32a2e1ecd9a332c833741e0b2463dd8db2383014
+- mapping_id: source-map.023
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:sources/model.c
+  relation: realizes
+  target_ids: [material.06, sem.root.initial, sem.root.free, sem.root.update, sem.root.impact, sem.root.protected, sem.free.dh, sem.free.dv, sem.free.e_independent, sem.free.termination, sem.impact.trigger, sem.impact.rebound, sem.impact.update, sem.impact.stop, sem.impact.protected, sem.impact.termination]
+  reason: The observed model source realizes every modeled behavior semantic in this boundary.
+  semantic_contracts:
+  - target_semantic_id: sem.root.initial
+    selector_id: selector.sem.root.initial
+    expected_selector_fingerprint: f746b8ec2ade215b48ac2e833f6f27a931a4edb8bb8eb2dfc54904dab5bc0024
+  - target_semantic_id: sem.root.free
+    selector_id: selector.sem.root.free
+    expected_selector_fingerprint: 0fcaad4be0b3fd4c1a09393b0fc2ac8c2737b93ae793c1721c6092aa1833dacb
+  - target_semantic_id: sem.root.update
+    selector_id: selector.sem.root.update
+    expected_selector_fingerprint: b63955dbb568f7ddcabff14b381ba65d77b3235b0bcd7f901674fe4a3af4a688
+  - target_semantic_id: sem.root.impact
+    selector_id: selector.sem.root.impact
+    expected_selector_fingerprint: 3432ed01147b8594f7fd29686ac6a506150c8efc178e8bf51751edc7cb49b173
+  - target_semantic_id: sem.root.protected
+    selector_id: selector.sem.root.protected
+    expected_selector_fingerprint: 7a1cce21b33cbda4c32a197e609c8217d3dfe405bee7a8566f99e05a88c3c0da
+  - target_semantic_id: sem.free.dh
+    selector_id: selector.sem.free.dh
+    expected_selector_fingerprint: 1b23046747139e0714ab13fe47ddea7cd3b131eac63c9f53cfc5fbb043a15858
+  - target_semantic_id: sem.free.dv
+    selector_id: selector.sem.free.dv
+    expected_selector_fingerprint: a5e6db16bf55c3a3fec644574ecc4c54ff9fd34fec99918c7feaaa3d2a44cace
+  - target_semantic_id: sem.free.e_independent
+    selector_id: selector.sem.free.e_independent
+    expected_selector_fingerprint: 3e9616f221c80d533adc864d17c4928f2470919789525ca87ebff9c1c92edad5
+  - target_semantic_id: sem.free.termination
+    selector_id: selector.sem.free.termination
+    expected_selector_fingerprint: e28a2d548d0014ed996cf1dd2ea13e877eb83d31f163f13ae0d39388b70f0de0
+  - target_semantic_id: sem.impact.trigger
+    selector_id: selector.sem.impact.trigger
+    expected_selector_fingerprint: 2998c1f3cff1a3386bedb96dd569ecd4fd26cdfa8d5ae8ca31b356871b22774d
+  - target_semantic_id: sem.impact.rebound
+    selector_id: selector.sem.impact.rebound
+    expected_selector_fingerprint: 1221f4b1dc6be1d5472f37ceb076f6bf6958bb5776f58adf3d9800b880cb14fe
+  - target_semantic_id: sem.impact.update
+    selector_id: selector.sem.impact.update
+    expected_selector_fingerprint: c38931858f1c5ec2db638ebd7705da42c1dda223f1d8ea09c9c6cc1a25ecc3df
+  - target_semantic_id: sem.impact.stop
+    selector_id: selector.sem.impact.stop
+    expected_selector_fingerprint: 885c16073277f003a71a24366149e6ef8418b2a1d694c8b6b86c4a242bd71134
+  - target_semantic_id: sem.impact.protected
+    selector_id: selector.sem.impact.protected
+    expected_selector_fingerprint: b227d7c63d6a561f22367e00a36ffd2bfccb2f2a487ae60cbbce3fe5868a857e
+  - target_semantic_id: sem.impact.termination
+    selector_id: selector.sem.impact.termination
+    expected_selector_fingerprint: af2da265724723cd9bd2d75e73aaee478d164026652f33f7f9c46637297d7833
+- mapping_id: source-map.024
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.member:sources/model.h
+  relation: supports
+  target_ids: [material.06]
+  reason: The observed model header supports the model source contract.
+- mapping_id: source-map.025
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.fmi-constant-contract:declared_vmin
+  relation: supports
+  target_ids: [sem.impact.protected]
+  reason: The restricted oracle supports the declared constant boundary.
+- mapping_id: source-map.026
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.free-flight-kinematics:dh
+  relation: defines
+  target_ids: [sem.free.dh]
+  reason: The independent oracle expression defines the free-flight height derivative.
+- mapping_id: source-map.027
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.free-flight-kinematics:dv
+  relation: defines
+  target_ids: [sem.free.dv]
+  reason: The independent oracle expression defines the free-flight velocity derivative.
+- mapping_id: source-map.028
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.impact-momentum-reflection:candidate
+  relation: defines
+  target_ids: [sem.impact.rebound]
+  reason: The independent oracle expression defines the rebound candidate equation.
+- mapping_id: source-map.029
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.impact-momentum-reflection:g_post
+  relation: supports
+  target_ids: [sem.impact.update]
+  reason: The restricted oracle supports the post-impact gravity branch.
+- mapping_id: source-map.030
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.impact-momentum-reflection:v_post
+  relation: supports
+  target_ids: [sem.impact.update]
+  reason: The restricted oracle supports the post-impact velocity branch.
+- mapping_id: source-map.031
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.stop-threshold:candidate
+  relation: supports
+  target_ids: [sem.impact.stop]
+  reason: The restricted oracle supports the threshold comparison branch.
+- mapping_id: source-map.032
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.stop-threshold:g_post
+  relation: supports
+  target_ids: [sem.impact.stop]
+  reason: The restricted oracle supports the stopped gravity output.
+- mapping_id: source-map.033
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.semantic:oracle.stop-threshold:v_post
+  relation: supports
+  target_ids: [sem.impact.stop]
+  reason: The restricted oracle supports the stopped velocity output.
+- mapping_id: source-map.034
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:der(h)
+  relation: realizes
+  target_ids: [port.root.dh, port.free.dh]
+  reason: The observed derivative variable realizes the modeled height-rate outputs.
+  fmi_variable_contract: {variable_name: 'der(h)', value_reference: 2, variable_type: Float64, causality: local, variability: continuous, unit: m/s, derivative_of_value_reference: 1, reinit: null, physical_quantity_id: height_derivative, source_state_role: continuous_derivative}
+  port_contracts:
+  - {target_port_id: port.root.dh, expected_direction: output, expected_quantity_id: height_derivative, expected_unit: m/s, port_state_role: derivative_output, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.free.dh, expected_direction: output, expected_quantity_id: height_derivative, expected_unit: m/s, port_state_role: derivative_output, quantity_relation: identity, conversion: {conversion_kind: identity}}
+- mapping_id: source-map.035
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:der(v)
+  relation: realizes
+  target_ids: [port.root.dv, port.free.dv]
+  reason: The observed derivative variable realizes the modeled velocity-rate outputs.
+  fmi_variable_contract: {variable_name: 'der(v)', value_reference: 4, variable_type: Float64, causality: local, variability: continuous, unit: m/s2, derivative_of_value_reference: 3, reinit: null, physical_quantity_id: velocity_derivative, source_state_role: continuous_derivative}
+  port_contracts:
+  - {target_port_id: port.root.dv, expected_direction: output, expected_quantity_id: velocity_derivative, expected_unit: m/s2, port_state_role: derivative_output, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.free.dv, expected_direction: output, expected_quantity_id: velocity_derivative, expected_unit: m/s2, port_state_role: derivative_output, quantity_relation: identity, conversion: {conversion_kind: identity}}
+- mapping_id: source-map.036
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:e
+  relation: realizes
+  target_ids: [port.root.e, port.free.e, port.impact.e]
+  reason: The observed FMI parameter realizes restitution inputs at every hierarchy level.
+  fmi_variable_contract: {variable_name: e, value_reference: 6, variable_type: Float64, causality: parameter, variability: tunable, unit: null, derivative_of_value_reference: null, reinit: null, physical_quantity_id: coefficient_of_restitution, source_state_role: parameter}
+  port_contracts:
+  - {target_port_id: port.root.e, expected_direction: input, expected_quantity_id: coefficient_of_restitution, expected_unit: '1', port_state_role: parameter_input, quantity_relation: identity, conversion: {conversion_kind: dimensionless_identity}}
+  - {target_port_id: port.free.e, expected_direction: input, expected_quantity_id: coefficient_of_restitution, expected_unit: '1', port_state_role: parameter_input, quantity_relation: identity, conversion: {conversion_kind: dimensionless_identity}}
+  - {target_port_id: port.impact.e, expected_direction: input, expected_quantity_id: coefficient_of_restitution, expected_unit: '1', port_state_role: parameter_input, quantity_relation: identity, conversion: {conversion_kind: dimensionless_identity}}
+- mapping_id: source-map.037
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:g
+  relation: realizes
+  target_ids: [port.root.g, port.root.g_effective, port.free.g, port.impact.g, port.impact.g_post]
+  reason: The observed FMI gravity variable realizes the gravity interfaces and post-event value.
+  fmi_variable_contract: {variable_name: g, value_reference: 5, variable_type: Float64, causality: parameter, variability: fixed, unit: m/s2, derivative_of_value_reference: null, reinit: null, physical_quantity_id: gravitational_acceleration, source_state_role: parameter}
+  port_contracts:
+  - {target_port_id: port.root.g, expected_direction: input, expected_quantity_id: gravitational_acceleration, expected_unit: m/s2, port_state_role: parameter_input, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.root.g_effective, expected_direction: state, expected_quantity_id: effective_gravity, expected_unit: m/s2, port_state_role: state_storage, quantity_relation: stateful_alias, conversion: {conversion_kind: identity}, governing_semantic_ids: [sem.root.initial]}
+  - {target_port_id: port.free.g, expected_direction: input, expected_quantity_id: effective_gravity, expected_unit: m/s2, port_state_role: state_read, quantity_relation: stateful_alias, conversion: {conversion_kind: identity}, governing_semantic_ids: [sem.free.dv]}
+  - {target_port_id: port.impact.g, expected_direction: input, expected_quantity_id: effective_gravity, expected_unit: m/s2, port_state_role: state_read, quantity_relation: stateful_alias, conversion: {conversion_kind: identity}, governing_semantic_ids: [sem.impact.update]}
+  - {target_port_id: port.impact.g_post, expected_direction: output, expected_quantity_id: effective_gravity, expected_unit: m/s2, port_state_role: event_post_state, quantity_relation: stateful_alias, conversion: {conversion_kind: identity}, governing_semantic_ids: [sem.impact.update]}
+- mapping_id: source-map.038
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:h
+  relation: realizes
+  target_ids: [port.root.h, port.free.h, port.impact.h, port.impact.h_post]
+  reason: The observed FMI height variable realizes the hierarchy state and event output.
+  fmi_variable_contract: {variable_name: h, value_reference: 1, variable_type: Float64, causality: output, variability: continuous, unit: m, derivative_of_value_reference: null, reinit: true, physical_quantity_id: height, source_state_role: continuous_state}
+  port_contracts:
+  - {target_port_id: port.root.h, expected_direction: state, expected_quantity_id: height, expected_unit: m, port_state_role: state_storage, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.free.h, expected_direction: input, expected_quantity_id: height, expected_unit: m, port_state_role: state_read, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.impact.h, expected_direction: input, expected_quantity_id: height, expected_unit: m, port_state_role: state_read, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.impact.h_post, expected_direction: output, expected_quantity_id: height, expected_unit: m, port_state_role: event_post_state, quantity_relation: identity, conversion: {conversion_kind: identity}}
+- mapping_id: source-map.039
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:time
+  relation: supports
+  target_ids: [validity.root]
+  reason: The observed independent time variable supports the continuous/event time basis.
+  fmi_variable_contract: {variable_name: time, value_reference: 0, variable_type: Float64, causality: independent, variability: continuous, unit: null, derivative_of_value_reference: null, reinit: null, physical_quantity_id: simulation_time, source_state_role: time}
+- mapping_id: source-map.040
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:v
+  relation: realizes
+  target_ids: [port.root.v, port.free.v, port.impact.v, port.impact.v_post]
+  reason: The observed FMI velocity variable realizes the hierarchy state and event output.
+  fmi_variable_contract: {variable_name: v, value_reference: 3, variable_type: Float64, causality: output, variability: continuous, unit: m/s, derivative_of_value_reference: null, reinit: true, physical_quantity_id: vertical_velocity, source_state_role: continuous_state}
+  port_contracts:
+  - {target_port_id: port.root.v, expected_direction: state, expected_quantity_id: vertical_velocity, expected_unit: m/s, port_state_role: state_storage, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.free.v, expected_direction: input, expected_quantity_id: vertical_velocity, expected_unit: m/s, port_state_role: state_read, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.impact.v, expected_direction: input, expected_quantity_id: vertical_velocity, expected_unit: m/s, port_state_role: state_read, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.impact.v_post, expected_direction: output, expected_quantity_id: vertical_velocity, expected_unit: m/s, port_state_role: event_post_state, quantity_relation: identity, conversion: {conversion_kind: identity}}
+- mapping_id: source-map.041
+  source_binding_id: binding.bouncing_ball.test
+  source_member_id: fmi.variable:v_min
+  relation: realizes
+  target_ids: [port.root.v_min, port.impact.v_min]
+  reason: The observed FMI constant realizes the stop-threshold interfaces.
+  fmi_variable_contract: {variable_name: v_min, value_reference: 7, variable_type: Float64, causality: local, variability: constant, unit: m/s, derivative_of_value_reference: null, reinit: null, physical_quantity_id: stop_speed_threshold, source_state_role: constant}
+  port_contracts:
+  - {target_port_id: port.root.v_min, expected_direction: input, expected_quantity_id: stop_speed_threshold, expected_unit: m/s, port_state_role: constant_input, quantity_relation: identity, conversion: {conversion_kind: identity}}
+  - {target_port_id: port.impact.v_min, expected_direction: input, expected_quantity_id: stop_speed_threshold, expected_unit: m/s, port_state_role: constant_input, quantity_relation: identity, conversion: {conversion_kind: identity}}

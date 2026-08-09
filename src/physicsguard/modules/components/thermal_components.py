@@ -34,7 +34,11 @@ class RadiatorSimpleModule(BaseModule):
             "cp_coolant_J_kgK",
         )
         self.UA_W_K = required_nonnegative(parameters, "UA_W_K")
-        self.fan_power_optional = bool(parameters.get("fan_power_optional", True))
+        if "fan_power_optional" in parameters:
+            raise ValueError(
+                "fan_power_optional is not supported by RadiatorSimpleModule; "
+                "use RadiatorFanSimpleModule for fan power"
+            )
         self.residual_scale_heat_W = positive_float(
             parameters.get("residual_scale_heat_W", 1000.0),
             "residual_scale_heat_W",
@@ -45,7 +49,6 @@ class RadiatorSimpleModule(BaseModule):
             temperature_record(component_id, parameters, "T_coolant_out_K", "T_coolant_out", 320.0),
             temperature_record(component_id, parameters, "T_air_in_K", "T_air_in", 300.0),
             power_record(component_id, parameters, "Q_rejected_W", "Q_rejected", 1000.0),
-            power_record(component_id, parameters, "fan_power_W", "fan_power", 0.0),
         ]
 
     def declare_variables(self) -> list[VariableRecord]:
@@ -88,6 +91,7 @@ class RadiatorSimpleModule(BaseModule):
                 "no detailed NTU model",
                 "no coolant phase change",
                 "no fan map",
+                "fan power is modeled only by the separate RadiatorFanSimpleModule",
             ],
         )
 

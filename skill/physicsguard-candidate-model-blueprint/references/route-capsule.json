@@ -21,12 +21,28 @@
   ],
   "minimum_inputs": [
     "validated_hierarchy",
+    "independent_target_inventory",
+    "current_blueprint_or_authoring_target",
+    "blueprint_artifact_root",
+    "explicit_material_root_if_declared",
     "ready_blocks",
     "interface_inventory",
-    "model_semantics"
+    "model_semantics",
+    "portable_bundle_output_if_requested",
+    "portable_bundle_selector_if_requested"
   ],
   "required_outputs": [
     "candidate_blueprint",
+    "physical_blueprint_review",
+    "blueprint_fingerprint",
+    "material_root_disposition",
+    "native_execution_status",
+    "deepest_licensed_layer",
+    "first_gap",
+    "safe_claim",
+    "portable_bundle_status_and_identity",
+    "portable_query_identity_and_gaps",
+    "execution_claim_licensed",
     "generation_eligibility",
     "rollout_boundary",
     "blockers"
@@ -40,12 +56,19 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_summary_required",
+        "blueprint_affected_slice_required",
+        "blueprint_author_or_full_review_required",
+        "explicit_material_root_or_fmi_observation_required",
+        "portable_blueprint_bundle_export_or_query_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "canonical_physical_blueprint_authority",
+        "portable_physical_blueprint_interchange"
       ],
-      "sha256": "c7c7ffc26251bd50c224e55a9ffd5272231f20388b9968895418e1feb847945a"
+      "sha256": "662ee63b6d283d82a2f6bba2d00ab364a69427b767e999bf6b477835887cc2a1"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -69,7 +92,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "d96f24488b328bc49d12b5c84d3070659da8a446c0b8203831dc599da9fe9f73"
+      "sha256": "3618079b63ce4042a6953ccd5850b5ea36df193b4a5d49ae549313f2b4f76e36"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -88,6 +111,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "67f236d64e07ee973aea55315034ffe27be512fc91d9dd4f718b44bbae211876",
+  "entry_prompt_sha256": "0512efab7a13d2b5e3e3dfd793238ea8ed2f95deca4c4b1d68e1c02028e4f0c7",
   "claim_boundary": "Generation eligibility covers only a candidate low-fidelity blueprint for the declared target and interfaces; it is not an implemented or validated high-fidelity model."
 }

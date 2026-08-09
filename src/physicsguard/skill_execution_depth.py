@@ -39,6 +39,10 @@ class RoutePolicy:
     native_owner_id: str
     native_route_id: str
     required_obligation_ids: tuple[str, ...]
+    blueprint_authority_mode: str
+    blueprint_projection_kinds: tuple[str, ...]
+    blueprint_required_operation_ids: tuple[str, ...]
+    blueprint_required_obligation_ids: tuple[str, ...]
     per_object_obligation_ids: tuple[str, ...] = (
         "object.coverage_complete",
         "object.evidence_current",
@@ -52,13 +56,27 @@ def _policy(
     route: str,
     obligations: Sequence[str],
     *,
+    blueprint_authority_mode: str,
+    blueprint_projection_kinds: Sequence[str],
+    blueprint_required_operation_ids: Sequence[str],
+    blueprint_required_obligation_ids: Sequence[str],
     temporal: bool = False,
 ) -> RoutePolicy:
+    if blueprint_authority_mode not in {"sole_author_full_reviewer", "consumer_only"}:
+        raise ValueError(f"unsupported blueprint authority mode: {blueprint_authority_mode}")
+    blueprint_obligations = tuple(blueprint_required_obligation_ids)
+    combined_obligations = tuple(obligations) + blueprint_obligations
+    if len(combined_obligations) != len(set(combined_obligations)):
+        raise ValueError(f"duplicate route obligation ids for {target}")
     return RoutePolicy(
         target_skill_id=target,
         native_owner_id=owner,
         native_route_id=route,
-        required_obligation_ids=tuple(obligations),
+        required_obligation_ids=combined_obligations,
+        blueprint_authority_mode=blueprint_authority_mode,
+        blueprint_projection_kinds=tuple(blueprint_projection_kinds),
+        blueprint_required_operation_ids=tuple(blueprint_required_operation_ids),
+        blueprint_required_obligation_ids=blueprint_obligations,
         temporal_depth_required=temporal,
     )
 
@@ -78,6 +96,19 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "assumption_boundary",
             "safe_claim_boundary",
         ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("summary", "affected", "reverse_trace"),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.summary_physical_blueprint_projection",
+            "api:physicsguard.affected_physical_blueprint_projection",
+            "api:physicsguard.reverse_trace_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_summary_affected_reverse_consumption",
+            "blueprint_minimum_owner_handoff",
+            "blueprint_gap_handoff",
+        ),
         temporal=True,
     ),
     "physicsguard-audit-closure": _policy(
@@ -93,6 +124,26 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "predictive_rollout_if_requested",
             "safe_claim_boundary",
         ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("affected", "full"),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.affected_physical_blueprint_projection",
+            "api:physicsguard.full_physical_blueprint_projection",
+            "api:physicsguard.query_physical_blueprint_export_bundle",
+            "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty",
+            "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --module|--element|--case|--impact|--reverse ID --pretty",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_whole_or_affected_review_consumption",
+            "blueprint_denominator_depth_first_gap",
+            "blueprint_closure_and_gap_accounting",
+            "blueprint_portable_bundle_identity_consumption",
+            "blueprint_portable_frozen_case_status_accounting",
+            "blueprint_frozen_case_vs_current_execution",
+            "blueprint_identity_only_terminal_accounting",
+            "blueprint_portable_execution_claim_boundary",
+        ),
     ),
     "physicsguard-candidate-model-blueprint": _policy(
         "physicsguard-candidate-model-blueprint",
@@ -106,6 +157,64 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "rollout_boundary",
             "generation_eligibility",
         ),
+        blueprint_authority_mode="sole_author_full_reviewer",
+        blueprint_projection_kinds=("summary", "affected", "reverse_trace", "full"),
+        blueprint_required_operation_ids=(
+            "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --pretty",
+            "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --material-root ROOT --pretty",
+            "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --output BUNDLE --pretty",
+            "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --material-root ROOT --output BUNDLE --pretty",
+            "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty",
+            "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --module|--element|--case|--impact|--reverse ID --pretty",
+            "schema:physicsguard.fmi-observation-request.v1",
+            "api:physicsguard.summary_physical_blueprint_projection",
+            "api:physicsguard.affected_physical_blueprint_projection",
+            "api:physicsguard.reverse_trace_physical_blueprint_projection",
+            "api:physicsguard.full_physical_blueprint_projection",
+            "api:physicsguard.build_physical_blueprint_export_bundle",
+            "api:physicsguard.materialize_physical_blueprint_export_bundle",
+            "api:physicsguard.query_physical_blueprint_export_bundle",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_author_and_full_review",
+            "blueprint_canonical_review",
+            "blueprint_impact_and_reverse_trace",
+            "blueprint_projection_identity_current",
+            "blueprint_depth_first_gap_and_safe_claim",
+            "blueprint_material_root_resolution",
+            "blueprint_external_resource_not_run_boundary",
+            "blueprint_generic_fmi_observation_and_independent_oracle",
+            "blueprint_portable_bundle_export_identity",
+            "blueprint_portable_compact_or_single_selector",
+            "blueprint_portable_execution_claim_boundary",
+        ),
+    ),
+    "physicsguard-model-dataset-validation": _policy(
+        "physicsguard-model-dataset-validation",
+        "physicsguard-model-dataset-validation",
+        "route:physicsguard-model-dataset-validation",
+        (
+            "model_identity",
+            "dataset_identity",
+            "test_file_contracts",
+            "mapping_evidence",
+            "validation_plan",
+            "validation_depth",
+            "adequacy_findings",
+            "bounded_validation_claim",
+        ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("affected", "full"),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.affected_physical_blueprint_projection",
+            "api:physicsguard.full_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_affected_or_whole_validation_consumption",
+            "blueprint_per_element_coverage",
+            "blueprint_unsupported_claim_gap_accounting",
+        ),
     ),
     "physicsguard-model-library": _policy(
         "physicsguard-model-library",
@@ -118,6 +227,19 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "gap_gate",
             "validation_receipt",
             "bounded_reuse_scope",
+        ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("summary", "affected", "full"),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.summary_physical_blueprint_projection",
+            "api:physicsguard.affected_physical_blueprint_projection",
+            "api:physicsguard.full_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_fingerprint_and_projection_consumption",
+            "blueprint_asset_reuse_limit",
+            "blueprint_compatibility_gap_accounting",
         ),
     ),
     "physicsguard-model-understanding-preflight": _policy(
@@ -133,6 +255,18 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "assumption_inventory",
             "access_gaps",
         ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("summary", "affected"),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.summary_physical_blueprint_projection",
+            "api:physicsguard.affected_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_target_boundary_and_inventory_consumption",
+            "blueprint_first_useful_layer",
+            "blueprint_access_gap_handoff",
+        ),
         temporal=True,
     ),
     "physicsguard-project-adoption": _policy(
@@ -146,6 +280,17 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "blocker_inventory",
             "required_revalidation",
         ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("summary",),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.summary_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_identity_and_scope_recorded",
+            "blueprint_adoption_not_completeness",
+            "blueprint_adoption_gap_and_revalidation",
+        ),
     ),
     "physicsguard-project-evidence-registry": _policy(
         "physicsguard-project-evidence-registry",
@@ -157,6 +302,19 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "role_coverage",
             "critical_gaps",
             "bundle_scope",
+        ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("summary", "affected", "full"),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.summary_physical_blueprint_projection",
+            "api:physicsguard.affected_physical_blueprint_projection",
+            "api:physicsguard.full_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_evidence_and_resource_binding",
+            "blueprint_binding_freshness",
+            "blueprint_missing_stale_gap_and_closure_handoff",
         ),
         temporal=True,
     ),
@@ -172,6 +330,18 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "confidence_review",
             "temporal_coverage",
             "target_variable_binding",
+        ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("affected", "reverse_trace"),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.affected_physical_blueprint_projection",
+            "api:physicsguard.reverse_trace_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_affected_interface_consumption",
+            "blueprint_downstream_reverse_consumers",
+            "blueprint_mapping_gap_and_safe_claim",
         ),
         temporal=True,
     ),
@@ -189,6 +359,17 @@ ROUTE_POLICIES: dict[str, RoutePolicy] = {
             "per_signal_depth",
             "mapping_evidence",
             "project_gaps",
+        ),
+        blueprint_authority_mode="consumer_only",
+        blueprint_projection_kinds=("affected",),
+        blueprint_required_operation_ids=(
+            "api:physicsguard.affected_physical_blueprint_projection",
+        ),
+        blueprint_required_obligation_ids=(
+            "blueprint_consumer_boundary",
+            "blueprint_file_field_interface_binding",
+            "blueprint_affected_file_slice_consumption",
+            "blueprint_mapping_gap_and_safe_boundary",
         ),
         temporal=True,
     ),
@@ -1257,6 +1438,20 @@ def evaluate_skill_execution_package(payload: Mapping[str, Any]) -> dict[str, An
         "scheduled_production_identity_source": scheduled_identity_source,
         "input_fingerprint": input_fingerprint,
         "required_obligation_ids": list(policy.required_obligation_ids) if policy else [],
+        "blueprint_policy": (
+            {
+                "authority_mode": policy.blueprint_authority_mode,
+                "projection_kinds": list(policy.blueprint_projection_kinds),
+                "required_operation_ids": list(
+                    policy.blueprint_required_operation_ids
+                ),
+                "required_obligation_ids": list(
+                    policy.blueprint_required_obligation_ids
+                ),
+            }
+            if policy
+            else {}
+        ),
         "covered_obligation_ids": sorted(obligation_map),
         "native_obligation_evidence": [
             {

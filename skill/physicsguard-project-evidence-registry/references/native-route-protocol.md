@@ -5,6 +5,12 @@ per-file test contracts or model-dataset validation. It tells AI agents where
 the evidence is, what is known, what is unknown, which fields and facts bind to
 the model, and which gaps still need work.
 
+## Blueprint evidence projection
+
+Use summary for project navigation and the exact affected projection when a file, resource, oracle, receipt, or evidence fingerprint changes. Bind each registry artifact and freshness result to the exact blueprint element, semantic, physical obligation, and native binding that owns it. Report missing, stale, unsupported, unresolved, or outside-scope endpoints distinctly. Registry status must not upgrade the native blueprint review. Load full only for a whole-boundary handoff or closure, and never replace a missing/stale projection with a repository scan.
+
+Executable projection entry: use `physicsguard.summary_physical_blueprint_projection(blueprint, review)` for navigation, `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for a changed evidence identity, and `physicsguard.full_physical_blueprint_projection(blueprint, review)` only for a declared whole-boundary handoff. The affected query reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result before graph compilation; it reports non-current identity rather than mutating or replacing the review.
+
 ## Hard Rules
 
 - Large test data stays where it is; register paths or external references

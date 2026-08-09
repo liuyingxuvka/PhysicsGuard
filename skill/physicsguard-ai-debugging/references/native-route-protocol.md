@@ -4,6 +4,12 @@
 
 Use PhysicsGuard as a transparent audit and blueprint layer for complex engineering simulations. Do not try to reproduce a full Simulink, GT-SUITE, Modelica, FMI, Amesim, MATLAB, Python, or commercial model from hidden internals. Build low-fidelity residual checks, evaluate mapped external results, rank suspicious blocks, ask for the next useful signals, and when requested, use the validated low-fidelity hierarchy as a blueprint for generating a candidate target model through official scripting interfaces.
 
+## Blueprint coordination
+
+Use a current summary for route selection and ordinary bounded work. Use affected or reverse-trace projection for a named symptom, element, interface, semantic, binding, dataset, resource, test, or output. Preserve the projection and source fingerprints, first gap, outside-scope members, and direction-specific dependency boundary. This composite route never authors or fully reviews `PhysicalModelBlueprint`; hand that to `physicsguard-candidate-model-blueprint`, and close through the direct claim owner. Missing/stale/ambiguous projection identity blocks without loading all ten skills, all blueprint members, or the repository as fallback.
+
+Executable projection entry: call the exported `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for forward impact or `physicsguard.reverse_trace_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for physical-ground tracing. Both rerun the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material, then require the supplied review to equal that passing result field-for-field before graph compilation; a projection is not a second qualification result and never repairs a stale or foreign review.
+
 ## Visual Audit Communication
 
 For non-trivial PhysicsGuard debugging, audit explanation, refinement, or candidate-model blueprint work, default to showing one compact Mermaid diagram or table once the physical-audit path is stable enough to explain. First run a PhysicsGuard diagram intent gate:

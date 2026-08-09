@@ -18,6 +18,129 @@ ParameterContributionExpectation = Literal["sensitive", "verified_non_sensitive"
 ANTI_DEGENERACY_FLOOR_ALGORITHM = "sqrt_n_stage_v1"
 
 
+class BlueprintEvidenceIdentityPlanSpec(BaseModel):
+    """One exact evidence input assigned to one blueprint obligation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    evidence_id: str
+    path: str
+    sha256: str
+    freshness_revision: str
+    native_owner_id: str
+    native_operation_id: str
+
+    @field_validator(
+        "evidence_id",
+        "path",
+        "freshness_revision",
+        "native_owner_id",
+        "native_operation_id",
+    )
+    @classmethod
+    def _text_valid(cls, value: str, info) -> str:
+        return ensure_non_empty(value, info.field_name)
+
+    @field_validator("sha256")
+    @classmethod
+    def _sha_valid(cls, value: str) -> str:
+        normalized = ensure_non_empty(value, "sha256").lower()
+        if len(normalized) != 64 or any(character not in "0123456789abcdef" for character in normalized):
+            raise ValueError("sha256 must be a lowercase SHA-256 digest")
+        return normalized
+
+
+class BlueprintObligationEvidencePlanSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    obligation_id: str
+    evidence: list[BlueprintEvidenceIdentityPlanSpec]
+
+    @field_validator("obligation_id")
+    @classmethod
+    def _obligation_valid(cls, value: str) -> str:
+        return ensure_non_empty(value, "obligation_id")
+
+    @model_validator(mode="after")
+    def _evidence_present(self) -> "BlueprintObligationEvidencePlanSpec":
+        if not self.evidence:
+            raise ValueError("blueprint obligation evidence cannot be empty")
+        ids = [item.evidence_id for item in self.evidence]
+        if len(ids) != len(set(ids)):
+            raise ValueError("blueprint obligation evidence ids must be unique")
+        return self
+
+
+class BlueprintElementValidationPlanSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    element_id: str
+    obligations: list[BlueprintObligationEvidencePlanSpec]
+
+    @field_validator("element_id")
+    @classmethod
+    def _element_valid(cls, value: str) -> str:
+        return ensure_non_empty(value, "element_id")
+
+    @model_validator(mode="after")
+    def _obligations_unique(self) -> "BlueprintElementValidationPlanSpec":
+        ids = [item.obligation_id for item in self.obligations]
+        if not ids or len(ids) != len(set(ids)):
+            raise ValueError("blueprint element obligations must be non-empty and unique")
+        return self
+
+
+class BlueprintValidationPlanSpec(BaseModel):
+    """Plan whose denominator is derived from the current blueprint authority."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    blueprint_path: str
+    blueprint_sha256: str
+    blueprint_fingerprint: str
+    scope: Literal["whole", "affected"]
+    affected_projection_path: str | None = None
+    affected_projection_sha256: str | None = None
+    affected_slice_fingerprint: str | None = None
+    elements: list[BlueprintElementValidationPlanSpec]
+
+    @field_validator("blueprint_path", "affected_projection_path")
+    @classmethod
+    def _path_valid(cls, value: str | None, info) -> str | None:
+        return None if value is None else ensure_non_empty(value, info.field_name)
+
+    @field_validator(
+        "blueprint_sha256",
+        "blueprint_fingerprint",
+        "affected_projection_sha256",
+        "affected_slice_fingerprint",
+    )
+    @classmethod
+    def _digest_valid(cls, value: str | None, info) -> str | None:
+        if value is None:
+            return None
+        normalized = ensure_non_empty(value, info.field_name).lower()
+        if len(normalized) != 64 or any(character not in "0123456789abcdef" for character in normalized):
+            raise ValueError(f"{info.field_name} must be a lowercase SHA-256 digest")
+        return normalized
+
+    @model_validator(mode="after")
+    def _scope_valid(self) -> "BlueprintValidationPlanSpec":
+        affected = (
+            self.affected_projection_path,
+            self.affected_projection_sha256,
+            self.affected_slice_fingerprint,
+        )
+        if self.scope == "affected" and any(value is None for value in affected):
+            raise ValueError("affected blueprint validation requires exact projection identity")
+        if self.scope == "whole" and any(value is not None for value in affected):
+            raise ValueError("whole blueprint validation cannot carry an affected projection")
+        ids = [item.element_id for item in self.elements]
+        if not ids or len(ids) != len(set(ids)):
+            raise ValueError("blueprint validation element rows must be non-empty and unique")
+        return self
+
+
 class ParameterTimeStratumSpec(BaseModel):
     """One project-declared row-position stratum for a time-varying parameter."""
 
@@ -302,6 +425,7 @@ class ValidationAdequacyPlanSpec(BaseModel):
     adaptive_evidence_id: Optional[str] = None
     adaptive_minimum_selected_points: Optional[int] = None
     adaptive_minimum_selected_ratio: Optional[float] = None
+    blueprint_validation: BlueprintValidationPlanSpec | None = None
 
     @field_validator("threshold_source", "selection_policy_id", "selection_rationale")
     @classmethod
@@ -572,6 +696,81 @@ class FamilyCoverageReceiptSpec(BaseModel):
     status: AdequacyStatus
 
 
+class BlueprintEvidenceIdentityReceiptSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    evidence_id: str
+    native_owner_id: str
+    native_operation_id: str
+    freshness_revision: str
+    expected_sha256: str
+    actual_sha256: str | None = None
+    status: Literal["current", "stale", "missing"]
+
+
+class BlueprintElementValidationReceiptSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    element_id: str
+    governed_obligation_ids: list[str]
+    tested_obligation_ids: list[str]
+    evidence: list[BlueprintEvidenceIdentityReceiptSpec]
+    unresolved_obligation_ids: list[str]
+    status: AdequacyStatus
+    maximum_licensed_claim: str
+
+    @model_validator(mode="after")
+    def _coverage_exact(self) -> "BlueprintElementValidationReceiptSpec":
+        governed = set(self.governed_obligation_ids)
+        tested = set(self.tested_obligation_ids)
+        unresolved = set(self.unresolved_obligation_ids)
+        if tested & unresolved or tested | unresolved != governed:
+            raise ValueError("tested plus unresolved obligations must exactly equal governed obligations")
+        if self.status == "pass" and unresolved:
+            raise ValueError("passing blueprint element receipt cannot contain unresolved obligations")
+        if self.status != "pass" and not unresolved and self.status != "not_applicable":
+            raise ValueError("non-passing blueprint element receipt requires unresolved obligations")
+        return self
+
+
+class BlueprintValidationCoverageReceiptSpec(BaseModel):
+    """Per-element denominator; aggregate status cannot erase leaf gaps."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    coverage_id: str
+    status: AdequacyStatus
+    blueprint_fingerprint: str | None
+    scope: Literal["whole", "affected", "not_applicable"]
+    affected_slice_fingerprint: str | None
+    denominator_source_id: str
+    denominator_fingerprint: str
+    governed_element_ids: list[str]
+    element_results: list[BlueprintElementValidationReceiptSpec]
+    unresolved_element_ids: list[str]
+    first_unresolved_id: str | None
+    maximum_licensed_claim: str
+
+    @model_validator(mode="after")
+    def _denominator_exact(self) -> "BlueprintValidationCoverageReceiptSpec":
+        governed = set(self.governed_element_ids)
+        row_ids = [item.element_id for item in self.element_results]
+        if len(row_ids) != len(set(row_ids)) or set(row_ids) != governed:
+            raise ValueError("blueprint element results must exactly equal the governed denominator")
+        unresolved = {item.element_id for item in self.element_results if item.status != "pass"}
+        if set(self.unresolved_element_ids) != unresolved:
+            raise ValueError("unresolved_element_ids must equal non-passing element rows")
+        first = sorted(unresolved)[0] if unresolved else None
+        if self.first_unresolved_id != first:
+            raise ValueError("first_unresolved_id must be the first deterministic unresolved element")
+        if self.status == "pass" and unresolved:
+            raise ValueError("passing blueprint coverage cannot contain unresolved elements")
+        if self.scope == "not_applicable":
+            if governed or self.blueprint_fingerprint is not None:
+                raise ValueError("not-applicable blueprint coverage cannot carry a denominator")
+        return self
+
+
 class ValidationAdequacyReceiptSpec(BaseModel):
     """Native quantitative receipt; supervisors consume but do not recompute it."""
 
@@ -592,6 +791,7 @@ class ValidationAdequacyReceiptSpec(BaseModel):
     signal_time_matrix: list[dict[str, Any]] = Field(default_factory=list)
     families: list[FamilyCoverageReceiptSpec] = Field(default_factory=list)
     subsystem_families: list[FamilyCoverageReceiptSpec] = Field(default_factory=list)
+    blueprint_coverage: BlueprintValidationCoverageReceiptSpec
     missing_critical_signals: list[str] = Field(default_factory=list)
     missing_critical_parameters: list[str] = Field(default_factory=list)
     missing_parameter_temporal_classifications: list[str] = Field(default_factory=list)
@@ -607,6 +807,13 @@ class ValidationAdequacyReceiptSpec(BaseModel):
 __all__ = [
     "AdequacyStatus",
     "ANTI_DEGENERACY_FLOOR_ALGORITHM",
+    "BlueprintElementValidationPlanSpec",
+    "BlueprintElementValidationReceiptSpec",
+    "BlueprintEvidenceIdentityPlanSpec",
+    "BlueprintEvidenceIdentityReceiptSpec",
+    "BlueprintObligationEvidencePlanSpec",
+    "BlueprintValidationCoverageReceiptSpec",
+    "BlueprintValidationPlanSpec",
     "CoverageFloorReceiptSpec",
     "FamilyCoverageReceiptSpec",
     "FamilyMemberKind",

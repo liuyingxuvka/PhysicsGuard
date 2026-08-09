@@ -2,6 +2,12 @@
 
 Use this route before non-trivial PhysicsGuard debugging or model-building work in a repository.
 
+## Blueprint adoption identity
+
+When a canonical blueprint exists, record its path, target id/revision and scope, `artifact_root: blueprint_directory`, blueprint/review fingerprint, available summary/affected/full projection identity, and exact native authority owners. Adoption reports missing or stale blueprint data as a workflow gap; it does not author an alternate blueprint, derive completeness, or scan the repository as fallback.
+
+Executable projection entry: call `physicsguard.summary_physical_blueprint_projection(blueprint, review)` to record the current adoption identity. Record an already requested affected or full projection fingerprint when present; adoption itself does not broaden the requested scope.
+
 ## Workflow
 
 1. Run a read-only audit first:

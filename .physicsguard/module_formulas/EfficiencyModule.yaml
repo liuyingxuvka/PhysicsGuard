@@ -1,0 +1,43 @@
+schema: physicsguard.project_formula.v1
+module_type: EfficiencyModule
+owner: physicsguard.project_formula.power_efficiency.v1
+purpose: Independently state the bounded useful-output to input-power efficiency relation used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 0.01, constraints: [residual_scale > 0]}
+  - {name: denominator_min_abs, dimension: power, unit: W, required: false, default: 1e-12, constraints: [denominator_min_abs > 0]}
+  - {name: efficiency_lower_bound, dimension: dimensionless, unit: '1', required: false, default: 0.0, constraints: [efficiency_lower_bound <= efficiency_upper_bound]}
+  - {name: efficiency_upper_bound, dimension: dimensionless, unit: '1', required: false, default: 1.5, constraints: [efficiency_upper_bound >= efficiency_lower_bound]}
+scenario_inputs:
+  - {name: input_power_W, dimension: power, unit: W}
+  - {name: useful_output_power_W, dimension: power, unit: W}
+scenario_outputs: [{name: efficiency, dimension: dimensionless, unit: '1'}]
+residuals:
+  - name: efficiency
+    expression: efficiency - useful_output_power_W / input_power_W
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: W divided by W is dimensionless, so both terms and the residual have unit 1.
+    scale_expression: residual_scale
+    zero_condition: Efficiency equals useful output power divided by nonzero input power.
+    source_intermediates:
+      - {symbol: input_power, expression: input_power_W}
+      - {symbol: useful_output, expression: useful_output_power_W}
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 0.01), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive residual_scale., cases: [{kind: inside, inputs: {residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+    - {predicate: denominator_min_abs > 0, guard_signature: "_positive_float(parameters.get('denominator_min_abs', 1e-12), 'denominator_min_abs')", failure_type: ValueError, message_selector: denominator_min_abs, on_violation: Reject non-positive denominator_min_abs., cases: [{kind: inside, inputs: {denominator_min_abs: 1e-12}, expected: pass}, {kind: boundary, inputs: {denominator_min_abs: 0.0}, expected: fail}, {kind: outside, inputs: {denominator_min_abs: -1.0}, expected: fail}]}
+  evaluation:
+    - {predicate: "abs(input_power_W) >= denominator_min_abs", guard_signature: "if abs(input_power) < self.denominator_min_abs", failure_type: ValueError, message_selector: input_power_W, on_violation: Reject input power inside the protected denominator deadband., cases: [{kind: inside, inputs: {input_power_W: 1000.0, denominator_min_abs: 1e-12}, expected: pass}, {kind: boundary, inputs: {input_power_W: 1e-12, denominator_min_abs: 1e-12}, expected: pass}, {kind: outside, inputs: {input_power_W: 0.0, denominator_min_abs: 1e-12}, expected: fail}]}
+regions:
+  valid:
+    - {predicate: "input_power_W >= denominator_min_abs and useful_output_power_W >= 0 and efficiency >= efficiency_lower_bound and efficiency <= efficiency_upper_bound and residual_scale > 0", meaning: Nonnegative power-ratio scenario inside the configured efficiency and denominator bounds., cases: [{kind: inside, inputs: {input_power_W: 1000.0, useful_output_power_W: 800.0, efficiency: 0.8, efficiency_lower_bound: 0.0, efficiency_upper_bound: 1.5, denominator_min_abs: 1e-12, residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {input_power_W: 1e-12, useful_output_power_W: 0.0, efficiency: 0.0, efficiency_lower_bound: 0.0, efficiency_upper_bound: 1.5, denominator_min_abs: 1e-12, residual_scale: 0.01}, expected: pass}, {kind: outside, inputs: {input_power_W: 0.0, useful_output_power_W: 0.0, efficiency: 0.0, efficiency_lower_bound: 0.0, efficiency_upper_bound: 1.5, denominator_min_abs: 1e-12, residual_scale: 0.01}, expected: fail}]}
+  invalid:
+    - {predicate: "input_power_W < denominator_min_abs or useful_output_power_W < 0 or efficiency < efficiency_lower_bound or efficiency > efficiency_upper_bound or residual_scale <= 0", meaning: Invalid denominator, signed power, efficiency bound, or normalization configuration., cases: [{kind: inside, inputs: {input_power_W: 0.0, useful_output_power_W: 0.0, efficiency: 0.0, efficiency_lower_bound: 0.0, efficiency_upper_bound: 1.5, denominator_min_abs: 1e-12, residual_scale: 0.01}, expected: pass}, {kind: boundary, inputs: {input_power_W: 1e-12, useful_output_power_W: 0.0, efficiency: 0.0, efficiency_lower_bound: 0.0, efficiency_upper_bound: 1.5, denominator_min_abs: 1e-12, residual_scale: 0.01}, expected: fail}, {kind: outside, inputs: {input_power_W: 1000.0, useful_output_power_W: 800.0, efficiency: 0.8, efficiency_lower_bound: 0.0, efficiency_upper_bound: 1.5, denominator_min_abs: 1e-12, residual_scale: 0.01}, expected: fail}]}
+assumptions: [Algebraic power ratio only, Input and useful output powers use the same sign convention, Loss mechanisms are outside this relation]
+validity: [Use only when input power is outside the protected denominator deadband, Treat scenario roles as one boundary assignment rather than an intrinsic equation direction]
+oracle_cases:
+  - {case_id: balanced, inputs: {residual_scale: 0.01, input_power_W: 1000.0, useful_output_power_W: 800.0, efficiency: 0.8}, expected: {efficiency: 0.0}, tolerance: 1e-12}
+  - {case_id: efficiency_offset, inputs: {residual_scale: 0.01, input_power_W: 1000.0, useful_output_power_W: 800.0, efficiency: 0.7}, expected: {efficiency: -0.1}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity algebraic efficiency check, not a loss model or empirical validation.

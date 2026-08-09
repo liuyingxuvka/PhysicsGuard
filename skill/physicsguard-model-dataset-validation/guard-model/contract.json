@@ -84,6 +84,46 @@
       "claim_boundary": "Native semantic detection is limited to tests/test_validation_adequacy.py::test_snapshot_receipt_cannot_satisfy_validation_ready_closure and its asserted observation 'snapshot_scope_incompatible'."
     }
   ],
+  "blueprint_route_contract": {
+    "schema_version": "physicsguard.skill_blueprint_route_contract.v1",
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "affected",
+      "full"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.full_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_affected_or_whole_validation_consumption",
+      "blueprint_per_element_coverage",
+      "blueprint_unsupported_claim_gap_accounting"
+    ],
+    "block_on": [
+      {
+        "finding_code": "blueprint_projection_missing_stale_foreign_or_ambiguous",
+        "condition": "a required blueprint projection or its blueprint, review, relation-set, recipe, target-revision, or evidence fingerprint is missing, stale, foreign, ambiguous, or caller-rehashed"
+      },
+      {
+        "finding_code": "blueprint_authority_boundary_violated",
+        "condition": "any route other than the sole author/full reviewer authors or fully reviews the blueprint"
+      },
+      {
+        "finding_code": "blueprint_required_obligation_unproved",
+        "condition": "any route-specific blueprint obligation lacks current target-native evidence or is replaced by AI prose or a self-declared pass"
+      },
+      {
+        "finding_code": "blueprint_gap_or_claim_boundary_unreconciled",
+        "condition": "the first gap, outside-scope branch, unsupported claim, closure handoff, or bounded claim required by this route is omitted or promoted to pass"
+      }
+    ],
+    "self_reported_status_allowed": false,
+    "missing_projection_behavior": "block_visible_no_fallback",
+    "claim_boundary": "Validation covers only the exact affected or whole projection and reports evidence per blueprint element and obligation; aggregate counts cannot authorize an uncovered element or unsupported claim."
+  },
+  "blueprint_route_contract_fingerprint": "36B2474642BD9336E83EFF0C3FBCE81778FECDBB971A27320E6E850DF337F7A7",
   "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt.",
   "authoring_order": [
     "freeze_prevented_failure_contract",

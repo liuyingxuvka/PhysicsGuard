@@ -27,6 +27,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint adoption record
+
+Record the current blueprint identity when one exists: canonical path, blueprint/review fingerprint, target revision and scope, artifact-root meaning, native authority identities, and whether the available projection is summary, affected, or full. This route does not author or fully review the blueprint. Adoption never derives completeness or physical truth. A missing or stale blueprint is reported as an adoption gap; this route does not create an alternate blueprint or silently scan the repository.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -45,6 +49,8 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `adoption_status`
 - `toolchain_status`
+- `blueprint_identity`
+- `adoption_boundary`
 - `blockers`
 - `required_revalidation`
 

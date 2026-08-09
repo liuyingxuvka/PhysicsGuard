@@ -22,11 +22,14 @@
   "minimum_inputs": [
     "project_root",
     "project_record",
-    "runtime_identity"
+    "runtime_identity",
+    "current_blueprint_identity_when_present"
   ],
   "required_outputs": [
     "adoption_status",
     "toolchain_status",
+    "blueprint_identity",
+    "adoption_boundary",
     "blockers",
     "required_revalidation"
   ],
@@ -39,12 +42,14 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_adoption_identity_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "blueprint_adoption_boundary"
       ],
-      "sha256": "1b9b48bae3f2b2ad44fb88e2c5b0f80df545acfd96319fbac3bbf1f20d1b29dc"
+      "sha256": "8cc4d6ece009676544effbfe0113d0a4390a51859558ffa1e1566861f5ea56eb"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -68,7 +73,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "48c7c43211021b3acd3601ebe37b8e75f22476e42bf76dad307faf811ba481be"
+      "sha256": "c986199fe1ba1e4bd83d5fd27095b106657018a4c929d8c0136866a48dd2c979"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -87,6 +92,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "282043acc00d98297950b2ba2d3875e1b673977f6db97ca7be9357b73446fc9d",
+  "entry_prompt_sha256": "ea80592ea11603ad0faaf75889a635c53ff5a069b340c4d4dff8e3b7ea1fea13",
   "claim_boundary": "Adoption proves only current workflow records and toolchain/artifact readiness; it never substitutes for model execution, validation, closure, installation, or release evidence."
 }

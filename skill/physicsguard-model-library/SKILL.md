@@ -27,6 +27,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint slice
+
+Index and select assets by exact blueprint fingerprint, physical obligation, target profile, validity boundary, testbench, native receipt, and verified reuse limit. Use summary for discovery, affected projection for one reuse decision, and full projection only for whole-target qualification. This route does not author or fully review the blueprint. Loose similarity is not compatibility. Missing/stale projection identity is blocking and does not authorize scanning or validating unrelated assets.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -45,6 +49,8 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `compatible_assets`
 - `reuse_status`
+- `selected_blueprint_fingerprints`
+- `verified_reuse_limits`
 - `gaps`
 - `bounded_reuse_scope`
 

@@ -22,6 +22,18 @@ from physicsguard.core.evaluator import AuditEvaluator
 from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy, plan_from_report
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.model_library import check_model_library_index
+from physicsguard.core.physical_model_blueprint import (
+    physical_model_blueprint_review_to_dict,
+    review_physical_model_blueprint,
+)
+from physicsguard.core.physical_blueprint_bundle import (
+    PhysicalBlueprintBundleError,
+    build_module_behavior_contract_index,
+    build_physical_blueprint_export_bundle,
+    load_physical_blueprint_export_bundle,
+    materialize_physical_blueprint_export_bundle,
+    query_physical_blueprint_export_bundle,
+)
 from physicsguard.core.project_closure import run_project_closure
 from physicsguard.core.project_evidence import (
     build_project_evidence_map,
@@ -49,6 +61,11 @@ from physicsguard.core.diagnosability import (
 )
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
+from physicsguard.io.physical_model_blueprint_loader import (
+    BlueprintLoadError,
+    load_physical_model_blueprint,
+    load_target_inventory_authority,
+)
 from physicsguard.io.test_file_contract_loader import load_yaml_mapping
 from physicsguard.io.yaml_loader import load_system_spec
 from physicsguard.schema.test_file_contract import ExtractorProfileSpec, TestBenchProfileSpec
@@ -416,6 +433,108 @@ def build_parser() -> argparse.ArgumentParser:
     )
     evidence_mesh.add_argument("mesh", type=Path, help="path to EvidenceMesh YAML")
     evidence_mesh.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+
+    blueprint_parser = subparsers.add_parser(
+        "blueprint",
+        help="canonical physical-model blueprint commands",
+    )
+    blueprint_subparsers = blueprint_parser.add_subparsers(
+        dest="blueprint_command",
+        required=True,
+    )
+    blueprint_review = blueprint_subparsers.add_parser(
+        "review",
+        help="read-only review of one canonical YAML or JSON PhysicalModelBlueprint",
+        description=(
+            "Read one canonical PhysicalModelBlueprint, report the deepest supported "
+            "layer and first actionable gap, and make no writes. Parsing or local "
+            "checks alone do not claim that the target is reconstructable."
+        ),
+    )
+    blueprint_review.add_argument(
+        "blueprint",
+        type=Path,
+        help=(
+            "path to the canonical YAML or JSON PhysicalModelBlueprint; its containing "
+            "directory is the declared root for every local repo_path"
+        ),
+    )
+    blueprint_review.add_argument(
+        "--target-authority",
+        required=True,
+        type=Path,
+        help="path to the frozen TargetInventoryAuthority issued outside the blueprint",
+    )
+    blueprint_review.add_argument(
+        "--material-root",
+        type=Path,
+        help=(
+            "explicit root containing content-addressed target material; required "
+            "when artifact_root is explicit_material_root"
+        ),
+    )
+    blueprint_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    blueprint_export = blueprint_subparsers.add_parser(
+        "bundle-export",
+        help="materialize one deterministic portable physical-DNA bundle",
+        description=(
+            "Review one exact blueprint, write its full current portable bundle to an "
+            "explicit JSON path, and print only the compact status projection."
+        ),
+    )
+    blueprint_export.add_argument("blueprint", type=Path)
+    blueprint_export.add_argument("--target-authority", required=True, type=Path)
+    blueprint_export.add_argument(
+        "--material-root",
+        type=Path,
+        help=(
+            "explicit root containing content-addressed target material; required "
+            "when artifact_root is explicit_material_root"
+        ),
+    )
+    blueprint_export.add_argument("--output", required=True, type=Path)
+    blueprint_export.add_argument(
+        "--module-review",
+        type=Path,
+        help="optional exact full module-ledger review JSON; requires --runtime-port-registry",
+    )
+    blueprint_export.add_argument(
+        "--runtime-port-registry",
+        type=Path,
+        help="optional exact runtime-port registry YAML/JSON; requires --module-review",
+    )
+    blueprint_export.add_argument("--pretty", action="store_true")
+
+    blueprint_query = blueprint_subparsers.add_parser(
+        "bundle-query",
+        help="read one compact or exact one-id projection from a portable bundle",
+    )
+    blueprint_query.add_argument("bundle", type=Path)
+    blueprint_selector = blueprint_query.add_mutually_exclusive_group()
+    blueprint_selector.add_argument("--module")
+    blueprint_selector.add_argument("--element")
+    blueprint_selector.add_argument("--case")
+    blueprint_selector.add_argument("--impact")
+    blueprint_selector.add_argument("--reverse")
+    blueprint_query.add_argument("--pretty", action="store_true")
+
+    self_dna_parser = subparsers.add_parser(
+        "self-dna",
+        help="explicitly audit or export the FlowGuard-owned PhysicsGuard software DNA",
+    )
+    self_dna_subparsers = self_dna_parser.add_subparsers(
+        dest="self_dna_command", required=True
+    )
+    self_dna_check = self_dna_subparsers.add_parser(
+        "check", help="audit the repository self-DNA without reconstruction"
+    )
+    self_dna_check.add_argument("--root", type=Path, default=Path("."))
+    self_dna_check.add_argument("--compact", action="store_true")
+    self_dna_export = self_dna_subparsers.add_parser(
+        "export", help="materialize self-DNA only to an external destination"
+    )
+    self_dna_export.add_argument("--root", type=Path, default=Path("."))
+    self_dna_export.add_argument("--output", required=True, type=Path)
     return parser
 
 
@@ -704,6 +823,209 @@ def evidence_mesh_check_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
+def blueprint_review_command(
+    path: Path,
+    target_authority_path: Path,
+    material_root: Path | None = None,
+    pretty: bool = False,
+) -> int:
+    try:
+        blueprint = load_physical_model_blueprint(path)
+        target_inventory_authority = load_target_inventory_authority(target_authority_path)
+    except BlueprintLoadError as exc:
+        _print_json(
+            {
+                "artifact_type": "physicsguard_physical_blueprint_error",
+                "category": exc.category,
+                "status": "invalid",
+                "message": str(exc),
+                "safe_claim": "No physical-blueprint claim is licensed because the canonical contract did not load.",
+            },
+            pretty,
+        )
+        return 2
+    review_root = (
+        material_root
+        if material_root is not None
+        else (None if blueprint.artifact_root == "explicit_material_root" else path.parent)
+    )
+    authority_root = (
+        material_root
+        if material_root is not None
+        else (
+            None
+            if blueprint.artifact_root == "explicit_material_root"
+            else target_authority_path.parent
+        )
+    )
+    review = review_physical_model_blueprint(
+        blueprint,
+        target_inventory_authority=target_inventory_authority,
+        base_dir=review_root,
+        authority_base_dir=authority_root,
+    )
+    _print_json(physical_model_blueprint_review_to_dict(review), pretty)
+    if review.status == "pass":
+        return 0
+    if review.status == "stale" or any(gap.status == "stale" for gap in review.gaps):
+        return 4
+    adapter_codes = {
+        "required_provider_capability_not_current",
+        "inventory_provider_missing_capability",
+        "inventory_provider_payload_mismatch",
+        "target_inventory_authority_not_verified",
+        "blueprint_inventory_authority_fingerprint_mismatch",
+        "native_binding_not_current",
+    }
+    if any(gap.code in adapter_codes for gap in review.gaps):
+        return 5
+    return 3
+
+
+def blueprint_bundle_export_command(
+    blueprint_path: Path,
+    target_authority_path: Path,
+    output_path: Path,
+    *,
+    material_root: Path | None = None,
+    module_review_path: Path | None = None,
+    runtime_port_registry_path: Path | None = None,
+    pretty: bool = False,
+) -> int:
+    if (module_review_path is None) != (runtime_port_registry_path is None):
+        _print_json(
+            {
+                "artifact_type": "physicsguard_physical_blueprint_bundle_error",
+                "category": "module_behavior_index_inputs_incomplete",
+                "status": "invalid",
+                "message": "--module-review and --runtime-port-registry must be supplied together",
+                "safe_claim": "No portable bundle was materialized.",
+            },
+            pretty,
+        )
+        return 2
+    try:
+        blueprint = load_physical_model_blueprint(blueprint_path)
+        authority = load_target_inventory_authority(target_authority_path)
+        review_root = (
+            material_root
+            if material_root is not None
+            else (
+                None
+                if blueprint.artifact_root == "explicit_material_root"
+                else blueprint_path.parent
+            )
+        )
+        authority_root = (
+            material_root
+            if material_root is not None
+            else (
+                None
+                if blueprint.artifact_root == "explicit_material_root"
+                else target_authority_path.parent
+            )
+        )
+        review = review_physical_model_blueprint(
+            blueprint,
+            target_inventory_authority=authority,
+            base_dir=review_root,
+            authority_base_dir=authority_root,
+        )
+        module_index = None
+        if module_review_path is not None and runtime_port_registry_path is not None:
+            module_review = _load_structured_mapping(module_review_path)
+            runtime_registry = _load_structured_mapping(runtime_port_registry_path)
+            module_index = build_module_behavior_contract_index(
+                module_review,
+                runtime_registry,
+            )
+        bundle = build_physical_blueprint_export_bundle(
+            blueprint,
+            review,
+            authority,
+            module_behavior_contract_index=module_index,
+        )
+        materialize_physical_blueprint_export_bundle(bundle, output_path)
+        projection = query_physical_blueprint_export_bundle(bundle)
+    except (BlueprintLoadError, PhysicalBlueprintBundleError) as exc:
+        _print_json(
+            {
+                "artifact_type": "physicsguard_physical_blueprint_bundle_error",
+                "category": getattr(exc, "category", "portable_bundle_error"),
+                "status": "invalid",
+                "message": str(exc),
+                "safe_claim": "No portable-bundle claim is licensed because export did not complete.",
+            },
+            pretty,
+        )
+        return 2
+    _print_json(projection.model_dump(mode="json", exclude_none=False), pretty)
+    return _portable_status_exit(projection.status)
+
+
+def blueprint_bundle_query_command(
+    bundle_path: Path,
+    *,
+    selector_kind: str = "status",
+    selector_id: str | None = None,
+    pretty: bool = False,
+) -> int:
+    try:
+        bundle = load_physical_blueprint_export_bundle(bundle_path)
+        projection = query_physical_blueprint_export_bundle(
+            bundle,
+            selector_kind=selector_kind,
+            selector_id=selector_id,
+        )
+    except PhysicalBlueprintBundleError as exc:
+        _print_json(
+            {
+                "artifact_type": "physicsguard_physical_blueprint_bundle_error",
+                "category": exc.category,
+                "status": "invalid",
+                "message": str(exc),
+                "safe_claim": "No portable-bundle query claim is licensed.",
+            },
+            pretty,
+        )
+        return 2
+    _print_json(projection.model_dump(mode="json", exclude_none=False), pretty)
+    return _portable_status_exit(projection.status)
+
+
+def _load_structured_mapping(path: Path) -> dict:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise PhysicalBlueprintBundleError(
+            "supporting_artifact_read_error",
+            f"failed to read supporting artifact '{path}': {exc}",
+        ) from exc
+    try:
+        value = json.loads(text) if path.suffix.lower() == ".json" else yaml.safe_load(text)
+    except (json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise PhysicalBlueprintBundleError(
+            "supporting_artifact_malformed",
+            f"malformed supporting artifact '{path}': {exc}",
+        ) from exc
+    if not isinstance(value, dict):
+        raise PhysicalBlueprintBundleError(
+            "supporting_artifact_invalid_root",
+            f"supporting artifact root must be an object: {path}",
+        )
+    return value
+
+
+def _portable_status_exit(status: str) -> int:
+    if status == "pass":
+        return 0
+    if status == "stale":
+        return 4
+    if status == "blocked":
+        return 5
+    return 3
+
+
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
     data = load_yaml_mapping(path)
     if "script" in data:
@@ -814,6 +1136,48 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return evidence_map_command(args.registry, args.pretty)
             if args.evidence_command == "mesh-check":
                 return evidence_mesh_check_command(args.mesh, args.pretty)
+        if args.command == "blueprint":
+            if args.blueprint_command == "review":
+                return blueprint_review_command(
+                    args.blueprint,
+                    args.target_authority,
+                    args.material_root,
+                    args.pretty,
+                )
+            if args.blueprint_command == "bundle-export":
+                return blueprint_bundle_export_command(
+                    args.blueprint,
+                    args.target_authority,
+                    args.output,
+                    material_root=args.material_root,
+                    module_review_path=args.module_review,
+                    runtime_port_registry_path=args.runtime_port_registry,
+                    pretty=args.pretty,
+                )
+            if args.blueprint_command == "bundle-query":
+                selectors = [
+                    (name, getattr(args, name))
+                    for name in ("module", "element", "case", "impact", "reverse")
+                    if getattr(args, name) is not None
+                ]
+                selector_kind, selector_id = selectors[0] if selectors else ("status", None)
+                return blueprint_bundle_query_command(
+                    args.bundle,
+                    selector_kind=selector_kind,
+                    selector_id=selector_id,
+                    pretty=args.pretty,
+                )
+        if args.command == "self-dna":
+            from physicsguard.self_dna import check as self_dna_check_run
+            from physicsguard.self_dna import export as self_dna_export_run
+
+            payload, code = (
+                self_dna_check_run(args.root, compact=args.compact)
+                if args.self_dna_command == "check"
+                else self_dna_export_run(args.root, args.output)
+            )
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+            return code
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

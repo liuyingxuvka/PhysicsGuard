@@ -1,0 +1,51 @@
+schema: physicsguard.project_formula.v1
+module_type: WaterProductionFaradayModule
+owner: physicsguard.module_semantics.mechanical_draft.WaterProductionFaradayModule
+purpose: Mechanically describe the current low-fidelity Faraday-law water-production relation and exact scenario roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: n_cells, dimension: count, unit: count, required: true, default: null, constraints: [n_cells > 0]}
+  - {name: faradaic_efficiency, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [faradaic_efficiency > 0, faradaic_efficiency <= 1]}
+  - {name: residual_scale_mol_s, dimension: molar_flow, unit: mol/s, required: false, default: 0.001, constraints: [residual_scale_mol_s > 0]}
+scenario_inputs:
+  - {name: current_A, dimension: electric_current, unit: A}
+scenario_outputs:
+  - {name: n_dot_H2O_mol_s, dimension: molar_flow, unit: mol/s}
+residuals:
+  - name: water_production_faraday
+    expression: n_dot_H2O_mol_s - faradaic_efficiency * n_cells * current_A / (2.0 * 96485.33212)
+    dimension: molar_flow
+    unit: mol/s
+    dimensional_derivation: The current source divides charge flow by two times the Faraday constant and multiplies by cell count and unitless efficiency to obtain molar flow.
+    scale_expression: residual_scale_mol_s
+    zero_condition: Water molar flow equals the current implementation's lumped Faraday expression.
+    source_intermediates:
+      - {symbol: current, expression: current_A}
+      - {symbol: n_dot, expression: n_dot_H2O_mol_s}
+      - {symbol: FARADAY_CONSTANT, expression: '96485.33212'}
+      - {symbol: expected, expression: "faradaic_efficiency * n_cells * current / (2.0 * FARADAY_CONSTANT)"}
+constraints:
+  constructor:
+    - {predicate: n_cells > 0, guard_signature: "required_positive(parameters, 'n_cells')", failure_type: ValueError, message_selector: n_cells, on_violation: Reject missing or non-positive cell count., cases: [{kind: inside, inputs: {n_cells: 400.0}, expected: pass}, {kind: boundary, inputs: {n_cells: 0.0}, expected: fail}, {kind: outside, inputs: {n_cells: -1.0}, expected: fail}]}
+    - {predicate: "faradaic_efficiency > 0 and faradaic_efficiency <= 1", guard_signature: "positive_float(...); if self.faradaic_efficiency > 1.0", failure_type: ValueError, message_selector: faradaic_efficiency, on_violation: Reject efficiency outside the current open-zero closed-one interval., cases: [{kind: inside, inputs: {faradaic_efficiency: 0.9}, expected: pass}, {kind: boundary, inputs: {faradaic_efficiency: 1.0}, expected: pass}, {kind: outside, inputs: {faradaic_efficiency: 1.1}, expected: fail}]}
+    - {predicate: residual_scale_mol_s > 0, guard_signature: "positive_float(parameters.get('residual_scale_mol_s', 1e-3), 'residual_scale_mol_s')", failure_type: ValueError, message_selector: residual_scale_mol_s, on_violation: Reject non-positive molar-flow normalization., cases: [{kind: inside, inputs: {residual_scale_mol_s: 0.001}, expected: pass}, {kind: boundary, inputs: {residual_scale_mol_s: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_mol_s: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "n_cells > 0 and faradaic_efficiency > 0 and faradaic_efficiency <= 1 and current_A >= 0 and n_dot_H2O_mol_s >= 0 and residual_scale_mol_s > 0", meaning: Positive cell count, bounded efficiency, nonnegative exact variables, and usable normalization., cases: [{kind: inside, inputs: {n_cells: 400.0, faradaic_efficiency: 0.9, current_A: 100.0, n_dot_H2O_mol_s: 0.2, residual_scale_mol_s: 0.001}, expected: pass}, {kind: boundary, inputs: {n_cells: 400.0, faradaic_efficiency: 1.0, current_A: 0.0, n_dot_H2O_mol_s: 0.0, residual_scale_mol_s: 0.001}, expected: pass}, {kind: outside, inputs: {n_cells: 400.0, faradaic_efficiency: 1.1, current_A: 100.0, n_dot_H2O_mol_s: 0.2, residual_scale_mol_s: 0.001}, expected: fail}]}
+  invalid:
+    - {predicate: "n_cells <= 0 or faradaic_efficiency <= 0 or faradaic_efficiency > 1 or current_A < 0 or n_dot_H2O_mol_s < 0 or residual_scale_mol_s <= 0", meaning: Invalid cell count, efficiency, exact variable sign, or normalization., cases: [{kind: inside, inputs: {n_cells: 400.0, faradaic_efficiency: 1.1, current_A: 100.0, n_dot_H2O_mol_s: 0.2, residual_scale_mol_s: 0.001}, expected: pass}, {kind: boundary, inputs: {n_cells: 400.0, faradaic_efficiency: 1.0, current_A: 0.0, n_dot_H2O_mol_s: 0.0, residual_scale_mol_s: 0.001}, expected: fail}, {kind: outside, inputs: {n_cells: 400.0, faradaic_efficiency: 0.9, current_A: 100.0, n_dot_H2O_mol_s: 0.2, residual_scale_mol_s: 0.001}, expected: fail}]}
+assumptions: [Lumped PEM-style Faraday relation, No water crossover evaporation condensation or membrane-water model, Current and water production are nonnegative in the exact example]
+validity: [Use only for the exact current low-fidelity implementation and bound constant]
+invariants: [Current is read-only and water molar flow is checked without mutation]
+effects: [Emit one water_production_faraday residual]
+postconditions: [Residual equals observed water molar flow minus the declared lumped Faraday expression]
+termination: One finite multiplication and division expression terminates.
+oracle_cases:
+  - {case_id: balanced, inputs: {n_cells: 400.0, faradaic_efficiency: 1.0, current_A: 100.0, n_dot_H2O_mol_s: 0.20728539313235458, residual_scale_mol_s: 0.001}, expected: {water_production_faraday: 0.0}, tolerance: 1.0e-12}
+  - {case_id: zero_current, inputs: {n_cells: 400.0, faradaic_efficiency: 1.0, current_A: 0.0, n_dot_H2O_mol_s: 0.01, residual_scale_mol_s: 0.001}, expected: {water_production_faraday: 0.01}, tolerance: 1.0e-12}
+claim_boundary: This current lumped Faraday arithmetic draft does not validate electrochemistry, Faraday constant provenance, cell aggregation, water transport, or physical correctness.

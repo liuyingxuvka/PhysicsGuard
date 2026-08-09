@@ -1,0 +1,47 @@
+schema: physicsguard.project_formula.v1
+module_type: TankLevelVolumeModule
+owner: physicsguard.module_semantics.mechanical_draft.TankLevelVolumeModule
+purpose: Mechanically describe the current constant-area tank level-volume relation and exact scenario roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: area_m2, dimension: area, unit: m^2, required: true, default: null, constraints: [area_m2 > 0]}
+  - {name: residual_scale_m3, dimension: volume, unit: m^3, required: false, default: 0.001, constraints: [residual_scale_m3 > 0]}
+scenario_inputs:
+  - {name: level_m, dimension: displacement, unit: m}
+scenario_outputs:
+  - {name: volume_m3, dimension: volume, unit: m^3}
+residuals:
+  - name: tank_level_volume
+    expression: volume_m3 - area_m2 * level_m
+    dimension: volume
+    unit: m^3
+    dimensional_derivation: Square metres times metres yields cubic metres.
+    scale_expression: residual_scale_m3
+    zero_condition: Volume equals constant cross-sectional area times level.
+    source_intermediates:
+      - {symbol: level, expression: level_m}
+      - {symbol: volume, expression: volume_m3}
+constraints:
+  constructor:
+    - {predicate: area_m2 > 0, guard_signature: "required_positive(parameters, 'area_m2')", failure_type: ValueError, message_selector: area_m2, on_violation: Reject missing or non-positive cross-sectional area., cases: [{kind: inside, inputs: {area_m2: 3.0}, expected: pass}, {kind: boundary, inputs: {area_m2: 0.0}, expected: fail}, {kind: outside, inputs: {area_m2: -1.0}, expected: fail}]}
+    - {predicate: residual_scale_m3 > 0, guard_signature: "positive_float(parameters.get('residual_scale_m3', 0.001), 'residual_scale_m3')", failure_type: ValueError, message_selector: residual_scale_m3, on_violation: Reject non-positive volume normalization., cases: [{kind: inside, inputs: {residual_scale_m3: 0.001}, expected: pass}, {kind: boundary, inputs: {residual_scale_m3: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_m3: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "area_m2 > 0 and level_m >= 0 and volume_m3 >= 0 and residual_scale_m3 > 0", meaning: Positive constant area, nonnegative exact tank variables, and usable normalization., cases: [{kind: inside, inputs: {area_m2: 3.0, level_m: 2.0, volume_m3: 6.0, residual_scale_m3: 0.001}, expected: pass}, {kind: boundary, inputs: {area_m2: 3.0, level_m: 0.0, volume_m3: 0.0, residual_scale_m3: 0.001}, expected: pass}, {kind: outside, inputs: {area_m2: 3.0, level_m: -1.0, volume_m3: 0.0, residual_scale_m3: 0.001}, expected: fail}]}
+  invalid:
+    - {predicate: "area_m2 <= 0 or level_m < 0 or volume_m3 < 0 or residual_scale_m3 <= 0", meaning: Invalid area, negative tank variable, or normalization., cases: [{kind: inside, inputs: {area_m2: 3.0, level_m: -1.0, volume_m3: 0.0, residual_scale_m3: 0.001}, expected: pass}, {kind: boundary, inputs: {area_m2: 3.0, level_m: 0.0, volume_m3: 0.0, residual_scale_m3: 0.001}, expected: fail}, {kind: outside, inputs: {area_m2: 3.0, level_m: 2.0, volume_m3: 6.0, residual_scale_m3: 0.001}, expected: fail}]}
+assumptions: [Constant cross-sectional area, No sloshing or detailed geometry, Exact example uses nonnegative level and volume]
+validity: [Use only for the current low-fidelity constant-area relation]
+invariants: [Level is read-only and volume is checked without mutation]
+effects: [Emit one tank_level_volume residual]
+postconditions: [Residual equals volume minus area times level]
+termination: One multiplication and subtraction terminate.
+oracle_cases:
+  - {case_id: balanced, inputs: {area_m2: 3.0, level_m: 2.0, volume_m3: 6.0, residual_scale_m3: 0.001}, expected: {tank_level_volume: 0.0}, tolerance: 1.0e-12}
+  - {case_id: volume_offset, inputs: {area_m2: 3.0, level_m: 2.0, volume_m3: 5.5, residual_scale_m3: 0.001}, expected: {tank_level_volume: -0.5}, tolerance: 1.0e-12}
+claim_boundary: This constant-area arithmetic draft does not validate tank geometry, sloshing, calibration, or independently reviewed physical behavior.

@@ -13,6 +13,24 @@
     "assumption_boundary",
     "safe_claim_boundary"
   ],
+  "blueprint_route_contract_fingerprint": "604C296EDF7428A9A7EBAAA47A86D155AB653319717A869555A6AC3A30E06874",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_consumer_boundary",
+    "blueprint_summary_affected_reverse_consumption",
+    "blueprint_minimum_owner_handoff",
+    "blueprint_gap_handoff"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "summary",
+    "affected",
+    "reverse_trace"
+  ],
+  "executed_blueprint_operation_ids": [
+    "api:physicsguard.summary_physical_blueprint_projection",
+    "api:physicsguard.affected_physical_blueprint_projection",
+    "api:physicsguard.reverse_trace_physical_blueprint_projection"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

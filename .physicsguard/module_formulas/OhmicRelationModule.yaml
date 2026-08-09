@@ -1,0 +1,195 @@
+schema: physicsguard.project_formula.v1
+module_type: OhmicRelationModule
+owner: physicsguard.module_semantics.source_first.OhmicRelationModule
+purpose: Source-first reconstruction of the exact maintained implementation, configuration, scenario ports, state roles, residuals,
+  and protected failure.
+authoring_status: source_first_reconstruction_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_source_first_reconstruction
+relation_directionality: direction_neutral
+configuration:
+- name: V_initial_guess
+  dimension: voltage
+  unit: V
+  required: false
+  default: 1.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''V_initial_guess'', 1.0), ''V_initial_guess'')'
+- name: V_lower_bound
+  dimension: voltage
+  unit: V
+  required: false
+  default: -10000.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''V_lower_bound'', -10000.0), ''V_lower_bound'')'
+- name: V_scale
+  dimension: voltage
+  unit: V
+  required: false
+  default: 1.0
+  constraints:
+  - 'Maintained source guard: _positive_float(parameters.get(''V_scale'', 1.0), ''V_scale'')'
+- name: V_upper_bound
+  dimension: voltage
+  unit: V
+  required: false
+  default: 10000.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''V_upper_bound'', 10000.0), ''V_upper_bound'')'
+- name: current_initial_guess
+  dimension: electric_current
+  unit: A
+  required: false
+  default: 100.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''current_initial_guess'', 100.0), ''current_initial_guess'')'
+- name: current_lower_bound
+  dimension: electric_current
+  unit: A
+  required: false
+  default: -5000.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''current_lower_bound'', -5000.0), ''current_lower_bound'')'
+- name: current_scale
+  dimension: electric_current
+  unit: A
+  required: false
+  default: 100.0
+  constraints:
+  - 'Maintained source guard: _positive_float(parameters.get(''current_scale'', 100.0), ''current_scale'')'
+- name: current_upper_bound
+  dimension: electric_current
+  unit: A
+  required: false
+  default: 5000.0
+  constraints:
+  - 'Maintained source guard: _finite_float(parameters.get(''current_upper_bound'', 5000.0), ''current_upper_bound'')'
+- name: residual_scale_V
+  dimension: voltage
+  unit: V
+  required: false
+  default: 1.0
+  constraints:
+  - 'Maintained source guard: _positive_float(parameters.get(''residual_scale_V'', 1.0), ''residual_scale_V'')'
+- name: resistance_ohm
+  dimension: resistance
+  unit: Ohm
+  required: true
+  default: null
+  constraints:
+  - 'Maintained source guard: _required_nonnegative(parameters, ''resistance_ohm'')'
+scenario_inputs:
+- name: current_A
+  dimension: electric_current
+  unit: A
+  role: input
+scenario_outputs:
+- name: V_drop_V
+  dimension: voltage
+  unit: V
+  role: output
+residuals:
+- name: ohmic_relation
+  expression: V_drop_V - current_A * resistance_ohm
+  dimension: voltage
+  unit: V
+  dimensional_derivation: The exact maintained-source relation is normalized in V; physical meaning remains pending separate
+    review.
+  scale_expression: residual_scale_V
+  zero_condition: The exact source-first relation ohmic_relation evaluates to zero.
+constraints:
+  constructor:
+  - predicate: residual_scale_V > 0
+    guard_signature: _positive_float(parameters.get('residual_scale_V', 1.0), 'residual_scale_V')
+    failure_type: ValueError
+    message_selector: residual_scale_V
+    on_violation: Reject non-positive residual_scale_V through the maintained source guard.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_V: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_V: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_V: -1.0
+      expected: fail
+  evaluation: []
+regions:
+  valid:
+  - predicate: residual_scale_V > 0
+    meaning: The protected maintained constructor guard accepts this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_V: 1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_V: 0.0
+      expected: fail
+    - kind: outside
+      inputs:
+        residual_scale_V: -1.0
+      expected: fail
+  invalid:
+  - predicate: not (residual_scale_V > 0)
+    meaning: The protected maintained constructor guard rejects this region.
+    cases:
+    - kind: inside
+      inputs:
+        residual_scale_V: -1.0
+      expected: pass
+    - kind: boundary
+      inputs:
+        residual_scale_V: 0.0
+      expected: pass
+    - kind: outside
+      inputs:
+        residual_scale_V: 1.0
+      expected: fail
+assumptions:
+- This reconstruction describes the exact bound current source and example only.
+- No physical truth or cross-target generalization is licensed by source agreement.
+validity:
+- Use only while the bound implementation, exact instantiation, formula, ports, and tests retain matching fingerprints.
+invariants:
+- All maintained constructor parameters have explicit source provenance.
+- Scenario ports exactly cover every current local declaration and referenced external variable.
+effects:
+- Read the exact bound scenario ports and emit 1 named residual record(s) without mutating the solver vector.
+postconditions:
+- Every emitted record keeps its source name, role, positive scale, diagnostic key, and source-bound arithmetic.
+termination: Finite algebraic source-first evaluation terminates without retry or hidden iteration.
+behavior_contract:
+  kind: residual_equations
+  residuals:
+  - ohmic_relation
+  input_ports:
+  - current_A
+  output_ports:
+  - V_drop_V
+oracle_cases:
+- case_id: exact_bound_current_source
+  inputs:
+    resistance_ohm: 0.1
+    residual_scale_V: 1.0
+    current_lower_bound: -5000.0
+    current_upper_bound: 5000.0
+    current_initial_guess: 100.0
+    current_scale: 100.0
+    V_lower_bound: -10000.0
+    V_upper_bound: 10000.0
+    V_initial_guess: 1.0
+    V_scale: 1.0
+    current_A: 100.0
+    V_drop_V: 1.0
+  expected:
+    ohmic_relation: -9.0
+  tolerance: 1.0e-09
+claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It does not prove
+  physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate evidence accepts those claims.

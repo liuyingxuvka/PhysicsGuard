@@ -59,5 +59,85 @@
       "predicate": "The target-native result for 'generation_eligibility' must be current and pass; otherwise candidate admission blocks with missing_target_obligation.",
       "expected_finding_code": "missing_target_obligation"
     }
+  ],
+  "blueprint_route_contract_fingerprint": "24EF4BB6D6A2FE86A48F77A0F020517DB9F7CBB2FA3FC49B177B7CA48BF0A4D2",
+  "blueprint_oracles": [
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_author_and_full_review",
+      "obligation_id": "blueprint_author_and_full_review",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_author_and_full_review' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_canonical_review",
+      "obligation_id": "blueprint_canonical_review",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_canonical_review' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_impact_and_reverse_trace",
+      "obligation_id": "blueprint_impact_and_reverse_trace",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_impact_and_reverse_trace' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_projection_identity_current",
+      "obligation_id": "blueprint_projection_identity_current",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_projection_identity_current' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_depth_first_gap_and_safe_claim",
+      "obligation_id": "blueprint_depth_first_gap_and_safe_claim",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_depth_first_gap_and_safe_claim' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_material_root_resolution",
+      "obligation_id": "blueprint_material_root_resolution",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_material_root_resolution' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_external_resource_not_run_boundary",
+      "obligation_id": "blueprint_external_resource_not_run_boundary",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_external_resource_not_run_boundary' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_generic_fmi_observation_and_independent_oracle",
+      "obligation_id": "blueprint_generic_fmi_observation_and_independent_oracle",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_generic_fmi_observation_and_independent_oracle' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_portable_bundle_export_identity",
+      "obligation_id": "blueprint_portable_bundle_export_identity",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_portable_bundle_export_identity' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_portable_compact_or_single_selector",
+      "obligation_id": "blueprint_portable_compact_or_single_selector",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_portable_compact_or_single_selector' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    },
+    {
+      "oracle_id": "oracle:physicsguard-candidate-model-blueprint:blueprint_portable_execution_claim_boundary",
+      "obligation_id": "blueprint_portable_execution_claim_boundary",
+      "predicate_kind": "native_blueprint_obligation_must_pass",
+      "predicate": "The exact route-owned blueprint operation and projection evidence for 'blueprint_portable_execution_claim_boundary' must be current and pass; AI prose, a self-declared status, or a caller-rehashed projection cannot pass.",
+      "expected_finding_code": "blueprint_required_obligation_unproved"
+    }
   ]
 }

@@ -1,0 +1,53 @@
+schema: physicsguard.project_formula.v1
+module_type: ThresholdStateCheckModule
+owner: physicsguard.module_semantics.mechanical_draft.ThresholdStateCheckModule
+purpose: Mechanically describe the current threshold-derived state post-check and accepted state deadband.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: threshold, dimension: dimensionless, unit: '1', required: true, default: null, constraints: []}
+  - {name: on_value, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: []}
+  - {name: off_value, dimension: dimensionless, unit: '1', required: false, default: 0.0, constraints: []}
+  - {name: state_tolerance, dimension: dimensionless, unit: '1', required: false, default: 0.25, constraints: [state_tolerance > 0]}
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: input, dimension: dimensionless, unit: '1'}
+  - {name: state, dimension: dimensionless, unit: '1'}
+scenario_outputs: []
+residuals:
+  - name: threshold_state_check
+    expression: "0.0 if max(abs(state - (on_value if input >= threshold else off_value)) - state_tolerance, 0.0) == 0.0 else max(abs(state - (on_value if input >= threshold else off_value)) - state_tolerance, 0.0) * (1.0 if state - (on_value if input >= threshold else off_value) > 0.0 else -1.0)"
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: Input, threshold, states, deadband, residual, and normalization are unitless.
+    scale_expression: state_tolerance * residual_scale
+    zero_condition: State lies within the accepted absolute deadband around the threshold-selected value.
+    source_intermediates:
+      - {symbol: input_value, expression: input}
+      - {symbol: expected, expression: "on_value if input_value >= threshold else off_value"}
+      - {symbol: mismatch, expression: state - expected}
+      - {symbol: excess, expression: "max(abs(mismatch) - state_tolerance, 0.0)"}
+      - {symbol: signed_excess, expression: "0.0 if excess == 0.0 else excess * (1.0 if mismatch > 0.0 else -1.0)"}
+constraints:
+  constructor:
+    - {predicate: state_tolerance > 0, guard_signature: "_positive_float(parameters.get('state_tolerance', 0.25), 'state_tolerance')", failure_type: ValueError, message_selector: state_tolerance, on_violation: Reject a non-positive state deadband., cases: [{kind: inside, inputs: {state_tolerance: 0.25}, expected: pass}, {kind: boundary, inputs: {state_tolerance: 0.0}, expected: fail}, {kind: outside, inputs: {state_tolerance: -1.0}, expected: fail}]}
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive normalization multiplier., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "state_tolerance > 0 and residual_scale > 0", meaning: Current threshold-state post-check has positive deadband and normalization., cases: [{kind: inside, inputs: {state_tolerance: 0.25, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {state_tolerance: 0.0, residual_scale: 1.0}, expected: fail}, {kind: outside, inputs: {state_tolerance: -1.0, residual_scale: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "state_tolerance <= 0 or residual_scale <= 0", meaning: Invalid state deadband or normalization., cases: [{kind: inside, inputs: {state_tolerance: -1.0, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {state_tolerance: 0.0, residual_scale: 1.0}, expected: pass}, {kind: outside, inputs: {state_tolerance: 0.25, residual_scale: 1.0}, expected: fail}]}
+assumptions: [Input and state are explicit current observations, The check has no hysteresis and no temporal memory]
+validity: [Use only as the current exact post-check]
+invariants: [Neither input nor state is mutated]
+effects: [Emit one post_check residual]
+postconditions: [Residual is signed state mismatch beyond the accepted deadband]
+termination: A fixed threshold branch and finite deadband calculation terminate.
+oracle_cases:
+  - {case_id: accepted_on_state, inputs: {input: 6.0, state: 1.1, threshold: 5.0, on_value: 1.0, off_value: 0.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: {threshold_state_check: 0.0}, tolerance: 1.0e-12}
+  - {case_id: excessive_on_state, inputs: {input: 6.0, state: 1.5, threshold: 5.0, on_value: 1.0, off_value: 0.0, state_tolerance: 0.25, residual_scale: 1.0}, expected: {threshold_state_check: 0.25}, tolerance: 1.0e-12}
+claim_boundary: This draft reproduces the current stateless threshold post-check; it does not supply hysteresis, memory, actuation, or independent control semantics.

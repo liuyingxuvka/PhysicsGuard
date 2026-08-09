@@ -4,7 +4,24 @@
   "target_skill_id": "physicsguard-project-adoption",
   "candidate_id": "candidate:physicsguard-project-adoption:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "D8FE89E743B1D98102EE5914529DB507BEBD164931B162AB16243CD92D8D5A01",
+  "purpose_contract_fingerprint": "340555522D93856FF0A25A5229BE7A9066BE532D51D50679B600769B8513B80B",
+  "blueprint_route_contract_fingerprint": "58C38A13A320EA4C4DF86874C972BD218D280918027B8F5B098DE87E8FBC1BA8",
+  "blueprint_projection_contract": {
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "summary"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.summary_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_identity_and_scope_recorded",
+      "blueprint_adoption_not_completeness",
+      "blueprint_adoption_gap_and_revalidation"
+    ],
+    "claim_boundary": "Adoption records the current blueprint identity, scope, artifact-root meaning, native authorities, and projection kind; adoption is never a completeness, physical-truth, or full-review verdict."
+  },
   "candidate_definition": {
     "native_owner_id": "physicsguard.project-adoption",
     "native_route_id": "route:physicsguard-project-adoption:audit",
@@ -21,6 +38,7 @@
       "blocker_inventory",
       "required_revalidation"
     ],
+    "blueprint_route_contract_fingerprint": "58C38A13A320EA4C4DF86874C972BD218D280918027B8F5B098DE87E8FBC1BA8",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -28,15 +46,15 @@
       "event_id": "event:physicsguard-project-adoption:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "D8FE89E743B1D98102EE5914529DB507BEBD164931B162AB16243CD92D8D5A01"
+      "purpose_contract_fingerprint": "340555522D93856FF0A25A5229BE7A9066BE532D51D50679B600769B8513B80B"
     },
     {
       "event_id": "event:physicsguard-project-adoption:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "D8FE89E743B1D98102EE5914529DB507BEBD164931B162AB16243CD92D8D5A01",
-      "previous_event_fingerprint": "B8FF41BA88221E1D5CB992DF53CD54E763569E83123C548DDFE302B918DB8301",
-      "candidate_definition_fingerprint": "727FBFCA3C4E9E3436DDCE8E5F93EE9D5281F0914D43ED58D062E1AF77ED9F59"
+      "purpose_contract_fingerprint": "340555522D93856FF0A25A5229BE7A9066BE532D51D50679B600769B8513B80B",
+      "previous_event_fingerprint": "62F1C081B433BC52EB3F0F3E67739CD42E1A30F06D11329F4A16641C59CFADAC",
+      "candidate_definition_fingerprint": "008B2CF2D42E7E98BDF7238A78B4B11EB880A00E0E71F70E297D90CC007EB83B"
     }
   ]
 }

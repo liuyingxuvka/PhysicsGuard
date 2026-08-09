@@ -17,6 +17,7 @@ from typing import Any, Literal, Mapping
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.predictive_rollout import PredictiveRolloutReceiptSpec
+from physicsguard.schema.physical_model_blueprint import BlueprintLayerName
 
 
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -45,6 +46,16 @@ RevisionKind = Literal[
 ]
 RevisionCheckKind = Literal["regression", "holdout", "predictive_rollout"]
 CheckStatus = Literal["pass", "fail", "blocked", "not_run"]
+ModelMissEvidenceKind = Literal[
+    "runtime",
+    "test",
+    "replay",
+    "manual",
+    "production",
+    "experiment",
+    "dataset",
+    "observation",
+]
 NativeGapFamily = Literal[
     "execution_depth",
     "mapping",
@@ -169,6 +180,56 @@ class CoverageUniverseSpec(BaseModel):
         return _unique_text(values, "coverage member id", non_empty=True)
 
 
+class TaskBlueprintBindingSpec(BaseModel):
+    """Exact current blueprint review consumed by one task-local iteration."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    blueprint_id: str
+    target_system_id: str
+    subject_revision: str
+    blueprint_fingerprint: str
+    blueprint_review_fingerprint: str
+    scope: Literal["whole", "affected"]
+    affected_slice_fingerprint: str | None
+    affected_element_ids: list[str]
+    deepest_licensed_layer: BlueprintLayerName | None
+    first_gap_id: str | None
+    review_status: Literal["pass", "incomplete", "stale", "blocked"]
+
+    @field_validator("blueprint_id", "target_system_id", "subject_revision", "first_gap_id")
+    @classmethod
+    def _identity_valid(cls, value: str | None, info) -> str | None:
+        return None if value is None else _non_empty(value, info.field_name)
+
+    @field_validator(
+        "blueprint_fingerprint",
+        "blueprint_review_fingerprint",
+        "affected_slice_fingerprint",
+    )
+    @classmethod
+    def _fingerprint_valid(cls, value: str | None, info) -> str | None:
+        return None if value is None else _sha256(value, info.field_name)
+
+    @field_validator("affected_element_ids")
+    @classmethod
+    def _affected_ids_valid(cls, values: list[str]) -> list[str]:
+        return _unique_text(values, "affected_element_id")
+
+    @model_validator(mode="after")
+    def _scope_and_gap_current(self) -> "TaskBlueprintBindingSpec":
+        if self.scope == "affected":
+            if self.affected_slice_fingerprint is None or not self.affected_element_ids:
+                raise ValueError("affected blueprint binding requires slice fingerprint and element ids")
+        elif self.affected_slice_fingerprint is not None or self.affected_element_ids:
+            raise ValueError("whole blueprint binding cannot carry an affected slice")
+        if self.review_status == "pass" and self.first_gap_id is not None:
+            raise ValueError("passing blueprint binding cannot carry first_gap_id")
+        if self.review_status != "pass" and self.first_gap_id is None:
+            raise ValueError("non-passing blueprint binding requires first_gap_id")
+        return self
+
+
 class NativeDepthGapSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -212,6 +273,7 @@ class NativeDepthReceiptSpec(BaseModel):
     iteration: int = Field(ge=0)
     model_sha256: str
     coverage_universe_fingerprint: str
+    blueprint: TaskBlueprintBindingSpec
     source_receipt_ids: dict[NativeGapFamily, str]
     source_receipt_fingerprints: dict[NativeGapFamily, str]
     gaps: list[NativeDepthGapSpec]
@@ -273,6 +335,7 @@ class PredecessorIterationSpec(BaseModel):
     terminal_reason: TerminalReason
     receipt_fingerprint: str
     model_sha256: str
+    blueprint_fingerprint: str
     open_gap_ids: list[str]
 
     @field_validator("task_id", "plan_id")
@@ -280,7 +343,7 @@ class PredecessorIterationSpec(BaseModel):
     def _text_valid(cls, value: str, info) -> str:
         return _non_empty(value, info.field_name)
 
-    @field_validator("receipt_fingerprint", "model_sha256")
+    @field_validator("receipt_fingerprint", "model_sha256", "blueprint_fingerprint")
     @classmethod
     def _hash_valid(cls, value: str, info) -> str:
         return _sha256(value, info.field_name)
@@ -415,6 +478,7 @@ class HypothesisPlanSpec(BaseModel):
     non_trivial: bool
     model: TaskModelIdentitySpec
     coverage: CoverageUniverseSpec
+    blueprint: TaskBlueprintBindingSpec
     assumptions: list[str]
     unknowns: list[str]
     prediction_sequence: int = Field(ge=0)
@@ -466,6 +530,8 @@ class HypothesisPlanSpec(BaseModel):
             raise ValueError("native depth receipt is not bound to the plan model")
         if receipt.coverage_universe_fingerprint != self.coverage.coverage_universe_fingerprint:
             raise ValueError("native depth receipt coverage universe mismatch")
+        if receipt.blueprint != self.blueprint:
+            raise ValueError("native depth receipt blueprint identity or depth mismatch")
         if self.iteration == 0:
             if self.predecessor is not None:
                 raise ValueError("initial plan must declare predecessor as null")
@@ -476,6 +542,8 @@ class HypothesisPlanSpec(BaseModel):
                 raise ValueError("predecessor task identity mismatch")
             if self.predecessor.iteration != self.iteration - 1:
                 raise ValueError("predecessor iteration must be exactly one less than the plan")
+            if self.predecessor.blueprint_fingerprint != self.blueprint.blueprint_fingerprint:
+                raise ValueError("predecessor blueprint fingerprint is stale or foreign")
         return self
 
 
@@ -502,6 +570,7 @@ class EvidenceIdentitySpec(BaseModel):
     producer_id: str
     source_ref: str
     independence_group: str
+    evidence_kind: ModelMissEvidenceKind
 
     @field_validator("evidence_id", "producer_id", "source_ref", "independence_group")
     @classmethod
@@ -521,6 +590,8 @@ class DiagnosticObservationSpec(BaseModel):
     task_id: str
     plan_id: str
     frozen_plan_fingerprint: str
+    blueprint_fingerprint: str
+    affected_slice_fingerprint: str | None
     selected_candidate_id: str
     observation_sequence: int = Field(ge=0)
     evidence: EvidenceIdentitySpec
@@ -534,10 +605,10 @@ class DiagnosticObservationSpec(BaseModel):
     def _text_valid(cls, value: str, info) -> str:
         return _non_empty(value, info.field_name)
 
-    @field_validator("frozen_plan_fingerprint")
+    @field_validator("frozen_plan_fingerprint", "blueprint_fingerprint", "affected_slice_fingerprint")
     @classmethod
-    def _plan_fingerprint_valid(cls, value: str) -> str:
-        return _sha256(value, "frozen_plan_fingerprint")
+    def _plan_fingerprint_valid(cls, value: str | None, info) -> str | None:
+        return None if value is None else _sha256(value, info.field_name)
 
     @field_validator("residuals", "timings")
     @classmethod
@@ -571,6 +642,7 @@ class TaskRevisionCheckReceiptSpec(BaseModel):
     revision_id: str
     candidate_model_sha256: str
     coverage_universe_fingerprint: str
+    blueprint: TaskBlueprintBindingSpec
     evidence: EvidenceIdentitySpec
     independent_of_evidence_ids: list[str]
     predictive_receipt: dict[str, Any] | None
@@ -622,6 +694,8 @@ class CandidateModelRevisionSpec(BaseModel):
     base_model: TaskModelIdentitySpec
     candidate_model: TaskModelIdentitySpec
     coverage: CoverageUniverseSpec
+    base_blueprint: TaskBlueprintBindingSpec
+    candidate_blueprint: TaskBlueprintBindingSpec
     base_native_depth_receipt: NativeDepthReceiptSpec
     candidate_native_depth_receipt: NativeDepthReceiptSpec
     revision_kind: RevisionKind
@@ -672,6 +746,17 @@ class CandidateModelRevisionSpec(BaseModel):
                 raise ValueError(f"{label} native depth receipt model mismatch")
             if receipt.coverage_universe_fingerprint != self.coverage.coverage_universe_fingerprint:
                 raise ValueError(f"{label} native depth receipt coverage mismatch")
+        if self.base_native_depth_receipt.blueprint != self.base_blueprint:
+            raise ValueError("base native depth receipt blueprint mismatch")
+        if self.candidate_native_depth_receipt.blueprint != self.candidate_blueprint:
+            raise ValueError("candidate native depth receipt blueprint mismatch")
+        if self.base_blueprint.blueprint_fingerprint == self.candidate_blueprint.blueprint_fingerprint:
+            raise ValueError("candidate revision requires a new blueprint fingerprint")
+        if (
+            self.base_blueprint.target_system_id != self.candidate_blueprint.target_system_id
+            or self.base_blueprint.subject_revision != self.candidate_blueprint.subject_revision
+        ):
+            raise ValueError("base and candidate blueprints must describe the same target revision")
         if self.base_native_depth_receipt.iteration != self.iteration - 1:
             raise ValueError("base native depth receipt must belong to the preceding iteration")
         if self.candidate_native_depth_receipt.iteration != self.iteration:
@@ -695,6 +780,7 @@ class CandidateModelRevisionSpec(BaseModel):
                 or check.candidate_model_sha256 != self.candidate_model.sha256
                 or check.coverage_universe_fingerprint
                 != self.coverage.coverage_universe_fingerprint
+                or check.blueprint != self.candidate_blueprint
             ):
                 raise ValueError("revision check receipt identity mismatch")
         if self.candidate_applied and self.rollback_model is None:
@@ -712,6 +798,7 @@ __all__ = [
     "EvidenceIdentitySpec",
     "HypothesisExpectationSpec",
     "HypothesisPlanSpec",
+    "ModelMissEvidenceKind",
     "NATIVE_GAP_FAMILIES",
     "NativeDepthGapSpec",
     "NativeDepthReceiptSpec",
@@ -721,6 +808,7 @@ __all__ = [
     "PredecessorIterationSpec",
     "ResolutionClass",
     "TaskModelIdentitySpec",
+    "TaskBlueprintBindingSpec",
     "TaskRevisionCheckReceiptSpec",
     "TerminalReason",
     "fingerprint_native_depth_receipt",

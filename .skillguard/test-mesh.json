@@ -1,0 +1,18 @@
+{
+  "schema_version": "skillguard.test_mesh_manifest.current",
+  "mesh_id": "physicsguard-family-owner-receipt-mesh",
+  "source_model_id": "physicsguard.family.validation_composition.current",
+  "profiles": [
+    {
+      "profile_id": "focused",
+      "closure_profile_id": "enforced",
+      "full_admission_required": false
+    },
+    {
+      "profile_id": "full",
+      "closure_profile_id": "enforced",
+      "full_admission_required": true
+    }
+  ],
+  "claim_boundary": "This one unit-level definition selects each PhysicsGuard member's existing enforced closure, including eighty-four target-domain/model owners and one family distribution owner declared only by the audit-closure member. One legitimate claimed run per member is required before member-specific plan_only can freeze owners. It declares no commands, source paths, aliases, fallback, execution result, or receipt authority; full remains separately admitted."
+}

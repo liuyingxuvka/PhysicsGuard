@@ -2,6 +2,65 @@
   "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
   "artifact_role": "family_baseline_regression",
   "target_skill_id": "physicsguard-candidate-model-blueprint",
+  "blueprint_route_contract_fingerprint": "24EF4BB6D6A2FE86A48F77A0F020517DB9F7CBB2FA3FC49B177B7CA48BF0A4D2",
+  "blueprint_cases": [
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_projection_missing_stale_foreign_or_ambiguous",
+      "trigger_condition": "a required blueprint projection or its blueprint, review, relation-set, recipe, target-revision, or evidence fingerprint is missing, stale, foreign, ambiguous, or caller-rehashed",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_projection_missing_stale_foreign_or_ambiguous",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_authority_boundary_violated",
+      "trigger_condition": "the canonical author/full-review route is replaced, bypassed, or duplicated",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_authority_boundary_violated",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_required_obligation_unproved",
+      "trigger_condition": "any route-specific blueprint obligation lacks current target-native evidence or is replaced by AI prose or a self-declared pass",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_required_obligation_unproved",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_gap_or_claim_boundary_unreconciled",
+      "trigger_condition": "the first gap, outside-scope branch, unsupported claim, closure handoff, or bounded claim required by this route is omitted or promoted to pass",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_gap_or_claim_boundary_unreconciled",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_material_root_boundary_violated",
+      "trigger_condition": "explicit_material_root is treated as the blueprint directory, searched, downloaded, or reviewed without the caller-selected --material-root, or external_resource_not_run is promoted",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_material_root_boundary_violated",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_fmi_oracle_independence_violated",
+      "trigger_condition": "FMI caller expectations or native outputs replace the restricted source-independent oracle or are conflated with its result",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_fmi_oracle_independence_violated",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_portable_query_contract_violated",
+      "trigger_condition": "the full bundle is emitted as the default prompt payload, more than one deep selector is accepted, a byte budget is bypassed, or an identity-only terminal is silently repaired",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_portable_query_contract_violated",
+      "self_reported_outcome_allowed": false
+    },
+    {
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_portable_execution_promoted",
+      "trigger_condition": "bundle presence, observed-at-export status, a frozen-case pass, or an AI answer is promoted to current native execution, fresh evidence, or high-fidelity reconstruction",
+      "expected_native_status": "blocked",
+      "expected_finding_code": "blueprint_portable_execution_promoted",
+      "self_reported_outcome_allowed": false
+    }
+  ],
   "cases": [
     {
       "case_id": "known-bad:generation-despite-blocker",

@@ -1,0 +1,36 @@
+schema: physicsguard.project_formula.v1
+module_type: MoleFractionFlowModule
+owner: physicsguard.project_formula.mole_fraction_flow.v1
+purpose: Independently state the lumped species-flow and mole-fraction relation used by the exact scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale_mol_s, dimension: molar_flow, unit: mol/s, required: false, default: 0.001, constraints: [residual_scale_mol_s > 0]}
+scenario_inputs:
+  - {name: total_n_dot_mol_s, dimension: molar_flow, unit: mol/s}
+  - {name: mole_fraction, dimension: mole_fraction, unit: '1'}
+scenario_outputs: [{name: species_n_dot_mol_s, dimension: molar_flow, unit: mol/s}]
+residuals:
+  - name: mole_fraction_flow
+    expression: species_n_dot_mol_s - mole_fraction * total_n_dot_mol_s
+    dimension: molar_flow
+    unit: mol/s
+    dimensional_derivation: Dimensionless mole fraction multiplied by mol/s remains mol/s.
+    scale_expression: residual_scale_mol_s
+    zero_condition: Species molar flow equals mole fraction multiplied by total molar flow.
+    source_intermediates: [{symbol: total, expression: total_n_dot_mol_s}, {symbol: species, expression: species_n_dot_mol_s}, {symbol: fraction, expression: mole_fraction}]
+constraints:
+  constructor:
+    - {predicate: residual_scale_mol_s > 0, guard_signature: "positive_float(parameters.get('residual_scale_mol_s', 1e-3), 'residual_scale_mol_s')", failure_type: ValueError, message_selector: residual_scale_mol_s, on_violation: Reject non-positive residual_scale_mol_s., cases: [{kind: inside, inputs: {residual_scale_mol_s: 0.001}, expected: pass}, {kind: boundary, inputs: {residual_scale_mol_s: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_mol_s: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "mole_fraction >= 0 and mole_fraction <= 1 and residual_scale_mol_s > 0", meaning: Lumped mixture fraction region with bounded fraction and positive normalization; signed flows preserve direction., cases: [{kind: inside, inputs: {mole_fraction: 0.2, residual_scale_mol_s: 0.001}, expected: pass}, {kind: boundary, inputs: {mole_fraction: 0.0, residual_scale_mol_s: 0.001}, expected: pass}, {kind: outside, inputs: {mole_fraction: 1.1, residual_scale_mol_s: 0.001}, expected: fail}]}
+  invalid:
+    - {predicate: "mole_fraction < 0 or mole_fraction > 1 or residual_scale_mol_s <= 0", meaning: Invalid mole fraction or normalization configuration., cases: [{kind: inside, inputs: {mole_fraction: 1.1, residual_scale_mol_s: 0.001}, expected: pass}, {kind: boundary, inputs: {mole_fraction: 1.0, residual_scale_mol_s: 0.001}, expected: fail}, {kind: outside, inputs: {mole_fraction: 0.2, residual_scale_mol_s: 0.001}, expected: fail}]}
+assumptions: [Lumped mixture relation, No species transport, No reaction, Mole fraction is bounded from zero to one]
+validity: [Total and species flows share one signed direction, Scenario roles are one boundary assignment]
+oracle_cases:
+  - {case_id: balanced, inputs: {residual_scale_mol_s: 0.001, total_n_dot_mol_s: 10.0, mole_fraction: 0.2, species_n_dot_mol_s: 2.0}, expected: {mole_fraction_flow: 0.0}, tolerance: 1e-12}
+  - {case_id: species_offset, inputs: {residual_scale_mol_s: 0.001, total_n_dot_mol_s: 10.0, mole_fraction: 0.2, species_n_dot_mol_s: 2.1}, expected: {mole_fraction_flow: 0.1}, tolerance: 1e-12}
+claim_boundary: This is a lumped algebraic mixture relation, not a species-transport or reaction model.

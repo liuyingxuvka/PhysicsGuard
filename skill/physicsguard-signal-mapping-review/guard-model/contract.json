@@ -69,6 +69,46 @@
       "claim_boundary": "This failure row licenses only rejection of a candidate that lacks current passing target-native obligation proof; it does not license a claim that the underlying domain defect was detected."
     }
   ],
+  "blueprint_route_contract": {
+    "schema_version": "physicsguard.skill_blueprint_route_contract.v1",
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "affected",
+      "reverse_trace"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.reverse_trace_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_affected_interface_consumption",
+      "blueprint_downstream_reverse_consumers",
+      "blueprint_mapping_gap_and_safe_claim"
+    ],
+    "block_on": [
+      {
+        "finding_code": "blueprint_projection_missing_stale_foreign_or_ambiguous",
+        "condition": "a required blueprint projection or its blueprint, review, relation-set, recipe, target-revision, or evidence fingerprint is missing, stale, foreign, ambiguous, or caller-rehashed"
+      },
+      {
+        "finding_code": "blueprint_authority_boundary_violated",
+        "condition": "any route other than the sole author/full reviewer authors or fully reviews the blueprint"
+      },
+      {
+        "finding_code": "blueprint_required_obligation_unproved",
+        "condition": "any route-specific blueprint obligation lacks current target-native evidence or is replaced by AI prose or a self-declared pass"
+      },
+      {
+        "finding_code": "blueprint_gap_or_claim_boundary_unreconciled",
+        "condition": "the first gap, outside-scope branch, unsupported claim, closure handoff, or bounded claim required by this route is omitted or promoted to pass"
+      }
+    ],
+    "self_reported_status_allowed": false,
+    "missing_projection_behavior": "block_visible_no_fallback",
+    "claim_boundary": "Mapping review covers only the exact affected interface and reverse-traced downstream consumers with current identity, units, frames, conversion, time, revision, and evidence; omitted branches are outside scope, not passed."
+  },
+  "blueprint_route_contract_fingerprint": "6ED28A71B76AD689CE6AB6BA44364BBC3C2EF0EE98D9BA2E0E0C6CEFD679047D",
   "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth.",
   "authoring_order": [
     "freeze_prevented_failure_contract",

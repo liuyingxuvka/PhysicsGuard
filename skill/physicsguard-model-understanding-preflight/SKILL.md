@@ -27,6 +27,10 @@ Reject or hand off when:
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
 
+## Blueprint slice
+
+Establish the exact target identity, boundary fingerprint, independent inventory source, provider capabilities, and the first useful understanding layer. Consume only the current summary for ordinary preflight or the affected slice for a named boundary/inventory gap. This route does not author or fully review the blueprint; hand that work to `physicsguard-candidate-model-blueprint`. Missing or stale projection identity blocks without a full-scan fallback.
+
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -45,6 +49,8 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `preflight_status`
 - `understanding_record`
+- `blueprint_summary_inputs`
+- `first_useful_layer`
 - `access_gaps`
 - `next_route`
 

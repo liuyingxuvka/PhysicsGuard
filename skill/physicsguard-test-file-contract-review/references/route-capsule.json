@@ -23,11 +23,14 @@
     "test_file",
     "testbench_profile",
     "field_inventory",
-    "model_binding"
+    "model_binding",
+    "current_affected_blueprint_slice"
   ],
   "required_outputs": [
     "contract_status",
     "field_dispositions",
+    "blueprint_interface_bindings",
+    "affected_slice_fingerprint",
     "mapping_gaps",
     "safe_analysis_boundary"
   ],
@@ -40,12 +43,14 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_affected_file_slice_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "blueprint_test_file_contract_projection"
       ],
-      "sha256": "a21d63f69a6dab20e76a154218af5b5050fca1724f2d2ae26a888959f891bab0"
+      "sha256": "9a5c3b377fb8be6c26cda0b755020c3538636c04b4d8bccb2ae8b054ec264344"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -69,7 +74,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "972dc6a140dd17c462f1ef52b47f4cbc67cd6cf3f79fe3c5f63e8563a39a067b"
+      "sha256": "054eb7d54828bceceab3e6d458b76cbcab4d53bf528445f502fde7c9bfc5b434"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -88,6 +93,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "40166bc8ad8e1da5b91b61f447f3d3ab669e650200d18ffcd33280447b490d13",
+  "entry_prompt_sha256": "f57954a6ee8789a14bfb43f0019a6b7a79cc7a1942d108d9f5911e552d886587",
   "claim_boundary": "A pass covers only the exact test files, fields, units, timing, model/testbench versions, signal mappings, and depth represented in the receipt."
 }

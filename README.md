@@ -12,7 +12,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.15.1` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.3` | Python 3.11+ | `physicsguard` | MIT |
 
 English comes first. A Chinese mirror follows below.
 
@@ -61,6 +61,23 @@ visible symptom
 
 The important design choice is modesty. PhysicsGuard does not try to recreate a full solver. It checks explicit, reviewable relations such as balances, gains, signs, map bounds, controller steps, flow splits, and sanity envelopes.
 
+## Physical Blueprint And Layered Understanding
+
+PhysicsGuard can preserve an external physical target as one canonical,
+provider-neutral Physical Model Blueprint: target identity, independent
+inventory, parent-child elements, typed input/output/state/effect ports,
+physical semantics, validity limits, refinements, and exact native
+model/workflow/data/test/evidence bindings. The review reports eight continuous
+understanding layers and the first real gap instead of asking an AI to declare
+that it understands the target.
+
+The stored blueprint can be detailed while an ordinary task reads only a
+summary, affected slice, or reverse trace. A full projection is reserved for a
+claim that actually covers the whole declared boundary. See
+[`docs/physical_model_blueprint.md`](./docs/physical_model_blueprint.md) for the
+contract, evidence strengths, artifact-root rule, projections, and pump-loop
+example.
+
 ## What It Can Build And Check
 
 | Goal | PhysicsGuard output | Boundary |
@@ -102,6 +119,13 @@ python -m physicsguard.cli project closure templates/project_closure_plan.yaml -
 python scripts/check_module_equation_ledger.py --json
 ```
 
+The module command checks the sole current per-module semantic ledger against
+all 152 live public registry members. A pass requires one independently
+reviewed record and exact implementation/test/example/resource bindings per
+module. It reports 151 physical-semantic members and keeps
+`DummyResidualModule` as framework-only behavior with no physical claim
+license. See [`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md).
+
 Test-file and dataset checks:
 
 ```powershell
@@ -116,7 +140,7 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 Candidate model and reusable-library checks:
 
 ```powershell
-python -m physicsguard.cli blueprint review BLUEPRINT.yaml --pretty
+python -m physicsguard.cli blueprint review BLUEPRINT.yaml --target-authority AUTHORITY.yaml --pretty
 python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
 ```
 
@@ -158,7 +182,7 @@ Do not use it when:
 
 ## Library Coverage
 
-PhysicsGuard `v0.15.1` includes strict, receipt-driven task-local model revision loops and low-fidelity audit relations for:
+PhysicsGuard `v0.15.3` includes strict, receipt-driven task-local model revision loops and low-fidelity audit relations for:
 
 - controls, sensors, actuators, delays, saturation, maps, and PID-like steps;
 - drivetrain, vehicle, brake, wheel, gearbox, and road-load relations;
@@ -180,6 +204,7 @@ lists, and a green regression alone cannot close the task.
 
 | File | Purpose |
 | --- | --- |
+| [`docs/physical_model_blueprint.md`](./docs/physical_model_blueprint.md) | canonical layered physical DNA, native bindings, bounded projections, and review semantics |
 | [`docs/model_understanding_preflight.md`](./docs/model_understanding_preflight.md) | visible symptom, subsystem boundary, units, assumptions, and stop condition |
 | [`docs/task_local_model_deepening.md`](./docs/task_local_model_deepening.md) | strict prediction, model-miss, native-gap, and candidate-receipt lifecycle |
 | [`docs/external_model_intake.md`](./docs/external_model_intake.md) | safe intake of external model facts without claiming parser support |
@@ -191,6 +216,7 @@ lists, and a green regression alone cannot close the task.
 | [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | closure gate before final debugging claims |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption-card lifecycle |
 | [`docs/model_library.md`](./docs/model_library.md) | reusable low-fidelity model library |
+| [`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md) | one independently reviewed semantic and binding record for every public module |
 | [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger and evidence freshness |
 
 ## Repository Layout
@@ -223,7 +249,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.15.1` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.3` | Python 3.11+ | `physicsguard` | MIT |
 
 ## 它是什么
 
@@ -263,6 +289,19 @@ visible symptom
 ```
 
 关键是克制。PhysicsGuard 不试图重建完整 solver，只检查明确、可审阅的关系，比如 balance、gain、sign、map bounds、controller step、flow split 和 sanity envelope。
+
+## 物理蓝图和分层理解
+
+PhysicsGuard 可以把一个外部物理目标保存为一份统一、与供应商无关的
+Physical Model Blueprint：里面连着目标身份、独立清单、父子物理元素、
+带类型的输入/输出/状态/效果接口、物理语义、有效边界、细化关系，以及
+精确的模型、流程、数据、测试和证据绑定。审查结果会明确给出八层理解
+走到了哪一层、第一处缺口在哪里，而不是让 AI 自己说“我已经理解了”。
+
+蓝图本身可以很细，但普通任务只需要读取摘要、受影响切片或反向追踪；
+只有声明范围确实覆盖完整边界时才读取完整投影。详细契约、证据强度、
+工件根目录规则、投影方式和泵回路示例见
+[`docs/physical_model_blueprint.md`](./docs/physical_model_blueprint.md)。
 
 ## 它能搭出并检查什么
 
@@ -305,6 +344,12 @@ python -m physicsguard.cli project closure templates/project_closure_plan.yaml -
 python scripts/check_module_equation_ledger.py --json
 ```
 
+这个命令会把唯一有效的逐模块语义账本与实时公开 registry 的 152 个成员逐一
+核对。通过检查必须做到每个模块都有一条独立复审过的记录，并精确绑定实现、
+测试、反例、示例、资源和 oracle。物理语义分母是 151；
+`DummyResidualModule` 只保留为框架测试行为，不拥有物理结论许可。详见
+[`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md)。
+
 测试文件和数据集检查：
 
 ```powershell
@@ -319,7 +364,7 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 候选模型和复用库检查：
 
 ```powershell
-python -m physicsguard.cli blueprint review BLUEPRINT.yaml --pretty
+python -m physicsguard.cli blueprint review BLUEPRINT.yaml --target-authority AUTHORITY.yaml --pretty
 python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
 ```
 
@@ -361,7 +406,7 @@ PhysicsGuard 可以用紧凑图表解释：
 
 ## 模块覆盖
 
-PhysicsGuard `v0.15.1` 包含严格、由原生回执驱动的任务局部模型迭代和这些低保真审计关系：
+PhysicsGuard `v0.15.3` 包含严格、由原生回执驱动的任务局部模型迭代和这些低保真审计关系：
 
 - controls、sensors、actuators、delays、saturation、maps、PID-like steps；
 - drivetrain、vehicle、brake、wheel、gearbox、road-load；
@@ -376,6 +421,7 @@ PhysicsGuard `v0.15.1` 包含严格、由原生回执驱动的任务局部模型
 
 | 文件 | 作用 |
 | --- | --- |
+| [`docs/physical_model_blueprint.md`](./docs/physical_model_blueprint.md) | 分层物理 DNA、原生绑定、有界投影和审查语义 |
 | [`docs/model_understanding_preflight.md`](./docs/model_understanding_preflight.md) | 症状、边界、单位、假设和停止条件 |
 | [`docs/external_model_intake.md`](./docs/external_model_intake.md) | 安全记录外部模型事实，不声称 parser 支持 |
 | [`docs/hierarchical_audit_workflow.md`](./docs/hierarchical_audit_workflow.md) | hierarchy 和 residual audit 路线 |
@@ -386,6 +432,7 @@ PhysicsGuard `v0.15.1` 包含严格、由原生回执驱动的任务局部模型
 | [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | 最终 debugging claim 前的 closure gate |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption card 生命周期 |
 | [`docs/model_library.md`](./docs/model_library.md) | 可复用低保真模型库 |
+| [`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md) | 每个公开模块各自拥有一条独立复审的语义与绑定记录 |
 | [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger 和 evidence freshness |
 
 ## 仓库结构

@@ -13,7 +13,7 @@ python -m physicsguard.cli intake review templates/external_model_intake.yaml --
 python scripts/check_module_equation_ledger.py --json
 ```
 
-The project audit identifies the repository, package version, workflow schema, local skill routes, and adoption log. The preflight records the visible symptom, physical boundary, unit basis, first audit level, assumptions, uncertain mappings, and stop conditions. The intake review records source-of-truth model context, mapped signals, unit/conversion evidence, confidence, stale conditions, and required reviews. The module ledger is a navigation index for low-fidelity module families; it is not physical proof.
+The project audit identifies the repository, package version, workflow schema, local skill routes, and adoption log. The preflight records the visible symptom, physical boundary, unit basis, first audit level, assumptions, uncertain mappings, and stop conditions. The intake review records source-of-truth model context, mapped signals, unit/conversion evidence, confidence, stale conditions, and required reviews. The current module semantic ledger independently reconciles every public registry type and binds each module's FunctionBlock behavior, equation or residual, units, validity and failure boundaries, implementation, tests, examples, resources, and oracle. It supports bounded low-fidelity understanding; it is not high-fidelity physical proof or executed-test evidence.
 
 When the work includes a concrete testbench/test-data file, add the test-file
 contract gate before broad analysis:

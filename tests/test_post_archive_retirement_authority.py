@@ -84,7 +84,7 @@ def test_retired_parent_authority_is_absent_and_summary_is_source_only() -> None
     assert report["authoritative"] is False
     assert report["maintenance_unit_id"] == "unit:physicsguard-family"
     assert report["member_count"] == 10
-    assert report["declared_check_count"] == 84
+    assert report["declared_check_count"] == 85
 
 
 def test_post_archive_source_retirement_audit_is_current_without_install_claim() -> None:

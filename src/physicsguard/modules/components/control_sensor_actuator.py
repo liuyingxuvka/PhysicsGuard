@@ -165,9 +165,9 @@ class MapMonotonicityCheckModule(BaseModule):
         violation = 0.0
         for left, right in zip(self.values, self.values[1:]):
             if self.expected == "increasing":
-                violation += max(left - right, 0.0) + (1.0 if right == left else 0.0)
+                violation += max(left - right, 0.0) + (self.scale if right == left else 0.0)
             elif self.expected == "decreasing":
-                violation += max(right - left, 0.0) + (1.0 if right == left else 0.0)
+                violation += max(right - left, 0.0) + (self.scale if right == left else 0.0)
             elif self.expected == "nondecreasing":
                 violation += max(left - right, 0.0)
             else:

@@ -7,9 +7,28 @@ from pathlib import Path
 import sys
 
 import physicsguard
+import pytest
+
+from scripts.check_installed_physicsguard_skills import _consumer_projection_status
+from scripts.physicsguard_skill_install_authority import load_skillguard_consumer_api
+from scripts import upgrade_purpose_contracts as purpose_contract_generator
 
 
 ROOT = Path(__file__).resolve().parents[1]
+FULL_TOOLCHAIN_IDENTITY = {
+    "physicsguard_version": "0.15.2",
+    "physicsguard_authority_sha256": "sha256:physicsguard-authority",
+    "flowguard_version": "0.68.7",
+    "flowguard_schema_version": "1.0",
+    "flowguard_package_tree_sha256": "sha256:flowguard-tree",
+    "flowguard_direct_url_sha256": "sha256:flowguard-direct-url",
+    "flowguard_authority_sha256": "sha256:flowguard-authority",
+    "skillguard_version": "0.7.2",
+    "skillguard_api_tree_sha256": "sha256:skillguard-api-tree",
+    "skillguard_distribution_tree_sha256": "sha256:skillguard-distribution-tree",
+    "skillguard_direct_url_sha256": "sha256:skillguard-direct-url",
+    "skillguard_authority_sha256": "sha256:skillguard-authority",
+}
 
 
 def _source_file_hash(path: Path) -> str:
@@ -87,14 +106,16 @@ def test_narrow_receipt_cannot_hide_residual_and_consumer_parity_is_exact(
     )
     result = build_consumer_distribution(PRIMARY_ROOT, installed, contract)
     assert result["status"] == "passed"
-    assert audit._consumer_status(
-        PRIMARY_ROOT, installed, PRIMARY_ROOT.name
+    api = load_skillguard_consumer_api()
+    assert _consumer_projection_status(
+        PRIMARY_ROOT.name, PRIMARY_ROOT, installed, api
     )["ok"] is True
 
     installed.joinpath("SKILL.md").write_text("changed prompt\n", encoding="utf-8")
-    assert audit._consumer_status(
-        PRIMARY_ROOT, installed, PRIMARY_ROOT.name
+    assert _consumer_projection_status(
+        PRIMARY_ROOT.name, PRIMARY_ROOT, installed, api
     )["ok"] is False
+    assert not hasattr(audit, "_consumer_status")
 
     residual = source / ".skillguard" / "skillguard_manifest.json"
     residual.write_text("{}\n", encoding="utf-8")
@@ -256,11 +277,184 @@ def test_primary_contract_binds_physicsguard_owned_proofs_without_old_wire() -> 
             assert check["args"][skill_root_index] == skill_prefix
 
 
-def test_readiness_declares_current_three_toolchain_versions() -> None:
+def test_readiness_declares_the_generator_frozen_toolchain_identity() -> None:
     audit = _load_audit_module()
-    assert audit._declared_toolchain_identity() == {
-        "flowguard_schema_version": "1.0",
-        "flowguard_version": "0.68.2",
-        "physicsguard_version": "0.15.1",
-        "skillguard_version": "0.7.2",
+    expected = purpose_contract_generator.current_toolchain_identity(
+        repository_root=ROOT,
+        flowguard_project_path=ROOT / ".flowguard" / "project.toml",
+    )
+    assert audit._declared_toolchain_identity(expected) == expected
+
+
+def test_readiness_accepts_the_complete_generator_identity_schema(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    audit = _load_audit_module()
+    mesh_path = tmp_path / "suite-mesh.json"
+    mesh_path.write_text(
+        json.dumps({"toolchain_identity": FULL_TOOLCHAIN_IDENTITY}),
+        encoding="utf-8",
+    )
+    audit.SUITE_MESH_PATH = mesh_path
+
+    assert audit._declared_toolchain_identity(FULL_TOOLCHAIN_IDENTITY) == {
+        key: FULL_TOOLCHAIN_IDENTITY[key]
+        for key in sorted(FULL_TOOLCHAIN_IDENTITY)
     }
+    monkeypatch.setattr(
+        audit,
+        "_current_toolchain_identity",
+        lambda: dict(FULL_TOOLCHAIN_IDENTITY),
+    )
+    result = audit._check_toolchain_identity()
+    assert result["ok"] is True
+    assert result["status"] == "pass"
+    assert result["declared"] == FULL_TOOLCHAIN_IDENTITY
+    assert result["source"] == FULL_TOOLCHAIN_IDENTITY
+    assert result["observed"] == FULL_TOOLCHAIN_IDENTITY
+
+
+@pytest.mark.parametrize(
+    ("mutate", "finding"),
+    (
+        (
+            lambda value: value.pop("flowguard_authority_sha256"),
+            "missing=.*flowguard_authority_sha256",
+        ),
+        (
+            lambda value: value.update({"historical_version_alias": "retired"}),
+            "extra=.*historical_version_alias",
+        ),
+    ),
+)
+def test_readiness_rejects_missing_or_unknown_identity_fields(
+    tmp_path: Path,
+    mutate,
+    finding: str,
+) -> None:
+    audit = _load_audit_module()
+    declared = dict(FULL_TOOLCHAIN_IDENTITY)
+    mutate(declared)
+    mesh_path = tmp_path / "suite-mesh.json"
+    mesh_path.write_text(
+        json.dumps({"toolchain_identity": declared}),
+        encoding="utf-8",
+    )
+    audit.SUITE_MESH_PATH = mesh_path
+
+    with pytest.raises(ValueError, match=finding):
+        audit._declared_toolchain_identity(FULL_TOOLCHAIN_IDENTITY)
+
+
+def test_readiness_blocks_project_import_drift_without_fallback(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    audit = _load_audit_module()
+
+    def drifted_identity() -> dict[str, str]:
+        raise RuntimeError(
+            "flowguard_authority_mismatch:project=0.68.6:installed=0.68.7"
+        )
+
+    monkeypatch.setattr(audit, "_current_toolchain_identity", drifted_identity)
+
+    result = audit._check_toolchain_identity()
+
+    assert result["ok"] is False
+    assert result["status"] == "blocked"
+    assert result["declared"] == {}
+    assert result["findings"] == [
+        "toolchain_identity_unreadable:RuntimeError:"
+        "flowguard_authority_mismatch:project=0.68.6:installed=0.68.7"
+    ]
+
+
+def test_readiness_package_exception_is_one_canonical_blocked_result(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    audit = _load_audit_module()
+    monkeypatch.setattr(
+        audit,
+        "_check_toolchain_identity",
+        lambda: {
+            "ok": True,
+            "declared": {"physicsguard_version": physicsguard.__version__},
+        },
+    )
+
+    def fail_package(_expected_version: str):
+        raise RuntimeError("fixture-package-failure")
+
+    monkeypatch.setattr(audit, "_check_package_identity", fail_package)
+    monkeypatch.setattr(
+        audit,
+        "check_installed_skills",
+        lambda _root: audit.blocked_installed_skill_audit(
+            installed_root=audit.HOME_SKILLS,
+            repository_root=audit.ROOT,
+            finding_type="fixture_shared_block",
+            detail="fixture",
+        ),
+    )
+
+    exit_code = audit.main()
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+
+    assert exit_code == 1
+    assert captured.err == ""
+    assert payload["ok"] is False
+    assert payload["status"] == "blocked"
+    assert payload["package"]["status"] == "blocked"
+    assert payload["package"]["findings"] == [
+        "package_identity_unavailable:RuntimeError:fixture-package-failure"
+    ]
+
+
+def test_readiness_shared_audit_exception_is_one_canonical_blocked_result(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    audit = _load_audit_module()
+    monkeypatch.setattr(
+        audit,
+        "_check_toolchain_identity",
+        lambda: {
+            "ok": True,
+            "declared": {"physicsguard_version": physicsguard.__version__},
+        },
+    )
+    monkeypatch.setattr(
+        audit,
+        "_check_package_identity",
+        lambda _expected_version: {
+            "check": "canonical_package_identity",
+            "ok": True,
+        },
+    )
+
+    def fail_shared(_root: Path):
+        raise RuntimeError("fixture-shared-audit-failure")
+
+    monkeypatch.setattr(audit, "check_installed_skills", fail_shared)
+
+    exit_code = audit.main()
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+
+    assert exit_code == 1
+    assert captured.err == ""
+    assert payload["status"] == "blocked"
+    shared = payload["consumer_installation_audit"]
+    assert shared["schema_version"] == "physicsguard.installed_skill_audit.v1"
+    assert shared["status"] == "blocked"
+    assert shared["member_results"] == []
+    assert shared["findings"] == [
+        {
+            "severity": "error",
+            "type": "shared_installation_audit_unavailable",
+            "detail": "RuntimeError:fixture-shared-audit-failure",
+        }
+    ]

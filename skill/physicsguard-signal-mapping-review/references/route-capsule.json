@@ -23,11 +23,14 @@
     "governed_signal_or_parameter",
     "target_variable",
     "unit_and_conversion_evidence",
-    "revision_identity"
+    "revision_identity",
+    "current_affected_interface_projection"
   ],
   "required_outputs": [
     "mapping_status",
     "review_gaps",
+    "affected_slice_fingerprint",
+    "downstream_blueprint_consumers",
     "temporal_boundary",
     "safe_mapping_claim"
   ],
@@ -40,12 +43,15 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_affected_interface_slice_required",
+        "blueprint_reverse_trace_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "blueprint_interface_mapping_projection"
       ],
-      "sha256": "ae95fa30f64de9ab955b8cf81035e97bd5d68cbbb7499ce584ccba10d7e53977"
+      "sha256": "6b6d8a620af6506ca471aa4040e2c66999c5575f426dc933033a0c515bc79136"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -69,7 +75,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "5091f6d7e6bde7839ff76a90ef4c79cbced7a43cf393fee9ff6fcb3119770b9e"
+      "sha256": "2ad247d326109e9c8140d482281a3426f846a82da94a40179ad2550a669a2506"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -88,6 +94,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "dc85e16d3f05ce86ea78938fc753168642a6fe7df7b6783bc1c074ed388be059",
+  "entry_prompt_sha256": "2ed2951a5e7c98e7121fa561f6ecf98b29ef632bd2b235a94d3a592c39329667",
   "claim_boundary": "A mapping pass licenses only the exact external signal, target variable, conversion, revision, temporal range, and reviewed confidence in the receipt."
 }

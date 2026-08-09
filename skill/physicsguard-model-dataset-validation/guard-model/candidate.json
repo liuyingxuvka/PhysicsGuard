@@ -4,7 +4,26 @@
   "target_skill_id": "physicsguard-model-dataset-validation",
   "candidate_id": "candidate:physicsguard-model-dataset-validation:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "B9E39127882A827C7FF9E26461A9B568BC0E027C2D2BD41E9D55B40C1D0639CD",
+  "purpose_contract_fingerprint": "A139C39FFD2A3D8602F162941B8EDECD59AA7FDB6E850797401FFEC13FCCE35C",
+  "blueprint_route_contract_fingerprint": "36B2474642BD9336E83EFF0C3FBCE81778FECDBB971A27320E6E850DF337F7A7",
+  "blueprint_projection_contract": {
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "affected",
+      "full"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.full_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_affected_or_whole_validation_consumption",
+      "blueprint_per_element_coverage",
+      "blueprint_unsupported_claim_gap_accounting"
+    ],
+    "claim_boundary": "Validation covers only the exact affected or whole projection and reports evidence per blueprint element and obligation; aggregate counts cannot authorize an uncovered element or unsupported claim."
+  },
   "candidate_definition": {
     "native_owner_id": "physicsguard-model-dataset-validation",
     "native_route_id": "route:physicsguard-model-dataset-validation",
@@ -24,6 +43,7 @@
       "obligation:per-signal-depth-adequate",
       "obligation:predictive-semantics-honest"
     ],
+    "blueprint_route_contract_fingerprint": "36B2474642BD9336E83EFF0C3FBCE81778FECDBB971A27320E6E850DF337F7A7",
     "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt."
   },
   "authoring_events": [
@@ -31,15 +51,15 @@
       "event_id": "event:physicsguard-model-dataset-validation:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "B9E39127882A827C7FF9E26461A9B568BC0E027C2D2BD41E9D55B40C1D0639CD"
+      "purpose_contract_fingerprint": "A139C39FFD2A3D8602F162941B8EDECD59AA7FDB6E850797401FFEC13FCCE35C"
     },
     {
       "event_id": "event:physicsguard-model-dataset-validation:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "B9E39127882A827C7FF9E26461A9B568BC0E027C2D2BD41E9D55B40C1D0639CD",
-      "previous_event_fingerprint": "1B2F49CF820732BBE65F6F5893CF74D30811A7ED46A270FB2398157138D7B0DD",
-      "candidate_definition_fingerprint": "6BF3103408A4BCF64B117F018F8FF38DB01A3ACBA8C9C8B90E82E03978BD415E"
+      "purpose_contract_fingerprint": "A139C39FFD2A3D8602F162941B8EDECD59AA7FDB6E850797401FFEC13FCCE35C",
+      "previous_event_fingerprint": "B8AC7F45985B7974E1427CC26C0628F5CAC04E064B413FB18FCEFDDB173FC843",
+      "candidate_definition_fingerprint": "9EB87BBA63F7D121C78B30C6A859A8B8598195C838973A013F1146D088E2E72A"
     }
   ]
 }

@@ -1,0 +1,46 @@
+schema: physicsguard.project_formula.v1
+module_type: BooleanSwitchModule
+owner: physicsguard.module_semantics.mechanical_draft.BooleanSwitchModule
+purpose: Mechanically describe the current algebraic switch relation and exact example port roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale, dimension: dimensionless, unit: '1', required: false, default: 1.0, constraints: [residual_scale > 0]}
+scenario_inputs:
+  - {name: condition, dimension: dimensionless, unit: '1'}
+  - {name: true_value, dimension: dimensionless, unit: '1'}
+  - {name: false_value, dimension: dimensionless, unit: '1'}
+scenario_outputs:
+  - {name: output, dimension: dimensionless, unit: '1'}
+residuals:
+  - name: boolean_switch
+    expression: output - (condition * true_value + (1.0 - condition) * false_value)
+    dimension: dimensionless
+    unit: '1'
+    dimensional_derivation: The condition and all three signal values are unitless in the exact example.
+    scale_expression: residual_scale
+    zero_condition: Output equals the algebraic blend selected by condition.
+    source_intermediates:
+      - {symbol: expected, expression: "condition * true_value + (1.0 - condition) * false_value"}
+constraints:
+  constructor:
+    - {predicate: residual_scale > 0, guard_signature: "_positive_float(parameters.get('residual_scale', 1.0), 'residual_scale')", failure_type: ValueError, message_selector: residual_scale, on_violation: Reject non-positive normalization., cases: [{kind: inside, inputs: {residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "condition >= 0 and condition <= 1 and residual_scale > 0", meaning: Exact algebraic interpolation range with positive normalization., cases: [{kind: inside, inputs: {condition: 0.5, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {condition: 1.0, residual_scale: 1.0}, expected: pass}, {kind: outside, inputs: {condition: 2.0, residual_scale: 1.0}, expected: fail}]}
+  invalid:
+    - {predicate: "condition < 0 or condition > 1 or residual_scale <= 0", meaning: Condition is outside the documented blend interval or normalization is invalid., cases: [{kind: inside, inputs: {condition: 2.0, residual_scale: 1.0}, expected: pass}, {kind: boundary, inputs: {condition: 1.0, residual_scale: 1.0}, expected: fail}, {kind: outside, inputs: {condition: 0.5, residual_scale: 1.0}, expected: fail}]}
+assumptions: [Condition is normally zero or one but source computes a continuous algebraic blend, No integer or boolean enforcement is performed]
+validity: [Use only for the current unitless exact example]
+invariants: [No state or switching memory is introduced]
+effects: [Emit one boolean_switch residual]
+postconditions: [Residual equals output minus the declared algebraic blend]
+termination: A fixed finite arithmetic expression terminates.
+oracle_cases:
+  - {case_id: true_branch, inputs: {condition: 1.0, true_value: 4.0, false_value: 2.0, output: 4.0, residual_scale: 1.0}, expected: {boolean_switch: 0.0}, tolerance: 1.0e-12}
+  - {case_id: blend_offset, inputs: {condition: 0.5, true_value: 4.0, false_value: 2.0, output: 2.5, residual_scale: 1.0}, expected: {boolean_switch: -0.5}, tolerance: 1.0e-12}
+claim_boundary: This is a current implementation draft for an algebraic blend, not a Boolean type system, temporal switch, or independently reviewed control model.

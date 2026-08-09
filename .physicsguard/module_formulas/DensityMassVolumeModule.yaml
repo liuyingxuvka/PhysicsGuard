@@ -1,0 +1,45 @@
+schema: physicsguard.project_formula.v1
+module_type: DensityMassVolumeModule
+owner: physicsguard.project_formula.density_mass_volume.v1
+purpose: Independently state the mass equals density times volume relation used by the exact bulk-density scenario.
+direction_scope: exact_instantiation_scenario
+relation_directionality: direction_neutral
+configuration:
+  - {name: residual_scale_kg, dimension: mass, unit: kg, required: false, default: 1.0, constraints: [residual_scale_kg > 0]}
+scenario_inputs:
+  - {name: rho_kg_m3, dimension: density, unit: kg/m^3}
+  - {name: volume_m3, dimension: volume, unit: m^3}
+scenario_outputs: [{name: mass_kg, dimension: mass, unit: kg}]
+residuals:
+  - name: density_mass_volume
+    expression: mass_kg - rho_kg_m3 * volume_m3
+    dimension: mass
+    unit: kg
+    dimensional_derivation: kg/m^3 multiplied by m^3 reduces to kg.
+    scale_expression: residual_scale_kg
+    zero_condition: Mass equals bulk density multiplied by volume.
+    source_intermediates: [{symbol: mass, expression: mass_kg}, {symbol: density, expression: rho_kg_m3}, {symbol: volume, expression: volume_m3}]
+constraints:
+  constructor:
+    - predicate: residual_scale_kg > 0
+      guard_signature: positive_float(parameters.get('residual_scale_kg', 1.0), 'residual_scale_kg')
+      failure_type: ValueError
+      message_selector: residual_scale_kg
+      on_violation: Reject non-positive residual_scale_kg.
+      cases: [{kind: inside, inputs: {residual_scale_kg: 1.0}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_kg: -1.0}, expected: fail}]
+  evaluation: []
+regions:
+  valid:
+    - predicate: residual_scale_kg > 0 and mass_kg >= 0 and rho_kg_m3 >= 0 and volume_m3 >= 0
+      meaning: Nonnegative bulk mass-density-volume magnitude relation with a positive scale.
+      cases: [{kind: inside, inputs: {residual_scale_kg: 1.0, mass_kg: 100.0, rho_kg_m3: 1000.0, volume_m3: 0.1}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg: 1.0, mass_kg: 0.0, rho_kg_m3: 0.0, volume_m3: 0.0}, expected: pass}, {kind: outside, inputs: {residual_scale_kg: 1.0, mass_kg: -1.0, rho_kg_m3: 1000.0, volume_m3: 0.1}, expected: fail}]
+  invalid:
+    - predicate: residual_scale_kg <= 0 or mass_kg < 0 or rho_kg_m3 < 0 or volume_m3 < 0
+      meaning: Invalid scale or signed values outside the declared bulk-magnitude boundary.
+      cases: [{kind: inside, inputs: {residual_scale_kg: 0.0, mass_kg: 100.0, rho_kg_m3: 1000.0, volume_m3: 0.1}, expected: pass}, {kind: boundary, inputs: {residual_scale_kg: 1.0, mass_kg: 0.0, rho_kg_m3: 0.0, volume_m3: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_kg: 1.0, mass_kg: 100.0, rho_kg_m3: 1000.0, volume_m3: 0.1}, expected: fail}]
+assumptions: [Bulk density is constant over the modeled volume, Spatial distribution and phase change are outside scope]
+validity: [Use for a pointwise bulk-density relation, Scenario roles are one solvable boundary assignment only]
+oracle_cases:
+  - {case_id: balanced, inputs: {residual_scale_kg: 1.0, mass_kg: 10.0, rho_kg_m3: 2.0, volume_m3: 5.0}, expected: {density_mass_volume: 0.0}, tolerance: 1e-12}
+  - {case_id: excess_mass, inputs: {residual_scale_kg: 1.0, mass_kg: 11.0, rho_kg_m3: 2.0, volume_m3: 5.0}, expected: {density_mass_volume: 1.0}, tolerance: 1e-12}
+claim_boundary: This is a low-fidelity bulk algebraic relation for one exact scenario, not a spatial, phase-change, compressibility, or empirical model.

@@ -1,0 +1,52 @@
+schema: physicsguard.project_formula.v1
+module_type: TankVolumeRateModule
+owner: physicsguard.module_semantics.mechanical_draft.TankVolumeRateModule
+purpose: Mechanically describe the current one-step tank volume balance with explicit previous and next state roles.
+authoring_status: mechanical_draft_pending_independent_review
+separate_review_status: pending
+physical_claim_licensed: false
+direction_scope: exact_instantiation_mechanical_draft
+relation_directionality: direction_neutral
+configuration:
+  - {name: dt_s, dimension: duration, unit: s, required: true, default: null, constraints: [dt_s > 0]}
+  - {name: residual_scale_m3, dimension: volume, unit: m^3, required: false, default: 0.001, constraints: [residual_scale_m3 > 0]}
+scenario_inputs:
+  - {name: volume_previous_m3, dimension: volume, unit: m^3, role: state_previous}
+  - {name: V_dot_in_m3_s, dimension: volume_flow, unit: m^3/s}
+  - {name: V_dot_out_m3_s, dimension: volume_flow, unit: m^3/s}
+scenario_outputs:
+  - {name: volume_current_m3, dimension: volume, unit: m^3, role: state_next}
+residuals:
+  - name: tank_volume_rate
+    expression: volume_current_m3 - (volume_previous_m3 + (V_dot_in_m3_s - V_dot_out_m3_s) * dt_s)
+    dimension: volume
+    unit: m^3
+    dimensional_derivation: Cubic metres per second times seconds yields cubic metres, matching both explicit state values.
+    scale_expression: residual_scale_m3
+    zero_condition: Current volume equals previous volume plus net volumetric inflow over one step.
+    source_intermediates:
+      - {symbol: previous, expression: volume_previous_m3}
+      - {symbol: v_in, expression: V_dot_in_m3_s}
+      - {symbol: v_out, expression: V_dot_out_m3_s}
+      - {symbol: current, expression: volume_current_m3}
+      - {symbol: expected, expression: "previous + (v_in - v_out) * dt_s"}
+constraints:
+  constructor:
+    - {predicate: dt_s > 0, guard_signature: "required_positive(parameters, 'dt_s')", failure_type: ValueError, message_selector: dt_s, on_violation: Reject missing or non-positive step duration., cases: [{kind: inside, inputs: {dt_s: 10.0}, expected: pass}, {kind: boundary, inputs: {dt_s: 0.0}, expected: fail}, {kind: outside, inputs: {dt_s: -1.0}, expected: fail}]}
+    - {predicate: residual_scale_m3 > 0, guard_signature: "positive_float(parameters.get('residual_scale_m3', 0.001), 'residual_scale_m3')", failure_type: ValueError, message_selector: residual_scale_m3, on_violation: Reject non-positive volume normalization., cases: [{kind: inside, inputs: {residual_scale_m3: 0.001}, expected: pass}, {kind: boundary, inputs: {residual_scale_m3: 0.0}, expected: fail}, {kind: outside, inputs: {residual_scale_m3: -1.0}, expected: fail}]}
+  evaluation: []
+regions:
+  valid:
+    - {predicate: "dt_s > 0 and volume_previous_m3 >= 0 and volume_current_m3 >= 0 and residual_scale_m3 > 0", meaning: One positive-duration step over nonnegative explicit volumes with usable normalization., cases: [{kind: inside, inputs: {dt_s: 10.0, volume_previous_m3: 1.0, volume_current_m3: 2.0, residual_scale_m3: 0.001}, expected: pass}, {kind: boundary, inputs: {dt_s: 10.0, volume_previous_m3: 0.0, volume_current_m3: 0.0, residual_scale_m3: 0.001}, expected: pass}, {kind: outside, inputs: {dt_s: 10.0, volume_previous_m3: -1.0, volume_current_m3: 0.0, residual_scale_m3: 0.001}, expected: fail}]}
+  invalid:
+    - {predicate: "dt_s <= 0 or volume_previous_m3 < 0 or volume_current_m3 < 0 or residual_scale_m3 <= 0", meaning: Invalid step duration, explicit volume, or normalization., cases: [{kind: inside, inputs: {dt_s: 10.0, volume_previous_m3: -1.0, volume_current_m3: 0.0, residual_scale_m3: 0.001}, expected: pass}, {kind: boundary, inputs: {dt_s: 10.0, volume_previous_m3: 0.0, volume_current_m3: 0.0, residual_scale_m3: 0.001}, expected: fail}, {kind: outside, inputs: {dt_s: 10.0, volume_previous_m3: 1.0, volume_current_m3: 2.0, residual_scale_m3: 0.001}, expected: fail}]}
+assumptions: [Single-step volume balance, No compressibility or density change, Previous volume is supplied explicitly]
+validity: [Use only for the exact current single-step relation]
+invariants: [Previous volume and flow rates are read-only and current volume is checked without mutation]
+effects: [Emit one tank_volume_rate residual]
+postconditions: [Residual equals current volume minus the one-step expected volume]
+termination: A fixed finite one-step arithmetic expression terminates.
+oracle_cases:
+  - {case_id: balanced, inputs: {dt_s: 10.0, volume_previous_m3: 1.0, V_dot_in_m3_s: 0.1, V_dot_out_m3_s: 0.0, volume_current_m3: 2.0, residual_scale_m3: 0.001}, expected: {tank_volume_rate: 0.0}, tolerance: 1.0e-12}
+  - {case_id: volume_offset, inputs: {dt_s: 10.0, volume_previous_m3: 1.0, V_dot_in_m3_s: 0.1, V_dot_out_m3_s: 0.0, volume_current_m3: 1.8, residual_scale_m3: 0.001}, expected: {tank_volume_rate: -0.2}, tolerance: 1.0e-12}
+claim_boundary: This one-step draft does not provide continuous integration, compressibility, density change, capacity limits, or independently reviewed tank dynamics.

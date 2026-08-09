@@ -22,10 +22,14 @@ Reject or hand off when:
 ## Minimum workflow
 
 1. Bind the exact requested claim and current native receipt inventory.
-2. Load the native route protocol and reconcile failures, skips, stale evidence, mappings, refinements, and predictive conditions.
-3. Return one exact closure state and a claim that does not exceed current evidence.
+2. Load the native route protocol and reconcile failures, skips, stale evidence, mappings, refinements, predictive conditions, and any supplied portable bundle identity or query gap.
+3. Keep frozen bundle cases and current target-native execution as separate states; return one exact closure state and a claim that does not exceed current evidence.
 
 Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+
+## Blueprint closure input
+
+Consume a current whole or affected `PhysicalModelBlueprintReview` projection matching the requested claim. A supplied portable bundle is a frozen interpretation projection only: preserve its bundle/source identities, `observed_at_export_unlicensed`, compact or exact-one-selector query status, `portable_query_identity_only_terminal` gaps, frozen case result, and `execution_claim_licensed=false`. Report current native execution separately and never turn bundle presence, a frozen-case pass, or an AI answer into fresh evidence or closure. This route does not author or fully review the blueprint; missing, stale, ambiguous, unsupported, unresolved, or not-run evidence remains non-pass and cannot broaden to a repository scan or larger projection.
 
 ## Conditional detail loading
 
@@ -45,6 +49,13 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 - `closure_status`
 - `safe_claim`
+- `blueprint_scope_fingerprint`
+- `blueprint_depth_and_first_gap`
+- `portable_bundle_identity`
+- `portable_query_status`
+- `frozen_case_status`
+- `current_execution_status`
+- `execution_claim_licensed`
 - `blockers`
 - `next_actions`
 

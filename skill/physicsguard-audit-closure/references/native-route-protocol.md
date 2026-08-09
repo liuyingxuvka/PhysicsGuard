@@ -2,6 +2,27 @@
 
 Use this route before final localization or completion claims.
 
+## Blueprint closure projection
+
+Bind the requested claim to one current whole or affected `PhysicalModelBlueprintReview` projection. Reconcile its blueprint/review/projection fingerprints, target revision, exact governed denominator, outside-scope members, deepest licensed layer, first gap, native evidence states, and safe claim. Closure consumes this result and never reimplements physical qualification. Missing, stale, unsupported, unresolved, ambiguous, or not-run evidence remains non-pass; do not substitute a broader projection or source scan.
+
+Executable projection entry: call `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for a bounded claim or `physicsguard.full_physical_blueprint_projection(blueprint, review)` only for an explicitly whole-boundary claim. The affected query reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material, then requires the supplied review to equal that passing result field-for-field before graph compilation; non-current, foreign, incomplete, or self-rehashed review input remains non-pass and is never repaired by the query.
+
+## Portable bundle closure boundary
+
+A portable bundle may be supplied as a frozen handoff. Load it only through `physicsguard.query_physical_blueprint_export_bundle` or the public CLI. With no selector, consume the compact status. A deep read accepts exactly one `module`, `element`, `case`, `impact`, or `reverse` identity:
+
+```powershell
+python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty
+python -m physicsguard.cli blueprint bundle-query BUNDLE --case ID --pretty
+```
+
+Other selectors use the same command with exactly one of `--module ID`, `--element ID`, `--impact ID`, or `--reverse ID`. Do not load the complete bundle into the prompt, combine selectors, scan a repository for missing bytes, or replace an over-budget failure with a hand-written summary.
+
+Bind and report the exact bundle fingerprint and id, target system id, subject revision, source fingerprints, source review status, deepest licensed layer, coverage counts, first gap, safe claim, claim boundary, query kind/id, and execution trust status. Preserve `observed_at_export_unlicensed`. Preserve every `portable_query_identity_only_terminal` gap: the bundle can identify an external source, test, dataset, resource, or oracle without carrying its bytes.
+
+A `frozen_case_status=pass` means only that the exported bundle records that frozen case result. It is not a current run. Bundle presence, bundle load, or a correct AI answer never changes `execution_claim_licensed=false`, never refreshes evidence, and never proves high-fidelity reconstruction. If the requested claim requires current native execution, report `current_execution_status=not_run` until a separate current target-native receipt is supplied and validated by its owner. Keep that current receipt separate from the frozen bundle status.
+
 For project-level completion, validation, reuse, or localization claims, prefer
 the project closure gate first:
 
@@ -20,6 +41,7 @@ python <physicsguard-ai-debugging skill directory>\scripts\physicsguard_closure_
 ```
 
 Blocking or downgrading evidence includes failed audit, missing variables or parameters, review-required mappings, stale evidence, skipped checks, open refinements, and same-family follow-ups.
+Portable blocking or downgrading evidence additionally includes a mismatched bundle/source fingerprint, a non-pass frozen source review, promotion of `observed_at_export_unlicensed` to fresh execution, an identity-only terminal that the claim needs as content, a missing exact selector, an over-budget projection, or absent current native execution for an execution claim.
 For interval-aware work, `indeterminate` and `not_run` remain visible and
 cannot be promoted to robust pass. For diagnosability work, unresolved
 hypothesis pairs, missing fault-signature intervals, or a missing recommended

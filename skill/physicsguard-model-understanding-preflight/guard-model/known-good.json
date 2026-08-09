@@ -12,6 +12,22 @@
     "assumption_inventory",
     "access_gaps"
   ],
+  "blueprint_route_contract_fingerprint": "E1474C0EDEC953A43BD9B9F38AF9D91A9CD9B05A867796EF66A9BB80F7D2702E",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_consumer_boundary",
+    "blueprint_target_boundary_and_inventory_consumption",
+    "blueprint_first_useful_layer",
+    "blueprint_access_gap_handoff"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "summary",
+    "affected"
+  ],
+  "executed_blueprint_operation_ids": [
+    "api:physicsguard.summary_physical_blueprint_projection",
+    "api:physicsguard.affected_physical_blueprint_projection"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

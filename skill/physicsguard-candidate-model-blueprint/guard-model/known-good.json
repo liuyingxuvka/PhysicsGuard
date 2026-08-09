@@ -11,6 +11,43 @@
     "rollout_boundary",
     "generation_eligibility"
   ],
+  "blueprint_route_contract_fingerprint": "24EF4BB6D6A2FE86A48F77A0F020517DB9F7CBB2FA3FC49B177B7CA48BF0A4D2",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_author_and_full_review",
+    "blueprint_canonical_review",
+    "blueprint_impact_and_reverse_trace",
+    "blueprint_projection_identity_current",
+    "blueprint_depth_first_gap_and_safe_claim",
+    "blueprint_material_root_resolution",
+    "blueprint_external_resource_not_run_boundary",
+    "blueprint_generic_fmi_observation_and_independent_oracle",
+    "blueprint_portable_bundle_export_identity",
+    "blueprint_portable_compact_or_single_selector",
+    "blueprint_portable_execution_claim_boundary"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "summary",
+    "affected",
+    "reverse_trace",
+    "full"
+  ],
+  "executed_blueprint_operation_ids": [
+    "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --pretty",
+    "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --material-root ROOT --pretty",
+    "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --output BUNDLE --pretty",
+    "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --material-root ROOT --output BUNDLE --pretty",
+    "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty",
+    "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --module|--element|--case|--impact|--reverse ID --pretty",
+    "schema:physicsguard.fmi-observation-request.v1",
+    "api:physicsguard.summary_physical_blueprint_projection",
+    "api:physicsguard.affected_physical_blueprint_projection",
+    "api:physicsguard.reverse_trace_physical_blueprint_projection",
+    "api:physicsguard.full_physical_blueprint_projection",
+    "api:physicsguard.build_physical_blueprint_export_bundle",
+    "api:physicsguard.materialize_physical_blueprint_export_bundle",
+    "api:physicsguard.query_physical_blueprint_export_bundle"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

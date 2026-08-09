@@ -11,6 +11,24 @@
     "validation_receipt",
     "bounded_reuse_scope"
   ],
+  "blueprint_route_contract_fingerprint": "A21785A74F84D262FF67E47CA39E86C1882EFC90CCEA06C07347F8F766DD9FAB",
+  "covered_blueprint_obligation_ids": [
+    "blueprint_consumer_boundary",
+    "blueprint_fingerprint_and_projection_consumption",
+    "blueprint_asset_reuse_limit",
+    "blueprint_compatibility_gap_accounting"
+  ],
+  "covered_blueprint_projection_kinds": [
+    "summary",
+    "affected",
+    "full"
+  ],
+  "executed_blueprint_operation_ids": [
+    "api:physicsguard.summary_physical_blueprint_projection",
+    "api:physicsguard.affected_physical_blueprint_projection",
+    "api:physicsguard.full_physical_blueprint_projection"
+  ],
+  "expected_blueprint_status": "pass",
   "expected_native_status": "pass",
   "self_reported_outcome_allowed": false
 }

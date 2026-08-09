@@ -160,10 +160,30 @@ class BatteryPackPowerModule(BaseModule):
         voltage = value(x, registry, self.component_id, "terminal_voltage_V")
         current = value(x, registry, self.component_id, "current_A")
         power = value(x, registry, self.component_id, "power_W")
-        return [residual_record(self, "battery_pack_power", power - voltage * current, self.scale, "battery_pack_power_mismatch", "Battery pack DC power residual.")]
+        discharge_positive_current = current if self.sign == "discharge_positive" else -current
+        return [
+            residual_record(
+                self,
+                "battery_pack_power",
+                power - voltage * discharge_positive_current,
+                self.scale,
+                "battery_pack_power_mismatch",
+                "Battery pack DC power residual with discharge-positive power and explicitly oriented current.",
+            )
+        ]
 
     def metadata(self) -> dict[str, Any]:
-        return component_metadata(self, "battery_hv", ["algebraic DC power", "no inverter/converter", "no thermal limits"])
+        return component_metadata(
+            self,
+            "battery_hv",
+            [
+                "power_W is positive for pack discharge",
+                f"current_A uses the explicit {self.sign} convention",
+                "algebraic DC power",
+                "no inverter/converter",
+                "no thermal limits",
+            ],
+        )
 
 
 class BatteryPowerLimitCheckModule(BaseModule):

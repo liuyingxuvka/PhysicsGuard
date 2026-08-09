@@ -23,11 +23,15 @@
     "visible_symptom",
     "external_source_of_truth",
     "physical_boundary",
-    "known_inventory"
+    "known_inventory",
+    "inventory_provider_capabilities",
+    "current_blueprint_summary_or_affected_slice"
   ],
   "required_outputs": [
     "preflight_status",
     "understanding_record",
+    "blueprint_summary_inputs",
+    "first_useful_layer",
     "access_gaps",
     "next_route"
   ],
@@ -40,12 +44,15 @@
     {
       "path": "references/native-route-protocol.md",
       "load_when": [
-        "route_selected_and_domain_execution_required"
+        "route_selected_and_domain_execution_required",
+        "blueprint_summary_required",
+        "blueprint_affected_boundary_required"
       ],
       "required_for": [
-        "target_native_domain_workflow"
+        "target_native_domain_workflow",
+        "blueprint_preflight_projection"
       ],
-      "sha256": "06afcb7e05aed4cebb5e4b1457e5337ca729e27b92685ae87fe5423aab3433ab"
+      "sha256": "41e6fd2b79f4b14776889ba1e5e8dd24f4e5945d03a1c30027204cf667467e40"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -69,7 +76,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "c5a58466be4429f3ee75f726a14c4295cb944e0d2454d65fe559d019a330afb2"
+      "sha256": "dc481523f628bf84be3081ac7fdfb8bd59ae66cf730e117d1f0a97fd0c6f8b24"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -88,6 +95,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "d74b447377fb434f236831391e0ee07581f526f0798298c1227372db13baf7cb",
+  "entry_prompt_sha256": "796cea4180b15bbe5558ce8f934348ea2e9bbe75550c609518b512b58bbb6924",
   "claim_boundary": "Preflight licenses only that the declared low-fidelity audit boundary is sufficiently understood to proceed; unresolved access or inventory gaps remain visible blockers."
 }

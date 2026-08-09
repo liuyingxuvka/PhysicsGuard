@@ -6,12 +6,23 @@ import importlib.metadata
 import json
 import os
 from pathlib import Path
-import tomllib
+import sys
 from typing import Any, Mapping
 
 
 ROOT = Path(__file__).resolve().parents[1]
-HOME_SKILLS = Path.home() / ".codex" / "skills"
+CODEX_HOME = Path(os.environ.get("CODEX_HOME") or (Path.home() / ".codex"))
+HOME_SKILLS = CODEX_HOME / "skills"
+SCRIPT_ROOT = Path(__file__).resolve().parent
+if str(SCRIPT_ROOT) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_ROOT))
+
+from check_installed_physicsguard_skills import (  # noqa: E402
+    blocked_installed_skill_audit,
+    check_installed_skills,
+)
+
+
 PACKAGE_NAME = "physicsguard"
 SUITE_MESH_PATH = ROOT / ".flowguard" / "physicsguard_skill_suite_mesh.json"
 FLOWGUARD_PROJECT_PATH = ROOT / ".flowguard" / "project.toml"
@@ -170,64 +181,57 @@ def _check_package_identity(expected_version: str = "") -> dict[str, Any]:
     }
 
 
-def _metadata_version(package_name: str) -> str:
-    try:
-        return importlib.metadata.version(package_name)
-    except importlib.metadata.PackageNotFoundError:
-        return "missing"
+def _current_toolchain_identity() -> dict[str, str]:
+    """Resolve the generator's sole direct-current frozen toolchain identity."""
+
+    from upgrade_purpose_contracts import current_toolchain_identity
+
+    return current_toolchain_identity(
+        repository_root=ROOT,
+        flowguard_project_path=FLOWGUARD_PROJECT_PATH,
+    )
 
 
-def _declared_toolchain_identity() -> dict[str, str]:
+def _declared_toolchain_identity(
+    expected_identity: Mapping[str, str],
+) -> dict[str, str]:
     mesh = json.loads(SUITE_MESH_PATH.read_text(encoding="utf-8"))
     declared = mesh.get("toolchain_identity")
     if not isinstance(declared, Mapping):
         raise ValueError("toolchain_identity_missing")
-    required = {
-        "physicsguard_version",
-        "flowguard_version",
-        "flowguard_schema_version",
-        "skillguard_version",
-    }
-    if set(map(str, declared)) != required:
-        raise ValueError("toolchain_identity_fields_wrong")
-    return {key: str(declared[key]) for key in sorted(required)}
+    expected = {str(key): str(value) for key, value in expected_identity.items()}
+    if not expected:
+        raise ValueError("current_toolchain_identity_empty")
+    if any(not isinstance(key, str) or not isinstance(value, str) for key, value in declared.items()):
+        raise ValueError("toolchain_identity_values_wrong")
+    actual_keys = set(declared)
+    expected_keys = set(expected)
+    if actual_keys != expected_keys:
+        raise ValueError(
+            "toolchain_identity_fields_wrong:"
+            f"missing={sorted(expected_keys - actual_keys)}:"
+            f"extra={sorted(actual_keys - expected_keys)}"
+        )
+    return {key: declared[key] for key in sorted(expected_keys)}
 
 
 def _check_toolchain_identity() -> dict[str, Any]:
     findings: list[str] = []
     try:
-        declared = _declared_toolchain_identity()
-        project = tomllib.loads(FLOWGUARD_PROJECT_PATH.read_text(encoding="utf-8"))
-        pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
-        source = {
-            "physicsguard_version": str(pyproject["project"]["version"]),
-            "flowguard_version": str(project["flowguard"]["adopted_package_version"]),
-            "flowguard_schema_version": str(project["flowguard"]["schema_version"]),
-            "skillguard_version": declared["skillguard_version"],
-        }
-        flowguard_module = importlib.import_module("flowguard")
-        observed = {
-            "physicsguard_version": _metadata_version("physicsguard"),
-            "flowguard_version": _metadata_version("flowguard"),
-            "flowguard_schema_version": str(
-                getattr(flowguard_module, "SCHEMA_VERSION", "missing")
-            ),
-            "skillguard_version": _metadata_version("skillguard"),
-        }
-        version_file = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-        if source["physicsguard_version"] != version_file:
-            findings.append("physicsguard_source_version_drift")
-        if declared != source:
+        current = _current_toolchain_identity()
+        declared = _declared_toolchain_identity(current)
+        source = dict(current)
+        observed = dict(current)
+        if declared != current:
             findings.append("declared_toolchain_identity_stale")
-        for key in sorted(declared):
-            if observed.get(key) != declared[key]:
-                findings.append(f"installed_toolchain_mismatch:{key}")
     except (
         ImportError,
         OSError,
         UnicodeError,
         json.JSONDecodeError,
         KeyError,
+        RuntimeError,
+        TypeError,
         ValueError,
     ) as exc:
         declared = {}
@@ -351,107 +355,27 @@ def _authority_status(
     }
 
 
-def _consumer_status(
-    source_skill: Path,
-    installed_skill: Path,
+def _skill_status(
     target_skill_id: str,
+    source_relative: str,
+    installed_name: str,
+    installation_member: Mapping[str, Any] | None,
 ) -> dict[str, Any]:
-    manifest_path = installed_skill / "consumer-release.json"
-    findings: list[str] = []
-    rows: list[dict[str, Any]] = []
-    if (installed_skill / ".skillguard").exists():
-        findings.append("installed_consumer_contains_author_control")
-    try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return {
-            "ok": False,
-            "skill_root": str(installed_skill),
-            "manifest_path": str(manifest_path),
-            "findings": [f"consumer_manifest_unreadable:{type(exc).__name__}"],
-            "rows": rows,
-        }
-    if manifest.get("schema_version") != "consumer.skill_distribution.current":
-        findings.append("consumer_manifest_schema_wrong")
-    if manifest.get("skill_id") != target_skill_id:
-        findings.append("consumer_manifest_skill_wrong")
-    if manifest.get("author_control_excluded") is not True:
-        findings.append("consumer_manifest_author_boundary_wrong")
-    declared = manifest.get("files")
-    if not isinstance(declared, list) or not declared:
-        findings.append("consumer_manifest_files_missing")
-        declared = []
-    declared_paths: set[str] = set()
-    for index, row in enumerate(declared):
-        if not isinstance(row, Mapping):
-            findings.append(f"consumer_manifest_row_invalid:{index}")
-            continue
-        relative = str(row.get("path", "")).replace("\\", "/")
-        expected = str(row.get("content_hash", "")).lower()
-        parts = relative.split("/")
-        if (
-            not relative
-            or relative.startswith("/")
-            or any(part in {"", ".", ".."} for part in parts)
-            or ".skillguard" in parts
-            or relative == "consumer-release.json"
-            or relative in declared_paths
-        ):
-            findings.append(f"consumer_manifest_path_invalid:{relative}")
-            continue
-        declared_paths.add(relative)
-        source = source_skill / Path(relative)
-        installed = installed_skill / Path(relative)
-        source_hash = f"sha256:{_sha256(source)}" if source.is_file() else None
-        installed_hash = f"sha256:{_sha256(installed)}" if installed.is_file() else None
-        ok = (
-            expected.startswith("sha256:")
-            and len(expected) == 71
-            and source_hash == expected
-            and installed_hash == expected
-        )
-        rows.append(
-            {
-                "relative_path": relative,
-                "expected_hash": expected,
-                "source_sha256": source_hash,
-                "installed_sha256": installed_hash,
-                "ok": ok,
-            }
-        )
-        if not ok:
-            findings.append(f"consumer_file_mismatch:{relative}")
-    actual_paths = {
-        path.relative_to(installed_skill).as_posix()
-        for path in installed_skill.rglob("*")
-        if path.is_file() and path.name != "consumer-release.json"
-    }
-    if actual_paths != declared_paths:
-        findings.append(
-            "consumer_inventory_mismatch:"
-            f"missing={sorted(declared_paths - actual_paths)}:"
-            f"unexpected={sorted(actual_paths - declared_paths)}"
-        )
-    return {
-        "ok": not findings and len(rows) == len(declared_paths),
-        "skill_root": str(installed_skill),
-        "manifest_path": str(manifest_path),
-        "release_id": manifest.get("release_id"),
-        "manifest_hash": manifest.get("manifest_hash"),
-        "findings": findings,
-        "rows": rows,
-    }
-
-
-def _skill_status(target_skill_id: str, source_relative: str, installed_name: str) -> dict[str, Any]:
     source_skill = (ROOT / source_relative).resolve()
-    installed_skill = (HOME_SKILLS / installed_name).resolve()
     receipt = retirement_receipt_path(target_skill_id)
     source = _authority_status(source_skill, target_skill_id, receipt)
-    installed = _consumer_status(source_skill, installed_skill, target_skill_id)
+    if installation_member is None:
+        installed = {
+            "skill_id": installed_name,
+            "ok": False,
+            "status": "blocked",
+            "reasons": ["shared_installation_audit_member_missing"],
+        }
+    else:
+        installed = dict(installation_member)
     return {
         "target_skill_id": target_skill_id,
-        "ok": source["ok"] and installed["ok"],
+        "ok": bool(source.get("ok")) and bool(installed.get("ok")),
         "source": source,
         "installed": installed,
         "source_installed_consumer_parity": installed,
@@ -461,23 +385,113 @@ def _skill_status(target_skill_id: str, source_relative: str, installed_name: st
 def main() -> int:
     toolchain = _check_toolchain_identity()
     expected_version = str(toolchain.get("declared", {}).get("physicsguard_version", ""))
-    package = _check_package_identity(expected_version)
-    skills = [_skill_status(*row) for row in SKILLS]
-    ok = toolchain["ok"] and package["ok"] and all(skill["ok"] for skill in skills)
+    try:
+        package = _machine_mapping(
+            _check_package_identity(expected_version),
+            "package_identity_result",
+        )
+        if type(package.get("ok")) is not bool:
+            raise TypeError("package_identity_ok_not_boolean")
+    except Exception as exc:
+        package = _blocked_package_identity(expected_version, exc)
+    try:
+        installation_audit = _machine_mapping(
+            check_installed_skills(HOME_SKILLS),
+            "shared_installation_audit_result",
+        )
+        if type(installation_audit.get("ok")) is not bool:
+            raise TypeError("shared_installation_audit_ok_not_boolean")
+        if type(installation_audit.get("member_results")) is not list:
+            raise TypeError("shared_installation_audit_member_results_not_list")
+        if type(installation_audit.get("findings")) is not list:
+            raise TypeError("shared_installation_audit_findings_not_list")
+        if not all(
+            isinstance(row, Mapping)
+            for row in installation_audit["member_results"]
+        ):
+            raise TypeError("shared_installation_audit_member_not_object")
+    except Exception as exc:
+        installation_audit = blocked_installed_skill_audit(
+            installed_root=HOME_SKILLS,
+            repository_root=ROOT,
+            finding_type="shared_installation_audit_unavailable",
+            detail=_exception_detail(exc),
+        )
+    installation_by_id = {
+        str(row.get("skill_id", "")): row
+        for row in installation_audit.get("member_results", [])
+        if isinstance(row, Mapping)
+    }
+    skills = [
+        _skill_status(*row, installation_by_id.get(row[0]))
+        for row in SKILLS
+    ]
+    ok = (
+        toolchain["ok"]
+        and package["ok"]
+        and bool(installation_audit.get("ok"))
+        and all(skill["ok"] for skill in skills)
+    )
     result = {
         "artifact_kind": "guard_family_v2_runtime_authority_audit",
         "ok": ok,
+        "status": "pass" if ok else "blocked",
         "toolchain": toolchain,
         "package": package,
         "skills": skills,
+        "consumer_installation_audit": installation_audit,
         "installation_currentness": {
             "status": "external_exact_receipt_required",
             "claim_boundary": "Byte parity here does not prove issuance, terminal closure, parent consumption, or installation-currentness replay.",
         },
         "claim_boundary": "Pass proves canonical package identity, exact author-side V2 authority-file presence, expanded former-V1 residual absence, expanded-scope retirement receipt presence, and exact clean consumer parity. It executes no native owner and cannot close production by itself.",
     }
-    print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+    print(
+        json.dumps(
+            result,
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+            allow_nan=False,
+        )
+    )
     return 0 if ok else 1
+
+
+def _machine_mapping(value: object, label: str) -> dict[str, Any]:
+    if not isinstance(value, Mapping):
+        raise TypeError(f"{label}_not_object")
+    candidate = dict(value)
+    try:
+        json.dumps(candidate, ensure_ascii=False, sort_keys=True, allow_nan=False)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise TypeError(f"{label}_not_json_serializable:{type(exc).__name__}") from exc
+    return candidate
+
+
+def _blocked_package_identity(
+    expected_version: str,
+    exc: Exception,
+) -> dict[str, Any]:
+    return {
+        "check": "canonical_package_identity",
+        "ok": False,
+        "status": "blocked",
+        "expected_version": expected_version,
+        "metadata_version": None,
+        "module_version": None,
+        "module_path": None,
+        "expected_repository_root": str(ROOT.resolve()),
+        "findings": [f"package_identity_unavailable:{_exception_detail(exc)}"],
+    }
+
+
+def _exception_detail(exc: Exception) -> str:
+    try:
+        detail = str(exc)
+    except Exception:
+        detail = "unprintable_exception"
+    return f"{type(exc).__name__}:{detail}"
 
 
 if __name__ == "__main__":

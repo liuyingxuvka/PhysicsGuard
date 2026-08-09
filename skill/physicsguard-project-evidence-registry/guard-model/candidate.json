@@ -4,7 +4,28 @@
   "target_skill_id": "physicsguard-project-evidence-registry",
   "candidate_id": "candidate:physicsguard-project-evidence-registry:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "DF24A1D21276251C8AA0BAEA3996D0D6D1F4C25702A4D498A16B5205BB54427E",
+  "purpose_contract_fingerprint": "673944717E7997A34D34A11884C4C796FDBA914E54E1A7F02142FE41A6F50050",
+  "blueprint_route_contract_fingerprint": "17B69F0B156F0A3B92239E48D6DAB3787D243010704A20A52A8CF0868DDBEB2C",
+  "blueprint_projection_contract": {
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "summary",
+      "affected",
+      "full"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.summary_physical_blueprint_projection",
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.full_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_evidence_and_resource_binding",
+      "blueprint_binding_freshness",
+      "blueprint_missing_stale_gap_and_closure_handoff"
+    ],
+    "claim_boundary": "Registry results bind exact current evidence, resources, oracles, receipts, freshness, and gaps to blueprint elements; they do not convert missing or stale evidence into a project-wide pass."
+  },
   "candidate_definition": {
     "native_owner_id": "physicsguard.project-evidence-registry",
     "native_route_id": "route:physicsguard-project-evidence-registry:check",
@@ -21,6 +42,7 @@
       "critical_gaps",
       "bundle_scope"
     ],
+    "blueprint_route_contract_fingerprint": "17B69F0B156F0A3B92239E48D6DAB3787D243010704A20A52A8CF0868DDBEB2C",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -28,15 +50,15 @@
       "event_id": "event:physicsguard-project-evidence-registry:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "DF24A1D21276251C8AA0BAEA3996D0D6D1F4C25702A4D498A16B5205BB54427E"
+      "purpose_contract_fingerprint": "673944717E7997A34D34A11884C4C796FDBA914E54E1A7F02142FE41A6F50050"
     },
     {
       "event_id": "event:physicsguard-project-evidence-registry:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "DF24A1D21276251C8AA0BAEA3996D0D6D1F4C25702A4D498A16B5205BB54427E",
-      "previous_event_fingerprint": "729EFDF9265EDA5F9EF6EB4CA0F003543ACDEBC58BAAE20450646C45DF35E3DD",
-      "candidate_definition_fingerprint": "0ADCC293E37F8842BD9BEF27311A4F62C285804104F96221BCDCB701610019FC"
+      "purpose_contract_fingerprint": "673944717E7997A34D34A11884C4C796FDBA914E54E1A7F02142FE41A6F50050",
+      "previous_event_fingerprint": "FB3C5E93E0D037B5308A4C2FFDD2E47378BB3AF3AAD92878153A47B4688764B2",
+      "candidate_definition_fingerprint": "B94062EC7BA5EE17D82962907766E1222D56C1A3A108B099160B98E2CD72FFE9"
     }
   ]
 }

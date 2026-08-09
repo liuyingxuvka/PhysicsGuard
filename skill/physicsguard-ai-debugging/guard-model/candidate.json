@@ -4,7 +4,28 @@
   "target_skill_id": "physicsguard-ai-debugging",
   "candidate_id": "candidate:physicsguard-ai-debugging:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "4962A5432F8FC5A2040AC8F9F16A54795C50704BD79E3244F03D3F288B3EE666",
+  "purpose_contract_fingerprint": "FEDD04338E663AAD0166E4F00F73F80948625CF24A11D0892F590148CADAC241",
+  "blueprint_route_contract_fingerprint": "604C296EDF7428A9A7EBAAA47A86D155AB653319717A869555A6AC3A30E06874",
+  "blueprint_projection_contract": {
+    "authority_mode": "consumer_only",
+    "projection_kinds": [
+      "summary",
+      "affected",
+      "reverse_trace"
+    ],
+    "required_operation_ids": [
+      "api:physicsguard.summary_physical_blueprint_projection",
+      "api:physicsguard.affected_physical_blueprint_projection",
+      "api:physicsguard.reverse_trace_physical_blueprint_projection"
+    ],
+    "required_obligation_ids": [
+      "blueprint_consumer_boundary",
+      "blueprint_summary_affected_reverse_consumption",
+      "blueprint_minimum_owner_handoff",
+      "blueprint_gap_handoff"
+    ],
+    "claim_boundary": "This mixed coordinator may consume only current summary, affected, and reverse-trace projections to select and hand off to the minimum direct owners; it cannot author, fully review, or close the blueprint."
+  },
   "candidate_definition": {
     "native_owner_id": "physicsguard.ai-debugging",
     "native_route_id": "route:physicsguard-ai-debugging:audit",
@@ -25,6 +46,7 @@
       "assumption_boundary",
       "safe_claim_boundary"
     ],
+    "blueprint_route_contract_fingerprint": "604C296EDF7428A9A7EBAAA47A86D155AB653319717A869555A6AC3A30E06874",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -32,15 +54,15 @@
       "event_id": "event:physicsguard-ai-debugging:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "4962A5432F8FC5A2040AC8F9F16A54795C50704BD79E3244F03D3F288B3EE666"
+      "purpose_contract_fingerprint": "FEDD04338E663AAD0166E4F00F73F80948625CF24A11D0892F590148CADAC241"
     },
     {
       "event_id": "event:physicsguard-ai-debugging:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "4962A5432F8FC5A2040AC8F9F16A54795C50704BD79E3244F03D3F288B3EE666",
-      "previous_event_fingerprint": "2D07B5FA9A9C02B5D40B65D92E32D5A836CEC80E1BE1D6E6F29181FE3BAC2A43",
-      "candidate_definition_fingerprint": "1E1B110091AF3FB816564537D7ABFF5991E941AC5ECCE5A78CD976A8C924B786"
+      "purpose_contract_fingerprint": "FEDD04338E663AAD0166E4F00F73F80948625CF24A11D0892F590148CADAC241",
+      "previous_event_fingerprint": "F1A150EBB70358F00B4DD5BFC6020DA57B0D6787F1BF947B1955E25EB842E06D",
+      "candidate_definition_fingerprint": "CD31E18258760DDA0310EAA6CD0DF9187AB3DF7930479C165332BA2DD1202329"
     }
   ]
 }

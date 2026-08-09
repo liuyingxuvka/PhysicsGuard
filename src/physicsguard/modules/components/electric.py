@@ -81,11 +81,14 @@ class ElectricMotorSimpleModule(BaseModule):
             ResidualRecord(
                 name=f"{self.component_id}.motor_efficiency_power",
                 value=mechanical_power - efficiency * electrical_power,
-                scale=self.residual_scale_power_W,
+                scale=self.residual_scale_power_W * self.residual_scale_efficiency,
                 source=self.component_id,
                 role="equation",
                 diagnostic_key="motor_efficiency_power_mismatch",
-                description="Motor efficiency power residual P_mech - eta*P_elec.",
+                description=(
+                    "Motor efficiency power residual P_mech - eta*P_elec, normalized by "
+                    "the configured power scale times the dimensionless efficiency scale."
+                ),
             ),
         ]
 
