@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15.4 - 2026-08-10
+
+- Refresh the PhysicsGuard package, model-regression identities, and self-DNA version bindings.
+- Regenerate the maintained-skill projections from the current package identity.
+- Preserve explicit native-physics ownership and visible evidence gaps.
+
 ## v0.15.3 - 2026-08-09
 
 - Complete the PhysicsGuard family self-DNA spine with current model, code,
