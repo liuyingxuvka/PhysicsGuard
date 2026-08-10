@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.15.5 - 2026-08-10
+- Keep the ten maintained skill projections aligned with the patch release.
+- Add category-aware software-scope treatment for the supporting-framework
+  `DummyResidualModule` without making physical claims.
+- Refresh current model, code, test, and evidence identities for the 0.15.5
+  DNA snapshot; historical receipts remain immutable.
+
 ## v0.15.4 - 2026-08-10
 
 - Refresh the PhysicsGuard package, model-regression identities, and self-DNA version bindings.

@@ -78,7 +78,7 @@ def test_current_toolchain_and_model_purpose_metadata_are_exact() -> None:
     for row in manifest["models"]:
         purpose = ModelPurposeClosure.from_dict(row["purpose_closure"])
         assert purpose.model_instance_id == (
-            f"regression:{row['model_id']}:0.15.4"
+            f"regression:{row['model_id']}:0.15.5"
         )
 
 
