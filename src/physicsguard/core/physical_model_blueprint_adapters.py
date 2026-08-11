@@ -19,6 +19,11 @@ from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.dataset_identity import LogicalDatasetRecordSpec
 from physicsguard.schema.evidence_mesh import EvidenceMeshSpec
 from physicsguard.schema.fmi_observation import FmiObservationRequest
+from physicsguard.schema.native_object_dna import (
+    NativeObjectDnaObservation,
+    load_native_object_dna_observation,
+    native_object_dna_from_fmi_result,
+)
 from physicsguard.schema.model_dataset_validation import (
     ModelDatasetValidationReportSpec,
     ModelValidationPlanSpec,
@@ -114,6 +119,10 @@ REPLAYABLE_NATIVE_OPERATIONS: dict[str, tuple[str, str]] = {
     "fmi_observation_request": (
         "physicsguard.fmi-observation",
         "fmi_observation.review",
+    ),
+    "native_object_dna_observation": (
+        "physicsguard.native-object-dna",
+        "native_object_dna.observe",
     ),
     "project_evidence_registry": (
         "physicsguard.project-evidence-registry",
@@ -441,6 +450,7 @@ def _load_declared_native_schema(binding: NativeBinding, path: Path) -> BaseMode
         return load_hierarchical_audit_spec(path)
     loaders: dict[str, tuple[type[BaseModel], Callable[[Path, type[BaseModel]], BaseModel]]] = {
         "fmi_observation_request": (FmiObservationRequest, load_spec),
+        "native_object_dna_observation": (NativeObjectDnaObservation, load_spec),
         "project_evidence_registry": (ProjectEvidenceRegistrySpec, load_spec),
         "project_profile": (ProjectProfileAuthoritySpec, load_spec),
         "signal_mapping_ledger": (SignalMappingLedgerSpec, load_spec),
@@ -467,6 +477,7 @@ def _native_identity(native: BaseModel | None, native_schema: str) -> str | None
     values = native.model_dump(mode="json", exclude_none=True)
     identity_key = {
         "fmi_observation_request": "observation_id",
+        "native_object_dna_observation": "observation_id",
         "hierarchical_audit": "audit_name",
         "project_evidence_registry": "registry_id",
         "project_profile": "profile_id",
@@ -613,14 +624,10 @@ def _replay_native_owner(
             terminal_receipt_verified=True,
             terminal_receipt_fingerprint=terminal_fingerprint,
         )
-    verified_fmi_object_dna_contract = (
-        binding.native_schema == "fmi_observation_request"
-        and payload.get("schema_version") == "physicsguard.fmi-observation-result.v1"
-        and bool(payload.get("source_census"))
-        and bool(payload.get("source_census_fingerprint"))
-        and bool(payload.get("behavior_case_universe"))
-        and bool(payload.get("behavior_case_universe_fingerprint"))
-    )
+    object_dna_payload = _normalize_object_dna_payload(binding.native_schema, payload)
+    verified_object_dna_contract = object_dna_payload is not None
+    if object_dna_payload is not None:
+        payload = object_dna_payload
     return NativeAuthorityObservation(
         binding_id=binding.binding_id,
         adapter_id=f"physicsguard.native-authority.{binding.native_schema}.v1",
@@ -662,8 +669,10 @@ def _replay_native_owner(
             if payload.get("behavior_case_universe_fingerprint") is not None
             else None
         ),
-        object_dna_contract_kind=("fmi.v1" if binding.native_schema == "fmi_observation_request" else None),
-        object_dna_contract_verified=verified_fmi_object_dna_contract,
+        object_dna_contract_kind=(
+            str(payload.get("profile")) if verified_object_dna_contract else None
+        ),
+        object_dna_contract_verified=verified_object_dna_contract,
     )
 
 
@@ -672,6 +681,13 @@ def _execute_native_operation(native_schema: str, path: Path) -> dict[str, objec
         from physicsguard.core.fmi_observation import review_fmi_observation_request
 
         return review_fmi_observation_request(path).model_dump(mode="json", exclude_none=False)
+    if native_schema == "native_object_dna_observation":
+        # The neutral contract is already the native owner's terminal result.
+        # Loading it here is intentionally strict: the reviewer must never
+        # reconstruct a provider result from a caller projection.
+        return load_native_object_dna_observation(path).model_dump(
+            mode="json", exclude_none=False
+        )
     if native_schema == "project_evidence_registry":
         from physicsguard.core.project_evidence import check_project_evidence_registry
 
@@ -714,6 +730,32 @@ def _execute_native_operation(native_schema: str, path: Path) -> dict[str, objec
 
         return check_evidence_mesh(path).to_dict()
     raise ValueError(f"native schema has no executable replay owner: {native_schema}")
+
+
+def _normalize_object_dna_payload(
+    native_schema: str,
+    payload: dict[str, object],
+) -> dict[str, object] | None:
+    """Return the one provider-neutral observation projection, if valid.
+
+    FMI is retained as a strict adapter profile only.  The reviewer consumes
+    the normalized contract below and therefore has no FMI-specific branch.
+    Any malformed projection is rejected as an unverified native contract
+    rather than silently passed through as provider evidence.
+    """
+
+    try:
+        if native_schema == "fmi_observation_request":
+            return native_object_dna_from_fmi_result(payload).model_dump(
+                mode="json", exclude_none=False
+            )
+        if native_schema == "native_object_dna_observation":
+            return NativeObjectDnaObservation.model_validate(payload).model_dump(
+                mode="json", exclude_none=False
+            )
+    except (TypeError, ValueError):
+        return None
+    return None
 
 
 __all__ = [

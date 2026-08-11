@@ -38,13 +38,6 @@ from physicsguard.core.physical_blueprint_trace import (
     reverse_trace_physical_blueprint_projection,
     summary_physical_blueprint_projection,
 )
-from physicsguard.core.physical_blueprint_bundle import (
-    build_module_behavior_contract_index,
-    build_physical_blueprint_export_bundle,
-    load_physical_blueprint_export_bundle,
-    materialize_physical_blueprint_export_bundle,
-    query_physical_blueprint_export_bundle,
-)
 from physicsguard.core.project_closure import run_project_closure
 from physicsguard.core.project_evidence import (
     build_project_evidence_map,
@@ -69,11 +62,6 @@ from physicsguard.schema.physical_model_blueprint import (
     PhysicalModelBlueprintReview,
     TargetInventoryAuthority,
 )
-from physicsguard.schema.physical_blueprint_bundle import (
-    ModuleBehaviorContractIndex,
-    PhysicalBlueprintExportBundle,
-    PortableBundleQueryResult,
-)
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -85,8 +73,6 @@ __all__ = [
     "SignalMappingRecord",
     "TargetInventoryAuthority",
     "build_signal_mapping_ledger",
-    "build_module_behavior_contract_index",
-    "build_physical_blueprint_export_bundle",
     "affected_physical_blueprint_projection",
     "build_project_evidence_map",
     "check_test_file_contract",
@@ -107,9 +93,6 @@ __all__ = [
     "review_signal_mapping_ledger",
     "PhysicalModelBlueprint",
     "PhysicalModelBlueprintReview",
-    "PhysicalBlueprintExportBundle",
-    "ModuleBehaviorContractIndex",
-    "PortableBundleQueryResult",
     "run_project_closure",
     "sha256_file",
     "scan_project_evidence_candidates",
@@ -124,9 +107,6 @@ __all__ = [
     "reverse_trace_physical_blueprint_projection",
     "review_physical_model_blueprint",
     "summary_physical_blueprint_projection",
-    "load_physical_blueprint_export_bundle",
-    "materialize_physical_blueprint_export_bundle",
-    "query_physical_blueprint_export_bundle",
 ]
 
 _DIAGNOSTIC_EXPORTS = set(__all__)

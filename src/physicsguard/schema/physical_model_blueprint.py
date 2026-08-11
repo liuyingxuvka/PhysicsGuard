@@ -120,6 +120,7 @@ ValidationMode = Literal[
 NativeSchemaKind = Literal[
     "generic_artifact",
     "fmi_observation_request",
+    "native_object_dna_observation",
     "hierarchical_audit",
     "project_evidence_registry",
     "project_profile",
@@ -1263,6 +1264,35 @@ class FmiVariableSemanticContract(_StrictModel):
         return None if value is None else _required_text(value, info.field_name)
 
 
+class NativeInterfaceContract(_StrictModel):
+    """Provider-neutral interface meaning observed from a native object.
+
+    FMI's value references and lifecycle flags are optional details.  Other
+    adapters can provide a stable name/type/quantity/unit/state role without
+    importing an FMI vocabulary into the canonical reviewer contract.
+    """
+
+    source_name: str
+    source_type: str | None = None
+    unit: str | None = None
+    physical_quantity_id: str | None = None
+    state_role: str | None = None
+    value_reference: int | None = Field(default=None, ge=0)
+    derivative_reference: int | None = Field(default=None, ge=0)
+    reinit: bool | None = None
+
+    @field_validator(
+        "source_name",
+        "source_type",
+        "unit",
+        "physical_quantity_id",
+        "state_role",
+    )
+    @classmethod
+    def _text_valid(cls, value: str | None, info) -> str | None:
+        return None if value is None else _required_text(value, info.field_name)
+
+
 class SourceUnitConversion(_StrictModel):
     conversion_kind: UnitConversionKind
     scale: float = 1.0
@@ -1340,6 +1370,7 @@ class SourceModelMapping(_StrictModel):
     target_ids: list[str] = Field(default_factory=list)
     reason: str
     fmi_variable_contract: FmiVariableSemanticContract | None = None
+    source_interface_contract: NativeInterfaceContract | None = None
     port_contracts: list[SourcePortContract] = Field(default_factory=list)
     semantic_contracts: list[SourceSemanticContract] = Field(default_factory=list)
 
@@ -1364,8 +1395,8 @@ class SourceModelMapping(_StrictModel):
             raise ValueError("dispositioned source mappings cannot target model objects")
         if self.relation != "dispositioned" and not self.target_ids:
             raise ValueError("non-disposition source mappings require at least one target id")
-        if self.port_contracts and self.fmi_variable_contract is None:
-            raise ValueError("port contracts require an FMI variable semantic contract")
+        if self.port_contracts and self.fmi_variable_contract is None and self.source_interface_contract is None:
+            raise ValueError("port contracts require a native interface semantic contract")
         contracted_target_ids = [item.target_port_id for item in self.port_contracts]
         if len(contracted_target_ids) != len(set(contracted_target_ids)):
             raise ValueError("port_contracts must bind each target port at most once")
@@ -1437,6 +1468,7 @@ class ObservedSourceMember(_StrictModel):
     member_fingerprint: str
     semantic_expression: str | None = None
     fmi_variable_contract: FmiVariableSemanticContract | None = None
+    interface_contract: NativeInterfaceContract | None = None
     semantic_selectors: list[ObservedSemanticSelector] = Field(default_factory=list)
 
     @field_validator("source_member_id", "source_kind")
@@ -2374,6 +2406,7 @@ __all__ = [
     "InventoryMember",
     "NativeBinding",
     "NativeExecutionEvidence",
+    "NativeInterfaceContract",
     "NativeValueBinding",
     "ObservedSourceMember",
     "PHYSICAL_BLUEPRINT_PROJECTION_SCHEMA",

@@ -1,8 +1,8 @@
-"""Strict portable physical-DNA bundle and bounded query schemas.
+"""Internal in-memory physical-DNA projection and bounded-query schemas.
 
-The full bundle is a deterministic disk artifact.  AI-facing callers receive
-only compact or one-id deep projections; the bundle itself is never the
-default projection.
+These schemas are not a second artifact authority. Public disk bundle
+serialization and loading are retired in favor of the repository-native
+blueprint directory.
 """
 
 from __future__ import annotations

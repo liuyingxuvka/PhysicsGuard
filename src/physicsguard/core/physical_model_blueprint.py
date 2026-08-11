@@ -980,7 +980,6 @@ def _collect_native_case_universe(
         if not (
             observation.qualifies_native_execution
             and observation.object_dna_contract_verified
-            and observation.object_dna_contract_kind == "fmi.v1"
         ):
             continue
         observed_fingerprint = canonical_blueprint_fingerprint(
@@ -1025,22 +1024,21 @@ def _review_object_dna(
     native_case_universe_conflicts: list[str],
     layer_gaps: dict[BlueprintLayerName, list[BlueprintGap]],
 ) -> None:
-    verified_fmi_observations = {
+    verified_object_dna_observations = {
         binding_id: observation
         for binding_id, observation in observations.items()
         if observation.qualifies_native_execution
-        and observation.object_dna_contract_kind == "fmi.v1"
         and observation.object_dna_contract_verified
     }
-    if not verified_fmi_observations:
+    if not verified_object_dna_observations:
         layer_gaps["target_inventory"].append(
             _gap(
                 "target_inventory",
                 "blocked",
                 "object_dna_verified_native_adapter_missing",
                 [blueprint.blueprint_id],
-                "object-DNA readiness has no independently replayed, current FMI semantic adapter contract",
-                "bind one verified FMI v1 observation; other providers remain non-licensing until they define an equally strict native contract",
+                "object-DNA readiness has no independently replayed, current provider-neutral native observation contract",
+                "bind one verified native object-DNA observation; each provider must emit the same strict neutral contract",
             )
         )
     if not source_census:
@@ -1075,7 +1073,7 @@ def _review_object_dna(
                 "object_dna_native_case_universe_missing",
                 [blueprint.blueprint_id],
                 "the verified native adapter did not expose its complete governed behavior-case universe",
-                "refresh the exact FMI request and replay so the adapter, not source-mapping prose, owns the case denominator",
+                "refresh the exact native observation and replay so the adapter, not source-mapping prose, owns the case denominator",
             )
         )
     if native_case_universe_conflicts:
@@ -1105,15 +1103,15 @@ def _review_object_dna(
         )
     for mapping in blueprint.source_mappings:
         observation = observations.get(mapping.source_binding_id)
-        if mapping.source_binding_id not in verified_fmi_observations:
+        if mapping.source_binding_id not in verified_object_dna_observations:
             layer_gaps["target_inventory"].append(
                 _gap(
                     "target_inventory",
                     "blocked",
                     "object_dna_mapping_adapter_not_licensed",
                     [mapping.mapping_id, mapping.source_binding_id],
-                    "source mapping is not owned by the currently verified FMI object-DNA adapter contract",
-                    "use the verified FMI source census or keep this provider route explicitly non-licensing",
+                    "source mapping is not owned by a currently verified provider-neutral object-DNA adapter contract",
+                    "use a verified native source census or keep this provider route explicitly non-licensing",
                 )
             )
         observed_ids = {
@@ -1376,33 +1374,58 @@ def _review_object_dna_port_contracts(
     for mapping in blueprint.source_mappings:
         member = source_census.get(mapping.source_member_id)
         target_port_ids = [target_id for target_id in mapping.target_ids if target_id in port_by_id]
+        observed_contract = None if member is None else (
+            member.get("interface_contract") or member.get("fmi_variable_contract")
+        )
+        declared_contract = mapping.source_interface_contract or mapping.fmi_variable_contract
         if not target_port_ids or not (
             mapping.source_member_id.startswith("fmi.variable:")
             or (member is not None and member.get("source_kind") == "variable")
+            or observed_contract is not None
+            or declared_contract is not None
         ):
             continue
-        observed_contract = None if member is None else member.get("fmi_variable_contract")
-        declared_contract = mapping.fmi_variable_contract
         if declared_contract is None or not isinstance(observed_contract, dict):
+            contract_label = "FMI variable" if mapping.fmi_variable_contract is not None else "native interface"
+            missing_code = (
+                "object_dna_fmi_variable_contract_missing"
+                if mapping.fmi_variable_contract is not None
+                else "object_dna_native_interface_contract_missing"
+            )
             gaps.append(
                 _gap(
                     "typed_interfaces",
                     "blocked",
-                    "object_dna_fmi_variable_contract_missing",
+                    missing_code,
                     [mapping.mapping_id, mapping.source_member_id, *target_port_ids],
-                    "an FMI variable-to-port mapping lacks a typed source contract observed from modelDescription.xml",
-                    "bind valueReference, causality, variability, unit, derivative/reinit, quantity, and source state role",
+                    f"a {contract_label}-to-port mapping lacks a typed source contract observed from the native object",
+                    "bind source name/type, unit, quantity, lifecycle role, and any provider-specific references",
                 )
             )
             continue
-        if declared_contract.model_dump(mode="json", exclude_none=True) != observed_contract:
+        declared_payload = declared_contract.model_dump(mode="json", exclude_none=True)
+        observed_payload = dict(observed_contract)
+        if mapping.source_interface_contract is not None:
+            # The neutral contract is the only reviewer-facing shape.  Any
+            # provider-specific details remain adapter-owned extensions.
+            observed_payload = {
+                key: value
+                for key, value in observed_payload.items()
+                if value is not None
+            }
+        if declared_payload != observed_payload:
+            mismatch_code = (
+                "object_dna_fmi_variable_contract_mismatch"
+                if mapping.fmi_variable_contract is not None
+                else "object_dna_native_interface_contract_mismatch"
+            )
             gaps.append(
                 _gap(
                     "typed_interfaces",
                     "blocked",
-                    "object_dna_fmi_variable_contract_mismatch",
+                    mismatch_code,
                     [mapping.mapping_id, mapping.source_member_id],
-                    "the mapping's FMI variable meaning differs from the current adapter-observed source contract",
+                    "the mapping's native interface meaning differs from the current adapter-observed source contract",
                     "refresh the exact typed source contract instead of relying on matching names",
                 )
             )
@@ -1465,7 +1488,7 @@ def _review_object_dna_port_contracts(
                         "blocked",
                         "object_dna_unit_conversion_not_verified",
                         [mapping.mapping_id, port_id, contract.conversion.authority_binding_id or "missing"],
-                        "affine unit conversion is declared but the FMI v1 adapter does not independently execute conversion authority",
+                        "affine unit conversion is declared but the native adapter does not independently execute conversion authority",
                         "add an independently replayed conversion contract before licensing this mapping",
                     )
                 )

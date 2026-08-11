@@ -1,4 +1,9 @@
-"""Deterministic portable physical-DNA export and bundle-only queries."""
+"""Internal in-memory physical-DNA composition and bounded queries.
+
+The historical disk export/load/materialization names remain only for direct
+domain-test migration; their file-writing/reading routes are hard-disabled by
+the native-directory-only boundary below.
+"""
 
 from __future__ import annotations
 
@@ -324,8 +329,15 @@ def materialize_physical_blueprint_export_bundle(
     bundle: PhysicalBlueprintExportBundle,
     path: str | Path,
 ) -> int:
-    """Write exact canonical bytes and return the byte count."""
+    """Reject retired disk materialization; composition remains in-memory only."""
 
+    raise PhysicalBlueprintBundleError(
+        "native_directory_only",
+        "portable physical-DNA materialization is retired; keep the canonical blueprint and review in the native directory",
+    )
+
+    # Historical implementation intentionally unreachable; retained only as
+    # an audit reference for the old disk route.
     output_path = Path(path)
     if output_path.suffix.lower() != ".json":
         raise PhysicalBlueprintBundleError(
@@ -341,8 +353,15 @@ def materialize_physical_blueprint_export_bundle(
 def load_physical_blueprint_export_bundle(
     path: str | Path,
 ) -> PhysicalBlueprintExportBundle:
-    """Load one current portable bundle without following any embedded locator."""
+    """Reject retired disk loading; only in-memory bundle queries remain internal."""
 
+    raise PhysicalBlueprintBundleError(
+        "native_directory_only",
+        "portable physical-DNA disk loading is retired; query the native blueprint review in place",
+    )
+
+    # Historical implementation intentionally unreachable; retained only as
+    # an audit reference for the old disk route.
     bundle_path = Path(path)
     if bundle_path.suffix.lower() != ".json":
         raise PhysicalBlueprintBundleError(
