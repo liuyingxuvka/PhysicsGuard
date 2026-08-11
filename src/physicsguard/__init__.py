@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-__version__ = "0.15.6"
+__version__ = "0.15.7"
 
 from physicsguard.core.signal_mapping import (
     BugFamilyFollowUp,
@@ -37,6 +37,10 @@ from physicsguard.core.physical_blueprint_trace import (
     full_physical_blueprint_projection,
     reverse_trace_physical_blueprint_projection,
     summary_physical_blueprint_projection,
+)
+from physicsguard.core.physical_blueprint_bundle import (
+    build_physical_blueprint_export_bundle,
+    query_physical_blueprint_export_bundle,
 )
 from physicsguard.core.project_closure import run_project_closure
 from physicsguard.core.project_evidence import (
@@ -73,6 +77,9 @@ __all__ = [
     "SignalMappingRecord",
     "TargetInventoryAuthority",
     "build_signal_mapping_ledger",
+    # These are bounded in-memory projections for domain review only. Disk
+    # materialization/loading is retired by the native-directory boundary.
+    "build_physical_blueprint_export_bundle",
     "affected_physical_blueprint_projection",
     "build_project_evidence_map",
     "check_test_file_contract",
@@ -107,6 +114,7 @@ __all__ = [
     "reverse_trace_physical_blueprint_projection",
     "review_physical_model_blueprint",
     "summary_physical_blueprint_projection",
+    "query_physical_blueprint_export_bundle",
 ]
 
 _DIAGNOSTIC_EXPORTS = set(__all__)

@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 import json
-import os
-import site
-import subprocess
-import sys
 from pathlib import Path
+
+import pytest
 
 from physicsguard.cli import main
 from physicsguard.core.physical_blueprint_bundle import (
     COMPACT_PROJECTION_BYTE_LIMIT,
     DEEP_PROJECTION_BYTE_LIMIT,
+    PhysicalBlueprintBundleError,
     build_module_behavior_contract_index,
     build_physical_blueprint_export_bundle,
     load_physical_blueprint_export_bundle,
@@ -159,24 +158,22 @@ def _module_index(*, large: bool = False):
     return build_module_behavior_contract_index(review, registry)
 
 
-def test_bundle_materialization_is_byte_identical_and_path_independent(
+def test_retired_disk_materialization_is_hard_blocked(
     complete_physical_blueprint,
     tmp_path: Path,
 ) -> None:
     _, review, bundle = _reviewed_bundle(complete_physical_blueprint)
-    first = tmp_path / "one" / "bundle.json"
-    second = tmp_path / "two" / "bundle.json"
+    output = tmp_path / "bundle.json"
 
-    first_size = materialize_physical_blueprint_export_bundle(bundle, first)
-    second_size = materialize_physical_blueprint_export_bundle(bundle, second)
-    loaded = load_physical_blueprint_export_bundle(first)
+    with pytest.raises(PhysicalBlueprintBundleError) as materialize_error:
+        materialize_physical_blueprint_export_bundle(bundle, output)
+    assert materialize_error.value.category == "native_directory_only"
+    assert not output.exists()
 
-    assert first.read_bytes() == second.read_bytes() == canonical_portable_bytes(bundle)
-    assert first_size == second_size == len(first.read_bytes())
-    assert loaded.bundle_fingerprint == bundle.bundle_fingerprint
-    assert loaded.review.status == review.status
-    assert str(first) not in first.read_text(encoding="utf-8")
-    assert str(second) not in first.read_text(encoding="utf-8")
+    with pytest.raises(PhysicalBlueprintBundleError) as load_error:
+        load_physical_blueprint_export_bundle(output)
+    assert load_error.value.category == "native_directory_only"
+    assert review.status == bundle.review.status
 
 
 def test_default_projection_is_compact_and_never_contains_the_full_bundle(
@@ -356,103 +353,21 @@ def test_unknown_id_and_oversized_deep_projection_fail_without_full_bundle_fallb
     assert blocked.projection_canonical_bytes <= DEEP_PROJECTION_BYTE_LIMIT
 
 
-def test_separate_installed_consumer_uses_only_bundle_from_isolated_working_directory(
+def test_retired_disk_loader_does_not_read_an_existing_file(
     complete_physical_blueprint,
     tmp_path: Path,
 ) -> None:
     _, _, bundle = _reviewed_bundle(complete_physical_blueprint)
-    isolated = tmp_path / "isolated-consumer"
-    isolated.mkdir()
-    installed_package = isolated / "installed-package"
-    package_root = Path(__file__).resolve().parents[1]
-    dependency_site = Path(site.getusersitepackages()).resolve()
-    bundle_path = isolated / "physical-dna.json"
-    materialize_physical_blueprint_export_bundle(bundle, bundle_path)
-    install_environment = os.environ.copy()
-    install_environment["PYTHONDONTWRITEBYTECODE"] = "1"
-    installed = subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "--disable-pip-version-check",
-            "--no-build-isolation",
-            "--no-cache-dir",
-            "--no-compile",
-            "--no-deps",
-            "--target",
-            str(installed_package),
-            str(package_root),
-        ],
-        cwd=tmp_path,
-        env=install_environment,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=120,
-        check=False,
-    )
-    assert installed.returncode == 0, installed.stderr
-    code = (
-        "import json, pathlib, sys; "
-        f"installed_site=pathlib.Path({str(installed_package)!r}).resolve(); "
-        f"dependency_site=pathlib.Path({str(dependency_site)!r}).resolve(); "
-        f"source_root=pathlib.Path({str(package_root)!r}).resolve(); "
-        "sys.path[:0]=[str(installed_site),str(dependency_site)]; "
-        "from physicsguard.core.physical_blueprint_bundle import "
-        "load_physical_blueprint_export_bundle, query_physical_blueprint_export_bundle; "
-        "cwd=pathlib.Path.cwd(); "
-        "import physicsguard; "
-        "assert sorted(p.name for p in cwd.iterdir())==['installed-package','physical-dna.json']; "
-        "assert pathlib.Path(physicsguard.__file__).resolve().is_relative_to(installed_site); "
-        "assert all(pathlib.Path(p or '.').resolve()!=source_root for p in sys.path); "
-        "b=load_physical_blueprint_export_bundle(cwd/'physical-dna.json'); "
-        "element=query_physical_blueprint_export_bundle(b, selector_kind='element', selector_id='pipe'); "
-        "impact=query_physical_blueprint_export_bundle(b, selector_kind='impact', selector_id='port.pipe.flow'); "
-        "reverse=query_physical_blueprint_export_bundle(b, selector_kind='reverse', selector_id='port.loop.flow'); "
-        "missing=query_physical_blueprint_export_bundle(b, selector_kind='element', selector_id='outside.bundle'); "
-        "assert element.payload['parent_id']=='pump_loop'; "
-        "assert {p['port_id'] for p in element.payload['ports']}=={'port.pipe.inlet_pressure','port.pipe.flow','port.pipe.mass','port.pipe.heat_loss'}; "
-        "assert 'port.pipe.mass' in element.payload['behavior_contract']['pre_state_port_ids']; "
-        "assert 'element:pipe' in impact.payload['included_member_ids']; "
-        "assert 'element:pump_loop' in reverse.payload['included_member_ids']; "
-        "assert missing.gaps[0].code=='portable_query_not_in_bundle'; "
-        "assert all(q.source_review_status==b.review.status for q in (element,impact,reverse,missing)); "
-        "print(json.dumps({'element':element.payload['element']['element_id'],"
-        "'bundle':element.bundle_fingerprint,'bytes':element.projection_canonical_bytes,"
-        "'impact':impact.query_id,'reverse':reverse.query_id,'missing':missing.first_gap_code,"
-        "'package':str(pathlib.Path(physicsguard.__file__).resolve())},sort_keys=True))"
-    )
-    environment = os.environ.copy()
-    environment["PYTHONDONTWRITEBYTECODE"] = "1"
-    completed = subprocess.run(
-        [sys.executable, "-I", "-c", code],
-        cwd=isolated,
-        env=environment,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=30,
-        check=False,
-    )
+    existing = tmp_path / "physical-dna.json"
+    existing.write_bytes(canonical_portable_bytes(bundle))
 
-    assert completed.returncode == 0, completed.stderr
-    result = json.loads(completed.stdout)
-    assert result["element"] == "pipe"
-    assert result["impact"] == "port.pipe.flow"
-    assert result["reverse"] == "port.loop.flow"
-    assert result["missing"] == "portable_query_not_in_bundle"
-    assert Path(result["package"]).is_relative_to(installed_package)
-    assert sorted(path.name for path in isolated.iterdir()) == [
-        "installed-package",
-        "physical-dna.json",
-    ]
+    with pytest.raises(PhysicalBlueprintBundleError) as error:
+        load_physical_blueprint_export_bundle(existing)
+    assert error.value.category == "native_directory_only"
+    assert existing.is_file()
 
 
-def test_cli_export_prints_only_compact_status_and_query_requires_one_id(
+def test_cli_disk_routes_report_native_directory_only_without_writing(
     complete_physical_blueprint,
     tmp_path: Path,
     capsys,
@@ -477,9 +392,9 @@ def test_cli_export_prints_only_compact_status_and_query_requires_one_id(
         ]
     ) == 3
     compact = json.loads(capsys.readouterr().out)
-    assert compact["query_kind"] == "status"
-    assert "blueprint" not in compact["payload"]
-    assert bundle_path.is_file()
+    assert compact["code"] == "native_directory_only"
+    assert compact["status"] == "blocked"
+    assert not bundle_path.exists()
 
     assert main(
         [
@@ -491,6 +406,5 @@ def test_cli_export_prints_only_compact_status_and_query_requires_one_id(
         ]
     ) == 3
     detail = json.loads(capsys.readouterr().out)
-    assert detail["query_kind"] == "element"
-    assert detail["query_id"] == "pipe"
-    assert detail["payload"]["element"]["element_id"] == "pipe"
+    assert detail["code"] == "native_directory_only"
+    assert detail["status"] == "blocked"

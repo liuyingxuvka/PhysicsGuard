@@ -4,8 +4,8 @@
   "target_skill_id": "physicsguard-candidate-model-blueprint",
   "candidate_id": "candidate:physicsguard-candidate-model-blueprint:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "CC59BE29A403A2C2D441818320674CC8814F578CD48036D5DDF806687D20E642",
-  "blueprint_route_contract_fingerprint": "24EF4BB6D6A2FE86A48F77A0F020517DB9F7CBB2FA3FC49B177B7CA48BF0A4D2",
+  "purpose_contract_fingerprint": "43BFE2FCC1428F0E6190305B80A16B012BD7A3ACA5E24F20898CEEFC845978B3",
+  "blueprint_route_contract_fingerprint": "B3ED81D153EB199EC36471DD682CA19CE9A32D384549376E41F84F718E58F74D",
   "blueprint_projection_contract": {
     "authority_mode": "sole_author_full_reviewer",
     "projection_kinds": [
@@ -27,7 +27,6 @@
       "api:physicsguard.reverse_trace_physical_blueprint_projection",
       "api:physicsguard.full_physical_blueprint_projection",
       "api:physicsguard.build_physical_blueprint_export_bundle",
-      "api:physicsguard.materialize_physical_blueprint_export_bundle",
       "api:physicsguard.query_physical_blueprint_export_bundle"
     ],
     "required_obligation_ids": [
@@ -62,7 +61,7 @@
       "rollout_boundary",
       "generation_eligibility"
     ],
-    "blueprint_route_contract_fingerprint": "24EF4BB6D6A2FE86A48F77A0F020517DB9F7CBB2FA3FC49B177B7CA48BF0A4D2",
+    "blueprint_route_contract_fingerprint": "B3ED81D153EB199EC36471DD682CA19CE9A32D384549376E41F84F718E58F74D",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -70,15 +69,15 @@
       "event_id": "event:physicsguard-candidate-model-blueprint:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "CC59BE29A403A2C2D441818320674CC8814F578CD48036D5DDF806687D20E642"
+      "purpose_contract_fingerprint": "43BFE2FCC1428F0E6190305B80A16B012BD7A3ACA5E24F20898CEEFC845978B3"
     },
     {
       "event_id": "event:physicsguard-candidate-model-blueprint:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "CC59BE29A403A2C2D441818320674CC8814F578CD48036D5DDF806687D20E642",
-      "previous_event_fingerprint": "4333C92D43604D78E3E5EC25EC106B9546B75B8D19D74563C4727ACB584F2E62",
-      "candidate_definition_fingerprint": "EC157AFCB04D48D075FF8432E0E575AE8985112715806933D32BBE0BC11E3BD0"
+      "purpose_contract_fingerprint": "43BFE2FCC1428F0E6190305B80A16B012BD7A3ACA5E24F20898CEEFC845978B3",
+      "previous_event_fingerprint": "7D2B1BEC2AA27D2CD1C4AFC05DC02AD47BD06C24E7D0ED381F471F680FAEC597",
+      "candidate_definition_fingerprint": "B1722C3498974723ED0761556CC6F759DF06BB75835666D517EF8ED6AEBE16B2"
     }
   ]
 }

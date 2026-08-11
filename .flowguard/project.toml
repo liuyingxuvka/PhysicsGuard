@@ -1,8 +1,8 @@
 [flowguard]
 repository = "https://github.com/liuyingxuvka/FlowGuard"
-adopted_package_version = "0.68.10"
+adopted_package_version = "0.68.11"
 schema_version = "1.0"
-last_verified_at = "2026-08-09T12:51:07+00:00"
+last_verified_at = "2026-08-11T12:12:45+00:00"
 last_verified_by = "FlowGuard project-upgrade"
 agents_path = "AGENTS.md"
 
@@ -15,12 +15,12 @@ require_model_update_for_behavior_changes = true
 
 [model_authority]
 system_id = "flowguard"
-observed_snapshot_path = ".flowguard/model-mesh/snapshots/d548349a23d085c9b8f7cff3318c73be83d4d8bb2d2c0d2afa0f61dc27c8adb3.json"
-observed_snapshot_fingerprint = "sha256:d548349a23d085c9b8f7cff3318c73be83d4d8bb2d2c0d2afa0f61dc27c8adb3"
-subject_revision = "source-inventory:131a95d4b86f9ff5d5c51c5147a62ff8008604c9901f0eaf3c547a4f5e962992"
+observed_snapshot_path = ".flowguard/model-mesh/snapshots/5ca2d96a91c23f33e92eaf6f149a7118792a7f5663e4af6fed099ebea15eacdb.json"
+observed_snapshot_fingerprint = "sha256:5ca2d96a91c23f33e92eaf6f149a7118792a7f5663e4af6fed099ebea15eacdb"
+subject_revision = "source-inventory:68e815ef567d268e8f179592bf57b83266f7acded854afd4bfeeaef612c4eb74"
 coverage_status = "complete_within_declared_boundary"
-generation = 37
-accepted_revision_set_fingerprint = "sha256:927533865e44a1d0949382f31bd48dc78bc4f949123c6ba2c22d69a9a51bfed1"
-previous_snapshot_fingerprint = "sha256:d04317e649cc9afaeeb2e173dfaeba3809a4124f43b780ad98bd94be4ddd2247"
-activation_receipt_fingerprint = "sha256:e4338ce136b333122ba9aad1549c67c9d41a9278fc9430b0cbe1e13a6b1d15b8"
-head_fingerprint = "sha256:e9b0e55df071ef6d4b0a5e436e8a37fc8141b9ae3bb03f959d674187836452a2"
+generation = 38
+accepted_revision_set_fingerprint = "sha256:fc24171a63f51654f7806b3191c0855e1388def5de39ac6b9e65ed7d9a799a42"
+previous_snapshot_fingerprint = "sha256:d548349a23d085c9b8f7cff3318c73be83d4d8bb2d2c0d2afa0f61dc27c8adb3"
+activation_receipt_fingerprint = "sha256:a1c566cfc4a21ea66aeb0d9fc3c9ec20b74282d3c26199f48734281eff5c3a6a"
+head_fingerprint = "sha256:25fbbac2d6dc2de5a61b3b3088e5c3f195c314a6b9abd7669fea2d3d3c140355"

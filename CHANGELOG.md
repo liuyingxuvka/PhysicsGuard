@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15.7 - 2026-08-11
+
+- Retire standalone physical-DNA transport so the native project directory is
+  the sole DNA authority, with provider-neutral object observations and
+  explicit bindings retained in place.
+
 ## v0.15.6 - 2026-08-10
 - Synchronize the ten maintained PhysicsGuard skill projections with the
   provider-neutral FlowGuard software-DNA boundary.

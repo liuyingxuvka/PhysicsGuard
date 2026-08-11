@@ -1101,7 +1101,6 @@ BLUEPRINT_ROUTE_GUARD_CONTRACTS: dict[str, dict[str, Any]] = {
             "api:physicsguard.reverse_trace_physical_blueprint_projection",
             "api:physicsguard.full_physical_blueprint_projection",
             "api:physicsguard.build_physical_blueprint_export_bundle",
-            "api:physicsguard.materialize_physical_blueprint_export_bundle",
             "api:physicsguard.query_physical_blueprint_export_bundle",
         ),
         required_obligation_ids=(
