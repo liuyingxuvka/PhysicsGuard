@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.15.6 - 2026-08-10
+- Synchronize the ten maintained PhysicsGuard skill projections with the
+  provider-neutral FlowGuard software-DNA boundary.
+- Refresh PhysicsGuard self-DNA, object-DNA qualification, code/test bindings,
+  model mesh, and regression identities for the patch release.
+
+## v0.15.5 - 2026-08-10
+- Keep the ten maintained skill projections aligned with the patch release.
+- Add category-aware software-scope treatment for the supporting-framework
+  `DummyResidualModule` without making physical claims.
+- Refresh current model, code, test, and evidence identities for the 0.15.5
+  DNA snapshot; historical receipts remain immutable.
+
+## v0.15.4 - 2026-08-10
+
+- Refresh the PhysicsGuard package, model-regression identities, and self-DNA version bindings.
+- Regenerate the maintained-skill projections from the current package identity.
+- Preserve explicit native-physics ownership and visible evidence gaps.
+
 ## v0.15.3 - 2026-08-09
 
 - Complete the PhysicsGuard family self-DNA spine with current model, code,

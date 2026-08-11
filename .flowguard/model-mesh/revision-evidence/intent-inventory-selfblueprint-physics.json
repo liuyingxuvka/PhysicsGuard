@@ -1,0 +1,464 @@
+{
+  "contributions": [
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:selfblueprint-refresh-0.15.4-20260810",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:authoritative_model_system",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:release-refresh-0.15.4-20260810"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "Refresh the current physics model owner identity for release 0.15.4 while preserving the accepted domain behavior and intent lineage.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:ae9a2ba26731540cce49fe7e35141943086359eb7e5408f5abcdc0fd6512128c"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:selfblueprint-refresh-0.15.4-20260810",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:compositional_verification_kernel",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:release-refresh-0.15.4-20260810"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:compositional_verification_kernel",
+        "relation:system-contains:compositional_verification_kernel"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "Refresh the current physics model owner identity for release 0.15.4 while preserving the accepted domain behavior and intent lineage.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:b09a046751ee0ebfd98befb33c57bb3fdea04eea4977ccf131531019f7e08dc8"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:selfblueprint-refresh-0.15.4-20260810",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:guard_closure_contract",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:release-refresh-0.15.4-20260810"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:guard_closure_contract",
+        "relation:system-contains:guard_closure_contract"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "Refresh the current physics model owner identity for release 0.15.4 while preserving the accepted domain behavior and intent lineage.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:1626171fd68723a23521dc6f50b2de3019a2224d7d45d4cca9f7eeb0d6e5c6a0"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:selfblueprint-refresh-0.15.4-20260810",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:hierarchical_model_mesh",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:release-refresh-0.15.4-20260810"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "relation:system-contains:hierarchical_model_mesh"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "Refresh the current physics model owner identity for release 0.15.4 while preserving the accepted domain behavior and intent lineage.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:403af9c5903d2141c56ffcfd4aa74a31f8c1fc945b87cdaf79355d5f16a1b41d"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:selfblueprint-refresh-0.15.4-20260810",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:interval_diagnosability",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:release-refresh-0.15.4-20260810"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:interval_diagnosability",
+        "relation:system-contains:interval_diagnosability"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "Refresh the current physics model owner identity for release 0.15.4 while preserving the accepted domain behavior and intent lineage.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:b1429d5ffcef11b1656e00b375f90c84672b87248314aa62da3c096408caf210"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:selfblueprint-refresh-0.15.4-20260810",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:model_test_code_alignment",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:release-refresh-0.15.4-20260810"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:model_test_code_alignment",
+        "relation:system-contains:model_test_code_alignment"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "Refresh the current physics model owner identity for release 0.15.4 while preserving the accepted domain behavior and intent lineage.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:51a06d7c3fb627d52ee8ff28c59042b3e563ed3c88468b6045fbe82c3c9ee985"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:selfblueprint-refresh-0.15.4-20260810",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:1362a0396d042608b6d3bababcd2eb057a3e0dd4aa49b55a32a395129ee24287",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:task_local_model_deepening",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:release-refresh-0.15.4-20260810"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:task_local_model_deepening",
+        "relation:system-contains:task_local_model_deepening"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "change:strengthen-physicsguard-domain-blueprint-spine",
+      "rationale": "Refresh the current physics model owner identity for release 0.15.4 while preserving the accepted domain behavior and intent lineage.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:1ecaf39621bc609f32ad4239dd6501fa974efc361b49b6c3fe01f00578c1e1e8"
+    }
+  ],
+  "dispositions": [
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:selfblueprint-refresh-0.15.4-20260810",
+      "contribution_fingerprint": "sha256:ae9a2ba26731540cce49fe7e35141943086359eb7e5408f5abcdc0fd6512128c",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the self-blueprint refresh as current evidence maintenance; no product intent or external behavior boundary changes.",
+      "fingerprint": "sha256:a47a9c4a185bd63cfce607b11a1a34b89d7ef4c6c86df592906391f773c81900"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:selfblueprint-refresh-0.15.4-20260810",
+      "contribution_fingerprint": "sha256:b09a046751ee0ebfd98befb33c57bb3fdea04eea4977ccf131531019f7e08dc8",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the self-blueprint refresh as current evidence maintenance; no product intent or external behavior boundary changes.",
+      "fingerprint": "sha256:2c84de1ff3023f75ac8df5eb818aaad7485cc9ebb2cd7a6ac6471c255f31f731"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:selfblueprint-refresh-0.15.4-20260810",
+      "contribution_fingerprint": "sha256:1626171fd68723a23521dc6f50b2de3019a2224d7d45d4cca9f7eeb0d6e5c6a0",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the self-blueprint refresh as current evidence maintenance; no product intent or external behavior boundary changes.",
+      "fingerprint": "sha256:f420e1e764e9420fbfabc9b8425a5987191cc0111ef73128be9cc2fc7dde5beb"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:selfblueprint-refresh-0.15.4-20260810",
+      "contribution_fingerprint": "sha256:403af9c5903d2141c56ffcfd4aa74a31f8c1fc945b87cdaf79355d5f16a1b41d",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the self-blueprint refresh as current evidence maintenance; no product intent or external behavior boundary changes.",
+      "fingerprint": "sha256:4238f64c92e99c5ef112235186fd08b2ef6aa469be644f0f874a43ee4a85a2aa"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:selfblueprint-refresh-0.15.4-20260810",
+      "contribution_fingerprint": "sha256:b1429d5ffcef11b1656e00b375f90c84672b87248314aa62da3c096408caf210",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the self-blueprint refresh as current evidence maintenance; no product intent or external behavior boundary changes.",
+      "fingerprint": "sha256:eb859704c9f15fd7199607a9755a7ffaa323691f20acc55d71d1bda4a0478667"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:selfblueprint-refresh-0.15.4-20260810",
+      "contribution_fingerprint": "sha256:51a06d7c3fb627d52ee8ff28c59042b3e563ed3c88468b6045fbe82c3c9ee985",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the self-blueprint refresh as current evidence maintenance; no product intent or external behavior boundary changes.",
+      "fingerprint": "sha256:73471019709deae36eadbe1a68cc6ad9bf37e3ea6131a772e5da21e70d5ce99d"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:selfblueprint-refresh-0.15.4-20260810",
+      "contribution_fingerprint": "sha256:1ecaf39621bc609f32ad4239dd6501fa974efc361b49b6c3fe01f00578c1e1e8",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the self-blueprint refresh as current evidence maintenance; no product intent or external behavior boundary changes.",
+      "fingerprint": "sha256:f1f219a6eaa35b416eb288a333eb6e1bb08fe63c0cfd0486ac1852f0bdbcbadc"
+    }
+  ],
+  "effective_intent_transitions": [
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:release-refresh-0.15.4-20260810",
+      "prior_contribution_fingerprint": "sha256:ac3ddafa9c8c3d09514921026950f60b1997a877aecb635ec2961122d691d4ed",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:selfblueprint-refresh-0.15.4-20260810"
+      ],
+      "reason": "Replace the prior model-owner identity with the exact self-blueprint refresh evidence while retaining its intent lineage.",
+      "fingerprint": "sha256:fe52cd09af2b09871c039ec2e2b8f1be882019183bae435e3141f54cc6df8e31"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:release-refresh-0.15.4-20260810",
+      "prior_contribution_fingerprint": "sha256:9a976426348dd99ea2637aed1d6f8cd516e78be987063665d4fa94d4053229b2",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:selfblueprint-refresh-0.15.4-20260810"
+      ],
+      "reason": "Replace the prior model-owner identity with the exact self-blueprint refresh evidence while retaining its intent lineage.",
+      "fingerprint": "sha256:070df581d38fd3e5c993f228e464ba3bdd42202c1cdc6d6f10e818803f54a022"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:release-refresh-0.15.4-20260810",
+      "prior_contribution_fingerprint": "sha256:0de165bbb7d91996edd772a0db2dfd59f175305d378a351e5ff5279445de424b",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:selfblueprint-refresh-0.15.4-20260810"
+      ],
+      "reason": "Replace the prior model-owner identity with the exact self-blueprint refresh evidence while retaining its intent lineage.",
+      "fingerprint": "sha256:6a0d66b1e1d1630baa16959ace47910931c16e2921eec257e37a2f18d604646c"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:release-refresh-0.15.4-20260810",
+      "prior_contribution_fingerprint": "sha256:7390a90aaac74ad1eb788144e1031732f5ce1e3589626a7bdda0e874e1081fe2",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:selfblueprint-refresh-0.15.4-20260810"
+      ],
+      "reason": "Replace the prior model-owner identity with the exact self-blueprint refresh evidence while retaining its intent lineage.",
+      "fingerprint": "sha256:22058c5b1752c8bf024a4c71e52a4d0c48c356603d99e0b5df391dc45ca846ff"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:release-refresh-0.15.4-20260810",
+      "prior_contribution_fingerprint": "sha256:33ee7fe9b74fa97a95790bc774c45fa39582957a68a09e6f7ac9df93be23f337",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:selfblueprint-refresh-0.15.4-20260810"
+      ],
+      "reason": "Replace the prior model-owner identity with the exact self-blueprint refresh evidence while retaining its intent lineage.",
+      "fingerprint": "sha256:f0ce488dd334ad24908863bb91a7ddee6569f3760e2417a83359db7f401d6bb4"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:release-refresh-0.15.4-20260810",
+      "prior_contribution_fingerprint": "sha256:623c3e5e963e3941e95e58a4cbff1dba0ff3d56b619f17037df0a7ba6a3eb000",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:selfblueprint-refresh-0.15.4-20260810"
+      ],
+      "reason": "Replace the prior model-owner identity with the exact self-blueprint refresh evidence while retaining its intent lineage.",
+      "fingerprint": "sha256:2611e7c1803f6a4ca655e18d6c9437ef6852b69a2d96008e014f13c8413ff3aa"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:release-refresh-0.15.4-20260810",
+      "prior_contribution_fingerprint": "sha256:753bca4cd8526b1c4acfd3412ae43b6d5cb73a2dc7a6b66ad702d169de002f2e",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:selfblueprint-refresh-0.15.4-20260810"
+      ],
+      "reason": "Replace the prior model-owner identity with the exact self-blueprint refresh evidence while retaining its intent lineage.",
+      "fingerprint": "sha256:6707ae6f961f89e4c256d0bcf41434ae0c3f6abfd150a83e78b2809262651137"
+    }
+  ]
+}

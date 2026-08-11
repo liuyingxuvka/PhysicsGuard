@@ -81,6 +81,29 @@ BEHAVIOR_CONTRACT_DIMENSION_IDS = (
     "counterexample",
     "independent_oracle",
 )
+# The public dummy module is deliberately retained as framework plumbing.  It
+# still needs an independently reviewable software-behaviour record, but it is
+# not a physical module and therefore must not be forced through physical-only
+# equation, unit, region, or oracle obligations.  Keeping this denominator
+# explicit prevents a framework fixture from either licensing a physical claim
+# or falsely blocking the physical ledger with inapplicable questions.
+SUPPORTING_FRAMEWORK_REQUIRED_DIMENSION_IDS = (
+    "registry_inventory",
+    "function_block",
+    "behavioral_test",
+    "counterexample",
+    "independent_review",
+)
+SUPPORTING_FRAMEWORK_NON_APPLICABLE_DIMENSION_IDS = tuple(
+    dimension
+    for dimension in DIMENSION_IDS
+    if dimension not in SUPPORTING_FRAMEWORK_REQUIRED_DIMENSION_IDS
+)
+SUPPORTING_FRAMEWORK_BEHAVIOR_CONTRACT_DIMENSION_IDS = (
+    "function_block",
+    "behavioral_test",
+    "counterexample",
+)
 
 PREVIOUSLY_GROUPED_TYPES = frozenset(
     {
@@ -777,12 +800,16 @@ def _review_record(
         owners,
         findings,
     )
+    supporting_framework = record.get("category") == "supporting_framework_behavior"
     runtime = _runtime_contract(root, record, module_type)
     source_contract = _source_residual_contract(record, module_type)
-    _review_function_block(record, module_type, runtime, source_contract, findings)
-    _review_equation_dependencies(record, module_type, runtime, source_contract, findings)
-    _review_units(root, record, module_type, runtime, findings)
-    _review_constraints_and_regions(record, module_type, source_contract, findings)
+    if supporting_framework:
+        _review_supporting_framework_function_block(record, module_type, findings)
+    else:
+        _review_function_block(record, module_type, runtime, source_contract, findings)
+        _review_equation_dependencies(record, module_type, runtime, source_contract, findings)
+        _review_units(root, record, module_type, runtime, findings)
+        _review_constraints_and_regions(record, module_type, source_contract, findings)
     behavioral_stages = _review_behavioral_evidence(
         root,
         record,
@@ -792,7 +819,15 @@ def _review_record(
         executed_nodeids=executed_nodeids,
         execution_requested=execution_requested,
     )
-    oracle_stage = _review_independent_oracle(root, record, module_type, findings)
+    oracle_stage = (
+        {
+            "status": "not_applicable",
+            "producer_identity": ORACLE_RUNNER_IDENTITY,
+            "reason": "supporting framework behaviour has no physical oracle obligation",
+        }
+        if supporting_framework
+        else _review_independent_oracle(root, record, module_type, findings)
+    )
     review_request, reviewer_stage = _review_semantic_review(
         root,
         record,
@@ -818,7 +853,22 @@ def _review_record(
         "behavior_contract": behavior_contract,
         "first_gap": first_gap,
         "dimensions": {
-            dimension: _dimension_result(dimension, findings[dimension])
+            dimension: _dimension_result(
+                dimension,
+                findings[dimension],
+                applicability=(
+                    "not_applicable"
+                    if supporting_framework
+                    and dimension in SUPPORTING_FRAMEWORK_NON_APPLICABLE_DIMENSION_IDS
+                    else "applicable"
+                ),
+                claim_boundary=(
+                    "framework-only; no physical meaning or physical claim is licensed"
+                    if supporting_framework
+                    and dimension in SUPPORTING_FRAMEWORK_NON_APPLICABLE_DIMENSION_IDS
+                    else None
+                ),
+            )
             for dimension in DIMENSION_IDS
         },
         "execution_stages": {
@@ -840,6 +890,70 @@ def _review_record(
         },
         "review_request": review_request,
     }
+
+
+def _review_supporting_framework_function_block(
+    record: dict[str, Any],
+    module_type: str,
+    findings: dict[str, list[dict[str, str]]],
+) -> None:
+    """Check the dummy's software contract without inventing physical meaning."""
+
+    dimension = "function_block"
+    if not _nonempty_string(record.get("purpose")):
+        _add(findings, dimension, "purpose_missing", f"{module_type}: purpose must be a non-empty framework-behaviour statement")
+    block = record.get("function_block")
+    if not isinstance(block, dict):
+        _add(findings, dimension, "function_block_missing", f"{module_type}: function_block must be a mapping")
+        return
+    if block.get("signature") != "Input × State -> Set(Output × State)":
+        _add(findings, dimension, "function_block_signature_invalid", f"{module_type}: function_block.signature must be Input × State -> Set(Output × State)")
+
+    declared = block.get("declared_variables")
+    if not isinstance(declared, list) or len(declared) != 1 or not isinstance(declared[0], dict):
+        _add(findings, dimension, "framework_declared_variables_invalid", f"{module_type}: framework record must declare exactly one input variable")
+        declared_items: list[dict[str, Any]] = []
+    else:
+        declared_items = declared
+    if declared_items:
+        variable = declared_items[0]
+        if variable.get("name") != "x" or variable.get("role") != "input":
+            _add(findings, dimension, "framework_input_role_invalid", f"{module_type}: framework variable x must be the sole input")
+        for field in ("unit", "lower_bound", "upper_bound", "initial_guess", "scale"):
+            if field not in variable:
+                _add(findings, dimension, "framework_variable_field_missing", f"{module_type}: framework input x must declare {field}")
+
+    state = block.get("state")
+    if not isinstance(state, dict) or any(
+        state.get(slot) != [] for slot in ("previous", "current", "next")
+    ) or state.get("hidden") is not False:
+        _add(findings, dimension, "framework_state_contract_invalid", f"{module_type}: framework behaviour must declare no hidden or evolving state")
+
+    outputs = block.get("outputs")
+    if not isinstance(outputs, dict):
+        _add(findings, dimension, "outputs_contract_missing", f"{module_type}: function_block.outputs must be a mapping")
+    else:
+        if outputs.get("declared_variables") != []:
+            _add(findings, dimension, "framework_declared_output_invalid", f"{module_type}: x is an input; the framework output is the residual record")
+        if outputs.get("residuals") != ["dummy_target"]:
+            _add(findings, dimension, "framework_residual_output_invalid", f"{module_type}: framework output must be the dummy_target residual")
+
+    residuals = record.get("residual_definitions")
+    if not isinstance(residuals, list) or len(residuals) != 1 or not isinstance(residuals[0], dict):
+        _add(findings, dimension, "framework_residual_definition_invalid", f"{module_type}: framework record must bind exactly one residual definition")
+    else:
+        residual = residuals[0]
+        if residual.get("name") != "dummy_target" or residual.get("role") != "equation":
+            _add(findings, dimension, "framework_residual_identity_invalid", f"{module_type}: residual identity must be dummy_target/equation")
+        if residual.get("diagnostic_key") != "dummy_target_mismatch":
+            _add(findings, dimension, "framework_diagnostic_key_invalid", f"{module_type}: residual diagnostic key must be dummy_target_mismatch")
+
+    for field in ("effects", "failures", "preconditions", "postconditions"):
+        values = block.get(field)
+        if not isinstance(values, list) or not values:
+            _add(findings, dimension, f"framework_{field}_missing", f"{module_type}: framework {field} must be an explicit non-empty list")
+    if not _nonempty_string(block.get("termination")):
+        _add(findings, dimension, "framework_termination_missing", f"{module_type}: framework termination must be explicit")
 
 
 def _review_record_inventory(
@@ -3704,23 +3818,42 @@ def _assemble_review(
     )
     physical_type_set = scope_type_set - {DUMMY_MODULE_TYPE}
     for dimension in DIMENSION_IDS:
-        applicable = sorted(scope_type_set)
+        applicable = sorted(
+            module_type
+            for module_type in scope_type_set
+            if not (
+                records_by_type.get(module_type, {}).get("category")
+                == "supporting_framework_behavior"
+                and dimension in SUPPORTING_FRAMEWORK_NON_APPLICABLE_DIMENSION_IDS
+            )
+        )
         passed: list[str] = []
         blocked: list[str] = []
+        not_applicable: list[str] = []
         for module_type in applicable:
             result = record_results.get(module_type)
             if result is not None and result["dimensions"][dimension]["status"] == "pass":
                 passed.append(module_type)
             else:
                 blocked.append(module_type)
+        not_applicable = sorted(
+            module_type
+            for module_type in scope_type_set
+            if module_type not in applicable
+        )
         dimension_findings = list(global_findings[dimension])
-        status = "pass" if not dimension_findings and not blocked else "blocked"
+        if not applicable and not dimension_findings:
+            status = "not_applicable"
+        else:
+            status = "pass" if not dimension_findings and not blocked else "blocked"
         aggregate_results[dimension] = {
             "status": status,
             "applicable_record_count": len(applicable),
             "passed_record_count": len(passed),
             "blocked_record_count": len(blocked),
             "blocked_records": blocked,
+            "not_applicable_record_count": len(not_applicable),
+            "not_applicable_records": not_applicable,
             "physical_applicable_record_count": len(physical_type_set),
             "physical_passed_record_count": len(physical_type_set & set(passed)),
             "physical_blocked_record_count": len(physical_type_set & set(blocked)),
@@ -3733,9 +3866,22 @@ def _assemble_review(
         record_results.get(module_type) is not None
         and all(
             record_results[module_type]["dimensions"][dimension]["status"] == "pass"
-            for dimension in SEMANTIC_DIMENSION_IDS
+            for dimension in (
+                SUPPORTING_FRAMEWORK_REQUIRED_DIMENSION_IDS
+                if records_by_type.get(module_type, {}).get("category")
+                == "supporting_framework_behavior"
+                else SEMANTIC_DIMENSION_IDS
+            )
         )
-        and not any(global_findings[dimension] for dimension in SEMANTIC_DIMENSION_IDS)
+        and not any(
+            global_findings[dimension]
+            for dimension in (
+                SUPPORTING_FRAMEWORK_REQUIRED_DIMENSION_IDS
+                if records_by_type.get(module_type, {}).get("category")
+                == "supporting_framework_behavior"
+                else SEMANTIC_DIMENSION_IDS
+            )
+        )
         for module_type in scope_type_set
     )
     scope_physical_semantics_pass = scope_semantics_pass and all(
@@ -3808,7 +3954,7 @@ def _assemble_review(
             "physical_semantic_coverage_licensed": full_physical_semantics_pass,
             "scope_semantic_coverage_licensed": scope_licensed,
             "first_blocked_dimension": next(
-                (dimension for dimension in DIMENSION_IDS if aggregate_results[dimension]["status"] != "pass"),
+                (dimension for dimension in DIMENSION_IDS if aggregate_results[dimension]["status"] == "blocked"),
                 None,
             ),
             "claim_boundary": (
@@ -3837,6 +3983,8 @@ def _project_review(
             "applicable_record_count": result["applicable_record_count"],
             "passed_record_count": result["passed_record_count"],
             "blocked_record_count": result["blocked_record_count"],
+            "not_applicable_record_count": result.get("not_applicable_record_count", 0),
+            "not_applicable_records": result.get("not_applicable_records", []),
             "physical_applicable_record_count": result[
                 "physical_applicable_record_count"
             ],
@@ -3918,7 +4066,14 @@ def _project_review(
             "behavior_contract_fingerprint": item["behavior_contract"]["contract_fingerprint"],
             "status": (
                 "pass"
-                if all(result["status"] == "pass" for result in item["dimensions"].values())
+                if all(
+                    item["dimensions"][dimension]["status"] == "pass"
+                    for dimension in (
+                        SUPPORTING_FRAMEWORK_REQUIRED_DIMENSION_IDS
+                        if item["category"] == "supporting_framework_behavior"
+                        else DIMENSION_IDS
+                    )
+                )
                 else "blocked"
             ),
             "finding_count": sum(
@@ -3928,7 +4083,13 @@ def _project_review(
                 (
                     dimension
                     for dimension, result in item["dimensions"].items()
-                    if result["status"] != "pass"
+                    if dimension
+                    in (
+                        SUPPORTING_FRAMEWORK_REQUIRED_DIMENSION_IDS
+                        if item["category"] == "supporting_framework_behavior"
+                        else DIMENSION_IDS
+                    )
+                    and result["status"] != "pass"
                 ),
                 None,
             ),
@@ -5571,13 +5732,18 @@ def _project_behavior_contract(
         },
     }
     contract_fingerprint = _canonical_hash(logical_contract)
+    required_contract_dimensions = (
+        SUPPORTING_FRAMEWORK_BEHAVIOR_CONTRACT_DIMENSION_IDS
+        if record.get("category") == "supporting_framework_behavior"
+        else BEHAVIOR_CONTRACT_DIMENSION_IDS
+    )
     contract_gaps = [
         {
             "dimension": dimension,
             "code": item["code"],
             "message": item["message"],
         }
-        for dimension in BEHAVIOR_CONTRACT_DIMENSION_IDS
+        for dimension in required_contract_dimensions
         for item in findings[dimension]
     ]
     return {
@@ -5585,11 +5751,13 @@ def _project_behavior_contract(
         "contract_fingerprint": contract_fingerprint,
         "verification": {
             "status": "pass" if not contract_gaps else "blocked",
-            "required_dimensions": list(BEHAVIOR_CONTRACT_DIMENSION_IDS),
+            "required_dimensions": list(required_contract_dimensions),
             "first_gap": contract_gaps[0] if contract_gaps else None,
             "gap_count": len(contract_gaps),
             "claim_boundary": (
-                "derived projection only; physical meaning remains unlicensed until all required dimensions pass"
+                "derived framework-behaviour projection only; physical meaning and physical claims remain prohibited"
+                if record.get("category") == "supporting_framework_behavior"
+                else "derived projection only; physical meaning remains unlicensed until all required dimensions pass"
                 if contract_gaps
                 else "derived projection passed its machine dimensions; independent semantic licensing remains separate"
             ),
@@ -5868,7 +6036,13 @@ def _add(
         findings[dimension].append(finding)
 
 
-def _dimension_result(dimension: str, findings: list[dict[str, str]]) -> dict[str, Any]:
+def _dimension_result(
+    dimension: str,
+    findings: list[dict[str, str]],
+    *,
+    applicability: str = "applicable",
+    claim_boundary: str | None = None,
+) -> dict[str, Any]:
     assurance = {
         "registry_inventory": "structural_inventory",
         "function_block": "author_completeness_plus_role_authority",
@@ -5880,11 +6054,22 @@ def _dimension_result(dimension: str, findings: list[dict[str, str]]) -> dict[st
         "independent_oracle": "independent_evidence",
         "independent_review": "independent_licensing",
     }[dimension]
+    if applicability not in {"applicable", "not_applicable"}:
+        raise ValueError("dimension applicability must be applicable or not_applicable")
+    status = (
+        "not_applicable"
+        if applicability == "not_applicable" and not findings
+        else "pass"
+        if not findings
+        else "blocked"
+    )
     return {
-        "status": "pass" if not findings else "blocked",
+        "status": status,
+        "applicability": applicability,
         "assurance": assurance,
         "finding_count": len(findings),
         "findings": findings,
+        "claim_boundary": claim_boundary,
     }
 
 

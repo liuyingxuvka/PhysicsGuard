@@ -182,7 +182,7 @@ def test_checker_derives_all_nine_per_record_and_aggregate_dimensions() -> None:
     for record_result in review["record_results"]:
         assert tuple(record_result["dimensions"]) == checker.DIMENSION_IDS
         for result in record_result["dimensions"].values():
-            assert result["status"] in {"pass", "blocked"}
+            assert result["status"] in {"pass", "blocked", "not_applicable"}
             assert result["finding_count"] == len(result["findings"])
 
 
@@ -1539,3 +1539,33 @@ def test_dummy_remains_supporting_framework_behavior_only() -> None:
     from physicsguard.modules import DummyResidualModule
 
     assert DummyResidualModule.__name__ == "DummyResidualModule"
+
+
+def test_dummy_framework_record_uses_only_software_behavior_dimensions() -> None:
+    checker = _load_checker()
+    result = _review_record(checker, _record(_payload(), "DummyResidualModule"))
+
+    assert result["dimensions"]["function_block"]["status"] == "pass"
+    assert result["dimensions"]["equation_dependency"]["status"] == "not_applicable"
+    assert result["dimensions"]["unit"]["status"] == "not_applicable"
+    assert result["dimensions"]["constraint_valid_region"]["status"] == "not_applicable"
+    assert result["dimensions"]["independent_oracle"]["status"] == "not_applicable"
+    assert result["behavior_contract"]["verification"]["required_dimensions"] == [
+        "function_block",
+        "behavioral_test",
+        "counterexample",
+    ]
+    assert "physical meaning" in result["behavior_contract"]["verification"]["claim_boundary"]
+
+
+def test_dummy_framework_record_rejects_a_physical_claim() -> None:
+    checker = _load_checker()
+    record = _record(_payload(), "DummyResidualModule")
+    record["physical_claim_licensed"] = True
+
+    result = _review_record(checker, record)
+
+    assert any(
+        finding["code"] == "dummy_physical_claim_licensed"
+        for finding in result["dimensions"]["registry_inventory"]["findings"]
+    )

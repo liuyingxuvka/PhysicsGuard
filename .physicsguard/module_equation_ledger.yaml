@@ -1,6 +1,6 @@
 schema: physicsguard.module_semantics_ledger.v3
 project: PhysicsGuard
-reviewed_for_package_version: 0.15.3
+reviewed_for_package_version: 0.15.4
 purpose: Author-side current per-module semantic model for every public registry member. Records remain unlicensed until a separate immutable
   external review manifest binds their exact current inputs and accepts them.
 authoring_contract:
@@ -18068,8 +18068,7 @@ module_records:
       next: []
       hidden: false
     outputs:
-      declared_variables:
-      - x
+      declared_variables: []
       residuals:
       - dummy_target
     effects:
@@ -18205,8 +18204,8 @@ module_records:
       positive:
         disposition: bound
         path: tests/test_diagnostics.py
-        selector: test_warnings_generated_for_solver_failure
-        pytest_nodeid: tests/test_diagnostics.py::test_warnings_generated_for_solver_failure
+        selector: test_warnings_generated_for_high_residual
+        pytest_nodeid: tests/test_diagnostics.py::test_warnings_generated_for_high_residual
         sha256: 3ce59b2c46553a82e8def0cb22ada0880533f41e8528021c49b278ba17098940
         case: unparameterized
         semantic_case: DummyResidualModule:expected_behavior
@@ -18219,24 +18218,91 @@ module_records:
           - role
           - scale
           - diagnostic_key
+          expected_observation:
+            name: dummy_target
+            value: 11.0
+            role: equation
+            scale: 1.0
+            diagnostic_key: dummy_target_mismatch
+          tolerance: 0.0
+        case_contract:
+          runner_identity: physicsguard.module_semantics_case_runner.v1
+          inputs:
+            component_id: a
+            parameters:
+              target: 0.0
+              lower_bound: -100.0
+              upper_bound: 100.0
+              initial_guess: 0.0
+              scale: 1.0
+              unit: '1'
+            variables:
+              x: 11.0
+            external_variables: []
+          obligation: The framework dummy emits one finite diagnostic residual with its declared identity.
+          assertion_kind: residual_record
+          expected_observation:
+            name: dummy_target
+            value: 11.0
+            role: equation
+            scale: 1.0
+            diagnostic_key: dummy_target_mismatch
+          tolerance: 0.0
+          expected_fingerprint: 1e8126931a3ebb8152a5e87a24f021c4be372c1b1196391714f0ac0a99948ffa
       counterexample:
         disposition: bound
-        path: tests/test_residual_builder.py
-        selector: test_missing_boundary_variable_fails
-        pytest_nodeid: tests/test_residual_builder.py::test_missing_boundary_variable_fails
-        sha256: b75bbc41d6ab6f163589b1ee2af5772adc75311186f0da711b02ba2afa7d4ad6
+        path: tests/test_diagnostics.py
+        selector: test_bound_hit_detection_works
+        pytest_nodeid: tests/test_diagnostics.py::test_bound_hit_detection_works
+        sha256: 3ce59b2c46553a82e8def0cb22ada0880533f41e8528021c49b278ba17098940
         case: unparameterized
         semantic_case: DummyResidualModule:protected_failure_or_nonzero_residual
         module_parameter: null
         expected_outcome:
-          kind: raises
-          exception_type: KeyError
-          message_selector: boundary
+          kind: residual_violation
+          residual_fields:
+          - name
+          - value
+          - role
+          - scale
+          - diagnostic_key
+          violation: dummy_target residual is nonzero for the counterexample input
+          expected_observation:
+            name: dummy_target
+            value: -5.0
+            role: equation
+            scale: 1.0
+            diagnostic_key: dummy_target_mismatch
+          tolerance: 0.0
+        case_contract:
+          runner_identity: physicsguard.module_semantics_case_runner.v1
+          inputs:
+            component_id: a
+            parameters:
+              target: 5.0
+              lower_bound: -100.0
+              upper_bound: 100.0
+              initial_guess: 0.0
+              scale: 1.0
+              unit: '1'
+            variables:
+              x: 0.0
+            external_variables: []
+          obligation: The framework counterexample keeps the nonzero dummy residual visible without licensing physical meaning.
+          assertion_kind: residual_violation
+          expected_observation:
+            name: dummy_target
+            value: -5.0
+            role: equation
+            scale: 1.0
+            diagnostic_key: dummy_target_mismatch
+          tolerance: 0.0
+          expected_fingerprint: 6c7d2a372e414697e4212de3461eaa07c8c58c630698843a9dc3db664d3d9012
     instantiation:
       disposition: bound
       kind: yaml_component
       path: examples/dummy_system.yaml
-      selector: components[id=a].type=DummyResidualModule
+      selector: DummyResidualModule
       sha256: e9c3f8891ba5d221fa07c67edd576281a2610703ba31ed83d4e492fddc8237b9
       component_id: a
       parameters:
@@ -18298,7 +18364,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: DummyResidualModule
-    subject_fingerprint: c68a44a6daba6e2c4d99b5ad3fd4d60a43cd4171987a5ffd20620bd1ec1887e7
+    subject_fingerprint: c7ebdf8cef2c50e668b0487ada66ab5e8c91d4cbcb902db3170f351642cfacc6
 - module_type: EGRMixingModule
   baseline_partition: domain_judgment
   category: physical_module

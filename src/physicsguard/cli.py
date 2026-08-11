@@ -26,14 +26,6 @@ from physicsguard.core.physical_model_blueprint import (
     physical_model_blueprint_review_to_dict,
     review_physical_model_blueprint,
 )
-from physicsguard.core.physical_blueprint_bundle import (
-    PhysicalBlueprintBundleError,
-    build_module_behavior_contract_index,
-    build_physical_blueprint_export_bundle,
-    load_physical_blueprint_export_bundle,
-    materialize_physical_blueprint_export_bundle,
-    query_physical_blueprint_export_bundle,
-)
 from physicsguard.core.project_closure import run_project_closure
 from physicsguard.core.project_evidence import (
     build_project_evidence_map,
@@ -476,10 +468,10 @@ def build_parser() -> argparse.ArgumentParser:
     blueprint_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     blueprint_export = blueprint_subparsers.add_parser(
         "bundle-export",
-        help="materialize one deterministic portable physical-DNA bundle",
+        help="retired: physical-DNA authority is directory-native and in-memory only",
         description=(
-            "Review one exact blueprint, write its full current portable bundle to an "
-            "explicit JSON path, and print only the compact status projection."
+            "Portable physical-DNA disk export is retired. The canonical authority "
+            "remains the native blueprint directory and review result."
         ),
     )
     blueprint_export.add_argument("blueprint", type=Path)
@@ -507,7 +499,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     blueprint_query = blueprint_subparsers.add_parser(
         "bundle-query",
-        help="read one compact or exact one-id projection from a portable bundle",
+        help="retired: portable physical-DNA disk bundle queries are not a public route",
     )
     blueprint_query.add_argument("bundle", type=Path)
     blueprint_selector = blueprint_query.add_mutually_exclusive_group()
@@ -520,7 +512,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     self_dna_parser = subparsers.add_parser(
         "self-dna",
-        help="explicitly audit or export the FlowGuard-owned PhysicsGuard software DNA",
+        help="audit the FlowGuard-owned repository software DNA (repository-native only)",
     )
     self_dna_subparsers = self_dna_parser.add_subparsers(
         dest="self_dna_command", required=True
@@ -531,7 +523,7 @@ def build_parser() -> argparse.ArgumentParser:
     self_dna_check.add_argument("--root", type=Path, default=Path("."))
     self_dna_check.add_argument("--compact", action="store_true")
     self_dna_export = self_dna_subparsers.add_parser(
-        "export", help="materialize self-DNA only to an external destination"
+        "export", help="retired: software self-DNA is repository-native only"
     )
     self_dna_export.add_argument("--root", type=Path, default=Path("."))
     self_dna_export.add_argument("--output", required=True, type=Path)
@@ -892,75 +884,19 @@ def blueprint_bundle_export_command(
     runtime_port_registry_path: Path | None = None,
     pretty: bool = False,
 ) -> int:
-    if (module_review_path is None) != (runtime_port_registry_path is None):
-        _print_json(
-            {
-                "artifact_type": "physicsguard_physical_blueprint_bundle_error",
-                "category": "module_behavior_index_inputs_incomplete",
-                "status": "invalid",
-                "message": "--module-review and --runtime-port-registry must be supplied together",
-                "safe_claim": "No portable bundle was materialized.",
-            },
-            pretty,
-        )
-        return 2
-    try:
-        blueprint = load_physical_model_blueprint(blueprint_path)
-        authority = load_target_inventory_authority(target_authority_path)
-        review_root = (
-            material_root
-            if material_root is not None
-            else (
-                None
-                if blueprint.artifact_root == "explicit_material_root"
-                else blueprint_path.parent
-            )
-        )
-        authority_root = (
-            material_root
-            if material_root is not None
-            else (
-                None
-                if blueprint.artifact_root == "explicit_material_root"
-                else target_authority_path.parent
-            )
-        )
-        review = review_physical_model_blueprint(
-            blueprint,
-            target_inventory_authority=authority,
-            base_dir=review_root,
-            authority_base_dir=authority_root,
-        )
-        module_index = None
-        if module_review_path is not None and runtime_port_registry_path is not None:
-            module_review = _load_structured_mapping(module_review_path)
-            runtime_registry = _load_structured_mapping(runtime_port_registry_path)
-            module_index = build_module_behavior_contract_index(
-                module_review,
-                runtime_registry,
-            )
-        bundle = build_physical_blueprint_export_bundle(
-            blueprint,
-            review,
-            authority,
-            module_behavior_contract_index=module_index,
-        )
-        materialize_physical_blueprint_export_bundle(bundle, output_path)
-        projection = query_physical_blueprint_export_bundle(bundle)
-    except (BlueprintLoadError, PhysicalBlueprintBundleError) as exc:
-        _print_json(
-            {
-                "artifact_type": "physicsguard_physical_blueprint_bundle_error",
-                "category": getattr(exc, "category", "portable_bundle_error"),
-                "status": "invalid",
-                "message": str(exc),
-                "safe_claim": "No portable-bundle claim is licensed because export did not complete.",
-            },
-            pretty,
-        )
-        return 2
-    _print_json(projection.model_dump(mode="json", exclude_none=False), pretty)
-    return _portable_status_exit(projection.status)
+    _print_json(
+        {
+            "artifact_type": "physicsguard_native_directory_only",
+            "status": "blocked",
+            "code": "native_directory_only",
+            "route": "blueprint.bundle-export",
+            "message": "Portable physical-DNA disk export is retired; the native blueprint directory and in-memory review are authoritative.",
+            "output": str(output_path),
+            "safe_claim": "No disk bundle was written and no portable-DNA claim is licensed.",
+        },
+        pretty,
+    )
+    return 3
 
 
 def blueprint_bundle_query_command(
@@ -970,59 +906,18 @@ def blueprint_bundle_query_command(
     selector_id: str | None = None,
     pretty: bool = False,
 ) -> int:
-    try:
-        bundle = load_physical_blueprint_export_bundle(bundle_path)
-        projection = query_physical_blueprint_export_bundle(
-            bundle,
-            selector_kind=selector_kind,
-            selector_id=selector_id,
-        )
-    except PhysicalBlueprintBundleError as exc:
-        _print_json(
-            {
-                "artifact_type": "physicsguard_physical_blueprint_bundle_error",
-                "category": exc.category,
-                "status": "invalid",
-                "message": str(exc),
-                "safe_claim": "No portable-bundle query claim is licensed.",
-            },
-            pretty,
-        )
-        return 2
-    _print_json(projection.model_dump(mode="json", exclude_none=False), pretty)
-    return _portable_status_exit(projection.status)
-
-
-def _load_structured_mapping(path: Path) -> dict:
-    try:
-        text = path.read_text(encoding="utf-8")
-    except OSError as exc:
-        raise PhysicalBlueprintBundleError(
-            "supporting_artifact_read_error",
-            f"failed to read supporting artifact '{path}': {exc}",
-        ) from exc
-    try:
-        value = json.loads(text) if path.suffix.lower() == ".json" else yaml.safe_load(text)
-    except (json.JSONDecodeError, yaml.YAMLError) as exc:
-        raise PhysicalBlueprintBundleError(
-            "supporting_artifact_malformed",
-            f"malformed supporting artifact '{path}': {exc}",
-        ) from exc
-    if not isinstance(value, dict):
-        raise PhysicalBlueprintBundleError(
-            "supporting_artifact_invalid_root",
-            f"supporting artifact root must be an object: {path}",
-        )
-    return value
-
-
-def _portable_status_exit(status: str) -> int:
-    if status == "pass":
-        return 0
-    if status == "stale":
-        return 4
-    if status == "blocked":
-        return 5
+    _print_json(
+        {
+            "artifact_type": "physicsguard_native_directory_only",
+            "status": "blocked",
+            "code": "native_directory_only",
+            "route": "blueprint.bundle-query",
+            "message": "Portable physical-DNA disk bundle queries are retired; query the native blueprint review in place.",
+            "bundle": str(bundle_path),
+            "safe_claim": "No disk bundle was read and no portable-DNA claim is licensed.",
+        },
+        pretty,
+    )
     return 3
 
 
@@ -1169,7 +1064,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
         if args.command == "self-dna":
             from physicsguard.self_dna import check as self_dna_check_run
-            from physicsguard.self_dna import export as self_dna_export_run
+            from physicsguard.self_dna import _reject_disk_export as self_dna_export_run
 
             payload, code = (
                 self_dna_check_run(args.root, compact=args.compact)
