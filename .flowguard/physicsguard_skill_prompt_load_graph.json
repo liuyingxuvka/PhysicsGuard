@@ -1,14 +1,14 @@
 {
   "schema_version": "physicsguard.skill_prompt_load_graph.v1",
-  "suite_version": "0.15.5",
+  "suite_version": "0.15.6",
   "toolchain_identity": {
-    "physicsguard_version": "0.15.5",
-    "physicsguard_authority_sha256": "sha256:6d5ab83c297a3a236f0435fdfc291c1b9345267b3f0db7e89a4d1b6a930c2060",
-    "flowguard_version": "0.68.9",
+    "physicsguard_version": "0.15.6",
+    "physicsguard_authority_sha256": "sha256:631abc8a5a5a4a3f6e2b5f151748f2e199360bcb1c690f12832b4ee019c81257",
+    "flowguard_version": "0.68.10",
     "flowguard_schema_version": "1.0",
-    "flowguard_package_tree_sha256": "sha256:4e4733d942f52de84c25f93bab30d4a910ec3b55059c5330e3e6c1a95c77d8e4",
+    "flowguard_package_tree_sha256": "sha256:995e5c3976528f9b76ee580cd7bf0c55226fa8957a4ad4d41557efa611ec6382",
     "flowguard_direct_url_sha256": "sha256:35738303a58827bda346d458850eb99718f2b382c3ef138cb9036c07db24de9d",
-    "flowguard_authority_sha256": "sha256:5cf953303f0f120b4b6f29902c92f007dc54cf5d5c8229e379a81c9b036319b5",
+    "flowguard_authority_sha256": "sha256:1870cc3d3ecd534a2102fad2f2ea5acda2a44f46c295a46e4849eb3b16640501",
     "skillguard_version": "0.7.2",
     "skillguard_api_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
     "skillguard_distribution_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
@@ -59,7 +59,7 @@
       "path": "skill/physicsguard-ai-debugging/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 4714,
-      "sha256": "3b5a9fa4d6b278c2a2acc1abf15dbf64224978edf2c39513e80e88be595ca850"
+      "sha256": "868ddbcf3e0c0a6c31800cf94f070d7f147f248604b75c98465c0d04c80b69fb"
     },
     {
       "node_id": "artifact:skill/physicsguard-ai-debugging/references/native-route-protocol.md",
@@ -75,7 +75,7 @@
       "path": "skill/physicsguard-ai-debugging/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 9570,
-      "sha256": "4499b674b2dc6c4141ac8a4b0d7a22da63347cd3d8200dddf7b905c768e291e5"
+      "sha256": "221829d0963ef77ee298f24a77e2d320a97eb47ddf84ca6b50df7355cdbd0897"
     },
     {
       "node_id": "artifact:skill/physicsguard-ai-debugging/references/template-pack-routing.md",
@@ -107,7 +107,7 @@
       "path": "skill/physicsguard-audit-closure/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3732,
-      "sha256": "6c28477d41b09d97d52661ceac25ee84e6f07f6e9946e0af609b4a917a3c8335"
+      "sha256": "a631ff10c15d8f884c437b742356003c47d863fafadfe5743a4cec79c2e4590c"
     },
     {
       "node_id": "artifact:skill/physicsguard-audit-closure/references/native-route-protocol.md",
@@ -123,7 +123,7 @@
       "path": "skill/physicsguard-audit-closure/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 9408,
-      "sha256": "41840f4ddc3c360c09fb53300ac49559934bd5c11034ca109ec960d0f095850a"
+      "sha256": "6e2453b5d89e7dcb6ce6106c497ec44a4a741481cf98dd5a88f7050b1f092a8f"
     },
     {
       "node_id": "artifact:skill/physicsguard-audit-closure/references/template-pack-routing.md",
@@ -155,7 +155,7 @@
       "path": "skill/physicsguard-candidate-model-blueprint/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 4106,
-      "sha256": "67ad6048c38429fe05bf7c39ac715bd3b010937e3f13e1b22ba6e366ae234d9b"
+      "sha256": "335142062d999257daf947a8ab3d6f14cd07cafb1f52e247a4391300d9eea123"
     },
     {
       "node_id": "artifact:skill/physicsguard-candidate-model-blueprint/references/native-route-protocol.md",
@@ -171,7 +171,7 @@
       "path": "skill/physicsguard-candidate-model-blueprint/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8979,
-      "sha256": "ca38ae9b6cf9286f8f91d7f8a410493f327e44c38c796243acbe58e9f0779e77"
+      "sha256": "f2dca400e56f789a503dd41ebf384ebd05b9c5011004a14fb4bf44e4845528d1"
     },
     {
       "node_id": "artifact:skill/physicsguard-candidate-model-blueprint/references/template-pack-routing.md",
@@ -203,7 +203,7 @@
       "path": "skill/physicsguard-model-dataset-validation/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3516,
-      "sha256": "b546ca48b578e57132c48fde826860ba9676e1f4142f0e724fc739377d7b8b2d"
+      "sha256": "30e9674eb42eea8a1029a28c5581f8813cf17632bfe8aafa93c35dcf963a7f95"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-dataset-validation/references/native-route-protocol.md",
@@ -219,7 +219,7 @@
       "path": "skill/physicsguard-model-dataset-validation/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8821,
-      "sha256": "235f691cdb8e3165d8f892f0345bca90cfba29cf08bcaa106eb7178142618fef"
+      "sha256": "6cf281762b7295f5b99c8a8f4a130dc8f844b655fbf565670ab36ac0657a89cb"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-dataset-validation/references/template-pack-routing.md",
@@ -251,7 +251,7 @@
       "path": "skill/physicsguard-model-library/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3429,
-      "sha256": "31707f59be247cb4931873180da1b1be6f4fa0dcb5a3755e0f05add308f5da5c"
+      "sha256": "3e73c5691b2b8ec9c48245f815a1438dbabb44631b3bb027e92eac092321dd50"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-library/references/native-route-protocol.md",
@@ -267,7 +267,7 @@
       "path": "skill/physicsguard-model-library/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8871,
-      "sha256": "bbb6c3b49c0c627293a4fc647d481ebde6ab91a4aa9ea882a1f90108cbce8dd2"
+      "sha256": "10f7bbcde1ce082ea388f5945ecd324e2a88b2659277b2ad2314a23b98b4f187"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-library/references/template-pack-routing.md",
@@ -299,7 +299,7 @@
       "path": "skill/physicsguard-model-understanding-preflight/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3503,
-      "sha256": "a26a993e69aa8cc09d051a225b100b1acf1d9933430c6a8dcd3daa20d6d40899"
+      "sha256": "058232ac88a948806d315f1f759e58f89bf2f6d4d588f1f8bb576e9cf60461de"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-understanding-preflight/references/native-route-protocol.md",
@@ -315,7 +315,7 @@
       "path": "skill/physicsguard-model-understanding-preflight/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8917,
-      "sha256": "fb0d4e8154744165de08750c52efe381950e305c670267a3790c1ec7d8fc65a0"
+      "sha256": "1df5253f02358abec55081c0f742bf0c828ce6e5571eae42c1809de6c993c502"
     },
     {
       "node_id": "artifact:skill/physicsguard-model-understanding-preflight/references/template-pack-routing.md",
@@ -347,7 +347,7 @@
       "path": "skill/physicsguard-project-adoption/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3299,
-      "sha256": "7a223d4d099a7625000bf1fa5e5863c28798cc96806b92be1d61caf9e368efcc"
+      "sha256": "38e9aa436bb040cccfa001ac441464df15ec095b0724a2a4783aa9ef7f3b91f4"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-adoption/references/native-route-protocol.md",
@@ -363,7 +363,7 @@
       "path": "skill/physicsguard-project-adoption/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8866,
-      "sha256": "e1ec06caeb146d218815c0f274cae613970d3b40fcbf33dd4620f9cb2d337cd7"
+      "sha256": "32e030f1ea0bcb8ceeafbb6047e5e1dea34437f2080c56779f46781427a51cda"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-adoption/references/template-pack-routing.md",
@@ -395,7 +395,7 @@
       "path": "skill/physicsguard-project-evidence-registry/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3412,
-      "sha256": "da4e9dfec8c666cc7bbe540d1ba51eb9fdda4913e3ce1ba20ad1158545035f89"
+      "sha256": "b79276e6c30d1716ff9b605b9d792f815c84223744d90e0b30e679afe689e35a"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-evidence-registry/references/native-route-protocol.md",
@@ -411,7 +411,7 @@
       "path": "skill/physicsguard-project-evidence-registry/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8820,
-      "sha256": "84eef10407f50308cc85c6c3e0c7b47ee88df2db402ec6e6515413214c4c6f9a"
+      "sha256": "6378daee561acefeeb5279cc7b5c4bab9c7d3d7e67ae69083a5936f3e5951d28"
     },
     {
       "node_id": "artifact:skill/physicsguard-project-evidence-registry/references/template-pack-routing.md",
@@ -443,7 +443,7 @@
       "path": "skill/physicsguard-signal-mapping-review/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3479,
-      "sha256": "956fda90f6e21991d465b558b1ee7eeecf234e8cf038dbf3b7e85034fb4ae52f"
+      "sha256": "6b59501651a0985c17a57a570e9b5b0c75e92bc736b0748691e374eae9aa9e27"
     },
     {
       "node_id": "artifact:skill/physicsguard-signal-mapping-review/references/native-route-protocol.md",
@@ -459,7 +459,7 @@
       "path": "skill/physicsguard-signal-mapping-review/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 8950,
-      "sha256": "72985418c958e9eb17eda32b53c31d0859bcd4ead2046e63809399910f4843f1"
+      "sha256": "8332ced54877e4cf0ab35fb4bd3f71eac60ad64d458d7a3d7504bf9defcef463"
     },
     {
       "node_id": "artifact:skill/physicsguard-signal-mapping-review/references/template-pack-routing.md",
@@ -491,7 +491,7 @@
       "path": "skill/physicsguard-test-file-contract-review/references/route-capsule.json",
       "load_phase": "initial",
       "bytes": 3369,
-      "sha256": "c6dbbb855a373495b8f7401eeb6ef8d8119a5bcac3954891c2df951a484a3ffb"
+      "sha256": "aa87f6547465bf377c108b0b7a663baa95228bc06036e838fb6e14051538274a"
     },
     {
       "node_id": "artifact:skill/physicsguard-test-file-contract-review/references/native-route-protocol.md",
@@ -507,7 +507,7 @@
       "path": "skill/physicsguard-test-file-contract-review/references/native-depth-and-purpose.md",
       "load_phase": "conditional",
       "bytes": 9443,
-      "sha256": "a257ba1f27f34b5f4c95e470c6cec732ac254d00f58783115372b72ca92e62c7"
+      "sha256": "7aca2530b5ce33807b26004471fc72418395224d9c747868931cce0300920129"
     },
     {
       "node_id": "artifact:skill/physicsguard-test-file-contract-review/references/template-pack-routing.md",
@@ -567,7 +567,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "4499b674b2dc6c4141ac8a4b0d7a22da63347cd3d8200dddf7b905c768e291e5"
+          "sha256": "221829d0963ef77ee298f24a77e2d320a97eb47ddf84ca6b50df7355cdbd0897"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -653,7 +653,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "41840f4ddc3c360c09fb53300ac49559934bd5c11034ca109ec960d0f095850a"
+          "sha256": "6e2453b5d89e7dcb6ce6106c497ec44a4a741481cf98dd5a88f7050b1f092a8f"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -741,7 +741,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "ca38ae9b6cf9286f8f91d7f8a410493f327e44c38c796243acbe58e9f0779e77"
+          "sha256": "f2dca400e56f789a503dd41ebf384ebd05b9c5011004a14fb4bf44e4845528d1"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -825,7 +825,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "235f691cdb8e3165d8f892f0345bca90cfba29cf08bcaa106eb7178142618fef"
+          "sha256": "6cf281762b7295f5b99c8a8f4a130dc8f844b655fbf565670ab36ac0657a89cb"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -910,7 +910,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "bbb6c3b49c0c627293a4fc647d481ebde6ab91a4aa9ea882a1f90108cbce8dd2"
+          "sha256": "10f7bbcde1ce082ea388f5945ecd324e2a88b2659277b2ad2314a23b98b4f187"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -994,7 +994,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "fb0d4e8154744165de08750c52efe381950e305c670267a3790c1ec7d8fc65a0"
+          "sha256": "1df5253f02358abec55081c0f742bf0c828ce6e5571eae42c1809de6c993c502"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1077,7 +1077,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "e1ec06caeb146d218815c0f274cae613970d3b40fcbf33dd4620f9cb2d337cd7"
+          "sha256": "32e030f1ea0bcb8ceeafbb6047e5e1dea34437f2080c56779f46781427a51cda"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1162,7 +1162,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "84eef10407f50308cc85c6c3e0c7b47ee88df2db402ec6e6515413214c4c6f9a"
+          "sha256": "6378daee561acefeeb5279cc7b5c4bab9c7d3d7e67ae69083a5936f3e5951d28"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1246,7 +1246,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "72985418c958e9eb17eda32b53c31d0859bcd4ead2046e63809399910f4843f1"
+          "sha256": "8332ced54877e4cf0ab35fb4bd3f71eac60ad64d458d7a3d7504bf9defcef463"
         },
         {
           "path": "references/template-pack-routing.md",
@@ -1329,7 +1329,7 @@
             "independent_holdout",
             "exact_terminal_boundary"
           ],
-          "sha256": "a257ba1f27f34b5f4c95e470c6cec732ac254d00f58783115372b72ca92e62c7"
+          "sha256": "7aca2530b5ce33807b26004471fc72418395224d9c747868931cce0300920129"
         },
         {
           "path": "references/template-pack-routing.md",

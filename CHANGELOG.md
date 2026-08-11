@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15.6 - 2026-08-10
+- Synchronize the ten maintained PhysicsGuard skill projections with the
+  provider-neutral FlowGuard software-DNA boundary.
+- Refresh PhysicsGuard self-DNA, object-DNA qualification, code/test bindings,
+  model mesh, and regression identities for the patch release.
+
 ## v0.15.5 - 2026-08-10
 - Keep the ten maintained skill projections aligned with the patch release.
 - Add category-aware software-scope treatment for the supporting-framework

@@ -1,0 +1,69 @@
+{
+  "contributions": [],
+  "dispositions": [],
+  "effective_intent_transitions": [
+    {
+      "action": "retain",
+      "fingerprint": "sha256:0e25af455b2aabfb0b44c1b7e0a1b253dc530789bd83d755829c1d50f1138638",
+      "prior_contribution_fingerprint": "sha256:6437e57cb29a438210308895e884c015b615b05d18db30045ed052826d73ede9",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:patch-0.15.5-20260810",
+      "reason": "Retain the accepted current PhysicsGuard intent; this revision refreshes current model identity and evidence only.",
+      "replacement_contribution_ids": [],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "retain",
+      "fingerprint": "sha256:3aed1e9333372bab675c19c4df4a03603521d84d90a3862aa2144dfc2d36b454",
+      "prior_contribution_fingerprint": "sha256:ddb5759aed93a91c2bcd79ba90b3d7afb11b020abef1181ddd5fea904a4eb02d",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:patch-0.15.5-20260810",
+      "reason": "Retain the accepted current PhysicsGuard intent; this revision refreshes current model identity and evidence only.",
+      "replacement_contribution_ids": [],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "retain",
+      "fingerprint": "sha256:9d5418a6f4d335ef825774797038f149c59c06d47b2963c25dbd34359ace66fa",
+      "prior_contribution_fingerprint": "sha256:242c77cc1ff36200d9045894df5394fc6010f16beffeb657a8ebd7da10e11f92",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:patch-0.15.5-20260810",
+      "reason": "Retain the accepted current PhysicsGuard intent; this revision refreshes current model identity and evidence only.",
+      "replacement_contribution_ids": [],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "retain",
+      "fingerprint": "sha256:c878c5f9546ba6a9016e5840a6f6f27fc424704e3f48c4a7f3daacc1fa1818cc",
+      "prior_contribution_fingerprint": "sha256:c72d032efa981907dad6c6fcd7ebfa6508af74c505aab6c9cfd4b0388b08e7f4",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:patch-0.15.5-20260810",
+      "reason": "Retain the accepted current PhysicsGuard intent; this revision refreshes current model identity and evidence only.",
+      "replacement_contribution_ids": [],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "retain",
+      "fingerprint": "sha256:f2be9c802cda67a703fa946c4890ec59ec1c0af1ba598e27e92e00c832c4e22e",
+      "prior_contribution_fingerprint": "sha256:846b3bf729ece5c9c0383a041b35de962b50d7a007b971d0452e86808c8d7c90",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:interval_diagnosability:patch-0.15.5-20260810",
+      "reason": "Retain the accepted current PhysicsGuard intent; this revision refreshes current model identity and evidence only.",
+      "replacement_contribution_ids": [],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "retain",
+      "fingerprint": "sha256:2a301e395f4a9a42dff2a1d7f21b7884ec91179d8582fbdc3c3a37c61271a079",
+      "prior_contribution_fingerprint": "sha256:e143f709185223ca3e32286a0b839c3431c49c973257e93d17935f41a56f36f6",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:patch-0.15.5-20260810",
+      "reason": "Retain the accepted current PhysicsGuard intent; this revision refreshes current model identity and evidence only.",
+      "replacement_contribution_ids": [],
+      "schema": "flowguard.effective_intent_transition.v1"
+    },
+    {
+      "action": "retain",
+      "fingerprint": "sha256:006e92504504182f891b126ca79a7a882759c2a73eb63d526a5c0b6d05d17a5b",
+      "prior_contribution_fingerprint": "sha256:b142fa13f880856841cd5c6334476250e7081b6dcd57547f8fce5ea3dad4ae4f",
+      "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:task_local_model_deepening:patch-0.15.5-20260810",
+      "reason": "Retain the accepted current PhysicsGuard intent; this revision refreshes current model identity and evidence only.",
+      "replacement_contribution_ids": [],
+      "schema": "flowguard.effective_intent_transition.v1"
+    }
+  ]
+}
