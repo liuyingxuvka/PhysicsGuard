@@ -2,7 +2,7 @@
   "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
   "artifact_role": "family_baseline_regression",
   "target_skill_id": "physicsguard-audit-closure",
-  "blueprint_route_contract_fingerprint": "305F138B908EE4ADB0EFB79DBA347DEF54B198E553650E1CCEDAEC0A28651220",
+  "blueprint_route_contract_fingerprint": "C8D025E564758F80722A519E35CE83C5FA0117295A7F6A01DED63F0D4749F55C",
   "blueprint_cases": [
     {
       "case_id": "known-bad:physicsguard-audit-closure:blueprint_projection_missing_stale_foreign_or_ambiguous",
@@ -33,22 +33,15 @@
       "self_reported_outcome_allowed": false
     },
     {
-      "case_id": "known-bad:physicsguard-audit-closure:blueprint_bundle_presence_promoted_to_closure",
-      "trigger_condition": "bundle presence, bundle load, or an AI answer is treated as current evidence, native execution, high-fidelity reconstruction, or closure",
+      "case_id": "known-bad:physicsguard-audit-closure:blueprint_projection_promoted_to_closure",
+      "trigger_condition": "an in-memory interpretation projection or an AI answer is treated as current evidence, native execution, high-fidelity reconstruction, or closure",
       "expected_native_status": "blocked",
-      "expected_finding_code": "blueprint_bundle_presence_promoted_to_closure",
-      "self_reported_outcome_allowed": false
-    },
-    {
-      "case_id": "known-bad:physicsguard-audit-closure:blueprint_frozen_case_promoted_to_current_execution",
-      "trigger_condition": "a frozen case pass from the portable bundle is reported as current target-native execution or fresh validation",
-      "expected_native_status": "blocked",
-      "expected_finding_code": "blueprint_frozen_case_promoted_to_current_execution",
+      "expected_finding_code": "blueprint_projection_promoted_to_closure",
       "self_reported_outcome_allowed": false
     },
     {
       "case_id": "known-bad:physicsguard-audit-closure:blueprint_identity_only_terminal_promoted",
-      "trigger_condition": "portable_query_identity_only_terminal is omitted, repaired by scanning, or promoted to resolved content",
+      "trigger_condition": "an identity-only source, test, resource, or oracle gap is omitted, repaired by scanning, or promoted to resolved content",
       "expected_native_status": "blocked",
       "expected_finding_code": "blueprint_identity_only_terminal_promoted",
       "self_reported_outcome_allowed": false

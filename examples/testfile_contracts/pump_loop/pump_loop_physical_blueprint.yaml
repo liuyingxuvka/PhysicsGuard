@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: pump loop physical blueprint.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/testfile_contracts/pump_loop/pump_loop_physical_blueprint.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 # Canonical PhysicsGuard physical-model blueprint.
 # This models the maintained pump-loop contract fixture, not a real pump or a
 # commercial-tool reconstruction.  Its physical claim remains the repository's
@@ -245,22 +250,22 @@ native_executions:
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.7"
+    tool_version: "0.15.8"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: 55b7f7bb9ac48a0cfa3f69b4f485ea78945ba7512645958fd462c496bee381df
-    execution_fingerprint: 7aa84181ce017a8e0173a75effb3fe875a48c020f32efe6bccdcb40daab5c5db
+    execution_fingerprint: e796e9832301e87c19d0c28ec87a9d58a15056f3cef3502c5b43ab1bc8a5fe20
   - execution_id: execution.pump-loop.model_validation_plan.fixture-r1
     native_owner_id: physicsguard-model-dataset-validation
     operation_id: model_dataset_validation.validate
     native_schema: model_validation_plan
-    input_artifact_sha256: ac886eb3798bcf91663ffe58819c454dace35e4812730563239b3703d9513832
+    input_artifact_sha256: 8361962d09cd8e2c21da59acb0c1fe8b3d924c6b998a9a3bd38bdd9525050050
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.7"
+    tool_version: "0.15.8"
     expected_terminal_status: pass
-    terminal_receipt_fingerprint: 1d8a88416edd1450dfc173e80dca3eea08384fc4714ab8f954d84b6fe24eb57a
-    execution_fingerprint: 15bfb139030562f0c243761c9394fb7d99a9e44b3550f4bf2da74dc668c75b38
+    terminal_receipt_fingerprint: 99a83e9423e0e520780f0ae874cbbf54ef288b70ee21a80e70d242fa93bc6137
+    execution_fingerprint: ed2893e460188c3712b32710e41e3f88f842735333bdad719c79c5fd0e31194b
   - execution_id: execution.pump-loop.evidence_mesh.fixture-r1
     native_owner_id: physicsguard.audit-closure
     operation_id: evidence_mesh.check
@@ -269,22 +274,22 @@ native_executions:
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.7"
+    tool_version: "0.15.8"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: 4f2777f02ccf39a08334f855f2961044b695ab198cb4e1b1155037ebbf0fd2d6
-    execution_fingerprint: 9cae5ddd5d493188050c71d8736b03d3c667ccd8fdf5ece9601ce37665607914
+    execution_fingerprint: f43dd83e5629a3744cc4652e2d5099df1d51f08d91b42557499e7025973d2072
   - execution_id: execution.pump-loop.project_evidence_registry.fixture-r1
     native_owner_id: physicsguard.project-evidence-registry
     operation_id: project_evidence_registry.check
     native_schema: project_evidence_registry
-    input_artifact_sha256: 80582208774ab97de5a098e6192241e7a70f4ebae88e06ea5d27dda6d7612232
+    input_artifact_sha256: 49e0d4bb3cb018b77f4c66935f39028ef5cf96f9f2db9b7f396389db1232931e
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.7"
+    tool_version: "0.15.8"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: ba91fa2f0eb8ad2efacadee5798b7ad3d78d00ffee17f1c2066c853eb02c88ff
-    execution_fingerprint: 8af4b7bd2e173cf9cd3c82fec64980b315b00ec6d349921d54c1693dc1fcffb8
+    execution_fingerprint: ae8f10deb2db3f23d1c44eb27932940b7d493120524d80bb0f47a1964edd4951
   - execution_id: execution.pump-loop.model_library_index.fixture-r1
     native_owner_id: physicsguard.model-library
     operation_id: model_library.check
@@ -293,10 +298,10 @@ native_executions:
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.7"
+    tool_version: "0.15.8"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: a37e08315c9aa245e5488524a9047d7c72837db80838e38fbf1b656224f5b808
-    execution_fingerprint: 61ab4b0c65a1bfed8eeacaa49f85b09e7ade844773a189e29c99949d2cee489d
+    execution_fingerprint: 7e40e9dba18a9c4727449adcbc624dfc4c43ca223928d90d4d94ea6e4351d099
 bindings:
   - binding_id: binding.root.implementation
     owner_element_id: pump_loop_fixture
@@ -339,7 +344,7 @@ bindings:
     native_schema: model_validation_plan
     subject_id: pump_loop_clean_validation
     subject_revision: fixture-r1
-    artifact: &validation_ref {repo_path: validation/clean_validation_plan.yaml, sha256: ac886eb3798bcf91663ffe58819c454dace35e4812730563239b3703d9513832}
+    artifact: &validation_ref {repo_path: validation/clean_validation_plan.yaml, sha256: 8361962d09cd8e2c21da59acb0c1fe8b3d924c6b998a9a3bd38bdd9525050050}
     provider_id: provider.pump-loop-repository
     native_execution_id: execution.pump-loop.model_validation_plan.fixture-r1
     status: current
@@ -374,7 +379,7 @@ bindings:
     native_schema: project_evidence_registry
     subject_id: pump_loop_fixture_evidence
     subject_revision: fixture-r1
-    artifact: &registry_ref {repo_path: evidence/project_evidence_registry.yaml, sha256: 80582208774ab97de5a098e6192241e7a70f4ebae88e06ea5d27dda6d7612232}
+    artifact: &registry_ref {repo_path: evidence/project_evidence_registry.yaml, sha256: 49e0d4bb3cb018b77f4c66935f39028ef5cf96f9f2db9b7f396389db1232931e}
     provider_id: provider.pump-loop-repository
     native_execution_id: execution.pump-loop.project_evidence_registry.fixture-r1
     status: current

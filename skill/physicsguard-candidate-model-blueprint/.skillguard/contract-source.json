@@ -810,11 +810,10 @@
         "tests/test_physical_model_blueprint_schema.py",
         "tests/test_physical_model_blueprint_target_authority.py",
         "tests/test_fmi_observation.py",
-        "tests/test_physical_blueprint_bundle.py",
         "tests/test_reference_fmus_bouncing_ball_example.py",
         "-q",
         "-k",
-        "test_task_local_revision or physicsguard_candidate_model_blueprint or test_physical_blueprint_impact_trace or test_physical_model_blueprint_bad_cases or test_physical_model_blueprint_cli or test_physical_model_blueprint_external_target or test_physical_model_blueprint_native_authorities or test_physical_model_blueprint_provider_neutral or test_physical_model_blueprint_review or test_physical_model_blueprint_schema or test_physical_model_blueprint_target_authority or test_fmi_observation or test_physical_blueprint_bundle or test_reference_fmus_bouncing_ball_example"
+        "test_task_local_revision or physicsguard_candidate_model_blueprint or test_physical_blueprint_impact_trace or test_physical_model_blueprint_bad_cases or test_physical_model_blueprint_cli or test_physical_model_blueprint_external_target or test_physical_model_blueprint_native_authorities or test_physical_model_blueprint_provider_neutral or test_physical_model_blueprint_review or test_physical_model_blueprint_schema or test_physical_model_blueprint_target_authority or test_fmi_observation or test_reference_fmus_bouncing_ball_example"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -997,14 +996,6 @@
         },
         {
           "kind": "path",
-          "path": "src/physicsguard/schema/physical_blueprint_bundle.py"
-        },
-        {
-          "kind": "path",
-          "path": "src/physicsguard/core/physical_blueprint_bundle.py"
-        },
-        {
-          "kind": "path",
           "path": "templates/physical_model_blueprint.yaml"
         },
         {
@@ -1062,10 +1053,6 @@
         {
           "kind": "path",
           "path": "tests/test_fmi_observation.py"
-        },
-        {
-          "kind": "path",
-          "path": "tests/test_physical_blueprint_bundle.py"
         },
         {
           "kind": "path",
@@ -1213,7 +1200,6 @@
     "src/physicsguard/__init__.py",
     "src/physicsguard/cli.py",
     "src/physicsguard/core/fmi_observation.py",
-    "src/physicsguard/core/physical_blueprint_bundle.py",
     "src/physicsguard/core/physical_blueprint_trace.py",
     "src/physicsguard/core/physical_model_blueprint.py",
     "src/physicsguard/core/physical_model_blueprint_adapters.py",
@@ -1222,7 +1208,6 @@
     "src/physicsguard/guard_model_contract.py",
     "src/physicsguard/io/physical_model_blueprint_loader.py",
     "src/physicsguard/schema/fmi_observation.py",
-    "src/physicsguard/schema/physical_blueprint_bundle.py",
     "src/physicsguard/schema/physical_model_blueprint.py",
     "src/physicsguard/schema/task_local_revision.py",
     "src/physicsguard/skill_execution_depth.py",
@@ -1233,7 +1218,6 @@
     "tests/test_fmi_observation.py",
     "tests/test_guard_skill_mesh.py",
     "tests/test_installed_skill_sync.py",
-    "tests/test_physical_blueprint_bundle.py",
     "tests/test_physical_blueprint_impact_trace.py",
     "tests/test_physical_model_blueprint_bad_cases.py",
     "tests/test_physical_model_blueprint_cli.py",

@@ -28,8 +28,8 @@
     "ready_blocks",
     "interface_inventory",
     "model_semantics",
-    "portable_bundle_output_if_requested",
-    "portable_bundle_selector_if_requested"
+    "in_memory_projection_if_requested",
+    "in_memory_selector_if_requested"
   ],
   "required_outputs": [
     "candidate_blueprint",
@@ -40,8 +40,8 @@
     "deepest_licensed_layer",
     "first_gap",
     "safe_claim",
-    "portable_bundle_status_and_identity",
-    "portable_query_identity_and_gaps",
+    "native_directory_dna_status",
+    "in_memory_query_identity_and_gaps",
     "execution_claim_licensed",
     "generation_eligibility",
     "rollout_boundary",
@@ -61,14 +61,14 @@
         "blueprint_affected_slice_required",
         "blueprint_author_or_full_review_required",
         "explicit_material_root_or_fmi_observation_required",
-        "portable_blueprint_bundle_export_or_query_required"
+        "in_memory_blueprint_projection_query_required"
       ],
       "required_for": [
         "target_native_domain_workflow",
         "canonical_physical_blueprint_authority",
-        "portable_physical_blueprint_interchange"
+        "in_memory_physical_blueprint_projection"
       ],
-      "sha256": "662ee63b6d283d82a2f6bba2d00ab364a69427b767e999bf6b477835887cc2a1"
+      "sha256": "83aca58f8e2b3e2b436a519839ca6534afa970bd8f8015997b7efa08a4b5fc58"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -92,7 +92,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "1d61951de4ab80192f3bd2975819738b72a33fac1bbafafc1244e4e71f68f92e"
+      "sha256": "5beff8b95809437aa094315dd26f3791cf99e8faedb1de33a13c6ccf9540d91a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -111,6 +111,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "0512efab7a13d2b5e3e3dfd793238ea8ed2f95deca4c4b1d68e1c02028e4f0c7",
+  "entry_prompt_sha256": "a9e840093b922905e8ee8a0fde1c3c85e723cac0e6ce47b4479c8b1e59791f78",
   "claim_boundary": "Generation eligibility covers only a candidate low-fidelity blueprint for the declared target and interfaces; it is not an implemented or validated high-fidelity model."
 }

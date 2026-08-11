@@ -33,8 +33,8 @@ BLUEPRINT_ROUTE_EXPECTATIONS = {
             "deepest_licensed_layer",
             "first_gap",
             "safe_claim",
-            "portable_bundle_status_and_identity",
-            "portable_query_identity_and_gaps",
+            "native_directory_dna_status",
+            "in_memory_query_identity_and_gaps",
             "execution_claim_licensed",
         },
     ),
@@ -71,9 +71,8 @@ BLUEPRINT_ROUTE_EXPECTATIONS = {
         {
             "blueprint_scope_fingerprint",
             "blueprint_depth_and_first_gap",
-            "portable_bundle_identity",
-            "portable_query_status",
-            "frozen_case_status",
+            "in_memory_projection_identity",
+            "in_memory_query_status",
             "current_execution_status",
             "execution_claim_licensed",
         },
@@ -92,16 +91,12 @@ BLUEPRINT_PROJECTION_API_EXPECTATIONS = {
     "physicsguard-audit-closure": {
         "affected_physical_blueprint_projection",
         "full_physical_blueprint_projection",
-        "query_physical_blueprint_export_bundle",
     },
     "physicsguard-candidate-model-blueprint": {
         "summary_physical_blueprint_projection",
         "affected_physical_blueprint_projection",
         "reverse_trace_physical_blueprint_projection",
         "full_physical_blueprint_projection",
-        "build_physical_blueprint_export_bundle",
-        "materialize_physical_blueprint_export_bundle",
-        "query_physical_blueprint_export_bundle",
     },
     "physicsguard-model-dataset-validation": {
         "affected_physical_blueprint_projection",
@@ -350,7 +345,7 @@ def test_candidate_is_the_only_full_blueprint_author_or_reviewer() -> None:
             assert "does not author" in prompt.lower() or "never author" in prompt.lower()
 
 
-def test_candidate_protocol_exposes_material_fmi_and_portable_boundaries() -> None:
+def test_candidate_protocol_exposes_material_fmi_and_native_directory_boundaries() -> None:
     protocol = (
         SKILL_ROOT
         / "physicsguard-candidate-model-blueprint"
@@ -366,17 +361,16 @@ def test_candidate_protocol_exposes_material_fmi_and_portable_boundaries() -> No
         "native_execution_status=not_run",
         "physicsguard.fmi-observation-request.v1",
         "restricted source-independent oracle",
-        "blueprint bundle-export",
-        "blueprint bundle-query",
-        "exactly one deep selector",
-        "observed_at_export_unlicensed",
-        "portable_query_identity_only_terminal",
+        "native directory stays authoritative",
+        "no standalone bundle is written",
+        "one selector",
+        "identity-only gaps",
         "execution_claim_licensed=false",
     ):
         assert token in protocol
 
 
-def test_audit_protocol_keeps_frozen_bundle_separate_from_current_execution() -> None:
+def test_audit_protocol_keeps_in_memory_projection_separate_from_current_execution() -> None:
     protocol = (
         SKILL_ROOT
         / "physicsguard-audit-closure"
@@ -385,10 +379,8 @@ def test_audit_protocol_keeps_frozen_bundle_separate_from_current_execution() ->
     ).read_text(encoding="utf-8")
 
     for token in (
-        "query_physical_blueprint_export_bundle",
-        "observed_at_export_unlicensed",
-        "portable_query_identity_only_terminal",
-        "frozen_case_status=pass",
+        "in-memory projection",
+        "identity-only gap",
         "current_execution_status=not_run",
         "execution_claim_licensed=false",
     ):

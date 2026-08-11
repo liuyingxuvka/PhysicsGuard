@@ -912,12 +912,11 @@
         "tests/test_physicsguard_skill_entry_loading.py",
         "tests/test_skill_execution_depth.py",
         "tests/test_physicsguard_skill_blueprint_contracts.py",
-        "tests/test_physical_blueprint_bundle.py",
         "tests/test_reference_fmus_bouncing_ball_example.py",
         "tests/test_validation_blueprint_coverage.py",
         "-q",
         "-k",
-        "test_task_local_revision or physicsguard_audit_closure or test_physical_blueprint_bundle or test_reference_fmus_bouncing_ball_example or test_validation_blueprint_coverage"
+        "test_task_local_revision or physicsguard_audit_closure or test_reference_fmus_bouncing_ball_example or test_validation_blueprint_coverage"
       ],
       "cwd_token": "target_root",
       "expected": {
@@ -1085,18 +1084,6 @@
         {
           "kind": "path",
           "path": "tests/test_skill_execution_depth.py"
-        },
-        {
-          "kind": "path",
-          "path": "src/physicsguard/schema/physical_blueprint_bundle.py"
-        },
-        {
-          "kind": "path",
-          "path": "src/physicsguard/core/physical_blueprint_bundle.py"
-        },
-        {
-          "kind": "path",
-          "path": "tests/test_physical_blueprint_bundle.py"
         },
         {
           "kind": "path",
@@ -1407,14 +1394,12 @@
     "skill/physicsguard-audit-closure/runtime-requirements.json",
     "src/physicsguard/__init__.py",
     "src/physicsguard/cli.py",
-    "src/physicsguard/core/physical_blueprint_bundle.py",
     "src/physicsguard/core/physical_blueprint_trace.py",
     "src/physicsguard/core/physical_model_blueprint.py",
     "src/physicsguard/core/target_inventory_authority.py",
     "src/physicsguard/core/task_local_revision.py",
     "src/physicsguard/guard_model_contract.py",
     "src/physicsguard/io/physical_model_blueprint_loader.py",
-    "src/physicsguard/schema/physical_blueprint_bundle.py",
     "src/physicsguard/schema/physical_model_blueprint.py",
     "src/physicsguard/schema/task_local_revision.py",
     "src/physicsguard/skill_execution_depth.py",
@@ -1422,7 +1407,6 @@
     "tests/test_guard_skill_mesh.py",
     "tests/test_install_physicsguard_skills.py",
     "tests/test_installed_skill_sync.py",
-    "tests/test_physical_blueprint_bundle.py",
     "tests/test_physicsguard_family_maintenance.py",
     "tests/test_physicsguard_skill_blueprint_contracts.py",
     "tests/test_physicsguard_skill_entry_loading.py",

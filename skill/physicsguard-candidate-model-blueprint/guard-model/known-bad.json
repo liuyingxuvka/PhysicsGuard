@@ -2,7 +2,7 @@
   "schema_version": "physicsguard.family_baseline_known_bad_set.v1",
   "artifact_role": "family_baseline_regression",
   "target_skill_id": "physicsguard-candidate-model-blueprint",
-  "blueprint_route_contract_fingerprint": "B3ED81D153EB199EC36471DD682CA19CE9A32D384549376E41F84F718E58F74D",
+  "blueprint_route_contract_fingerprint": "7FC59BA22C35AB1A3015F6F5AE3B2D83778B713B310F11BE93D6539E7F4A9B13",
   "blueprint_cases": [
     {
       "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_projection_missing_stale_foreign_or_ambiguous",
@@ -47,17 +47,10 @@
       "self_reported_outcome_allowed": false
     },
     {
-      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_portable_query_contract_violated",
-      "trigger_condition": "the full bundle is emitted as the default prompt payload, more than one deep selector is accepted, a byte budget is bypassed, or an identity-only terminal is silently repaired",
+      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_projection_execution_promoted",
+      "trigger_condition": "an in-memory projection or an AI answer is promoted to current native execution, fresh evidence, or high-fidelity reconstruction",
       "expected_native_status": "blocked",
-      "expected_finding_code": "blueprint_portable_query_contract_violated",
-      "self_reported_outcome_allowed": false
-    },
-    {
-      "case_id": "known-bad:physicsguard-candidate-model-blueprint:blueprint_portable_execution_promoted",
-      "trigger_condition": "bundle presence, observed-at-export status, a frozen-case pass, or an AI answer is promoted to current native execution, fresh evidence, or high-fidelity reconstruction",
-      "expected_native_status": "blocked",
-      "expected_finding_code": "blueprint_portable_execution_promoted",
+      "expected_finding_code": "blueprint_projection_execution_promoted",
       "self_reported_outcome_allowed": false
     }
   ],

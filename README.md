@@ -12,7 +12,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.15.7` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.8` | Python 3.11+ | `physicsguard` | MIT |
 
 English comes first. A Chinese mirror follows below.
 
@@ -182,7 +182,7 @@ Do not use it when:
 
 ## Library Coverage
 
-PhysicsGuard `v0.15.7` includes strict, receipt-driven task-local model revision loops and low-fidelity audit relations for:
+PhysicsGuard `v0.15.8` includes strict, receipt-driven task-local model revision loops and low-fidelity audit relations for:
 
 - controls, sensors, actuators, delays, saturation, maps, and PID-like steps;
 - drivetrain, vehicle, brake, wheel, gearbox, and road-load relations;
@@ -249,7 +249,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.15.7` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.8` | Python 3.11+ | `physicsguard` | MIT |
 
 ## 它是什么
 
@@ -406,7 +406,7 @@ PhysicsGuard 可以用紧凑图表解释：
 
 ## 模块覆盖
 
-PhysicsGuard `v0.15.7` 包含严格、由原生回执驱动的任务局部模型迭代和这些低保真审计关系：
+PhysicsGuard `v0.15.8` 包含严格、由原生回执驱动的任务局部模型迭代和这些低保真审计关系：
 
 - controls、sensors、actuators、delays、saturation、maps、PID-like steps；
 - drivetrain、vehicle、brake、wheel、gearbox、road-load；

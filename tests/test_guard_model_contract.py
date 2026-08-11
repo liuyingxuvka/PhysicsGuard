@@ -11,6 +11,7 @@ import pytest
 
 import physicsguard
 import physicsguard.guard_model_contract as guard_model_contract
+from scripts import upgrade_purpose_contracts as purpose_contract_generator
 from physicsguard.guard_model_contract import (
     ADMISSION_PROOF,
     BASELINE_ROLE,
@@ -193,7 +194,7 @@ def test_every_skill_declares_one_canonical_package_runtime() -> None:
         requirement = json.loads(
             (skill_root / "runtime-requirements.json").read_text(encoding="utf-8")
         )
-        assert requirement == {
+        expected = {
             "schema_version": "physicsguard.skill_runtime_requirement.v1",
             "target_skill_id": skill_root.name,
             "package_name": "physicsguard",
@@ -210,6 +211,11 @@ def test_every_skill_declares_one_canonical_package_runtime() -> None:
                 "It does not prove a domain check ran or authorize a result."
             ),
         }
+        expected["toolchain_identity"] = purpose_contract_generator.current_toolchain_identity(
+            repository_root=ROOT,
+            flowguard_project_path=ROOT / ".flowguard" / "project.toml",
+        )
+        assert requirement == expected
         assert not (skill_root / "runtime").exists()
         assert not (skill_root / "guard-model/verify.py").exists()
         source_contract = json.loads(
@@ -223,9 +229,12 @@ def test_every_skill_declares_one_canonical_package_runtime() -> None:
             is_task_model = str(check["check_id"]).endswith(
                 ":task-local-model-deepening"
             )
+            is_distribution_authority = check["check_id"] == (
+                "check:physicsguard-family:distribution-authority"
+            )
             assert check["args"][:2] == (
                 ["-m", "pytest"]
-                if is_task_model
+                if is_task_model or is_distribution_authority
                 else ["-m", "physicsguard.guard_model_contract"]
             )
             selectors = {
@@ -241,6 +250,13 @@ def test_every_skill_declares_one_canonical_package_runtime() -> None:
                     "src/physicsguard/cli.py",
                     "tests/test_task_local_revision.py",
                     "tests/test_physicsguard_skill_prompts.py",
+                } <= selectors, check["check_id"]
+            elif is_distribution_authority:
+                assert {
+                    ".flowguard/check_physicsguard_skill_suite_mesh.py",
+                    ".flowguard/model-regression-manifest.json",
+                    "tests/test_guard_skill_mesh.py",
+                    "tests/test_version_consistency.py",
                 } <= selectors, check["check_id"]
             else:
                 assert canonical_sources | {requirement_path} <= selectors, check["check_id"]
@@ -299,6 +315,8 @@ def test_generic_skillguard_contract_contains_only_target_owned_native_integrati
                 "evidence_source": (
                     "physicsguard.task_local_revision"
                     if check_id.endswith(":task-local-model-deepening")
+                    else "physicsguard.family_distribution_authority"
+                    if check_id == "check:physicsguard-family:distribution-authority"
                     else "physicsguard.guard_model_contract"
                 ),
                 "native_check_id": check_id,

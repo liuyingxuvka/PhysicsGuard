@@ -54,12 +54,10 @@ ROUTE_SPECIFIC_BLUEPRINT_BLOCK_CODES = {
     "physicsguard-candidate-model-blueprint": {
         "blueprint_material_root_boundary_violated",
         "blueprint_fmi_oracle_independence_violated",
-        "blueprint_portable_query_contract_violated",
-        "blueprint_portable_execution_promoted",
+        "blueprint_projection_execution_promoted",
     },
     "physicsguard-audit-closure": {
-        "blueprint_bundle_presence_promoted_to_closure",
-        "blueprint_frozen_case_promoted_to_current_execution",
+        "blueprint_projection_promoted_to_closure",
         "blueprint_identity_only_terminal_promoted",
     },
 }

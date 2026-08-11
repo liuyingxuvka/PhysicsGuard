@@ -1,6 +1,6 @@
 [flowguard]
 repository = "https://github.com/liuyingxuvka/FlowGuard"
-adopted_package_version = "0.68.11"
+adopted_package_version = "0.68.12"
 schema_version = "1.0"
 last_verified_at = "2026-08-11T12:12:45+00:00"
 last_verified_by = "FlowGuard project-upgrade"
@@ -15,12 +15,12 @@ require_model_update_for_behavior_changes = true
 
 [model_authority]
 system_id = "flowguard"
-observed_snapshot_path = ".flowguard/model-mesh/snapshots/5ca2d96a91c23f33e92eaf6f149a7118792a7f5663e4af6fed099ebea15eacdb.json"
-observed_snapshot_fingerprint = "sha256:5ca2d96a91c23f33e92eaf6f149a7118792a7f5663e4af6fed099ebea15eacdb"
-subject_revision = "source-inventory:68e815ef567d268e8f179592bf57b83266f7acded854afd4bfeeaef612c4eb74"
+observed_snapshot_path = ".flowguard/model-mesh/snapshots/c2c9277dd8a878873b229f3ea027d6a9532242328d7a0d3d4363ed951263e8ba.json"
+observed_snapshot_fingerprint = "sha256:c2c9277dd8a878873b229f3ea027d6a9532242328d7a0d3d4363ed951263e8ba"
+subject_revision = "source-inventory:2c09568ebf7549448a325db862bdaa565e828bc5cc405d91f205d49d4a19dee1"
 coverage_status = "complete_within_declared_boundary"
-generation = 38
-accepted_revision_set_fingerprint = "sha256:fc24171a63f51654f7806b3191c0855e1388def5de39ac6b9e65ed7d9a799a42"
-previous_snapshot_fingerprint = "sha256:d548349a23d085c9b8f7cff3318c73be83d4d8bb2d2c0d2afa0f61dc27c8adb3"
-activation_receipt_fingerprint = "sha256:a1c566cfc4a21ea66aeb0d9fc3c9ec20b74282d3c26199f48734281eff5c3a6a"
-head_fingerprint = "sha256:25fbbac2d6dc2de5a61b3b3088e5c3f195c314a6b9abd7669fea2d3d3c140355"
+generation = 44
+accepted_revision_set_fingerprint = "sha256:302fefa81d01e8dd94eda7c3e02a7bdcf4997220686f6f50c50894064553bc12"
+previous_snapshot_fingerprint = "sha256:448101ffa948a853b6b606049768da7a3d329415d63fa44b6f2819a0adc96d35"
+activation_receipt_fingerprint = "sha256:19b61d2fcfb7a78fb037b7d808198f2c61cf1ed6a8ed5000138dd5aac4b6ff4e"
+head_fingerprint = "sha256:f3050cae15c4296b74695f29eec36debea9b7cf8d393ddd3c434c7cf854c1e41"

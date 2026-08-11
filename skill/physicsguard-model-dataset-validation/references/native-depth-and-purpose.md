@@ -10,7 +10,7 @@ Family route bounded claim: A pass licenses only the exact low-fidelity model, d
 
 Family baseline proof boundary: A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt.
 
-Shared simulator prerequisite: install the current `physicsguard==0.15.7` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
+Shared simulator prerequisite: install the current `physicsguard==0.15.8` package in the active Python environment. Before executing this skill, run `python -c "import physicsguard; print(physicsguard.__version__)"`; a missing package is a visible blocker and there is no bundled fallback.
 
 Issue target-owned execution-depth receipts with `python -m physicsguard.skill_execution_depth PACKAGE.json --output RECEIPT.json`. The package module is the sole editable depth implementation shared by all ten skills.
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Audit Closure"
   short_description: "Close bounded PhysicsGuard audit claims"
-  default_prompt: "Use $physicsguard-audit-closure directly; consume the exact whole or affected review and any supplied portable-bundle status, preserve observed_at_export_unlicensed and identity-only gaps, and keep frozen-case pass separate from current native execution and closure."
+  default_prompt: "Use $physicsguard-audit-closure directly; consume the exact whole or affected review and any in-memory projection status, preserve identity-only gaps, and keep interpretation separate from current native execution and closure."

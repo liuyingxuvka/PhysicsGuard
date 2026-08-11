@@ -662,11 +662,15 @@ def test_satellite_contracts_use_generic_supervision_for_native_guard_proofs() -
         assert source["native_check_bindings"] == [
             {
                 "binding_id": f"native-check:{target}:{check_id.replace(':', '-')}",
-                "evidence_source": (
-                    "physicsguard.task_local_revision"
-                    if check_id.endswith(":task-local-model-deepening")
-                    else "physicsguard.guard_model_contract"
-                ),
+                    "evidence_source": (
+                        "physicsguard.task_local_revision"
+                        if check_id.endswith(":task-local-model-deepening")
+                        else (
+                            "physicsguard.family_distribution_authority"
+                            if check_id == "check:physicsguard-family:distribution-authority"
+                            else "physicsguard.guard_model_contract"
+                        )
+                    ),
                 "native_check_id": check_id,
                 "required": True,
             }

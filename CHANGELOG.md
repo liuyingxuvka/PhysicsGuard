@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.15.8 - 2026-08-11
+
+- Keep the native physical-model directory as the DNA authority; bundle/export
+  remains unavailable as an ordinary route.
+- Refresh all ten maintained skill contracts, model/code/test bindings, and
+  regression identities for the current FlowGuard provider and patch version.
+- Preserve lightweight use while keeping every current model and validation
+  binding directly inspectable in the repository.
+
 ## v0.15.7 - 2026-08-11
 
 - Retire standalone physical-DNA transport so the native project directory is

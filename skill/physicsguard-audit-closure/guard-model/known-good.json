@@ -12,17 +12,15 @@
     "predictive_rollout_if_requested",
     "safe_claim_boundary"
   ],
-  "blueprint_route_contract_fingerprint": "305F138B908EE4ADB0EFB79DBA347DEF54B198E553650E1CCEDAEC0A28651220",
+  "blueprint_route_contract_fingerprint": "C8D025E564758F80722A519E35CE83C5FA0117295A7F6A01DED63F0D4749F55C",
   "covered_blueprint_obligation_ids": [
     "blueprint_consumer_boundary",
     "blueprint_whole_or_affected_review_consumption",
     "blueprint_denominator_depth_first_gap",
     "blueprint_closure_and_gap_accounting",
-    "blueprint_portable_bundle_identity_consumption",
-    "blueprint_portable_frozen_case_status_accounting",
-    "blueprint_frozen_case_vs_current_execution",
+    "blueprint_in_memory_projection_identity_consumption",
     "blueprint_identity_only_terminal_accounting",
-    "blueprint_portable_execution_claim_boundary"
+    "blueprint_in_memory_execution_claim_boundary"
   ],
   "covered_blueprint_projection_kinds": [
     "affected",
@@ -30,10 +28,7 @@
   ],
   "executed_blueprint_operation_ids": [
     "api:physicsguard.affected_physical_blueprint_projection",
-    "api:physicsguard.full_physical_blueprint_projection",
-    "api:physicsguard.query_physical_blueprint_export_bundle",
-    "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty",
-    "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --module|--element|--case|--impact|--reverse ID --pretty"
+    "api:physicsguard.full_physical_blueprint_projection"
   ],
   "expected_blueprint_status": "pass",
   "expected_native_status": "pass",

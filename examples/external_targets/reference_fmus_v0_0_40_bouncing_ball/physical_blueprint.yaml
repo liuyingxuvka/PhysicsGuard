@@ -1,3 +1,8 @@
+# PhysicsGuard system audit/model blueprint
+# Purpose: physical blueprint.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli run examples/external_targets/reference_fmus_v0_0_40_bouncing_ball/physical_blueprint.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 schema_version: physicsguard.physical-model-blueprint.v1
 blueprint_id: blueprint.reference-fmus.bouncing-ball.v0.0.40-fmi3
 qualification_target: external_physical_target

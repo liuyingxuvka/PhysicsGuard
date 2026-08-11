@@ -4,8 +4,8 @@
   "target_skill_id": "physicsguard-candidate-model-blueprint",
   "candidate_id": "candidate:physicsguard-candidate-model-blueprint:guard-model-current",
   "purpose_contract_ref": "guard-model/contract.json",
-  "purpose_contract_fingerprint": "43BFE2FCC1428F0E6190305B80A16B012BD7A3ACA5E24F20898CEEFC845978B3",
-  "blueprint_route_contract_fingerprint": "B3ED81D153EB199EC36471DD682CA19CE9A32D384549376E41F84F718E58F74D",
+  "purpose_contract_fingerprint": "7EB11E7ABBADF296675DA5B68AC4A6B8441DD0FC7B9FDF8846899D82573A0CAF",
+  "blueprint_route_contract_fingerprint": "7FC59BA22C35AB1A3015F6F5AE3B2D83778B713B310F11BE93D6539E7F4A9B13",
   "blueprint_projection_contract": {
     "authority_mode": "sole_author_full_reviewer",
     "projection_kinds": [
@@ -17,17 +17,11 @@
     "required_operation_ids": [
       "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --pretty",
       "command:python -m physicsguard.cli blueprint review BLUEPRINT --target-authority AUTHORITY --material-root ROOT --pretty",
-      "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --output BUNDLE --pretty",
-      "command:python -m physicsguard.cli blueprint bundle-export BLUEPRINT --target-authority AUTHORITY --material-root ROOT --output BUNDLE --pretty",
-      "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --pretty",
-      "command:python -m physicsguard.cli blueprint bundle-query BUNDLE --module|--element|--case|--impact|--reverse ID --pretty",
       "schema:physicsguard.fmi-observation-request.v1",
       "api:physicsguard.summary_physical_blueprint_projection",
       "api:physicsguard.affected_physical_blueprint_projection",
       "api:physicsguard.reverse_trace_physical_blueprint_projection",
-      "api:physicsguard.full_physical_blueprint_projection",
-      "api:physicsguard.build_physical_blueprint_export_bundle",
-      "api:physicsguard.query_physical_blueprint_export_bundle"
+      "api:physicsguard.full_physical_blueprint_projection"
     ],
     "required_obligation_ids": [
       "blueprint_author_and_full_review",
@@ -38,11 +32,11 @@
       "blueprint_material_root_resolution",
       "blueprint_external_resource_not_run_boundary",
       "blueprint_generic_fmi_observation_and_independent_oracle",
-      "blueprint_portable_bundle_export_identity",
-      "blueprint_portable_compact_or_single_selector",
-      "blueprint_portable_execution_claim_boundary"
+      "blueprint_native_directory_dna_identity",
+      "blueprint_in_memory_compact_or_single_selector",
+      "blueprint_in_memory_execution_claim_boundary"
     ],
-    "claim_boundary": "This is the sole PhysicsGuard author/full-review authority for the declared physical target and inventory. Explicit external material is never inferred, FMI observations remain bound to a restricted independent oracle, and portable bundle status remains frozen interpretation with execution_claim_licensed=false; none proves fresh native execution or unsupported high-fidelity truth."
+    "claim_boundary": "This is the sole PhysicsGuard author/full-review authority for the declared physical target and inventory. Explicit external material is never inferred, FMI observations remain bound to a restricted independent oracle, and the native-directory/in-memory projection status remains frozen interpretation with execution_claim_licensed=false; none proves fresh native execution or unsupported high-fidelity truth."
   },
   "candidate_definition": {
     "native_owner_id": "physicsguard.candidate-model-blueprint",
@@ -61,7 +55,7 @@
       "rollout_boundary",
       "generation_eligibility"
     ],
-    "blueprint_route_contract_fingerprint": "B3ED81D153EB199EC36471DD682CA19CE9A32D384549376E41F84F718E58F74D",
+    "blueprint_route_contract_fingerprint": "7FC59BA22C35AB1A3015F6F5AE3B2D83778B713B310F11BE93D6539E7F4A9B13",
     "claim_boundary": "This guard-model proof blocks only candidate admission when declared target-native obligation evidence is missing or native-failed. It does not independently detect the underlying physical, mapping, topology, workflow, or evidence defect and does not certify upstream truth."
   },
   "authoring_events": [
@@ -69,15 +63,15 @@
       "event_id": "event:physicsguard-candidate-model-blueprint:purpose-contract-frozen",
       "sequence": 1,
       "event_kind": "purpose_contract_frozen",
-      "purpose_contract_fingerprint": "43BFE2FCC1428F0E6190305B80A16B012BD7A3ACA5E24F20898CEEFC845978B3"
+      "purpose_contract_fingerprint": "7EB11E7ABBADF296675DA5B68AC4A6B8441DD0FC7B9FDF8846899D82573A0CAF"
     },
     {
       "event_id": "event:physicsguard-candidate-model-blueprint:candidate-built",
       "sequence": 2,
       "event_kind": "candidate_built",
-      "purpose_contract_fingerprint": "43BFE2FCC1428F0E6190305B80A16B012BD7A3ACA5E24F20898CEEFC845978B3",
-      "previous_event_fingerprint": "7D2B1BEC2AA27D2CD1C4AFC05DC02AD47BD06C24E7D0ED381F471F680FAEC597",
-      "candidate_definition_fingerprint": "B1722C3498974723ED0761556CC6F759DF06BB75835666D517EF8ED6AEBE16B2"
+      "purpose_contract_fingerprint": "7EB11E7ABBADF296675DA5B68AC4A6B8441DD0FC7B9FDF8846899D82573A0CAF",
+      "previous_event_fingerprint": "3D564B57AA7DB71158A6BB62A994CD218979CEFFF8C136105615AD5D2985E3A7",
+      "candidate_definition_fingerprint": "A4A3D7E93221E40EF06C2DC8CFC6D752B7EF0993A089B2C0DC897358FC93B596"
     }
   ]
 }

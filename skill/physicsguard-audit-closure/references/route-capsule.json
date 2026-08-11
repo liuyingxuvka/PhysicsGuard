@@ -25,7 +25,6 @@
     "native_receipts",
     "open_blockers",
     "current_whole_or_affected_blueprint_review",
-    "portable_bundle_status_if_supplied",
     "current_execution_receipts_if_claimed"
   ],
   "required_outputs": [
@@ -33,9 +32,8 @@
     "safe_claim",
     "blueprint_scope_fingerprint",
     "blueprint_depth_and_first_gap",
-    "portable_bundle_identity",
-    "portable_query_status",
-    "frozen_case_status",
+    "in_memory_projection_identity",
+    "in_memory_query_status",
     "current_execution_status",
     "execution_claim_licensed",
     "blockers",
@@ -53,14 +51,14 @@
         "route_selected_and_domain_execution_required",
         "blueprint_affected_closure_required",
         "blueprint_whole_boundary_closure_required",
-        "portable_blueprint_bundle_closure_required"
+        "in_memory_blueprint_projection_closure_required"
       ],
       "required_for": [
         "target_native_domain_workflow",
         "blueprint_closure_projection",
-        "portable_blueprint_bundle_claim_boundary"
+        "in_memory_blueprint_projection_claim_boundary"
       ],
-      "sha256": "6857d014c9d6c3b8a0db3278e0211ab06e938198f958689cabe26be16afecccd"
+      "sha256": "fe07f80390bb27c0397bb7653e42999b72a5c61c4c8427f2b4d85b8f888576f0"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -84,7 +82,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "2b54d8253fdf368ee943730449bba18725906a61957c796b8a0b7d2315083dac"
+      "sha256": "8a0993a34ad824bd2bca48ef15ac33d4d1235be2e4a7ee08ae3bbdf64bccc32d"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -103,6 +101,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "511439afc042ef6bc2f0dacedada287625d569beb3ef903714f3863f51525655",
+  "entry_prompt_sha256": "9167671e0e601a5ae6088f2c7fa7c3137f950e1b102deeebc81f65822929e5cf",
   "claim_boundary": "Closure proves only the exact requested audit scope represented by current native receipts; skipped, stale, partial, and predictive gaps remain non-pass."
 }

@@ -28,7 +28,7 @@ EXPECTED_SKILLS = {
     "physicsguard-test-file-contract-review",
 }
 EXPECTED_OPENAI_DEFAULT_PROMPTS = {
-    "physicsguard-candidate-model-blueprint": "Use $physicsguard-candidate-model-blueprint as the sole PhysicalModelBlueprint author/full reviewer; resolve blueprint_directory versus explicit_material_root and --material-root, run the canonical review, and only when requested export or query one portable-bundle selector while keeping frozen status, identity gaps, and native execution separate.",
+    "physicsguard-candidate-model-blueprint": "Use $physicsguard-candidate-model-blueprint as the sole PhysicalModelBlueprint author/full reviewer; resolve blueprint_directory versus explicit_material_root and --material-root, run the canonical review, and compose only an in-memory selector when explicitly requested while keeping identity gaps and native execution separate.",
     "physicsguard-model-understanding-preflight": "Use $physicsguard-model-understanding-preflight directly to freeze target identity, boundary, inventory providers, capabilities, and the first useful blueprint layer; consume only the current summary or affected slice and do not claim full blueprint qualification.",
     "physicsguard-project-evidence-registry": "Use $physicsguard-project-evidence-registry directly; bind current evidence/resource identities and freshness to exact blueprint elements in the summary or affected slice, and return missing or stale gaps without a project-wide pass.",
     "physicsguard-test-file-contract-review": "Use $physicsguard-test-file-contract-review directly; bind deterministic files, fields, datasets, and testbench I/O to the exact affected blueprint interfaces, state, obligations, and evidence, with no full-blueprint fallback.",
@@ -36,7 +36,7 @@ EXPECTED_OPENAI_DEFAULT_PROMPTS = {
     "physicsguard-model-dataset-validation": "Use $physicsguard-model-dataset-validation directly; consume the current affected or whole blueprint projection and report per-element obligations, validation modes, validity, residual/oracle, evidence fingerprints, and unsupported claims.",
     "physicsguard-model-library": "Use $physicsguard-model-library directly; index or select assets by current blueprint fingerprint, obligation, profile, validity boundary, testbench, receipt, and verified reuse limits, never by loose similarity.",
     "physicsguard-project-adoption": "Use $physicsguard-project-adoption directly; record the current blueprint identity, target scope, artifact-root meaning, native authorities, and projection kind while keeping adoption separate from completeness or physical truth.",
-    "physicsguard-audit-closure": "Use $physicsguard-audit-closure directly; consume the exact whole or affected review and any supplied portable-bundle status, preserve observed_at_export_unlicensed and identity-only gaps, and keep frozen-case pass separate from current native execution and closure.",
+    "physicsguard-audit-closure": "Use $physicsguard-audit-closure directly; consume the exact whole or affected review and any in-memory projection status, preserve identity-only gaps, and keep interpretation separate from current native execution and closure.",
     "physicsguard-ai-debugging": "Use $physicsguard-ai-debugging only for genuinely mixed routing; consume current blueprint summary/affected/reverse trace, delegate to the minimum direct owners, and never become a second blueprint author or reviewer.",
 }
 DEEP_TOKENS = (

@@ -43,12 +43,10 @@ ROUTE_SPECIFIC_BLUEPRINT_BLOCK_CODES = {
     "physicsguard-candidate-model-blueprint": {
         "blueprint_material_root_boundary_violated",
         "blueprint_fmi_oracle_independence_violated",
-        "blueprint_portable_query_contract_violated",
-        "blueprint_portable_execution_promoted",
+        "blueprint_projection_execution_promoted",
     },
     "physicsguard-audit-closure": {
-        "blueprint_bundle_presence_promoted_to_closure",
-        "blueprint_frozen_case_promoted_to_current_execution",
+        "blueprint_projection_promoted_to_closure",
         "blueprint_identity_only_terminal_promoted",
     },
 }
@@ -57,8 +55,6 @@ ROUTE_SPECIFIC_BLUEPRINT_INPUTS = {
         "src/physicsguard/core/physical_model_blueprint_adapters.py",
         "src/physicsguard/schema/fmi_observation.py",
         "src/physicsguard/core/fmi_observation.py",
-        "src/physicsguard/schema/physical_blueprint_bundle.py",
-        "src/physicsguard/core/physical_blueprint_bundle.py",
         "templates/physical_model_blueprint.yaml",
         "tests/fixtures/physical_model_blueprint/canonical_minimal.json",
         "tests/fixtures/physical_model_blueprint/canonical_minimal.yaml",
@@ -74,7 +70,6 @@ ROUTE_SPECIFIC_BLUEPRINT_INPUTS = {
         "tests/test_physical_model_blueprint_schema.py",
         "tests/test_physical_model_blueprint_target_authority.py",
         "tests/test_fmi_observation.py",
-        "tests/test_physical_blueprint_bundle.py",
         "tests/test_reference_fmus_bouncing_ball_example.py",
     },
     "physicsguard-signal-mapping-review": {
@@ -107,9 +102,6 @@ ROUTE_SPECIFIC_BLUEPRINT_INPUTS = {
         "tests/test_predictive_rollout_validation.py",
     },
     "physicsguard-audit-closure": {
-        "src/physicsguard/schema/physical_blueprint_bundle.py",
-        "src/physicsguard/core/physical_blueprint_bundle.py",
-        "tests/test_physical_blueprint_bundle.py",
         "tests/test_reference_fmus_bouncing_ball_example.py",
         "tests/test_validation_blueprint_coverage.py",
     },
@@ -225,28 +217,20 @@ def test_each_skill_guard_model_binds_its_native_blueprint_contract(
         }
         assert {
             "schema:physicsguard.fmi-observation-request.v1",
-            "api:physicsguard.build_physical_blueprint_export_bundle",
-            "api:physicsguard.materialize_physical_blueprint_export_bundle",
-            "api:physicsguard.query_physical_blueprint_export_bundle",
         } <= set(policy.blueprint_required_operation_ids)
         assert {
             "blueprint_material_root_resolution",
             "blueprint_external_resource_not_run_boundary",
             "blueprint_generic_fmi_observation_and_independent_oracle",
-            "blueprint_portable_bundle_export_identity",
-            "blueprint_portable_compact_or_single_selector",
-            "blueprint_portable_execution_claim_boundary",
+            "blueprint_native_directory_dna_identity",
+            "blueprint_in_memory_compact_or_single_selector",
+            "blueprint_in_memory_execution_claim_boundary",
         } <= set(policy.blueprint_required_obligation_ids)
     elif skill_id == "physicsguard-audit-closure":
-        assert "api:physicsguard.query_physical_blueprint_export_bundle" in (
-            policy.blueprint_required_operation_ids
-        )
         assert {
-            "blueprint_portable_bundle_identity_consumption",
-            "blueprint_portable_frozen_case_status_accounting",
-            "blueprint_frozen_case_vs_current_execution",
+            "blueprint_in_memory_projection_identity_consumption",
             "blueprint_identity_only_terminal_accounting",
-            "blueprint_portable_execution_claim_boundary",
+            "blueprint_in_memory_execution_claim_boundary",
         } <= set(policy.blueprint_required_obligation_ids)
     else:
         assert policy.blueprint_authority_mode == "consumer_only"
