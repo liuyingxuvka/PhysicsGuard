@@ -1,8 +1,8 @@
 [flowguard]
 repository = "https://github.com/liuyingxuvka/FlowGuard"
-adopted_package_version = "0.68.12"
+adopted_package_version = "0.68.13"
 schema_version = "1.0"
-last_verified_at = "2026-08-11T12:12:45+00:00"
+last_verified_at = "2026-08-12T07:24:55+00:00"
 last_verified_by = "FlowGuard project-upgrade"
 agents_path = "AGENTS.md"
 
@@ -15,12 +15,12 @@ require_model_update_for_behavior_changes = true
 
 [model_authority]
 system_id = "flowguard"
-observed_snapshot_path = ".flowguard/model-mesh/snapshots/c2c9277dd8a878873b229f3ea027d6a9532242328d7a0d3d4363ed951263e8ba.json"
-observed_snapshot_fingerprint = "sha256:c2c9277dd8a878873b229f3ea027d6a9532242328d7a0d3d4363ed951263e8ba"
-subject_revision = "source-inventory:2c09568ebf7549448a325db862bdaa565e828bc5cc405d91f205d49d4a19dee1"
+observed_snapshot_path = ".flowguard/model-mesh/snapshots/46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e.json"
+observed_snapshot_fingerprint = "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e"
+subject_revision = "source-inventory:bba56197a7e64332f6640b296a40736070a7284f2d0626f5a9c097f49a43cebc"
 coverage_status = "complete_within_declared_boundary"
-generation = 44
-accepted_revision_set_fingerprint = "sha256:302fefa81d01e8dd94eda7c3e02a7bdcf4997220686f6f50c50894064553bc12"
-previous_snapshot_fingerprint = "sha256:448101ffa948a853b6b606049768da7a3d329415d63fa44b6f2819a0adc96d35"
-activation_receipt_fingerprint = "sha256:19b61d2fcfb7a78fb037b7d808198f2c61cf1ed6a8ed5000138dd5aac4b6ff4e"
-head_fingerprint = "sha256:f3050cae15c4296b74695f29eec36debea9b7cf8d393ddd3c434c7cf854c1e41"
+generation = 46
+accepted_revision_set_fingerprint = "sha256:7b2e734cbbdd8c75cb1986c89e3e231c5b90c5a547f611e08431b62bd44fb981"
+previous_snapshot_fingerprint = "sha256:23920c6483bc6b551d2a4fdd0ca4f676295a11e7ccf3173e90adc409934944d9"
+activation_receipt_fingerprint = "sha256:b51789d48437c5302a72068531c3144d64a861c0712287dd3d03c7b56084a79b"
+head_fingerprint = "sha256:7c492baebdfa448f27e3c1cdc6f425b2bfefb1f285bdea5f872dad99b66d6ca0"

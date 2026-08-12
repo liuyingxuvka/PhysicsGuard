@@ -161,7 +161,7 @@ Every behavior-bearing software-DNA node SHALL express `Input × State -> Set(Ou
 
 FlowGuard SHALL derive these seven ordered software-DNA layers and no project-specific replacement order: evidence qualification; implementation inventory; traceability; independent semantics; model-code-test binding; resource-oracle binding; and static blueprint readiness. The deepest licensed layer SHALL be the last contiguous passing layer. A later passing fragment, caller declaration, cached summary, or physical-blueprint result MUST NOT skip an earlier gap.
 
-The whole-repository denominator and its dispositions are implementation-inventory obligations. The one-root child hierarchy, intent links, parent/child and sibling topology, and deterministic affected/reverse relations are traceability obligations. FunctionBlock behavior independent of source location is an independent-semantics obligation. Exact implementation and test owners belong to model-code-test binding, while prompts, schemas, configuration, datasets, provider resources, counterexamples, and oracles belong to resource-oracle binding. Root structure, topology, affected/reverse indexes, external materialization, or release publication MUST NOT be introduced as substitute depth layers.
+The whole-repository denominator and its dispositions are implementation-inventory obligations. The one-root child hierarchy, intent links, parent/child and sibling topology, and deterministic affected/reverse relations are traceability obligations. FunctionBlock behavior independent of source location is an independent-semantics obligation. Exact implementation and test owners belong to model-code-test binding, while prompts, schemas, configuration, datasets, provider resources, counterexamples, and oracles belong to resource-oracle binding. Root structure, topology, affected/reverse indexes, transport projection, or release publication MUST NOT be introduced as substitute depth layers.
 
 #### Scenario: Child output has no software consumer
 - **WHEN** a child FunctionBlock output, state transition, or effect is neither consumed by a sibling or parent nor exported or terminally dispositioned
@@ -194,10 +194,20 @@ The qualified software-DNA graph SHALL produce one deterministic affected index 
 - **WHEN** source, toolchain, model, test, install, and version identities are frozen for release
 - **THEN** the workflow explicitly runs whole-DNA static qualification as one release input rather than treating prior affected-only results as whole-repository or release evidence
 
-### Requirement: Canonical software DNA materialization and release publication are separate gates
-The canonical transferable software-DNA bundle SHALL materialize one exact static result from a frozen repository snapshot into an explicitly selected artifact root outside the repository. The bundle SHALL contain or bind the root, child models, denominator, typed relations, affected/reverse indexes, seven layer results, fingerprints, first gap, deepest licensed layer, and bounded claim without upgrading a non-pass result. Repository-local model sources and generators SHALL remain governed inventory members, but the canonical output SHALL NOT be written inside the repository or used as an input to its own fingerprint. No in-repository canonical copy, cache authority, compatibility export, legacy reader, alias, fallback, or second current head SHALL exist. Materialization is an identity-preservation gate outside the seven static layers.
+### Requirement: Native software DNA and release publication are separate gates
+The native repository directory SHALL remain the software-DNA authority. It SHALL
+contain or bind the root, child models, denominator, typed relations,
+affected/reverse indexes, seven layer results, fingerprints, first gap, and
+bounded claim without promoting a non-pass result. A bounded projection may be
+serialized for a caller, but it is not a second current head, release gate, or
+software-DNA authority.
 
-For a release that claims current software DNA, current test execution, package build, installation, installed-skill projection, Git commit, tag, and GitHub release evidence SHALL be established separately before the canonical bundle and its manifest can support release-asset closure. The manifest SHALL bind bundle fingerprint, denominator fingerprint, source commit, package version, and claim boundary, and the published assets SHALL be independently downloaded and verified. The bundle SHALL remain outside the package wheel, source distribution, installed package, and installed consumer skills. Source commit, package, installation, skill projection, Git tag, GitHub release, and software-DNA asset SHALL remain separate identities and claim boundaries. Release publication is a lifecycle gate and contributes no static depth.
+For a release that claims current software DNA, current test execution, package
+build, installation, installed-skill projection, Git commit, tag, and GitHub
+release evidence SHALL be established separately. Source commit, package,
+installation, skill projection, Git tag, GitHub release, and any optional
+transport evidence SHALL remain separate identities and claim boundaries.
+Release publication is a lifecycle gate and contributes no static depth.
 
 #### Scenario: Export path is inside the repository
 - **WHEN** the selected canonical bundle path is under the repository boundary

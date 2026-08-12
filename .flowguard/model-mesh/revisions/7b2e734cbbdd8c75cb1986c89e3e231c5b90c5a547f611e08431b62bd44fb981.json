@@ -1,0 +1,1911 @@
+{
+  "added_ids": [],
+  "affected_closure_fingerprint": "sha256:447a0b25848f5126ec055c50c8af6c432e685694a68081e87183ab1c04362ee5",
+  "affected_closure_ids": [
+    "coverage:universe",
+    "model_instance:model:authoritative_model_system",
+    "model_instance:model:compositional_verification_kernel",
+    "model_instance:model:guard_closure_contract",
+    "model_instance:model:hierarchical_model_mesh",
+    "model_instance:model:interval_diagnosability",
+    "model_instance:model:model_test_code_alignment",
+    "model_instance:model:task_local_model_deepening",
+    "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+    "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+    "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+    "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+    "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+    "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+    "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+    "model_relation:relation:system-contains:authoritative_model_system",
+    "model_relation:relation:system-contains:compositional_verification_kernel",
+    "model_relation:relation:system-contains:guard_closure_contract",
+    "model_relation:relation:system-contains:hierarchical_model_mesh",
+    "model_relation:relation:system-contains:interval_diagnosability",
+    "model_relation:relation:system-contains:model_test_code_alignment",
+    "model_relation:relation:system-contains:task_local_model_deepening",
+    "parent_closure:purpose:authoritative_model_system",
+    "parent_closure:purpose:compositional_verification_kernel",
+    "parent_closure:purpose:guard_closure_contract",
+    "parent_closure:purpose:hierarchical_model_mesh",
+    "parent_closure:purpose:interval_diagnosability",
+    "parent_closure:purpose:model_test_code_alignment",
+    "parent_closure:purpose:task_local_model_deepening",
+    "parent_closure:system:flowguard:model-regression-manifest",
+    "root:model:authoritative_model_system",
+    "system_property:subject_revision"
+  ],
+  "affected_edge_ids": [
+    "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+    "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+    "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+    "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+    "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+    "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+    "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+    "model_relation:relation:system-contains:authoritative_model_system",
+    "model_relation:relation:system-contains:compositional_verification_kernel",
+    "model_relation:relation:system-contains:guard_closure_contract",
+    "model_relation:relation:system-contains:hierarchical_model_mesh",
+    "model_relation:relation:system-contains:interval_diagnosability",
+    "model_relation:relation:system-contains:model_test_code_alignment",
+    "model_relation:relation:system-contains:task_local_model_deepening"
+  ],
+  "affected_owner_bindings": [
+    {
+      "affected_id": "coverage:universe",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_instance:model:authoritative_model_system",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_instance:model:compositional_verification_kernel",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_instance:model:guard_closure_contract",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_instance:model:hierarchical_model_mesh",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_instance:model:interval_diagnosability",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_instance:model:model_test_code_alignment",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_instance:model:task_local_model_deepening",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:authoritative_model_system",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:compositional_verification_kernel",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:guard_closure_contract",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:hierarchical_model_mesh",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:interval_diagnosability",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:model_test_code_alignment",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "model_relation:relation:system-contains:task_local_model_deepening",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "parent_closure:purpose:authoritative_model_system",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:purpose:compositional_verification_kernel",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:purpose:guard_closure_contract",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:purpose:hierarchical_model_mesh",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:purpose:interval_diagnosability",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:purpose:model_test_code_alignment",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:purpose:task_local_model_deepening",
+      "owner_route": "model_test_alignment"
+    },
+    {
+      "affected_id": "parent_closure:system:flowguard:model-regression-manifest",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "root:model:authoritative_model_system",
+      "owner_route": "model_mesh_maintenance"
+    },
+    {
+      "affected_id": "system_property:subject_revision",
+      "owner_route": "model_mesh_maintenance"
+    }
+  ],
+  "base_snapshot_fingerprint": "sha256:23920c6483bc6b551d2a4fdd0ca4f676295a11e7ccf3173e90adc409934944d9",
+  "candidate_snapshot_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+  "changed_commitment_ids": [],
+  "changed_contract_ids": [],
+  "changed_coverage_ids": [
+    "coverage:universe"
+  ],
+  "changed_field_ids": [],
+  "changed_gap_ids": [],
+  "changed_owner_artifact_ids": [
+    "parent_closure:purpose:authoritative_model_system",
+    "parent_closure:purpose:compositional_verification_kernel",
+    "parent_closure:purpose:guard_closure_contract",
+    "parent_closure:purpose:hierarchical_model_mesh",
+    "parent_closure:purpose:interval_diagnosability",
+    "parent_closure:purpose:model_test_code_alignment",
+    "parent_closure:purpose:task_local_model_deepening",
+    "parent_closure:system:flowguard:model-regression-manifest"
+  ],
+  "changed_relation_ids": [
+    "relation:model-realizes-purpose:authoritative_model_system",
+    "relation:model-realizes-purpose:compositional_verification_kernel",
+    "relation:model-realizes-purpose:guard_closure_contract",
+    "relation:model-realizes-purpose:hierarchical_model_mesh",
+    "relation:model-realizes-purpose:interval_diagnosability",
+    "relation:model-realizes-purpose:model_test_code_alignment",
+    "relation:model-realizes-purpose:task_local_model_deepening",
+    "relation:system-contains:authoritative_model_system",
+    "relation:system-contains:compositional_verification_kernel",
+    "relation:system-contains:guard_closure_contract",
+    "relation:system-contains:hierarchical_model_mesh",
+    "relation:system-contains:interval_diagnosability",
+    "relation:system-contains:model_test_code_alignment",
+    "relation:system-contains:task_local_model_deepening"
+  ],
+  "changed_root_ids": [
+    "root:model:authoritative_model_system"
+  ],
+  "changed_side_effect_ids": [],
+  "changed_source_surface_ids": [],
+  "changed_system_property_ids": [
+    "system_property:subject_revision"
+  ],
+  "changed_test_ids": [],
+  "completed_evidence_refs": [
+    {
+      "affected_closure_fingerprint": "sha256:447a0b25848f5126ec055c50c8af6c432e685694a68081e87183ab1c04362ee5",
+      "candidate_snapshot_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "covered_affected_ids": [
+        "coverage:universe",
+        "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+        "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+        "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+        "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+        "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+        "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+        "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+        "model_relation:relation:system-contains:authoritative_model_system",
+        "model_relation:relation:system-contains:compositional_verification_kernel",
+        "model_relation:relation:system-contains:guard_closure_contract",
+        "model_relation:relation:system-contains:hierarchical_model_mesh",
+        "model_relation:relation:system-contains:interval_diagnosability",
+        "model_relation:relation:system-contains:model_test_code_alignment",
+        "model_relation:relation:system-contains:task_local_model_deepening",
+        "parent_closure:system:flowguard:model-regression-manifest",
+        "root:model:authoritative_model_system",
+        "system_property:subject_revision"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:02034b20d8b336d11fe9262060907de7688cd1369a0cedef1724e44c4403bef2",
+      "obligation_ids": [
+        "coverage:universe",
+        "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+        "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+        "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+        "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+        "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+        "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+        "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+        "model_relation:relation:system-contains:authoritative_model_system",
+        "model_relation:relation:system-contains:compositional_verification_kernel",
+        "model_relation:relation:system-contains:guard_closure_contract",
+        "model_relation:relation:system-contains:hierarchical_model_mesh",
+        "model_relation:relation:system-contains:interval_diagnosability",
+        "model_relation:relation:system-contains:model_test_code_alignment",
+        "model_relation:relation:system-contains:task_local_model_deepening",
+        "parent_closure:system:flowguard:model-regression-manifest",
+        "root:model:authoritative_model_system",
+        "system_property:subject_revision"
+      ],
+      "owner_route": "model_mesh_maintenance",
+      "receipt_fingerprint": "sha256:a6cc25c445d73947075e6b3bed3cc4a958a6e7999ec899ac00740a1cec4891a5",
+      "receipt_id": "receipt:validation-owner:model_mesh_maintenance:79169bc011cd820533fd3d8f59344489",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "pass",
+      "subject_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "toolchain_fingerprint": "sha256:ae53aa02bd37554823bde552f7cc616aa3185b5a1c5834ed8a09fb64cbd23cae"
+    },
+    {
+      "affected_closure_fingerprint": "sha256:447a0b25848f5126ec055c50c8af6c432e685694a68081e87183ab1c04362ee5",
+      "candidate_snapshot_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "covered_affected_ids": [
+        "model_instance:model:authoritative_model_system",
+        "model_instance:model:compositional_verification_kernel",
+        "model_instance:model:guard_closure_contract",
+        "model_instance:model:hierarchical_model_mesh",
+        "model_instance:model:interval_diagnosability",
+        "model_instance:model:model_test_code_alignment",
+        "model_instance:model:task_local_model_deepening",
+        "parent_closure:purpose:authoritative_model_system",
+        "parent_closure:purpose:compositional_verification_kernel",
+        "parent_closure:purpose:guard_closure_contract",
+        "parent_closure:purpose:hierarchical_model_mesh",
+        "parent_closure:purpose:interval_diagnosability",
+        "parent_closure:purpose:model_test_code_alignment",
+        "parent_closure:purpose:task_local_model_deepening"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:02034b20d8b336d11fe9262060907de7688cd1369a0cedef1724e44c4403bef2",
+      "obligation_ids": [
+        "model_instance:model:authoritative_model_system",
+        "model_instance:model:compositional_verification_kernel",
+        "model_instance:model:guard_closure_contract",
+        "model_instance:model:hierarchical_model_mesh",
+        "model_instance:model:interval_diagnosability",
+        "model_instance:model:model_test_code_alignment",
+        "model_instance:model:task_local_model_deepening",
+        "parent_closure:purpose:authoritative_model_system",
+        "parent_closure:purpose:compositional_verification_kernel",
+        "parent_closure:purpose:guard_closure_contract",
+        "parent_closure:purpose:hierarchical_model_mesh",
+        "parent_closure:purpose:interval_diagnosability",
+        "parent_closure:purpose:model_test_code_alignment",
+        "parent_closure:purpose:task_local_model_deepening"
+      ],
+      "owner_route": "model_test_alignment",
+      "receipt_fingerprint": "sha256:809362e35b0d58cf4c7819073145058e91d6f3b4dc8d756855cd6b4aa373f817",
+      "receipt_id": "receipt:validation-owner:model_test_alignment:f5b0382a1607aa61fcdde0b0dfef759b",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "pass",
+      "subject_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "toolchain_fingerprint": "sha256:f8ac897f393e6d59c00c4f03647488042975a81bbbace1b5186b0168c8ca997f"
+    }
+  ],
+  "current_effective_intent_view": {
+    "active_contributions": [
+      {
+        "conflicts_with_contribution_ids": [],
+        "contribution_id": "current-design:physicsguard-v0159-release-final:authoritative_model_system:1",
+        "decision_state": "accepted",
+        "declared_consumer_ids": [],
+        "desired_terminal_state_ids": [],
+        "effective_revision": "current-design:physicsguard-v0159-release-final",
+        "fingerprint": "sha256:96500cc5cd8981d83bc0183e0c91ede541a14b8e9158c01dfb3a5d4a01868718",
+        "lifecycle_state": "candidate",
+        "logical_model_id": "model:authoritative_model_system",
+        "native_owner_id": "",
+        "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+        "schema": "flowguard.model_intent_contribution.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_kind": "design",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "subject_lane": "normative_target",
+        "subject_role": "design",
+        "supersedes_contribution_ids": [
+          "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:source-refresh-0.15.7-20260811"
+        ],
+        "target_invariant_ids": [],
+        "target_obligation_ids": [],
+        "target_output_ids": [],
+        "target_relation_ids": [
+          "relation:model-realizes-purpose:authoritative_model_system",
+          "relation:system-contains:authoritative_model_system"
+        ],
+        "target_state_ids": [],
+        "target_transition_ids": [],
+        "unresolved_owner_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "conflicts_with_contribution_ids": [],
+        "contribution_id": "current-design:physicsguard-v0159-release-final:compositional_verification_kernel:1",
+        "decision_state": "accepted",
+        "declared_consumer_ids": [],
+        "desired_terminal_state_ids": [],
+        "effective_revision": "current-design:physicsguard-v0159-release-final",
+        "fingerprint": "sha256:ed78eedc709e42b8d3b3b0514634df0c47f207fb7a9574bd0962e7dc8c48d41a",
+        "lifecycle_state": "candidate",
+        "logical_model_id": "model:compositional_verification_kernel",
+        "native_owner_id": "",
+        "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+        "schema": "flowguard.model_intent_contribution.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_kind": "design",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "subject_lane": "normative_target",
+        "subject_role": "design",
+        "supersedes_contribution_ids": [
+          "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:source-refresh-0.15.7-20260811"
+        ],
+        "target_invariant_ids": [],
+        "target_obligation_ids": [],
+        "target_output_ids": [],
+        "target_relation_ids": [
+          "relation:model-realizes-purpose:compositional_verification_kernel",
+          "relation:system-contains:compositional_verification_kernel"
+        ],
+        "target_state_ids": [],
+        "target_transition_ids": [],
+        "unresolved_owner_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "conflicts_with_contribution_ids": [],
+        "contribution_id": "current-design:physicsguard-v0159-release-final:guard_closure_contract:1",
+        "decision_state": "accepted",
+        "declared_consumer_ids": [],
+        "desired_terminal_state_ids": [],
+        "effective_revision": "current-design:physicsguard-v0159-release-final",
+        "fingerprint": "sha256:ff3e5512014ddd957be680f29d38dae7192a1a978de830c4dceb84bab87469b7",
+        "lifecycle_state": "candidate",
+        "logical_model_id": "model:guard_closure_contract",
+        "native_owner_id": "",
+        "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+        "schema": "flowguard.model_intent_contribution.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_kind": "design",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "subject_lane": "normative_target",
+        "subject_role": "design",
+        "supersedes_contribution_ids": [
+          "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:source-refresh-0.15.7-20260811"
+        ],
+        "target_invariant_ids": [],
+        "target_obligation_ids": [],
+        "target_output_ids": [],
+        "target_relation_ids": [
+          "relation:model-realizes-purpose:guard_closure_contract",
+          "relation:system-contains:guard_closure_contract"
+        ],
+        "target_state_ids": [],
+        "target_transition_ids": [],
+        "unresolved_owner_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "conflicts_with_contribution_ids": [],
+        "contribution_id": "current-design:physicsguard-v0159-release-final:hierarchical_model_mesh:1",
+        "decision_state": "accepted",
+        "declared_consumer_ids": [],
+        "desired_terminal_state_ids": [],
+        "effective_revision": "current-design:physicsguard-v0159-release-final",
+        "fingerprint": "sha256:d5abc08158e74f0c8f1f62a0dfe620f0db6f54629d2d64cf70ff1e89e67ea1fb",
+        "lifecycle_state": "candidate",
+        "logical_model_id": "model:hierarchical_model_mesh",
+        "native_owner_id": "",
+        "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+        "schema": "flowguard.model_intent_contribution.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_kind": "design",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "subject_lane": "normative_target",
+        "subject_role": "design",
+        "supersedes_contribution_ids": [
+          "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:source-refresh-0.15.7-20260811"
+        ],
+        "target_invariant_ids": [],
+        "target_obligation_ids": [],
+        "target_output_ids": [],
+        "target_relation_ids": [
+          "relation:model-realizes-purpose:hierarchical_model_mesh",
+          "relation:system-contains:hierarchical_model_mesh"
+        ],
+        "target_state_ids": [],
+        "target_transition_ids": [],
+        "unresolved_owner_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "conflicts_with_contribution_ids": [],
+        "contribution_id": "current-design:physicsguard-v0159-release-final:interval_diagnosability:1",
+        "decision_state": "accepted",
+        "declared_consumer_ids": [],
+        "desired_terminal_state_ids": [],
+        "effective_revision": "current-design:physicsguard-v0159-release-final",
+        "fingerprint": "sha256:d6e23a7de81995f2dcdccc0e59c243357733f00b6a94cfb2cc6f0b04ab8fa933",
+        "lifecycle_state": "candidate",
+        "logical_model_id": "model:interval_diagnosability",
+        "native_owner_id": "",
+        "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+        "schema": "flowguard.model_intent_contribution.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_kind": "design",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "subject_lane": "normative_target",
+        "subject_role": "design",
+        "supersedes_contribution_ids": [
+          "current-design:physicsguard-v0159-native-directory-dna:interval_diagnosability:1"
+        ],
+        "target_invariant_ids": [],
+        "target_obligation_ids": [],
+        "target_output_ids": [],
+        "target_relation_ids": [
+          "relation:model-realizes-purpose:interval_diagnosability",
+          "relation:system-contains:interval_diagnosability"
+        ],
+        "target_state_ids": [],
+        "target_transition_ids": [],
+        "unresolved_owner_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "conflicts_with_contribution_ids": [],
+        "contribution_id": "current-design:physicsguard-v0159-release-final:model_test_code_alignment:1",
+        "decision_state": "accepted",
+        "declared_consumer_ids": [],
+        "desired_terminal_state_ids": [],
+        "effective_revision": "current-design:physicsguard-v0159-release-final",
+        "fingerprint": "sha256:dda4a3ec5abbbe9424f90b02884ede9dfcad0a59569af973a4552063ab033e83",
+        "lifecycle_state": "candidate",
+        "logical_model_id": "model:model_test_code_alignment",
+        "native_owner_id": "",
+        "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+        "schema": "flowguard.model_intent_contribution.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_kind": "design",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "subject_lane": "normative_target",
+        "subject_role": "design",
+        "supersedes_contribution_ids": [
+          "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:source-refresh-0.15.7-20260811"
+        ],
+        "target_invariant_ids": [],
+        "target_obligation_ids": [],
+        "target_output_ids": [],
+        "target_relation_ids": [
+          "relation:model-realizes-purpose:model_test_code_alignment",
+          "relation:system-contains:model_test_code_alignment"
+        ],
+        "target_state_ids": [],
+        "target_transition_ids": [],
+        "unresolved_owner_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "conflicts_with_contribution_ids": [],
+        "contribution_id": "current-design:physicsguard-v0159-release-final:task_local_model_deepening:1",
+        "decision_state": "accepted",
+        "declared_consumer_ids": [],
+        "desired_terminal_state_ids": [],
+        "effective_revision": "current-design:physicsguard-v0159-release-final",
+        "fingerprint": "sha256:305cab0b45acf7e4ea3df02a679c85e556261eeabde7a2c618ea20398014d37f",
+        "lifecycle_state": "candidate",
+        "logical_model_id": "model:task_local_model_deepening",
+        "native_owner_id": "",
+        "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+        "schema": "flowguard.model_intent_contribution.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_kind": "design",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "subject_lane": "normative_target",
+        "subject_role": "design",
+        "supersedes_contribution_ids": [
+          "current-design:physicsguard-v0159-native-directory-dna:task_local_model_deepening:1"
+        ],
+        "target_invariant_ids": [],
+        "target_obligation_ids": [],
+        "target_output_ids": [],
+        "target_relation_ids": [
+          "relation:model-realizes-purpose:task_local_model_deepening",
+          "relation:system-contains:task_local_model_deepening"
+        ],
+        "target_state_ids": [],
+        "target_transition_ids": [],
+        "unresolved_owner_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      }
+    ],
+    "base_effective_intent_view_fingerprint": "sha256:6f5f2b8e8ea53b66154e5c026b93dd28407a5431f32bc0d9793b9b86c0b4420d",
+    "bootstrap_receipt": null,
+    "candidate_snapshot_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+    "fingerprint": "sha256:b31d75f43dbf27be83b2bdec251b7d063fc5be0ec14158ec84eb4cc16ce44d3b",
+    "model_owner_ids": [
+      "model-obligation:authoritative_model_system",
+      "model-obligation:compositional_verification_kernel",
+      "model-obligation:guard_closure_contract",
+      "model-obligation:hierarchical_model_mesh",
+      "model-obligation:interval_diagnosability",
+      "model-obligation:model_test_code_alignment",
+      "model-obligation:task_local_model_deepening"
+    ],
+    "owner_bindings": [
+      {
+        "contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:authoritative_model_system:1"
+        ],
+        "fingerprint": "sha256:065a9fb15f9a295232e55a4e2affbfe892dd3d95336f172d2b168e9b88a788bc",
+        "logical_model_id": "authoritative_model_system",
+        "model_owner_id": "model-obligation:authoritative_model_system",
+        "realization_relation_fingerprint": "sha256:a6610fd186e2d1e1ba671e5352dd75276874425bc2a6156a9d479fef8c04d462",
+        "realization_relation_id": "relation:model-realizes-purpose:authoritative_model_system",
+        "schema": "flowguard.effective_intent_owner_binding.v1"
+      },
+      {
+        "contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:compositional_verification_kernel:1"
+        ],
+        "fingerprint": "sha256:d7d3680f6b3ccdaca7df30436b578aab9f6c12e7fc4eb57be506f28c3c35d497",
+        "logical_model_id": "compositional_verification_kernel",
+        "model_owner_id": "model-obligation:compositional_verification_kernel",
+        "realization_relation_fingerprint": "sha256:5458f7917baa25bcb0924ade45cf8ff168f5dd6be93042867e757f751d3cc88c",
+        "realization_relation_id": "relation:model-realizes-purpose:compositional_verification_kernel",
+        "schema": "flowguard.effective_intent_owner_binding.v1"
+      },
+      {
+        "contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:guard_closure_contract:1"
+        ],
+        "fingerprint": "sha256:08b8955475049e7aee452622b38084651141c24cafe05a36824e676fa25eec77",
+        "logical_model_id": "guard_closure_contract",
+        "model_owner_id": "model-obligation:guard_closure_contract",
+        "realization_relation_fingerprint": "sha256:bd6fa3e32e7848355fd20f3e99927bd9483bdb30692299f4a85c33e831d14799",
+        "realization_relation_id": "relation:model-realizes-purpose:guard_closure_contract",
+        "schema": "flowguard.effective_intent_owner_binding.v1"
+      },
+      {
+        "contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:hierarchical_model_mesh:1"
+        ],
+        "fingerprint": "sha256:550d17af75dd648f23f10d90c3bd329ca7fbbb82b690f8c9b8136c69ee6ee360",
+        "logical_model_id": "hierarchical_model_mesh",
+        "model_owner_id": "model-obligation:hierarchical_model_mesh",
+        "realization_relation_fingerprint": "sha256:e985a0960b67b4d5e569d4a3d929f6075cbe26d7c1b1025b0bc4ebb79341fedb",
+        "realization_relation_id": "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "schema": "flowguard.effective_intent_owner_binding.v1"
+      },
+      {
+        "contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:interval_diagnosability:1"
+        ],
+        "fingerprint": "sha256:a27c37a7a012836938802db529609b9706b5c199be8515b3a07561b8f2b070cc",
+        "logical_model_id": "interval_diagnosability",
+        "model_owner_id": "model-obligation:interval_diagnosability",
+        "realization_relation_fingerprint": "sha256:706d0bdebe4b620635183dc4a1c61b572fe01a93ae4c90453f4a0cfd6fbe5c75",
+        "realization_relation_id": "relation:model-realizes-purpose:interval_diagnosability",
+        "schema": "flowguard.effective_intent_owner_binding.v1"
+      },
+      {
+        "contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:model_test_code_alignment:1"
+        ],
+        "fingerprint": "sha256:1c24ed4c2040cb871727f2421f25eda31001ec30be4c5dc77e7a74b176368dbc",
+        "logical_model_id": "model_test_code_alignment",
+        "model_owner_id": "model-obligation:model_test_code_alignment",
+        "realization_relation_fingerprint": "sha256:039c0ef32a9b12174ef4deacacfb07de5ee1d0f80720e43519d7a552573410d9",
+        "realization_relation_id": "relation:model-realizes-purpose:model_test_code_alignment",
+        "schema": "flowguard.effective_intent_owner_binding.v1"
+      },
+      {
+        "contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:task_local_model_deepening:1"
+        ],
+        "fingerprint": "sha256:943e296ea278aff943056c4ec08266d570adc6b18b52f26bb7551808e788d96e",
+        "logical_model_id": "task_local_model_deepening",
+        "model_owner_id": "model-obligation:task_local_model_deepening",
+        "realization_relation_fingerprint": "sha256:54a3850990c562c0aa03cf83bc3dbae6c5037eb5cedcccbc0d59acf005c89f51",
+        "realization_relation_id": "relation:model-realizes-purpose:task_local_model_deepening",
+        "schema": "flowguard.effective_intent_owner_binding.v1"
+      }
+    ],
+    "schema": "flowguard.current_effective_intent_view.v1",
+    "subject_lane": "observed_implementation",
+    "system_id": "flowguard",
+    "transitions": [
+      {
+        "action": "supersede",
+        "fingerprint": "sha256:fac512af669be3aa1f7fbf9438603d8b5ed2720226d770988939019546c3b142",
+        "prior_contribution_fingerprint": "sha256:b0cfa8307594154006125d00e3dd3831037d16fcb9be736ed6fd88d689a29ec1",
+        "prior_contribution_id": "current-design:physicsguard-v0159-native-directory-dna:interval_diagnosability:1",
+        "reason": "Supersede the prior active owner with the exact current release contribution.",
+        "replacement_contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:interval_diagnosability:1"
+        ],
+        "schema": "flowguard.effective_intent_transition.v1"
+      },
+      {
+        "action": "supersede",
+        "fingerprint": "sha256:f8834f7eea9f600617c89ea29db349d7ee1279bbb871fb97949b30b8cf97df64",
+        "prior_contribution_fingerprint": "sha256:bab231efa8369b73a9a735bc1fb147ef1c9a1705adf270efe64f49388a385999",
+        "prior_contribution_id": "current-design:physicsguard-v0159-native-directory-dna:task_local_model_deepening:1",
+        "reason": "Supersede the prior active owner with the exact current release contribution.",
+        "replacement_contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:task_local_model_deepening:1"
+        ],
+        "schema": "flowguard.effective_intent_transition.v1"
+      },
+      {
+        "action": "supersede",
+        "fingerprint": "sha256:6b69c88ef904ddc6f64bcc345b2261b9e2ad94bd3bcae858fde453c89840dfdf",
+        "prior_contribution_fingerprint": "sha256:55c68aa709a930bb136043f224f0bb14eb5638e87b2681e157b8d6bc76701cb2",
+        "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:source-refresh-0.15.7-20260811",
+        "reason": "Supersede the prior active owner with the exact current release contribution.",
+        "replacement_contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:authoritative_model_system:1"
+        ],
+        "schema": "flowguard.effective_intent_transition.v1"
+      },
+      {
+        "action": "supersede",
+        "fingerprint": "sha256:05f20d123cd2e2d8526b21aa20671a2244a5bfd2829bdebf14ebbefd3fd84eac",
+        "prior_contribution_fingerprint": "sha256:cbc7a2c28722916a1be66f0a74da6fc0f46d21d476e48c91708214f9f393d640",
+        "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:source-refresh-0.15.7-20260811",
+        "reason": "Supersede the prior active owner with the exact current release contribution.",
+        "replacement_contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:compositional_verification_kernel:1"
+        ],
+        "schema": "flowguard.effective_intent_transition.v1"
+      },
+      {
+        "action": "supersede",
+        "fingerprint": "sha256:8fd4cfeaaa9ae590877afcd152ce7ac9df6166470182f1ef7be71f9ce1c659db",
+        "prior_contribution_fingerprint": "sha256:d3dfdbb07b55d53d241cbcb47527aab26784531e2e7eca49745d07ccb164ebbc",
+        "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:source-refresh-0.15.7-20260811",
+        "reason": "Supersede the prior active owner with the exact current release contribution.",
+        "replacement_contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:guard_closure_contract:1"
+        ],
+        "schema": "flowguard.effective_intent_transition.v1"
+      },
+      {
+        "action": "supersede",
+        "fingerprint": "sha256:d69be58fd3dc299e584084cefa271af7a72d24b893f9383e2baa65314daed552",
+        "prior_contribution_fingerprint": "sha256:12b95f901f84ba4d22b951235d3cf4b9bb5f79860506fba21dae2b6683749618",
+        "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:source-refresh-0.15.7-20260811",
+        "reason": "Supersede the prior active owner with the exact current release contribution.",
+        "replacement_contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:hierarchical_model_mesh:1"
+        ],
+        "schema": "flowguard.effective_intent_transition.v1"
+      },
+      {
+        "action": "supersede",
+        "fingerprint": "sha256:5586b1b4ccc260769d7d8f7372d46e8031aadc21276beef5ed514c48fdd25cff",
+        "prior_contribution_fingerprint": "sha256:eb113e25e961ed886bd15d85af89edd37a9e6f8cf91f36b06f520a79c6847bb3",
+        "prior_contribution_id": "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:source-refresh-0.15.7-20260811",
+        "reason": "Supersede the prior active owner with the exact current release contribution.",
+        "replacement_contribution_ids": [
+          "current-design:physicsguard-v0159-release-final:model_test_code_alignment:1"
+        ],
+        "schema": "flowguard.effective_intent_transition.v1"
+      }
+    ],
+    "verified_source_identities": [
+      {
+        "authority_kind": "project_file",
+        "contribution_id": "current-design:physicsguard-v0159-release-final:authoritative_model_system:1",
+        "fingerprint": "sha256:a5e69ffe3d2e3534b90ed560da0c529e54d225d8182a4b1600080053a46ea74c",
+        "native_owner_id": "",
+        "resolved_project_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "schema": "flowguard.model_intent_source_identity.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "work_context_artifact_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "authority_kind": "project_file",
+        "contribution_id": "current-design:physicsguard-v0159-release-final:compositional_verification_kernel:1",
+        "fingerprint": "sha256:66aa20f18da9aeb4b3999cebbace2071394e17e17a221a99d31773ee3f62e080",
+        "native_owner_id": "",
+        "resolved_project_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "schema": "flowguard.model_intent_source_identity.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "work_context_artifact_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "authority_kind": "project_file",
+        "contribution_id": "current-design:physicsguard-v0159-release-final:guard_closure_contract:1",
+        "fingerprint": "sha256:bb5e8ca786c1b6926ba41f848d0aba606418533b7a8e307cb75006fbb7a111c7",
+        "native_owner_id": "",
+        "resolved_project_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "schema": "flowguard.model_intent_source_identity.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "work_context_artifact_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "authority_kind": "project_file",
+        "contribution_id": "current-design:physicsguard-v0159-release-final:hierarchical_model_mesh:1",
+        "fingerprint": "sha256:7af38ec1fa209c4761bc0b95a2ac735fcb46b71c5f73a1b39725124369376cea",
+        "native_owner_id": "",
+        "resolved_project_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "schema": "flowguard.model_intent_source_identity.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "work_context_artifact_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "authority_kind": "project_file",
+        "contribution_id": "current-design:physicsguard-v0159-release-final:interval_diagnosability:1",
+        "fingerprint": "sha256:d61aa0a0e0f7393012b14c93bb6e086f3b1a5975954393fcd8566491de335ec0",
+        "native_owner_id": "",
+        "resolved_project_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "schema": "flowguard.model_intent_source_identity.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "work_context_artifact_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "authority_kind": "project_file",
+        "contribution_id": "current-design:physicsguard-v0159-release-final:model_test_code_alignment:1",
+        "fingerprint": "sha256:f01447084868fb6af1cb6c42c0ec81de1e8c4f9f89109fea4546cd317f623763",
+        "native_owner_id": "",
+        "resolved_project_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "schema": "flowguard.model_intent_source_identity.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "work_context_artifact_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      },
+      {
+        "authority_kind": "project_file",
+        "contribution_id": "current-design:physicsguard-v0159-release-final:task_local_model_deepening:1",
+        "fingerprint": "sha256:7289120dfead274f899b0b19ebb758b7f3669190a29fe3b862d588c224638586",
+        "native_owner_id": "",
+        "resolved_project_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "schema": "flowguard.model_intent_source_identity.v1",
+        "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+        "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+        "work_context_artifact_id": "",
+        "work_context_fingerprint": "",
+        "work_context_id": ""
+      }
+    ]
+  },
+  "decision_reason": "The exact-current parent receipt composes exact-current terminal-pass leaf receipts supplied by every affected native owner.",
+  "expected_head_fingerprint": "sha256:3e5caf82dcfb0040f786c9290aa457db1d42aa483299d955e9b10cd991f85b7e",
+  "fingerprint": "sha256:7b2e734cbbdd8c75cb1986c89e3e231c5b90c5a547f611e08431b62bd44fb981",
+  "fingerprint_changed_ids": [
+    "coverage:universe",
+    "model_instance:model:authoritative_model_system",
+    "model_instance:model:compositional_verification_kernel",
+    "model_instance:model:guard_closure_contract",
+    "model_instance:model:hierarchical_model_mesh",
+    "model_instance:model:interval_diagnosability",
+    "model_instance:model:model_test_code_alignment",
+    "model_instance:model:task_local_model_deepening",
+    "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+    "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+    "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+    "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+    "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+    "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+    "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+    "model_relation:relation:system-contains:authoritative_model_system",
+    "model_relation:relation:system-contains:compositional_verification_kernel",
+    "model_relation:relation:system-contains:guard_closure_contract",
+    "model_relation:relation:system-contains:hierarchical_model_mesh",
+    "model_relation:relation:system-contains:interval_diagnosability",
+    "model_relation:relation:system-contains:model_test_code_alignment",
+    "model_relation:relation:system-contains:task_local_model_deepening",
+    "parent_closure:purpose:authoritative_model_system",
+    "parent_closure:purpose:compositional_verification_kernel",
+    "parent_closure:purpose:guard_closure_contract",
+    "parent_closure:purpose:hierarchical_model_mesh",
+    "parent_closure:purpose:interval_diagnosability",
+    "parent_closure:purpose:model_test_code_alignment",
+    "parent_closure:purpose:task_local_model_deepening",
+    "parent_closure:system:flowguard:model-regression-manifest",
+    "root:model:authoritative_model_system"
+  ],
+  "implementation_bundle_fingerprint": "",
+  "intent_conflict_ids": [],
+  "intent_contribution_inventory_fingerprint": "sha256:1721b8926a4a7480cb4b6eee0f004bd90ca5c2e9e77ec495c50b22b613dbb84b",
+  "intent_contributions": [
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "current-design:physicsguard-v0159-release-final:authoritative_model_system:1",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "current-design:physicsguard-v0159-release-final",
+      "fingerprint": "sha256:96500cc5cd8981d83bc0183e0c91ede541a14b8e9158c01dfb3a5d4a01868718",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:authoritative_model_system",
+      "native_owner_id": "",
+      "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:authoritative_model_system:source-refresh-0.15.7-20260811"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "current-design:physicsguard-v0159-release-final:compositional_verification_kernel:1",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "current-design:physicsguard-v0159-release-final",
+      "fingerprint": "sha256:ed78eedc709e42b8d3b3b0514634df0c47f207fb7a9574bd0962e7dc8c48d41a",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:compositional_verification_kernel",
+      "native_owner_id": "",
+      "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:compositional_verification_kernel:source-refresh-0.15.7-20260811"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:compositional_verification_kernel",
+        "relation:system-contains:compositional_verification_kernel"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "current-design:physicsguard-v0159-release-final:guard_closure_contract:1",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "current-design:physicsguard-v0159-release-final",
+      "fingerprint": "sha256:ff3e5512014ddd957be680f29d38dae7192a1a978de830c4dceb84bab87469b7",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:guard_closure_contract",
+      "native_owner_id": "",
+      "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:guard_closure_contract:source-refresh-0.15.7-20260811"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:guard_closure_contract",
+        "relation:system-contains:guard_closure_contract"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "current-design:physicsguard-v0159-release-final:hierarchical_model_mesh:1",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "current-design:physicsguard-v0159-release-final",
+      "fingerprint": "sha256:d5abc08158e74f0c8f1f62a0dfe620f0db6f54629d2d64cf70ff1e89e67ea1fb",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:hierarchical_model_mesh",
+      "native_owner_id": "",
+      "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:hierarchical_model_mesh:source-refresh-0.15.7-20260811"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "relation:system-contains:hierarchical_model_mesh"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "current-design:physicsguard-v0159-release-final:interval_diagnosability:1",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "current-design:physicsguard-v0159-release-final",
+      "fingerprint": "sha256:d6e23a7de81995f2dcdccc0e59c243357733f00b6a94cfb2cc6f0b04ab8fa933",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:interval_diagnosability",
+      "native_owner_id": "",
+      "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0159-native-directory-dna:interval_diagnosability:1"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:interval_diagnosability",
+        "relation:system-contains:interval_diagnosability"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "current-design:physicsguard-v0159-release-final:model_test_code_alignment:1",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "current-design:physicsguard-v0159-release-final",
+      "fingerprint": "sha256:dda4a3ec5abbbe9424f90b02884ede9dfcad0a59569af973a4552063ab033e83",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:model_test_code_alignment",
+      "native_owner_id": "",
+      "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "intent:strengthen-physicsguard-domain-blueprint-spine:model:model_test_code_alignment:source-refresh-0.15.7-20260811"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:model_test_code_alignment",
+        "relation:system-contains:model_test_code_alignment"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    },
+    {
+      "conflicts_with_contribution_ids": [],
+      "contribution_id": "current-design:physicsguard-v0159-release-final:task_local_model_deepening:1",
+      "decision_state": "accepted",
+      "declared_consumer_ids": [],
+      "desired_terminal_state_ids": [],
+      "effective_revision": "current-design:physicsguard-v0159-release-final",
+      "fingerprint": "sha256:305cab0b45acf7e4ea3df02a679c85e556261eeabde7a2c618ea20398014d37f",
+      "lifecycle_state": "candidate",
+      "logical_model_id": "model:task_local_model_deepening",
+      "native_owner_id": "",
+      "rationale": "Refresh the exact current source binding for this changed PhysicsGuard model after the native directory DNA and target-neutral route update.",
+      "schema": "flowguard.model_intent_contribution.v1",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0159-native-directory-dna:task_local_model_deepening:1"
+      ],
+      "target_invariant_ids": [],
+      "target_obligation_ids": [],
+      "target_output_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:task_local_model_deepening",
+        "relation:system-contains:task_local_model_deepening"
+      ],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "unresolved_owner_id": "",
+      "work_context_fingerprint": "",
+      "work_context_id": ""
+    }
+  ],
+  "intent_dispositions": [
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:96500cc5cd8981d83bc0183e0c91ede541a14b8e9158c01dfb3a5d4a01868718",
+      "contribution_id": "current-design:physicsguard-v0159-release-final:authoritative_model_system:1",
+      "disposition": "accepted",
+      "fingerprint": "sha256:94500b26b6671298ebef588c24a4ffcd36f12aadab89bd1a7f3febc32f013c3e",
+      "reason": "Accept the exact changed relation set for this current model owner and bind it to the current source and test evidence.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:compositional_verification_kernel",
+        "relation:system-contains:compositional_verification_kernel"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:ed78eedc709e42b8d3b3b0514634df0c47f207fb7a9574bd0962e7dc8c48d41a",
+      "contribution_id": "current-design:physicsguard-v0159-release-final:compositional_verification_kernel:1",
+      "disposition": "accepted",
+      "fingerprint": "sha256:7fd82ce2e01d835b1f99a682dff76b3f782032e702848fa249377dd7aa4f2322",
+      "reason": "Accept the exact changed relation set for this current model owner and bind it to the current source and test evidence.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:guard_closure_contract",
+        "relation:system-contains:guard_closure_contract"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:ff3e5512014ddd957be680f29d38dae7192a1a978de830c4dceb84bab87469b7",
+      "contribution_id": "current-design:physicsguard-v0159-release-final:guard_closure_contract:1",
+      "disposition": "accepted",
+      "fingerprint": "sha256:8495f0bd565f738b1b81c3900a384a237287407c829f7c79f93f3dd3960ac903",
+      "reason": "Accept the exact changed relation set for this current model owner and bind it to the current source and test evidence.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "relation:system-contains:hierarchical_model_mesh"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:d5abc08158e74f0c8f1f62a0dfe620f0db6f54629d2d64cf70ff1e89e67ea1fb",
+      "contribution_id": "current-design:physicsguard-v0159-release-final:hierarchical_model_mesh:1",
+      "disposition": "accepted",
+      "fingerprint": "sha256:4c02796fa177d853b2d9fd306552aa10fed566cb5d1527c760af8ac4fe11f1bb",
+      "reason": "Accept the exact changed relation set for this current model owner and bind it to the current source and test evidence.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:interval_diagnosability",
+        "relation:system-contains:interval_diagnosability"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:d6e23a7de81995f2dcdccc0e59c243357733f00b6a94cfb2cc6f0b04ab8fa933",
+      "contribution_id": "current-design:physicsguard-v0159-release-final:interval_diagnosability:1",
+      "disposition": "accepted",
+      "fingerprint": "sha256:cabe3c8392f9562d255f0240f0e85765a1b765caf82cac0b3fe120419ca15e02",
+      "reason": "Accept the exact changed relation set for this current model owner and bind it to the current source and test evidence.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:model_test_code_alignment",
+        "relation:system-contains:model_test_code_alignment"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:dda4a3ec5abbbe9424f90b02884ede9dfcad0a59569af973a4552063ab033e83",
+      "contribution_id": "current-design:physicsguard-v0159-release-final:model_test_code_alignment:1",
+      "disposition": "accepted",
+      "fingerprint": "sha256:c05beb70710a0cedfcb10d89589d458d31c1ec7f47cc5ab7e93fa7e32435e0de",
+      "reason": "Accept the exact changed relation set for this current model owner and bind it to the current source and test evidence.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    },
+    {
+      "changed_invariant_ids": [],
+      "changed_obligation_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:task_local_model_deepening",
+        "relation:system-contains:task_local_model_deepening"
+      ],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "conflict_ids": [],
+      "contribution_fingerprint": "sha256:305cab0b45acf7e4ea3df02a679c85e556261eeabde7a2c618ea20398014d37f",
+      "contribution_id": "current-design:physicsguard-v0159-release-final:task_local_model_deepening:1",
+      "disposition": "accepted",
+      "fingerprint": "sha256:ab156d68b31431efdbaec56a00bf98cfa19e90ac4ff8a6f821062911a83cebbb",
+      "reason": "Accept the exact changed relation set for this current model owner and bind it to the current source and test evidence.",
+      "schema": "flowguard.model_intent_disposition.v1",
+      "scoped_gap_ids": [],
+      "unconsumed_output_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unresolved_effect_ids": []
+    }
+  ],
+  "intent_unresolved_ids": [],
+  "members": [
+    {
+      "base_instance_fingerprint": "sha256:fd7c5ca47691f1b239f9310f76e9cf13ac4b9e6b3fc4cc2319c7b91613473509",
+      "candidate_instance_fingerprint": "sha256:7170f5bb5783b9780a5ce745673013d9a80e20ee74da8bf534c374519268b2a4",
+      "changed_element_ids": [
+        "model_instance:model:authoritative_model_system"
+      ],
+      "member_id": "authoritative_model_system",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    },
+    {
+      "base_instance_fingerprint": "sha256:a120b7dcab245a2d61e59deb77c392f42be40811446628e9c860922d32a6fab6",
+      "candidate_instance_fingerprint": "sha256:624bc696301ce323bb46b0cf6943b905ccf9e2f8cf1a903f5d92a950dd348533",
+      "changed_element_ids": [
+        "model_instance:model:compositional_verification_kernel"
+      ],
+      "member_id": "compositional_verification_kernel",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    },
+    {
+      "base_instance_fingerprint": "sha256:0530156a8925500701360ad093a4fd4922af812d6d9875e5c09f5689a1fb67b9",
+      "candidate_instance_fingerprint": "sha256:ccb72a12efbb7a928b81d95dd2079b944e5a56aa4b44ecbf5668005a04612887",
+      "changed_element_ids": [
+        "model_instance:model:guard_closure_contract"
+      ],
+      "member_id": "guard_closure_contract",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    },
+    {
+      "base_instance_fingerprint": "sha256:84e5572a7bd52107153dae76d3ced466de1ddb3fa477c46baaa02a9cc781bf20",
+      "candidate_instance_fingerprint": "sha256:eb014c1d03426c50039a78c33fc42d75706992fa686f45aed79006c4fb57c18a",
+      "changed_element_ids": [
+        "model_instance:model:hierarchical_model_mesh"
+      ],
+      "member_id": "hierarchical_model_mesh",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    },
+    {
+      "base_instance_fingerprint": "sha256:d254a3196d572d128563a599a7e743bd2d2b98f7cf0455b1d79e10bf941a4739",
+      "candidate_instance_fingerprint": "sha256:7d10eeed44824dcc5ccb01051cb29d28d7d02336597bff08856889a9f80e4c47",
+      "changed_element_ids": [
+        "model_instance:model:interval_diagnosability"
+      ],
+      "member_id": "interval_diagnosability",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    },
+    {
+      "base_instance_fingerprint": "sha256:9fd6ad8ecea3c616df22b227c27cf189a8846367759b27e83ef96a3231a3a62e",
+      "candidate_instance_fingerprint": "sha256:72e9746070b1b44e49bff9d1bee076f637cd6782dab1adbb87492b65966242c2",
+      "changed_element_ids": [
+        "model_instance:model:model_test_code_alignment"
+      ],
+      "member_id": "model_test_code_alignment",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    },
+    {
+      "base_instance_fingerprint": "sha256:53eaaaaef6476dc1c711211956d73aefeef7ed6e6055059b818d143b2f251406",
+      "candidate_instance_fingerprint": "sha256:2d0bf9ec5a3ec46449c5534a1ce4589584f004a85ac4fd59fe030b9a8d2b4991",
+      "changed_element_ids": [
+        "model_instance:model:task_local_model_deepening"
+      ],
+      "member_id": "task_local_model_deepening",
+      "operation": "replace",
+      "schema": "flowguard.model_revision_member.v1"
+    }
+  ],
+  "no_declared_intent_evidence_fingerprints": [],
+  "no_declared_intent_rationale": "",
+  "no_declared_intent_rationale_id": "",
+  "originating_activation_receipt_fingerprint": "",
+  "originating_revision_set_fingerprint": "",
+  "path_quality_result_set_fingerprint": "sha256:8ba2ac5616aadca4abca09cf79486901135c0031f0985a4e61dd90908c8cc7e8",
+  "path_quality_results": [
+    {
+      "candidate_ids": [],
+      "candidate_set_exhausted": false,
+      "candidate_set_fingerprint": "",
+      "comparison_boundary_id": "",
+      "conclusion": "single_clear_path",
+      "cost_detail_evidence_fingerprint": "sha256:f15a61694ca9e49f38897b7e7183c9950fe6d5122a4862f74dc2cd81aeb8491a",
+      "cost_dimensions": [
+        "branches",
+        "payload_bytes",
+        "states",
+        "steps",
+        "transitions",
+        "validations"
+      ],
+      "cost_measurements": {
+        "branches": 0.0,
+        "payload_bytes": 16720.0,
+        "states": 4.0,
+        "steps": 3.0,
+        "transitions": 3.0,
+        "validations": 7.0
+      },
+      "current": true,
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "detail_evidence_fingerprint": "sha256:f527174dd417029ed765fab53c19ef3ce10b5e21a798bd2e82501a17fb1767e1",
+      "finding_ids": [],
+      "fingerprint": "sha256:1a2d70cbb8b6fe311c04181f23530de0c5fec2510fe62409c8d658b7975d9859",
+      "mode": "lightweight",
+      "necessity_witness_set_fingerprint": "sha256:debfa659c3d983a04530203cad1da3881e2225df33497b397487eb28696133c2",
+      "optimization_depth": "lightweight",
+      "producer_id": "flowguard-self-path-quality",
+      "result_id": "path-quality:task_local_model_deepening:82501a17fb1767e1",
+      "rewrite_rule_ids": [],
+      "rewrite_set_exhausted": false,
+      "rewrite_set_fingerprint": "",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "selected_candidate_id": "",
+      "selected_candidate_lane": "",
+      "subject_fingerprint": "sha256:243002acf926c7a2ec1c06a8391eabc6ac588051ad424aa21be6a57cd56a3719",
+      "trigger_evidence_fingerprint": "",
+      "trigger_ids": [],
+      "unresolved_ids": []
+    },
+    {
+      "candidate_ids": [],
+      "candidate_set_exhausted": false,
+      "candidate_set_fingerprint": "",
+      "comparison_boundary_id": "",
+      "conclusion": "single_clear_path",
+      "cost_detail_evidence_fingerprint": "sha256:0b3f7ab7e08c01b5133f2949a0e97827915b94a5a0d155f8aa82b3c9860939ef",
+      "cost_dimensions": [
+        "branches",
+        "payload_bytes",
+        "states",
+        "steps",
+        "transitions",
+        "validations"
+      ],
+      "cost_measurements": {
+        "branches": 0.0,
+        "payload_bytes": 9330.0,
+        "states": 4.0,
+        "steps": 3.0,
+        "transitions": 3.0,
+        "validations": 3.0
+      },
+      "current": true,
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "detail_evidence_fingerprint": "sha256:b1bea23da7b5d35a86a00c6675efb1e571087b75d007771caed56c7aba9754b5",
+      "finding_ids": [],
+      "fingerprint": "sha256:b75a841b80f9917228d7b9f3d1fef0dadc2b2b439a00caaef83254efb9664235",
+      "mode": "lightweight",
+      "necessity_witness_set_fingerprint": "sha256:75f1cd5812b29cb9eb7819e9a0b8266b6b4dbfd2026c75b740dd4db884dbda17",
+      "optimization_depth": "lightweight",
+      "producer_id": "flowguard-self-path-quality",
+      "result_id": "path-quality:authoritative_model_system:aed56c7aba9754b5",
+      "rewrite_rule_ids": [],
+      "rewrite_set_exhausted": false,
+      "rewrite_set_fingerprint": "",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "selected_candidate_id": "",
+      "selected_candidate_lane": "",
+      "subject_fingerprint": "sha256:289d4083ac6f704ad18d4aa72a698611240d8435e7481db48dda05aadbfec2f3",
+      "trigger_evidence_fingerprint": "",
+      "trigger_ids": [],
+      "unresolved_ids": []
+    },
+    {
+      "candidate_ids": [],
+      "candidate_set_exhausted": false,
+      "candidate_set_fingerprint": "",
+      "comparison_boundary_id": "",
+      "conclusion": "single_clear_path",
+      "cost_detail_evidence_fingerprint": "sha256:34d3880ec7d61918de71766da4c72e74dfa4c1ca7483a5aa0bd48f2fff77f50c",
+      "cost_dimensions": [
+        "branches",
+        "payload_bytes",
+        "states",
+        "steps",
+        "transitions",
+        "validations"
+      ],
+      "cost_measurements": {
+        "branches": 0.0,
+        "payload_bytes": 5189.0,
+        "states": 2.0,
+        "steps": 1.0,
+        "transitions": 1.0,
+        "validations": 3.0
+      },
+      "current": true,
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "detail_evidence_fingerprint": "sha256:f78cc7fde5979a4fe2026b72c89ff32b35c318488d00ae4329565042981c82b5",
+      "finding_ids": [],
+      "fingerprint": "sha256:2b507eb1e01895bd440ee5eafdf1e42bc16422c4593d49ac00e2571570803438",
+      "mode": "lightweight",
+      "necessity_witness_set_fingerprint": "sha256:b2899be255e1cf3936f1cbd194ea2e9e9e29dffc58115cb626589322987e542a",
+      "optimization_depth": "lightweight",
+      "producer_id": "flowguard-self-path-quality",
+      "result_id": "path-quality:compositional_verification_kernel:29565042981c82b5",
+      "rewrite_rule_ids": [],
+      "rewrite_set_exhausted": false,
+      "rewrite_set_fingerprint": "",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "selected_candidate_id": "",
+      "selected_candidate_lane": "",
+      "subject_fingerprint": "sha256:3cf2d10c83df4318b45196d6e934539aadba684ddfb808ae0f3eef6c8c3c31ec",
+      "trigger_evidence_fingerprint": "",
+      "trigger_ids": [],
+      "unresolved_ids": []
+    },
+    {
+      "candidate_ids": [],
+      "candidate_set_exhausted": false,
+      "candidate_set_fingerprint": "",
+      "comparison_boundary_id": "",
+      "conclusion": "single_clear_path",
+      "cost_detail_evidence_fingerprint": "sha256:e377b1dbaf4051718c95f2536f8f01d76b2daade359854a9b3bd484788ff8971",
+      "cost_dimensions": [
+        "branches",
+        "payload_bytes",
+        "states",
+        "steps",
+        "transitions",
+        "validations"
+      ],
+      "cost_measurements": {
+        "branches": 0.0,
+        "payload_bytes": 4260.0,
+        "states": 2.0,
+        "steps": 1.0,
+        "transitions": 1.0,
+        "validations": 2.0
+      },
+      "current": true,
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "detail_evidence_fingerprint": "sha256:718a029fbf70bbd7413cda05aab387398d4503b9d8319bf31eac44283eb1f183",
+      "finding_ids": [],
+      "fingerprint": "sha256:0f77ab96d4a456b0311199d1b23675b44b4678e68751c40afc891f241fd30d1f",
+      "mode": "lightweight",
+      "necessity_witness_set_fingerprint": "sha256:83e07806d7212e4ac79f702c3f25db498a55c123c4691aa6898bb6ea53fd3cee",
+      "optimization_depth": "lightweight",
+      "producer_id": "flowguard-self-path-quality",
+      "result_id": "path-quality:model_test_code_alignment:1eac44283eb1f183",
+      "rewrite_rule_ids": [],
+      "rewrite_set_exhausted": false,
+      "rewrite_set_fingerprint": "",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "selected_candidate_id": "",
+      "selected_candidate_lane": "",
+      "subject_fingerprint": "sha256:56ddae0439f98b5a733840a5ee74808da0a6b5884221c3a4bf5be5fdebe270a1",
+      "trigger_evidence_fingerprint": "",
+      "trigger_ids": [],
+      "unresolved_ids": []
+    },
+    {
+      "candidate_ids": [],
+      "candidate_set_exhausted": false,
+      "candidate_set_fingerprint": "",
+      "comparison_boundary_id": "",
+      "conclusion": "single_clear_path",
+      "cost_detail_evidence_fingerprint": "sha256:38308eacd0ec3b2607068929d9880ab6f6bd2d9e7bf5243970ea1b8112b08013",
+      "cost_dimensions": [
+        "branches",
+        "payload_bytes",
+        "states",
+        "steps",
+        "transitions",
+        "validations"
+      ],
+      "cost_measurements": {
+        "branches": 0.0,
+        "payload_bytes": 8908.0,
+        "states": 3.0,
+        "steps": 2.0,
+        "transitions": 2.0,
+        "validations": 4.0
+      },
+      "current": true,
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "detail_evidence_fingerprint": "sha256:6b732fe78d6f57a1e53c453cc624451603e671faabd95f1dcb4b65167427f103",
+      "finding_ids": [],
+      "fingerprint": "sha256:524eca730e27419a2e8e800dc31fdca2048701823359be1a59844518b0f58cb7",
+      "mode": "lightweight",
+      "necessity_witness_set_fingerprint": "sha256:422f6cc9f77197f188c3b884ddaeaa2dbb7687ddf878523f43f9477806159b5d",
+      "optimization_depth": "lightweight",
+      "producer_id": "flowguard-self-path-quality",
+      "result_id": "path-quality:guard_closure_contract:cb4b65167427f103",
+      "rewrite_rule_ids": [],
+      "rewrite_set_exhausted": false,
+      "rewrite_set_fingerprint": "",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "selected_candidate_id": "",
+      "selected_candidate_lane": "",
+      "subject_fingerprint": "sha256:82344bcc68fad00aeb681a13c128bb5a2fac0ea13ad4b9627ec5078f82a68432",
+      "trigger_evidence_fingerprint": "",
+      "trigger_ids": [],
+      "unresolved_ids": []
+    },
+    {
+      "candidate_ids": [],
+      "candidate_set_exhausted": false,
+      "candidate_set_fingerprint": "",
+      "comparison_boundary_id": "",
+      "conclusion": "single_clear_path",
+      "cost_detail_evidence_fingerprint": "sha256:09ed1ccff644cee34fff8d72b1be70bccc7850b99c234687e575063a99be8e26",
+      "cost_dimensions": [
+        "branches",
+        "payload_bytes",
+        "states",
+        "steps",
+        "transitions",
+        "validations"
+      ],
+      "cost_measurements": {
+        "branches": 0.0,
+        "payload_bytes": 10833.0,
+        "states": 3.0,
+        "steps": 2.0,
+        "transitions": 2.0,
+        "validations": 5.0
+      },
+      "current": true,
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "detail_evidence_fingerprint": "sha256:d7fb7067a661189f35c1a4ecadb536600f0b508295eda36246c5a17c1319c6d8",
+      "finding_ids": [],
+      "fingerprint": "sha256:77938c401ff25428b8ee69b8757ac54ffd5c846674dd48156482cfea3f6556f7",
+      "mode": "lightweight",
+      "necessity_witness_set_fingerprint": "sha256:ea69814991764c0b5f88186288c8b5487b5527711e9ee92ca2aec63845c460e3",
+      "optimization_depth": "lightweight",
+      "producer_id": "flowguard-self-path-quality",
+      "result_id": "path-quality:interval_diagnosability:46c5a17c1319c6d8",
+      "rewrite_rule_ids": [],
+      "rewrite_set_exhausted": false,
+      "rewrite_set_fingerprint": "",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "selected_candidate_id": "",
+      "selected_candidate_lane": "",
+      "subject_fingerprint": "sha256:a91be5b7ff096161054dcd1cf19e4ed1f6e161e50fe15301f8d82a69291cb244",
+      "trigger_evidence_fingerprint": "",
+      "trigger_ids": [],
+      "unresolved_ids": []
+    },
+    {
+      "candidate_ids": [],
+      "candidate_set_exhausted": false,
+      "candidate_set_fingerprint": "",
+      "comparison_boundary_id": "",
+      "conclusion": "single_clear_path",
+      "cost_detail_evidence_fingerprint": "sha256:0d98057d865fee31604cb622ab1048c947d5065a038368150b6e6f0973b015e7",
+      "cost_dimensions": [
+        "branches",
+        "payload_bytes",
+        "states",
+        "steps",
+        "transitions",
+        "validations"
+      ],
+      "cost_measurements": {
+        "branches": 0.0,
+        "payload_bytes": 4181.0,
+        "states": 2.0,
+        "steps": 1.0,
+        "transitions": 1.0,
+        "validations": 2.0
+      },
+      "current": true,
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "detail_evidence_fingerprint": "sha256:075819f1660f02533b6799fd7fd44566e34c3723fa44a71f2d5d374d56145fe3",
+      "finding_ids": [],
+      "fingerprint": "sha256:8b1562814de6fd9add63d57774653ed963588acd2b43ad1e5de582d573f7a7b4",
+      "mode": "lightweight",
+      "necessity_witness_set_fingerprint": "sha256:c820b8a1c8264442b3e4f6cc3301def4e11b9fcc6a4185e70c3ba5bdb0966036",
+      "optimization_depth": "lightweight",
+      "producer_id": "flowguard-self-path-quality",
+      "result_id": "path-quality:hierarchical_model_mesh:2d5d374d56145fe3",
+      "rewrite_rule_ids": [],
+      "rewrite_set_exhausted": false,
+      "rewrite_set_fingerprint": "",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "selected_candidate_id": "",
+      "selected_candidate_lane": "",
+      "subject_fingerprint": "sha256:bf9c9b33dd0880ca27af5d6bb553a7e65fbca30fd8aec42c07b248bdc6366a65",
+      "trigger_evidence_fingerprint": "",
+      "trigger_ids": [],
+      "unresolved_ids": []
+    }
+  ],
+  "path_quality_subjects": [
+    {
+      "boundary_id": "model-boundary:authoritative_model_system",
+      "code_fingerprint": "sha256:1ee9c8fd4eb1ff8d168766977c8289cd90e608e827c4869138891093649fc035",
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "dependency_fingerprint": "sha256:dea3ce910cbe1782bb86e020882a80f9ca3502d44a7becf269c7957e354c6498",
+      "evidence_fingerprint": "sha256:a2abfb2d3d0bd1dc637befb3902838247570f9bde085d0b5939c7b73fb416e37",
+      "fingerprint": "sha256:289d4083ac6f704ad18d4aa72a698611240d8435e7481db48dda05aadbfec2f3",
+      "intent_fingerprint": "sha256:ef68bbee990ab9e1b4580d5ea65b7634eaa807442b9968e5df33b5d9cc425a08",
+      "model_fingerprint": "sha256:7170f5bb5783b9780a5ce745673013d9a80e20ee74da8bf534c374519268b2a4",
+      "model_id": "authoritative_model_system",
+      "normalized_facts_fingerprint": "sha256:ed1332249fbba65553f2898634d0176386dfce73402909d1955055a9f979595e",
+      "obligation_fingerprint": "sha256:fc767dc7ec87233f3bba9875ba21f45ddebb8d82de64b8d299cf3316132262c1",
+      "oracle_fingerprint": "sha256:8646398d214dd9132a87262eb57aec01f21d2478cd33b5de5f5d96b175f56ee9",
+      "provider_fingerprint": "sha256:21a2efa840f78d9b163d8cd69e75b59884d14fe45c06d193cbd1203c2d7c8fd5",
+      "purpose_fingerprint": "sha256:4bba62f91d91a4b56f5803b6266894094e5f77c9f73d9d5cf051efc7272aa53f",
+      "retained_element_inventory_fingerprint": "sha256:b6b272000a4de7c21b048329c6a852247142dd3e462ad0788cb85429b3836e0b",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "test_fingerprint": "sha256:05073b522afd0c86b7680f805c980092339e5ab1552a2ad39a7cd9a9e6bdd776"
+    },
+    {
+      "boundary_id": "model-boundary:compositional_verification_kernel",
+      "code_fingerprint": "sha256:d232fd9d1897b4228788b1064eff4eded6659a1b3615d08fac2f1d0b575a430b",
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "dependency_fingerprint": "sha256:e2141932b98f17082a4655875287c312b0cf09046d63f23527ff9712d5bbf951",
+      "evidence_fingerprint": "sha256:928cb397b006e89f07f37f21c2617cf1f4819a1ae0e2f480f46f2a6d64d6e0cf",
+      "fingerprint": "sha256:3cf2d10c83df4318b45196d6e934539aadba684ddfb808ae0f3eef6c8c3c31ec",
+      "intent_fingerprint": "sha256:ed4fe914db7d38ace63f935c026b43d41e76210e394bbb4cfc88f053d2d8a920",
+      "model_fingerprint": "sha256:624bc696301ce323bb46b0cf6943b905ccf9e2f8cf1a903f5d92a950dd348533",
+      "model_id": "compositional_verification_kernel",
+      "normalized_facts_fingerprint": "sha256:2989cf22eec743f95db471f95dd1baf9788314cafbfa815680f79583d0671b87",
+      "obligation_fingerprint": "sha256:7ca376fe52b7f143518d2229c7b6fd906d675d90b0edd41ac85525db17122a57",
+      "oracle_fingerprint": "sha256:54addb48466140e72e175c297b1dcf901e6372f1269ccf71840cc7a7a2533468",
+      "provider_fingerprint": "sha256:c2135274ee067904fa58e941aa615cbd1f865bde196571cbdb6d97e7a3dcd317",
+      "purpose_fingerprint": "sha256:2979a041096da61349a8b31f1d9b0dd07ff6be2286a15fe9a358cfc58064fa2c",
+      "retained_element_inventory_fingerprint": "sha256:cabc4026af3c3760b6505b290bec04d5474ded1781b76754d0457595f86c8b02",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "test_fingerprint": "sha256:66580020ba156eec75aa81ea9432acc2e43138744a500c9fba71ba966d28267b"
+    },
+    {
+      "boundary_id": "model-boundary:guard_closure_contract",
+      "code_fingerprint": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa",
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "dependency_fingerprint": "sha256:71f7730152447c1561b0db2973d7c37db44b51be48dbb315309be25b85a85e5a",
+      "evidence_fingerprint": "sha256:6da49dfa8a16964593c6c61c1261ac55d73cafd48cacb41384f4caaee0661e66",
+      "fingerprint": "sha256:82344bcc68fad00aeb681a13c128bb5a2fac0ea13ad4b9627ec5078f82a68432",
+      "intent_fingerprint": "sha256:a5c45120e9a2b6a6fc9431bb8405d6b84513b31f27d1fa1a18fd3c3d96d4fbec",
+      "model_fingerprint": "sha256:ccb72a12efbb7a928b81d95dd2079b944e5a56aa4b44ecbf5668005a04612887",
+      "model_id": "guard_closure_contract",
+      "normalized_facts_fingerprint": "sha256:7ed1bed9167ae72d9503593e67762413f5a8bde54f001026fc0a33bdd366b528",
+      "obligation_fingerprint": "sha256:14f2270947f9659c3ac0fedac610c7cdd1499b5b10031c41e242050b39b7648e",
+      "oracle_fingerprint": "sha256:ad727af31ff875e8f4777d5d9de8ed4047a6fa615f8af59f34f83b8de909a871",
+      "provider_fingerprint": "sha256:00f23d1f73a99be31ea89eacfa19a349faa5113f54e0bda5a3c014d08d71c4a3",
+      "purpose_fingerprint": "sha256:0863cda20c576364b636968e386d4df679b4648e4e7ea02c6c2ff880fc41eec4",
+      "retained_element_inventory_fingerprint": "sha256:1ceda4f24b4fcab6d040f0e1bc6671e78cfcdc2ab7d7743d31a296e09e3380d7",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "test_fingerprint": "sha256:6415dbd2c1666297e6761f550b7a61d3b07d5ce279ecbb1d076f29f6e47d9e3d"
+    },
+    {
+      "boundary_id": "model-boundary:hierarchical_model_mesh",
+      "code_fingerprint": "sha256:d47a38aff8c8a131b41ee55a4e64d2c5e7b0a557df75f1d9b8c921e8b6ebbf3c",
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "dependency_fingerprint": "sha256:9f4e4fb55b0116244e2127ed2e20e2376347d57cc0cd2a963f89218c5b918e27",
+      "evidence_fingerprint": "sha256:5d01f178528abf23ef68d630b1c6d976c33fc23369c889545ccd3c00c771c22e",
+      "fingerprint": "sha256:bf9c9b33dd0880ca27af5d6bb553a7e65fbca30fd8aec42c07b248bdc6366a65",
+      "intent_fingerprint": "sha256:5a9aae409b0e610d88ffff548546bdd07e41ce4fd132d9f055655f699ff41e97",
+      "model_fingerprint": "sha256:eb014c1d03426c50039a78c33fc42d75706992fa686f45aed79006c4fb57c18a",
+      "model_id": "hierarchical_model_mesh",
+      "normalized_facts_fingerprint": "sha256:2013f60941af0595bd545f40c86b21e0b6008c435b3386a83d821f2acabdd0db",
+      "obligation_fingerprint": "sha256:62c30147d83e0f4905c644e0613c4c28a6bdfd266168ea9401183f545e14c72c",
+      "oracle_fingerprint": "sha256:5d1791d7263b00b2982fb262fb777b4face2ba37abd0ddb78ace8bfa0d0ee96b",
+      "provider_fingerprint": "sha256:0c7aa5857f2f9045a552ef708f67ad4e46246d6daf869cc82e7d083c0d049630",
+      "purpose_fingerprint": "sha256:b7722c3532ec2b1ef76e20e1e868f89314c0085e6bdd1954f312cdaf43fc2734",
+      "retained_element_inventory_fingerprint": "sha256:1c1ce18d6f6495ec4790e102a69b3472cfce1b20ab7324ae57d76f4855d67eef",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "test_fingerprint": "sha256:87c079112c48e0050c7a7b132ce61e8d6f79f3a7f171d97978e047f8b8f64d25"
+    },
+    {
+      "boundary_id": "model-boundary:interval_diagnosability",
+      "code_fingerprint": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c",
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "dependency_fingerprint": "sha256:b9ac354d797676a27f991f5e77c5ddcdc3f15155007af61e26e57aab57f36213",
+      "evidence_fingerprint": "sha256:213cb10f564e3e6481b312fd31157a9e6e0a2b5993ee393a1d7f6106843ee182",
+      "fingerprint": "sha256:a91be5b7ff096161054dcd1cf19e4ed1f6e161e50fe15301f8d82a69291cb244",
+      "intent_fingerprint": "sha256:e9d530fed3106ae1cb0e81cecd5d1e66940153d4ff1ba5d2d6bae84685f79993",
+      "model_fingerprint": "sha256:7d10eeed44824dcc5ccb01051cb29d28d7d02336597bff08856889a9f80e4c47",
+      "model_id": "interval_diagnosability",
+      "normalized_facts_fingerprint": "sha256:302ca4957e89b0a33d8e32def8d726a83388da653cee12fc29b25a219b77a184",
+      "obligation_fingerprint": "sha256:da96eb30669e2fddb7bda3b37daf2a1963f6a632e96ed7fb83ecacb02575dace",
+      "oracle_fingerprint": "sha256:c6cea229c4211a288ce120592b940c1036dbb9c370f404f183c59958ab7257c7",
+      "provider_fingerprint": "sha256:61fa6be4a5e2136e710105299cedc6aedb0ece8787e2ff2143e9a79791649370",
+      "purpose_fingerprint": "sha256:4df8c8864c8ccf38a423735f0b3396f97aaade76245c8894e3bd243030342757",
+      "retained_element_inventory_fingerprint": "sha256:276086d1249517dd122e31ec7798b494a411611ff8cb116b88940fdc425e3319",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "test_fingerprint": "sha256:541311a72deff854bad70c93b04369f74ddd8c7df2aa7272bf773a6ceb453aef"
+    },
+    {
+      "boundary_id": "model-boundary:model_test_code_alignment",
+      "code_fingerprint": "sha256:f5f1e4c802ddbde84b68bc596cbed2c1140b0c1ce3fc051d4594edc7ce28cd10",
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "dependency_fingerprint": "sha256:81afd3b842d780e613e68b547b861ad9e049e14fd661ff26f62c2db56e3c464f",
+      "evidence_fingerprint": "sha256:33aa1f678e8f5f82333204e75322dbadb9fb7a0ca637cf73fbe32569b6a7a285",
+      "fingerprint": "sha256:56ddae0439f98b5a733840a5ee74808da0a6b5884221c3a4bf5be5fdebe270a1",
+      "intent_fingerprint": "sha256:803f625a6d4d24ee9e7653b69aeed10c13958e66538bbd7f896036d788263b9b",
+      "model_fingerprint": "sha256:72e9746070b1b44e49bff9d1bee076f637cd6782dab1adbb87492b65966242c2",
+      "model_id": "model_test_code_alignment",
+      "normalized_facts_fingerprint": "sha256:59d443bdf40e4378ad182311578c00a0caa31466052c7907be8b55618f53ec81",
+      "obligation_fingerprint": "sha256:f39a5501946414abeb0f9495001153fd5c39652bd78a5b19b2de26d9b6fd0c12",
+      "oracle_fingerprint": "sha256:9e0cbf03ad03504ed8bd113db5ee55dda8200f5849b4654d4665a99cd92fed99",
+      "provider_fingerprint": "sha256:3e5bbf1aecdd212b92310f15412ba070c9e53c4d402d2b34f9eb9f4d3f01d5ed",
+      "purpose_fingerprint": "sha256:a5e46c7b0a8f543c12964dc209290b52438fd185240a11fa616c8f5cdfff7965",
+      "retained_element_inventory_fingerprint": "sha256:eb61a62dfa9057a31d7f46e1c02c64484b86d1dabeb702eebcedf54750852c14",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "test_fingerprint": "sha256:87c079112c48e0050c7a7b132ce61e8d6f79f3a7f171d97978e047f8b8f64d25"
+    },
+    {
+      "boundary_id": "model-boundary:task_local_model_deepening",
+      "code_fingerprint": "sha256:537c92eba9b05bb67fc6b00c173e14c5e746c63e4f40301bfbf7a35645f64b43",
+      "currentness_id": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "dependency_fingerprint": "sha256:472c66bd2c8a605c7dfa8be6f60a7a142ec9ceaafbb02359fc4d8b08371315ba",
+      "evidence_fingerprint": "sha256:a4e94a0957fb138b6ad44b750e65acbae8c93967d9ef918a2f941df1b4816f16",
+      "fingerprint": "sha256:243002acf926c7a2ec1c06a8391eabc6ac588051ad424aa21be6a57cd56a3719",
+      "intent_fingerprint": "sha256:a1d938ac69b845e6b0e68da56e4fc35911657feac000dd36d9b5dbfc51edd92e",
+      "model_fingerprint": "sha256:2d0bf9ec5a3ec46449c5534a1ce4589584f004a85ac4fd59fe030b9a8d2b4991",
+      "model_id": "task_local_model_deepening",
+      "normalized_facts_fingerprint": "sha256:e9820681969cb8105b6dacc4b5bf98d1dfdf4c68d4f4f13da00c9a3966a98bff",
+      "obligation_fingerprint": "sha256:46ea7d98475dbe940467623d7a23375ecac19d92356d3b535a95b7797caed931",
+      "oracle_fingerprint": "sha256:ae502d089ae4a8441973dd0641d43a3b829f486e895fb1ae317acf996777a21d",
+      "provider_fingerprint": "sha256:3d3f83dff4b44c193b64bb595c5699a889945fa109a2dfe6092aba6b7b6409f8",
+      "purpose_fingerprint": "sha256:e17d643602f114f825a2be4c464eb2bcfa225ba9df1b8ccfa85fa0d483dcb270",
+      "retained_element_inventory_fingerprint": "sha256:64d02b5b79990781eef684a33018ae0c6019b8f2662e21c96d1e1e5674a85ff6",
+      "schema_version": "flowguard.model-path-quality.v2",
+      "test_fingerprint": "sha256:cbb846832ee7e1312eaff9d4d41b6340a940011cc01151a1009a6c4e3200d547"
+    }
+  ],
+  "prediction_replay_refs": [],
+  "removal_dispositions": [],
+  "removed_ids": [],
+  "required_evidence_refs": [
+    {
+      "affected_closure_fingerprint": "sha256:447a0b25848f5126ec055c50c8af6c432e685694a68081e87183ab1c04362ee5",
+      "candidate_snapshot_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "covered_affected_ids": [
+        "coverage:universe",
+        "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+        "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+        "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+        "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+        "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+        "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+        "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+        "model_relation:relation:system-contains:authoritative_model_system",
+        "model_relation:relation:system-contains:compositional_verification_kernel",
+        "model_relation:relation:system-contains:guard_closure_contract",
+        "model_relation:relation:system-contains:hierarchical_model_mesh",
+        "model_relation:relation:system-contains:interval_diagnosability",
+        "model_relation:relation:system-contains:model_test_code_alignment",
+        "model_relation:relation:system-contains:task_local_model_deepening",
+        "parent_closure:system:flowguard:model-regression-manifest",
+        "root:model:authoritative_model_system",
+        "system_property:subject_revision"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:02034b20d8b336d11fe9262060907de7688cd1369a0cedef1724e44c4403bef2",
+      "obligation_ids": [
+        "coverage:universe",
+        "model_relation:relation:model-realizes-purpose:authoritative_model_system",
+        "model_relation:relation:model-realizes-purpose:compositional_verification_kernel",
+        "model_relation:relation:model-realizes-purpose:guard_closure_contract",
+        "model_relation:relation:model-realizes-purpose:hierarchical_model_mesh",
+        "model_relation:relation:model-realizes-purpose:interval_diagnosability",
+        "model_relation:relation:model-realizes-purpose:model_test_code_alignment",
+        "model_relation:relation:model-realizes-purpose:task_local_model_deepening",
+        "model_relation:relation:system-contains:authoritative_model_system",
+        "model_relation:relation:system-contains:compositional_verification_kernel",
+        "model_relation:relation:system-contains:guard_closure_contract",
+        "model_relation:relation:system-contains:hierarchical_model_mesh",
+        "model_relation:relation:system-contains:interval_diagnosability",
+        "model_relation:relation:system-contains:model_test_code_alignment",
+        "model_relation:relation:system-contains:task_local_model_deepening",
+        "parent_closure:system:flowguard:model-regression-manifest",
+        "root:model:authoritative_model_system",
+        "system_property:subject_revision"
+      ],
+      "owner_route": "model_mesh_maintenance",
+      "receipt_fingerprint": "sha256:a6cc25c445d73947075e6b3bed3cc4a958a6e7999ec899ac00740a1cec4891a5",
+      "receipt_id": "receipt:validation-owner:model_mesh_maintenance:79169bc011cd820533fd3d8f59344489",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "required",
+      "subject_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "toolchain_fingerprint": "sha256:ae53aa02bd37554823bde552f7cc616aa3185b5a1c5834ed8a09fb64cbd23cae"
+    },
+    {
+      "affected_closure_fingerprint": "sha256:447a0b25848f5126ec055c50c8af6c432e685694a68081e87183ab1c04362ee5",
+      "candidate_snapshot_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "covered_affected_ids": [
+        "model_instance:model:authoritative_model_system",
+        "model_instance:model:compositional_verification_kernel",
+        "model_instance:model:guard_closure_contract",
+        "model_instance:model:hierarchical_model_mesh",
+        "model_instance:model:interval_diagnosability",
+        "model_instance:model:model_test_code_alignment",
+        "model_instance:model:task_local_model_deepening",
+        "parent_closure:purpose:authoritative_model_system",
+        "parent_closure:purpose:compositional_verification_kernel",
+        "parent_closure:purpose:guard_closure_contract",
+        "parent_closure:purpose:hierarchical_model_mesh",
+        "parent_closure:purpose:interval_diagnosability",
+        "parent_closure:purpose:model_test_code_alignment",
+        "parent_closure:purpose:task_local_model_deepening"
+      ],
+      "current": true,
+      "eligible": true,
+      "environment_fingerprint": "sha256:02034b20d8b336d11fe9262060907de7688cd1369a0cedef1724e44c4403bef2",
+      "obligation_ids": [
+        "model_instance:model:authoritative_model_system",
+        "model_instance:model:compositional_verification_kernel",
+        "model_instance:model:guard_closure_contract",
+        "model_instance:model:hierarchical_model_mesh",
+        "model_instance:model:interval_diagnosability",
+        "model_instance:model:model_test_code_alignment",
+        "model_instance:model:task_local_model_deepening",
+        "parent_closure:purpose:authoritative_model_system",
+        "parent_closure:purpose:compositional_verification_kernel",
+        "parent_closure:purpose:guard_closure_contract",
+        "parent_closure:purpose:hierarchical_model_mesh",
+        "parent_closure:purpose:interval_diagnosability",
+        "parent_closure:purpose:model_test_code_alignment",
+        "parent_closure:purpose:task_local_model_deepening"
+      ],
+      "owner_route": "model_test_alignment",
+      "receipt_fingerprint": "sha256:809362e35b0d58cf4c7819073145058e91d6f3b4dc8d756855cd6b4aa373f817",
+      "receipt_id": "receipt:validation-owner:model_test_alignment:f5b0382a1607aa61fcdde0b0dfef759b",
+      "schema": "flowguard.model_revision_evidence.v2",
+      "status": "required",
+      "subject_fingerprint": "sha256:46a115fca2e86dfe986bcce6feba2edd897a26a01a55fdc17c77d8f89695fe7e",
+      "toolchain_fingerprint": "sha256:f8ac897f393e6d59c00c4f03647488042975a81bbbace1b5186b0168c8ca997f"
+    }
+  ],
+  "required_path_quality_model_ids": [
+    "authoritative_model_system",
+    "compositional_verification_kernel",
+    "guard_closure_contract",
+    "hierarchical_model_mesh",
+    "interval_diagnosability",
+    "model_test_code_alignment",
+    "task_local_model_deepening"
+  ],
+  "revision_set_id": "revision:physicsguard-v0159-release-final",
+  "rollback_contract_fingerprint": "",
+  "schema": "flowguard.model_revision_set.v5",
+  "snapshot_diff_fingerprint": "sha256:14b296dacb81bcfa1dab7f444e2eec76f64717037439db3c5316e924b99e8bc0",
+  "status": "accepted",
+  "task_id": "task:physicsguard-v0159-release-final"
+}

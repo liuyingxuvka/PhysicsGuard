@@ -158,27 +158,14 @@ def check(root: str | Path, *, compact: bool = False) -> tuple[dict[str, Any], i
     return payload, 0 if payload.get("ok") else 1
 
 
-def _reject_disk_export(root: str | Path, output: str | Path) -> tuple[dict[str, Any], int]:
-    root_path = Path(root).resolve()
-    output_path = Path(output).resolve()
-    return _blocked(
-        root_path,
-        "native_directory_only",
-        "PhysicsGuard software DNA is authoritative only in the repository-native FlowGuard directory; disk export and materialization are retired.",
-    ) | {"rejected_output": str(output_path)}, 1
-
-
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="physicsguard self-dna")
     sub = parser.add_subparsers(dest="command", required=True)
     check_parser = sub.add_parser("check", help="audit the FlowGuard-owned repository self-DNA")
     check_parser.add_argument("--root", default=".")
     check_parser.add_argument("--compact", action="store_true")
-    export_parser = sub.add_parser("export", help="retired: self-DNA is repository-native only")
-    export_parser.add_argument("--root", default=".")
-    export_parser.add_argument("--output", required=True)
     args = parser.parse_args(argv)
-    payload, code = check(args.root, compact=args.compact) if args.command == "check" else _reject_disk_export(args.root, args.output)
+    payload, code = check(args.root, compact=args.compact)
     print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
     return code
 

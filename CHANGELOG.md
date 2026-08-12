@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.15.9 - 2026-08-12
+
+- Keep the native physical-model directory as the DNA authority, including
+  models, bindings, tests, and current evidence; no self-DNA export route is
+  added.
+- Preserve target-owned physical blueprint projections for external objects
+  while keeping them separate from the suite's own DNA.
+- Refresh the ten maintained skill contracts and patch identities.
+
 ## v0.15.8 - 2026-08-11
 
 - Keep the native physical-model directory as the DNA authority; bundle/export

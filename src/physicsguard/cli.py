@@ -518,15 +518,10 @@ def build_parser() -> argparse.ArgumentParser:
         dest="self_dna_command", required=True
     )
     self_dna_check = self_dna_subparsers.add_parser(
-        "check", help="audit the repository self-DNA without reconstruction"
+        "check", help="audit the repository self-DNA in its native directory"
     )
     self_dna_check.add_argument("--root", type=Path, default=Path("."))
     self_dna_check.add_argument("--compact", action="store_true")
-    self_dna_export = self_dna_subparsers.add_parser(
-        "export", help="retired: software self-DNA is repository-native only"
-    )
-    self_dna_export.add_argument("--root", type=Path, default=Path("."))
-    self_dna_export.add_argument("--output", required=True, type=Path)
     return parser
 
 
@@ -1064,13 +1059,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
         if args.command == "self-dna":
             from physicsguard.self_dna import check as self_dna_check_run
-            from physicsguard.self_dna import _reject_disk_export as self_dna_export_run
 
-            payload, code = (
-                self_dna_check_run(args.root, compact=args.compact)
-                if args.self_dna_command == "check"
-                else self_dna_export_run(args.root, args.output)
-            )
+            payload, code = self_dna_check_run(args.root, compact=args.compact)
             print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
             return code
     except Exception as exc:

@@ -219,15 +219,32 @@
 - [ ] 14.6 Derive and test the seven stable provider-neutral software-DNA layers in exact order: evidence qualification; implementation inventory; traceability; independent semantics; model-code-test binding; resource-oracle binding; and static blueprint readiness. Stop at the first gap and reject caller-declared or summary-derived readiness. Treat the whole-repository denominator as implementation-inventory evidence, root/child topology plus intent and affected/reverse relations as traceability obligations, and FunctionBlocks as independent-semantics obligations; do not invent project-specific substitute layers.
 - [ ] 14.7 Compile one deterministic affected index and reverse index across behaviors, files, entry points, intents, tests, evidence, resources, child models, installation, and release surfaces. Prove exact seed, inclusion reason, terminal grounds, ambiguity handling, and stable projection fingerprints with known-good and known-bad fixtures.
 - [ ] 14.8 Make ordinary maintenance consume the smallest closed affected slice plus required ancestors, connected siblings, and shared consumers. Select whole-DNA review only for initial backfill, an explicit whole-boundary request, scope ambiguity that blocks bounded work, final architecture-reduction closure, or the frozen release gate; never fall back to repository scanning, cached discovery, arbitrary ownership, or automatic run-all.
-- [ ] 14.9 After deriving an exact static result, materialize the canonical software-DNA bundle, report, and affected/reverse indexes to an explicitly selected artifact root outside the PhysicsGuard repository. Verify before writing that the resolved output is outside the repository, prove repeated materialization from the same frozen snapshot is deterministic and cannot change the denominator or fingerprint itself, preserve non-pass static status without promotion, and record materialization as a separate gate outside the seven layers.
-- [ ] 14.10 Keep repository-local model sources and generators in the denominator but retain no in-repository canonical bundle, cache authority, compatibility export, legacy reader, alias, fallback, second current head, or hand-authored activation; publish current model authority only through the official FlowGuard transaction after all exact producers are current.
+- [ ] 14.9 After deriving an exact static result, keep the canonical software-DNA
+  model, report, and affected/reverse indexes in their native repository
+  directories. A bounded caller projection may be serialized for transport, but
+  it must not become a second current head or enter the denominator it reports.
+- [ ] 14.10 Keep repository-local model sources and generators in the denominator;
+  retain no cache authority, legacy reader, alias, fallback, second current
+  head, or hand-authored activation. Publish current model authority only
+  through the official FlowGuard transaction after all exact producers are
+  current.
 - [ ] 14.11 Use the qualified whole-repository model, indexes, ledgers, and runtime evidence to enumerate duplicate-looking handlers, adapters, prompt routes, validators, public entry points, schemas, and obsolete branches. For each candidate record observable contract, sole owner, consumers, affected and reverse closure, code/test/intent/resource bindings, parity oracle, proof status, proposed retain/merge/delete/defer action, migration impact, and rollback boundary.
 - [ ] 14.12 Mark a candidate proof-ready only when every required identity and parity obligation in 14.11 is current and unambiguous. Retain or defer size-only, name-only, token-only, stale, or incompletely modeled candidates; do not convert them into speculative cleanup work.
 - [ ] 14.13 Route each proof-ready public command, facade, package, or large-module change through StructureMesh and each field/schema removal through field-lifecycle evidence. Freeze the surviving primary owner and direct-current disposition before editing.
 - [ ] 14.14 Apply only proof-ready behavior-preserving reductions with narrow owned diffs, delete the replaced path in the same rollbackable change, and add no compatibility shim, alias, fallback handler, legacy reader, alternate command, or duplicate success route.
 - [ ] 14.15 After each accepted reduction, rerun its exact affected software-DNA owners and parity tests, rebuild affected/reverse projections, and require the independent denominator, ownership, topology, observable behavior, and earlier licensed depth to remain current.
-- [ ] 14.16 On the frozen source snapshot, rerun whole-DNA static qualification, then separately materialize the canonical external bundle and manifest binding bundle fingerprint, denominator fingerprint, source commit, package version, and claim boundary. Do not count materialization, package tests, installation, Git/tag/GitHub release, or release-asset publication as static-depth evidence; keep the bundle outside the wheel, source distribution, installed package, and installed consumer skills.
-- [ ] 14.17 Produce the final architecture/self-DNA report listing the seven stable layer results, first gap, deepest licensed static layer, denominator and owner coverage, accepted reductions, retained/deferred candidates and reasons, token/load and test impact, external materialization identity, and every remaining ambiguity. Report current test execution, package, installation, Git/tag/GitHub release, and release-asset lifecycle states separately and never broaden static readiness into those claims.
+- [ ] 14.16 On the frozen source snapshot, rerun whole-DNA static qualification
+  and record the native model fingerprint, denominator, source commit, package
+  version, and claim boundary as separate identities. Do not count package
+  tests, installation, Git/tag/GitHub release, or optional transport evidence as
+  static-depth evidence.
+- [ ] 14.17 Produce the final architecture/self-DNA report listing the seven
+  stable layer results, first gap, deepest licensed static layer, denominator
+  and owner coverage, accepted reductions, retained/deferred candidates and
+  reasons, token/load and test impact, and every remaining ambiguity. Report
+  current test execution, package, installation, Git/tag/GitHub release, and
+  release-asset lifecycle states separately and never broaden static readiness
+  into those claims.
 
 ## 15. Keep FlowGuard projection delayed and bounded
 
@@ -244,7 +261,13 @@
 - [x] 16.3 Document the ownership boundary: PhysicsGuard owns physical-domain semantics and qualification; FlowGuard owns only the reusable behavior/state/modeling spine and an optional later project-level projection.
 - [x] 16.4 Document lightweight, affected, and full usage as projections of one canonical blueprint rather than three competing schemas or workflows.
 - [x] 16.5 Document how existing software, non-Python software, hardware/experimental rigs, simulation models, and mixed workflows declare provider adapters without changing the core blueprint schema.
-- [ ] 16.6 Update the changelog with the native blueprint capability, per-module semantic-ledger closure and retained dummy `supporting_framework_behavior` boundary, skill-route changes, representative external-target qualification result, seven-layer FlowGuard static software-DNA result, architecture reductions, external DNA materialization and release-asset lifecycle boundaries, validation boundaries, and any deliberately deferred FlowGuard projection or future dummy breaking-change candidate.
+- [ ] 16.6 Update the changelog with the native blueprint capability, per-module
+  semantic-ledger closure and retained dummy `supporting_framework_behavior`
+  boundary, skill-route changes, representative external-target qualification
+  result, seven-layer FlowGuard static software-DNA result, architecture
+  reductions, native-directory and release-asset lifecycle boundaries,
+  validation boundaries, and any deliberately deferred FlowGuard projection or
+  future dummy breaking-change candidate.
 
 ## 17. Complete implementation evidence and close OpenSpec before the release freeze
 
@@ -264,7 +287,7 @@
 1. Compute the release number from the frozen current semantic version and increment only the third component. Update every governed version authority, including package metadata, runtime version constant, changelog, skill runtime requirements, the tracked release-role plan, and model/release source identities.
 2. Prepare only the current model and binding sources needed by repository generators; this preparation is not final model authority. Regenerate every tracked in-repository output that can affect the denominator before final DNA computation: the ten SkillGuard contract sources/compiled contracts/check manifests, the exact 85-owner test topology, route/prompt projections, consumer source projections, FlowGuard project records, and any version-derived model or release source. Prove source-only boundaries and exact owner mapping.
 3. On those fully generated post-archive bytes, independently rebuild the complete denominator and ownership table, recompute affected/reverse indexes, refresh model-code-test/intent/resource/topology bindings, rerun the seven static layers, and publish the sole current FlowGuard model authority. Model-authority records and execution receipts are predeclared derived evidence outputs, not inputs to their own logical fingerprint; after publication rerun the inventory audit and require that only those declared outputs appeared and the logical DNA identity remained unchanged.
-4. Materialize the canonical logical software-DNA bundle twice from that exact static result to isolated roots outside the repository. Require identical logical identity, zero repository writes, complete denominator/root/child/index/seven-layer/claim contents, no output-path self-reference, and no promotion of static status into execution or release claims.
+4. Recheck the native logical software-DNA directory from that exact static result. Require identical identity on repeated read, zero unauthorized repository writes, complete denominator/root/child/index/seven-layer/claim contents, and no promotion of static status into execution or release claims.
 5. Freeze source, dependencies, toolchain, model, affected plan, test inventory, and the one repository-suite plus one `unit:physicsguard-family` full-validation owner. Confirm zero descendants from interrupted launchers, then execute those two final owners exactly once in the foreground. Run final FlowGuard checks, reduction parity, representative external-target review, package-content preview, and archived-OpenSpec currentness only under their distinct exact owners.
 6. Review and stage only owned paths; preserve peer work and exclude `.flowguard/evidence/**`, caches, build leftovers, credentials, and private coordination data. Create a local candidate commit but do not push, tag, or publish it.
 7. From an isolated clean checkout of that immutable local commit, build and inspect the final wheel/sdist and clean ten-skill consumer asset. Create an out-of-repository commit-binding manifest that binds the already verified logical DNA/tree fingerprint to the exact commit SHA, package/version identities, asset roles, and checksums without adding the commit SHA to the logical DNA fingerprint. If build or inspection fails, abandon the candidate, return to source repair, rerun affected and required final gates, and create a new candidate commit.
