@@ -46,7 +46,11 @@ def _guard_model_proof_projection_ok() -> bool:
     expected_check_bindings = [
         {
             "binding_id": f"native-check:{target}:{check_id.replace(':', '-')}",
-            "evidence_source": "physicsguard.guard_model_contract",
+            "evidence_source": (
+                "physicsguard.task_local_revision"
+                if check_id.endswith(":task-local-model-deepening")
+                else "physicsguard.guard_model_contract"
+            ),
             "native_check_id": check_id,
             "required": True,
         }

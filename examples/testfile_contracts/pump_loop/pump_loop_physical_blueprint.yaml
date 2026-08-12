@@ -250,22 +250,22 @@ native_executions:
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.9"
+    tool_version: "0.15.11"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: 55b7f7bb9ac48a0cfa3f69b4f485ea78945ba7512645958fd462c496bee381df
-    execution_fingerprint: e796e9832301e87c19d0c28ec87a9d58a15056f3cef3502c5b43ab1bc8a5fe20
+    execution_fingerprint: 5efbf4fc725cbad98ba2a642ab6d798af9da3b37846b25d51af54c021f456511
   - execution_id: execution.pump-loop.model_validation_plan.fixture-r1
     native_owner_id: physicsguard-model-dataset-validation
     operation_id: model_dataset_validation.validate
     native_schema: model_validation_plan
-    input_artifact_sha256: 8361962d09cd8e2c21da59acb0c1fe8b3d924c6b998a9a3bd38bdd9525050050
+    input_artifact_sha256: 648a7ac95cda6246e6d864859ab644092d589bb88dced4c327b4ee4d34480f67
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.9"
+    tool_version: "0.15.11"
     expected_terminal_status: pass
-    terminal_receipt_fingerprint: 99a83e9423e0e520780f0ae874cbbf54ef288b70ee21a80e70d242fa93bc6137
-    execution_fingerprint: ed2893e460188c3712b32710e41e3f88f842735333bdad719c79c5fd0e31194b
+    terminal_receipt_fingerprint: bdf5c36def1dd60e53e66080f452eb84c6c1eda4a5f198affddec46a810d7993
+    execution_fingerprint: 327cf513b6d5b28b6373788866c3f8c2012cf6ce288fa99132662611e64fd275
   - execution_id: execution.pump-loop.evidence_mesh.fixture-r1
     native_owner_id: physicsguard.audit-closure
     operation_id: evidence_mesh.check
@@ -274,22 +274,22 @@ native_executions:
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.9"
+    tool_version: "0.15.11"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: 4f2777f02ccf39a08334f855f2961044b695ab198cb4e1b1155037ebbf0fd2d6
-    execution_fingerprint: f43dd83e5629a3744cc4652e2d5099df1d51f08d91b42557499e7025973d2072
+    execution_fingerprint: 968739e7289e429c706df0d06c9553cc24727b8c8a8a941d37a8d116ea9fd5c3
   - execution_id: execution.pump-loop.project_evidence_registry.fixture-r1
     native_owner_id: physicsguard.project-evidence-registry
     operation_id: project_evidence_registry.check
     native_schema: project_evidence_registry
-    input_artifact_sha256: 49e0d4bb3cb018b77f4c66935f39028ef5cf96f9f2db9b7f396389db1232931e
+    input_artifact_sha256: 3e05dcdc57403ba2ada305aa9608de44f4f23032f49111a67de57c96e6f37538
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.9"
+    tool_version: "0.15.11"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: ba91fa2f0eb8ad2efacadee5798b7ad3d78d00ffee17f1c2066c853eb02c88ff
-    execution_fingerprint: ae8f10deb2db3f23d1c44eb27932940b7d493120524d80bb0f47a1964edd4951
+    execution_fingerprint: f52ef9c765d9cfeb8dab02b3fe7e925ef9e694794cc70a2171c25661b4ee7955
   - execution_id: execution.pump-loop.model_library_index.fixture-r1
     native_owner_id: physicsguard.model-library
     operation_id: model_library.check
@@ -298,10 +298,10 @@ native_executions:
     target_system_id: pump-loop-contract-fixture
     subject_revision: fixture-r1
     tool_id: physicsguard
-    tool_version: "0.15.9"
+    tool_version: "0.15.11"
     expected_terminal_status: pass
     terminal_receipt_fingerprint: a37e08315c9aa245e5488524a9047d7c72837db80838e38fbf1b656224f5b808
-    execution_fingerprint: 7e40e9dba18a9c4727449adcbc624dfc4c43ca223928d90d4d94ea6e4351d099
+    execution_fingerprint: 9e051e7aaaec7ea0819e48121c57cd33321bb7300b861e5dbf4d463dd569422e
 bindings:
   - binding_id: binding.root.implementation
     owner_element_id: pump_loop_fixture
@@ -344,7 +344,7 @@ bindings:
     native_schema: model_validation_plan
     subject_id: pump_loop_clean_validation
     subject_revision: fixture-r1
-    artifact: &validation_ref {repo_path: validation/clean_validation_plan.yaml, sha256: 8361962d09cd8e2c21da59acb0c1fe8b3d924c6b998a9a3bd38bdd9525050050}
+    artifact: &validation_ref {repo_path: validation/clean_validation_plan.yaml, sha256: 648a7ac95cda6246e6d864859ab644092d589bb88dced4c327b4ee4d34480f67}
     provider_id: provider.pump-loop-repository
     native_execution_id: execution.pump-loop.model_validation_plan.fixture-r1
     status: current
@@ -379,7 +379,7 @@ bindings:
     native_schema: project_evidence_registry
     subject_id: pump_loop_fixture_evidence
     subject_revision: fixture-r1
-    artifact: &registry_ref {repo_path: evidence/project_evidence_registry.yaml, sha256: 49e0d4bb3cb018b77f4c66935f39028ef5cf96f9f2db9b7f396389db1232931e}
+    artifact: &registry_ref {repo_path: evidence/project_evidence_registry.yaml, sha256: 3e05dcdc57403ba2ada305aa9608de44f4f23032f49111a67de57c96e6f37538}
     provider_id: provider.pump-loop-repository
     native_execution_id: execution.pump-loop.project_evidence_registry.fixture-r1
     status: current

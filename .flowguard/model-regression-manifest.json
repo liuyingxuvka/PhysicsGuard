@@ -101,7 +101,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:authoritative_model_system:0.15.10",
+        "model_instance_id": "regression:authoritative_model_system:0.15.11",
         "reusable_model_type_id": "authoritative_model_system",
         "task_intent_id": "physicsguard-regression:authoritative_model_system",
         "declaration_phase": "before_candidate",
@@ -136,8 +136,8 @@
         ],
         "model_sha256": "sha256:1ee9c8fd4eb1ff8d168766977c8289cd90e608e827c4869138891093649fc035",
         "runner_sha256": "sha256:1205d833bb34a5842775fa1704f92539b05d1362b74a6f3a5cf46ee91165423c",
-        "declaration_fingerprint": "sha256:c919ce08bfa666365b67f5baebc7e793ede89ee07387fa48a51d302e36a6be5b",
-        "closure_fingerprint": "sha256:f2901a3c548baf37daa94a700db2ede7c68596e04a86811ac5d3041374e513b0"
+        "declaration_fingerprint": "sha256:78ca63c32b30cc8412ea6cb2c168cdf090df693112077b995c7b662a0c49964e",
+        "closure_fingerprint": "sha256:ca03992ed3d8901a94ddfab1664358ae533398fd361c30e75be9af351b16d899"
       }
     },
     {
@@ -165,7 +165,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:compositional_verification_kernel:0.15.10",
+        "model_instance_id": "regression:compositional_verification_kernel:0.15.11",
         "reusable_model_type_id": "compositional_verification_kernel",
         "task_intent_id": "physicsguard-regression:compositional_verification_kernel",
         "declaration_phase": "before_candidate",
@@ -200,8 +200,8 @@
         ],
         "model_sha256": "sha256:d232fd9d1897b4228788b1064eff4eded6659a1b3615d08fac2f1d0b575a430b",
         "runner_sha256": "sha256:ac35608aaa0545b41c084d2af6cb4709755c480bdefd134e081ad8e3b9115dc5",
-        "declaration_fingerprint": "sha256:eec9433aa0b68df62622e3c0ccbf07eba125cb8aa51091969e032a79a1033a15",
-        "closure_fingerprint": "sha256:63319afdadf68aef52784d0d3097f541ef6425d00d73147701b1542a94fc88e4"
+        "declaration_fingerprint": "sha256:a34cab50116e54ea2d06fb9e0b0eca23a0a6c56edf7d13b9a52676f4284da792",
+        "closure_fingerprint": "sha256:2c7e7bd8390a49655ddb53f4421f0971fa8a7e199fa036fc26065620a442c4d1"
       }
     },
     {
@@ -229,7 +229,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:guard_closure_contract:0.15.10",
+        "model_instance_id": "regression:guard_closure_contract:0.15.11",
         "reusable_model_type_id": "guard_closure_contract",
         "task_intent_id": "physicsguard-regression:guard-closure",
         "declaration_phase": "before_candidate",
@@ -258,8 +258,8 @@
         ],
         "model_sha256": "sha256:94a5b2fa58ac448b14ce0974492311f6c3bc3ddfef7c871af6497516dd8dc6aa",
         "runner_sha256": "sha256:24cd4f1ba388f021880170f9acacb373f6605c987aae816938e25272e50cfac2",
-        "declaration_fingerprint": "sha256:f16766cc63838788a7a39d6f7b077d6b1050ed5a8791877c829f8b364b70138c",
-        "closure_fingerprint": "sha256:3a3bb55a07e868537ea63053037d9941c3a22f630599e0099f806b66607d17c6"
+        "declaration_fingerprint": "sha256:580b9a0f88e8ee5218e675cec75d579b59d97fe96ca92b03c8f65f7bdfa18299",
+        "closure_fingerprint": "sha256:cf220085c752209b22ddd6fc3a2ada586b5e8c97150a77bbfdefc33e5659b2d4"
       }
     },
     {
@@ -295,7 +295,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:interval_diagnosability:0.15.10",
+        "model_instance_id": "regression:interval_diagnosability:0.15.11",
         "reusable_model_type_id": "interval_diagnosability",
         "task_intent_id": "physicsguard-regression:interval-diagnosability",
         "declaration_phase": "before_candidate",
@@ -331,8 +331,8 @@
         ],
         "model_sha256": "sha256:db6f4647b110125ee9d069cc90048c1af0747178be70e2e6a87a218f666d8e8c",
         "runner_sha256": "sha256:3514876e30f1cdad7bcf14dd50a4ad178456d47f45de4d9e1edbf0a36cca6fdc",
-        "declaration_fingerprint": "sha256:4f36b32aadd15025f4da4b00ba679f524fd608a4540fe5de259c8e9ed3b565aa",
-        "closure_fingerprint": "sha256:665d3fa0d0be30eec587561d94ec6adc8476c588f87486c159f885417eb38e37"
+        "declaration_fingerprint": "sha256:c6657370335c285c7d7ed292ce36adc8c9a0974a986ad730a9094074dfeb3687",
+        "closure_fingerprint": "sha256:b0e5b9d73271a50f0e61b99e64055ff2a2885bdca83ad25a1c76a5e4ed7d54ca"
       }
     },
     {
@@ -393,7 +393,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:task_local_model_deepening:0.15.10",
+        "model_instance_id": "regression:task_local_model_deepening:0.15.11",
         "reusable_model_type_id": "task_local_model_deepening",
         "task_intent_id": "physicsguard-regression:strict-task-local-model-deepening",
         "declaration_phase": "before_candidate",
@@ -430,8 +430,8 @@
         ],
         "model_sha256": "sha256:537c92eba9b05bb67fc6b00c173e14c5e746c63e4f40301bfbf7a35645f64b43",
         "runner_sha256": "sha256:3914882a52d44722194d92e8a0d046f346e83e245eb78c9ccbc9dba29886bfc7",
-        "declaration_fingerprint": "sha256:e9f9a5e7c849104594b30c33bc4fd6aae7faefad056be35f2747806c5407bdb5",
-        "closure_fingerprint": "sha256:738042d70e916874941745500b1e0b08dbe72af508e27c055558f8766fd4c54e"
+        "declaration_fingerprint": "sha256:e3331f341d7643c53b14d505c3186dfbe8c691ff3b34a36a1ca8bc85529c6fb0",
+        "closure_fingerprint": "sha256:7c13a7dee22b0478d269dbf862593500b4f200f9ba3f0d2f207ad03ed291f0d9"
       }
     },
     {
@@ -460,7 +460,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:hierarchical_model_mesh:0.15.10",
+        "model_instance_id": "regression:hierarchical_model_mesh:0.15.11",
         "reusable_model_type_id": "hierarchical_model_mesh",
         "task_intent_id": "physicsguard-regression:model-topology",
         "declaration_phase": "before_candidate",
@@ -489,8 +489,8 @@
         ],
         "model_sha256": "sha256:d47a38aff8c8a131b41ee55a4e64d2c5e7b0a557df75f1d9b8c921e8b6ebbf3c",
         "runner_sha256": "sha256:351bee292e4da38186552ab73cf758b61cbfcd90650dde45f6fa41571a00d4fe",
-        "declaration_fingerprint": "sha256:543a00bb349ffab8f72bbc984769e40c3791a336fb0fdbcf4ea43b8b7a2144cb",
-        "closure_fingerprint": "sha256:c0170f3912d86487de3c10ba739a0679dbd85880423944ff631dca279d7f0a1a"
+        "declaration_fingerprint": "sha256:14dba15a1bcfa4ede0b234d86b0a7b295b6292486cbd3ef2b16b4e0526ef97f3",
+        "closure_fingerprint": "sha256:511bbcf873c9b8b7d965dcaaf778366c2cfcfee111728c4716ca28221c403052"
       }
     },
     {
@@ -519,7 +519,7 @@
       "model_kind": "executable_workflow",
       "purpose_closure": {
         "schema_version": "flowguard.model_purpose_closure.v1",
-        "model_instance_id": "regression:model_test_code_alignment:0.15.10",
+        "model_instance_id": "regression:model_test_code_alignment:0.15.11",
         "reusable_model_type_id": "model_test_code_alignment",
         "task_intent_id": "physicsguard-regression:model-test-code-alignment",
         "declaration_phase": "before_candidate",
@@ -548,8 +548,8 @@
         ],
         "model_sha256": "sha256:f5f1e4c802ddbde84b68bc596cbed2c1140b0c1ce3fc051d4594edc7ce28cd10",
         "runner_sha256": "sha256:351bee292e4da38186552ab73cf758b61cbfcd90650dde45f6fa41571a00d4fe",
-        "declaration_fingerprint": "sha256:f8758a34800c865865d3281af97eea6e3dcfd2f2f1d0f497b1c8b7e4fafd13aa",
-        "closure_fingerprint": "sha256:8370ce0c31b39ba37b5860abee38d393d47e18750f3277a21e670b1a207f9c68"
+        "declaration_fingerprint": "sha256:cb5c7947a8edca4b95806fa0ce3bef7ab47136a55d0be163f140740b3bb59191",
+        "closure_fingerprint": "sha256:c81991148b03660ebb288aa378a6deda6e84fe512db9ba84c5e9a8f9adb68b40"
       }
     }
   ]

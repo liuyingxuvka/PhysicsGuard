@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.15.11 - 2026-08-12
+
+- Refresh the native model, code, test, and evidence bindings after the
+  current PhysicsGuard maintenance pass.
+- Keep the repository directory as the DNA authority and preserve the
+  provider-neutral target blueprint path without adding a standalone bundle
+  or a routine reconstruction step.
+- Publish the repaired pump-loop fixture bindings and the current FlowGuard
+  0.68.14 authority under this patch identity.
+
 ## v0.15.9 - 2026-08-12
 
 - Keep the native physical-model directory as the DNA authority, including

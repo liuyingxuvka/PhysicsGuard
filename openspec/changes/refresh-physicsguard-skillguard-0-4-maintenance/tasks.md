@@ -26,7 +26,7 @@
 
 ## 5. Validation and evidence lifecycle
 
-- [ ] 5.1 Run focused native PhysicsGuard/runtime/model tests and the affected FlowGuard suite, structure, process, and test checks.
+- [x] 5.1 Run focused native PhysicsGuard/runtime/model tests and the affected FlowGuard suite, structure, process, and test checks.
 - [x] 5.2 Run SkillGuard maintainer audit, affected/final unit validation, and clean consumer projection audits without activating or globally installing consumers.
 - [x] 5.3 Run OpenSpec validation and verify every completed task against current artifacts.
 - [x] 5.4 Run read-only evidence audits and exact GC planning for the family and retired parent roots; record current/release pins, candidates, and bytes without quarantine or purge.
