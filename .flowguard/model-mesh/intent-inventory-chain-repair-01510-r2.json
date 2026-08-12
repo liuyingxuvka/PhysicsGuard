@@ -1,0 +1,470 @@
+{
+  "contributions": [
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:authoritative_model_system:1",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:authoritative_model_system",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair:authoritative_model_system:1"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "current-design:physicsguard-v0410-chain-continuity-repair-r2",
+      "rationale": "Refresh the current model owner and repair the continuous authority chain using the sole current design source; preserve one owner and one path.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:45a31406df062102cddb51eae5dcd865b8b7d879088241e7be2bcfde682dc9e6"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:compositional_verification_kernel:1",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:compositional_verification_kernel",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair:compositional_verification_kernel:1"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:compositional_verification_kernel",
+        "relation:system-contains:compositional_verification_kernel"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "current-design:physicsguard-v0410-chain-continuity-repair-r2",
+      "rationale": "Refresh the current model owner and repair the continuous authority chain using the sole current design source; preserve one owner and one path.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:1c0b06b60e565b135267d11ad59da0b5523ad953aba871e9732fcaa38057fa36"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:guard_closure_contract:1",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:guard_closure_contract",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair:guard_closure_contract:1"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:guard_closure_contract",
+        "relation:system-contains:guard_closure_contract"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "current-design:physicsguard-v0410-chain-continuity-repair-r2",
+      "rationale": "Refresh the current model owner and repair the continuous authority chain using the sole current design source; preserve one owner and one path.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:701744c3f342e35be6e115ad59c1ff779a0d6089d3b1d969eae82f036410d58f"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:hierarchical_model_mesh:1",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:hierarchical_model_mesh",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair:hierarchical_model_mesh:1"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "relation:system-contains:hierarchical_model_mesh"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "current-design:physicsguard-v0410-chain-continuity-repair-r2",
+      "rationale": "Refresh the current model owner and repair the continuous authority chain using the sole current design source; preserve one owner and one path.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:64f7e4c7124333063d370982b44a84ee76d4e21e83e4d9724e662a3defbe256c"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:interval_diagnosability:1",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:interval_diagnosability",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair:interval_diagnosability:1"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:interval_diagnosability",
+        "relation:system-contains:interval_diagnosability"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "current-design:physicsguard-v0410-chain-continuity-repair-r2",
+      "rationale": "Refresh the current model owner and repair the continuous authority chain using the sole current design source; preserve one owner and one path.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:4b3bb44c99b6b101b1d039bcd502f4d3e0d6c2570c0b9c0431a6b1b81e3e1e69"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:model_test_code_alignment:1",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:model_test_code_alignment",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair:model_test_code_alignment:1"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:model_test_code_alignment",
+        "relation:system-contains:model_test_code_alignment"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "current-design:physicsguard-v0410-chain-continuity-repair-r2",
+      "rationale": "Refresh the current model owner and repair the continuous authority chain using the sole current design source; preserve one owner and one path.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:20a5b2eaacc60b469c185d3654cd1e57466c33d2f1d3fc4ea162e99e0fb7646d"
+    },
+    {
+      "schema": "flowguard.model_intent_contribution.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:task_local_model_deepening:1",
+      "source_kind": "design",
+      "source_ref": "openspec/changes/strengthen-physicsguard-domain-blueprint-spine/design.md",
+      "source_fingerprint": "sha256:ef65d9326c6b1bbb1bed846280f6b0067b9aa71b3ff721119ef71945f78a80ba",
+      "subject_lane": "normative_target",
+      "subject_role": "design",
+      "lifecycle_state": "candidate",
+      "decision_state": "accepted",
+      "logical_model_id": "model:task_local_model_deepening",
+      "unresolved_owner_id": "",
+      "supersedes_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair:task_local_model_deepening:1"
+      ],
+      "conflicts_with_contribution_ids": [],
+      "target_obligation_ids": [],
+      "target_state_ids": [],
+      "target_transition_ids": [],
+      "target_invariant_ids": [],
+      "target_relation_ids": [
+        "relation:model-realizes-purpose:task_local_model_deepening",
+        "relation:system-contains:task_local_model_deepening"
+      ],
+      "desired_terminal_state_ids": [],
+      "target_output_ids": [],
+      "declared_consumer_ids": [],
+      "effective_revision": "current-design:physicsguard-v0410-chain-continuity-repair-r2",
+      "rationale": "Refresh the current model owner and repair the continuous authority chain using the sole current design source; preserve one owner and one path.",
+      "work_context_id": "",
+      "work_context_fingerprint": "",
+      "native_owner_id": "",
+      "fingerprint": "sha256:cdf6db8e8baec56c0e9817d405c304008e7b7300d383535eb07cafb749eb0773"
+    }
+  ],
+  "dispositions": [
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:authoritative_model_system:1",
+      "contribution_fingerprint": "sha256:45a31406df062102cddb51eae5dcd865b8b7d879088241e7be2bcfde682dc9e6",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:authoritative_model_system",
+        "relation:system-contains:authoritative_model_system"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the refreshed current owner while repairing the missing authority-chain continuity.",
+      "fingerprint": "sha256:68e8fa07dd144934f1d01956a72ae12404259de08aa618b970b92dcf31bffd1f"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:compositional_verification_kernel:1",
+      "contribution_fingerprint": "sha256:1c0b06b60e565b135267d11ad59da0b5523ad953aba871e9732fcaa38057fa36",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:compositional_verification_kernel",
+        "relation:system-contains:compositional_verification_kernel"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the refreshed current owner while repairing the missing authority-chain continuity.",
+      "fingerprint": "sha256:5efe5efc866b49262be169e5302427a0eb0c398c8bd9e9ae636ba2c4d564c6e1"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:guard_closure_contract:1",
+      "contribution_fingerprint": "sha256:701744c3f342e35be6e115ad59c1ff779a0d6089d3b1d969eae82f036410d58f",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:guard_closure_contract",
+        "relation:system-contains:guard_closure_contract"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the refreshed current owner while repairing the missing authority-chain continuity.",
+      "fingerprint": "sha256:8e8e93f74871ec63043763facbc8f1a464262375f2262e6fc7dbc82eede2e3e2"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:hierarchical_model_mesh:1",
+      "contribution_fingerprint": "sha256:64f7e4c7124333063d370982b44a84ee76d4e21e83e4d9724e662a3defbe256c",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:hierarchical_model_mesh",
+        "relation:system-contains:hierarchical_model_mesh"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the refreshed current owner while repairing the missing authority-chain continuity.",
+      "fingerprint": "sha256:5aa6ed0ab0c92619dc62813d02f480f0f4d2ff502ebf80abe6d8765205cd7bda"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:interval_diagnosability:1",
+      "contribution_fingerprint": "sha256:4b3bb44c99b6b101b1d039bcd502f4d3e0d6c2570c0b9c0431a6b1b81e3e1e69",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:interval_diagnosability",
+        "relation:system-contains:interval_diagnosability"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the refreshed current owner while repairing the missing authority-chain continuity.",
+      "fingerprint": "sha256:351786592804652a002f420bde279a9b277c4129c02d41fe28c2435c2a423fbd"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:model_test_code_alignment:1",
+      "contribution_fingerprint": "sha256:20a5b2eaacc60b469c185d3654cd1e57466c33d2f1d3fc4ea162e99e0fb7646d",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:model_test_code_alignment",
+        "relation:system-contains:model_test_code_alignment"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the refreshed current owner while repairing the missing authority-chain continuity.",
+      "fingerprint": "sha256:417eb83971f6b888daf9afa461bb1dc354a1927be2043fed4e09e0bc77830c04"
+    },
+    {
+      "schema": "flowguard.model_intent_disposition.v1",
+      "contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair-r2:task_local_model_deepening:1",
+      "contribution_fingerprint": "sha256:cdf6db8e8baec56c0e9817d405c304008e7b7300d383535eb07cafb749eb0773",
+      "disposition": "accepted",
+      "changed_obligation_ids": [],
+      "changed_state_ids": [],
+      "changed_transition_ids": [],
+      "changed_invariant_ids": [],
+      "changed_relation_ids": [
+        "relation:model-realizes-purpose:task_local_model_deepening",
+        "relation:system-contains:task_local_model_deepening"
+      ],
+      "scoped_gap_ids": [],
+      "conflict_ids": [],
+      "unresolved_effect_ids": [],
+      "unreachable_terminal_state_ids": [],
+      "unconsumed_output_ids": [],
+      "reason": "Accept the refreshed current owner while repairing the missing authority-chain continuity.",
+      "fingerprint": "sha256:367c29e2c36fa15f93d4fa92ad4dd82aadb83085357d502c440a3207e4898335"
+    }
+  ],
+  "effective_intent_transitions": [
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair:authoritative_model_system:1",
+      "prior_contribution_fingerprint": "sha256:5b32f9e900be079b70e16f8805aa7dc552a6687bd45f6534b67424d113ed40d9",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair-r2:authoritative_model_system:1"
+      ],
+      "reason": "Replace the current repair contribution with a current version-bound contribution; preserve one clear path without compatibility aliases.",
+      "fingerprint": "sha256:6d8e36aafeafa94518f7d6e7c9f74410772e533f4b8965eca16691220acf7848"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair:compositional_verification_kernel:1",
+      "prior_contribution_fingerprint": "sha256:77105aef4dfd0ed6f009631ae9538fe136295131f1b6949cdb217587a8cd027b",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair-r2:compositional_verification_kernel:1"
+      ],
+      "reason": "Replace the current repair contribution with a current version-bound contribution; preserve one clear path without compatibility aliases.",
+      "fingerprint": "sha256:c8e0f7c68875070f91e919bc45d2f6fb01301274853862d077903e2271e37ad2"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair:guard_closure_contract:1",
+      "prior_contribution_fingerprint": "sha256:a3484436dfce398aa283e6a4453e45381f0cc1eb81799d46964f4473fdb79c1f",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair-r2:guard_closure_contract:1"
+      ],
+      "reason": "Replace the current repair contribution with a current version-bound contribution; preserve one clear path without compatibility aliases.",
+      "fingerprint": "sha256:e55b462faadcb2d94a4ed4c4c84364289149916e83297b5e3cc4d957fc8df930"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair:hierarchical_model_mesh:1",
+      "prior_contribution_fingerprint": "sha256:d9209a1b8e4c210b0eba8993ac35353616555d2fd370e6526f0eb1b585d685ef",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair-r2:hierarchical_model_mesh:1"
+      ],
+      "reason": "Replace the current repair contribution with a current version-bound contribution; preserve one clear path without compatibility aliases.",
+      "fingerprint": "sha256:628439ce8921df8f12980af27cf0a45e71251dfcf81a71ac4edb2cc8655ddbe4"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair:interval_diagnosability:1",
+      "prior_contribution_fingerprint": "sha256:a83ae90eaf8a0c2d6f7bc895775bfbcab30a60c793bfde69e03829745830a07e",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair-r2:interval_diagnosability:1"
+      ],
+      "reason": "Replace the current repair contribution with a current version-bound contribution; preserve one clear path without compatibility aliases.",
+      "fingerprint": "sha256:41ad37974e1224e400a702f029c543954e0c19e1c5832c52f88c4521fcf07f6c"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair:model_test_code_alignment:1",
+      "prior_contribution_fingerprint": "sha256:065a28324c6de4fff3f11a191186ea2b31af6a4df9759cd55a5042e44fac1702",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair-r2:model_test_code_alignment:1"
+      ],
+      "reason": "Replace the current repair contribution with a current version-bound contribution; preserve one clear path without compatibility aliases.",
+      "fingerprint": "sha256:49df0a3a1ff69724f3b488d8244dbca3a2c765ea55a73d686b2e75bc04d45354"
+    },
+    {
+      "schema": "flowguard.effective_intent_transition.v1",
+      "prior_contribution_id": "current-design:physicsguard-v0410-chain-continuity-repair:task_local_model_deepening:1",
+      "prior_contribution_fingerprint": "sha256:803227c5b09549e5ffa45519b3bd326054d6a5f52c024b6d68a917bed3665c4b",
+      "action": "supersede",
+      "replacement_contribution_ids": [
+        "current-design:physicsguard-v0410-chain-continuity-repair-r2:task_local_model_deepening:1"
+      ],
+      "reason": "Replace the current repair contribution with a current version-bound contribution; preserve one clear path without compatibility aliases.",
+      "fingerprint": "sha256:01e25411f853b16c00f1b2e30edaf8761346ca11d9769c1db83ec95299e875ca"
+    }
+  ]
+}
