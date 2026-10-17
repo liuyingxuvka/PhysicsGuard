@@ -1,28 +1,49 @@
+# physicsguard-skill-suite-runtime-authority Specification
+
+## Purpose
+
+Keep ten independent PhysicsGuard consumers on their actual native routes, with ordinary file installation and target-owned evidence.
+
 ## MODIFIED Requirements
 
-### Requirement: Generic SkillGuard supervision and single current authority
-Each migrated target SHALL use only `contract-source.json`, `compiled-contract.json`, and `check-manifest.json` as SkillGuard runtime authority plus explicitly referenced PhysicsGuard-native assets. The source contract MUST use the single fixed `native-integrated` identity only to project the exact PhysicsGuard `native_route_owner` and `default_route_id`. Every real route binding MUST use `{binding_id, native_route_id, required_before_closure: true, source}`. Every declared purpose-contract, candidate-binding, known-good, and known-bad check MUST have exactly one `{binding_id, evidence_source, native_check_id, required: true}` binding whose `native_check_id` equals its declared `check_id`. A non-optional `skillguard.depth_profile.v2` MUST repeat the exact native owner, all real native route ids, the complete declared check-id inventory, `native-integrated` mode, `enforced` level, and sole required `enforced` closure; the compiled contract MUST preserve the same profile unchanged. Every covered obligation MUST remain required before that sole closure. `may_define_parallel_execution_route` and `may_define_skillguard_runtime_route` MUST both be false, and the source contract MUST NOT be independently release-eligible. The source and depth profile SHALL NOT contain generic calibration, target classification, Guard-family semantics, optional integration modes, compatibility readers, or an alternate success route.
+### Requirement: Complete maintained consumer inventory
+The suite SHALL expose the ten ids declared by `scripts/install_physicsguard_skills.py`. The installer SHALL project SKILL.md, agents, references, scripts and runtime-requirements.json only. It SHALL validate safe paths, prepare all members before replacement and restore prior files if activation fails. The sync checker SHALL compare these files read-only.
 
-#### Scenario: One declared proof check lacks a target-native binding
-- **WHEN** a purpose-contract, candidate-binding, known-good, or known-bad check is absent from `native_check_bindings`, has `required` false, differs from `native_check_id`, is absent from the depth profile, or is omitted from the sole enforced closure
-- **THEN** target compilation, family mesh review, and route projection SHALL remain blocked
+#### Scenario: A member or installed file is stale
+- **WHEN** a declared consumer file is missing, changed or unsafe
+- **THEN** sync SHALL report the exact mismatch without installing files or executing tests
 
-#### Scenario: Compiled depth profile drops or changes target identity
-- **WHEN** the compiled contract omits the source depth profile or changes its owner, native route ids, native check ids, integration mode, enforcement level, or required closure profile
-- **THEN** the target SHALL remain non-current even when all source-only top-level metadata appears correct
+### Requirement: Independent native routes
+Every consumer SHALL declare one current native owner and route in its route capsule. Clear requests SHALL enter that owner directly. The AI debugging route SHALL coordinate only mixed or unclear requests, without becoming a prerequisite for other skills.
 
-#### Scenario: SkillGuard is allowed to define a parallel route
-- **WHEN** either parallel-execution or SkillGuard-runtime authority is enabled, or a second route/closure can succeed independently of the PhysicsGuard owner
-- **THEN** the source contract SHALL be rejected as non-current
+#### Scenario: A different owner is substituted
+- **WHEN** a selected route or capsule supplies another native owner
+- **THEN** native route validation SHALL reject the mismatch
 
-#### Scenario: Former V1 control surface remains executable
-- **WHEN** a former manifest, work contract, generic V1 checker, mutable report/ledger, fallback instruction, or alternate success route remains in source or installed skill roots
-- **THEN** migration and installation parity SHALL fail
+### Requirement: Native execution depth and evidence identities
+When broad execution-depth or closure claims are requested, native providers SHALL reconcile the declared, discovered, required, evaluated, excluded and unresolved object universe. Time-varying objects SHALL retain their own dynamic floors, exact point identities and coordinates, temporal distribution and gap limits; static objects SHALL retain binding evidence. Critical items and stricter project policies SHALL remain enforced. Missing, outside-root, stale or hash-mismatched target evidence SHALL block the claim.
 
-#### Scenario: Narrow retirement receipt omits live V1 residue
-- **WHEN** a completion receipt scans only the former work contract and manifest while generic V1 checkers, policies, mutable evidence/reports/ledgers, run outputs, or caches remain
-- **THEN** that receipt SHALL be invalid and retirement SHALL remain incomplete
+#### Scenario: A large series is reduced to two points
+- **WHEN** a required time-varying object lacks adequate current temporal coverage
+- **THEN** that object SHALL remain shallow and aggregate evidence SHALL NOT hide its gap
 
-#### Scenario: Retirement history is placed inside current SkillGuard authority
-- **WHEN** a V1 retirement receipt or other historical control artifact is stored inside a maintained skill's `.skillguard` directory
-- **THEN** current SkillGuard authority and installation SHALL be blocked; retirement history MUST remain in the PhysicsGuard project-level evidence root
+### Requirement: Current-model creation and closure
+When creating, deepening, revising or closing a model, the target SHALL freeze its current purpose and failure universe before candidate construction, bind the candidate and native oracle results to current content, prove its known-good case and every declared known-bad class, and retain exact failure findings and bounded claims. Ordinary bounded explanation, residual evaluation or mapping review SHALL NOT manufacture a model-proof package.
+
+#### Scenario: A required failure case has no native proof
+- **WHEN** current-model closure lacks one declared failure proof or its candidate binding is stale
+- **THEN** current-model closure SHALL remain non-pass
+
+### Requirement: Scheduled evidence remains target-owned
+Fixture evidence SHALL NOT satisfy scheduled-production closure. Scheduled execution SHALL bind the current installed runtime-requirements descriptor, trigger, execution id, runtime fingerprint, canonical project root and exact current project artifact/object/timepoint universe. Caller-supplied identity-shaped fields SHALL NOT replace target-owned discovery.
+
+#### Scenario: All declared lists shrink together
+- **WHEN** a package omits actual current target artifacts, parameters or timepoints from every self-reported list
+- **THEN** native discovery SHALL reject the authoritative-universe mismatch
+
+### Requirement: Narrow ordinary validation
+Generation, installation and route reporting SHALL NOT execute a family author-proof suite. Changes SHALL select their affected native tests and models once; shared runtime tests SHALL have one execution owner. Consumer metadata SHALL preserve route, package version, conditional deep references and native claim boundaries.
+
+#### Scenario: Consumer metadata drifts
+- **WHEN** a generated route, version or conditional reference differs from its generator
+- **THEN** the affected consumer SHALL be regenerated before installation or publication

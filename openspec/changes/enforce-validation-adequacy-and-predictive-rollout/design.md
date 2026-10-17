@@ -2,7 +2,7 @@
 
 The existing model-dataset validator owns exact dataset identity, signal mapping, pointwise residual evaluation, physical envelopes, split identity, and the native depth receipt. Its current time gate distinguishes one-point snapshots from multi-point evidence, but the selected sample is self-declared and is not reconciled with raw manifest row counts, hierarchy-required targets, timestamp distribution, or a predictive trajectory contract. Project closure consumes a passing receipt without comparing the requested closure claim to the receipt's scope or model semantics.
 
-PhysicsGuard must remain a low-fidelity audit framework. It must not reverse engineer a commercial solver or pretend that a target-neutral supervisor can choose domain sample sizes. SkillGuard remains a target-neutral contract supervisor and consumes PhysicsGuard's native receipt without recomputing physical or trajectory metrics.
+PhysicsGuard must remain a low-fidelity audit framework. It must not reverse engineer a commercial solver or pretend that a target-neutral supervisor can choose domain sample sizes. PhysicsGuard owns validation, adequacy, prediction and current evidence boundaries.
 
 ## Goals / Non-Goals
 
@@ -22,7 +22,6 @@ PhysicsGuard must remain a low-fidelity audit framework. It must not reverse eng
 
 - Add high-fidelity component models, commercial-tool adapters, or a universal dynamic simulator.
 - Pick one universal statistically optimal sample count for every engineering project.
-- Let SkillGuard derive signal importance, physical thresholds, trajectory predictions, or residuals.
 - Claim that a validated rollout proves behavior outside the exact model, initial state, step, horizon, files, and thresholds in the receipt.
 
 ## Decisions
@@ -31,7 +30,6 @@ PhysicsGuard must remain a low-fidelity audit framework. It must not reverse eng
 
 `physicsguard.core.model_dataset_validation` and the existing validation-depth route remain the public owner. Quantitative adequacy and rollout comparison live in focused schema/core helpers and are assembled into the existing native receipt. This avoids a parallel validator and keeps the already-large pointwise evaluator from becoming the only implementation surface.
 
-Alternative considered: implement adequacy inside SkillGuard. Rejected because it would duplicate target-domain judgment and violate the native-integrated boundary.
 
 ### 2. Derive counts from target-owned artifacts, not AI narration
 
@@ -81,47 +79,9 @@ Alternative considered: infer temporal prediction from pointwise residuals. Reje
 
 `validation_ready` and `validated_reuse_ready` require a passing non-snapshot adequacy receipt. `prediction_ready` additionally requires `stateful_dynamic` semantics and a passing predictive rollout receipt. Closure records the requested scope, covered scope, adequacy status, model semantics, and predictive status without recomputing native metrics.
 
-### 7. Calibrate with positive and intentionally shallow cases
+### 7. Verify native behavior once
 
-Focused tests include a representative adequate sample and intentionally shallow cases: one/two points from a 1000-point universe, endpoint-only and same-phase parameter selection, one shallow critical parameter among deep siblings, 10000 parameters or signals with only one/two selected, duplicate timestamps, skipped transient tags, repeated exclusion reasons, empty roles, snapshot closure, and pointwise prediction. A separate static case proves that time gates are not applied to static binding evidence. FlowGuard model inputs and replay labels mirror these cases so model, code, and tests bind the same obligations.
-
-SkillGuard V2 calibrates the bridge with three current content-addressed native
-outcomes: static-positive, time-varying-positive, and intentionally shallow.
-The ordinary supervised check instead discovers and executes the validation
-plan from `target_input_paths`; calibration data cannot impersonate target
-execution. Its dynamic parameter universe uses native class identities: one
-binding item and no time strata for `static`, versus the complete raw
-denominator, the precommitted native `sqrt_n_stage_v1`/project/convergence
-floor, early/middle/late, and model-contribution sentinels for each
-`time_varying` object. Every raw row remains visible, but only native
-cannot-omit event, boundary, and contribution sentinels are critical. This
-lets 32 well-distributed rows represent 1000 when all native gates pass while
-still rejecting 1, 2, or 3 shallow rows. Project-specific PhysicsGuard floors
-remain native and may be stricter.
-
-### 8. Retire the complete former SkillGuard V1 runtime, not only its two authority filenames
-
-Product-level bounded snapshot and data compatibility remains a PhysicsGuard concern. It does not authorize a second SkillGuard runtime. The expanded retirement inventory includes former generic checkers, policy files, mutable reports/evidence/ledgers, target-local run outputs, and caches in addition to `work-contract.json` and `check_manifest.json`. The earlier narrow completion receipt is invalidated. A new immutable completion receipt is issued only after the exact V2 authority, PhysicsGuard family-parent consumption, source/install residual absence, and installation-currentness replay all close on one frozen identity.
-
-### 9. Make candidate admission a separate target-owned check
-
-Each `guard-model/contract.json` is frozen and checked without requiring a candidate. A separate `guard-model/candidate.json` then binds the current contract fingerprint, complete declared failure and obligation ids, native owner/route, and a two-event hash-linked authoring chain. Known-good and known-bad proofs depend on that candidate-binding check. This prevents a later purpose document from retroactively legitimizing an earlier shallow candidate.
-
-### 10. Label proof strength by what the native evidence actually demonstrates
-
-Dataset-validation failures keep `native_semantic_detection` only where an exact target-native pytest fixture directly asserts the bounded native finding or exception. Satellite proofs that only remove one governed obligation become `native_obligation_admission_gate`; their titles and claim boundary say only that a candidate without current native proof is rejected, and their expected finding is the actual `missing_target_obligation` code. SkillGuard still sees only target-declared checks and receipts.
-
-### 11. Use one target-owned production identity sidecar and one installed runtime manifest
-
-The scheduled package contains discovered domain inputs but no installation identity. A separate target-owned sidecar binds target id, run id, package ref/hash, trigger/execution ids, installation receipt, and installed runtime fingerprint. The loader requires the package, exactly one sidecar, and every content-addressed target input to equal the declared input set; generic request copies and in-package identity fields are rejected. Dataset validation bundles all current `physicsguard/**/*.py` sources plus a hash manifest under `runtime`, and guard-model admission checks that manifest without importing a global fallback.
-
-### 12. Project target ownership through one fixed native-integrated identity
-
-Every maintained target writes the exact PhysicsGuard owner and default route into its current SkillGuard source contract. Every real route binding uses the common `{binding_id, native_route_id, required_before_closure: true, source}` wire, and every declared purpose/candidate/known-good/known-bad check has exactly one common `{binding_id, evidence_source, native_check_id, required: true}` binding. A non-optional `skillguard.depth_profile.v2` repeats the exact owner, route inventory, complete declared-check inventory, `native-integrated` mode, `enforced` level, and sole required `enforced` closure so the compiler preserves and supervises the identity rather than stripping it as source-only metadata. Their covered obligations remain mandatory in that sole closure. `may_define_parallel_execution_route` and `may_define_skillguard_runtime_route` are both false, and the source is not independently release-eligible.
-
-This identity is supervisory metadata, not a PhysicsGuard semantic model: prevented failures, physical/evidence boundaries, native oracles, proof strength, good/bad decisions, residual risk, and bounded claims remain exclusively in target-owned guard-model artifacts and evaluators. The depth profile contains no calibration, target classification, PhysicsGuard semantics, or selectable dimensions. Generic calibration policy, optional integration modes, compatibility readers, and alternate success routes remain forbidden.
-
-Alternative considered: omit the integration fields to avoid duplicating PhysicsGuard semantics. Rejected because absence also hides the ownership boundary from the compiler and global router. The fixed identity records who owns execution without transferring what the route means.
+Use the existing native adequacy, predictive-rollout, model-dataset, current-model and depth tests. Ordinary validation runs produce their own depth receipt; the receipt command is an alternate output path. Strict model creation/revision/closure keeps its exact candidate and independent evidence requirements. Consumer maintenance uses current map pointers and ordinary file generation/install/sync without an author-proof supervisor.
 
 ## Risks / Trade-offs
 
@@ -130,7 +90,6 @@ Alternative considered: omit the integration fields to avoid duplicating Physics
 - [Large full-series validation is expensive] → Preserve sampling modes and TestMesh partitioning; background progress never counts as final evidence.
 - [External prediction artifacts can be forged] → Bind exact hashes, model identity, training/holdout disjointness, and target-owned comparison receipt; keep producer execution provenance visible and bounded.
 - [Role matrices use generic exclusions] → Enforce exclusion ratio, repeated-reason rejection, critical-target coverage, and family quotas for broad claims.
-- [Peer edits stale earlier evidence] → Re-read each target before patching and rerun OpenSpec, FlowGuard, focused tests, and SkillGuard audits after the final source state.
 
 ## Migration Plan
 
@@ -139,12 +98,13 @@ Alternative considered: omit the integration fields to avoid duplicating Physics
 3. Integrate adequacy and predictive results into native validation and project closure.
 4. Update FlowGuard ownership/lifecycle/test evidence and target skills.
 5. Run focused negative/positive tests, FlowGuard replay, OpenSpec verification, and relevant regression suites.
-6. Remove the complete expanded V1 runtime surface, then issue a new completion receipt only after family reattachment, transactional installation parity, and installation-currentness replay.
+6. Retire obsolete author-control files and verify ordinary consumer installation/sync in a temporary directory.
 7. Bind candidate artifacts to frozen purpose contracts, calibrate proof-strength claims, and complete the target-owned sidecar plus installed runtime manifest.
 8. Leave release/version publication to the repository release workflow; this change is not archived, committed, or published until the shared identity follow-up closes.
 
-Rollback is a source revert of this unarchived change and its implementation edits. Product-level bounded snapshot plans remain executable throughout migration, but there is no dormant SkillGuard V1 fallback.
 
 ## Open Questions
 
 - Project-specific statistical confidence and domain event taxonomies remain target-project inputs. This change enforces their provenance and coverage, not one universal engineering threshold.
+
+Current maintenance uses the repository map, ordinary pytest, native validation models and the transactional consumer installer. Obsolete family author-proof receipts and control manifests are retired.

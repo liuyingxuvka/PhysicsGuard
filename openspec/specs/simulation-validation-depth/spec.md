@@ -41,6 +41,6 @@ Time-series validation SHALL preserve pointwise residual results, missing/invali
 ### Requirement: Native validation-depth receipt
 PhysicsGuard SHALL emit a receipt bound to dataset, mapping, time, scenario, split, residual, envelope, assumptions, report hash, report type, and pass/partial/block status.
 
-#### Scenario: SkillGuard supervision
-- **WHEN** SkillGuard evaluates PhysicsGuard execution depth
+#### Scenario: Native project closure
+- **WHEN** PhysicsGuard evaluates execution depth for project closure
 - **THEN** it SHALL consume the native receipt and SHALL NOT recompute physical residuals
