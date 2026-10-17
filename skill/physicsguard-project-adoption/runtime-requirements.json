@@ -3,20 +3,6 @@
   "target_skill_id": "physicsguard-project-adoption",
   "package_name": "physicsguard",
   "package_version": "0.15.11",
-  "toolchain_identity": {
-    "physicsguard_version": "0.15.11",
-    "physicsguard_authority_sha256": "sha256:5d0553a90e75c0b50d418b1e24bda947d9cd2ffc81c12db6ad839f39bb5aca14",
-    "flowguard_version": "0.68.14",
-    "flowguard_schema_version": "1.0",
-    "flowguard_package_tree_sha256": "sha256:6ea638c479e2836ee72d76f470ecba6ec4de315763872e2e9c2c271fb0c68468",
-    "flowguard_direct_url_sha256": "sha256:35738303a58827bda346d458850eb99718f2b382c3ef138cb9036c07db24de9d",
-    "flowguard_authority_sha256": "sha256:6dcc3ddf9ae4bf301c76c5104ae2392a89cdd5745c3c4979d62e32494ad0a98d",
-    "skillguard_version": "0.7.2",
-    "skillguard_api_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
-    "skillguard_distribution_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
-    "skillguard_direct_url_sha256": "sha256:7236a685f8f921d9a5f4444658caa372abdba29c9e5ed6ad62f5f7b84d060558",
-    "skillguard_authority_sha256": "sha256:aa816fbc8145c43f06c4ab5dec91015fedf2232e18b58bc33545346cffbb4bed"
-  },
   "entrypoints": [
     "physicsguard.cli",
     "physicsguard.guard_model_contract",
@@ -24,5 +10,5 @@
   ],
   "missing_dependency_behavior": "fail_visible",
   "fallback": false,
-  "claim_boundary": "This declares only the shared simulator required to execute the skill. It does not prove a domain check ran or authorize a result."
+  "claim_boundary": "This declares the domain runtime; it does not prove a domain check ran."
 }

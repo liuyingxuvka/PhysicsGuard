@@ -1,199 +1,80 @@
-"""Report PhysicsGuard maintained-skill structure without authorizing evidence.
-
-This command reads source inventory and contract metadata only.  It does not
-load SkillGuard, inspect run/evidence stores, execute checks, read receipts, or
-issue a suite closure.
-"""
-
+"""Read the ten route capsules and check their consumer reference paths."""
 from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
-from typing import Any, Mapping, Sequence
+from pathlib import Path, PurePosixPath
+import sys
+from typing import Any, Sequence
 
-
-EXPECTED_SKILLS = (
-    "physicsguard-ai-debugging",
-    "physicsguard-audit-closure",
-    "physicsguard-candidate-model-blueprint",
-    "physicsguard-model-dataset-validation",
-    "physicsguard-model-library",
-    "physicsguard-model-understanding-preflight",
-    "physicsguard-project-adoption",
-    "physicsguard-project-evidence-registry",
-    "physicsguard-signal-mapping-review",
-    "physicsguard-test-file-contract-review",
-)
-UNIT_ID = "unit:physicsguard-family"
-CLAIM_BOUNDARY = (
-    "This report proves only the ten-member source inventory, native-owner "
-    "partition, and declared-check identity shape. It executes no check, reads "
-    "or consumes no receipt, and issues no SkillGuard or PhysicsGuard closure."
+sys.dont_write_bytecode = True
+SCRIPT_ROOT = Path(__file__).resolve().parent
+if str(SCRIPT_ROOT) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_ROOT))
+from install_physicsguard_skills import (  # noqa: E402
+    PHYSICSGUARD_SKILL_IDS, ROOT, consumer_files, physicsguard_member_roots,
 )
 
-
-class SuiteStructureError(ValueError):
-    """Fail-closed source-structure error."""
-
-
-def _read_object(path: Path, code: str) -> dict[str, Any]:
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise SuiteStructureError(f"{code}:{path.as_posix()}") from exc
-    if not isinstance(value, dict):
-        raise SuiteStructureError(f"{code}:{path.as_posix()}")
-    return value
-
-
-def _member_row(
-    repository_root: Path,
-    manifest_row: Mapping[str, Any],
-    mesh_row: Mapping[str, Any],
-) -> tuple[dict[str, Any], list[str]]:
-    findings: list[str] = []
-    skill_id = str(manifest_row.get("skill_id", ""))
-    skill_path = str(manifest_row.get("skill_path", ""))
-    expected_path = f"skill/{skill_id}"
-    if skill_path != expected_path:
-        findings.append("author_skill_path_mismatch")
-    source = _read_object(
-        repository_root / expected_path / ".skillguard" / "contract-source.json",
-        "member_contract_unreadable",
-    )
-    checks = [row for row in source.get("checks", []) if isinstance(row, Mapping)]
-    check_ids = [str(row.get("check_id", "")) for row in checks]
-    semantic_ids = [str(row.get("semantic_check_id", "")) for row in checks]
-    owner_ids = [str(row.get("execution_owner_id", "")) for row in checks]
-    subject_ids = [str(row.get("evidence_subject_id", "")) for row in checks]
-    if source.get("skill_id") != skill_id:
-        findings.append("contract_skill_id_mismatch")
-    if source.get("maintenance_unit_id") != UNIT_ID:
-        findings.append("contract_foreign_unit")
-    if source.get("member_skill_ids") != list(EXPECTED_SKILLS):
-        findings.append("contract_member_inventory_mismatch")
-    if any(len(set(rows)) != len(rows) for rows in (check_ids, semantic_ids, owner_ids, subject_ids)):
-        findings.append("contract_check_identity_not_unique")
-    if any(row.get("maintenance_unit_id") != UNIT_ID for row in checks):
-        findings.append("check_foreign_unit")
-    if any(row.get("member_skill_id") != skill_id for row in checks):
-        findings.append("check_member_mismatch")
-    if manifest_row.get("maintenance_unit_id") != UNIT_ID:
-        findings.append("author_manifest_foreign_unit")
-    if source.get("native_route_owner") != manifest_row.get("native_owner_id"):
-        findings.append("native_owner_mismatch")
-    if mesh_row.get("native_owner_id") != source.get("native_route_owner"):
-        findings.append("mesh_native_owner_mismatch")
-    if mesh_row.get("native_route_id") != source.get("default_route_id"):
-        findings.append("mesh_native_route_mismatch")
-    if mesh_row.get("declared_check_count") != len(checks):
-        findings.append("mesh_check_count_mismatch")
-    return (
-        {
-            "skill_id": skill_id,
-            "maintenance_unit_id": UNIT_ID,
-            "native_owner_id": source.get("native_route_owner"),
-            "native_route_id": source.get("default_route_id"),
-            "declared_check_count": len(checks),
-            "semantic_check_count": len(set(semantic_ids)),
-            "execution_owner_count": len(set(owner_ids)),
-            "evidence_subject_count": len(set(subject_ids)),
-        },
-        findings,
-    )
+EXPECTED_SKILLS = PHYSICSGUARD_SKILL_IDS
 
 
 def build_report(repository_root: Path) -> dict[str, Any]:
-    manifest = _read_object(
-        repository_root / ".skillguard" / "author-project.json",
-        "author_manifest_unreadable",
-    )
-    mesh = _read_object(
-        repository_root / ".flowguard" / "physicsguard_skill_suite_mesh.json",
-        "suite_mesh_unreadable",
-    )
     findings: list[str] = []
-    if manifest.get("repository_role") != "skill_maintainer_source":
-        findings.append("author_repository_role_wrong")
-    managed = [row for row in manifest.get("managed_skills", []) if isinstance(row, Mapping)]
-    managed_by_id = {str(row.get("skill_id", "")): row for row in managed}
-    if tuple(sorted(managed_by_id)) != EXPECTED_SKILLS or len(managed) != len(EXPECTED_SKILLS):
-        findings.append("author_member_inventory_mismatch")
-    mesh_rows = [row for row in mesh.get("children", []) if isinstance(row, Mapping)]
-    mesh_by_id = {str(row.get("target_skill_id", "")): row for row in mesh_rows}
-    if tuple(sorted(mesh_by_id)) != EXPECTED_SKILLS or len(mesh_rows) != len(EXPECTED_SKILLS):
-        findings.append("mesh_member_inventory_mismatch")
-    boundary = mesh.get("maintenance_boundary")
-    if not isinstance(boundary, Mapping) or any(
-        boundary.get(field) is not False
-        for field in (
-            "suite_summary_authoritative",
-            "suite_summary_may_execute_checks",
-            "suite_summary_may_consume_receipts",
-            "suite_summary_may_issue_closure",
-        )
-    ):
-        findings.append("mesh_summary_authority_not_false")
-
-    retired_paths = (
-        ".flowguard/skillguard-parent",
-        ".flowguard/physicsguard_suite_parent_inventory.json",
-        "scripts/generate_physicsguard_suite_parent_contract.py",
-        "scripts/verify_physicsguard_suite_parent.py",
-    )
-    for relative in retired_paths:
-        if (repository_root / relative).exists():
-            findings.append(f"retired_parent_authority_present:{relative}")
-
     members: list[dict[str, Any]] = []
-    for skill_id in EXPECTED_SKILLS:
-        manifest_row = managed_by_id.get(skill_id)
-        mesh_row = mesh_by_id.get(skill_id)
-        if manifest_row is None or mesh_row is None:
-            continue
-        row, member_findings = _member_row(repository_root, manifest_row, mesh_row)
-        members.append(row)
-        findings.extend(f"{skill_id}:{finding}" for finding in member_findings)
-
-    return {
-        "artifact_kind": "physicsguard_skill_suite_structure_report",
-        "authoritative": False,
-        "structure_status": "pass" if not findings else "blocked",
-        "maintenance_unit_id": UNIT_ID,
-        "member_count": len(members),
-        "declared_check_count": sum(int(row["declared_check_count"]) for row in members),
-        "members": members,
-        "findings": findings,
-        "claim_boundary": CLAIM_BOUNDARY,
-    }
-
-
-def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--repository-root",
-        default=str(Path(__file__).resolve().parents[1]),
-    )
-    return parser
+    routes: set[str] = set()
+    owners: set[str] = set()
+    try:
+        source_members = physicsguard_member_roots(repository_root)
+    except (OSError, ValueError) as exc:
+        source_members = ()
+        findings.append(str(exc))
+    for skill_id, source in source_members:
+        try:
+            files = consumer_files(source)
+            capsule = json.loads((source / "references" / "route-capsule.json").read_text(encoding="utf-8"))
+            if not isinstance(capsule, dict):
+                raise ValueError("route_capsule_not_object")
+            owner, route = capsule.get("native_owner_id"), capsule.get("native_route_id")
+            if capsule.get("target_skill_id") != skill_id:
+                findings.append(f"{skill_id}:capsule_skill_mismatch")
+            if not isinstance(owner, str) or not owner or owner in owners:
+                findings.append(f"{skill_id}:native_owner_missing_or_duplicate")
+            if not isinstance(route, str) or not route or route in routes:
+                findings.append(f"{skill_id}:native_route_missing_or_duplicate")
+            if isinstance(owner, str):
+                owners.add(owner)
+            if isinstance(route, str):
+                routes.add(route)
+            references = list(capsule.get("initial_load", []))
+            conditional = capsule.get("conditional_references", [])
+            if not isinstance(conditional, list):
+                raise ValueError("conditional_references_not_list")
+            for row in conditional:
+                if not isinstance(row, dict):
+                    raise ValueError("conditional_reference_not_object")
+                relative = row.get("path")
+                references.append(relative)
+                if isinstance(relative, str) and relative in files and row.get("sha256") != files[relative]:
+                    findings.append(f"{skill_id}:reference_hash_mismatch:{relative}")
+            for relative in references:
+                if not isinstance(relative, str) or PurePosixPath(relative).is_absolute() or ".." in PurePosixPath(relative).parts or relative not in files:
+                    findings.append(f"{skill_id}:reference_missing_or_unsafe:{relative}")
+            if capsule.get("entry_prompt_sha256") != files["SKILL.md"]:
+                findings.append(f"{skill_id}:entry_prompt_hash_mismatch")
+            for handoff in capsule.get("reject_handoffs", []):
+                if not isinstance(handoff, dict) or handoff.get("target_skill_id") not in (*EXPECTED_SKILLS, "none"):
+                    findings.append(f"{skill_id}:handoff_target_missing")
+            members.append({"skill_id": skill_id, "native_owner_id": owner, "native_route_id": route, "consumer_file_count": len(files), "reference_count": len(references)})
+        except (OSError, ValueError, TypeError) as exc:
+            findings.append(f"{skill_id}:{type(exc).__name__}:{exc}")
+    return {"artifact_kind": "physicsguard_skill_suite_structure_report", "authoritative": False, "structure_status": "blocked" if findings else "pass", "member_count": len(members), "members": members, "findings": findings, "claim_boundary": "Reports source route uniqueness and reference identity only; executes no domain or regression check."}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
-    try:
-        result = build_report(Path(args.repository_root).resolve())
-    except SuiteStructureError as exc:
-        result = {
-            "artifact_kind": "physicsguard_skill_suite_structure_report",
-            "authoritative": False,
-            "structure_status": "blocked",
-            "maintenance_unit_id": UNIT_ID,
-            "member_count": 0,
-            "declared_check_count": 0,
-            "members": [],
-            "findings": [str(exc)],
-            "claim_boundary": CLAIM_BOUNDARY,
-        }
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repository-root", type=Path, default=ROOT)
+    args = parser.parse_args(argv)
+    result = build_report(args.repository_root)
     print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     return 0 if result["structure_status"] == "pass" else 1
 

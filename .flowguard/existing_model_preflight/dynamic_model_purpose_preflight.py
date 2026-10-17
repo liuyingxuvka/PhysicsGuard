@@ -10,28 +10,9 @@ from flowguard import (
 
 
 def build_preflight() -> ExistingModelPreflight:
-    baseline = ModelContextHit(
-        "physicsguard.guard-family.family-baseline-regression.current",
-        model_path="skill/physicsguard-ai-debugging/.skillguard/contract_model.py",
-        evidence_id="filesystem-current-dynamic-purpose-upgrade",
-        responsibilities=(
-            "maintained family capability regression",
-            "baseline native good/bad fixture execution",
-        ),
-        function_blocks=(
-            "ValidateFamilyBaselineContract",
-            "BindFamilyBaselineCandidate",
-            "ProveFamilyBaselineGood",
-            "ProveFamilyBaselineBad",
-        ),
-        state_owned=("family_baseline_current",),
-        fields_owned=("artifact_role:family_baseline_regression",),
-        side_effects_owned=("issue family baseline regression receipt",),
-        public_entrypoints=("PhysicsGuard maintained-skill baseline checks",),
-    )
     current = ModelContextHit(
         "physicsguard.current-model-purpose-closure.current",
-        model_path=".flowguard/physicsguard_dynamic_model_purpose_model.py",
+        model_path=".flowguard/models/owners/dynamic_model_purpose/physicsguard_dynamic_model_purpose_model.py",
         evidence_id="filesystem-current-dynamic-purpose-upgrade",
         responsibilities=(
             "AI-selected current modeling purpose",
@@ -67,32 +48,26 @@ def build_preflight() -> ExistingModelPreflight:
     )
     return ExistingModelPreflight(
         "physicsguard-dynamic-model-purpose-preflight",
-        "Separate immutable family baseline regression from target-local, AI-declared current model-purpose authority",
+        "Maintain the target-local current purpose, candidate, and failure-case proof owner",
         mode="full",
         model_search_performed=True,
         search_paths=(".flowguard", "src/physicsguard", "skill", "tests", "openspec/changes"),
-        relevant_models=(baseline, current),
+        relevant_models=(current,),
         ownership_snapshot=ExistingOwnershipSnapshot(
             function_block_owners=tuple(
                 (name, current.model_id) for name in current.function_blocks
-            )
-            + tuple((name, baseline.model_id) for name in baseline.function_blocks),
-            state_owners=tuple((name, current.model_id) for name in current.state_owned)
-            + (("family_baseline_current", baseline.model_id),),
-            field_owners=tuple((name, current.model_id) for name in current.fields_owned)
-            + (("artifact_role:family_baseline_regression", baseline.model_id),),
+            ),
+            state_owners=tuple((name, current.model_id) for name in current.state_owned),
+            field_owners=tuple((name, current.model_id) for name in current.fields_owned),
             side_effect_owners=(
-                ("issue family baseline regression receipt", baseline.model_id),
                 ("issue current model-purpose receipt", current.model_id),
             ),
             public_entrypoint_owners=(
-                ("PhysicsGuard maintained-skill baseline checks", baseline.model_id),
                 ("PhysicsGuard current model-purpose verifier", current.model_id),
             ),
             responsibility_owners=tuple(
                 (name, current.model_id) for name in current.responsibilities
-            )
-            + tuple((name, baseline.model_id) for name in baseline.responsibilities),
+            ),
         ),
         reuse_decision=REUSE_DECISION_EXTEND_EXISTING,
         downstream_routes=(
@@ -101,14 +76,10 @@ def build_preflight() -> ExistingModelPreflight:
             "model_test_alignment",
             "test_mesh_maintenance",
         ),
-        behavior_field_ids=tuple(current.fields_owned) + tuple(baseline.fields_owned),
+        behavior_field_ids=tuple(current.fields_owned),
         field_lifecycle_required=True,
-        field_lifecycle_model_ids=(baseline.model_id, current.model_id),
-        rationale=(
-            "Extend the existing purpose-before-candidate proof chain by splitting its two authorities. "
-            "The prior fixed suite remains the family baseline owner; the new current-model owner alone can license a concrete model. "
-            "SkillGuard remains a generic declared-check and receipt supervisor."
-        ),
+        field_lifecycle_model_ids=(current.model_id,),
+        rationale=("Reuse the current target-owned purpose/candidate/oracle authority; native tests cover shared runtime behavior once."),
     )
 
 

@@ -77,7 +77,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "52b59aadb8dca6308a827ec3a1c5b80215d11d25914b82f56e7f82d0bb152725"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -91,11 +91,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "06270e247c59ff8b0a0bc65a82a82340f70b0629030c96f965d35f4de210b087",
+  "entry_prompt_sha256": "d8bb39a14a7a7cd064f5b60cb23b2e7306f224c4792d9eb610bcb2b7ad9cd26b",
   "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt."
 }

@@ -76,7 +76,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "fe8d2a2e2e5a536c1295847976e7e49240a32e080d306f3177a05c51bda5f90c"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -90,11 +90,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "796cea4180b15bbe5558ce8f934348ea2e9bbe75550c609518b512b58bbb6924",
+  "entry_prompt_sha256": "d422b8f4a9ca82ab3b9ece3bd985dabed77bccffb7a56f9d13695bd09c3ea57e",
   "claim_boundary": "Preflight licenses only that the declared low-fidelity audit boundary is sufficiently understood to proceed; unresolved access or inventory gaps remain visible blockers."
 }

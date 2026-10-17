@@ -52,11 +52,11 @@ For release work, run it with the usual model and test checks:
 
 ```powershell
 python -c "import flowguard; print(flowguard.SCHEMA_VERSION)"
-python .flowguard/run_physicsguard_core_checks.py
-python .flowguard/run_physicsguard_ai_workflow_checks.py
-python .flowguard/run_physicsguard_test_file_contract_checks.py
-python .flowguard/run_physicsguard_test_file_contract_development_checks.py
-python .flowguard/run_physicsguard_evidence_mesh_checks.py
+python .flowguard/verification/owners/core/run_checks.py
+python .flowguard/verification/owners/ai_workflow/run_checks.py
+python .flowguard/verification/owners/test_file_contract/run_checks.py
+python .flowguard/verification/owners/test_file_contract_development/run_checks.py
+python .flowguard/verification/owners/evidence_mesh/run_checks.py
 python scripts/check_model_code_ledger.py
 python scripts/check_module_equation_ledger.py --json
 python -m pytest

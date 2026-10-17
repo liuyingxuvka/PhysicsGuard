@@ -76,7 +76,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "af57e2ef60d2f42a32f8a0e766ec3aea2cb3224d91e1e5ceb3f9e3e327b0ad3e"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -90,11 +90,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "7421c09bcb676a2622f8bc678975b7cf49dca6f340f0c2797d08ac027d38585e",
+  "entry_prompt_sha256": "46ef52e4e5d6a425e9fc0f2eeff40befd6c021c2a66547a3186441ecdc6953c5",
   "claim_boundary": "Library readiness licenses only the selected asset/profile/testbench combination and exact bounded reuse scope; it does not validate a new project automatically."
 }

@@ -73,7 +73,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "00fd399e9e635fff4b30930d73aedef63301690176a96c9be5bbd2461bc64ec8"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -87,11 +87,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "ea80592ea11603ad0faaf75889a635c53ff5a069b340c4d4dff8e3b7ea1fea13",
+  "entry_prompt_sha256": "04ee4bd0a71f0425566a93bcd51bebd4f1159afc9a1bb02214e7eece08c45a9f",
   "claim_boundary": "Adoption proves only current workflow records and toolchain/artifact readiness; it never substitutes for model execution, validation, closure, installation, or release evidence."
 }

@@ -73,7 +73,6 @@ def _load_checker():
 def _current_toolchain_identity() -> dict[str, str]:
     return purpose_contract_generator.current_toolchain_identity(
         repository_root=ROOT,
-        flowguard_project_path=ROOT / ".flowguard" / "project.toml",
     )
 
 
@@ -96,12 +95,11 @@ def test_route_capsule_is_direct_current_and_prompt_is_compact(skill_id: str) ->
     skill_root = SKILL_ROOT / skill_id
     prompt_path = skill_root / "SKILL.md"
     capsule = _load_json(skill_root / "references" / "route-capsule.json")
-    contract = _load_json(skill_root / "guard-model" / "contract.json")
 
     assert capsule["schema_version"] == "physicsguard.skill_route_capsule.v1"
     assert capsule["target_skill_id"] == skill_id
-    assert capsule["native_owner_id"] == contract["native_owner_id"]
-    assert capsule["native_route_id"] == contract["native_route_id"]
+    assert capsule["native_owner_id"] == purpose_contract_generator.TARGETS[skill_id]["native_owner_id"]
+    assert capsule["native_route_id"] == purpose_contract_generator.TARGETS[skill_id]["native_route_id"]
     assert capsule["route_role"] == (
         "composite" if skill_id == "physicsguard-ai-debugging" else "direct"
     )
@@ -154,7 +152,6 @@ def test_conditional_references_are_current_and_preserve_deep_capability(skill_i
         encoding="utf-8"
     )
     assert all(token in depth for token in DEEP_TOKENS)
-    assert f"check:{skill_id}:task-local-model-deepening" in depth
     template = (skill_root / "references" / "template-pack-routing.md").read_text(
         encoding="utf-8"
     )
@@ -190,17 +187,12 @@ def test_openai_metadata_invokes_only_the_selected_direct_skill(skill_id: str) -
 
 
 def test_prompt_load_graph_and_all_known_bads() -> None:
-    checker = _load_checker()
+    from scripts.report_physicsguard_skill_suite import build_report
     graph = _load_json(GRAPH_PATH)
-    expected_toolchain_identity = _current_toolchain_identity()
-    report = checker.check_prompt_load_graph(graph)
+    report = build_report(ROOT)
     assert report["structure_status"] == "pass", report["findings"]
-    assert report["route_count"] == 10
-    assert graph["suite_version"] == expected_toolchain_identity["physicsguard_version"]
-    assert graph["toolchain_identity"] == expected_toolchain_identity
-    known_bads = checker.prompt_load_known_bad_results(graph)
-    assert set(known_bads) == set(graph["known_bad_cases"])
-    assert set(known_bads.values()) == {"blocked"}
+    assert report["member_count"] == graph["route_count"] == 10
+    assert graph["suite_version"] == _current_toolchain_identity()["physicsguard_version"]
 
 
 def test_clear_satellite_routes_do_not_require_composite_debugging() -> None:
@@ -211,7 +203,6 @@ def test_clear_satellite_routes_do_not_require_composite_debugging() -> None:
         route = routes[skill_id]
         assert route["route_role"] == "direct"
         assert route["broad_route_prerequisite"] is False
-        assert route["selection_fixture"]["expected_skill_id"] == skill_id
         assert route["initial_paths"] == [
             f"skill/{skill_id}/agents/openai.yaml",
             f"skill/{skill_id}/SKILL.md",

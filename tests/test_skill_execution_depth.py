@@ -425,11 +425,11 @@ def _scheduled_identity() -> dict:
     return {
         "scheduler_or_trigger_id": "trigger:physicsguard:nightly",
         "scheduled_execution_id": "execution:physicsguard:2026-07-14",
-        "installation_receipt_id": "install:physicsguard:current",
-        "installation_receipt_hash": "1" * 64,
-        "installation_receipt_root_ref": {
+        "runtime_requirement_id": "install:physicsguard:current",
+        "runtime_requirement_hash": "1" * 64,
+        "runtime_requirement_root_ref": {
             "path_token": "active_skill_root",
-            "relative_path": ".skillguard/installation-receipt.json",
+            "relative_path": "runtime-requirements.json",
         },
         "installed_runtime_fingerprint": "2" * 64,
     }
@@ -461,7 +461,7 @@ def test_capability_and_scheduled_production_evidence_are_typed_and_disjoint(tmp
         project_relative="project",
         run_id="run:physicsguard-ai-debugging:scheduled-production",
     )
-    relative = ".skillguard/physicsguard-ai-debugging-scheduled-production.json"
+    relative = ".physicsguard/executions/physicsguard-ai-debugging-scheduled-production.json"
     target_inputs = _write_production_inputs(
         tmp_path,
         production,
@@ -502,7 +502,7 @@ def test_scheduled_production_adapter_binds_exact_target_files_and_sidecar(
         project_relative="project",
         run_id="run:physicsguard:production",
     )
-    relative = f".skillguard/{target}-scheduled-production.json"
+    relative = f".physicsguard/executions/{target}-scheduled-production.json"
     target_inputs = _write_production_inputs(
         tmp_path,
         package,
@@ -522,7 +522,7 @@ def test_scheduled_production_adapter_binds_exact_target_files_and_sidecar(
         item for item in target_inputs if not item.endswith("-identity.json")
     ]
     misplaced_run["request"]["scheduled_production_identity"] = _scheduled_identity()
-    with pytest.raises(ValueError, match="generic supervisor request"):
+    with pytest.raises(ValueError, match="scheduler request"):
         load_skill_scheduled_production_package(
             tmp_path, relative, misplaced_run, target
         )
@@ -576,7 +576,7 @@ def test_scheduled_production_rediscovers_semantic_rows_and_blocks_synchronized_
     ):
         shrunken["object_universe"][field] = [retained]
     shrunken["object_results"] = shrunken["object_results"][:1]
-    relative = f".skillguard/{target}-scheduled-production.json"
+    relative = f".physicsguard/executions/{target}-scheduled-production.json"
     target_inputs = _write_production_inputs(
         tmp_path,
         shrunken,
@@ -611,7 +611,7 @@ def test_scheduled_production_rejects_generic_placeholder_with_matching_hash(
         evidence_ref,
         hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
     )
-    relative = f".skillguard/{target}-scheduled-production.json"
+    relative = f".physicsguard/executions/{target}-scheduled-production.json"
     target_inputs = _write_production_inputs(
         tmp_path,
         package,
@@ -627,79 +627,6 @@ def test_scheduled_production_rejects_generic_placeholder_with_matching_hash(
         load_skill_scheduled_production_package(tmp_path, relative, run, target)
 
 
-def test_satellite_contracts_use_generic_supervision_for_native_guard_proofs() -> None:
-    for case in CASES:
-        target = case["target_skill_id"]
-        source = json.loads(
-            (
-                ROOT / "skill" / target / ".skillguard" / "contract-source.json"
-            ).read_text(encoding="utf-8")
-        )
-        checks = {row["check_id"]: row for row in source["checks"]}
-        guard = json.loads(
-            (ROOT / "skill" / target / "guard-model" / "contract.json").read_text(
-                encoding="utf-8"
-            )
-        )
-        assert not {
-            "calibration",
-        }.intersection(source)
-        owner = str(guard["native_owner_id"])
-        route = str(guard["native_route_id"])
-        assert source["integration_mode"] == "native-integrated"
-        assert source["native_route_owner"] == owner
-        assert source["default_route_id"] == route
-        assert source["native_route_bindings"] == [
-            {
-                "binding_id": f"native:{target}:current",
-                "native_route_id": route,
-                "required_before_closure": True,
-                "source": "guard-model/contract.json",
-            }
-        ]
-        assert source["may_define_parallel_execution_route"] is False
-        assert source["may_define_skillguard_runtime_route"] is False
-        assert source["native_check_bindings"] == [
-            {
-                "binding_id": f"native-check:{target}:{check_id.replace(':', '-')}",
-                    "evidence_source": (
-                        "physicsguard.task_local_revision"
-                        if check_id.endswith(":task-local-model-deepening")
-                        else (
-                            "physicsguard.family_distribution_authority"
-                            if check_id == "check:physicsguard-family:distribution-authority"
-                            else "physicsguard.guard_model_contract"
-                        )
-                    ),
-                "native_check_id": check_id,
-                "required": True,
-            }
-            for check_id in checks
-        ]
-        depth = source["depth_profile"]
-        assert depth["native_owner_id"] == owner
-        assert depth["native_route_ids"] == [route]
-        assert depth["native_check_ids"] == list(checks)
-        assert depth["model_deepening_check_id"] == (
-            f"check:{target}:task-local-model-deepening"
-        )
-        assert depth["integration_mode"] == "native-integrated"
-        assert depth["enforcement_level"] == "enforced"
-        assert depth["required_closure_profiles"] == ["enforced"]
-        assert depth["skillguard_adds_domain_route"] is False
-        contract_check = f"check:{target}:family-baseline-contract"
-        candidate_check = f"check:{target}:family-baseline-candidate"
-        good_check = f"check:{target}:family-baseline-good"
-        assert checks[candidate_check]["depends_on_check_ids"] == [contract_check]
-        assert checks[good_check]["depends_on_check_ids"] == [candidate_check]
-        for failure in guard["prevented_failure_classes"]:
-            suffix = failure["failure_id"].rsplit(":", 1)[-1]
-            bad = checks[f"check:{target}:family-baseline-bad:{suffix}"]
-            assert bad["depends_on_check_ids"] == [good_check]
-            assert not {
-                "depth_evidence_protocol",
-                "calibration_evidence_protocol",
-            }.intersection(bad)
 
 
 @pytest.mark.parametrize(

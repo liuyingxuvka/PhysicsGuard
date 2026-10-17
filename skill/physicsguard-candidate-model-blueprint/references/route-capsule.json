@@ -92,7 +92,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "5a4397c9a8facfe594c27fa0f6aed8feb258759d764df006264f03dc8c745ced"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -106,11 +106,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "a9e840093b922905e8ee8a0fde1c3c85e723cac0e6ce47b4479c8b1e59791f78",
+  "entry_prompt_sha256": "88393473e8b3ef8ec1169e5e6e2485c257b8918b9be9566c7f6f8a798afb9dcf",
   "claim_boundary": "Generation eligibility covers only a candidate low-fidelity blueprint for the declared target and interfaces; it is not an implemented or validated high-fidelity model."
 }

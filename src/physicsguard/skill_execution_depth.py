@@ -821,7 +821,7 @@ def _validate_scheduled_production_identity(
                 errors,
                 "scheduled_identity_on_nonproduction_evidence",
                 "scheduled_production_identity",
-                "Only scheduled-production evidence may carry an installation/execution identity.",
+                "Only scheduled-production evidence may carry an runtime/execution identity.",
             )
         return {}
     if not isinstance(value, Mapping):
@@ -829,15 +829,15 @@ def _validate_scheduled_production_identity(
             errors,
             "missing_scheduled_production_identity",
             "scheduled_production_identity",
-            "Scheduled production requires exact trigger, execution, installation receipt, root, and runtime identities.",
+            "Scheduled production requires exact trigger, execution, runtime requirement, root, and runtime identities.",
         )
         return {}
     allowed = {
         "scheduler_or_trigger_id",
         "scheduled_execution_id",
-        "installation_receipt_id",
-        "installation_receipt_hash",
-        "installation_receipt_root_ref",
+        "runtime_requirement_id",
+        "runtime_requirement_hash",
+        "runtime_requirement_root_ref",
         "installed_runtime_fingerprint",
     }
     unknown = sorted(set(value) - allowed)
@@ -852,32 +852,32 @@ def _validate_scheduled_production_identity(
     for field in (
         "scheduler_or_trigger_id",
         "scheduled_execution_id",
-        "installation_receipt_id",
+        "runtime_requirement_id",
     ):
         if not isinstance(value.get(field), str) or not str(value.get(field)).strip():
             _error(errors, f"scheduled_{field}_missing", f"scheduled_production_identity.{field}", "Non-empty exact identity is required.")
-    for field in ("installation_receipt_hash", "installed_runtime_fingerprint"):
+    for field in ("runtime_requirement_hash", "installed_runtime_fingerprint"):
         if not isinstance(value.get(field), str) or not re.fullmatch(
             r"[0-9A-Fa-f]{64}", str(value.get(field))
         ):
             _error(errors, f"scheduled_{field}_invalid", f"scheduled_production_identity.{field}", "A 64-character hexadecimal sha256 is required.")
-    root_ref = value.get("installation_receipt_root_ref")
+    root_ref = value.get("runtime_requirement_root_ref")
     if not isinstance(root_ref, Mapping):
-        _error(errors, "scheduled_installation_root_ref_missing", "scheduled_production_identity.installation_receipt_root_ref", "Active-skill-root reference is required.")
+        _error(errors, "scheduled_runtime_root_ref_missing", "scheduled_production_identity.runtime_requirement_root_ref", "Active-skill-root reference is required.")
     else:
         if set(root_ref) - {"path_token", "relative_path"}:
-            _error(errors, "scheduled_installation_root_ref_unknown_field", "scheduled_production_identity.installation_receipt_root_ref", "Only path_token and relative_path are allowed.")
+            _error(errors, "scheduled_runtime_root_ref_unknown_field", "scheduled_production_identity.runtime_requirement_root_ref", "Only path_token and relative_path are allowed.")
         relative = str(root_ref.get("relative_path", "")).replace("\\", "/")
         if root_ref.get("path_token") != "active_skill_root":
-            _error(errors, "scheduled_installation_root_ref_token_invalid", "scheduled_production_identity.installation_receipt_root_ref.path_token", "path_token must be active_skill_root.")
+            _error(errors, "scheduled_runtime_root_ref_token_invalid", "scheduled_production_identity.runtime_requirement_root_ref.path_token", "path_token must be active_skill_root.")
         if (
             not relative
             or relative.startswith("/")
             or re.match(r"^[A-Za-z]:", relative)
             or any(part in {"", ".", ".."} for part in relative.split("/"))
         ):
-            _error(errors, "scheduled_installation_root_ref_invalid", "scheduled_production_identity.installation_receipt_root_ref.relative_path", "A safe path relative to active_skill_root is required.")
-        result["installation_receipt_root_ref"] = {
+            _error(errors, "scheduled_runtime_root_ref_invalid", "scheduled_production_identity.runtime_requirement_root_ref.relative_path", "A safe path relative to active_skill_root is required.")
+        result["runtime_requirement_root_ref"] = {
             "path_token": root_ref.get("path_token"),
             "relative_path": relative,
         }
@@ -1498,7 +1498,7 @@ def build_skill_scheduled_production_identity_sidecar(
     package_sha256: str,
     scheduled_production_identity: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Build the sole target-owned installation/execution identity input."""
+    """Build the sole target-owned runtime/execution identity input."""
 
     if target_skill_id not in ROUTE_POLICIES:
         raise ValueError("scheduled production identity sidecar target is unknown")
@@ -1528,7 +1528,7 @@ def build_skill_scheduled_production_identity_sidecar(
         "package_ref": package_ref,
         "package_sha256": package_sha256,
         "scheduled_production_identity": identity,
-        "claim_boundary": "This sidecar binds only the exact target-owned scheduled execution, current installation receipt, installed runtime, and package bytes; generic supervisor request fields have no identity authority.",
+        "claim_boundary": "This sidecar binds only the exact target-owned scheduled execution, current runtime requirement, installed runtime, and package bytes; scheduler request fields have no identity authority.",
     }
 
 
@@ -1577,10 +1577,10 @@ def load_skill_scheduled_production_package(
     )
     request = run.get("request")
     if not isinstance(request, Mapping):
-        raise ValueError("generic supervisor run request is missing")
+        raise ValueError("scheduler run request is missing")
     if "scheduled_production_identity" in request:
         raise ValueError(
-            "generic supervisor request scheduled_production_identity is forbidden"
+            "scheduler request scheduled_production_identity is forbidden"
         )
     raw_inputs = request.get("target_input_paths")
     if not isinstance(raw_inputs, list) or not raw_inputs:
@@ -1613,7 +1613,7 @@ def load_skill_scheduled_production_package(
         raise ValueError("scheduled production loader requires scheduled_production evidence")
     if "scheduled_production_identity" in package:
         raise ValueError(
-            "package installation identity is forbidden; use the target-owned identity sidecar"
+            "package runtime identity is forbidden; use the target-owned identity sidecar"
         )
     if "scheduled_production_identity_source" in package:
         raise ValueError("package cannot self-assert identity-sidecar consumption")
@@ -1735,7 +1735,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--run-request",
         type=Path,
-        help="generic supervisor run JSON containing only run_id and target_input_paths",
+        help="scheduler run JSON containing only run_id and target_input_paths",
     )
     parser.add_argument(
         "--target-skill-id",

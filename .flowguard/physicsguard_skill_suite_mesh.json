@@ -1,508 +1,67 @@
 {
-  "artifact_kind": "flowguard_model_mesh",
-  "mesh_id": "physicsguard.skill-suite-maintenance.v4",
-  "mesh_version": "4.1",
-  "structure_owner": "physicsguard.skill-suite-structure-report",
-  "guard_model_contract": {
-    "semantic_owner": "physicsguard",
-    "skillguard_role": "declared_checks_receipts_dependencies_and_closure_only",
-    "family_baseline_role": "family_baseline_regression",
-    "current_model_role": "current_model_purpose",
-    "current_model_authority_root": ".physicsguard/model-purpose/<model-id>",
-    "family_baseline_authoring_order": [
-      "freeze_prevented_failure_contract",
-      "build_candidate",
-      "prove_known_good",
-      "prove_every_known_bad",
-      "issue_native_receipt"
-    ],
-    "current_model_authoring_order": [
-      "freeze_current_model_purpose",
-      "build_candidate",
-      "prove_known_good",
-      "prove_every_known_bad",
-      "issue_current_model_receipt"
-    ],
-    "every_declared_failure_requires_exact_known_bad": true,
-    "candidate_requires_contract_fingerprint": true,
-    "candidate_artifact": "guard-model/candidate.json",
-    "candidate_binding": "exact_contract_fingerprint_and_ordered_authoring_event_chain",
-    "proof_strengths": [
-      "native_semantic_detection",
-      "native_obligation_admission_gate"
-    ],
-    "semantic_claim_requires_exact_native_fixture": true,
-    "admission_claim_boundary": "candidate_rejected_only_when_current_target_native_obligation_evidence_is_absent_or_native_failed",
-    "mode_branching": "forbidden",
-    "family_baseline_can_close_current_model": false,
-    "task_local_model_role": "strict_receipt_derived_model_deepening",
-    "task_local_gap_authority": "target_owned_six_family_native_depth_receipt",
-    "task_local_closure_rule": "zero_native_gaps_plus_exact_candidate_regression_independent_holdout_and_predictive_receipts"
-  },
-  "maintenance_boundary": {
-    "maintenance_unit_id": "unit:physicsguard-family",
-    "member_count": 10,
-    "member_receipt_authority": "each_member_exact_declared_check_projection_only",
-    "suite_summary_authoritative": false,
-    "suite_summary_may_execute_checks": false,
-    "suite_summary_may_consume_receipts": false,
-    "suite_summary_may_issue_closure": false,
-    "forbidden_parent_unit_id": "unit:physicsguard-skill-suite-parent",
-    "retired_authority_paths": [
-      ".flowguard/skillguard-parent",
-      ".flowguard/physicsguard_suite_parent_inventory.json",
-      "scripts/generate_physicsguard_suite_parent_contract.py",
-      "scripts/verify_physicsguard_suite_parent.py"
-    ],
-    "summary_path": "scripts/report_physicsguard_skill_suite.py",
-    "summary_output": "stdout_only_no_receipt_no_run_store"
-  },
-  "shared_kernel": {
-    "owner": "physicsguard.core",
-    "relation": "read_only_shared_infrastructure",
-    "forbidden_transfer": [
-      "domain_judgment",
-      "physical_model_evaluation",
-      "native_route_execution",
-      "target_claim_boundary"
-    ]
-  },
-  "canonical_simulator": {
-    "source_authority": [
-      "src/physicsguard/skill_execution_depth.py",
-      "src/physicsguard/guard_model_contract.py",
-      "src/physicsguard/schema/task_local_revision.py",
-      "src/physicsguard/core/task_local_revision.py",
-      "src/physicsguard/cli.py"
-    ],
-    "entrypoints": [
-      "python -m physicsguard.skill_execution_depth",
-      "python -m physicsguard.guard_model_contract",
-      "python -m physicsguard.cli"
-    ],
-    "consumer_dependency": "physicsguard==0.15.11",
-    "missing_dependency_behavior": "fail_visible",
-    "copied_editable_implementations_allowed": false,
-    "dataset_bundle_reduction_gate": "isolated_package_install_and_entrypoint_equivalence_required",
-    "dataset_bundle_disposition": "removed_after_isolated_equivalence"
-  },
+  "schema_version": "physicsguard.skill_routes.v1",
+  "version": "0.15.11",
   "children": [
     {
       "target_skill_id": "physicsguard-ai-debugging",
       "native_owner_id": "physicsguard.ai-debugging",
       "native_route_id": "route:physicsguard-ai-debugging:audit",
-      "declared_check_count": 9,
-      "inputs": [
-        "symptom",
-        "physical_boundary",
-        "topology",
-        "signals",
-        "parameters",
-        "validation_evidence"
-      ],
-      "outputs": [
-        "localized_findings",
-        "next_required_evidence",
-        "bounded_audit_claim"
-      ],
-      "state_or_side_effects": [
-        "audit_artifacts"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "composite"
     },
     {
       "target_skill_id": "physicsguard-audit-closure",
       "native_owner_id": "physicsguard.audit-closure",
       "native_route_id": "route:physicsguard-audit-closure:close",
-      "declared_check_count": 10,
-      "inputs": [
-        "closure_plan",
-        "native_check_receipts",
-        "validation_depth_receipt"
-      ],
-      "outputs": [
-        "closure_status",
-        "blockers",
-        "claim_boundary"
-      ],
-      "state_or_side_effects": [
-        "closure_receipt"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-candidate-model-blueprint",
       "native_owner_id": "physicsguard.candidate-model-blueprint",
       "native_route_id": "route:physicsguard-candidate-model-blueprint:build",
-      "declared_check_count": 8,
-      "inputs": [
-        "validated_hierarchy",
-        "signals",
-        "parameters",
-        "interfaces"
-      ],
-      "outputs": [
-        "candidate_blueprint",
-        "generation_eligibility",
-        "rollout_boundary"
-      ],
-      "state_or_side_effects": [
-        "blueprint_artifact"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-model-dataset-validation",
       "native_owner_id": "physicsguard-model-dataset-validation",
       "native_route_id": "route:physicsguard-model-dataset-validation",
-      "declared_check_count": 9,
-      "inputs": [
-        "model",
-        "dataset",
-        "test_file_contract",
-        "validation_plan",
-        "project_evidence"
-      ],
-      "outputs": [
-        "validation_receipt",
-        "adequacy_findings",
-        "bounded_validation_claim"
-      ],
-      "state_or_side_effects": [
-        "validation_artifacts"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-model-library",
       "native_owner_id": "physicsguard.model-library",
       "native_route_id": "route:physicsguard-model-library:reuse",
-      "declared_check_count": 8,
-      "inputs": [
-        "asset_inventory",
-        "profiles",
-        "testbench_context",
-        "validation_receipts"
-      ],
-      "outputs": [
-        "compatible_assets",
-        "gaps",
-        "bounded_reuse_scope"
-      ],
-      "state_or_side_effects": [
-        "library_index"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-model-understanding-preflight",
       "native_owner_id": "physicsguard.model-understanding-preflight",
       "native_route_id": "route:physicsguard-model-understanding-preflight:review",
-      "declared_check_count": 8,
-      "inputs": [
-        "visible_symptom",
-        "physical_boundary",
-        "subsystems",
-        "signals",
-        "parameters",
-        "assumptions"
-      ],
-      "outputs": [
-        "understanding_record",
-        "access_gaps",
-        "next_route"
-      ],
-      "state_or_side_effects": [
-        "preflight_record"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-project-adoption",
       "native_owner_id": "physicsguard.project-adoption",
       "native_route_id": "route:physicsguard-project-adoption:audit",
-      "declared_check_count": 8,
-      "inputs": [
-        "project_root",
-        "project_record",
-        "toolchain_identity",
-        "artifact_inventory"
-      ],
-      "outputs": [
-        "adoption_status",
-        "blockers",
-        "required_revalidation"
-      ],
-      "state_or_side_effects": [
-        "project_adoption_record"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-project-evidence-registry",
       "native_owner_id": "physicsguard.project-evidence-registry",
       "native_route_id": "route:physicsguard-project-evidence-registry:check",
-      "declared_check_count": 8,
-      "inputs": [
-        "declared_artifacts",
-        "discovered_artifacts",
-        "binding_expectations",
-        "bundles"
-      ],
-      "outputs": [
-        "reconciled_inventory",
-        "binding_map",
-        "critical_gaps"
-      ],
-      "state_or_side_effects": [
-        "evidence_registry"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-signal-mapping-review",
       "native_owner_id": "physicsguard.signal-mapping-review",
       "native_route_id": "route:physicsguard-signal-mapping-review:review",
-      "declared_check_count": 8,
-      "inputs": [
-        "governed_signal_universe",
-        "units",
-        "conversions",
-        "revision_evidence",
-        "time_axes"
-      ],
-      "outputs": [
-        "mapping_results",
-        "confidence_gaps",
-        "target_bindings"
-      ],
-      "state_or_side_effects": [
-        "mapping_review"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     },
     {
       "target_skill_id": "physicsguard-test-file-contract-review",
       "native_owner_id": "physicsguard.test-file-contract-review",
       "native_route_id": "route:physicsguard-test-file-contract-review:check",
-      "declared_check_count": 9,
-      "inputs": [
-        "file_inventory",
-        "field_inventory",
-        "units",
-        "timing",
-        "testbench_and_model_bindings"
-      ],
-      "outputs": [
-        "contract_status",
-        "per_signal_depth",
-        "project_gaps"
-      ],
-      "state_or_side_effects": [
-        "test_file_contract"
-      ],
-      "summary_relation": "inventory_only_member_receipt_not_consumed"
+      "route_role": "direct"
     }
   ],
-  "architecture_reduction": {
-    "observable_contract": "Ten target-owned semantic inventories, direct route identities, and deep native capabilities remain reachable while initial entry loading contracts to one selected prompt and capsule; no suite-level closure is promised.",
-    "candidates": [
-      {
-        "candidate_id": "remove-cross-unit-parent-authority",
-        "candidate_type": "remove_branch",
-        "proof_status": "safe_by_equivalence",
-        "target_action": "remove",
-        "compatibility_disposition": "prune_candidate"
-      },
-      {
-        "candidate_id": "collapse-satellite-runtime-copies",
-        "candidate_type": "collapse_adapter",
-        "proof_status": "safe_by_equivalence",
-        "target_action": "collapse",
-        "compatibility_disposition": "retired_duplicate"
-      },
-      {
-        "candidate_id": "remove-dataset-bundled-runtime",
-        "candidate_type": "merge_modules",
-        "proof_status": "safe_by_equivalence",
-        "target_action": "remove",
-        "compatibility_disposition": "retired_duplicate"
-      },
-      {
-        "candidate_id": "contract-eager-skill-entry-prompts",
-        "candidate_type": "collapse_adapter",
-        "proof_status": "safe_by_equivalence",
-        "target_action": "collapse",
-        "compatibility_disposition": "direct_current_replacement"
-      }
-    ]
-  },
-  "structure_mesh": {
-    "source_model_id": "physicsguard.skill-suite-maintenance.v4",
-    "parent_surface": "per-skill copied execution-depth and guard-model verifier implementations",
-    "target_modules": [
-      "physicsguard.skill_execution_depth",
-      "physicsguard.guard_model_contract",
-      "physicsguard.schema.task_local_revision",
-      "physicsguard.core.task_local_revision",
-      "physicsguard.cli"
-    ],
-    "function_block_owners": {
-      "execution_depth": "src/physicsguard/skill_execution_depth.py",
-      "guard_model_verification": "src/physicsguard/guard_model_contract.py",
-      "task_local_model_deepening": "src/physicsguard/schema/task_local_revision.py + src/physicsguard/core/task_local_revision.py + src/physicsguard/cli.py",
-      "target_semantics": "each skill guard-model JSON and declared semantic checks"
-    },
-    "state_owner": "each SkillGuard member receipt store",
-    "side_effect_owner": "the selected member execution owner",
-    "config_owner": "each contract-source.json",
-    "public_entrypoint_plan": "package_module_entrypoints_no_fallback",
-    "parity_gate": "isolated_package_install_and_representative_consumer_replay"
-  },
-  "test_mesh": {
-    "mesh_id": "physicsguard.skillguard-family-validation.v4",
-    "source_model_id": "physicsguard.skill-suite-maintenance.v4",
-    "inventory_revision": "ten-members-85-exact-check-owners",
-    "diagnostic_boundary": "declared_in_progress",
-    "planned": 85,
-    "executed": 0,
-    "failed": 0,
-    "not_run": 85,
-    "not_run_reason": "Current generated source defines the owner topology only; no frozen SkillGuard owner execution receipt is embedded as source.",
-    "parent_gate": "ten frozen same-unit member plans; no suite-parent receipt",
-    "child_evidence_owner": "each member semantic check projection",
-    "supervisor_run_count": 10,
-    "read_only_reuse_review": {
-      "selected_owner_count": 85,
-      "reusable_owner_count": 0,
-      "would_execute_owner_count": 85
-    },
-    "release_scope": "deferred_not_requested"
-  },
-  "development_process": {
-    "modes": [
-      {
-        "mode": "plan_detailing",
-        "status": "complete"
-      },
-      {
-        "mode": "strategy_selection",
-        "status": "active",
-        "reason": "material_rework_risk"
-      },
-      {
-        "mode": "agent_workflow",
-        "status": "complete"
-      },
-      {
-        "mode": "execution_freshness",
-        "status": "in_progress",
-        "reason": "global_flowguard_identity_freeze_and_final_scope_audit_pending"
-      }
-    ],
-    "ordered_steps": [
-      "openspec_artifacts_current",
-      "flowguard_project_and_models_current",
-      "retire_foreign_parent_authority",
-      "update_canonical_runtime_projection",
-      "compile_skillguard_contracts",
-      "run_affected_validation",
-      "audit_evidence_lifecycle",
-      "final_scope_audit"
-    ],
-    "sequential_supervisor_run_count": 10,
-    "declared_execution_owner_count": 84,
-    "peer_write_policy": "preserve_and_stale_only_affected_evidence"
-  },
-  "evidence_lifecycle": {
-    "canonical_owner_evidence_root": "work/skillguard-0-4-refresh/owner-evidence",
-    "legacy_family_evidence_root": "work/oe",
-    "retired_parent_evidence_root": "work/oe-parent",
-    "run_state_root": "work/skillguard-0-4-refresh/run-state",
-    "source_authority": false,
-    "freshness_input": false,
-    "current_snapshot": {
-      "audit_status": "passed",
-      "current_objects": 372,
-      "temporary_objects": 74,
-      "orphan_objects": 0,
-      "collectible_bytes": 0,
-      "gc_plan_status": "ready",
-      "gc_candidate_count": 0
-    },
-    "legacy_snapshots": [
-      {
-        "root": "work/oe",
-        "audit_status": "blocked",
-        "blocker": "current_head_authority_missing",
-        "orphan_objects": 316,
-        "temporary_objects": 82,
-        "collectible_bytes": 856335,
-        "gc_plan_status": "blocked",
-        "gc_candidate_count": 0
-      },
-      {
-        "root": "work/oe-parent",
-        "audit_status": "blocked",
-        "blocker": "current_head_authority_missing",
-        "orphan_objects": 92,
-        "temporary_objects": 33,
-        "collectible_bytes": 262710,
-        "gc_plan_status": "blocked",
-        "gc_candidate_count": 0
-      }
-    ],
-    "allowed_operations": [
-      "evidence-audit",
-      "evidence-gc-plan"
-    ],
-    "quarantine_authorized": false,
-    "purge_authorized": false,
-    "current_and_release_pins_required_before_deletion": true
-  },
-  "claim_boundary": "This model proves the ten-member author structure, duplicate-runtime reduction gates, validation inventory, and evidence lifecycle boundaries. It does not execute or aggregate member checks, issue SkillGuard closure, prove a PhysicsGuard domain result, install consumers, or authorize evidence deletion.",
-  "entry_loading": {
-    "route_count": 10,
-    "direct_route_count": 9,
-    "composite_route_count": 1,
-    "composite_route_id": "route:physicsguard-ai-debugging:audit",
-    "composite_is_parent": false,
-    "route_capsule_schema": "physicsguard.skill_route_capsule.v1",
-    "prompt_load_graph": ".flowguard/physicsguard_skill_prompt_load_graph.json",
-    "initial_loading_rule": "selected_metadata_plus_compact_skill_plus_route_capsule_only",
-    "conditional_reference_paths": [
-      "references/native-route-protocol.md",
-      "references/native-depth-and-purpose.md",
-      "references/template-pack-routing.md"
-    ],
-    "maximum_reference_depth": 1,
-    "required_deep_capabilities": [
-      "execution_depth",
-      "mapping",
-      "residual",
-      "uncertainty",
-      "diagnosability",
-      "predictive_rollout",
-      "purpose_before_candidate",
-      "prediction_before_observation",
-      "model_miss",
-      "typed_regression",
-      "independent_holdout",
-      "exact_terminal_boundary"
-    ]
-  },
-  "toolchain_identity": {
-    "physicsguard_version": "0.15.11",
-    "physicsguard_authority_sha256": "sha256:5d0553a90e75c0b50d418b1e24bda947d9cd2ffc81c12db6ad839f39bb5aca14",
-    "flowguard_version": "0.68.14",
-    "flowguard_schema_version": "1.0",
-    "flowguard_package_tree_sha256": "sha256:6ea638c479e2836ee72d76f470ecba6ec4de315763872e2e9c2c271fb0c68468",
-    "flowguard_direct_url_sha256": "sha256:35738303a58827bda346d458850eb99718f2b382c3ef138cb9036c07db24de9d",
-    "flowguard_authority_sha256": "sha256:6dcc3ddf9ae4bf301c76c5104ae2392a89cdd5745c3c4979d62e32494ad0a98d",
-    "skillguard_version": "0.7.2",
-    "skillguard_api_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
-    "skillguard_distribution_tree_sha256": "sha256:e6a3ddb0844496e43d0d4c5a04cb639697299e423d7bda8948617e349e2ec756",
-    "skillguard_direct_url_sha256": "sha256:7236a685f8f921d9a5f4444658caa372abdba29c9e5ed6ad62f5f7b84d060558",
-    "skillguard_authority_sha256": "sha256:aa816fbc8145c43f06c4ab5dec91015fedf2232e18b58bc33545346cffbb4bed"
-  }
+  "claim_boundary": "Ten native routes; this navigation list executes no checks and grants no domain pass."
 }

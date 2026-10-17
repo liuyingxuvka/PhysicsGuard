@@ -134,22 +134,9 @@ one phase, two parameters from a 10,000-parameter universe, two signals from a
 10,000-signal universe, duplicate timestamps, or thousands of identical
 exclusion reasons cannot support a broad validation claim.
 
-For non-trivial, broad, reuse-ready, or predictive conclusions, the native
-receipt must then be consumed by a current SkillGuard V2 supervised run bound
-to the exact target input paths. A quick local run without that receipt remains
-`BOUNDARY_ONLY` or `BOUNDED_PARTIAL`; the supervisor does not recompute PhysicsGuard
-physics, adequacy, or rollout metrics.
+For broad or predictive conclusions, execute the native validation plan against the exact target inputs. Preserve its dataset, mapping, coverage and predictive boundaries. Static objects need current bindings; time-varying objects need their own declared coverage and contribution evidence.
 
-The supervised run executes the validation plan from the target-input set; its
-portable calibration project is never accepted as a substitute for the target
-project. Separate content-addressed calibrations prove one honest static
-binding, one adequate time-varying history, and rejection of an intentionally
-shallow history. SkillGuard's parameter projection is class-aware: static
-objects have no invented time points, while each time-varying object preserves
-its raw denominator, native dynamic floor, early/middle/late strata, and
-model-contribution sentinels. Ordinary rows remain visible in the denominator
-but are not all marked critical; otherwise representative sampling would be
-silently converted into full sampling. PhysicsGuard's project or convergence
+ PhysicsGuard's project or convergence
 policy may and usually should be stricter than the native floor.
 
 ## Predictive rollout

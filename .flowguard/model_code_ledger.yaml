@@ -9,7 +9,7 @@ purpose: >
   not prove runtime behavior or physical correctness by itself.
 entries:
   - id: workflow.task_local_model_deepening
-    model_file: .flowguard/task_local_model_deepening/model.py
+    model_file: .flowguard/models/owners/task_local_model_deepening/model.py
     model_blocks:
       - FreezeStrictPlan
       - CompareFrozenPrediction
@@ -40,7 +40,7 @@ entries:
       - openspec/changes/archive/2026-08-01-make-physics-model-deepening-iterative/specs/physics-model-deepening/spec.md
       - openspec/changes/archive/2026-08-01-make-physics-model-deepening-iterative/design.md
     validation_commands:
-      - command: python .flowguard/task_local_model_deepening/run_checks.py
+      - command: python .flowguard/verification/owners/task_local_model_deepening/run_checks.py
         covers: Strict plan, model-miss, native gap transition, closure, and all bounded non-success terminals.
       - command: python -m pytest tests/test_task_local_revision.py tests/test_physicsguard_skill_prompts.py tests/test_physicsguard_skill_entry_loading.py -q
         covers: Runtime schemas, evaluator behavior, CLI receipts, compact entry projections, and conditional deep-reference loading across all ten maintained skills.
@@ -56,7 +56,7 @@ entries:
       - Task-local schema, evaluator, CLI, strict skill prompt, generated author contract, or terminal semantics change.
 
   - id: core.system_validation
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks:
       - ValidateSystem
     responsibility: >
@@ -84,7 +84,7 @@ entries:
       - examples/hierarchical/observed_debugging/pitch_feedback_observed_clean.yaml
       - examples/assumptions/variable_assumption.yaml
     validation_commands:
-      - command: python .flowguard/run_physicsguard_core_checks.py
+      - command: python .flowguard/verification/owners/core/run_checks.py
         covers: FlowGuard validation branch coverage for schema and setup failures.
       - command: python -m pytest tests/test_system_spec.py tests/test_yaml_loader.py tests/test_hierarchy_spec.py tests/test_observation_spec.py tests/test_assumption_spec.py
         covers: Input schema and loader behavior.
@@ -98,7 +98,7 @@ entries:
       - New top-level input modes are added without validation ownership.
 
   - id: core.registry_and_assumptions
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks:
       - BuildRegistry
     responsibility: >
@@ -122,7 +122,7 @@ entries:
       - examples/assumptions/proposed_assumption.yaml
       - examples/assumptions/rejected_assumption.yaml
     validation_commands:
-      - command: python .flowguard/run_physicsguard_core_checks.py
+      - command: python .flowguard/verification/owners/core/run_checks.py
         covers: Registry, assumption, and setup failure branches.
       - command: python -m pytest tests/test_residual_builder.py tests/test_variable_registry.py tests/test_assumption_manager.py tests/test_assumption_residuals.py
         covers: Registry construction, variable constraints, and explicit assumption behavior.
@@ -135,7 +135,7 @@ entries:
       - Assumption application order or free-variable behavior changes.
 
   - id: core.residual_assembly
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks:
       - AssembleResiduals
     responsibility: >
@@ -154,7 +154,7 @@ entries:
       - examples/generic_conflict_system.yaml
       - examples/physical_conflict.yaml
     validation_commands:
-      - command: python .flowguard/run_physicsguard_core_checks.py
+      - command: python .flowguard/verification/owners/core/run_checks.py
         covers: Residual normalization, post_check selection, and setup failure branches.
       - command: python -m pytest tests/test_residual_builder.py tests/test_solver.py tests/test_diagnostics.py
         covers: Residual vector construction, solver participation, and diagnostics ranking.
@@ -167,7 +167,7 @@ entries:
       - ResidualRecord fields are renamed or moved.
 
   - id: core.solve_evaluate_compare
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks:
       - ExecuteMode
     responsibility: >
@@ -192,7 +192,7 @@ entries:
       - examples/observed/physical_coolant_observed_clean.yaml
       - examples/observed/physical_coolant_observed_conflict.yaml
     validation_commands:
-      - command: python .flowguard/run_physicsguard_core_checks.py
+      - command: python .flowguard/verification/owners/core/run_checks.py
         covers: Solve, evaluate, compare, non-convergence, and audit-fail branches.
       - command: python -m pytest tests/test_solver.py tests/test_evaluator.py tests/test_cli.py
         covers: Solver results, observed evaluation, reference comparison, and CLI behavior.
@@ -205,7 +205,7 @@ entries:
       - SolverResult, ObservedEvaluationResult, or ComparisonResult semantics change.
 
   - id: core.hierarchy_modes
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks:
       - ExecuteMode
       - GenerateDiagnostics
@@ -238,7 +238,7 @@ entries:
       - examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml
       - examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml
     validation_commands:
-      - command: python .flowguard/run_physicsguard_core_checks.py
+      - command: python .flowguard/verification/owners/core/run_checks.py
         covers: Hierarchy run, plan, inspect, evaluate, compare, and diagnostics labels.
       - command: python -m pytest tests/test_hierarchy_runner.py tests/test_hierarchy_cli.py tests/test_hierarchy_block_index.py tests/test_hierarchy_refinement.py tests/test_hierarchy_scoring.py
         covers: Hierarchy execution, block ownership, scoring, refinement recommendations, and CLI behavior.
@@ -254,7 +254,7 @@ entries:
       - Signal mapping ledger or bug-family follow-up output changes.
 
   - id: core.diagnostics_reporting
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks:
       - GenerateDiagnostics
     responsibility: >
@@ -277,7 +277,7 @@ entries:
       - examples/generic_conflict_system.yaml
       - examples/assumptions/variable_assumption.yaml
     validation_commands:
-      - command: python .flowguard/run_physicsguard_core_checks.py
+      - command: python .flowguard/verification/owners/core/run_checks.py
         covers: Diagnostics source ordering and assumption-reporting invariants.
       - command: python -m pytest tests/test_diagnostics.py tests/test_assumption_diagnostics.py tests/test_assumption_cli.py tests/test_cli.py
         covers: JSON diagnostics, warnings, assumption cards, and CLI output.
@@ -290,7 +290,7 @@ entries:
       - New execution modes emit diagnostics without being represented in the FlowGuard model.
 
   - id: workflow.project_adoption
-    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_file: .flowguard/models/owners/ai_workflow/physicsguard_ai_workflow_model.py
     model_blocks:
       - AdoptProject
     responsibility: >
@@ -308,7 +308,7 @@ entries:
       - .physicsguard/module_equation_ledger.yaml
       - docs/physicsguard_adoption_log.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+      - command: python .flowguard/verification/owners/ai_workflow/run_checks.py
         covers: Project-adoption gate before downstream AI workflow claims.
       - command: python -m physicsguard.cli project audit --pretty
         covers: Current repository adoption record.
@@ -323,7 +323,7 @@ entries:
       - The repository moves or package metadata changes without refreshing adoption evidence.
 
   - id: workflow.preflight_and_intake
-    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_file: .flowguard/models/owners/ai_workflow/physicsguard_ai_workflow_model.py
     model_blocks:
       - ReviewPreflight
       - ReviewIntake
@@ -345,7 +345,7 @@ entries:
       - docs/model_understanding_preflight.md
       - docs/external_model_intake.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+      - command: python .flowguard/verification/owners/ai_workflow/run_checks.py
         covers: Preflight and intake gates before localization claims.
       - command: python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
         covers: Current model-understanding template.
@@ -362,7 +362,7 @@ entries:
       - Signal mapping confidence, conversion, or stale-evidence semantics change.
 
   - id: workflow.module_equation_ledger
-    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_file: .flowguard/models/owners/ai_workflow/physicsguard_ai_workflow_model.py
     model_blocks:
       - CheckModuleLedger
     responsibility: >
@@ -377,7 +377,7 @@ entries:
       - .physicsguard/module_equation_ledger.yaml
       - docs/module_equation_ledger.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+      - command: python .flowguard/verification/owners/ai_workflow/run_checks.py
         covers: Ledger freshness gate before AI workflow done claims.
       - command: python scripts/check_module_equation_ledger.py --json
         covers: Ledger fields, registered module types, tests, and examples.
@@ -392,7 +392,7 @@ entries:
       - A new module family is added without an owning ledger row.
 
   - id: workflow.skill_sync_and_closure
-    model_file: .flowguard/physicsguard_ai_workflow_model.py
+    model_file: .flowguard/models/owners/ai_workflow/physicsguard_ai_workflow_model.py
     model_blocks:
       - SyncSkills
       - ReviewClosure
@@ -413,7 +413,7 @@ entries:
       - skill/physicsguard-audit-closure/SKILL.md
       - skill/physicsguard-candidate-model-blueprint/SKILL.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_ai_workflow_checks.py
+      - command: python .flowguard/verification/owners/ai_workflow/run_checks.py
         covers: Skill-sync and closure gates before done claims.
       - command: python -m pytest tests/test_physicsguard_closure_helper.py
         covers: Mapping review issue codes and skipped-check closure downgrade behavior.
@@ -428,7 +428,7 @@ entries:
       - Installed skill copies differ from repository skill source after workflow changes.
 
   - id: workflow.test_file_contract_route
-    model_file: .flowguard/physicsguard_test_file_contract_model.py
+    model_file: .flowguard/models/owners/test_file_contract/physicsguard_test_file_contract_model.py
     model_blocks:
       - SelectTestFileRoute
       - GenerateDataFileManifest
@@ -472,7 +472,7 @@ entries:
       - templates/test_file_contract.yaml
       - docs/test_file_contracts.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_test_file_contract_checks.py
+      - command: python .flowguard/verification/owners/test_file_contract/run_checks.py
         covers: Optional route, manifest gate, evidence-backed mapping, model-gap, review-required, and contract-pass claim gates.
       - command: python -m pytest tests/test_test_file_contract_schema.py tests/test_test_file_contract_core.py tests/test_test_file_contract_cli.py
         covers: Schemas, manifest extraction, fail-closed coverage, CLI commands, and contract diffing.
@@ -492,7 +492,7 @@ entries:
       - Mapping evidence, review-required, planned-child-model, or claim-gate semantics change.
 
   - id: workflow.test_file_contract_development_process
-    model_file: .flowguard/physicsguard_test_file_contract_development_model.py
+    model_file: .flowguard/models/owners/test_file_contract_development/physicsguard_test_file_contract_development_model.py
     model_blocks:
       - ValidateOpenSpec
       - CheckFlowGuardModels
@@ -507,10 +507,10 @@ entries:
       docs/examples/skills, current validation, local package and installed skill
       sync, git publish readiness, and GitHub release creation.
     code_symbols:
-      - .flowguard/physicsguard_test_file_contract_development_model.py::ValidateOpenSpec
-      - .flowguard/physicsguard_test_file_contract_development_model.py::CheckFlowGuardModels
-      - .flowguard/physicsguard_test_file_contract_development_model.py::SyncLocalInstall
-      - .flowguard/physicsguard_test_file_contract_development_model.py::CreateRelease
+      - .flowguard/models/owners/test_file_contract_development/physicsguard_test_file_contract_development_model.py::ValidateOpenSpec
+      - .flowguard/models/owners/test_file_contract_development/physicsguard_test_file_contract_development_model.py::CheckFlowGuardModels
+      - .flowguard/models/owners/test_file_contract_development/physicsguard_test_file_contract_development_model.py::SyncLocalInstall
+      - .flowguard/models/owners/test_file_contract_development/physicsguard_test_file_contract_development_model.py::CreateRelease
       - scripts/check_installed_physicsguard_skills.py::check_installed_skills
     tests:
       - tests/test_installed_skill_sync.py
@@ -521,7 +521,7 @@ entries:
       - openspec/changes/add-test-file-contract-system/tasks.md
       - skill/physicsguard-test-file-contract-review/SKILL.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_test_file_contract_development_checks.py
+      - command: python .flowguard/verification/owners/test_file_contract_development/run_checks.py
         covers: Development-process gates before release claims.
       - command: openspec validate add-test-file-contract-system --strict
         covers: Requirement/spec/task artifact validity.
@@ -537,7 +537,7 @@ entries:
       - OpenSpec artifacts, FlowGuard models, tests, scripts, skills, docs, version surfaces, local install sync, git publish, or release process changes.
 
   - id: workflow.model_dataset_validation
-    model_file: .flowguard/physicsguard_model_dataset_validation_model.py
+    model_file: .flowguard/models/owners/model_dataset_validation/physicsguard_model_dataset_validation_model.py
     model_blocks:
       - CheckContracts
       - GateValidationDepth
@@ -586,7 +586,7 @@ entries:
       - tests/test_model_dataset_validation.py
       - tests/test_validation_depth_receipts.py
       - tests/test_validation_adequacy.py
-      - tests/test_guard_model_contract.py
+      - tests/test_skill_execution_depth.py
       - tests/test_predictive_rollout_validation.py
       - tests/test_test_file_contract_cli.py
     examples:
@@ -603,16 +603,16 @@ entries:
       - docs/model_dataset_validation.md
       - skill/physicsguard-model-dataset-validation/SKILL.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_model_dataset_validation_checks.py
+      - command: python .flowguard/verification/owners/model_dataset_validation/run_checks.py
         covers: Contract, direct validation, calibration, holdout, confidence feedback, and claim gates.
-      - command: python .flowguard/run_physicsguard_validation_depth_checks.py
-        covers: Dataset/mapping identity, honest scope, split isolation, series/envelope evidence, native receipt, field lifecycle, and process freshness gates.
+      - command: python .flowguard/verification/owners/validation_depth/run_checks.py
+        covers: Dataset/mapping identity, honest scope, split isolation, series/envelope evidence, native receipt and field lifecycle.
       - command: python -m pytest tests/test_validation_depth_receipts.py -q
         covers: Stale identity, uncertain mapping, scope overclaim, split overlap, interval evidence, closure consumption, and receipt output.
       - command: python -m pytest tests/test_validation_adequacy.py tests/test_predictive_rollout_validation.py -q
         covers: Artifact-derived point/signal/parameter universes, strictest N-aware native/project/convergence floors, honest static binding, per-parameter row/time stages and gap limits, counterfactual model contribution, one-shallow-among-deep and 10000-parameter negatives, all sampling modes, pointwise prediction block, and stateful future-holdout metrics.
-      - command: python -m pytest tests/test_guard_model_contract.py -q
-        covers: Complete native object-scope reconciliation, precommitted per-object dynamic-floor receipts, ordinary versus critical-sentinel rows, and static/time-varying SkillGuard projection.
+      - command: python -m pytest tests/test_skill_execution_depth.py -q
+        covers: Complete native object-scope reconciliation, precommitted per-object dynamic-floor receipts, ordinary versus critical-sentinel rows, and static/time-varying native object bindings.
       - command: python -m pytest tests/test_dataset_identity.py tests/test_model_dataset_validation.py tests/test_test_file_contract_cli.py
         covers: Dataset identity, model validation, conservative calibration, and CLI routing.
     boundaries:
@@ -625,18 +625,16 @@ entries:
       - A selected subset does not define its own universe; non-snapshot claims require project-sourced quantitative adequacy over current target artifacts.
       - Every available parameter needs a source-backed static/time-varying classification; static uses binding-only evidence, while each time-varying parameter must pass the strictest N-aware native/plan/project/convergence floor plus raw-denominator time/gap/universal/project-stage gates.
       - Full aligned sequences use vectorized full-row validation; representative samples are predeclared, fingerprinted, bounded, and require per-parameter residual, observed-direction, physical-envelope, and executable counterfactual-contribution evidence or an explicit bounded non-sensitive disposition.
-      - SkillGuard preserves every native raw row but marks only event, boundary, contribution, and other cannot-omit sentinels critical; it consumes rather than replaces the precommitted native per-object floor.
+      - Native depth preserves raw rows and distinguishes event, boundary, contribution, and other cannot-omit sentinels from ordinary rows.
       - Pointwise validation cannot support prediction; prediction requires explicit stateful semantics and a disjoint future-holdout rollout.
-      - Supervisory closure consumes the native receipt and does not recompute physical residuals.
+      - The receipt consumer does not recompute physical residuals; project closure recomputes current validation before consuming it.
     stale_when:
       - Dataset, schema, testbench, mapping, universe, adequacy, sampling, time, scenario, split, predictive rollout, residual, envelope, report identity, closure, or CLI semantics change.
 
   - id: workflow.validation_depth_lifecycle
-    model_file: .flowguard/physicsguard_validation_depth_lifecycle.py
+    model_file: .flowguard/models/owners/validation_depth/physicsguard_validation_depth_lifecycle.py
     model_blocks:
       - build_field_lifecycle_plan
-      - build_development_process_plan
-      - review_lifecycle_and_process
     responsibility: >
       Account every validation-depth field and projection, preserve the existing
       model-dataset validation owner, and require current field, model, code,
@@ -656,32 +654,31 @@ entries:
     tests:
       - tests/test_validation_depth_receipts.py
       - tests/test_validation_adequacy.py
-      - tests/test_guard_model_contract.py
+      - tests/test_skill_execution_depth.py
       - tests/test_predictive_rollout_validation.py
     examples:
       - examples/testfile_contracts/pump_loop/validation/clean_validation_plan.yaml
       - examples/testfile_contracts/pump_loop/observed/clean_observed_series.yaml
       - skill/physicsguard-model-dataset-validation/SKILL.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_validation_depth_checks.py
+      - command: python .flowguard/verification/owners/validation_depth/run_checks.py
         covers: Native validation model, evidence owner, field lifecycle, and development-process checks.
       - command: python -m pytest tests/test_validation_depth_receipts.py -q
         covers: Current and negative validation-depth behavior.
       - command: python -m pytest tests/test_validation_adequacy.py tests/test_predictive_rollout_validation.py -q
         covers: Current and negative adequacy and future-rollout behavior.
-      - command: python -m pytest tests/test_guard_model_contract.py -q
+      - command: python -m pytest tests/test_skill_execution_depth.py -q
         covers: Current class-aware native object scope, critical sentinels, and dynamic-floor projection behavior.
     boundaries:
       - Field inventory and process review do not replace executable physics or tests.
       - All depth fields remain owned by the existing PhysicsGuard validator and evidence registry.
-      - SkillGuard and project closure enforce the target-owned receipts; they do not duplicate adequacy or predictive calculations.
-      - Formal supervised depth loads the bundled, contract-fingerprinted `.skillguard/runtime` before any editable checkout; an external/global import cannot satisfy the installed runtime gate.
+      - Project closure checks current target-owned evidence and recomputes the relevant native validation.
       - Receipt consumption never establishes commercial-model or high-fidelity equivalence.
     stale_when:
       - Any depth, adequacy, predictive, projection, validator, portable native runtime, closure consumer, negative test, skill route, or receipt boundary changes.
 
   - id: workflow.model_library
-    model_file: .flowguard/physicsguard_model_library_model.py
+    model_file: .flowguard/models/owners/model_library/physicsguard_model_library_model.py
     model_blocks:
       - CheckLibraryEntry
     responsibility: >
@@ -702,7 +699,7 @@ entries:
       - docs/model_library.md
       - skill/physicsguard-model-library/SKILL.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_model_library_checks.py
+      - command: python .flowguard/verification/owners/model_library/run_checks.py
         covers: Model-library evidence gates.
       - command: python -m pytest tests/test_model_library.py tests/test_test_file_contract_cli.py
         covers: Model-library schema, core check, and CLI routing.
@@ -715,7 +712,7 @@ entries:
       - Model library schema, CLI, project evidence bundle, or skill-route semantics change.
 
   - id: workflow.project_evidence_registry
-    model_file: .flowguard/physicsguard_project_evidence_registry_model.py
+    model_file: .flowguard/models/owners/project_evidence_registry/physicsguard_project_evidence_registry_model.py
     model_blocks:
       - ReviewProjectProfile
       - RegisterArtifacts
@@ -753,7 +750,7 @@ entries:
       - docs/project_evidence_registry.md
       - skill/physicsguard-project-evidence-registry/SKILL.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_project_evidence_registry_checks.py
+      - command: python .flowguard/verification/owners/project_evidence_registry/run_checks.py
         covers: Project profile, artifact registration, binding maintenance, gap-check, project map, validation handoff, and reuse handoff gates.
       - command: python -m pytest tests/test_project_evidence_registry.py tests/test_test_file_contract_cli.py
         covers: Registry schema/core, project profile gaps, binding expectations, CLI map/gap commands, and downstream validation gate.
@@ -770,7 +767,7 @@ entries:
       - Project evidence schema, CLI command names, gap severity, binding expectation, project map, validation bundle, model-library reuse, or skill-route semantics change.
 
   - id: workflow.project_closure_gate
-    model_file: .flowguard/physicsguard_project_closure_model.py
+    model_file: .flowguard/models/owners/project_closure/physicsguard_project_closure_model.py
     model_blocks:
       - RunProjectAudit
       - RunEvidenceGate
@@ -809,7 +806,7 @@ entries:
       - docs/project_evidence_registry.md
       - skill/physicsguard-audit-closure/SKILL.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_project_closure_checks.py
+      - command: python .flowguard/verification/owners/project_closure/run_checks.py
         covers: Closure pass, map-not-proof, blocking evidence gaps, review downgrades, skipped required checks, and downstream blockers.
       - command: python -m pytest tests/test_project_closure.py tests/test_test_file_contract_cli.py
         covers: Closure schema/core/CLI behavior over pump-loop examples and bad-case mutations.
@@ -830,7 +827,7 @@ entries:
       - Closure plan/report schema, project audit policy, evidence mesh handoff, evidence gap severity, validation/model-library adequacy, predictive status semantics, or final claim wording changes.
 
   - id: workflow.evidence_mesh
-    model_file: .flowguard/physicsguard_evidence_mesh_model.py
+    model_file: .flowguard/models/owners/evidence_mesh/physicsguard_evidence_mesh_model.py
     model_blocks:
       - ReviewModelMesh
       - ReviewModelTestAlignment
@@ -871,7 +868,7 @@ entries:
       - examples/testfile_contracts/pump_loop/project_closure_plan.yaml
       - docs/evidence_mesh.md
     validation_commands:
-      - command: python .flowguard/run_physicsguard_evidence_mesh_checks.py
+      - command: python .flowguard/verification/owners/evidence_mesh/run_checks.py
         covers: Evidence mesh route gates for model mesh, alignment, generated cases, test mesh, field lifecycle, and risk ledger.
       - command: python -m pytest tests/test_evidence_mesh.py tests/test_project_closure.py -q
         covers: Schema/core/CLI evidence mesh behavior and project closure handoff.

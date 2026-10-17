@@ -1,11 +1,9 @@
-"""Explicit FlowGuard-owned PhysicsGuard software self-DNA route.
+"""Read the current FlowGuard map without executing models or claiming test success.
 
-The physical-model blueprint remains an external-object/domain model.  This
-module audits the PhysicsGuard repository itself through FlowGuard's released
-self-blueprint provider and never creates a parallel schema, disk bundle, or
-reconstruction path.
+The physical-object blueprint is a separate domain route.  This command reads
+repository code/model/test bindings; affected execution belongs to FlowGuard's
+existing impact and model/test commands, without a stored PASS certificate.
 """
-
 from __future__ import annotations
 
 import argparse
@@ -14,32 +12,13 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 REPORT_KIND = "physicsguard.flowguard_software_self_dna_report.v1"
-LAYER_IDS = (
-    "evidence_qualification",
-    "implementation_inventory",
-    "traceability",
-    "independent_semantics",
-    "model_code_test_binding",
-    "resource_oracle_binding",
-    "static_blueprint_readiness",
-)
 
 
 def _native_directory_only(root: Path) -> dict[str, Any]:
-    """Describe the one canonical software-DNA authority and its hard boundary."""
-
-    return {
-        "kind": "native_directory_only",
-        "status": "enforced",
-        "canonical_root": str(root),
-        "canonical_authority": "repository_native_flowguard_definition",
-        "disk_export": "prohibited",
-        "bundle_materialization": "prohibited",
-        "alternate_head": "prohibited",
-        "cache_authority": "prohibited",
-    }
+    return {"kind": "native_directory_only", "status": "enforced", "canonical_root": str(root),
+            "canonical_authority": "repository_flowguard_map", "disk_export": "prohibited",
+            "bundle_materialization": "prohibited", "alternate_head": "prohibited", "cache_authority": "prohibited"}
 
 
 def _flowguard_identity() -> dict[str, str]:
@@ -49,121 +28,91 @@ def _flowguard_identity() -> dict[str, str]:
         version = "unavailable"
     try:
         import flowguard
-
-        return {
-            "package": "flowguard",
-            "version": version,
-            "schema_version": str(flowguard.SCHEMA_VERSION),
-            "module": str(Path(flowguard.__file__).resolve()),
-        }
-    except (ImportError, AttributeError) as exc:
-        return {
-            "package": "flowguard",
-            "version": version,
-            "schema_version": "unavailable",
-            "module": "unavailable",
-            "import_error": f"{type(exc).__name__}: {exc}",
-        }
+        from flowguard.map.common import SCHEMA
+        return {"package": "flowguard", "version": version, "schema_version": SCHEMA,
+                "module": str(Path(flowguard.__file__).resolve())}
+    except ImportError as exc:
+        return {"package": "flowguard", "version": version, "import_error": str(exc)}
 
 
-def _blocked(root: Path, code: str, message: str, *, exc: Exception | None = None) -> dict[str, Any]:
-    result: dict[str, Any] = {
-        "report_kind": REPORT_KIND,
-        "software_id": "physicsguard",
-        "target_kind": "software",
-        "status": "blocked",
-        "ok": False,
-        "root": str(root),
-        "native_directory_only": _native_directory_only(root),
-        "claim_boundary": "Only the exact PhysicsGuard repository boundary is covered; the physical-object DNA route remains separate.",
-        "flowguard": _flowguard_identity(),
-        "readiness": {
-            "layers": [
-                {"layer": layer, "status": "blocked", "gap": code if index == 0 else ""}
-                for index, layer in enumerate(LAYER_IDS)
-            ],
-            "deepest_proven_layer": "",
-            "first_gap": code,
-            "gap_count": 1,
-        },
-        "gap": {"code": code, "message": message},
-        "dna_qualification": {
-            "status": "blocked",
-            "qualified": False,
-            "reasons": [code],
-        },
-    }
-    if exc is not None:
-        result["gap"]["exception"] = f"{type(exc).__name__}: {exc}"
-    return result
+def _base(root: Path) -> dict[str, Any]:
+    return {"report_kind": REPORT_KIND, "software_id": "physicsguard", "target_kind": "software",
+            "root": str(root), "native_directory_only": _native_directory_only(root),
+            "flowguard": _flowguard_identity(),
+            "claim_boundary": "Current repository map and code/model/test bindings only. Models and tests are not run by this command; content hashes are current observations, not past execution or freshness certificates. Physical-object blueprints remain separate.",
+            "model_execution": "not_run", "test_execution": "not_run"}
 
 
-def _build(root: Path) -> tuple[dict[str, Any], Any | None]:
+def _blocked(root: Path, code: str, message: str) -> dict[str, Any]:
+    return {**_base(root), "status": "blocked", "ok": False,
+            "gap": {"code": code, "message": message},
+            "readiness": {"status": "blocked", "first_gap": code, "gap_count": 1}}
+
+
+def _build(root: Path) -> dict[str, Any]:
     try:
-        from flowguard.self_blueprint import FlowGuardSelfBlueprintError, build_flowguard_self_blueprint
-    except (ImportError, AttributeError) as exc:
-        return _blocked(root, "flowguard_toolchain_unavailable", "The current FlowGuard self-blueprint API cannot be imported.", exc=exc), None
+        from flowguard.map.check import run_check
+        from flowguard.map.common import matches_any
+        from flowguard.map.inventory import build_inventory
+        from flowguard.map.mapfile import (MapError, component_files, component_graph,
+                                           fingerprint, ignore_patterns, load_map, model_registry)
+    except ImportError as exc:
+        return _blocked(root, "flowguard_toolchain_unavailable", str(exc))
     try:
-        bundle = build_flowguard_self_blueprint(root)
-    except FlowGuardSelfBlueprintError as exc:
-        return _blocked(root, "flowguard_self_blueprint_not_ready", "FlowGuard rejected the current PhysicsGuard project authority, definition, inventory, or model evidence; no local substitute is used.", exc=exc), None
-    except (OSError, ValueError) as exc:
-        return _blocked(root, "flowguard_self_blueprint_input_invalid", "The current FlowGuard self-blueprint inputs are invalid or unavailable.", exc=exc), None
-    qualification = getattr(bundle, "dna_qualification", None)
-    if qualification is None:
-        return _blocked(
-            root,
-            "flowguard_dna_qualification_missing",
-            "The current FlowGuard self-blueprint did not expose its provider-neutral DNA qualification contract.",
-        ), None
-    qualified = bool(qualification.qualified)
-    return {
-        "report_kind": REPORT_KIND,
-        "software_id": "physicsguard",
-        "target_kind": "software",
-        "status": "ready" if bundle.ok and qualified else "not_ready",
-        "ok": bool(bundle.ok and qualified),
-        "root": str(root),
-        "native_directory_only": _native_directory_only(root),
-        "claim_boundary": "This is the FlowGuard repository software-DNA boundary. PhysicsGuard's physical-model blueprint is domain evidence, not a second self-DNA root.",
-        "flowguard": _flowguard_identity(),
-        "readiness": bundle.readiness_ledger.to_dict(),
-        "dna_qualification": qualification.to_dict(),
-    }, bundle
+        data = load_map(root)
+        inv = build_inventory(root, ignore_patterns(data))
+        findings = run_check(root, data, inv, strict=True)
+        registry = model_registry(root, data)
+        graph = component_graph(data, inv)
+        rows = []
+        for component in data["components"]:
+            cid = component["id"]
+            code = component_files(component, inv)
+            tests = sorted(p for p in inv.tests if matches_any(p, component.get("tests", [])))
+            models = sorted(component.get("models", []))
+            model_sources = set(models)
+            for model in models:
+                path = Path(model)
+                if path.name == "run_checks.py" and path.parts[:3] == (".flowguard", "verification", "owners"):
+                    model_sources.update(p.relative_to(root).as_posix()
+                                         for p in (root / ".flowguard/models/owners" / path.parent.name).glob("*.py"))
+            model_sources = sorted(model_sources)
+            rows.append({"id": cid, "summary": component["summary"], "responsibilities": component["responsibilities"],
+                         "code": code, "code_fingerprint": fingerprint(root, code),
+                         "confirmed_fingerprint": component.get("fingerprint", ""),
+                         "tests": tests, "test_fingerprint": fingerprint(root, tests), "test_execution": "not_run",
+                         "models": models, "model_sources": model_sources, "model_fingerprint": fingerprint(root, model_sources), "model_execution": "not_run",
+                         "depends_on": sorted(graph[cid]),
+                         "reverse_dependents": sorted(other for other, deps in graph.items() if cid in deps)})
+        errors = [f for f in findings if f.level == "error"]
+        first = errors[0].code if errors else ""
+        result = {**_base(root), "status": "current" if not errors else "blocked", "ok": not errors,
+                  "map": {"path": ".flowguard/map.json", "schema": data["schema"],
+                          "fingerprint": fingerprint(root, [".flowguard/map.json"])},
+                  "readiness": {"status": "current" if not errors else "blocked", "first_gap": first, "gap_count": len(errors)},
+                  "components": rows,
+                  "registered_models": [{"id": m.id, "path": m.path, "kind": m.kind, "execution": "not_run"} for m in registry.entries],
+                  "findings": [{"level": f.level, "code": f.code, "component": f.component, "message": f.message} for f in findings]}
+        if errors:
+            result["gap"] = {"code": first, "message": errors[0].message}
+        return result
+    except (MapError, OSError, ValueError, KeyError) as exc:
+        return _blocked(root, "flowguard_map_invalid", str(exc))
 
 
 def check(root: str | Path, *, compact: bool = False) -> tuple[dict[str, Any], int]:
-    root_path = Path(root).resolve()
-    payload, _bundle = _build(root_path)
+    payload = _build(Path(root).resolve())
     if compact:
-        readiness = payload.get("readiness", {})
-        payload = {
-            "report_kind": payload.get("report_kind"),
-            "software_id": payload.get("software_id"),
-            "target_kind": payload.get("target_kind"),
-            "status": payload.get("status"),
-            "ok": payload.get("ok"),
-            "root": payload.get("root"),
-            "claim_boundary": payload.get("claim_boundary"),
-            "flowguard": payload.get("flowguard"),
-            "native_directory_only": payload.get("native_directory_only"),
-            "gap": payload.get("gap"),
-            "readiness": {
-                key: readiness[key]
-                for key in ("status", "deepest_proven_layer", "first_gap", "gap_count", "implementation_admitted", "rows")
-                if key in readiness
-            },
-            "dna_qualification": payload.get("dna_qualification"),
-        }
+        payload = {k: v for k, v in payload.items() if k not in {"components", "findings"}}
     return payload, 0 if payload.get("ok") else 1
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="physicsguard self-dna")
     sub = parser.add_subparsers(dest="command", required=True)
-    check_parser = sub.add_parser("check", help="audit the FlowGuard-owned repository self-DNA")
-    check_parser.add_argument("--root", default=".")
-    check_parser.add_argument("--compact", action="store_true")
+    command = sub.add_parser("check", help="read current FlowGuard repository bindings; models/tests remain not_run")
+    command.add_argument("--root", default=".")
+    command.add_argument("--compact", action="store_true")
     args = parser.parse_args(argv)
     payload, code = check(args.root, compact=args.compact)
     print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))

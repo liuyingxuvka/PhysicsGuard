@@ -103,7 +103,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "077f42b4a6d4c8ebba2fb683d5c07a365c4e0e4bd9d3f0a2ddd9ded9215afe65"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -117,11 +117,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "255a8ca0b2248116113e36b6ced846a6622cff1598102a03a2af162fd415312d",
+  "entry_prompt_sha256": "f773545b3774256550f627196dfacac48fa9a32ca08f0adc7248d387efbd9c60",
   "claim_boundary": "This route can license only a low-fidelity, evidence-bounded fault localization. It does not prove high-fidelity model truth or behavior outside the checked operating envelope."
 }

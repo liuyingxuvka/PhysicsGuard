@@ -1,469 +1,178 @@
-"""Plan or coordinate one exact ten-member PhysicsGuard consumer installation.
-
-The coordinator owns only suite membership and ordering.  Every projection,
-stage check, filesystem lock, activation journal, receipt, and rollback is
-performed by the current installed SkillGuard public target-installation API.
-"""
-
+"""Copy the ten PhysicsGuard consumer skills with recoverable directory replacement."""
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 from pathlib import Path
-import re
+import shutil
+import stat
 import sys
-from typing import Any, Mapping
-
+import tempfile
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_ROOT = Path(__file__).resolve().parent
 if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
-
-from physicsguard_skill_install_authority import (  # noqa: E402
-    DEFAULT_CODEX_HOME,
-    DEFAULT_SKILLGUARD_ROOT,
-    PHYSICSGUARD_MAINTENANCE_UNIT_ID,
-    PHYSICSGUARD_SKILL_IDS,
-    SkillGuardAuthorityUnavailable,
-    SkillGuardConsumerApi,
-    load_member_contract,
-    load_skillguard_consumer_api,
-    physicsguard_member_roots,
+DEFAULT_CODEX_HOME = Path(os.environ.get("CODEX_HOME") or (Path.home() / ".codex"))
+PHYSICSGUARD_SKILL_IDS = (
+    "physicsguard-ai-debugging",
+    "physicsguard-audit-closure",
+    "physicsguard-candidate-model-blueprint",
+    "physicsguard-model-dataset-validation",
+    "physicsguard-model-library",
+    "physicsguard-model-understanding-preflight",
+    "physicsguard-project-adoption",
+    "physicsguard-project-evidence-registry",
+    "physicsguard-signal-mapping-review",
+    "physicsguard-test-file-contract-review",
 )
+CONSUMER_FILES = {"SKILL.md", "runtime-requirements.json"}
+CONSUMER_DIRECTORIES = {"agents", "references", "scripts"}
 
 
-TRANSACTION_ID_PATTERN = re.compile(r"^target-install-[0-9a-f]{32}$")
-CANONICAL_HASH_PATTERN = re.compile(r"^[0-9A-F]{64}$")
-
-
-def build_suite_plan(
-    repository_root: Path,
-    api: SkillGuardConsumerApi,
-) -> dict[str, Any]:
-    """Create a pure source plan through SkillGuard without staging or installing."""
-
-    try:
-        members = physicsguard_member_roots(repository_root)
-    except (OSError, ValueError) as exc:
-        return {
-            "status": "blocked",
-            "maintenance_unit_id": PHYSICSGUARD_MAINTENANCE_UNIT_ID,
-            "member_ids": list(PHYSICSGUARD_SKILL_IDS),
-            "members": [],
-            "blockers": [f"suite_inventory_blocked:{type(exc).__name__}:{exc}"],
-        }
-    rows: list[dict[str, Any]] = []
-    blockers: list[str] = []
-    for skill_id, member_root in members:
+def safe_path(path: Path) -> Path:
+    """Reject traversal, symlinks and Windows junction/reparse paths, including ancestors."""
+    candidate = Path(path).expanduser()
+    if ".." in candidate.parts:
+        raise ValueError(f"path_traversal:{candidate}")
+    candidate = candidate.absolute()
+    for part in reversed((candidate, *candidate.parents)):
+        if part.is_symlink():
+            raise ValueError(f"symlink_path:{part}")
         try:
-            contract = load_member_contract(member_root, skill_id)
-            raw_plan = api.consumer_distribution_plan(member_root, contract)
-            if not isinstance(raw_plan, Mapping):
-                raise TypeError("consumer_distribution_plan_not_object")
-            plan = dict(raw_plan)
-        except Exception as exc:
-            plan = None
-            blockers.append(
-                f"member_plan_unavailable:{skill_id}:{type(exc).__name__}:{exc}"
-            )
-        else:
-            if plan.get("status") != "passed":
-                blockers.append(f"member_plan_blocked:{skill_id}")
-            if plan.get("skill_id") != skill_id:
-                blockers.append(f"member_plan_skill_mismatch:{skill_id}")
-            if plan.get("projection_id") != "projection:consumer-distribution":
-                blockers.append(f"member_plan_projection_mismatch:{skill_id}")
-            if plan.get("release_manifest_path") != "consumer-release.json":
-                blockers.append(f"member_plan_manifest_path_mismatch:{skill_id}")
-            files = plan.get("files")
-            if not isinstance(files, list) or not files:
-                blockers.append(f"member_plan_inventory_invalid:{skill_id}")
-            if not str(plan.get("release_id", "")):
-                blockers.append(f"member_plan_release_id_missing:{skill_id}")
-            plan_findings = plan.get("findings")
-            if not isinstance(plan_findings, list):
-                blockers.append(f"member_plan_findings_invalid:{skill_id}")
-            elif plan_findings:
-                blockers.append(f"member_plan_findings_present:{skill_id}")
-        rows.append(
-            {
-                "skill_id": skill_id,
-                "member_root": str(member_root),
-                "plan": plan,
-            }
-        )
-    return {
-        "status": "blocked" if blockers else "passed",
-        "maintenance_unit_id": PHYSICSGUARD_MAINTENANCE_UNIT_ID,
-        "member_ids": list(PHYSICSGUARD_SKILL_IDS),
-        "members": rows,
-        "blockers": blockers,
-        "claim_boundary": (
-            "This plan is a read-only projection from the current SkillGuard "
-            "consumer planner. It creates no stage, lock, journal, receipt, or install."
-        ),
-    }
-
-
-def _activation_result_findings(
-    skill_id: str,
-    report: Mapping[str, Any],
-    verification: Mapping[str, Any],
-) -> list[str]:
-    findings: list[str] = []
-    transaction_id = str(report.get("transaction_id", ""))
-    receipt = report.get("receipt")
-    head = report.get("head")
-    if report.get("status") != "passed":
-        findings.append("activation_status_blocked")
-    if report.get("skill_id") != skill_id:
-        findings.append("activation_skill_identity_mismatch")
-    if not TRANSACTION_ID_PATTERN.fullmatch(transaction_id):
-        findings.append("activation_transaction_pointer_malformed")
-    if not isinstance(receipt, Mapping):
-        receipt = {}
-        findings.append("activation_receipt_pointer_missing")
-    if not isinstance(head, Mapping):
-        head = {}
-        findings.append("activation_head_pointer_missing")
-    receipt_hash = str(receipt.get("receipt_hash", ""))
-    if (
-        receipt.get("status") != "committed"
-        or receipt.get("skill_id") != skill_id
-        or receipt.get("transaction_id") != transaction_id
-        or not CANONICAL_HASH_PATTERN.fullmatch(receipt_hash)
-    ):
-        findings.append("activation_receipt_pointer_identity_mismatch")
-    if (
-        head.get("skill_id") != skill_id
-        or head.get("transaction_id") != transaction_id
-        or head.get("receipt_hash") != receipt_hash
-        or not isinstance(head.get("generation"), int)
-        or int(head.get("generation", 0)) < 1
-    ):
-        findings.append("activation_head_pointer_identity_mismatch")
-    expected_projection = verification.get("canonical_projection")
-    receipt_projection = receipt.get("canonical_projection")
-    if (
-        not isinstance(expected_projection, Mapping)
-        or not isinstance(receipt_projection, Mapping)
-        or receipt_projection.get("release_id")
-        != expected_projection.get("release_id")
-    ):
-        findings.append("activation_projection_identity_mismatch")
-    return findings
-
-
-def coordinate_suite_install(
-    repository_root: Path,
-    stage_root: Path,
-    codex_home: Path,
-    api: SkillGuardConsumerApi,
-) -> dict[str, Any]:
-    """Prepare and verify all members before activation; roll back in reverse."""
-
-    required = {
-        "prepare_target_stage": api.prepare_target_stage,
-        "verify_target_stage": api.verify_target_stage,
-        "activate_target_stage": api.activate_target_stage,
-        "rollback_target_install": api.rollback_target_install,
-    }
-    missing = sorted(name for name, value in required.items() if not callable(value))
-    if missing:
-        return {
-            "status": "blocked",
-            "phase": "api_preflight",
-            "blockers": [f"skillguard_install_api_missing:{name}" for name in missing],
-            "activated": [],
-            "rollbacks": [],
-        }
-    suite_plan = build_suite_plan(repository_root, api)
-    if suite_plan["status"] != "passed":
-        return {
-            "status": "blocked",
-            "phase": "plan",
-            "suite_plan": suite_plan,
-            "prepared": [],
-            "verified": [],
-            "activated": [],
-            "rollbacks": [],
-            "blockers": list(suite_plan["blockers"]),
-        }
-
-    prepare = api.prepare_target_stage
-    verify = api.verify_target_stage
-    activate = api.activate_target_stage
-    rollback = api.rollback_target_install
-    assert prepare is not None
-    assert verify is not None
-    assert activate is not None
-    assert rollback is not None
-
-    repository = Path(repository_root).resolve(strict=True)
-    stage_parent = Path(stage_root).absolute()
-    home = Path(codex_home).expanduser().absolute()
-    member_roots = {
-        skill_id: member_root
-        for skill_id, member_root in physicsguard_member_roots(repository)
-    }
-    prepared: list[dict[str, Any]] = []
-    verified: list[dict[str, Any]] = []
-    activated: list[dict[str, Any]] = []
-    rollbacks: list[dict[str, Any]] = []
-
-    for skill_id in PHYSICSGUARD_SKILL_IDS:
-        stage = stage_parent / skill_id
-        try:
-            raw_report = prepare(repository, member_roots[skill_id], stage)
-            report = (
-                dict(raw_report)
-                if isinstance(raw_report, Mapping)
-                else {
-                    "status": "blocked",
-                    "blockers": ["coordinator_observed_non_object_prepare_result"],
-                }
-            )
-        except Exception as exc:  # SkillGuard owns and types the underlying failure.
-            report = {
-                "status": "blocked",
-                "blockers": [f"coordinator_observed_exception:{type(exc).__name__}:{exc}"],
-            }
-        prepared.append({"skill_id": skill_id, "stage_root": str(stage), "report": report})
-        if report.get("status") != "passed" or report.get("skill_id") != skill_id:
-            return _blocked_install_result(
-                phase="prepare",
-                suite_plan=suite_plan,
-                prepared=prepared,
-                verified=verified,
-                activated=activated,
-                rollbacks=rollbacks,
-                blockers=[
-                    f"member_prepare_blocked:{skill_id}"
-                    if report.get("status") != "passed"
-                    else f"member_prepare_identity_mismatch:{skill_id}"
-                ],
-            )
-
-    for skill_id in PHYSICSGUARD_SKILL_IDS:
-        stage = stage_parent / skill_id
-        try:
-            raw_report = verify(repository, member_roots[skill_id], stage)
-            report = (
-                dict(raw_report)
-                if isinstance(raw_report, Mapping)
-                else {
-                    "status": "blocked",
-                    "blockers": ["coordinator_observed_non_object_verify_result"],
-                }
-            )
-        except Exception as exc:
-            report = {
-                "status": "blocked",
-                "blockers": [f"coordinator_observed_exception:{type(exc).__name__}:{exc}"],
-            }
-        verified.append({"skill_id": skill_id, "stage_root": str(stage), "report": report})
-        if (
-            report.get("status") != "passed"
-            or report.get("skill_id") != skill_id
-            or not str(report.get("stage_verification_hash", ""))
-        ):
-            return _blocked_install_result(
-                phase="verify",
-                suite_plan=suite_plan,
-                prepared=prepared,
-                verified=verified,
-                activated=activated,
-                rollbacks=rollbacks,
-                blockers=[
-                    f"member_verify_blocked:{skill_id}"
-                    if report.get("status") != "passed"
-                    else f"member_verify_identity_mismatch:{skill_id}"
-                ],
-            )
-
-    verification_by_id = {
-        str(row["skill_id"]): row["report"] for row in verified
-    }
-    for skill_id in PHYSICSGUARD_SKILL_IDS:
-        stage = stage_parent / skill_id
-        try:
-            raw_report = activate(
-                repository,
-                member_roots[skill_id],
-                stage,
-                home,
-                stage_verification=verification_by_id[skill_id],
-            )
-            report = (
-                dict(raw_report)
-                if isinstance(raw_report, Mapping)
-                else {
-                    "status": "blocked",
-                    "blockers": ["coordinator_observed_non_object_activate_result"],
-                }
-            )
-        except Exception as exc:
-            report = {
-                "status": "blocked",
-                "blockers": [f"coordinator_observed_exception:{type(exc).__name__}:{exc}"],
-            }
-        activation_row = {"skill_id": skill_id, "report": report}
-        activated.append(activation_row)
-        activation_findings = _activation_result_findings(
-            skill_id,
-            report,
-            verification_by_id[skill_id],
-        )
-        activation_current = not activation_findings
-        if activation_current:
+            info = part.lstat()
+        except FileNotFoundError:
             continue
-        rollback_candidates = [
-            prior
-            for prior in reversed(activated)
-            if prior["skill_id"] != skill_id
-            or (
-                prior["report"].get("status") == "passed"
-                and TRANSACTION_ID_PATTERN.fullmatch(
-                    str(prior["report"].get("transaction_id", ""))
-                )
-            )
-        ]
-        for prior in rollback_candidates:
-            prior_report = prior["report"]
-            transaction_id = str(prior_report.get("transaction_id", ""))
-            prior_skill_id = str(prior["skill_id"])
-            if not transaction_id:
-                rollback_report = {
-                    "status": "blocked",
-                    "blockers": ["successful_activation_transaction_id_missing"],
-                }
-            else:
+        if getattr(info, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0):
+            raise ValueError(f"reparse_path:{part}")
+    return candidate
+
+
+def consumer_files(skill_root: Path, *, installed: bool = False) -> dict[str, str]:
+    """Return relative paths and byte hashes; author files never enter a consumer copy."""
+    root = safe_path(skill_root)
+    if not root.is_dir():
+        raise ValueError(f"skill_directory_missing:{root}")
+    files: dict[str, str] = {}
+    for directory, dirs, names in os.walk(root, followlinks=False):
+        parent = Path(directory)
+        for name in [*dirs, *names]:
+            safe_path(parent / name)
+        dirs[:] = [name for name in dirs if name != "__pycache__"]
+        if parent == root and not installed:
+            dirs[:] = [name for name in dirs if name in CONSUMER_DIRECTORIES]
+        for name in names:
+            path = parent / name
+            relative = path.relative_to(root)
+            if name.endswith((".pyc", ".pyo")):
+                continue
+            if not installed and len(relative.parts) == 1 and name not in CONSUMER_FILES:
+                continue
+            if not path.is_file():
+                raise ValueError(f"non_regular_consumer_file:{path}")
+            files[relative.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+    missing = CONSUMER_FILES - files.keys()
+    if missing:
+        raise ValueError(f"consumer_files_missing:{root}:{','.join(sorted(missing))}")
+    return dict(sorted(files.items()))
+
+
+def physicsguard_member_roots(repository_root: Path) -> tuple[tuple[str, Path], ...]:
+    root = safe_path(repository_root) / "skill"
+    safe_path(root)
+    actual = {path.name for path in root.iterdir() if path.name.startswith("physicsguard-")}
+    if actual != set(PHYSICSGUARD_SKILL_IDS):
+        raise ValueError(f"skill_inventory_mismatch:missing={sorted(set(PHYSICSGUARD_SKILL_IDS)-actual)}:extra={sorted(actual-set(PHYSICSGUARD_SKILL_IDS))}")
+    return tuple((skill_id, safe_path(root / skill_id)) for skill_id in PHYSICSGUARD_SKILL_IDS)
+
+
+def build_suite_plan(repository_root: Path) -> dict[str, Any]:
+    members: list[dict[str, Any]] = []
+    blockers: list[str] = []
+    try:
+        for skill_id, source in physicsguard_member_roots(repository_root):
+            members.append({"skill_id": skill_id, "source_root": str(source), "files": consumer_files(source)})
+    except (OSError, ValueError) as exc:
+        blockers.append(str(exc))
+    return {"status": "blocked" if blockers else "passed", "member_ids": list(PHYSICSGUARD_SKILL_IDS), "members": members, "blockers": blockers}
+
+
+def coordinate_suite_install(repository_root: Path, stage_root: Path | None, codex_home: Path) -> dict[str, Any]:
+    """Stage every member first, then replace directories; restore old trees on failure."""
+    plan = build_suite_plan(repository_root)
+    if plan["status"] != "passed":
+        return {**plan, "phase": "plan"}
+    activated: list[str] = []
+    moved_old: list[str] = []
+    recovery_errors: list[str] = []
+    temporary: Path | None = None
+    phase = "prepare"
+    try:
+        installed_root = safe_path(codex_home) / "skills"
+        safe_path(installed_root)
+        source_root = safe_path(repository_root)
+        if installed_root.is_relative_to(source_root) or source_root.is_relative_to(installed_root):
+            raise ValueError("installation_source_destination_overlap")
+        if installed_root.is_dir():
+            extra = sorted(path.name for path in installed_root.iterdir() if path.name.startswith("physicsguard-") and path.name not in PHYSICSGUARD_SKILL_IDS)
+            if extra:
+                raise ValueError(f"unexpected_installed_skills:{extra}")
+        for skill_id in PHYSICSGUARD_SKILL_IDS:
+            destination = safe_path(installed_root / skill_id)
+            if destination.exists() and not destination.is_dir():
+                raise ValueError(f"installed_skill_not_directory:{destination}")
+        parent = safe_path(stage_root) if stage_root is not None else installed_root.parent
+        if parent.is_relative_to(source_root):
+            raise ValueError("stage_source_overlap")
+        if any(parent.is_relative_to(installed_root / skill_id) for skill_id in PHYSICSGUARD_SKILL_IDS):
+            raise ValueError("stage_inside_installation_member")
+        parent.mkdir(parents=True, exist_ok=True)
+        temporary = Path(tempfile.mkdtemp(prefix=".physicsguard-install-", dir=parent))
+        staged = temporary / "new"
+        backup = temporary / "old"
+        backup.mkdir()
+        for row in plan["members"]:
+            source = Path(row["source_root"])
+            target = staged / row["skill_id"]
+            target.mkdir(parents=True)
+            for relative in row["files"]:
+                destination = target / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source / relative, destination)
+            if consumer_files(target, installed=True) != row["files"]:
+                raise ValueError(f"staged_files_changed:{row['skill_id']}")
+        phase = "activate"
+        installed_root.mkdir(parents=True, exist_ok=True)
+        for skill_id in PHYSICSGUARD_SKILL_IDS:
+            destination = safe_path(installed_root / skill_id)
+            if destination.exists():
+                os.replace(destination, backup / skill_id)
+                moved_old.append(skill_id)
+            os.replace(staged / skill_id, destination)
+            activated.append(skill_id)
+    except (OSError, ValueError) as exc:
+        if temporary is not None:
+            for skill_id in reversed(PHYSICSGUARD_SKILL_IDS):
                 try:
-                    raw_rollback_report = rollback(
-                        home, prior_skill_id, transaction_id
-                    )
-                    rollback_report = (
-                        dict(raw_rollback_report)
-                        if isinstance(raw_rollback_report, Mapping)
-                        else {
-                            "status": "blocked",
-                            "blockers": [
-                                "coordinator_observed_non_object_rollback_result"
-                            ],
-                        }
-                    )
-                    if (
-                        rollback_report.get("status") == "passed"
-                        and (
-                            rollback_report.get("skill_id") != prior_skill_id
-                            or rollback_report.get("transaction_id") != transaction_id
-                            or rollback_report.get("restored_status")
-                            != "manually_rolled_back"
-                        )
-                    ):
-                        rollback_report = {
-                            "status": "blocked",
-                            "skill_id": prior_skill_id,
-                            "transaction_id": transaction_id,
-                            "blockers": ["rollback_identity_mismatch"],
-                            "observed_result": rollback_report,
-                        }
-                except Exception as exc:
-                    rollback_report = {
-                        "status": "blocked",
-                        "blockers": [
-                            f"coordinator_observed_exception:{type(exc).__name__}:{exc}"
-                        ],
-                    }
-            rollbacks.append(
-                {
-                    "skill_id": prior_skill_id,
-                    "transaction_id": transaction_id,
-                    "report": rollback_report,
-                }
-            )
-        rollback_blockers = [
-            f"member_rollback_blocked:{row['skill_id']}"
-            for row in rollbacks
-            if row["report"].get("status") != "passed"
-        ]
-        cleanup_unconfirmed = bool(rollback_blockers) or any(
-            "target_rollback_failed" in str(blocker)
-            for blocker in report.get("blockers", [])
-        )
-        return _blocked_install_result(
-            phase="activate",
-            suite_plan=suite_plan,
-            prepared=prepared,
-            verified=verified,
-            activated=activated,
-            rollbacks=rollbacks,
-            blockers=[
-                (
-                    f"member_activation_blocked:{skill_id}"
-                    if report.get("status") != "passed"
-                    else f"member_activation_identity_mismatch:{skill_id}"
-                ),
-                *activation_findings,
-                *(["cleanup_unconfirmed"] if cleanup_unconfirmed else []),
-                *rollback_blockers,
-            ],
-            suite_state=(
-                "cleanup_unconfirmed" if cleanup_unconfirmed else "rolled_back_clean"
-            ),
-        )
-
-    return {
-        "status": "passed",
-        "phase": "complete",
-        "maintenance_unit_id": PHYSICSGUARD_MAINTENANCE_UNIT_ID,
-        "member_ids": list(PHYSICSGUARD_SKILL_IDS),
-        "suite_plan": suite_plan,
-        "prepared": prepared,
-        "verified": verified,
-        "activated": activated,
-        "rollbacks": rollbacks,
-        "blockers": [],
-        "suite_state": "committed_pending_final_audit",
-        "claim_boundary": _claim_boundary(),
-    }
-
-
-def _blocked_install_result(
-    *,
-    phase: str,
-    suite_plan: dict[str, Any],
-    prepared: list[dict[str, Any]],
-    verified: list[dict[str, Any]],
-    activated: list[dict[str, Any]],
-    rollbacks: list[dict[str, Any]],
-    blockers: list[str],
-    suite_state: str = "no_activation",
-) -> dict[str, Any]:
-    return {
-        "status": "blocked",
-        "phase": phase,
-        "maintenance_unit_id": PHYSICSGUARD_MAINTENANCE_UNIT_ID,
-        "member_ids": list(PHYSICSGUARD_SKILL_IDS),
-        "suite_plan": suite_plan,
-        "prepared": prepared,
-        "verified": verified,
-        "activated": activated,
-        "rollbacks": rollbacks,
-        "blockers": blockers,
-        "suite_state": suite_state,
-        "claim_boundary": _claim_boundary(),
-    }
-
-
-def _claim_boundary() -> str:
-    return (
-        "The coordinator proves only the ordered outcome returned by the current "
-        "SkillGuard target-installation API for these ten members. SkillGuard owns "
-        "every projection, lock, journal, receipt, verification, and rollback. The "
-        "result proves no PhysicsGuard domain behavior, package, Git, tag, or release."
-    )
+                    destination = installed_root / skill_id
+                    if skill_id in activated:
+                        shutil.rmtree(destination)
+                    if skill_id in moved_old:
+                        os.replace(temporary / "old" / skill_id, destination)
+                except OSError as recovery_exc:
+                    recovery_errors.append(f"{skill_id}:{recovery_exc}")
+            if not recovery_errors:
+                shutil.rmtree(temporary)
+        return {"status": "blocked", "phase": phase, "blockers": [str(exc)], "activated": activated, "recovery_errors": recovery_errors, "recovery_path": str(temporary) if recovery_errors else None}
+    if temporary is not None:
+        try:
+            shutil.rmtree(temporary)
+        except OSError as exc:
+            return {"status": "blocked", "phase": "cleanup", "blockers": [str(exc)], "activated": activated, "recovery_path": str(temporary)}
+    return {"status": "passed", "phase": "complete", "member_ids": list(PHYSICSGUARD_SKILL_IDS), "installed_root": str(installed_root), "activated": activated, "blockers": []}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -471,77 +180,21 @@ def main(argv: list[str] | None = None) -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--plan", action="store_true")
     mode.add_argument("--install", action="store_true")
+    mode.add_argument("--check", action="store_true")
     parser.add_argument("--repository-root", type=Path, default=ROOT)
     parser.add_argument("--stage-root", type=Path)
     parser.add_argument("--codex-home", type=Path, default=DEFAULT_CODEX_HOME)
-    parser.add_argument("--skillguard-root", type=Path, default=DEFAULT_SKILLGUARD_ROOT)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
-    if args.install and args.stage_root is None:
-        parser.error("--stage-root is required with --install")
-    try:
-        api = load_skillguard_consumer_api(
-            args.skillguard_root,
-            require_installation=args.install,
-        )
-        result = (
-            build_suite_plan(args.repository_root, api)
-            if args.plan
-            else coordinate_suite_install(
-                args.repository_root,
-                args.stage_root,
-                args.codex_home,
-                api,
-            )
-        )
-        result["skillguard_authority"] = api.authority_record()
-    except SkillGuardAuthorityUnavailable as exc:
-        result = {
-            "status": "blocked",
-            "phase": "api_preflight",
-            "skillguard_authority": None,
-            "blockers": [f"skillguard_authority_unavailable:{exc}"],
-            "claim_boundary": _claim_boundary(),
-        }
-    except Exception as exc:
-        result = {
-            "status": "blocked",
-            "phase": "coordinator",
-            "skillguard_authority": None,
-            "blockers": [
-                f"coordinator_unhandled_exception:{type(exc).__name__}:{exc}"
-            ],
-            "suite_state": "cleanup_unconfirmed" if args.install else "no_activation",
-            "claim_boundary": _claim_boundary(),
-        }
-    try:
-        payload = json.dumps(
-            result,
-            ensure_ascii=False,
-            indent=None if args.json else 2,
-            sort_keys=True,
-            allow_nan=False,
-        )
-    except Exception as exc:
-        result = {
-            "status": "blocked",
-            "phase": "machine_output",
-            "skillguard_authority": None,
-            "blockers": [
-                f"coordinator_result_not_serializable:{type(exc).__name__}"
-            ],
-            "suite_state": "cleanup_unconfirmed" if args.install else "no_activation",
-            "claim_boundary": _claim_boundary(),
-        }
-        payload = json.dumps(
-            result,
-            ensure_ascii=False,
-            indent=None if args.json else 2,
-            sort_keys=True,
-            allow_nan=False,
-        )
-    print(payload)
-    return 0 if result.get("status") == "passed" else 1
+    if args.check:
+        from check_installed_physicsguard_skills import check_installed_skills
+        result = check_installed_skills(args.codex_home / "skills", repository_root=args.repository_root)
+    elif args.plan:
+        result = build_suite_plan(args.repository_root)
+    else:
+        result = coordinate_suite_install(args.repository_root, args.stage_root, args.codex_home)
+    print(json.dumps(result, ensure_ascii=False, indent=None if args.json else 2, sort_keys=True))
+    return 0 if result["status"] in {"pass", "passed"} else 1
 
 
 if __name__ == "__main__":

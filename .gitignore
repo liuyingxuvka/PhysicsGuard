@@ -28,9 +28,6 @@ openspec/**/run-artifacts/
 openspec/**/verification-receipts/
 openspec/**/verification-reports/
 openspec/**/provenance/
-**/.skillguard/runs/
-**/.skillguard/locks/
-/.physicsguard-*-supervisor-packet.json
 
 # Local MATLAB/Simulink experiment artifacts
 examples/hierarchical/simulink_f14_experiment/models/

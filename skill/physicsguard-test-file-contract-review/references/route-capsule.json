@@ -74,7 +74,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "8e15f46ebce296db1fb45b7c473339f44bbfba57337a0d32a08a1da7d42901b4"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -88,11 +88,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "f57954a6ee8789a14bfb43f0019a6b7a79cc7a1942d108d9f5911e552d886587",
+  "entry_prompt_sha256": "91d79958b9dcac8f98cc199eb6fdb05c0e70b693469b7177ad65db038678eae8",
   "claim_boundary": "A pass covers only the exact test files, fields, units, timing, model/testbench versions, signal mappings, and depth represented in the receipt."
 }

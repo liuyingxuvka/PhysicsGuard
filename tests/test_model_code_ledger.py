@@ -34,7 +34,7 @@ def test_model_code_ledger_reports_missing_symbol(tmp_path: Path) -> None:
 ledger_version: 1
 entries:
   - id: bad.symbol
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks: [ValidateSystem]
     responsibility: Demonstrate stale symbol detection.
     code_symbols:
@@ -66,7 +66,7 @@ def test_model_code_ledger_reports_missing_file(tmp_path: Path) -> None:
 ledger_version: 1
 entries:
   - id: bad.file
-    model_file: .flowguard/physicsguard_core_model.py
+    model_file: .flowguard/models/owners/core/physicsguard_core_model.py
     model_blocks: [ValidateSystem]
     responsibility: Demonstrate stale file detection.
     code_symbols:

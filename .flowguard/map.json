@@ -1,0 +1,852 @@
+{
+  "schema": "flowguard.map.v1",
+  "project": "PhysicsGuard",
+  "layers": [],
+  "ignore": [
+    ".agents/**",
+    "openspec/**"
+  ],
+  "test_command": "python -m pytest -q",
+  "components": [
+    {
+      "id": "interface",
+      "layer": "",
+      "summary": "CLI, public API, diagnostics identity and current repository binding projection",
+      "responsibilities": [
+        "Dispatch commands without running unrelated owners",
+        "Keep physical-object and software repository boundaries separate"
+      ],
+      "files": [
+        "src/physicsguard/__init__.py",
+        "src/physicsguard/cli.py",
+        "src/physicsguard/self_dna.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "blueprint",
+        "evidence",
+        "loaders",
+        "routing",
+        "schema",
+        "simulation",
+        "task_revision",
+        "validation"
+      ],
+      "tests": [
+        "src/physicsguard/core/test_file_contract.py",
+        "tests/test_assumption_cli.py",
+        "tests/test_assumption_diagnostics.py",
+        "tests/test_cli.py",
+        "tests/test_dataset_identity.py",
+        "tests/test_diagnosability.py",
+        "tests/test_diagnostics.py",
+        "tests/test_dynamic_model_purpose.py",
+        "tests/test_evaluator.py",
+        "tests/test_evidence_mesh.py",
+        "tests/test_fmi_observation.py",
+        "tests/test_hierarchy_block_index.py",
+        "tests/test_hierarchy_cli.py",
+        "tests/test_hierarchy_refinement.py",
+        "tests/test_hierarchy_runner.py",
+        "tests/test_hierarchy_scoring.py",
+        "tests/test_model_dataset_validation.py",
+        "tests/test_model_library.py",
+        "tests/test_module_semantics_compiler.py",
+        "tests/test_native_directory_only_routes.py",
+        "tests/test_physical_blueprint_bundle.py",
+        "tests/test_physical_model_blueprint_cli.py",
+        "tests/test_physical_model_blueprint_external_target.py",
+        "tests/test_physical_model_blueprint_native_authorities.py",
+        "tests/test_physicsguard_skill_entry_loading.py",
+        "tests/test_physicsguard_skill_prompts.py",
+        "tests/test_predictive_rollout_validation.py",
+        "tests/test_project_closure.py",
+        "tests/test_project_evidence_registry.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_solver.py",
+        "tests/test_task_local_revision.py",
+        "tests/test_test_file_contract_cli.py",
+        "tests/test_test_file_contract_core.py",
+        "tests/test_test_file_contract_schema.py",
+        "tests/test_validation_adequacy.py",
+        "tests/test_validation_depth_receipts.py",
+        "tests/test_version_consistency.py",
+        "tests/test_workflow_governance.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/authoritative_model_system/run_checks.py",
+        ".flowguard/verification/owners/compositional_verification_kernel/run_checks.py",
+        ".flowguard/verification/owners/model_test_code_alignment/run_checks.py",
+        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
+        ".flowguard/verification/owners/ai_workflow/run_checks.py",
+        ".flowguard/verification/owners/core/run_checks.py",
+        ".flowguard/verification/owners/evidence_mesh/run_checks.py",
+        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
+        ".flowguard/verification/owners/model_library/run_checks.py",
+        ".flowguard/verification/owners/project_closure/run_checks.py",
+        ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
+        ".flowguard/verification/owners/test_file_contract/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:40394f4c46a6b64f71922d5f58947a7dd44d96b25629a3ded787600a1edc10a9"
+    },
+    {
+      "id": "purpose",
+      "layer": "",
+      "summary": "Target-local current-purpose, candidate and native execution depth",
+      "responsibilities": [
+        "Bind the current candidate and failure universe to exact target-native evidence",
+        "Keep required current good/bad proofs and scheduled runtime identities current"
+      ],
+      "files": [
+        "src/physicsguard/guard_model_contract.py",
+        "src/physicsguard/skill_execution_depth.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [],
+      "tests": [
+        "tests/test_dynamic_model_purpose.py",
+        "tests/test_physicsguard_skill_blueprint_contracts.py",
+        "tests/test_skill_execution_depth.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/dynamic_model_purpose/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:ea1fa8bd56b9ac07fdf4560401c9e3e6dbbe9a4dee493496be14fe005fa56925"
+    },
+    {
+      "id": "routing",
+      "layer": "",
+      "summary": "Native task routing and physical template selection",
+      "responsibilities": [
+        "Choose the native skill and template owner from task facts"
+      ],
+      "files": [
+        "src/physicsguard/template_packs.py",
+        "src/physicsguard/workflow.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "interface"
+      ],
+      "tests": [
+        "tests/test_template_packs.py",
+        "tests/test_workflow_governance.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/ai_workflow/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:76516a25cd7bdfaa3425c81b2a6edb4189df5a1905cd883d80eded6ccf03bb3a"
+    },
+    {
+      "id": "simulation",
+      "layer": "",
+      "summary": "Residual assembly, bounded solve, observed evaluation and hierarchy",
+      "responsibilities": [
+        "Validate inputs and finite solver bounds before residual evaluation",
+        "Separate numerical optimization success, observed audit and diagnostic limits"
+      ],
+      "files": [
+        "src/physicsguard/core/__init__.py",
+        "src/physicsguard/core/assumptions.py",
+        "src/physicsguard/core/diagnostics.py",
+        "src/physicsguard/core/evaluator.py",
+        "src/physicsguard/core/hierarchy.py",
+        "src/physicsguard/core/registry.py",
+        "src/physicsguard/core/residual.py",
+        "src/physicsguard/core/solver.py",
+        "src/physicsguard/core/diagnosability.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "blueprint",
+        "evidence",
+        "modules",
+        "schema",
+        "task_revision",
+        "validation"
+      ],
+      "tests": [
+        "src/physicsguard/core/test_file_contract.py",
+        "tests/test_additional_physical_relations.py",
+        "tests/test_aggregate_modules.py",
+        "tests/test_agriculture_food_bioprocess_starter_pack.py",
+        "tests/test_assumption_cli.py",
+        "tests/test_assumption_diagnostics.py",
+        "tests/test_assumption_manager.py",
+        "tests/test_assumption_residuals.py",
+        "tests/test_building_hvac_starter_pack.py",
+        "tests/test_cli.py",
+        "tests/test_component_battery_hv.py",
+        "tests/test_component_control.py",
+        "tests/test_component_control_sensor_actuator.py",
+        "tests/test_component_drivetrain_vehicle.py",
+        "tests/test_component_electric.py",
+        "tests/test_component_electrochemical.py",
+        "tests/test_component_electrochemical_bop.py",
+        "tests/test_component_engine.py",
+        "tests/test_component_engine_aftertreatment.py",
+        "tests/test_component_fluid_machines.py",
+        "tests/test_component_fluid_network.py",
+        "tests/test_component_maps.py",
+        "tests/test_component_thermal.py",
+        "tests/test_component_thermal_management.py",
+        "tests/test_control_pid_helpers.py",
+        "tests/test_control_signal_modules.py",
+        "tests/test_data_center_electronics_cooling_starter_pack.py",
+        "tests/test_diagnosability.py",
+        "tests/test_diagnostics.py",
+        "tests/test_distribution_power_der_starter_pack.py",
+        "tests/test_domain_judgment_module_behaviors.py",
+        "tests/test_electrochemical_extra_helpers.py",
+        "tests/test_evaluator.py",
+        "tests/test_expanded_domain_starter_packs.py",
+        "tests/test_gas_rotating_helpers.py",
+        "tests/test_heat_exchanger_helpers.py",
+        "tests/test_hierarchy_block_index.py",
+        "tests/test_hierarchy_cli.py",
+        "tests/test_hierarchy_loader.py",
+        "tests/test_hierarchy_refinement.py",
+        "tests/test_hierarchy_runner.py",
+        "tests/test_hierarchy_scoring.py",
+        "tests/test_hierarchy_spec.py",
+        "tests/test_humidity_helpers.py",
+        "tests/test_industrial_utilities_starter_pack.py",
+        "tests/test_lookup_modules.py",
+        "tests/test_mechanical_helpers.py",
+        "tests/test_mobility_extensions_starter_pack.py",
+        "tests/test_module_semantics_batch_brake_charger.py",
+        "tests/test_module_semantics_batch_dcdc_inverter.py",
+        "tests/test_module_semantics_batch_mechanically_draftable_01.py",
+        "tests/test_module_semantics_batch_mechanically_draftable_02.py",
+        "tests/test_module_semantics_batch_previously_grouped.py",
+        "tests/test_native_directory_only_routes.py",
+        "tests/test_physical_electrochemical.py",
+        "tests/test_physical_foundation_electrical.py",
+        "tests/test_physical_foundation_electrochemical.py",
+        "tests/test_physical_foundation_fluid.py",
+        "tests/test_physical_foundation_thermal.py",
+        "tests/test_physical_gas.py",
+        "tests/test_physical_thermal.py",
+        "tests/test_process_industry_starter_pack.py",
+        "tests/test_renewable_microgrid_starter_pack.py",
+        "tests/test_residual_builder.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_solver.py",
+        "tests/test_stormwater_sewer_drainage_starter_pack.py",
+        "tests/test_tank_helpers.py",
+        "tests/test_thermodynamic_conversion_helpers.py",
+        "tests/test_variable_registry.py",
+        "tests/test_wastewater_starter_pack.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/interval_diagnosability/run_checks.py",
+        ".flowguard/verification/owners/core/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:60cc934795f714280ea09c825db12bced7eb0980423d88e76a9f950c49fdedbf"
+    },
+    {
+      "id": "blueprint",
+      "layer": "",
+      "summary": "Physical-object blueprint, adapters and qualified impact/reverse traces",
+      "responsibilities": [
+        "Review physical model material and native bindings before qualified projections",
+        "Preserve unit, equation, hierarchy and failure evidence boundaries"
+      ],
+      "files": [
+        "src/physicsguard/core/physical*.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "evidence",
+        "interface",
+        "loaders",
+        "schema",
+        "task_revision",
+        "validation"
+      ],
+      "tests": [
+        "tests/test_cli.py",
+        "tests/test_fmi_observation.py",
+        "tests/test_module_runtime_port_contracts.py",
+        "tests/test_native_directory_only_routes.py",
+        "tests/test_native_object_dna_contract.py",
+        "tests/test_physical_blueprint_bundle.py",
+        "tests/test_physical_blueprint_impact_trace.py",
+        "tests/test_physical_model_blueprint_bad_cases.py",
+        "tests/test_physical_model_blueprint_cli.py",
+        "tests/test_physical_model_blueprint_external_target.py",
+        "tests/test_physical_model_blueprint_native_authorities.py",
+        "tests/test_physical_model_blueprint_object_dna.py",
+        "tests/test_physical_model_blueprint_provider_neutral.py",
+        "tests/test_physical_model_blueprint_review.py",
+        "tests/test_physical_model_blueprint_schema.py",
+        "tests/test_physical_model_blueprint_target_authority.py",
+        "tests/test_reference_fmus_bouncing_ball_example.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_validation_blueprint_coverage.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/hierarchical_model_mesh/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:e3f2a7367ce3d6c3852fe55c2e08ab2a38078443d137627b58f4cee2823ae041"
+    },
+    {
+      "id": "validation",
+      "layer": "",
+      "summary": "Dataset identity, quantitative adequacy and stateful predictive validation",
+      "responsibilities": [
+        "Bind actual datasets, mapping, temporal coverage and validation results",
+        "Reject stale evidence, insufficient scope and pointwise prediction overclaims"
+      ],
+      "files": [
+        "src/physicsguard/core/dataset_identity.py",
+        "src/physicsguard/core/model_dataset_validation.py",
+        "src/physicsguard/core/validation_depth.py",
+        "src/physicsguard/core/validation_adequacy.py",
+        "src/physicsguard/core/predictive_rollout.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "evidence",
+        "loaders",
+        "schema",
+        "simulation"
+      ],
+      "tests": [
+        "tests/test_cli.py",
+        "tests/test_dataset_identity.py",
+        "tests/test_dynamic_model_purpose.py",
+        "tests/test_model_dataset_validation.py",
+        "tests/test_native_directory_only_routes.py",
+        "tests/test_physical_model_blueprint_native_authorities.py",
+        "tests/test_predictive_rollout_validation.py",
+        "tests/test_project_evidence_registry.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_test_file_contract_cli.py",
+        "tests/test_validation_adequacy.py",
+        "tests/test_validation_blueprint_coverage.py",
+        "tests/test_validation_depth_receipts.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
+        ".flowguard/verification/owners/validation_depth/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:dbcabe760a0839f8d871205776c6d17f21e3e694cea356f3e7ad6be06632b2ee"
+    },
+    {
+      "id": "task_revision",
+      "layer": "",
+      "summary": "Strict task-local hypothesis, observation and revision",
+      "responsibilities": [
+        "Freeze an independent plan and candidate-bound native depth before revision closure"
+      ],
+      "files": [
+        "src/physicsguard/core/task_local_revision.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "schema"
+      ],
+      "tests": [
+        "tests/test_cli.py",
+        "tests/test_native_directory_only_routes.py",
+        "tests/test_physicsguard_skill_entry_loading.py",
+        "tests/test_physicsguard_skill_prompts.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_task_local_revision.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:49092e52f099c5c7eefa2db34c6eb2b1a18245af8d71b24daccd333052ab6791"
+    },
+    {
+      "id": "evidence",
+      "layer": "",
+      "summary": "Project evidence, contracts, library and closure",
+      "responsibilities": [
+        "Keep source, evidence, mapping and inventory identities traceable",
+        "Recompute relevant native validation when deriving project closure"
+      ],
+      "files": [
+        "src/physicsguard/core/target_inventory_authority.py",
+        "src/physicsguard/core/evidence_mesh.py",
+        "src/physicsguard/core/parameter_coverage.py",
+        "src/physicsguard/core/data_file_manifest.py",
+        "src/physicsguard/core/project_closure.py",
+        "src/physicsguard/core/project_evidence.py",
+        "src/physicsguard/core/fmi_observation.py",
+        "src/physicsguard/core/model_library.py",
+        "src/physicsguard/core/contract_diff.py",
+        "src/physicsguard/core/test_file_contract.py",
+        "src/physicsguard/core/signal_mapping.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "interface",
+        "loaders",
+        "routing",
+        "schema",
+        "simulation",
+        "validation"
+      ],
+      "tests": [
+        "src/physicsguard/core/test_file_contract.py",
+        "tests/test_cli.py",
+        "tests/test_dataset_identity.py",
+        "tests/test_dynamic_model_purpose.py",
+        "tests/test_evidence_mesh.py",
+        "tests/test_fmi_observation.py",
+        "tests/test_hierarchy_block_index.py",
+        "tests/test_hierarchy_cli.py",
+        "tests/test_hierarchy_refinement.py",
+        "tests/test_hierarchy_runner.py",
+        "tests/test_hierarchy_scoring.py",
+        "tests/test_model_dataset_validation.py",
+        "tests/test_model_library.py",
+        "tests/test_native_directory_only_routes.py",
+        "tests/test_physical_model_blueprint_object_dna.py",
+        "tests/test_physical_model_blueprint_target_authority.py",
+        "tests/test_predictive_rollout_validation.py",
+        "tests/test_project_closure.py",
+        "tests/test_project_evidence_registry.py",
+        "tests/test_reference_fmus_bouncing_ball_example.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_test_file_contract_cli.py",
+        "tests/test_test_file_contract_core.py",
+        "tests/test_test_file_contract_schema.py",
+        "tests/test_validation_adequacy.py",
+        "tests/test_validation_depth_receipts.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/guard_closure_contract/run_checks.py",
+        ".flowguard/verification/owners/core/run_checks.py",
+        ".flowguard/verification/owners/evidence_mesh/run_checks.py",
+        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
+        ".flowguard/verification/owners/model_library/run_checks.py",
+        ".flowguard/verification/owners/project_closure/run_checks.py",
+        ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
+        ".flowguard/verification/owners/test_file_contract/run_checks.py",
+        ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:0d5b006eefa1aaa6b33006bfd03a515b77f8c4a66f6468a6c09a4b8cbc847af2"
+    },
+    {
+      "id": "schema",
+      "layer": "",
+      "summary": "Validated schemas and explicit claim boundaries",
+      "responsibilities": [
+        "Validate structured inputs before domain operations"
+      ],
+      "files": [
+        "src/physicsguard/schema/*.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [],
+      "tests": [
+        "src/physicsguard/core/test_file_contract.py",
+        "src/physicsguard/io/test_file_contract_loader.py",
+        "src/physicsguard/schema/test_file_contract.py",
+        "tests/test_additional_physical_relations.py",
+        "tests/test_aggregate_modules.py",
+        "tests/test_assumption_manager.py",
+        "tests/test_assumption_residuals.py",
+        "tests/test_assumption_spec.py",
+        "tests/test_cli.py",
+        "tests/test_component_battery_hv.py",
+        "tests/test_component_control.py",
+        "tests/test_component_control_sensor_actuator.py",
+        "tests/test_component_drivetrain_vehicle.py",
+        "tests/test_component_electric.py",
+        "tests/test_component_electrochemical.py",
+        "tests/test_component_electrochemical_bop.py",
+        "tests/test_component_engine.py",
+        "tests/test_component_engine_aftertreatment.py",
+        "tests/test_component_fluid_machines.py",
+        "tests/test_component_fluid_network.py",
+        "tests/test_component_maps.py",
+        "tests/test_component_thermal.py",
+        "tests/test_component_thermal_management.py",
+        "tests/test_control_pid_helpers.py",
+        "tests/test_control_signal_modules.py",
+        "tests/test_dataset_identity.py",
+        "tests/test_diagnosability.py",
+        "tests/test_diagnostics.py",
+        "tests/test_domain_judgment_module_behaviors.py",
+        "tests/test_dynamic_model_purpose.py",
+        "tests/test_electrochemical_extra_helpers.py",
+        "tests/test_evaluator.py",
+        "tests/test_evidence_mesh.py",
+        "tests/test_fmi_observation.py",
+        "tests/test_gas_rotating_helpers.py",
+        "tests/test_heat_exchanger_helpers.py",
+        "tests/test_hierarchy_block_index.py",
+        "tests/test_hierarchy_refinement.py",
+        "tests/test_hierarchy_scoring.py",
+        "tests/test_hierarchy_spec.py",
+        "tests/test_humidity_helpers.py",
+        "tests/test_lookup_modules.py",
+        "tests/test_mechanical_helpers.py",
+        "tests/test_model_dataset_validation.py",
+        "tests/test_model_library.py",
+        "tests/test_module_semantics_batch_mechanically_draftable_01.py",
+        "tests/test_module_semantics_batch_mechanically_draftable_02.py",
+        "tests/test_module_semantics_batch_previously_grouped.py",
+        "tests/test_module_spec.py",
+        "tests/test_native_directory_only_routes.py",
+        "tests/test_native_object_dna_contract.py",
+        "tests/test_observation_spec.py",
+        "tests/test_physical_blueprint_bundle.py",
+        "tests/test_physical_blueprint_impact_trace.py",
+        "tests/test_physical_electrochemical.py",
+        "tests/test_physical_foundation_electrical.py",
+        "tests/test_physical_foundation_electrochemical.py",
+        "tests/test_physical_foundation_fluid.py",
+        "tests/test_physical_foundation_thermal.py",
+        "tests/test_physical_gas.py",
+        "tests/test_physical_model_blueprint_bad_cases.py",
+        "tests/test_physical_model_blueprint_cli.py",
+        "tests/test_physical_model_blueprint_external_target.py",
+        "tests/test_physical_model_blueprint_native_authorities.py",
+        "tests/test_physical_model_blueprint_object_dna.py",
+        "tests/test_physical_model_blueprint_provider_neutral.py",
+        "tests/test_physical_model_blueprint_review.py",
+        "tests/test_physical_model_blueprint_schema.py",
+        "tests/test_physical_model_blueprint_target_authority.py",
+        "tests/test_physical_thermal.py",
+        "tests/test_physicsguard_skill_entry_loading.py",
+        "tests/test_physicsguard_skill_prompts.py",
+        "tests/test_predictive_rollout_validation.py",
+        "tests/test_project_closure.py",
+        "tests/test_project_evidence_registry.py",
+        "tests/test_reference_fmus_bouncing_ball_example.py",
+        "tests/test_residual_builder.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_solver.py",
+        "tests/test_system_spec.py",
+        "tests/test_tank_helpers.py",
+        "tests/test_task_local_revision.py",
+        "tests/test_test_file_contract_cli.py",
+        "tests/test_test_file_contract_core.py",
+        "tests/test_test_file_contract_schema.py",
+        "tests/test_thermodynamic_conversion_helpers.py",
+        "tests/test_validation_adequacy.py",
+        "tests/test_validation_blueprint_coverage.py",
+        "tests/test_validation_depth_receipts.py",
+        "tests/test_variable_registry.py",
+        "tests/test_yaml_loader.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
+        ".flowguard/verification/owners/core/run_checks.py",
+        ".flowguard/verification/owners/evidence_mesh/run_checks.py",
+        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
+        ".flowguard/verification/owners/model_library/run_checks.py",
+        ".flowguard/verification/owners/project_closure/run_checks.py",
+        ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
+        ".flowguard/verification/owners/test_file_contract/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:f8381c646e1cda83255b0b67008c129de555726918d7018a5a768040e1dc1637"
+    },
+    {
+      "id": "loaders",
+      "layer": "",
+      "summary": "Native YAML/JSON and observation loaders",
+      "responsibilities": [
+        "Read native files without silently changing observations"
+      ],
+      "files": [
+        "src/physicsguard/io/*.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "evidence",
+        "schema"
+      ],
+      "tests": [
+        "src/physicsguard/core/test_file_contract.py",
+        "tests/test_additional_physical_relations.py",
+        "tests/test_aggregate_modules.py",
+        "tests/test_agriculture_food_bioprocess_starter_pack.py",
+        "tests/test_assumption_diagnostics.py",
+        "tests/test_assumption_spec.py",
+        "tests/test_building_hvac_starter_pack.py",
+        "tests/test_component_battery_hv.py",
+        "tests/test_component_control.py",
+        "tests/test_component_control_sensor_actuator.py",
+        "tests/test_component_drivetrain_vehicle.py",
+        "tests/test_component_electric.py",
+        "tests/test_component_electrochemical.py",
+        "tests/test_component_electrochemical_bop.py",
+        "tests/test_component_engine.py",
+        "tests/test_component_engine_aftertreatment.py",
+        "tests/test_component_fluid_machines.py",
+        "tests/test_component_fluid_network.py",
+        "tests/test_component_maps.py",
+        "tests/test_component_thermal.py",
+        "tests/test_component_thermal_management.py",
+        "tests/test_control_pid_helpers.py",
+        "tests/test_control_signal_modules.py",
+        "tests/test_data_center_electronics_cooling_starter_pack.py",
+        "tests/test_distribution_power_der_starter_pack.py",
+        "tests/test_electrochemical_extra_helpers.py",
+        "tests/test_evaluator.py",
+        "tests/test_expanded_domain_starter_packs.py",
+        "tests/test_gas_rotating_helpers.py",
+        "tests/test_heat_exchanger_helpers.py",
+        "tests/test_hierarchy_loader.py",
+        "tests/test_hierarchy_runner.py",
+        "tests/test_hierarchy_spec.py",
+        "tests/test_humidity_helpers.py",
+        "tests/test_industrial_utilities_starter_pack.py",
+        "tests/test_lookup_modules.py",
+        "tests/test_mechanical_helpers.py",
+        "tests/test_mobility_extensions_starter_pack.py",
+        "tests/test_observation_loader.py",
+        "tests/test_observation_spec.py",
+        "tests/test_physical_electrochemical.py",
+        "tests/test_physical_foundation_electrical.py",
+        "tests/test_physical_foundation_electrochemical.py",
+        "tests/test_physical_foundation_fluid.py",
+        "tests/test_physical_foundation_thermal.py",
+        "tests/test_physical_gas.py",
+        "tests/test_physical_model_blueprint_bad_cases.py",
+        "tests/test_physical_model_blueprint_external_target.py",
+        "tests/test_physical_model_blueprint_object_dna.py",
+        "tests/test_physical_model_blueprint_schema.py",
+        "tests/test_physical_thermal.py",
+        "tests/test_predictive_rollout_validation.py",
+        "tests/test_process_industry_starter_pack.py",
+        "tests/test_reference_fmus_bouncing_ball_example.py",
+        "tests/test_renewable_microgrid_starter_pack.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_stormwater_sewer_drainage_starter_pack.py",
+        "tests/test_system_spec.py",
+        "tests/test_tank_helpers.py",
+        "tests/test_thermodynamic_conversion_helpers.py",
+        "tests/test_validation_adequacy.py",
+        "tests/test_wastewater_starter_pack.py",
+        "tests/test_yaml_loader.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/core/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:2db2908a706c35fadf89db4a893c8bbcc294049bdc4f7bfa2f59d8138dd95a72"
+    },
+    {
+      "id": "modules",
+      "layer": "",
+      "summary": "Physical residual modules and registry declarations",
+      "responsibilities": [
+        "Define documented low-fidelity equations, SI units, assumptions and finite validity ranges"
+      ],
+      "files": [
+        "src/physicsguard/modules/*.py",
+        "src/physicsguard/modules/components/*.py",
+        "src/physicsguard/modules/physical/*.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "schema",
+        "simulation"
+      ],
+      "tests": [
+        "tests/test_additional_physical_relations.py",
+        "tests/test_aggregate_modules.py",
+        "tests/test_assumption_manager.py",
+        "tests/test_assumption_residuals.py",
+        "tests/test_component_battery_hv.py",
+        "tests/test_component_control.py",
+        "tests/test_component_control_sensor_actuator.py",
+        "tests/test_component_drivetrain_vehicle.py",
+        "tests/test_component_electric.py",
+        "tests/test_component_electrochemical.py",
+        "tests/test_component_electrochemical_bop.py",
+        "tests/test_component_engine.py",
+        "tests/test_component_engine_aftertreatment.py",
+        "tests/test_component_fluid_machines.py",
+        "tests/test_component_fluid_network.py",
+        "tests/test_component_maps.py",
+        "tests/test_component_thermal.py",
+        "tests/test_component_thermal_management.py",
+        "tests/test_control_pid_helpers.py",
+        "tests/test_control_signal_modules.py",
+        "tests/test_electrochemical_extra_helpers.py",
+        "tests/test_gas_rotating_helpers.py",
+        "tests/test_heat_exchanger_helpers.py",
+        "tests/test_humidity_helpers.py",
+        "tests/test_lookup_modules.py",
+        "tests/test_mechanical_helpers.py",
+        "tests/test_module_equation_ledger.py",
+        "tests/test_module_semantics_batch_brake_charger.py",
+        "tests/test_module_semantics_batch_dcdc_inverter.py",
+        "tests/test_physical_electrochemical.py",
+        "tests/test_physical_foundation_electrochemical.py",
+        "tests/test_physical_gas.py",
+        "tests/test_residual_builder.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_tank_helpers.py",
+        "tests/test_thermodynamic_conversion_helpers.py",
+        "tests/test_variable_registry.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/core/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:eb37c7f62f67246bd7bedbed6e67be9d51c143853a82d6c4e86aa4234d73cfe7"
+    },
+    {
+      "id": "maintenance",
+      "layer": "",
+      "summary": "Consumer generation, transactional installation and native equation/model ledgers",
+      "responsibilities": [
+        "Generate the ten consumer projections from one source",
+        "Install ordinary consumer files with safe staging and rollback",
+        "Review real model/code/test and equation bindings without default nested pytest"
+      ],
+      "files": [
+        "scripts/*.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "evidence",
+        "loaders",
+        "modules",
+        "simulation"
+      ],
+      "tests": [
+        "tests/test_guard_skill_mesh.py",
+        "tests/test_install_physicsguard_skills.py",
+        "tests/test_installed_skill_sync.py",
+        "tests/test_model_code_ledger.py",
+        "tests/test_module_equation_ledger.py",
+        "tests/test_module_semantics_review_producer.py",
+        "tests/test_physicsguard_family_maintenance.py",
+        "tests/test_physicsguard_skill_entry_loading.py",
+        "tests/test_physicsguard_skill_install_authority.py",
+        "tests/test_physicsguard_skill_prompts.py",
+        "tests/test_portable_model_headers.py",
+        "tests/test_task_local_revision.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
+        ".flowguard/verification/owners/ai_workflow/run_checks.py",
+        ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:0136cf6fa009a8e006c18a568817a32a055756f900270df61a34ee04f5316b56"
+    },
+    {
+      "id": "consumer_scripts",
+      "layer": "",
+      "summary": "Maintained skill consumer helper entrypoints",
+      "responsibilities": [
+        "Delegate helper operations to existing PhysicsGuard native owners"
+      ],
+      "files": [
+        "skill/*/scripts/*.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "interface"
+      ],
+      "tests": [
+        "tests/test_physicsguard_closure_helper.py"
+      ],
+      "models": [
+        ".flowguard/verification/owners/ai_workflow/run_checks.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:0afa5373ed6797fc47b65f485d0cdde80dafda93e2c35e59a856ea99bae48fc9"
+    },
+    {
+      "id": "example_tools",
+      "layer": "",
+      "summary": "Explicit external-tool example helper scripts",
+      "responsibilities": [
+        "Keep optional example tooling outside the native simulation runtime"
+      ],
+      "files": [
+        "examples/**/*.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [],
+      "tests": [],
+      "models": [],
+      "status": "confirmed",
+      "fingerprint": "sha256:76507e3f1b615f09145ed46072e89bcc16fca5633104f81c4f2eec5f092a8381"
+    }
+  ],
+  "flows": [
+    {
+      "id": "observed_audit",
+      "steps": [
+        "interface",
+        "loaders",
+        "simulation"
+      ]
+    },
+    {
+      "id": "current_purpose",
+      "steps": [
+        "interface",
+        "purpose"
+      ]
+    },
+    {
+      "id": "dataset_validation",
+      "steps": [
+        "interface",
+        "validation",
+        "evidence"
+      ]
+    },
+    {
+      "id": "physical_blueprint",
+      "steps": [
+        "interface",
+        "blueprint",
+        "modules"
+      ]
+    }
+  ],
+  "accepted_debts": []
+}

@@ -82,7 +82,7 @@
         "independent_holdout",
         "exact_terminal_boundary"
       ],
-      "sha256": "02547272a7df164ca3e6f27cc81ca1824b12260c5393cde4ae63c6fbb278ad00"
+      "sha256": "97fcf8b7ed14119b95cfb75d63da80e23dbd7be5395d0ab2eddf25751fdbf39a"
     },
     {
       "path": "references/template-pack-routing.md",
@@ -96,11 +96,11 @@
       "required_for": [
         "validated_template_pack_routing"
       ],
-      "sha256": "bda75a6e981dd7ba46bee11cf5be39d665764bda7c21b462c3d619de0069377d"
+      "sha256": "7bd5fad5614c7b7d232bb26fdc47c5df5c9a6db5170ac584a0ba04a9e94b4524"
     }
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "9167671e0e601a5ae6088f2c7fa7c3137f950e1b102deeebc81f65822929e5cf",
+  "entry_prompt_sha256": "bfc9ce35f9125e460a03505ad65802aa536488629ddc003d4f9cdf124cbe68e1",
   "claim_boundary": "Closure proves only the exact requested audit scope represented by current native receipts; skipped, stale, partial, and predictive gaps remain non-pass."
 }
