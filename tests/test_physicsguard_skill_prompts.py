@@ -174,8 +174,6 @@ def test_skill_prompt_requires_receipt_derived_task_model_closure(skill_id: str)
     assert "Renaming or deleting a caller gap is not progress" in depth
     assert "model_closed_for_task" in depth
     assert capsule["target_skill_id"] == skill_id
-    assert capsule["native_owner_id"] == capsule["native_owner_id"]
-    assert capsule["native_route_id"] == capsule["native_route_id"]
 
 
 

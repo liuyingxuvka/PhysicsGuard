@@ -35,6 +35,12 @@ not change observed values.
 
 ```powershell
 python -m physicsguard.cli validation run PLAN.yaml --pretty
+```
+
+The run output already contains `depth_receipt`. If only that receipt is needed,
+choose this alternative command instead of running both:
+
+```powershell
 python -m physicsguard.cli validation receipt PLAN.yaml --pretty
 ```
 
@@ -155,3 +161,5 @@ accumulated normalized error, lag/phase error, drift, error growth, and
 stability. PhysicsGuard validates the supplied stateful trajectory; it does not
 pretend a pointwise residual formula is a simulator or reconstruct hidden
 commercial-model dynamics.
+
+Project closure recomputes current validation from its plan. The receipt consumer's `physical_recomputation: false` flag covers that final consume step only; a prior JSON result does not bypass current source validation.

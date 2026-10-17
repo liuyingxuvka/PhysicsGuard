@@ -91,7 +91,7 @@ Executable projection entry: call `physicsguard.affected_physical_blueprint_proj
    use. Static parameters declare no time or contribution fields and pass only
    through current binding evidence.
 
-3. Run validation:
+3. Run validation once; this report already includes `depth_receipt`:
 
    ```powershell
    python scripts/run_physicsguard.py validation run PLAN.yaml --pretty
@@ -112,14 +112,14 @@ Executable projection entry: call `physicsguard.affected_physical_blueprint_proj
    and exclusion diagnostics must pass. A scalar plan without
    `depth` remains usable only as a snapshot and must not support time-series,
    scenario, or general-understanding claims.
-5. To emit only the target-owned receipt, run:
+5. Alternatively, if only the target-owned receipt is needed, use this command instead of step 3; do not run both for the same unchanged inputs:
 
    ```powershell
    python scripts/run_physicsguard.py validation receipt PLAN.yaml --pretty
    ```
 
-   Downstream consumers use this receipt. They must not recompute or
-   reinterpret physical residuals themselves. PhysicsGuard must reconcile every
+   Read-only consumers may inspect the receipt from either output. The receipt
+   command performs validation again; it does not extract a prior report. PhysicsGuard must reconcile every
    native object and raw denominator, retain only true event/boundary/
    contribution sentinels as critical, and consume the precommitted native
    per-object floor. Treating every ordinary raw row as critical incorrectly
@@ -141,8 +141,9 @@ Executable projection entry: call `physicsguard.affected_physical_blueprint_proj
    A passing validation report is necessary for validation claims, but project
    closure checks whether the surrounding evidence, contracts, and skipped
    checks also permit the claim. Set `required_checks.validation_depth: true`;
-   closure consumes the native passing receipt and records
-   `physical_recomputation: false` for that receipt gate.
+   project closure recomputes current model-dataset validation before consuming
+   its native receipt. `physical_recomputation: false` describes only the
+   subsequent receipt-consumption step, not the whole closure command.
 
 ## Predictive Boundary
 

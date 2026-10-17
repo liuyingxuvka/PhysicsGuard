@@ -152,6 +152,9 @@ def test_conditional_references_are_current_and_preserve_deep_capability(skill_i
         encoding="utf-8"
     )
     assert all(token in depth for token in DEEP_TOKENS)
+    assert set(references["references/native-depth-and-purpose.md"]["load_when"]) == {
+        "create_task_local_model", "materially_deepen_model", "revise_candidate_model", "claim_model_closure"
+    }
     template = (skill_root / "references" / "template-pack-routing.md").read_text(
         encoding="utf-8"
     )
