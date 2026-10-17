@@ -64,17 +64,6 @@ def _actuator_module_review() -> dict:
     )
 
 
-@lru_cache(maxsize=1)
-def _collected_nodeids() -> frozenset[str]:
-    checker = _load_checker()
-    paths = checker._bound_behavioral_test_paths(
-        ROOT, _base_payload()["module_records"]
-    )
-    nodeids, error = checker._collect_pytest_nodeids(ROOT, paths)
-    assert error is None
-    return frozenset(nodeids)
-
-
 def _record(payload: dict, module_type: str) -> dict:
     return next(
         record
@@ -104,7 +93,7 @@ def _review_record(checker: ModuleType, record: dict) -> dict:
         expected_partitions=partitions,
         registered_types=registered,
         owners=set(),
-        collected_nodeids=set(_collected_nodeids()),
+        collected_nodeids=None,
         executed_nodeids=set(),
     )
 
@@ -1242,7 +1231,7 @@ def test_caller_authored_execution_evidence_never_licenses_test_binding() -> Non
         "positive",
         findings,
         "behavioral_test",
-        collected_nodeids=set(_collected_nodeids()),
+        collected_nodeids=None,
     )
 
     codes = {item["code"] for item in findings["behavioral_test"]}

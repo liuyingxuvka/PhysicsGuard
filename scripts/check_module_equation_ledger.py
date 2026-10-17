@@ -670,22 +670,25 @@ def review_ledger(
     if review_scope == "module" and module is not None:
         execution_filter = {module}
     bound_nodeids = _bound_behavioral_test_nodeids(selected_records, execution_filter)
-    collection_nodeids = bound_nodeids if review_scope == "module" else None
-    collected_nodeids, collection_error = _collect_pytest_nodeids(
-        root,
-        test_paths,
-        nodeids=collection_nodeids,
-    )
-    if collection_error:
-        _add(global_findings, "behavioral_test", "pytest_collection_failed", collection_error)
-        _add(global_findings, "counterexample", "pytest_collection_failed", collection_error)
+    collected_nodeids: set[str] | None = None
+    collection_error: str | None = None
+    executed_nodeids: set[str] = set()
+    execution_error: str | None = None
     if execute_bound_tests:
-        executed_nodeids, execution_error = _execute_pytest_nodeids(root, bound_nodeids)
+        collected_nodeids, collection_error = _collect_pytest_nodeids(
+            root, test_paths, nodeids=bound_nodeids,
+        )
+        if collection_error:
+            _add(global_findings, "behavioral_test", "pytest_collection_failed", collection_error)
+            _add(global_findings, "counterexample", "pytest_collection_failed", collection_error)
+            execution_error = "bound tests were not executed because collection failed"
+        elif not set(bound_nodeids) <= collected_nodeids:
+            execution_error = "bound tests were not executed because exact nodeids were not collected"
+        else:
+            executed_nodeids, execution_error = _execute_pytest_nodeids(root, bound_nodeids)
         if execution_error:
             _add(global_findings, "behavioral_test", "pytest_batch_execution_failed", execution_error)
             _add(global_findings, "counterexample", "pytest_batch_execution_failed", execution_error)
-    else:
-        executed_nodeids, execution_error = set(), None
 
     external_review_evidence: dict[str, Any] | None = None
     if review_result_path is not None and review_receipt_path is not None:
@@ -713,6 +716,7 @@ def review_ledger(
             registered_types=registered_types,
             owners=owners,
             collected_nodeids=collected_nodeids,
+            collection_error=collection_error,
             executed_nodeids=executed_nodeids,
             execution_requested=execute_bound_tests,
             ledger_path=ledger_path,
@@ -727,6 +731,12 @@ def review_ledger(
         review_scope=review_scope,
         module=module,
     )
+    review["test_collection"] = {
+        "requested": execute_bound_tests,
+        "status": "fail" if collection_error else "success" if collected_nodeids is not None else "not_run",
+        "collected_case_count": len(collected_nodeids or ()),
+        "error": collection_error,
+    }
     review["test_execution"] = {
         "requested": execute_bound_tests,
         "status": (
@@ -758,6 +768,7 @@ def _review_record(
     registered_types: set[str],
     owners: set[str] | None = None,
     collected_nodeids: set[str] | None = None,
+    collection_error: str | None = None,
     executed_nodeids: set[str] | None = None,
     execution_requested: bool = False,
     ledger_path: Path | None = None,
@@ -877,8 +888,19 @@ def _review_record(
                 "isolation": "checker_process",
                 "error": runtime.get("error"),
             },
+            "test_binding_design": {
+                "status": (
+                    "unverified"
+                    if any("unverified" in item["code"] for dimension in ("behavioral_test", "counterexample") for item in findings[dimension])
+                    else "blocked"
+                    if any(item["code"] != "test_execution_evidence_not_run" for dimension in ("behavioral_test", "counterexample") for item in findings[dimension])
+                    else "static_bound"
+                ),
+                "claim_boundary": "Source paths, selectors and supported literal cases only; pytest nodeid collection and execution require an explicit request.",
+            },
             "test_collection": {
-                "status": "success" if collected_nodeids is not None else "not_run",
+                "status": "fail" if collection_error else "success" if collected_nodeids is not None else "not_run",
+                "error": collection_error,
                 "collected_nodeid_count": len(
                     set(_bound_behavioral_test_nodeids([record], None))
                     & set(collected_nodeids or ())
@@ -2189,12 +2211,7 @@ def _review_test_binding(
             "pytest_nodeid_mismatch",
             f"{module_type}: {role} pytest_nodeid must be exactly {expected_nodeid}",
         )
-    effective_collection = collected_nodeids
-    if effective_collection is None:
-        effective_collection, collection_error = _collect_pytest_nodeids(root, [path])
-        if collection_error:
-            _add(findings, dimension, "pytest_collection_failed", collection_error)
-    if effective_collection is not None and expected_nodeid not in effective_collection:
+    if collected_nodeids is not None and expected_nodeid not in collected_nodeids:
         _add(
             findings,
             dimension,
@@ -2205,6 +2222,8 @@ def _review_test_binding(
     module_parameter = binding.get("module_parameter")
     execution_source = _local_test_execution_source(path, selector)
     if module_parameter is None:
+        if collected_nodeids is None and not _parametrize_declares_module_case(path, selector, None, str(case)):
+            _add(findings, dimension, "pytest_case_static_unverified", f"{module_type}: {role} case cannot be resolved by the bounded literal-decorator inspection; pytest collection was not requested")
         if module_type not in execution_source:
             _add(
                 findings,
@@ -2227,7 +2246,7 @@ def _review_test_binding(
                 findings,
                 dimension,
                 "module_parameter_case_unverified",
-                f"{module_type}: {role} decorator/constants do not bind this collected case to module_type",
+                f"{module_type}: {role} decorator/constants do not statically bind this case to module_type",
             )
 
     _review_expected_outcome(binding, module_type, role, findings, dimension)
@@ -2263,7 +2282,7 @@ def _review_test_binding(
         if executed_nodeids is None or expected_nodeid not in executed_nodeids:
             _add(findings, dimension, "pytest_case_execution_unverified", f"{module_type}: {role} exact pytest case lacks a terminal-success batch result")
     else:
-        _add(findings, dimension, "test_execution_evidence_not_run", f"{module_type}: {role} test design is bound, but execution was not requested and no current terminal evidence is attached")
+        _add(findings, dimension, "test_execution_evidence_not_run", f"{module_type}: {role} test execution was not requested; source binding is reviewed separately and no current terminal evidence is attached")
 
 
 def _review_expected_outcome(
@@ -4028,6 +4047,10 @@ def _project_review(
         "record_finding_count": record_finding_count,
         "behavior_contract_schema": BEHAVIOR_CONTRACT_SCHEMA,
         "summary": review["summary"],
+        "test_collection": review.get(
+            "test_collection",
+            {"requested": False, "status": "not_run", "collected_case_count": 0, "error": None},
+        ),
         "test_execution": review.get(
             "test_execution",
             {"requested": False, "status": "not_run", "bound_case_count": 0, "executed_case_count": 0, "error": None},
@@ -6292,8 +6315,10 @@ def _execute_pytest_nodeids(
     root: Path,
     nodeids: list[str],
 ) -> tuple[set[str], str | None]:
-    if not nodeids or os.environ.get("PHYSICSGUARD_LEDGER_BINDING_EXECUTION") == "1":
-        return set(nodeids), None
+    if not nodeids:
+        return set(), None
+    if os.environ.get("PHYSICSGUARD_LEDGER_BINDING_EXECUTION") == "1":
+        return set(), "nested bound pytest execution was not run"
     environment = os.environ.copy()
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     environment["PHYSICSGUARD_LEDGER_BINDING_EXECUTION"] = "1"
@@ -6433,12 +6458,12 @@ def _local_test_execution_source(path: Path, selector: str) -> str:
 def _parametrize_declares_module_case(
     path: Path,
     selector: str,
-    module_type: str,
+    module_type: str | None,
     case: str,
 ) -> bool:
+    """Inspect simple literal case design; this never proves pytest collection."""
     try:
-        source = path.read_text(encoding="utf-8")
-        tree = ast.parse(source)
+        tree = ast.parse(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, SyntaxError):
         return False
     constants: dict[str, Any] = {}
@@ -6447,56 +6472,58 @@ def _parametrize_declares_module_case(
             value = _literal_eval_with_constants(node.value, constants)
             if value is not _UNRESOLVED:
                 constants[node.targets[0].id] = value
-    function = next(
-        (
-            node
-            for node in tree.body
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-            and node.name == selector
-        ),
-        None,
-    )
+    function = next((node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == selector), None)
     if function is None:
         return False
-    for decorator in function.decorator_list:
-        if not isinstance(decorator, ast.Call) or _call_name(decorator.func) != "parametrize":
-            continue
-        if len(decorator.args) < 2:
-            continue
-        argnames = _literal_eval_with_constants(decorator.args[0], constants)
-        values = _literal_eval_with_constants(decorator.args[1], constants)
-        if isinstance(argnames, str):
-            names = [item.strip() for item in argnames.split(",")]
-        elif isinstance(argnames, (list, tuple)):
-            names = [str(item) for item in argnames]
+    decorators = [node for node in function.decorator_list if isinstance(node, ast.Call) and _call_name(node.func) == "parametrize"]
+    if not decorators:
+        return module_type is None and case == "unparameterized"
+    # Fixture-generated cases, stacked decorators, id callables and pytest's
+    # duplicate-id rewriting need real collection; do not approximate their ids.
+    if len(decorators) != 1:
+        return False
+    decorator = decorators[0]
+    if len(decorator.args) != 2 or any(item.arg is None for item in decorator.keywords):
+        return False
+    keywords = {item.arg: _literal_eval_with_constants(item.value, constants) for item in decorator.keywords}
+    if keywords.get("indirect", False) is not False:
+        return False
+    ids = keywords.get("ids")
+    if ids is not None and not isinstance(ids, (list, tuple)):
+        return False
+    argnames = _literal_eval_with_constants(decorator.args[0], constants)
+    values = _literal_eval_with_constants(decorator.args[1], constants)
+    names = [item.strip() for item in argnames.split(",")] if isinstance(argnames, str) else list(argnames) if isinstance(argnames, (list, tuple)) else []
+    if not names or not all(isinstance(name, str) and name for name in names) or len(set(names)) != len(names) or not isinstance(values, (list, tuple)):
+        return False
+    if module_type is not None and "module_type" not in names:
+        return False
+    if ids is not None and len(ids) != len(values):
+        return False
+    cases: dict[str, tuple[Any, ...]] = {}
+    for index, raw_row in enumerate(values):
+        explicit_id = None
+        if isinstance(raw_row, dict) and "__pytest_param__" in raw_row:
+            row = tuple(raw_row["__pytest_param__"])
+            explicit_id = raw_row.get("__id__")
         else:
-            continue
-        if "module_type" not in names or not isinstance(values, (list, tuple)):
-            continue
-        module_index = names.index("module_type")
-        ids_node = next((item.value for item in decorator.keywords if item.arg == "ids"), None)
-        ids = _literal_eval_with_constants(ids_node, constants) if ids_node is not None else None
-        for index, raw_row in enumerate(values):
-            explicit_id = None
-            if isinstance(raw_row, dict) and "__pytest_param__" in raw_row:
-                row = tuple(raw_row["__pytest_param__"])
-                explicit_id = raw_row.get("__id__")
-            else:
-                row = raw_row if isinstance(raw_row, (list, tuple)) else (raw_row,)
-            if module_index >= len(row) or row[module_index] != module_type:
-                continue
-            row_case = None
-            if explicit_id is not None:
-                row_case = str(explicit_id)
-            elif isinstance(ids, (list, tuple)) and index < len(ids):
-                row_case = str(ids[index])
-            elif len(row) == 1:
-                row_case = str(row[0])
-            else:
-                row_case = "-".join(str(item) for item in row)
-            if row_case == case:
-                return True
-    return False
+            row = tuple(raw_row) if isinstance(raw_row, (list, tuple)) else (raw_row,)
+        if len(row) != len(names):
+            return False
+        identifier = explicit_id if explicit_id is not None else ids[index] if ids is not None else None
+        if identifier is None:
+            if not all(value is None or isinstance(value, (str, int, float, bool)) for value in row):
+                return False
+            identifier = "-".join(str(value) for value in row)
+        elif not isinstance(identifier, (str, int, float, bool)):
+            return False
+        identifier = str(identifier)
+        if identifier in cases:
+            return False
+        cases[identifier] = row
+    if case not in cases:
+        return False
+    return module_type is None or cases[case][names.index("module_type")] == module_type
 
 
 class _UnresolvedLiteral:
@@ -6518,7 +6545,7 @@ def _literal_eval_with_constants(node: ast.AST | None, constants: dict[str, Any]
             None,
         )
         identifier = _literal_eval_with_constants(identifier_node, constants)
-        if any(value is _UNRESOLVED for value in values):
+        if any(value is _UNRESOLVED for value in values) or (identifier_node is not None and identifier is _UNRESOLVED):
             return _UNRESOLVED
         return {
             "__pytest_param__": values,
