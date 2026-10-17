@@ -1,5 +1,9 @@
 # PhysicsGuard Candidate Model Blueprint
 
+## Reuse within one read-only task
+
+Pass an already qualified exact current summary, affected projection or reverse trace to the next native owner when its source, material, authority, revision and selector identities remain unchanged. Combine all affected seed ids for the requested scope into one affected API call. Inspect the existing returned slice before asking for another projection of the same scope. If inputs or raw target material change, run the existing canonical qualification gate again; a prior review, summary or hash label does not bypass it. Unknown or invalid seeds block the whole request; never join separately accepted fragments to hide a rejected seed. This is task-local reuse of an actual result, without a persistent cache or new receipt.
+
 Use this route when the user asks to build a candidate model from PhysicsGuard evidence.
 
 ## Canonical physical DNA
