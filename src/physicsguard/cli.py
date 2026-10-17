@@ -8,75 +8,6 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-import yaml
-
-from physicsguard.core.contract_diff import diff_test_file_contracts
-from physicsguard.core.data_file_manifest import generate_delimited_manifest, manifest_to_dict
-from physicsguard.core.dataset_identity import (
-    check_logical_dataset_record,
-    check_test_file_relation_index,
-)
-from physicsguard.core.evidence_mesh import check_evidence_mesh
-from physicsguard.core.diagnostics import DiagnosticReporter
-from physicsguard.core.evaluator import AuditEvaluator
-from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy, plan_from_report
-from physicsguard.core.model_dataset_validation import validate_model_dataset
-from physicsguard.core.model_library import check_model_library_index
-from physicsguard.core.physical_model_blueprint import (
-    physical_model_blueprint_review_to_dict,
-    review_physical_model_blueprint,
-)
-from physicsguard.core.project_closure import run_project_closure
-from physicsguard.core.project_evidence import (
-    build_project_evidence_map,
-    check_evidence_bundle,
-    check_evidence_gaps,
-    check_project_evidence_registry,
-    scan_project_evidence_candidates,
-)
-from physicsguard.core.residual import ResidualBuilder
-from physicsguard.core.solver import BoundedSolver
-from physicsguard.core.test_file_contract import (
-    check_test_file_contract,
-    check_test_file_parameter_coverage,
-    check_test_file_project_index,
-    inspect_test_file_contract,
-)
-from physicsguard.core.task_local_revision import (
-    evaluate_candidate_model_revision,
-    evaluate_hypothesis_observation,
-    freeze_hypothesis_plan,
-)
-from physicsguard.core.diagnosability import (
-    evaluate_diagnosability,
-    evaluate_interval_residual,
-)
-from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
-from physicsguard.io.observation_loader import load_observed_values
-from physicsguard.io.physical_model_blueprint_loader import (
-    BlueprintLoadError,
-    load_physical_model_blueprint,
-    load_target_inventory_authority,
-)
-from physicsguard.io.test_file_contract_loader import load_yaml_mapping
-from physicsguard.io.yaml_loader import load_system_spec
-from physicsguard.schema.test_file_contract import ExtractorProfileSpec, TestBenchProfileSpec
-from physicsguard.schema.task_local_revision import (
-    CandidateModelRevisionSpec,
-    DiagnosticObservationSpec,
-    HypothesisPlanSpec,
-)
-from physicsguard.schema.diagnosability import (
-    DiagnosabilityRequestSpec,
-    IntervalResidualSpec,
-)
-from physicsguard.workflow import (
-    adopt_project,
-    audit_project,
-    review_external_model_intake,
-    review_model_understanding_preflight,
-)
-
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="physicsguard")
@@ -533,6 +464,11 @@ def _print_json(output: dict, pretty: bool) -> None:
 
 
 def solve(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.diagnostics import DiagnosticReporter
+    from physicsguard.core.residual import ResidualBuilder
+    from physicsguard.core.solver import BoundedSolver
+    from physicsguard.io.yaml_loader import load_system_spec
+
     system = load_system_spec(path)
     builder = ResidualBuilder(system)
     solver = BoundedSolver(builder, system.solver)
@@ -544,6 +480,11 @@ def solve(path: Path, pretty: bool = False) -> int:
 
 
 def evaluate(system_path: Path, observed_path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.diagnostics import DiagnosticReporter
+    from physicsguard.core.evaluator import AuditEvaluator
+    from physicsguard.io.observation_loader import load_observed_values
+    from physicsguard.io.yaml_loader import load_system_spec
+
     system = load_system_spec(system_path)
     observed = load_observed_values(observed_path)
     report = AuditEvaluator(system).evaluate_observed(observed)
@@ -552,6 +493,11 @@ def evaluate(system_path: Path, observed_path: Path, pretty: bool = False) -> in
 
 
 def compare(system_path: Path, observed_path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.diagnostics import DiagnosticReporter
+    from physicsguard.core.evaluator import AuditEvaluator
+    from physicsguard.io.observation_loader import load_observed_values
+    from physicsguard.io.yaml_loader import load_system_spec
+
     system = load_system_spec(system_path)
     observed = load_observed_values(observed_path)
     report = AuditEvaluator(system).compare_to_reference(observed)
@@ -560,6 +506,9 @@ def compare(system_path: Path, observed_path: Path, pretty: bool = False) -> int
 
 
 def hierarchy_run(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+
     spec = load_hierarchical_audit_spec(path)
     runner = HierarchicalAuditRunner(spec)
     report = runner.run()
@@ -568,12 +517,18 @@ def hierarchy_run(path: Path, pretty: bool = False) -> int:
 
 
 def hierarchy_inspect(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.hierarchy import inspect_hierarchy
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+
     spec = load_hierarchical_audit_spec(path)
     _print_json(inspect_hierarchy(spec), pretty)
     return 0
 
 
 def hierarchy_plan(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner, plan_from_report
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+
     spec = load_hierarchical_audit_spec(path)
     runner = HierarchicalAuditRunner(spec)
     report = runner.run()
@@ -582,6 +537,10 @@ def hierarchy_plan(path: Path, pretty: bool = False) -> int:
 
 
 def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
     spec = load_hierarchical_audit_spec(path)
     observed = load_observed_values(observed_path)
     runner = HierarchicalAuditRunner(spec)
@@ -591,6 +550,10 @@ def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False) ->
 
 
 def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
     spec = load_hierarchical_audit_spec(path)
     observed = load_observed_values(observed_path)
     runner = HierarchicalAuditRunner(spec)
@@ -600,6 +563,10 @@ def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False) -> 
 
 
 def task_model_plan_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.task_local_revision import freeze_hypothesis_plan
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
+    from physicsguard.schema.task_local_revision import HypothesisPlanSpec
+
     plan = HypothesisPlanSpec.model_validate(load_yaml_mapping(path))
     output = freeze_hypothesis_plan(plan, base_dir=path.parent)
     _print_json(output, pretty)
@@ -611,6 +578,10 @@ def task_model_observe_command(
     observation_path: Path,
     pretty: bool = False,
 ) -> int:
+    from physicsguard.core.task_local_revision import evaluate_hypothesis_observation
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
+    from physicsguard.schema.task_local_revision import DiagnosticObservationSpec, HypothesisPlanSpec
+
     plan = HypothesisPlanSpec.model_validate(load_yaml_mapping(plan_path))
     observation = DiagnosticObservationSpec.model_validate(
         load_yaml_mapping(observation_path)
@@ -625,6 +596,10 @@ def task_model_observe_command(
 
 
 def task_model_revision_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.task_local_revision import evaluate_candidate_model_revision
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
+    from physicsguard.schema.task_local_revision import CandidateModelRevisionSpec
+
     revision = CandidateModelRevisionSpec.model_validate(load_yaml_mapping(path))
     output = evaluate_candidate_model_revision(revision, base_dir=path.parent)
     _print_json(output, pretty)
@@ -635,6 +610,10 @@ def task_model_interval_residual_command(
     path: Path,
     pretty: bool = False,
 ) -> int:
+    from physicsguard.core.diagnosability import evaluate_interval_residual
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
+    from physicsguard.schema.diagnosability import IntervalResidualSpec
+
     residual = IntervalResidualSpec.model_validate(load_yaml_mapping(path))
     output = evaluate_interval_residual(residual)
     _print_json(output, pretty)
@@ -645,6 +624,10 @@ def task_model_diagnose_command(
     path: Path,
     pretty: bool = False,
 ) -> int:
+    from physicsguard.core.diagnosability import evaluate_diagnosability
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
+    from physicsguard.schema.diagnosability import DiagnosabilityRequestSpec
+
     diagnosis = DiagnosabilityRequestSpec.model_validate(
         load_yaml_mapping(path)
     )
@@ -654,6 +637,10 @@ def task_model_diagnose_command(
 
 
 def assumptions_inspect(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.diagnostics import DiagnosticReporter
+    from physicsguard.core.residual import ResidualBuilder
+    from physicsguard.io.yaml_loader import load_system_spec
+
     system = load_system_spec(path)
     builder = ResidualBuilder(system)
     _print_json(DiagnosticReporter().to_dict(builder.assumption_summary()), pretty)
@@ -661,6 +648,8 @@ def assumptions_inspect(path: Path, pretty: bool = False) -> int:
 
 
 def project_command(command: str, root: Path, pretty: bool = False) -> int:
+    from physicsguard.workflow import adopt_project, audit_project
+
     if command == "audit":
         output = audit_project(root)
     else:
@@ -670,18 +659,24 @@ def project_command(command: str, root: Path, pretty: bool = False) -> int:
 
 
 def project_closure_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.project_closure import run_project_closure
+
     report = run_project_closure(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def preflight_review(path: Path, pretty: bool = False) -> int:
+    from physicsguard.workflow import review_model_understanding_preflight
+
     report = review_model_understanding_preflight(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def intake_review(path: Path, pretty: bool = False) -> int:
+    from physicsguard.workflow import review_external_model_intake
+
     report = review_external_model_intake(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
@@ -697,6 +692,9 @@ def testfile_manifest_command(
     time_column: str | None = None,
     pretty: bool = False,
 ) -> int:
+    import yaml
+    from physicsguard.core.data_file_manifest import generate_delimited_manifest, manifest_to_dict
+
     profile = _load_manifest_profile(profile_path) if profile_path is not None else None
     manifest = generate_delimited_manifest(
         data_file,
@@ -715,53 +713,71 @@ def testfile_manifest_command(
 
 
 def testfile_inspect_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.test_file_contract import inspect_test_file_contract
+
     _print_json(inspect_test_file_contract(path), pretty)
     return 0
 
 
 def testfile_contract_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.test_file_contract import check_test_file_contract
+
     report = check_test_file_contract(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def testfile_project_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.test_file_contract import check_test_file_project_index
+
     report = check_test_file_project_index(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def testfile_diff_command(old_contract: Path, new_contract: Path, pretty: bool = False) -> int:
+    from physicsguard.core.contract_diff import diff_test_file_contracts
+
     report = diff_test_file_contracts(old_contract, new_contract)
     _print_json(report.to_dict(), pretty)
     return 0
 
 
 def coverage_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.test_file_contract import check_test_file_parameter_coverage
+
     report = check_test_file_parameter_coverage(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def dataset_logical_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.dataset_identity import check_logical_dataset_record
+
     report = check_logical_dataset_record(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def dataset_relation_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.dataset_identity import check_test_file_relation_index
+
     report = check_test_file_relation_index(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def validation_run_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.model_dataset_validation import validate_model_dataset
+
     report = validate_model_dataset(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def validation_receipt_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.model_dataset_validation import validate_model_dataset
+
     report = validate_model_dataset(path)
     receipt = report.depth_receipt
     _print_json(receipt, pretty)
@@ -769,42 +785,56 @@ def validation_receipt_command(path: Path, pretty: bool = False) -> int:
 
 
 def model_library_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.model_library import check_model_library_index
+
     report = check_model_library_index(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def evidence_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.project_evidence import check_project_evidence_registry
+
     report = check_project_evidence_registry(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def evidence_scan_command(root: Path, registry: Path | None = None, pretty: bool = False) -> int:
+    from physicsguard.core.project_evidence import scan_project_evidence_candidates
+
     report = scan_project_evidence_candidates(root, registry)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def evidence_gap_check_command(path: Path, bundle_id: str | None = None, pretty: bool = False) -> int:
+    from physicsguard.core.project_evidence import check_evidence_gaps
+
     report = check_evidence_gaps(path, bundle_id)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def evidence_bundle_check_command(path: Path, bundle_id: str, pretty: bool = False) -> int:
+    from physicsguard.core.project_evidence import check_evidence_bundle
+
     report = check_evidence_bundle(path, bundle_id)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def evidence_map_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.project_evidence import build_project_evidence_map
+
     report = build_project_evidence_map(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
 def evidence_mesh_check_command(path: Path, pretty: bool = False) -> int:
+    from physicsguard.core.evidence_mesh import check_evidence_mesh
+
     report = check_evidence_mesh(path)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
@@ -816,6 +846,9 @@ def blueprint_review_command(
     material_root: Path | None = None,
     pretty: bool = False,
 ) -> int:
+    from physicsguard.core.physical_model_blueprint import physical_model_blueprint_review_to_dict, review_physical_model_blueprint
+    from physicsguard.io.physical_model_blueprint_loader import BlueprintLoadError, load_physical_model_blueprint, load_target_inventory_authority
+
     try:
         blueprint = load_physical_model_blueprint(path)
         target_inventory_authority = load_target_inventory_authority(target_authority_path)
@@ -917,6 +950,9 @@ def blueprint_bundle_query_command(
 
 
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
+    from physicsguard.schema.test_file_contract import ExtractorProfileSpec, TestBenchProfileSpec
+
     data = load_yaml_mapping(path)
     if "script" in data:
         return ExtractorProfileSpec.model_validate(data)

@@ -1,71 +1,10 @@
-"""PhysicsGuard Core framework package."""
-
+"""PhysicsGuard Core framework package, with public APIs loaded on demand."""
 from __future__ import annotations
 
-import importlib.util
-import sys
-from pathlib import Path
+import importlib
 from typing import Any
 
 __version__ = "0.15.11"
-
-from physicsguard.core.signal_mapping import (
-    BugFamilyFollowUp,
-    SignalMappingRecord,
-    build_signal_mapping_ledger,
-    derive_bug_family_followups,
-    mapping_warnings,
-    review_signal_mapping_ledger,
-)
-from physicsguard.core.data_file_manifest import (
-    field_signature_hash,
-    generate_delimited_manifest,
-    sha256_file,
-)
-from physicsguard.core.test_file_contract import (
-    check_test_file_contract,
-    check_test_file_parameter_coverage,
-    check_test_file_project_index,
-)
-from physicsguard.core.dataset_identity import check_logical_dataset_record, check_test_file_relation_index
-from physicsguard.core.evidence_mesh import check_evidence_mesh
-from physicsguard.core.model_dataset_validation import validate_model_dataset
-from physicsguard.core.model_library import check_model_library_index
-from physicsguard.core.physical_model_blueprint import review_physical_model_blueprint
-from physicsguard.core.physical_blueprint_trace import (
-    affected_physical_blueprint_projection,
-    full_physical_blueprint_projection,
-    reverse_trace_physical_blueprint_projection,
-    summary_physical_blueprint_projection,
-)
-from physicsguard.core.physical_blueprint_bundle import (
-    build_physical_blueprint_export_bundle,
-    query_physical_blueprint_export_bundle,
-)
-from physicsguard.core.project_closure import run_project_closure
-from physicsguard.core.project_evidence import (
-    build_project_evidence_map,
-    check_evidence_bundle,
-    check_evidence_gaps,
-    check_project_evidence_registry,
-    scan_project_evidence_candidates,
-    review_project_profile_authority,
-)
-from physicsguard.core.task_local_revision import (
-    evaluate_candidate_model_revision,
-    evaluate_hypothesis_observation,
-    freeze_hypothesis_plan,
-    rank_observation_candidates,
-)
-from physicsguard.core.diagnosability import (
-    evaluate_diagnosability,
-    evaluate_interval_residual,
-)
-from physicsguard.schema.physical_model_blueprint import (
-    PhysicalModelBlueprint,
-    PhysicalModelBlueprintReview,
-    TargetInventoryAuthority,
-)
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",
@@ -117,25 +56,69 @@ __all__ = [
     "query_physical_blueprint_export_bundle",
 ]
 
-_DIAGNOSTIC_EXPORTS = set(__all__)
+_PUBLIC_EXPORTS = {
+    'BOUND_HIT_TOLERANCE': 'physicsguard.core.model_dataset_validation',
+    'BugFamilyFollowUp': 'physicsguard.core.signal_mapping',
+    'BoundHitDiagnostic': 'physicsguard.core.diagnostics',
+    'DiagnosticReport': 'physicsguard.core.diagnostics',
+    'DiagnosticReporter': 'physicsguard.core.diagnostics',
+    'ResidualDiagnostic': 'physicsguard.core.diagnostics',
+    'SignalMappingRecord': 'physicsguard.core.signal_mapping',
+    'TargetInventoryAuthority': 'physicsguard.schema.physical_model_blueprint',
+    'build_signal_mapping_ledger': 'physicsguard.core.signal_mapping',
+    'build_physical_blueprint_export_bundle': 'physicsguard.core.physical_blueprint_bundle',
+    'affected_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
+    'build_project_evidence_map': 'physicsguard.core.project_evidence',
+    'check_test_file_contract': 'physicsguard.core.test_file_contract',
+    'check_test_file_parameter_coverage': 'physicsguard.core.test_file_contract',
+    'check_test_file_project_index': 'physicsguard.core.test_file_contract',
+    'check_logical_dataset_record': 'physicsguard.core.dataset_identity',
+    'check_model_library_index': 'physicsguard.core.model_library',
+    'check_evidence_bundle': 'physicsguard.core.project_evidence',
+    'check_evidence_gaps': 'physicsguard.core.project_evidence',
+    'check_evidence_mesh': 'physicsguard.core.evidence_mesh',
+    'check_project_evidence_registry': 'physicsguard.core.project_evidence',
+    'check_test_file_relation_index': 'physicsguard.core.dataset_identity',
+    'derive_bug_family_followups': 'physicsguard.core.signal_mapping',
+    'field_signature_hash': 'physicsguard.core.data_file_manifest',
+    'full_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
+    'generate_delimited_manifest': 'physicsguard.core.data_file_manifest',
+    'mapping_warnings': 'physicsguard.core.signal_mapping',
+    'review_signal_mapping_ledger': 'physicsguard.core.signal_mapping',
+    'PhysicalModelBlueprint': 'physicsguard.schema.physical_model_blueprint',
+    'PhysicalModelBlueprintReview': 'physicsguard.schema.physical_model_blueprint',
+    'run_project_closure': 'physicsguard.core.project_closure',
+    'sha256_file': 'physicsguard.core.data_file_manifest',
+    'scan_project_evidence_candidates': 'physicsguard.core.project_evidence',
+    'review_project_profile_authority': 'physicsguard.core.project_evidence',
+    'validate_model_dataset': 'physicsguard.core.model_dataset_validation',
+    'evaluate_candidate_model_revision': 'physicsguard.core.task_local_revision',
+    'evaluate_hypothesis_observation': 'physicsguard.core.task_local_revision',
+    'evaluate_diagnosability': 'physicsguard.core.diagnosability',
+    'evaluate_interval_residual': 'physicsguard.core.diagnosability',
+    'freeze_hypothesis_plan': 'physicsguard.core.task_local_revision',
+    'rank_observation_candidates': 'physicsguard.core.task_local_revision',
+    'reverse_trace_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
+    'review_physical_model_blueprint': 'physicsguard.core.physical_model_blueprint',
+    'summary_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
+    'query_physical_blueprint_export_bundle': 'physicsguard.core.physical_blueprint_bundle',
+}
 
 
 def __getattr__(name: str) -> Any:
-    if name in _DIAGNOSTIC_EXPORTS:
-        module = _load_diagnostics_module()
-        return getattr(module, name)
-    raise AttributeError(f"module 'physicsguard' has no attribute {name!r}")
+    module_name = _PUBLIC_EXPORTS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module 'physicsguard' has no attribute {name!r}")
+    module = (
+        _load_diagnostics_module()
+        if module_name == "physicsguard.core.diagnostics"
+        else importlib.import_module(module_name)
+    )
+    value = getattr(module, name)
+    globals()[name] = value
+    return value
 
 
 def _load_diagnostics_module() -> Any:
-    module_name = "_physicsguard_diagnostics_standalone"
-    if module_name in sys.modules:
-        return sys.modules[module_name]
-    module_path = Path(__file__).with_name("core") / "diagnostics.py"
-    spec = importlib.util.spec_from_file_location(module_name, module_path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"cannot load diagnostics module from {module_path}")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    spec.loader.exec_module(module)
-    return module
+    # Use the canonical module registry so public diagnostic classes keep identity.
+    return importlib.import_module("physicsguard.core.diagnostics")
