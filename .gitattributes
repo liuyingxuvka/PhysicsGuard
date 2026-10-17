@@ -1,4 +1,2 @@
-# Keep byte-level fixture and model hashes stable across Windows/macOS/Linux checkouts.
-* text=auto eol=lf
-*.csv text eol=lf
-*.png -text
+# Content-addressed pump-loop fixtures must have the same bytes on every host.
+examples/testfile_contracts/pump_loop/** text eol=lf
