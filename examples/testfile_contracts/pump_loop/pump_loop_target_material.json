@@ -1,5 +1,5 @@
 {
-  "boundary_fingerprint": "4d6ff39f9cbad95443a88137a172e7c51629f024bd7c526d8b2881f46acaa051",
+  "boundary_fingerprint": "4e35960c7363a6038ba0b54aed71a43506c3695b96844bfe3ecb51c8f47c607e",
   "elements": [
     {"element_id": "pump_loop_fixture"},
     {"element_id": "fixture_validation_path"},
@@ -7,7 +7,7 @@
     {"element_id": "valve_mode_context"}
   ],
   "inventory_id": "inventory.pump-loop-contract-fixture.r1",
-  "material_revision_fingerprint": "5825e99b6946aeda9476aeca6c7150a64a8c1e4e9537bb18e9089cf264ff9bb7",
+  "material_revision_fingerprint": "2f4471ce16054445a6971ff9fb383efaac1b16248b1ad8fcd452c40dba47d901",
   "materials": [
     {
       "binding_ids": ["binding.root.implementation", "binding.path.implementation", "binding.signal.implementation", "binding.mode.implementation"],
@@ -56,7 +56,7 @@
     {"owner_element_id": "valve_mode_context", "port_id": "port.mode.diagnostic"}
   ],
   "provider_id": "provider.pump-loop-repository",
-  "request_id": "request.target-material.5825e99b6946aeda9476aeca6c7150a64a8c1e4e9537bb18e9089cf264ff9bb7",
+  "request_id": "request.target-material.2f4471ce16054445a6971ff9fb383efaac1b16248b1ad8fcd452c40dba47d901",
   "schema_version": "physicsguard.target-material.v1",
   "semantics": [
     {"owner_element_id": "pump_loop_fixture", "semantic_id": "sem.root.relation"},

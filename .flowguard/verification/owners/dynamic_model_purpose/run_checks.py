@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "models/owners"))
+
 """Run FlowGuard exploration for current PhysicsGuard model-purpose closure."""
 
 from flowguard.explorer import Explorer

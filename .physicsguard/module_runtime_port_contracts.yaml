@@ -236,11 +236,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/AggregateElectricalBusBalanceModule.yaml
-    sha256: fea4ded0df0cfa721a11a2dfe2a7399dcd9349cbc7b21140cf016334a44c4d0a
+    sha256: 095e881e8d59eabe942a9c0adbc77d3ce16d839b19ae72f06d8ab633065e4a61
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.AggregateElectricalBusBalanceModule
     selector: 'module_type: AggregateElectricalBusBalanceModule'
-    subject_revision: 3f392060badfd36de1bcfa6c0cf49a9b7fcc871d27ae6c77a98d38b528ed3bdf
+    subject_revision: badbe7ed5ef3b308f1a4ecc0edfbfc69a3d8ffc9a6fdbab885d92a56621588c4
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -305,11 +305,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/AggregateMassBalanceModule.yaml
-    sha256: 56c2a2e2bc20a85f8f87bec4b83bc653d561e88417aa859711d95a3efbb18a5b
+    sha256: 908d1150191a5f6acb8fb8fbae5a6f24c83812b0a39f62254e9940f58dcb9e3e
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.AggregateMassBalanceModule
     selector: 'module_type: AggregateMassBalanceModule'
-    subject_revision: 2c198f9ed1da748f61802d9b65496e69e770c398621bc79813bf5b167d4d6f0a
+    subject_revision: f31af3103cf7be12ffb6574f588980061457ca851359ca86ba955cf7c0bc3380
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -381,11 +381,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/AggregatePowerBalanceModule.yaml
-    sha256: c203323bc806d06a3442a1ffec75cdd40ad0ec82b8ac8fc0632c9038b9c3ed25
+    sha256: c3033e7e6b210c3d9f86fd44164e6f059eebf1605616c37fe8840acab267be42
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.AggregatePowerBalanceModule
     selector: 'module_type: AggregatePowerBalanceModule'
-    subject_revision: baf563387e0d1e2d625c613e05490a0333e28021a249b06719a06fe507427149
+    subject_revision: 30ac182e5eac6863f91c89db208e86442e3a26340d3d2be7c99b8b9540ab0c01
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -461,11 +461,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/AggregateThermalBalanceModule.yaml
-    sha256: 7218f37e4d6a6e14cfd36eb48da9192840cd530b2dc4e21c8df9a40eeed3e509
+    sha256: 8588efa2be849bad7fe41cc5c6caebcbbe16268ca1ff2bb05a643ae85156dde0
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.AggregateThermalBalanceModule
     selector: 'module_type: AggregateThermalBalanceModule'
-    subject_revision: 327ade7a06a7a2a9e49a398c5ea6b5a5320eb6c68f3a2f16f15a1733540575ba
+    subject_revision: 5398c50ccf201f4fec1c21984fffcf55b31ae14803351a26cf75ec093c58556d
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -521,10 +521,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/air_oxygen_molar_flow.yaml
-    sha256: b5804123e1f76de9aa1a5038b5db2063af0c31700014b5cf3dd6b0cfad02600e
+    sha256: 6a44e63645de2a11732280997de195c912af9ee45655cde390810eff05f9f455
     component_id: air
     instantiation_fingerprint: 3e409410d59a3c1516737a25a9b27c1e07b5bf89313e0c67b2c5e33691dae171
-    subject_revision: b4a0b55cc21a95823c279f6c875b269f5d8619700a896495bbd3f6273144a17c
+    subject_revision: 4651c03acf99f24bf0c3e76e12f5c501b1cd04292480234731797aa0f1c19252
     boundary_variables:
     - n_dot_O2_mol_s
     derivation: derive this scenario's fixed inputs and solved outputs from the exact current example
@@ -938,10 +938,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/additional/cell_stack_voltage.yaml
-    sha256: 77b1baad35001953482427abe674f3b52d7eb519cdfaecd5923e1f6eee9ff8ea
+    sha256: 7a856009cad8f903232fc1139b251f8c8bd46798fbc0e22d62f998f3cbf29364
     component_id: stack
     instantiation_fingerprint: d3c2bb64ea8d858970e276939ad0132711a003f346ce7a884b3dc4010268f39e
-    subject_revision: e5983715a098914f13a20382bd5b6125a2439e7d74a36b699316f1ec585db738
+    subject_revision: 5912b0c4c9085a045ae4c4eeb035043cc1befd32b7674e5fcfa4dac9d75f0413
     boundary_variables:
     - V_cell_V
     derivation: derive this scenario's fixed inputs and solved outputs from the exact current example
@@ -1074,10 +1074,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/chemical_power_lhv.yaml
-    sha256: 5767bd8f6c9e08b3cfec09cb127d6cb47fcb0d6d1d57000f7617bf16331707a5
+    sha256: 3447f9b058439b7b62409538d63ece53eaf1bdfbb1318641b377b3c2ea0e53c9
     component_id: chem
     instantiation_fingerprint: d1f38cbe764f697afc7ca74d7a3aabbc138c319b43576fdff1e917cca61466db
-    subject_revision: c3bc95929adbfe86ee7d74829a7dfb5ab24ce9771f4886b46704281dfd2840a7
+    subject_revision: 4ac0e68e43e65fe953af720e61bdd9861084845f362ed29d16d668f7d390f4a4
     boundary_variables:
     - m_dot_fuel_kg_s
     derivation: derive this scenario's fixed inputs and solved outputs from the exact current example
@@ -1414,11 +1414,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ControlErrorModule.yaml
-    sha256: 522c96e8f17ab8adb6c5fa905c35963e81abeee0010742cfb00a63ad8aae6b36
+    sha256: aa496e605650c5c501745a225f446bc5df9f68429e86cc46a2b6946d122adff1
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ControlErrorModule
     selector: 'module_type: ControlErrorModule'
-    subject_revision: 5f6ba8c1bdd50524105841c11256f32e50d75463c0c010c0496266683703613a
+    subject_revision: 5cc9c792abf3fb5be5fd1e75d4ea95a44362361bdbb49241b9eeff7b22f427af
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -1474,11 +1474,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ConvectiveHeatTransferModule.yaml
-    sha256: 97702e828eb923ace23ac16fd08d79557d978bdd3b3de1f70e880e0146b1abf6
+    sha256: 51cfb0daf588ac99e612e169196746ae1e9cecf37db2ff36699c3c7de6b7bdbd
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ConvectiveHeatTransferModule
     selector: 'module_type: ConvectiveHeatTransferModule'
-    subject_revision: 2b276d2ed50c6eecaa637a0123e7c16a93ff822c9f312862f40557eb64904cd2
+    subject_revision: 8e1070e79ce827a5b580b548d4ea0c89ca8d885a5bb139682736ec5285739abe
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -1542,11 +1542,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/CoolantHeatBalanceModule.yaml
-    sha256: 43e7bba4275636296ecf6fa073a2cde394aae3194de308b31727694dbc236498
+    sha256: ef03ec8925135cdc6b52a3bcc7bd8cb4995f7ce9a3b530a156010adfa1dbe3c9
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.CoolantHeatBalanceModule
     selector: 'module_type: CoolantHeatBalanceModule'
-    subject_revision: e1b60ab1908065a91928f2f6eb893f3c805a817fd6e1d21bb9955caa105e2d54
+    subject_revision: e4fe83d7d3de5cf63d7030ae9e15c8f6644eeb2b6783734dc88eb9ada9f43184
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -1594,10 +1594,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/additional/current_density.yaml
-    sha256: d297703fb7cd43979ab3be8cfc725be7b4af3553f610cb4caf5839cf4ea5af3b
+    sha256: a17fd761523bf9eb8f6212fce95ee47fc2de8f3c85b2de536e908f53a154a8f8
     component_id: cd
     instantiation_fingerprint: 5a0585b0ccffac34ad5e5ebc1f4cd54182b5d031abbe91e42c0aea9d069899b7
-    subject_revision: e4f85f7c84457a77442482d2301586654f5d84c370e1044808cb317222a44b20
+    subject_revision: ed693912fac2ffd2fba3d89fc9fc18fa87d45f67d8c87741ba6df2bcfa21b91b
     boundary_variables:
     - current_A
     derivation: derive this scenario's fixed inputs and solved outputs from the exact current example
@@ -1745,10 +1745,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/density_mass_volume.yaml
-    sha256: 1f9204d0804a2c1cb3a0df302479dc0d8af34b2e359ff2cac7e9c95be6e22120
+    sha256: a1da028bdae21128202fcd5564f42d9cd9964156653496120ea82784b5056f17
     component_id: bulk
     instantiation_fingerprint: 80096300f65ccbe8ff78082aefbf45954421c56020090dba3e389f19078e961c
-    subject_revision: 9cd24fecb1931e1c27568c5643cf02ef407089ca8a7b4a53c08381978bc341bf
+    subject_revision: 19a682cc3fed79fd98d14421fdd64fa07ab00c9a3ccb5a07d3ea66cc2689ef74
     boundary_variables:
     - rho_kg_m3
     - volume_m3
@@ -1958,11 +1958,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/EfficiencyMap2DModule.yaml
-    sha256: 067ee03fbfe0845680895e1d710e10dba02d22a43574cf198c80d638f4f70232
+    sha256: 18eba570292a1be7b70f3b8fce117bf84db1373dbb39766257adba0ebbc80eee
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.EfficiencyMap2DModule
     selector: 'module_type: EfficiencyMap2DModule'
-    subject_revision: 5c2c96e3b54e44c1905ba1bae37ecd360e70f85886dadab7a79117dadf16e084
+    subject_revision: 80c6860d3f456d1f1210ee1c51ae22649862b3453cceaccade04384b7a415c10
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -2018,10 +2018,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/additional/efficiency.yaml
-    sha256: aca201ed40067cc43c2513a098de555c063be6541753dd74f33954aec7409ffb
+    sha256: f21879a42689fe7f03be3a67970e9de5e0a2a010bcd233436ee9443cf6774c0c
     component_id: eff
     instantiation_fingerprint: 765c91566d93666b0203b1b6882c189dd5d9e80ca914ff8a142580d837ea6910
-    subject_revision: 1a7e6b7100a2aed9a0d2532637b9a63087f019821ce6f04cc0a249f47c5cc079
+    subject_revision: 120ade6392f65fc76208b0baa2ede1bdd318258cb81d29cc94ef8bff36ba2793
     boundary_variables:
     - input_power_W
     - useful_output_power_W
@@ -2168,11 +2168,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ElectricalPowerModule.yaml
-    sha256: e22dbd588b058fb78e49395e7445fc38c418246498651d37952b6c71a9c52965
+    sha256: 2ccbf62b192bb9c81cf79167eed420c53e07dbeaa57ab9bf13b96636d116bb91
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ElectricalPowerModule
     selector: 'module_type: ElectricalPowerModule'
-    subject_revision: 651962f47e79f26315052e31e26a783879961cc3e0fb5c951ff2066c75eda5b3
+    subject_revision: b424d241a339a47d177833d4d3bb7d282c5a1e2e2cd0b7808badcc28da4adbf9
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -2220,11 +2220,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ElectrochemicalFaradayRateModule.yaml
-    sha256: d97106ded5b9058267c9bb55201e28ecd9f1a0248913c2c0c4b435bd79aab0f1
+    sha256: 15cb88bc090b5bd576490218d652c25398749e0b962de268b3fd34aed54f9392
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ElectrochemicalFaradayRateModule
     selector: 'module_type: ElectrochemicalFaradayRateModule'
-    subject_revision: cb8e1403f64cc6444c994c132af7ed4cf390ca6ee0214ace4979199516fd9935
+    subject_revision: 30f10f813eb736648ea038ac8edf5be54f117950241549779a3f70ae753c975b
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -2280,11 +2280,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ElectrochemicalStackPowerModule.yaml
-    sha256: b3be1f5c0b591662a5ea704432bfdd4f3a91681cead924a622c500ce067b5af3
+    sha256: f576f0b525027403862858a87eb3f24b0a7b8eaed5a1709d86579786a9bc2c59
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ElectrochemicalStackPowerModule
     selector: 'module_type: ElectrochemicalStackPowerModule'
-    subject_revision: 6ec4ba3447544f7587f65005210fc7ce36c9107e0a7e9372a277797affd12baf
+    subject_revision: a4eba46115b784989ceaa64576d43bd9a9bbf0b26a56c446be831bbfad5b9c13
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -2391,11 +2391,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ElectrolyzerGasProductionModule.yaml
-    sha256: beedd5cf1db229f7617c4e8aada99a9bbb3007e1f19f1e9f716b5f367e04faa8
+    sha256: 9506b6dcab8f9616e649fadd7b15f9006136c61f78270f49d7f39f283aadc85d
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ElectrolyzerGasProductionModule
     selector: 'module_type: ElectrolyzerGasProductionModule'
-    subject_revision: 7b7d44b69fef74f0031581acbbf6509015d9aec0845c9820884877b904b653ce
+    subject_revision: 757079cc1cb5971b9af9a2c7c4f0f688b5626d2a54bb1ab76a54315645b5c160
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -2514,11 +2514,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ElectrolyzerStackBalanceModule.yaml
-    sha256: 17f91ec34b0453737facf235fea845d13b7115d64097bd9c4a969b2a6a03885b
+    sha256: 3c729a2ba77043927f8a8b55d35ffd367a11466f67c12a76a5b9522bed776ecf
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ElectrolyzerStackBalanceModule
     selector: 'module_type: ElectrolyzerStackBalanceModule'
-    subject_revision: 323e79de9b15a559454b04030ee4662d3aecf58c358c954d9f0719f15d48ee9c
+    subject_revision: 856b7113c3f7dcdefee8767360db8cea617bc8cd0e702c5b15928293f17835a2
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -2988,10 +2988,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/force_velocity_power.yaml
-    sha256: 7461e5d3c72ed1b61bd5384f277902c1d715bc4dc3496b9d99ac554b5ce8dae4
+    sha256: da41fc0bfff6498526c0dd58526d09c98ae6a6c07a3710e2305d03e57346a2cc
     component_id: mech
     instantiation_fingerprint: 53994dae7ad71467f7449bc0708944eb0a2ef597bfb1264f1a9acd4d415433ae
-    subject_revision: 7ff635e0541d51ae9379058598d817e685d4e8574ceb4e30b5397d787f793ef9
+    subject_revision: e6c4e3c35fe1d1af5cd76ae6cd8fd9c70f114f93f0bec1c00de679d6ab87e3d0
     boundary_variables:
     - force_N
     - velocity_m_s
@@ -3130,11 +3130,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/FuelCellCathodeAirSupplyModule.yaml
-    sha256: 4f883773c9f0bfbea31056e4a2cb2c1e1c6360b41fd09958f8abc183d7680d8b
+    sha256: 5e4e14eeebbfc418bdc98b0b906b4435d6fdfea74f3f05ae27e62f9943324529
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.FuelCellCathodeAirSupplyModule
     selector: 'module_type: FuelCellCathodeAirSupplyModule'
-    subject_revision: b0ea6617acebe179e98aa8c65d52bcd789c0f9e64f2d7b4a32dd88472f9a511f
+    subject_revision: 99827d0fa5f469538996502973b71083a2cef12767f53c17f22e97ec8c759a0b
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -3288,11 +3288,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/FuelCellStackBalanceModule.yaml
-    sha256: 8e8bc89ada43bba5cacea7ebefec31e8f66c93ece091445fd9f19372e34ab03b
+    sha256: 97e40a9d811bdf691a99c19b5522b0692939b044961c3c53a55133df6bcc4d6f
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.FuelCellStackBalanceModule
     selector: 'module_type: FuelCellStackBalanceModule'
-    subject_revision: 59f210ff18c017abb842ccc32727d84d08cfafeffafc40fb91324f1dbb63ab1d
+    subject_revision: b968d604b4cf8b6401835deb3173c87620ecfe8870f545a347c0e056764d879b
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -3580,11 +3580,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/HVBusPowerBalanceModule.yaml
-    sha256: 7a6cae2fb1220623b4883c787422c1ed9c58d7e878134a413d370afa91e252a9
+    sha256: 0564ef93d9166f696d1f6ba7dc5ca8f5d71d0493d7cf306c53369b0c8464ecbe
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.HVBusPowerBalanceModule
     selector: 'module_type: HVBusPowerBalanceModule'
-    subject_revision: 76a6cf14c210e7faafa4a76c11324aec673dd0be3a3824a241447d9e2e77ea67
+    subject_revision: b40f4e3b652b595ef04f7364cb0f3bf73e1fec8afa698acaf5ea819efd552450
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -3813,10 +3813,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/ideal_gas_density.yaml
-    sha256: 45ea2e172eb66ad0c1597ae6470d81a168bf808d1352b82713adcc56af4965b0
+    sha256: ce2b206c74356264b7a3c4b03666fddd03b71bc144798fd6167d6272425430ae
     component_id: gas
     instantiation_fingerprint: 41c9734a67aa7a235089c760c5ce66ea4604fda9ef38649a92b47d91ffbb0bfd
-    subject_revision: da06257ee359b047a941f1bf37031de7d5c422bccfd09d18c31375556fbfa12a
+    subject_revision: 658a063905429682d562a08baeaa84218d21512138f2505012340a05d7091a51
     boundary_variables:
     - T_K
     - p_Pa
@@ -3898,11 +3898,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/IncompressibleOrificeModule.yaml
-    sha256: d59490818a8b21cd840e6a4fe083c73e7ba140aff9f6215dc3d46a76fb121671
+    sha256: 862226b1a6dd4cb0582542b5a0fe59aa796618db2cd2b70c6937165a1933c9d3
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.IncompressibleOrificeModule
     selector: 'module_type: IncompressibleOrificeModule'
-    subject_revision: e4750aedde515b90e0473cb7b77c784e27daba3cf185508f7a9cd9de2e06109c
+    subject_revision: d56e0958859518eb5a507e40bc58a27aeb8bc8ec5de62b430ccff0f693a850ec
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -3958,11 +3958,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/IncompressiblePressureDropModule.yaml
-    sha256: 85740517af225888de2a70d9cc9c6de28401f03d7752f19761773bb92811898c
+    sha256: e8cef94b632b283c88675b3121b04f7db67e57274d63c4a9463622ed4bc1db15
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.IncompressiblePressureDropModule
     selector: 'module_type: IncompressiblePressureDropModule'
-    subject_revision: e9d17b7637f3e81aeb2b8c92915cd59a781f8aecc27c29cabe7d358768aa6539
+    subject_revision: 42bdba3dc45f6fa8e365e707ac910b8207f2dcda155ab5a28194999234432a4f
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4175,10 +4175,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/generic_audit_system.yaml
-    sha256: 39ecba6fffb65e3dae14c47186babdc3050a6d58f8c40b68847b53b5c186e068
+    sha256: 408d0f4cc487e86b9ab7e1af584af2d50e229768e6788769233de8022ae6ff81
     component_id: rel
     instantiation_fingerprint: c7fc2b2ea14af0bdb1aa33f7a30da298ac54635656f54451835e32dca229cd20
-    subject_revision: 38cd04dffbcb468ea98011f4084f1806cbc46566d752dbbb923a58348dab182e
+    subject_revision: bf5c7b2428b3a1115fdc1a11cac39d3bb8e012d7ae866902b482f55137c9aea0
     boundary_variables:
     - x
     derivation: derive this scenario's fixed inputs and solved outputs from the exact current example
@@ -4222,10 +4222,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/linear_spring_force.yaml
-    sha256: 3cd5777fc148ecb9e2c46e0354dcfe3fad758d3b26c83b788aa9f658c57e6d23
+    sha256: cb231560811364cabd2f2584c28d427290c4c528fb1a9757020758104dcc1057
     component_id: spring
     instantiation_fingerprint: 708d929f24c03fd56159d4b3c4b42415eac2260bc8123139283b1526d379a0a9
-    subject_revision: c96601b8bf8c82df5d9168acbc80d8a757f8507a380bf12bd3d398654e3acc2a
+    subject_revision: ec21a0e8ac4a7625b8fa1ce236079e70f966ced6e59966a1106ac0dd37295259
     boundary_variables:
     - displacement_m
     derivation: derive this scenario's fixed inputs and solved outputs from the exact current example
@@ -4269,11 +4269,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/LookupTable1DModule.yaml
-    sha256: ea9eeccb4cf5b63cd538cdd392c121f33c0d34e43f36bdcf8a086462420256e0
+    sha256: f967e66cd5440d401d8b25460b80ac177a6ce7710ed4efa2bad131b8927a3127
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.LookupTable1DModule
     selector: 'module_type: LookupTable1DModule'
-    subject_revision: c726405e8074ea8d6a0eb5a44f9e1687e8945badbb8491a8e70b1ab376b128e5
+    subject_revision: bc07caf3bf0b14b8179566b5c3f9ea656379a2f631080862c4a8912294236fb6
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4329,11 +4329,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/LookupTable2DModule.yaml
-    sha256: a64d6dfe04c506f581f9666d92f69c630ffdeea7ae642f7e6356abf4e88bab90
+    sha256: 571a8effb5946ed544983b60d9a04f6c96313fee18e8ecf6233470be2a0cde43
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.LookupTable2DModule
     selector: 'module_type: LookupTable2DModule'
-    subject_revision: 459ee8214070495ddab8ceffa60b88426c266fc7dec3ba67566b870337e1f5e3
+    subject_revision: 1bc04ef98b5a0586542806949c6159b94f39515b56bd2981162c4548379b71ff
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4449,11 +4449,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/MapAxisBoundsCheckModule.yaml
-    sha256: 9790568781606798936876df95ab34344e5e91b2d72274e062e3f5cfc55c8368
+    sha256: b73c3b8396b0092741a09e0e6339a3ef76519fdd05e637c72ae8cadcdbabfcfe
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.MapAxisBoundsCheckModule
     selector: 'module_type: MapAxisBoundsCheckModule'
-    subject_revision: e3be244d708215540224b83420fc2330972d545791831057f5cc820e4f0cc9cd
+    subject_revision: 57688a375da18b555b36a712a2044a139a4bf2d1de8a91d41a7a842000172025
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4526,11 +4526,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/MapMonotonicityCheckModule.yaml
-    sha256: 3bad27127c794a0f22ad2e94f825ebc9903e1a2999d3c9fbe13e53526a80007b
+    sha256: 3ce171f49dbfeed748e3f4813fe9692b0cd46590068582275d709cd45bb63c26
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.MapMonotonicityCheckModule
     selector: 'module_type: MapMonotonicityCheckModule'
-    subject_revision: 1255ad4e467d7d8285e07e57fb86d483bd3db4e28c722d4cba80cc61d2ca033e
+    subject_revision: 5b5ba17e0442308d14304224dddcb37ee75e9c6807365e253d5825643500aaf7
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4571,11 +4571,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/MappedSignalModule.yaml
-    sha256: 60fd01f78d575654ef507b961d340e9e7d6adc354eddc3066485d1c908081c45
+    sha256: 0b4ee4124446b47234a8c4dd5fc825ab565d240fab24efffc657305283fdf602
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.MappedSignalModule
     selector: 'module_type: MappedSignalModule'
-    subject_revision: f017feddba12eb7df2a505628fbcd5a540ec874065fd7621d92e926db7327b74
+    subject_revision: 3bd8173657883a0a489e639cbd8daaa533ccb4456c54519391dad1be91f30808
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4677,10 +4677,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/mass_molar_flow_conversion.yaml
-    sha256: 8f56dca90e705a2f4ea7aa3a411c4d68eb3e350c085fa5319102c23d63224d7e
+    sha256: c60df2545ee592d5aa7dcc4852347dcce64273b7a46a712de65d4287e3c6155c
     component_id: conv
     instantiation_fingerprint: c0afd936dd9d68961d0f3bb6d1e7a9e4c45ba17d018414cae9e3564cc183a305
-    subject_revision: 37704a8b29a81e663e30615cf4d71462de5e360fb3851bb5b9d9f4208c6d25ad
+    subject_revision: 6834097f54029503fc4fcc9bbf86a96cf0c08a79eeec8905b4f4d40d13fca257
     boundary_variables:
     - n_dot_mol_s
     derivation: derive this scenario's fixed inputs and solved outputs from the exact current example
@@ -4756,10 +4756,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/mole_fraction_flow.yaml
-    sha256: 5400e9d5c5f64715857cf6839824ddce932bdeadca0ccf46825c3f736101a99d
+    sha256: d2da36360865adaba33c6a3eb12519d1b89a0c6d89facc4b27f09868d32070cd
     component_id: mix
     instantiation_fingerprint: 58dea58332070c6a35490ed73cafdb8d1cb47a122b746b2c5fb220f30fa97335
-    subject_revision: d86f84b562a949bd3c41f817457d858e4248ed4c9b613ce4116110e502a1d77d
+    subject_revision: 2d4c6c907ea35fd576e88d54a000443d1a6580b3abfe130220a59ada6854cde8
     boundary_variables:
     - mole_fraction
     - total_n_dot_mol_s
@@ -4804,11 +4804,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/OhmicRelationModule.yaml
-    sha256: 8e7b0ef0079a7611462bfdf2315f7c1ef3de29692f0a893e7b820673e54ca8c9
+    sha256: 77aaae4a44a8fe4e02ea73f5e53a67c4906873ea3c4021a7c1d4dfd82383eedf
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.OhmicRelationModule
     selector: 'module_type: OhmicRelationModule'
-    subject_revision: b511e2dda06711e1d58aa2b1b4e719da591cd74473dab1310a41dfe427d9d116
+    subject_revision: 012ead95cba5e6adbcc3b091e45dd53073998aed9329f26326b2a09209353fe2
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4872,11 +4872,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/PIDAlgebraicModule.yaml
-    sha256: 41787b7ceeb3c1c4c59425ce16285bb91adc4954935eb820d3b9007deb5a4b8e
+    sha256: 91ff8a6af53bb6bfa14177b6faeddeca99bebfff8764aefaaee30f931cb3924b
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.PIDAlgebraicModule
     selector: 'module_type: PIDAlgebraicModule'
-    subject_revision: 4326c341a27f8e71e01bea2a225ba09c8fe6493e819626863b73517cb210bd32
+    subject_revision: a5a5e7b88ad7f80f7670ec4c1de9ca6090dd32fe4f5c677ff471509e9d1129ce
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -4980,11 +4980,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/PIDControllerStepModule.yaml
-    sha256: 08a1fdc94a4b1f88931d3cc4dec1c5cd2cfd12dd565f4e6abf30959807a4353a
+    sha256: 6bee67082b30dff6acd3095461c62afee75e43c633369538aa0d366d06d6b76d
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.PIDControllerStepModule
     selector: 'module_type: PIDControllerStepModule'
-    subject_revision: c45aefe8cbad8ce0550532036cbddee0f370edc9ebb9c3e594bab8d00dfc5e11
+    subject_revision: 76b62cd135ec55d22ad0a1adca12e11e1d50eff35d236114a0d282acb2744a8d
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -5040,11 +5040,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/PipeSegmentSimpleModule.yaml
-    sha256: 3f89b61fa50cf9ba42bcc6f3d030ef44aa0764a001af3e6ed06daf028e88ba9b
+    sha256: ef58c5859480e80dba07bbcc385f01415dba9f2252a6e802726ae88947169fd3
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.PipeSegmentSimpleModule
     selector: 'module_type: PipeSegmentSimpleModule'
-    subject_revision: 8aaf5f26b85a55b2f72787ef21a1743fd862f3b16f699d5b1a4818147770686d
+    subject_revision: ee1551a96f55d2b0afba3c5904be5106023da587b3311b09a87fc8baf9169bdc
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -5100,10 +5100,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/additional/pressure_ratio.yaml
-    sha256: 363fba9277a80221b990053a796aad430c68ce12b926d0c615358057d7086d3d
+    sha256: 1fc2199c24babcf00b5817b7531d1189b56db9a9a9ed760a01ecc6aa58ca0806
     component_id: pr
     instantiation_fingerprint: 9f3312b8ace44c15f40727f17e6cb88dcbb9192d8805315f1bc3b90752c7b83a
-    subject_revision: 9319733ef6437241b03c054e06b9b019251a6151d152fa04e4ed78593baf41c0
+    subject_revision: 9ae858da41083ba601106119788a08d61bcc7f2b481a01c0a82cca307a931640
     boundary_variables:
     - p_in_Pa
     - p_out_Pa
@@ -5254,11 +5254,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/PumpHydraulicPowerModule.yaml
-    sha256: af58bbc287e33c499aeb9816738cd9d7a58026b4986ce48d054d11df01013edb
+    sha256: 4e6bd16016cc3b3b1884ff4c5145e9a6c729394d00762c728545ae00ae0c403d
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.PumpHydraulicPowerModule
     selector: 'module_type: PumpHydraulicPowerModule'
-    subject_revision: 1c9da83451f482fff530fce76172e60b85c8c4c43450abb17c00c3ed321cf0d9
+    subject_revision: d16e63656706987d2af1388d2dfceadf80c20d4b0eb79d9bad4056ceceeefa73
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -5371,11 +5371,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/PumpSimpleModule.yaml
-    sha256: 4576e69b41a473e45e3d3cd9cc5d98bcc90f7b7c34ee9d80e825c2b4a9a12066
+    sha256: f289d9cc02b099193bbd4724910d0be0e51fddf6966da73724a259fef5843039
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.PumpSimpleModule
     selector: 'module_type: PumpSimpleModule'
-    subject_revision: 6134f392665bac45fda4f7335d7c34fc526d6f2407a38a9cf4b537ff73996abd
+    subject_revision: ec2b43e60110b20a77e7ebd37358be4680ebf56c9db08930cdbc40a7d072d168
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -5431,11 +5431,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/RadiativeHeatTransferModule.yaml
-    sha256: 536e51a594b01fe39adc1a7e3a93292f3696e0cc52212fffd95fdd472930beec
+    sha256: 396af35ddce43da869f2f9588a231a0334e39fa9c2a496e979f77050d1d8d62f
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.RadiativeHeatTransferModule
     selector: 'module_type: RadiativeHeatTransferModule'
-    subject_revision: 5843c8ab0484e3ee4d39aa32cc08e0f339751086c5aa6703d3aff9ba3d5b0b62
+    subject_revision: 85d484eda6fca64dd673f76a1c06d6aad23bc0b31c2705c807dd588151f3df19
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -5594,11 +5594,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/RateLimiterModule.yaml
-    sha256: 0e52ba05221f007b0479e3822264c892ec7ccf24b1a8431ef4dd66ed627e5b18
+    sha256: 95ddff7583655e0bd5f9b7a1f0b7bcaa8c754e61e507beab07c7e0d00f8a0842
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.RateLimiterModule
     selector: 'module_type: RateLimiterModule'
-    subject_revision: a2fa31577f89160868046426c5a2a5344a67a5ba270da294b3c874f91f94ca1d
+    subject_revision: 2c18a603e325789923dcbf6b8062390425bc55b60d3c7c031b6fdb5b3d092a1e
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -5891,11 +5891,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/SaturationModule.yaml
-    sha256: a107ffc7f1364e44fc5ad6ed23920034f6bb1400d2469a3eac59c6cb501fb679
+    sha256: 881fe60bc9500d03d373866125bac0af071c7c5d58152afe92786e3d2e6f855e
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.SaturationModule
     selector: 'module_type: SaturationModule'
-    subject_revision: 9eaa5b66f539ae66c8ca2442e3aadb4fc40d3a5388d758ad8568113ebdb9c7f5
+    subject_revision: cf8ace2cdb474c911dcc4dc9472de1b4c5a52e88de017530b0b38a7dd3234c3d
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -5972,11 +5972,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/SensorScaleOffsetModule.yaml
-    sha256: e9fb5db8c488b183768b6d92554074c1b6c9b9bb152cc488e94268116202c4dd
+    sha256: 83eea6aaa705c2afbe794e76c9f26faf6997120f8e333037e8ca127cf3b8b1b1
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.SensorScaleOffsetModule
     selector: 'module_type: SensorScaleOffsetModule'
-    subject_revision: 98f6b560f291cda2a36f02ced1256bf26f2dc4415eb0e57ac01d82c43ce08f6b
+    subject_revision: 72b619957b6df47ddcd6fdc5cf112b485d0b3e8b8b658daa98ba3b91d541af63
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -6055,10 +6055,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/specific_enthalpy_flow.yaml
-    sha256: c54c3ccdf3dce8b745f00fc63a3e496293bb358d4d439d0f429177e6fd7116be
+    sha256: 1861fda8c44f8dd5c5be92efcb79b5ecbf3e26aa64c11898b09138c0d2ed213e
     component_id: h
     instantiation_fingerprint: bb8ee9233f24d9f7a5cdc6f08082ea1aee154ec97a752a596ade7143d8325c53
-    subject_revision: 8de218cc1569fb8cbbae89d6e233e9c9062991c6b5686c89c19a0117d200413e
+    subject_revision: 467fa0c4e10313d86b1acb607cae88f8fffde180a6cb22ade21ddd9d7847b579
     boundary_variables:
     - T_K
     - m_dot_kg_s
@@ -6111,10 +6111,10 @@ modules:
   authority_evidence:
     kind: current_example_boundary_contract
     path: examples/foundation/stack_chemical_efficiency.yaml
-    sha256: 82846f60e8d8d8343770fa92406c2ff82e215e100d1ee0e563d00ec4c7dfd799
+    sha256: 6af0715d87a2505bb39023516ae4a1f444de8fc853d0973c7390fa5b862ed4ca
     component_id: eff
     instantiation_fingerprint: 6ba51c2d4bfa5599cd7636a48205058f4f8c6423ca8cfc8760e50939fb44b43f
-    subject_revision: bcdb2ab400bf7d89ab2d128fda015b4fcd79cd483fa54e55693d4d5bea73ef30
+    subject_revision: 8de9d7163808007a51bc9598acc2926a7ed78fb0a2fcbb0133555ed4fa95e597
     boundary_variables:
     - P_chemical_W
     - P_stack_W
@@ -6351,11 +6351,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ThermalCapacitanceRateModule.yaml
-    sha256: b9af56c9473117b6ba657b1742eaf90c94358ab352890b7119b4eca32789a46f
+    sha256: d3e42ea1ac66f78e090cf12ad06a98f7cda2fcbf94c3efc9f7ae0431beb78fb3
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ThermalCapacitanceRateModule
     selector: 'module_type: ThermalCapacitanceRateModule'
-    subject_revision: 92563d7a397657e90fcfb5967775e3a322580828eea764f8bc0340e56daca9e8
+    subject_revision: 1e7ddedff3ebbf3ab74ec4c71f4d96e6836456ef11019dc9b5f0050acbdd53ef
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -6411,11 +6411,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/ThermalConductorModule.yaml
-    sha256: 03b4c1f2135ce11c3a5f35405082a00048fb141934eec1de34ff5fc0ee33ebfb
+    sha256: 1a3890afbea0e50123b5b5375869cc2f1ecf020d0111f92047bfd74496e4082b
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.ThermalConductorModule
     selector: 'module_type: ThermalConductorModule'
-    subject_revision: 812889b9a32f05f059773f5d7eea59e288821d574c201519f0e2b3a3bfd6ad96
+    subject_revision: 5f2102c23a762c854fa7f67e4f375dc809af063e5b4bb7ab6fa0498c0ba05a01
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -6796,11 +6796,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/UnitConversionAuditModule.yaml
-    sha256: 38e9f16a7b5e0fd2efaf3a7de98d9a8a52b919583cff3590d36f446a638da543
+    sha256: d3a164161e141e60b505c1be9d1181cc6ecb548335e2443e6f96c4d966c5bf6d
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.UnitConversionAuditModule
     selector: 'module_type: UnitConversionAuditModule'
-    subject_revision: 158ae59218fa988d54c676cd7b5f5563553022140fe1d1330c3750d2b1bfd3cc
+    subject_revision: 8e4c99a8658f39dd03701c5c06ad5ead77ddbe051cecdc51af6ad8203861b092
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -6848,11 +6848,11 @@ modules:
   authority_evidence:
     kind: source_first_formula_role_contract
     path: .physicsguard/module_formulas/UnitScaleModule.yaml
-    sha256: 76b0399d53e21148af05f37dbce78e917e6441ad4345ff08f83870005beac3c2
+    sha256: e6e3e80c63a49f4e234fe2131d9ee504c20807442b0c35fb68bc39de9324f2bd
     schema: physicsguard.project_formula.v1
     owner: physicsguard.module_semantics.source_first.UnitScaleModule
     selector: 'module_type: UnitScaleModule'
-    subject_revision: a45745e5f018a7ef76d7bb685462ff790e2b141178d01bb549423b32b8213732
+    subject_revision: 8e9ea87bc3eb8a7a91c919f2bc8ca50f6d0624578309a2e3589c668406461481
     authoring_status: source_first_reconstruction_pending_independent_review
     separate_review_status: pending
     physical_claim_licensed: false
@@ -7148,4 +7148,4 @@ modules:
   first_gap:
     code: runtime_port_direction_unavailable
     message: 3 live declared port(s) have no independent input/output/state direction authority
-registry_fingerprint: 0ed9bfd91de0ea5322714f31ba95b73bc3ec4668de44cb221d5327da23809149
+registry_fingerprint: 0d33fd2916b37e9fe4720a26b9f9d38496ca938bcde838ba37b255df109fc8da

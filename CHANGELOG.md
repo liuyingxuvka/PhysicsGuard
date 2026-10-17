@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.15.12 - 2026-10-17
+
+- Retire SkillGuard author control and fixed baseline proof loops; preserve target-local current-purpose, candidate, oracle and failure-case binding.
+- Generate and install the ten native consumers through ordinary transactional files and read-only sync.
+- Keep ordinary tasks bounded, avoid duplicate validation output runs, load public APIs and CLI handlers on demand, and make ledger pytest execution explicit.
+- Use the current FlowGuard map and fourteen real native domain models, retaining code/model/test bindings and honest not_run boundaries.
+- Recompute current pump-loop native evidence and exact fixture hashes; repair source ownership for product files named test_*.py.
+- Refresh stale runtime-port and framework-example byte bindings through the existing compiler, retaining unresolved roles and independent physical review requirements.
+
 ## v0.15.11 - 2026-08-12
 
 - Refresh the native model, code, test, and evidence bindings after the

@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 import tomllib
 from typing import Any
+from urllib.parse import unquote, urlparse
 
 sys.dont_write_bytecode = True
 SCRIPT_ROOT = Path(__file__).resolve().parent
@@ -28,9 +29,23 @@ def _check_package_identity(repository_root: Path = ROOT) -> dict[str, Any]:
         module = importlib.import_module("physicsguard")
         module_path = Path(module.__file__).resolve()
         module_version = str(module.__version__)
-        metadata_version = importlib.metadata.version("physicsguard")
-        ok = metadata_version == module_version == expected_version and module_path.is_relative_to(repository_root.resolve() / "src" / "physicsguard")
-        return {"check": "canonical_package_identity", "ok": ok, "expected_version": expected_version, "metadata_version": metadata_version, "module_version": module_version, "module_path": str(module_path)}
+        distribution = importlib.metadata.distribution("physicsguard")
+        metadata_version = distribution.version
+        origins = {Path(distribution.locate_file(file)).resolve()
+                   for file in distribution.files or ()
+                   if str(file).replace("\\", "/").endswith("physicsguard/__init__.py")}
+        direct_url = distribution.read_text("direct_url.json")
+        if direct_url:
+            editable = json.loads(direct_url)
+            location = urlparse(str(editable.get("url", "")))
+            if editable.get("dir_info", {}).get("editable") is True and location.scheme == "file" and not location.netloc:
+                source_root = Path(unquote(location.path))
+                origins.update((source_root / candidate).resolve()
+                               for candidate in ("src/physicsguard/__init__.py", "physicsguard/__init__.py"))
+        spec_origin = getattr(getattr(module, "__spec__", None), "origin", None)
+        origin_matches = bool(spec_origin) and Path(spec_origin).resolve() == module_path and module_path in origins
+        ok = metadata_version == module_version == expected_version and origin_matches
+        return {"check": "canonical_package_identity", "ok": ok, "expected_version": expected_version, "metadata_version": metadata_version, "module_version": module_version, "module_path": str(module_path), "distribution_module_origins": sorted(str(path) for path in origins), "origin_matches_distribution": origin_matches}
     except (ImportError, OSError, ValueError, KeyError, AttributeError) as exc:
         return {"check": "canonical_package_identity", "ok": False, "expected_version": expected_version, "findings": [f"{type(exc).__name__}:{exc}"]}
 

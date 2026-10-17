@@ -6475,9 +6475,16 @@ def _parametrize_declares_module_case(
     function = next((node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == selector), None)
     if function is None:
         return False
+    if any(isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "pytest_generate_tests" for node in tree.body):
+        return False
+    arguments = {arg.arg for arg in [*function.args.posonlyargs, *function.args.args, *function.args.kwonlyargs]}
+    if function.args.vararg is not None or function.args.kwarg is not None:
+        return False
+    if any(isinstance(node, ast.Call) and _call_name(node.func) == "usefixtures" for node in function.decorator_list):
+        return False
     decorators = [node for node in function.decorator_list if isinstance(node, ast.Call) and _call_name(node.func) == "parametrize"]
     if not decorators:
-        return module_type is None and case == "unparameterized"
+        return not arguments and module_type is None and case == "unparameterized"
     # Fixture-generated cases, stacked decorators, id callables and pytest's
     # duplicate-id rewriting need real collection; do not approximate their ids.
     if len(decorators) != 1:
@@ -6495,6 +6502,8 @@ def _parametrize_declares_module_case(
     values = _literal_eval_with_constants(decorator.args[1], constants)
     names = [item.strip() for item in argnames.split(",")] if isinstance(argnames, str) else list(argnames) if isinstance(argnames, (list, tuple)) else []
     if not names or not all(isinstance(name, str) and name for name in names) or len(set(names)) != len(names) or not isinstance(values, (list, tuple)):
+        return False
+    if arguments != set(names):
         return False
     if module_type is not None and "module_type" not in names:
         return False

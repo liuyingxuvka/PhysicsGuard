@@ -6,4 +6,4 @@
 - [x] Keep direct native routes and target-owned production evidence discovery.
 - [x] Retire family author-control manifests and use ordinary consumer generation/install/sync.
 - [x] Keep current model/code/test pointers in `.flowguard/map.json` and native owner directories.
-- [ ] Freeze final 0.15.12 source, run the selected ordinary/native verification once, and publish the exact commit.
+- [x] Freeze final 0.15.12 source, run the selected ordinary/native verification once, and publish the exact commit.

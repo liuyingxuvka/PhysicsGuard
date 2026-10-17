@@ -191,46 +191,40 @@ supporting_framework_baseline:
   module_type: DummyResidualModule
   public_registry_required: true
   public_export_required: true
-  allowed_existing_example_count: 19
+  allowed_existing_example_count: 16
   allowed_existing_example_bindings:
   - path: examples/components/battery_hv/conflict_hv_bus_power_balance.yaml
-    sha256: ee71519696a0c1a5db1f24b9bea120b15169b5e19a116b7831836e310865854c
+    sha256: 2f4bbc533b75bd14a8f1fe13adcf590f3e397116e345bd6d5f3e560b30ee8198
   - path: examples/components/battery_hv/hv_bus_power_balance.yaml
-    sha256: f3c375e463ce10256415b1c3cc7140298ed0274dce77c695016dbf5e15b4e568
+    sha256: e1427f640b3ab9281b2ff32547dda17cdba9601ead01dbb542e1b7823778fe7f
   - path: examples/components/control_sensor_actuator/map_axis_bounds_check.yaml
-    sha256: 895df0741097fed4092885bde0cfde313338467f01a2fbf6b777a07825b7d02e
+    sha256: 42d36beafcc0a0778dc36555f6cef357cf5df796b586af0219823e400a064aef
   - path: examples/components/control_sensor_actuator/map_monotonicity_check.yaml
-    sha256: c95eab2ffb1b11e92ae7b924ac10c574897e6212be8a37b71caac389bdbb1c81
+    sha256: 9a52c3dd51eb484113427a3ce9c7cf7077120891e3eefc0a2dc367112bf044b7
   - path: examples/control/map_bounds_violation.yaml
-    sha256: db61f2eb70db547e52f91e2b89ca3e118cdf2927b8b1f6b912d2bb3b518c6527
+    sha256: 5db521edfefe9366a814083fbcdf4a636b8a217efda6012a2c0d9a7ed1404624
   - path: examples/dummy_conflict_system.yaml
-    sha256: dfe55701560205a6de77de4bc11e65e4ea5151eb39390ce2d34b4715692f7102
+    sha256: 42674ba7947bd4369439d917148ae7b1bff11844cadd5d142ca81e50ddb02063
   - path: examples/dummy_system.yaml
-    sha256: e9c3f8891ba5d221fa07c67edd576281a2610703ba31ed83d4e492fddc8237b9
+    sha256: b808f450042d3352ff11466b7f1d2f680ce1c9125072c4048da6bc144012aa0b
   - path: examples/foundation/conflict_mass_balance.yaml
-    sha256: 0bba80e1b2c6e06f102b94d753991da4a262e1551c3480c6093479cd030a33cf
+    sha256: 05dc23bd8614a4d37d80c2e2099e1b205926d58d93fb991a391e11231668dee5
   - path: examples/foundation/mass_balance_rate.yaml
-    sha256: d1835393f91c7d82750e022829d2cfbe0e25f3495b375257737efeccf6ac4bca
+    sha256: cbb107afc570d1c6c649a224c092bcbeb3c9bd76064d4cdaa12513f5bf197788
   - path: examples/foundation/mixer_energy_balance.yaml
-    sha256: 59570c8672b03e17fda35345c587cd0d87d1fb42ee43fc857ebfff403a846eef
+    sha256: d5223ec7c90d360fc096a4195cbd03dd58af20f9fc03aee106e48c9e241f2a4f
   - path: examples/hierarchical/coolant_loop/conflict_level_0_heat_rejection.yaml
-    sha256: e33a574f88c0c5c892c1f6a09b5a1a7e3764c99459ad4c46b9fa52912d27635c
+    sha256: b499b5bd422afea9cfb567444d46345c436934d1cfa09b4e8c67511896008ffb
   - path: examples/hierarchical/coolant_loop/level_0_cooling_balance.yaml
-    sha256: 86f21e09fe060e79eb2a1a2376775c69148dd3ede392b0872afe46e16c5c3387
+    sha256: 5174f40d9b4833438e4dc9efd130d55fe27fc7a20e9e95773ba3f640e491581c
   - path: examples/hierarchical/fuel_cell_system/conflict_level_0_h2_power.yaml
-    sha256: 09885e1addab7889fb59a1a4cd062b9c54f2f451e6f4eaa770b8b60ce3df3e81
+    sha256: 875628304ecf629e8f7cfda9c6df802dcf353563394ec980c9ba187e52d49916
   - path: examples/hierarchical/fuel_cell_system/conflict_level_1_cathode_air_path.yaml
-    sha256: 14f6c7534f000bb4584d84c8ce2afb7a50be6cf8a0f0b4a09824b01ef9b4dcf5
+    sha256: aee7eab9a7d89020b779676f8c9f4b38bb4a3d407ebc4ace7eefb2446498640c
   - path: examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml
-    sha256: a1ee8095bfa8b7e52a38aa217cf97e3bd8e4102bd108597158ad9084fa4ec92f
+    sha256: f62f8be28b3985bad03450336b715bd451124301b7c728668c90b2c89ea84247
   - path: examples/hierarchical/fuel_cell_system/level_1_major_subsystems.yaml
-    sha256: 0a7e55f913e329d836784cc9272d23df93f11febdf672b7051ec64d94d7f38fa
-  - path: examples/hierarchical/simulink_f14_experiment/generated/f14_bughunt_level0_clean.yaml
-    sha256: ef9f77a674095fa86533c8428a2c725a0b3c76fe89ad9102ef381f84e6319785
-  - path: examples/hierarchical/simulink_f14_experiment/generated/f14_bughunt_level0_fault.yaml
-    sha256: d28012c8dac0a46cbbb5fe3922ebdc38e45b669001abfb55316cb96200a59cd6
-  - path: examples/hierarchical/simulink_f14_experiment/generated/f14_bughunt_level1_fault.yaml
-    sha256: 766d428400b5245f6276fc64a488f4ca3157e3f40dfa63642e88cad480380a9a
+    sha256: 3d2e537d353bc9e9e2bc921ce15e8450b8936938016b132405cec8f1599459b3
 module_records:
 - module_type: ActuatorDeadZoneModule
   baseline_partition: domain_judgment
@@ -1760,7 +1754,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateEfficiencyModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -1810,7 +1804,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateEfficiencyModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -1957,7 +1951,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: AggregateEfficiencyModule
-    subject_fingerprint: bedc0ad76215de07c05c106b8bdfb8f34e999ef7100deb589541f12836b5e03c
+    subject_fingerprint: 2c8a81934f172747fcd72c3a8cebe25e64426371888626428cfe09a520275bdd
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 706413a5fa3371daee6cd7b67e001cdcdb25f453d8a13c8186c597a67b759816
@@ -2100,13 +2094,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 106969be05031095cd96357f0360adb3f3de1c6382fa883ef7e2411d9975d6f8
+      contract_fingerprint: e8198c8ad065b25e87c772b07810387b74d0a7279eac85ac92671ac10c28ab68
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 87dbf3f13e69e2a8518f99e867f5e0a2c869a591de158ae1559130cfd55b1d3a
+      authority_evidence_fingerprint: 18c825b4de587e2b0c9695ddd897234e315a3d4d7aaf8cd87f25a2d22cde1408
   residual_definitions:
   - name: aggregate_electrical_bus_balance
     role: equation
@@ -2313,7 +2307,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateElectricalBusBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -2379,7 +2373,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateElectricalBusBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -2426,7 +2420,7 @@ module_records:
       identity: physicsguard.project_formula.AggregateElectricalBusBalanceModule.v1
       path: .physicsguard/module_formulas/AggregateElectricalBusBalanceModule.yaml
       selector: 'module_type: AggregateElectricalBusBalanceModule'
-      sha256: fea4ded0df0cfa721a11a2dfe2a7399dcd9349cbc7b21140cf016334a44c4d0a
+      sha256: 095e881e8d59eabe942a9c0adbc77d3ce16d839b19ae72f06d8ab633065e4a61
       implementation_binding:
         path: src/physicsguard/modules/aggregate.py
         selector: class AggregateElectricalBusBalanceModule
@@ -2515,7 +2509,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/AggregateElectricalBusBalanceModule.yaml
         selector: 'module_type: AggregateElectricalBusBalanceModule'
-        sha256: fea4ded0df0cfa721a11a2dfe2a7399dcd9349cbc7b21140cf016334a44c4d0a
+        sha256: 095e881e8d59eabe942a9c0adbc77d3ce16d839b19ae72f06d8ab633065e4a61
       expressions:
       - name: aggregate_electrical_bus_balance
         expression: generation_0 - consumption_0 - consumption_1 - consumption_2 - consumption_3 - consumption_4
@@ -2586,7 +2580,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: AggregateElectricalBusBalanceModule
-    subject_fingerprint: fbd7dfc90bce769b7de18db677912a755737acea194a5fee4c333f85f6e31561
+    subject_fingerprint: 17da974f66198dfc29f3f2268b06f8ac879ebf06de0d387b112205877d629dad
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 2b85fe58d18352e753d8976b10b66f7c7688fc4090f669526f3aab18fa25e970
@@ -2729,13 +2723,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 917a5f5e39227380a2ea17f854479ba4cde646c2a757248ccf523dfbc26fa1c8
+      contract_fingerprint: daa292c13deb932cd10863d16e6168f2d85d875470b966ca4a7db5921051df52
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: de0f4d0431cfb84835d8507fff5bf9192bf4a2261130a0dc8476b1f53be8d05a
+      authority_evidence_fingerprint: a28ebcd40dec2f97f49173f54224f4eece8a0823f72385009d46335b7bf52eab
   residual_definitions:
   - name: aggregate_mass_balance
     role: equation
@@ -2941,7 +2935,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateMassBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -2998,7 +2992,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateMassBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -3041,7 +3035,7 @@ module_records:
       identity: physicsguard.project_formula.AggregateMassBalanceModule.v1
       path: .physicsguard/module_formulas/AggregateMassBalanceModule.yaml
       selector: 'module_type: AggregateMassBalanceModule'
-      sha256: 56c2a2e2bc20a85f8f87bec4b83bc653d561e88417aa859711d95a3efbb18a5b
+      sha256: 908d1150191a5f6acb8fb8fbae5a6f24c83812b0a39f62254e9940f58dcb9e3e
       implementation_binding:
         path: src/physicsguard/modules/aggregate.py
         selector: class AggregateMassBalanceModule
@@ -3130,7 +3124,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/AggregateMassBalanceModule.yaml
         selector: 'module_type: AggregateMassBalanceModule'
-        sha256: 56c2a2e2bc20a85f8f87bec4b83bc653d561e88417aa859711d95a3efbb18a5b
+        sha256: 908d1150191a5f6acb8fb8fbae5a6f24c83812b0a39f62254e9940f58dcb9e3e
       expressions:
       - name: aggregate_mass_balance
         expression: mass_in_0 - mass_out_0 - mass_out_1 - storage_0
@@ -3194,7 +3188,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: AggregateMassBalanceModule
-    subject_fingerprint: 548500a7227cefdd36d26c0a94984b46d637c191f55ddf710b5326ec9459e296
+    subject_fingerprint: 827b48038db8b59bf22d1ea84b83e898675dc04c841106ec81e652837312e5a0
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: ab296ffa1303ec42e4046af846f4e9ca30768d908e67e6f3ff11d977fb938017
@@ -3341,13 +3335,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: cb55162e5e3385fdd844e292895ce4b71c5f8c8c0180b01df7b8dd2c668ea99c
+      contract_fingerprint: d00d8bccf5b2a788fd342275315fe268f00fef1041a8277ba850aa60f67fea04
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 95f1867cbab4db0be07caf8065bd7eae120fc155855b38230f46256a1cf7fbf2
+      authority_evidence_fingerprint: 77454f045c3285935666d2d53d34df4ce7d9a904bb67f2794031c4d962333163
   residual_definitions:
   - name: aggregate_power_balance
     role: equation
@@ -3547,7 +3541,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregatePowerBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -3609,7 +3603,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregatePowerBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -3654,7 +3648,7 @@ module_records:
       identity: physicsguard.project_formula.AggregatePowerBalanceModule.v1
       path: .physicsguard/module_formulas/AggregatePowerBalanceModule.yaml
       selector: 'module_type: AggregatePowerBalanceModule'
-      sha256: c203323bc806d06a3442a1ffec75cdd40ad0ec82b8ac8fc0632c9038b9c3ed25
+      sha256: c3033e7e6b210c3d9f86fd44164e6f059eebf1605616c37fe8840acab267be42
       implementation_binding:
         path: src/physicsguard/modules/aggregate.py
         selector: class AggregatePowerBalanceModule
@@ -3743,7 +3737,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/AggregatePowerBalanceModule.yaml
         selector: 'module_type: AggregatePowerBalanceModule'
-        sha256: c203323bc806d06a3442a1ffec75cdd40ad0ec82b8ac8fc0632c9038b9c3ed25
+        sha256: c3033e7e6b210c3d9f86fd44164e6f059eebf1605616c37fe8840acab267be42
       expressions:
       - name: aggregate_power_balance
         expression: source_0 - load_0 - load_1 - load_2 - load_3
@@ -3811,7 +3805,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: AggregatePowerBalanceModule
-    subject_fingerprint: b7476b7e781e75c08157c9e8ef0e6e99a4813a288b4686b7a8f93bc831198473
+    subject_fingerprint: 82f07274afcfd20a914208128bacc98fa73150dfedb1e49185fcc86cfdc7d0c7
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: f5ad63eb7702ecdc7029090e2f6c8ca881a56e7ae25cab4da71cd0760278b341
@@ -4178,13 +4172,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 6174506ae6555295f3f6dadaa52980e89e867dff214778f6653c010e0de1b266
+      contract_fingerprint: aab5885d4c67281322f67610bfb8c5f7e5816716fa6353ea1cd747f303d73fac
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 583c731bb39f0b6877eb2b72af0f95d833f80a6b7db9d6fa5747dce4a27dd0ae
+      authority_evidence_fingerprint: 4d5b8c86204de17270bd265fedc1a55e31eee646d394d79a073eed5f45984d6a
   residual_definitions:
   - name: aggregate_thermal_balance
     role: equation
@@ -4390,7 +4384,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateThermalBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -4448,7 +4442,7 @@ module_records:
         module_parameter:
           name: module_type
           value: AggregateThermalBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -4491,7 +4485,7 @@ module_records:
       identity: physicsguard.project_formula.AggregateThermalBalanceModule.v1
       path: .physicsguard/module_formulas/AggregateThermalBalanceModule.yaml
       selector: 'module_type: AggregateThermalBalanceModule'
-      sha256: 7218f37e4d6a6e14cfd36eb48da9192840cd530b2dc4e21c8df9a40eeed3e509
+      sha256: 8588efa2be849bad7fe41cc5c6caebcbbe16268ca1ff2bb05a643ae85156dde0
       implementation_binding:
         path: src/physicsguard/modules/aggregate.py
         selector: class AggregateThermalBalanceModule
@@ -4580,7 +4574,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/AggregateThermalBalanceModule.yaml
         selector: 'module_type: AggregateThermalBalanceModule'
-        sha256: 7218f37e4d6a6e14cfd36eb48da9192840cd530b2dc4e21c8df9a40eeed3e509
+        sha256: 8588efa2be849bad7fe41cc5c6caebcbbe16268ca1ff2bb05a643ae85156dde0
       expressions:
       - name: aggregate_thermal_balance
         expression: heat_in_0 + heat_in_1 - heat_out_0 - heat_out_1 - target_storage_rate_W
@@ -4646,7 +4640,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: AggregateThermalBalanceModule
-    subject_fingerprint: e5a2303e15f85485a1a577c740887c8104d490a2ef0dea049621bba345e901d9
+    subject_fingerprint: 9de5bb599fe18012a76e7c9bb9ed30cb3a94c614336a8fce0c636cd4979dd771
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: b2677eb0bb1186560a5948530f220737bcc3bd388fc9b3dedeb60dbe7b56c9d0
@@ -4778,12 +4772,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 1e7cbd98359b1236945e97f4730aab17edcbc132566439b62d452ffcaf223869
+      contract_fingerprint: d6592af0808fe0ead7291fefffb1687cce777fa97b8a877530fdf1675b2bd75e
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: b4320108193b4ecdb34f75b10cbd80eff227a8482036069c0462fe32b969d388
+      authority_evidence_fingerprint: 059e9fd9098002989f8c8566b7cce61ff47990687131d17731061f6eb866130c
   residual_definitions:
   - name: air_oxygen_molar_flow
     role: equation
@@ -5343,7 +5337,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: AirOxygenMolarFlowModule
-    subject_fingerprint: a3880cf60fbd9f2a4a4159efb37e2697e192c494baa0cfc2a697d6d3e6407702
+    subject_fingerprint: af30d94a9ba6fb5a86304e4aa5b3baf164ee44b509e417f81bf5f57cad61834a
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 3505b807c34efaea7b7e94c90139d6d54e5ce48d7c4b3c8c9a06f4b19d6f201f
@@ -7979,7 +7973,7 @@ module_records:
         module_parameter:
           name: module_type
           value: BooleanSwitchModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -8021,7 +8015,7 @@ module_records:
         module_parameter:
           name: module_type
           value: BooleanSwitchModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -8153,7 +8147,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: BooleanSwitchModule
-    subject_fingerprint: 8a3dd47fd6e8e422e342a5059dc9d2c39c9bf824050f54e2baa672c84dbf0c7b
+    subject_fingerprint: 6ceaca4f971fb1a6223838306cd569b310fb66c3efdce85edd1b018c4c5cdaa5
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 5751f6eb4b6fb690135f4a86c791963d44dba61d7350e642d8a765999fba5c4d
@@ -8918,12 +8912,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: a520bda54601f91eddc3646182d20133c5bf8e9c093a13bec6523454cc2b3884
+      contract_fingerprint: d35ec843786e192969e9b49057638834f7ad3bbcf6f84eccf55406b37bc81145
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: f8e60d7ad9ad516a63383d53bd2875c46a461896c1db13afdb37452e9c04b584
+      authority_evidence_fingerprint: d6c0c07a3de0eb9e72dd65a5c27d55f7a36ac971985253787dc7a14c1f78287a
   residual_definitions:
   - name: cell_stack_voltage
     role: equation
@@ -9289,7 +9283,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: CellVoltageStackVoltageModule
-    subject_fingerprint: fc6687a77a64cbc986082e2bbeded0dff5ce10d71ce95747a47064f7776e1e1d
+    subject_fingerprint: 57c73fb95b5a9682acf1d6ba081469f9686f10444c592dc5c29a093b19efe253
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 2db472ee3a8749f7c4a284529ffb0afa82d25706e33ae1e00c995998a3dc6ba5
@@ -10086,12 +10080,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 6ca4ff58b533bc99a168cde9deb5615ff5016806bc4e0ce9867c99c4e2d042cc
+      contract_fingerprint: 129ff73bedc6527310df5b4cf043c06f210f8139ec56e3907cb38ae9cc1b6869
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: 62037b7507df5b08ead4329d5277a97a8f9bc8594804e76144742f60bed56d44
+      authority_evidence_fingerprint: d5634f34b2e3d6c05db9deee073ac6ca8d94d3bab731d547f2430294898ea390
   residual_definitions:
   - name: chemical_power_lhv
     role: equation
@@ -10457,7 +10451,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ChemicalPowerLHVModule
-    subject_fingerprint: 09712d30b3c9d55394a0726838a6c63288d3f6eb2441ba1fd246587bd8b21fb1
+    subject_fingerprint: 2d12df9828a1fecbea74ee89b0027326da0ae3edde4c86228f275636b0d1bd72
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: b1ae70bcf714c68ff577b21d46e5093c4f7605ea601321b1297d132238866f1e
@@ -12929,7 +12923,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ConservationSumModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -12974,7 +12968,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ConservationSumModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -13118,7 +13112,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ConservationSumModule
-    subject_fingerprint: cab2f0de8f707071c3f868165f0d87034336d4f02f662090bcd603e4e6af8e20
+    subject_fingerprint: 859a66dd24430780a19270fe80ad07d87f6f00247ff2af344fff14d700a93b7c
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: e7e693237a972bf31350a71b95404b74bd12d777cd254e058359d039ac185cd0
@@ -13343,13 +13337,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 004839846060795c163571e3c5af32679f6a1fb86faef143dc345c8c86f1d193
+      contract_fingerprint: d705c6ed2cc8f1a8c2ab7dcad0223db8d400e5694c8c3ed995b2c2d545d0d09d
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 7898976c917b41f2017de43f27824df992d545d20a15f250b187bb9ac171f869
+      authority_evidence_fingerprint: aad46c1009a36f127cd0927a98282e57a46eb4e2326021dfe36e6950496f8c16
   residual_definitions:
   - name: control_error
     role: equation
@@ -13598,7 +13592,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ControlErrorModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -13651,7 +13645,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ControlErrorModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -13681,7 +13675,7 @@ module_records:
       identity: physicsguard.project_formula.ControlErrorModule.v1
       path: .physicsguard/module_formulas/ControlErrorModule.yaml
       selector: 'module_type: ControlErrorModule'
-      sha256: 522c96e8f17ab8adb6c5fa905c35963e81abeee0010742cfb00a63ad8aae6b36
+      sha256: aa496e605650c5c501745a225f446bc5df9f68429e86cc46a2b6946d122adff1
       implementation_binding:
         path: src/physicsguard/modules/control.py
         selector: class ControlErrorModule
@@ -13868,7 +13862,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ControlErrorModule.yaml
         selector: 'module_type: ControlErrorModule'
-        sha256: 522c96e8f17ab8adb6c5fa905c35963e81abeee0010742cfb00a63ad8aae6b36
+        sha256: aa496e605650c5c501745a225f446bc5df9f68429e86cc46a2b6946d122adff1
       expressions:
       - name: control_error
         expression: error - (setpoint - measurement)
@@ -13935,7 +13929,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ControlErrorModule
-    subject_fingerprint: 82edeaad99fce727b475c11bc4038e619124b87729843e397a105aed37ccc173
+    subject_fingerprint: 5b6cc936739f226e7db01d5c64975ec680a10b946b7b01c3ce5df81c7795b481
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 9b53374227368b24f833cdce6825c085c8a581cdecf1a6317e126a96369d4df2
@@ -14157,13 +14151,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 5fe33bc22ed982c41a349504dd2ca763298dcf2c5d80841c04d471a43466f519
+      contract_fingerprint: 90f905f60403437db75e59ac7c58fc18ad4665cd90d1fa1fcf3a7f1bfb5eb5db
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 1ecda9326ff24ce9591b3552e28d1fbe6e4e44613ae48df20c29482bd0749639
+      authority_evidence_fingerprint: 60def0b72b77865746a75bfb4052e683e9a981c4cc46127557a1d65f4baf3a71
   residual_definitions:
   - name: convective_heat_transfer
     role: equation
@@ -14413,7 +14407,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ConvectiveHeatTransferModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -14465,7 +14459,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ConvectiveHeatTransferModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -14499,7 +14493,7 @@ module_records:
       identity: physicsguard.project_formula.ConvectiveHeatTransferModule.v1
       path: .physicsguard/module_formulas/ConvectiveHeatTransferModule.yaml
       selector: 'module_type: ConvectiveHeatTransferModule'
-      sha256: 97702e828eb923ace23ac16fd08d79557d978bdd3b3de1f70e880e0146b1abf6
+      sha256: 51cfb0daf588ac99e612e169196746ae1e9cecf37db2ff36699c3c7de6b7bdbd
       implementation_binding:
         path: src/physicsguard/modules/physical/thermal.py
         selector: class ConvectiveHeatTransferModule
@@ -14672,7 +14666,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ConvectiveHeatTransferModule.yaml
         selector: 'module_type: ConvectiveHeatTransferModule'
-        sha256: 97702e828eb923ace23ac16fd08d79557d978bdd3b3de1f70e880e0146b1abf6
+        sha256: 51cfb0daf588ac99e612e169196746ae1e9cecf37db2ff36699c3c7de6b7bdbd
       expressions:
       - name: convective_heat_transfer
         expression: Q_dot_W - h_W_m2K * area_m2 * (T_surface_K - T_fluid_K)
@@ -14740,7 +14734,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ConvectiveHeatTransferModule
-    subject_fingerprint: ce4e51ff0949a4b06752a0e5311edacbb55b01516bb10c977dfa1623eb85553f
+    subject_fingerprint: 8985fd7a0f4b6c5451e7e22764ecca27186f4526f7473c5046829d0b086e4613
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 3a8ed750677f1c8b1da26427dac10af4803b121ec18c2d9c53edf5588ea3b86c
@@ -15005,13 +14999,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: d6a78a5666d935884098af7765430f93dd436358b49597f53045fc910b55da68
+      contract_fingerprint: c5bccd13aebe7709e7a7b001ccf8ab405a983f0d313a2e4697f81df7e84718cb
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 7da07e0964e7aeef322d8fd4e24bbf345e1bfd3383afba0d7c6fa70509d5eaa4
+      authority_evidence_fingerprint: 7ac7822203021377a9fb629b599adf3d2da510117348d6494afc6053ed71ef15
   residual_definitions:
   - name: coolant_heat_balance
     role: equation
@@ -15294,7 +15288,7 @@ module_records:
         module_parameter:
           name: module_type
           value: CoolantHeatBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -15350,7 +15344,7 @@ module_records:
         module_parameter:
           name: module_type
           value: CoolantHeatBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -15383,7 +15377,7 @@ module_records:
       identity: physicsguard.project_formula.CoolantHeatBalanceModule.v1
       path: .physicsguard/module_formulas/CoolantHeatBalanceModule.yaml
       selector: 'module_type: CoolantHeatBalanceModule'
-      sha256: 43e7bba4275636296ecf6fa073a2cde394aae3194de308b31727694dbc236498
+      sha256: ef03ec8925135cdc6b52a3bcc7bd8cb4995f7ce9a3b530a156010adfa1dbe3c9
       implementation_binding:
         path: src/physicsguard/modules/physical/thermal.py
         selector: class CoolantHeatBalanceModule
@@ -15592,7 +15586,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/CoolantHeatBalanceModule.yaml
         selector: 'module_type: CoolantHeatBalanceModule'
-        sha256: 43e7bba4275636296ecf6fa073a2cde394aae3194de308b31727694dbc236498
+        sha256: ef03ec8925135cdc6b52a3bcc7bd8cb4995f7ce9a3b530a156010adfa1dbe3c9
       expressions:
       - name: coolant_heat_balance
         expression: Q_dot_W - m_dot_kg_s * cp_J_kgK * (T_out_K - T_in_K)
@@ -15664,7 +15658,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: CoolantHeatBalanceModule
-    subject_fingerprint: 32046e6f831ecf9a0c4540dae75cda1e8fd6fd09e4fece231e4d01dff12c1a38
+    subject_fingerprint: 81c7e7bd0b4b872d1717f42417b69279b692681ed820012d95f672dc6563c57d
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 805387fe1df32b210fcce8b0a034ffd4dc6ed9dee2b923b639e5e3856abc9e84
@@ -15760,12 +15754,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 53c56896818f5e5aec166cfde86c8af0f2fc81ea3ecc989d4d9e73aad554ff40
+      contract_fingerprint: 3dbbe50751b0690e025d10c7c4cf60255cad3e5229ce77fe1306891bfcc6ca0f
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: a3496e37da7b681afb80b019aeaee3134be3673624e5bb91df4e1a718e33cb28
+      authority_evidence_fingerprint: 924ce0e5c7cb4ef79cc5a8d818830ce4eb3bfe39a657164d382a2edc97082284
   residual_definitions:
   - name: current_density
     role: equation
@@ -16131,7 +16125,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: CurrentDensityModule
-    subject_fingerprint: 5d7bdd44b90440143a941e7cc8904e3ed0cf6803cb849afa4431b9db30c58b59
+    subject_fingerprint: fc49ae63c6bbd4fa6160848e8ef11e35d9276ab44f41e959ede181052d95d43d
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 57c08708436694dfa2e59299da70295b92ba2a7a6b19bc2abb17b7d0ab7f5d27
@@ -16851,12 +16845,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 78095bf66e15749df5fd319bf0da74316f46196d6e01a0d57aeb6e528062dc60
+      contract_fingerprint: 19bb4a80fef749ae2726b648e4c49a4c8d28171014f0fa9e0fe21fa06a63d0dc
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: 40a5a5c788b5dfa5ca2605d4f912cb0ad1ebc141010e79ecdd6fed09e1c54156
+      authority_evidence_fingerprint: 75eca8da9c36865b164dd834a99bade5057b671ca5f31ee04df069ea59311440
   residual_definitions:
   - name: density_mass_volume
     role: equation
@@ -17192,7 +17186,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: DensityMassVolumeModule
-    subject_fingerprint: e3d8b9a831a548869e28b6a4f434b12bf45a36d3dc0bf3ad71e12c67a369b708
+    subject_fingerprint: d1ba5925f5363c86647c62ad3091839500f3af9fab292490b11e10712bd09fb9
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 1f6b73f9bcf89026f614488430efa873d5cd239a3c9002ba82829bb6848a7bfc
@@ -17513,7 +17507,7 @@ module_records:
         module_parameter:
           name: module_type
           value: DiscreteIntegratorModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -17556,7 +17550,7 @@ module_records:
         module_parameter:
           name: module_type
           value: DiscreteIntegratorModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -17715,7 +17709,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: DiscreteIntegratorModule
-    subject_fingerprint: b1b1d9591a6c575a48578175752bdc711d87276bd81281a313247ceace77a341
+    subject_fingerprint: 31df9042030521e4a7ced47a58e4ab75c10903c91a59b7c7b8920f7234b61f17
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: f8feca0cab5eaad5210f3fcdef7dde7e320fd21ba56c32d3c258f9de2fc6a2e7
@@ -19097,13 +19091,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 7ebf5bb41156622b42994353c8c4765c16fe3e2418e64c7288a11ac58c997dc8
+      contract_fingerprint: 46fcf35cad2b97b2f774f4c23d7ec1372e056082cd406b14f008cb7e3ab0cfee
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 04c9656b5f03dc125bf1ab365ebc802049e5e2688dcf79e8c0645887ff8b1510
+      authority_evidence_fingerprint: c679649c8e2ed9f4b3e8109b5cda5005f9eb9acc4b2de28ab92a401c248554e2
   residual_definitions:
   - name: efficiency_map_2d
     role: equation
@@ -19390,7 +19384,7 @@ module_records:
         module_parameter:
           name: module_type
           value: EfficiencyMap2DModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -19455,7 +19449,7 @@ module_records:
         module_parameter:
           name: module_type
           value: EfficiencyMap2DModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -19507,7 +19501,7 @@ module_records:
       identity: physicsguard.project_formula.EfficiencyMap2DModule.v1
       path: .physicsguard/module_formulas/EfficiencyMap2DModule.yaml
       selector: 'module_type: EfficiencyMap2DModule'
-      sha256: 067ee03fbfe0845680895e1d710e10dba02d22a43574cf198c80d638f4f70232
+      sha256: 18eba570292a1be7b70f3b8fce117bf84db1373dbb39766257adba0ebbc80eee
       implementation_binding:
         path: src/physicsguard/modules/components/maps.py
         selector: class EfficiencyMap2DModule
@@ -19740,7 +19734,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/EfficiencyMap2DModule.yaml
         selector: 'module_type: EfficiencyMap2DModule'
-        sha256: 067ee03fbfe0845680895e1d710e10dba02d22a43574cf198c80d638f4f70232
+        sha256: 18eba570292a1be7b70f3b8fce117bf84db1373dbb39766257adba0ebbc80eee
       expressions:
       - name: efficiency_map_2d
         expression: efficiency - (efficiency_values[0][0] * (1 - (x - x_points[0]) / (x_points[1] - x_points[0]))
@@ -19827,7 +19821,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: EfficiencyMap2DModule
-    subject_fingerprint: fe63eff5702272bc480a4195ba9a0d1a47d746a5dcc43af4ef8fba9f3fa5ed66
+    subject_fingerprint: 02cfe018da97bcb0f435d9ed24ada24e8ea48ba096df33c960bb0f8eb77ebaa0
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: ef2a8526d2d610e3998ffa049d7c1a5afa293cfea0604b45a58823325e02f220
@@ -19951,12 +19945,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: ff582c00c7cbf102b87a3827e38d9cddf244612ddb63b7e75f149432bafd3763
+      contract_fingerprint: 581b8a0c64979e144bed2499c8c5c5d98bf87b1b537fe0d430fecc51d474413d
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: 334a159588c1758c6bc57adf6d7f6a1a9b93fc5f77d2ccfbd6f5da94439a649d
+      authority_evidence_fingerprint: 68d8da280082de1dd91f53e6c0b5b0b2640915866da0094ae4c0a836f66066ca
   residual_definitions:
   - name: efficiency
     role: equation
@@ -20409,7 +20403,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: EfficiencyModule
-    subject_fingerprint: ba754a555d71c5b9890a957cab5e297204955a4e457c347f1aaac203ece54a69
+    subject_fingerprint: 29c1c0a478275fcbf13f44b1e2b261957824d627a06620a7de7f7271423da4b0
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: f42ad6e8fb974a86d826cbe56e996f3a87c3877278d0a5ddeca9e7c6165f7aa6
@@ -21536,13 +21530,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 45870e2f6431eae7a0b42ce71d17ecbd1a7c7108b36539cd795a3c53c8d68013
+      contract_fingerprint: c7876e910f99182231767097437412f28181af31a520b0cd44a5c142207da600
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 9cf31d8b6eccb420f1eb0c408714a01cf269ec4e7448af3b1a18c67727b1a238
+      authority_evidence_fingerprint: 3252c49e25922ad7315f96035edd318b6fc4c94f72b5e5709ab0a7c1c84c4a05
   residual_definitions:
   - name: electrical_power
     role: equation
@@ -21791,7 +21785,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectricalPowerModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -21844,7 +21838,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectricalPowerModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -21876,7 +21870,7 @@ module_records:
       identity: physicsguard.project_formula.ElectricalPowerModule.v1
       path: .physicsguard/module_formulas/ElectricalPowerModule.yaml
       selector: 'module_type: ElectricalPowerModule'
-      sha256: e22dbd588b058fb78e49395e7445fc38c418246498651d37952b6c71a9c52965
+      sha256: 2ccbf62b192bb9c81cf79167eed420c53e07dbeaa57ab9bf13b96636d116bb91
       implementation_binding:
         path: src/physicsguard/modules/physical/electrical.py
         selector: class ElectricalPowerModule
@@ -22061,7 +22055,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ElectricalPowerModule.yaml
         selector: 'module_type: ElectricalPowerModule'
-        sha256: e22dbd588b058fb78e49395e7445fc38c418246498651d37952b6c71a9c52965
+        sha256: 2ccbf62b192bb9c81cf79167eed420c53e07dbeaa57ab9bf13b96636d116bb91
       expressions:
       - name: electrical_power
         expression: P_W - V_V * current_A
@@ -22128,7 +22122,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ElectricalPowerModule
-    subject_fingerprint: 4a643e2486e57970387f78a88c5dff6395d05bae61faa75edba2e562db8cb009
+    subject_fingerprint: d3bcaa8ec2d2d002bf90705353158dd6b966ab5b30ad8d5d9320afbbfe6515f9
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: de3a863e3a2a9528f2c15fa26fe3be6506618aa9ac2c5e29eb9ac59ea2020ae3
@@ -22343,13 +22337,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 16d303b5c1ab5e802679676e39a8fabb34e9883081654a0ee31c4aecf9dc44fa
+      contract_fingerprint: ce318b0725f3c6542adf0defbdd707f5d56849cfd040adcbe4316cecb9c35e48
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 5b7ba74f59e0c8d09de8e75cc66b6972e57fccb426a4dfd126a5ee60dbc6f64c
+      authority_evidence_fingerprint: 87b318e00188c10ddcc4b5e4b23c094b00a7a99d3aa9086c03f735015f588c6d
   residual_definitions:
   - name: faraday_rate
     role: equation
@@ -22586,7 +22580,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrochemicalFaradayRateModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -22637,7 +22631,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrochemicalFaradayRateModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -22674,7 +22668,7 @@ module_records:
       identity: physicsguard.project_formula.ElectrochemicalFaradayRateModule.v1
       path: .physicsguard/module_formulas/ElectrochemicalFaradayRateModule.yaml
       selector: 'module_type: ElectrochemicalFaradayRateModule'
-      sha256: d97106ded5b9058267c9bb55201e28ecd9f1a0248913c2c0c4b435bd79aab0f1
+      sha256: 15cb88bc090b5bd576490218d652c25398749e0b962de268b3fd34aed54f9392
       implementation_binding:
         path: src/physicsguard/modules/physical/electrochemical.py
         selector: class ElectrochemicalFaradayRateModule
@@ -22847,7 +22841,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ElectrochemicalFaradayRateModule.yaml
         selector: 'module_type: ElectrochemicalFaradayRateModule'
-        sha256: d97106ded5b9058267c9bb55201e28ecd9f1a0248913c2c0c4b435bd79aab0f1
+        sha256: 15cb88bc090b5bd576490218d652c25398749e0b962de268b3fd34aed54f9392
       expressions:
       - name: faraday_rate
         expression: n_dot_mol_s - faradaic_efficiency * n_cells * current_A / (electrons_per_mole * 96485.33212)
@@ -22914,7 +22908,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ElectrochemicalFaradayRateModule
-    subject_fingerprint: ea43a4ae1460ba21cc8c7e44099dfe40b227a2b8532cb84b87d2ce0b3c9e7a8b
+    subject_fingerprint: 0693a2f9627b52a7f62ec52f5a2418196ad8b3c4be8441300af1c2f52b7d1bfb
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: eb01900ce67ecf6fbc30e1a4b01083d813d0b3c878eec76152d667895797fa01
@@ -23159,13 +23153,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: b322d13c3eda6a8a7cc9d02862abaa6d37203ff0b3ff2fbc8b1968cfab8f65fa
+      contract_fingerprint: 891db5dd5bc905aff44ea57b5884b2b155162d9061e0f128e2398bf50a982a89
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: dce1af88ae0a6b459c44022407513b382a6f9167c11448ed40879aee4782a6fd
+      authority_evidence_fingerprint: 10c8e46588f2178b17c01a1fc406b98cd56585ed1377e6f0792167a47b5609f0
   residual_definitions:
   - name: electrochemical_stack_power
     role: equation
@@ -23423,7 +23417,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrochemicalStackPowerModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -23477,7 +23471,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrochemicalStackPowerModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -23511,7 +23505,7 @@ module_records:
       identity: physicsguard.project_formula.ElectrochemicalStackPowerModule.v1
       path: .physicsguard/module_formulas/ElectrochemicalStackPowerModule.yaml
       selector: 'module_type: ElectrochemicalStackPowerModule'
-      sha256: b3be1f5c0b591662a5ea704432bfdd4f3a91681cead924a622c500ce067b5af3
+      sha256: f576f0b525027403862858a87eb3f24b0a7b8eaed5a1709d86579786a9bc2c59
       implementation_binding:
         path: src/physicsguard/modules/physical/electrochemical.py
         selector: class ElectrochemicalStackPowerModule
@@ -23708,7 +23702,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ElectrochemicalStackPowerModule.yaml
         selector: 'module_type: ElectrochemicalStackPowerModule'
-        sha256: b3be1f5c0b591662a5ea704432bfdd4f3a91681cead924a622c500ce067b5af3
+        sha256: f576f0b525027403862858a87eb3f24b0a7b8eaed5a1709d86579786a9bc2c59
       expressions:
       - name: electrochemical_stack_power
         expression: P_stack_W - n_cells * V_cell_V * current_A
@@ -23777,7 +23771,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ElectrochemicalStackPowerModule
-    subject_fingerprint: b43d405b40a9822fceb17af56b7b50d5e4428dcdbf0c0c606ce68eeabf1b742c
+    subject_fingerprint: 218770404a6b2c0315d6753d9d2a9bbf806b770c4865c58a887fa5fe3f29a416
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 4f248d7e8044c1a143b8dd9a80df27fc8a22e8bee7f4bc636d5c78d374dbb963
@@ -24420,13 +24414,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 13bca029912343bb3136cc02970cfd229be489c9fde1d166c38d15c37512c2d3
+      contract_fingerprint: 505cd0c49b02d2bfccd00b125487cf8f11a649af801f4dcb272cbca3afd57ef7
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 392a45cedfca90bcaa516c9bed54656e1aa0bdbd4179ccc5edc7649c507c9635
+      authority_evidence_fingerprint: f89a9522b3a62ff68e3b93b1d93eabc05f3c97f8d608ce3b611b8f7c5f176d24
   residual_definitions:
   - name: electrolyzer_h2_molar_production
     role: equation
@@ -24900,7 +24894,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrolyzerGasProductionModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -24968,7 +24962,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrolyzerGasProductionModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -25000,7 +24994,7 @@ module_records:
       identity: physicsguard.project_formula.ElectrolyzerGasProductionModule.v1
       path: .physicsguard/module_formulas/ElectrolyzerGasProductionModule.yaml
       selector: 'module_type: ElectrolyzerGasProductionModule'
-      sha256: beedd5cf1db229f7617c4e8aada99a9bbb3007e1f19f1e9f716b5f367e04faa8
+      sha256: 9506b6dcab8f9616e649fadd7b15f9006136c61f78270f49d7f39f283aadc85d
       implementation_binding:
         path: src/physicsguard/modules/components/electrochemical_bop.py
         selector: class ElectrolyzerGasProductionModule
@@ -25356,7 +25350,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ElectrolyzerGasProductionModule.yaml
         selector: 'module_type: ElectrolyzerGasProductionModule'
-        sha256: beedd5cf1db229f7617c4e8aada99a9bbb3007e1f19f1e9f716b5f367e04faa8
+        sha256: 9506b6dcab8f9616e649fadd7b15f9006136c61f78270f49d7f39f283aadc85d
       expressions:
       - name: electrolyzer_h2_molar_production
         expression: n_dot_H2_mol_s - faradaic_efficiency * n_cells * current_A / (2.0 * 96485.33212)
@@ -25473,7 +25467,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ElectrolyzerGasProductionModule
-    subject_fingerprint: ced066b79e9e756290fe751b65c9552e4b8b83d7327b8fd28edd6801639c8ff6
+    subject_fingerprint: 6ed94e20e9575744f0a2174873eb03fa7844af2e6619a6d562a98753c2581a9f
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: f8bd7751fdf89bc1715dc1514902928d0ef736af8c52cdb9523214b75ae5f015
@@ -26362,13 +26356,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 76e020eb157984eb636432e99a67d79995057c28afa010956beabf60e68ad66b
+      contract_fingerprint: 52dcbc1a3eab4a6ed00a800c9428b956d2a4275f9eeff20a6cea64864dbc032b
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 3fea4726efe9bb47ccde42af18c182774df5912766df82d3b3028b7ac217e89f
+      authority_evidence_fingerprint: dc03fcdd67fc15825570fe4c36fd32798385d3b2b542869867e0b7c18995ba6f
   residual_definitions:
   - name: electrolyzer_stack_voltage
     role: equation
@@ -27028,7 +27022,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrolyzerStackBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -27111,7 +27105,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ElectrolyzerStackBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -27147,7 +27141,7 @@ module_records:
       identity: physicsguard.project_formula.ElectrolyzerStackBalanceModule.v1
       path: .physicsguard/module_formulas/ElectrolyzerStackBalanceModule.yaml
       selector: 'module_type: ElectrolyzerStackBalanceModule'
-      sha256: 17f91ec34b0453737facf235fea845d13b7115d64097bd9c4a969b2a6a03885b
+      sha256: 3c729a2ba77043927f8a8b55d35ffd367a11466f67c12a76a5b9522bed776ecf
       implementation_binding:
         path: src/physicsguard/modules/components/electrochemical_components.py
         selector: class ElectrolyzerStackBalanceModule
@@ -27657,7 +27651,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ElectrolyzerStackBalanceModule.yaml
         selector: 'module_type: ElectrolyzerStackBalanceModule'
-        sha256: 17f91ec34b0453737facf235fea845d13b7115d64097bd9c4a969b2a6a03885b
+        sha256: 3c729a2ba77043927f8a8b55d35ffd367a11466f67c12a76a5b9522bed776ecf
       expressions:
       - name: electrolyzer_stack_voltage
         expression: V_stack_V - n_cells * V_cell_V
@@ -27815,7 +27809,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ElectrolyzerStackBalanceModule
-    subject_fingerprint: d359784136af205df6601273b8c189e6e127fe4dd8752e7e6f464a347b7756ea
+    subject_fingerprint: ca0edd85791c6ec9f64bd92883f728b133e4c41dc04fa7e11f5f69e8e8e2e9d0
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 16919424b37f97b4c7fd5e6625307fcf7c20434e941572fb76c5625d9f91ce21
@@ -30722,7 +30716,7 @@ module_records:
         module_parameter:
           name: module_type
           value: FirstOrderLagModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -30765,7 +30759,7 @@ module_records:
         module_parameter:
           name: module_type
           value: FirstOrderLagModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -30923,7 +30917,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: FirstOrderLagModule
-    subject_fingerprint: bb2808b62a85ce20180dd164beca2ef12cd4ac3acb6d6cfcaef68ba8e1ea2477
+    subject_fingerprint: ea81bbe945c3c78244356f94c3fc451180863db0bced3f58d8741569a95c91de
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 9cfa5c747b917a895634307096f3b16ad8b897f3525516475941178dd4a1b3e3
@@ -31685,12 +31679,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: d64279534b4e8d68ab488beeb2928300bf5464b86bd679f5a040093026c64cae
+      contract_fingerprint: 900a5ba0de9e46b84b19f188051455b218c087b3672dc6c1928eb4f6a781e9cc
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: adf105713b75135a307d0af7fec6dc0eb49a777bdc1b708f8040f6e62c8878b4
+      authority_evidence_fingerprint: 90a015e5ed8dbe2117b4b52f903069d6fe87a1745c0f1303902cef7d6011997f
   residual_definitions:
   - name: force_velocity_power
     role: equation
@@ -32003,7 +31997,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ForceVelocityPowerModule
-    subject_fingerprint: e3201ee21ff020c070d5353ef84db39babfd238c7e85b23de39592146f20bd28
+    subject_fingerprint: 848e155c7baf730cf9e3c65e523ee567711981ca121c5bf79c4d4b04cc0d30ed
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 0a9ed78fdd12c24e842f6789695a720b34699c4bfb4d49b6f825385101b1acd0
@@ -33039,13 +33033,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 55351ec615459ae35c28d8c9570767ef3646f6d7d152b775d68da19502d739e7
+      contract_fingerprint: c4f7d0b623020f8c173aae2b43477d4d5239c010828c700f0bf4d0f65d900a96
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: d2a7ab4ec840adb81890f56eb6e44318ed6c5172e097b015f252717f2b25e48d
+      authority_evidence_fingerprint: 71855cd8e971dff77d2bcc535dd4d680d0de2caf0a4f15a0a3bb0c132928fe10
   residual_definitions:
   - name: fc_cathode_o2_consumption
     role: equation
@@ -33487,7 +33481,7 @@ module_records:
         module_parameter:
           name: module_type
           value: FuelCellCathodeAirSupplyModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -33555,7 +33549,7 @@ module_records:
         module_parameter:
           name: module_type
           value: FuelCellCathodeAirSupplyModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -33587,7 +33581,7 @@ module_records:
       identity: physicsguard.project_formula.FuelCellCathodeAirSupplyModule.v1
       path: .physicsguard/module_formulas/FuelCellCathodeAirSupplyModule.yaml
       selector: 'module_type: FuelCellCathodeAirSupplyModule'
-      sha256: 4f883773c9f0bfbea31056e4a2cb2c1e1c6360b41fd09958f8abc183d7680d8b
+      sha256: 5e4e14eeebbfc418bdc98b0b906b4435d6fdfea74f3f05ae27e62f9943324529
       implementation_binding:
         path: src/physicsguard/modules/components/electrochemical_bop.py
         selector: class FuelCellCathodeAirSupplyModule
@@ -33940,7 +33934,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/FuelCellCathodeAirSupplyModule.yaml
         selector: 'module_type: FuelCellCathodeAirSupplyModule'
-        sha256: 4f883773c9f0bfbea31056e4a2cb2c1e1c6360b41fd09958f8abc183d7680d8b
+        sha256: 5e4e14eeebbfc418bdc98b0b906b4435d6fdfea74f3f05ae27e62f9943324529
       expressions:
       - name: fc_cathode_o2_consumption
         expression: n_dot_O2_consumed_mol_s - faradaic_efficiency * n_cells * current_A / (4.0 * 96485.33212)
@@ -34046,7 +34040,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: FuelCellCathodeAirSupplyModule
-    subject_fingerprint: 4a4de129a6e7164285fc9d3f3181d49af2526ea82fbe7e34605b810f2ae3de8d
+    subject_fingerprint: 3c63e96ea717062d4fa18cbde3c9a581ca8f9ce08b6d35073b9f7860666c4538
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: aa0ea5019c78a56db0eb21f0ee88a7b10fbb521e329d86e9f110078a0a1debef
@@ -35180,13 +35174,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: eeef844268a77f88480114dcd861911c29f27850bdcdd15e1764aeebe6f01118
+      contract_fingerprint: 675bac9913f4bf1f6a4f45a430fc9e95acb529437d1c690c56cfebae65a5427c
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: d48d4bebaafe53bf6cc5592a1bc1bfc63ba4f57764618ba46a00d2175f375348
+      authority_evidence_fingerprint: 72acb82261e44f2fac11ac5e8dd74e5300c215fba226a3f28cb6d73ca75ebe0d
   residual_definitions:
   - name: fuel_cell_stack_voltage
     role: equation
@@ -35846,7 +35840,7 @@ module_records:
         module_parameter:
           name: module_type
           value: FuelCellStackBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -35929,7 +35923,7 @@ module_records:
         module_parameter:
           name: module_type
           value: FuelCellStackBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -35965,7 +35959,7 @@ module_records:
       identity: physicsguard.project_formula.FuelCellStackBalanceModule.v1
       path: .physicsguard/module_formulas/FuelCellStackBalanceModule.yaml
       selector: 'module_type: FuelCellStackBalanceModule'
-      sha256: 8e8bc89ada43bba5cacea7ebefec31e8f66c93ece091445fd9f19372e34ab03b
+      sha256: 97e40a9d811bdf691a99c19b5522b0692939b044961c3c53a55133df6bcc4d6f
       implementation_binding:
         path: src/physicsguard/modules/components/electrochemical_components.py
         selector: class FuelCellStackBalanceModule
@@ -36475,7 +36469,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/FuelCellStackBalanceModule.yaml
         selector: 'module_type: FuelCellStackBalanceModule'
-        sha256: 8e8bc89ada43bba5cacea7ebefec31e8f66c93ece091445fd9f19372e34ab03b
+        sha256: 97e40a9d811bdf691a99c19b5522b0692939b044961c3c53a55133df6bcc4d6f
       expressions:
       - name: fuel_cell_stack_voltage
         expression: V_stack_V - n_cells * V_cell_V
@@ -36633,7 +36627,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: FuelCellStackBalanceModule
-    subject_fingerprint: 7d11aad49a58b57183b2e728078d759a500eeb993d94773c3ba734147245b302
+    subject_fingerprint: 950ab49971176ef475c40cb505c799c482f09f725f88407490e053c8837c730a
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: d16f50d2e9ef2cac46a2c81acded031fb2f313ab5f29c3df41e57c67610eda44
@@ -37303,7 +37297,7 @@ module_records:
         module_parameter:
           name: module_type
           value: GainBiasModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -37345,7 +37339,7 @@ module_records:
         module_parameter:
           name: module_type
           value: GainBiasModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -37499,7 +37493,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: GainBiasModule
-    subject_fingerprint: 3aaf7edc513d694459aa8cb3f4d38a34d7b9559a2dfd7a5f59d3b7c2fdd5e2df
+    subject_fingerprint: ccc96f531236cb7276fca0415d215aa3216e1158134e3c11be6123d0da8c7400
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 42afaf0f1bcb7c5aa9ed47b994c6bfe916a4353913e2dcd294cce26cf8a76c3e
@@ -38885,13 +38879,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: f9729c0031a6547764bf5857c796c110bde976f0737bed3c0a296597f59ba9df
+      contract_fingerprint: 843cb60d6b8939ede704d0bb0988a1de11362fc7fde4fae646f07087ad4a60c0
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 63ad2116b06e3508db68cc0d0ee48a98ec3b679416bee82abaaa2fa2dbad8a63
+      authority_evidence_fingerprint: 0c60f8d4242f59bd0977493ffd0195e1fec811078cfbc78e88b0358c8378e850
   residual_definitions:
   - name: hv_bus_power_balance
     role: equation
@@ -39067,7 +39061,7 @@ module_records:
         module_parameter:
           name: module_type
           value: HVBusPowerBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -39120,7 +39114,7 @@ module_records:
         module_parameter:
           name: module_type
           value: HVBusPowerBalanceModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -39162,7 +39156,7 @@ module_records:
       identity: physicsguard.project_formula.HVBusPowerBalanceModule.v1
       path: .physicsguard/module_formulas/HVBusPowerBalanceModule.yaml
       selector: 'module_type: HVBusPowerBalanceModule'
-      sha256: 7a6cae2fb1220623b4883c787422c1ed9c58d7e878134a413d370afa91e252a9
+      sha256: 0564ef93d9166f696d1f6ba7dc5ca8f5d71d0493d7cf306c53369b0c8464ecbe
       implementation_binding:
         path: src/physicsguard/modules/components/battery_hv.py
         selector: class HVBusPowerBalanceModule
@@ -39239,7 +39233,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/HVBusPowerBalanceModule.yaml
         selector: 'module_type: HVBusPowerBalanceModule'
-        sha256: 7a6cae2fb1220623b4883c787422c1ed9c58d7e878134a413d370afa91e252a9
+        sha256: 0564ef93d9166f696d1f6ba7dc5ca8f5d71d0493d7cf306c53369b0c8464ecbe
       expressions:
       - name: hv_bus_power_balance
         expression: source_0 - load_0 - storage_0
@@ -39300,7 +39294,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: HVBusPowerBalanceModule
-    subject_fingerprint: 654f305a78adacc119d1e9c351a4121e88edeb9edfe104eb5181e6f9a81afa9c
+    subject_fingerprint: b4902a9697928f38d2a148615df61faddf1f31402176b2dda9a830a899ae242a
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: d473d0619a58df95eaa7b3061f221ed3f9566b215d9758a6eb9f1d3d1abd67f3
@@ -40977,7 +40971,7 @@ module_records:
         module_parameter:
           name: module_type
           value: HysteresisStateCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -41022,7 +41016,7 @@ module_records:
         module_parameter:
           name: module_type
           value: HysteresisStateCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -41217,7 +41211,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: HysteresisStateCheckModule
-    subject_fingerprint: 8449f2cf550b4222badd0c5eabc3c955eff48b7b939e53bf69c87af8ef9af8cf
+    subject_fingerprint: ba97ddd194de1cb04e3daba3f56845f63de055aaff2c2663a6453c6634105746
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 9a569f8d9433602ffdea7725f317723bdc1c763c5a0961cd6d30807eee5c3c32
@@ -41324,12 +41318,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 77d85041e5a9babb4eef284b5f2be2208ac7e2a593fb13426ec57b777c634b04
+      contract_fingerprint: 163d4f82e876b6e8c63469e2296fd7f84ba9b0e8a5fff1d1631e61f9333de8f3
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: a54b63af6d0bd3cd348b60989b52065fbad20d35d37e70d48cb968ada8d04d6e
+      authority_evidence_fingerprint: 92460b345f62ce26a248ac848739851933dea51f5f6e8213904cfc42f7cd1485
   residual_definitions:
   - name: ideal_gas_density
     role: equation
@@ -41803,7 +41797,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: IdealGasDensityModule
-    subject_fingerprint: 4328d974558b5c7cc8b81906d5efd64b5610c92af1173524514b12df43cde791
+    subject_fingerprint: 115378d75f6ea63af924fe2a669fc6cf9732b71fbeb4082e90380941a07a27ba
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: ab6533f0aff32d6ebff7d51273f5547d743933695ad8c450913ad2b14b686a14
@@ -42251,13 +42245,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 586d2f217e90c81a63a224dfda31de8cefe3f7f32c56b3a40622f56c3d0b0488
+      contract_fingerprint: bc2eb0aa9d429f45229a1e775399d2654a8388ae2768da1f17748213b06b34ac
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 197a8398e4e248b402d1291a7ec5a4492001a20e904991ac0dc38dba3f8b1e9a
+      authority_evidence_fingerprint: e377e06d698b9f3a66e1067187f337cddc9f1da3c2427170160e1e0843c9bfb6
   residual_definitions:
   - name: incompressible_orifice
     role: equation
@@ -42513,7 +42507,7 @@ module_records:
         module_parameter:
           name: module_type
           value: IncompressibleOrificeModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -42565,7 +42559,7 @@ module_records:
         module_parameter:
           name: module_type
           value: IncompressibleOrificeModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -42602,7 +42596,7 @@ module_records:
       identity: physicsguard.project_formula.IncompressibleOrificeModule.v1
       path: .physicsguard/module_formulas/IncompressibleOrificeModule.yaml
       selector: 'module_type: IncompressibleOrificeModule'
-      sha256: d59490818a8b21cd840e6a4fe083c73e7ba140aff9f6215dc3d46a76fb121671
+      sha256: 862226b1a6dd4cb0582542b5a0fe59aa796618db2cd2b70c6937165a1933c9d3
       implementation_binding:
         path: src/physicsguard/modules/physical/fluid.py
         selector: class IncompressibleOrificeModule
@@ -42775,7 +42769,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/IncompressibleOrificeModule.yaml
         selector: 'module_type: IncompressibleOrificeModule'
-        sha256: d59490818a8b21cd840e6a4fe083c73e7ba140aff9f6215dc3d46a76fb121671
+        sha256: 862226b1a6dd4cb0582542b5a0fe59aa796618db2cd2b70c6937165a1933c9d3
       expressions:
       - name: incompressible_orifice
         expression: m_dot_kg_s ** 2 - 2.0 * rho_kg_m3 * CdA_m2 ** 2 * (p_upstream_Pa - p_downstream_Pa)
@@ -42843,7 +42837,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: IncompressibleOrificeModule
-    subject_fingerprint: 5d187a6538b1b0cddcf8ff2ee79d92ee4951f809559c0987feca2e4461138165
+    subject_fingerprint: c094d2045eef7d9a9cbc84b81993e320e58b52c705542860cc5608d95ff8835b
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: aeada69c488fc4085ac58420ee4b6f0bba1ce6fd25c3edd2b923bff05af15675
@@ -43077,13 +43071,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 3b96944ed77e1092934d6e3d0b53dfe15efcea4adb3cbfd5040e47d08c1e2151
+      contract_fingerprint: 575848cac607befe9b28e3557f3bf4dab84d6b47c24ff630f605ff3423c18e23
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 671e6a69ee09535aae7495f8e69cc0536a631b1410bdae1a4cd2d4c81f9a85ad
+      authority_evidence_fingerprint: 182c10affb36a1a846714cf70d5c5cfdcae7c3652c2ca82a33e1bf7f559f8502
   residual_definitions:
   - name: incompressible_pressure_drop
     role: equation
@@ -43354,7 +43348,7 @@ module_records:
         module_parameter:
           name: module_type
           value: IncompressiblePressureDropModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -43407,7 +43401,7 @@ module_records:
         module_parameter:
           name: module_type
           value: IncompressiblePressureDropModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -43446,7 +43440,7 @@ module_records:
       identity: physicsguard.project_formula.IncompressiblePressureDropModule.v1
       path: .physicsguard/module_formulas/IncompressiblePressureDropModule.yaml
       selector: 'module_type: IncompressiblePressureDropModule'
-      sha256: 85740517af225888de2a70d9cc9c6de28401f03d7752f19761773bb92811898c
+      sha256: e8cef94b632b283c88675b3121b04f7db67e57274d63c4a9463622ed4bc1db15
       implementation_binding:
         path: src/physicsguard/modules/physical/fluid.py
         selector: class IncompressiblePressureDropModule
@@ -43631,7 +43625,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/IncompressiblePressureDropModule.yaml
         selector: 'module_type: IncompressiblePressureDropModule'
-        sha256: 85740517af225888de2a70d9cc9c6de28401f03d7752f19761773bb92811898c
+        sha256: e8cef94b632b283c88675b3121b04f7db67e57274d63c4a9463622ed4bc1db15
       expressions:
       - name: incompressible_pressure_drop
         expression: p_in_Pa - p_out_Pa - K * 0.5 * rho_kg_m3 * (m_dot_kg_s / (rho_kg_m3 * area_m2)) * abs(m_dot_kg_s
@@ -43702,7 +43696,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: IncompressiblePressureDropModule
-    subject_fingerprint: d44b01a2b40b793fd230f0853af34e2d687ccbf4f0e11cc16407227ec9dd81e0
+    subject_fingerprint: 33087c5b6cb678bc15a65447371be4cb05f77934d597542b9647866ce124d4bb
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 61ca60e46a13631c39a12fa68ec64cbf5ae86efb4c03a1066202f1e5c2b86b09
@@ -45253,12 +45247,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: af2d129ec8879e1211a8e0edc8bfd348a2e03671d49214be79d50f8d45812553
+      contract_fingerprint: d68c44f5fc1419b7a6da0c0b26eda99de391c322fcc1673867d3eb199c730924
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: f17bad9d52ebb1eb9d68b84ef96e96c22bd6b1ffe8f8d217dd1b83403ed948ce
+      authority_evidence_fingerprint: 30aeb1448f3fd1d68a4283b63b2202a39abbe18b947796e203e92928f6c0c45f
   residual_definitions:
   - name: linear_relation
     role: equation
@@ -45629,7 +45623,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: LinearRelationModule
-    subject_fingerprint: 1ca7e7513afa09ea197389c6768b5159efb56b19c72f4b32bde85dc70f617f94
+    subject_fingerprint: 7908b103f5522cfafe5b1edf97babd980e88850c77b1a4cca80569f3e2e5a95f
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: c275c419daa04a205c2b0516d00760d87918bb1708c07296d132f90c2c23ad7c
@@ -45715,12 +45709,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: bdc28548ed29f0ddc4c9b05a3fc93ee8333d71fa6aa7447cb8f3fd82f26f9e03
+      contract_fingerprint: 7d7a2ab5d41c8606fe7214a88fdf0aa39f00e5727ffeaf589cbadbcd20d95191
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: 6670839a9742708b645d6595303f4fb93e919ed0d9f6e5b6db67c7861e001be2
+      authority_evidence_fingerprint: 9c7105b2b08f826ead00705421f828ddff6a72e275533263b16a588d0493bd26
   residual_definitions:
   - name: linear_spring_force
     role: equation
@@ -46070,7 +46064,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: LinearSpringForceModule
-    subject_fingerprint: 5b8b0a3081bc127e01e7bdbf8323a13979d48863a27ce99a8c39f7a926ca0b98
+    subject_fingerprint: cdf8b7bc858dba5c8217aa15dbf89363b2fd99cceaab77f9c95904ed6132b33d
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: f6dcec6482cfefaf54bc2ddc1add86f9c77a74e1f10187f14c0579032606e39a
@@ -46288,13 +46282,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 6624e646804dc8c8876edc6cdd81bb158d0d1f89d8a81c2717b4153fc8a789f8
+      contract_fingerprint: f4af187fd76ecc1275125931f8239692ec76e9e3b7bca55af242816cdf4934d6
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 31c128c1a74d230b662b5bc40d9f3c1dbe33c914ab5c3f8b16b0bb34dda9ec43
+      authority_evidence_fingerprint: 0929e802f0ff59ca7c3b478f0fb37f1654451974bbdcc745e157874ae6c803e2
   residual_definitions:
   - name: lookup_table_1d
     role:
@@ -46544,7 +46538,7 @@ module_records:
         module_parameter:
           name: module_type
           value: LookupTable1DModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -46602,7 +46596,7 @@ module_records:
         module_parameter:
           name: module_type
           value: LookupTable1DModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -46648,7 +46642,7 @@ module_records:
       identity: physicsguard.project_formula.LookupTable1DModule.v1
       path: .physicsguard/module_formulas/LookupTable1DModule.yaml
       selector: 'module_type: LookupTable1DModule'
-      sha256: ea9eeccb4cf5b63cd538cdd392c121f33c0d34e43f36bdcf8a086462420256e0
+      sha256: f967e66cd5440d401d8b25460b80ac177a6ce7710ed4efa2bad131b8927a3127
       implementation_binding:
         path: src/physicsguard/modules/control.py
         selector: class LookupTable1DModule
@@ -46833,7 +46827,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/LookupTable1DModule.yaml
         selector: 'module_type: LookupTable1DModule'
-        sha256: ea9eeccb4cf5b63cd538cdd392c121f33c0d34e43f36bdcf8a086462420256e0
+        sha256: f967e66cd5440d401d8b25460b80ac177a6ce7710ed4efa2bad131b8927a3127
       expressions:
       - name: lookup_table_1d
         expression: y - (y_points[0] if x < x_points[0] and extrapolation == 'hold' else y_points[2] if x > x_points[2]
@@ -46911,7 +46905,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: LookupTable1DModule
-    subject_fingerprint: 5db002ffcc2ed8b93b60f388d7977c19948a89eafb6a89e424d8ff5f303019d5
+    subject_fingerprint: efc12007c6cb130795797b3b6f7893a40b629642c1d01ce5279429fc7e5f8d2e
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 482b0196424037d2fc7ce7481991b3e0c577211e90176141d415bc9d8c9841c1
@@ -47204,13 +47198,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: cf2fc94a6bf8f7eeabc3f945e27e4c08f9453f8cffd8f9b250d38a63b60bc085
+      contract_fingerprint: 2e66c7abb4a9ccce92653af4bf5f7f0501071f9e593f9f5d6bd1cd29e068452a
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: ab4d0faf228eb32484470186b15fc1839becd39a1d7783c5be3859c5f1864afb
+      authority_evidence_fingerprint: bcae17b3e95c63520b530b77380ebda572ae7d896652aa55ef29f84bf96017bd
   residual_definitions:
   - name: lookup_table_2d
     role:
@@ -47512,7 +47506,7 @@ module_records:
         module_parameter:
           name: module_type
           value: LookupTable2DModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -47578,7 +47572,7 @@ module_records:
         module_parameter:
           name: module_type
           value: LookupTable2DModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -47630,7 +47624,7 @@ module_records:
       identity: physicsguard.project_formula.LookupTable2DModule.v1
       path: .physicsguard/module_formulas/LookupTable2DModule.yaml
       selector: 'module_type: LookupTable2DModule'
-      sha256: a64d6dfe04c506f581f9666d92f69c630ffdeea7ae642f7e6356abf4e88bab90
+      sha256: 571a8effb5946ed544983b60d9a04f6c96313fee18e8ecf6233470be2a0cde43
       implementation_binding:
         path: src/physicsguard/modules/components/maps.py
         selector: class LookupTable2DModule
@@ -47875,7 +47869,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/LookupTable2DModule.yaml
         selector: 'module_type: LookupTable2DModule'
-        sha256: a64d6dfe04c506f581f9666d92f69c630ffdeea7ae642f7e6356abf4e88bab90
+        sha256: 571a8effb5946ed544983b60d9a04f6c96313fee18e8ecf6233470be2a0cde43
       expressions:
       - name: lookup_table_2d
         expression: z - (z_values[0][0] * (1 - (x - x_points[0]) / (x_points[1] - x_points[0])) * (1 - (y - y_points[0])
@@ -47963,7 +47957,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: LookupTable2DModule
-    subject_fingerprint: 41d1ef4803ee5e7d2c701e652f99810068542170d0bb1f9a0855f5cb4d52d22d
+    subject_fingerprint: f4383f9653d3430e1fbbb4eff2af42dc61217f553e962b103031b341a0ff7f1e
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 87037002188651a7c5ad6a8582dd1fb2112271373bcee0ae09b98f52f34f49cc
@@ -48662,13 +48656,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 37299b4b61c3e7c73c9908b561fb1a7f39aa0f3ca81481396f303582354de9e5
+      contract_fingerprint: 072a52009111ac31968b309aebda651fa755fd87890cecdad701c0cd1ea550c3
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 403422df2dfeaf0fd8945974d10030386b2e0a66369d1c1ee6b28a5531bc8e3b
+      authority_evidence_fingerprint: 8ddf94e83a8fe60a7c14231aa0fda5f67ffbc3827fa8250b5df31d50371f33b5
   residual_definitions:
   - name: map_axis_bounds:{variable}
     role: post_check
@@ -48847,7 +48841,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MapAxisBoundsCheckModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -48894,7 +48888,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MapAxisBoundsCheckModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -48936,7 +48930,7 @@ module_records:
       identity: physicsguard.project_formula.MapAxisBoundsCheckModule.v1
       path: .physicsguard/module_formulas/MapAxisBoundsCheckModule.yaml
       selector: 'module_type: MapAxisBoundsCheckModule'
-      sha256: 9790568781606798936876df95ab34344e5e91b2d72274e062e3f5cfc55c8368
+      sha256: b73c3b8396b0092741a09e0e6339a3ef76519fdd05e637c72ae8cadcdbabfcfe
       implementation_binding:
         path: src/physicsguard/modules/components/control_sensor_actuator.py
         selector: class MapAxisBoundsCheckModule
@@ -49013,7 +49007,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/MapAxisBoundsCheckModule.yaml
         selector: 'module_type: MapAxisBoundsCheckModule'
-        sha256: 9790568781606798936876df95ab34344e5e91b2d72274e062e3f5cfc55c8368
+        sha256: b73c3b8396b0092741a09e0e6339a3ef76519fdd05e637c72ae8cadcdbabfcfe
       expressions:
       - name: map_axis_bounds:{variable}
         expression: observed_0 - upper_bounds[0] if observed_0 > upper_bounds[0] else observed_0 - lower_bounds[0]
@@ -49073,7 +49067,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: MapAxisBoundsCheckModule
-    subject_fingerprint: 5f0ac9f772072b9db420589685e6431b5eccf1feec3e3376ea866c27000311d3
+    subject_fingerprint: 0afd41baf0378243cf1413efaa2ca2873f9e198aacb68eca51fa6e4104e62dc3
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 8e63117379c2e65ded964956bc0934249a6102ed418f08b5eb783f3bb49d87b9
@@ -49384,7 +49378,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MapBoundsCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -49428,7 +49422,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MapBoundsCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -49584,7 +49578,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: MapBoundsCheckModule
-    subject_fingerprint: 7505619a4432b487f9e309375a9b166381b7c2b438452c98c9c658bce4d166db
+    subject_fingerprint: 85ac2891204eb35c1bf86f3d8681728c280029c684b2cf1a75e65ffbc570f6b1
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: ccc34a8020751219d397fbd25851ba8ca110bc9054249141e0ab3e297cb5be8c
@@ -49667,13 +49661,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 7fe03b19ec77602f24d46ff0da17379dcd28582fd943be3c7b5d046a75326e55
+      contract_fingerprint: 1e181cc93012c89408bd4992722f235e0f62434c826b68409aa8526b84c147e8
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 5740fb78789f022eb262f0950b14025514b1b8ecebb9e743e690fd40a032dba7
+      authority_evidence_fingerprint: 1d7181f789c48515a2761dbe35fd2a03713a332016e7ab841ebd272ec45dd78b
   residual_definitions:
   - name: map_monotonicity
     role: post_check
@@ -49825,7 +49819,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MapMonotonicityCheckModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -49868,7 +49862,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MapMonotonicityCheckModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -49908,7 +49902,7 @@ module_records:
       identity: physicsguard.project_formula.MapMonotonicityCheckModule.v1
       path: .physicsguard/module_formulas/MapMonotonicityCheckModule.yaml
       selector: 'module_type: MapMonotonicityCheckModule'
-      sha256: 3bad27127c794a0f22ad2e94f825ebc9903e1a2999d3c9fbe13e53526a80007b
+      sha256: 3ce171f49dbfeed748e3f4813fe9692b0cd46590068582275d709cd45bb63c26
       implementation_binding:
         path: src/physicsguard/modules/components/control_sensor_actuator.py
         selector: class MapMonotonicityCheckModule
@@ -49973,7 +49967,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/MapMonotonicityCheckModule.yaml
         selector: 'module_type: MapMonotonicityCheckModule'
-        sha256: 3bad27127c794a0f22ad2e94f825ebc9903e1a2999d3c9fbe13e53526a80007b
+        sha256: 3ce171f49dbfeed748e3f4813fe9692b0cd46590068582275d709cd45bb63c26
       expressions:
       - name: map_monotonicity
         expression: max(values[0] - values[1], 0.0) + (residual_scale if values[1] == values[0] else 0.0) + max(values[1]
@@ -50035,7 +50029,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: MapMonotonicityCheckModule
-    subject_fingerprint: 48caee1a3c99ff5041b73f2497f4a5920514e5c93f0a666c2dc590abc593b4e9
+    subject_fingerprint: 971ea4934d953931dbcad1f4fdceff8468fcf5ec25febeeeab1f60c1a2629a4b
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 23a458f3c0b35586907666a868ab89909beb9e0f0c07fbb89146f276320c3e4a
@@ -50203,13 +50197,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 154b2cc33a387e3c088de678bffd6a8a8e4092764496b8dca9857c8ab5071007
+      contract_fingerprint: 47352251174059a327e2cf7b234818eeee2f7a30a4d5a98b2257fc861aa4905d
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 3350ac641f86cce84babb1968ebc8b6df5f7bbb037177e049a9684d89dd1dbc1
+      authority_evidence_fingerprint: 0df50070bbc0969c68293558c1b6158d76248e96ae6da07765c88be9b664fad5
   residual_definitions: []
   residual_program: "def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:\n   \
     \ return []"
@@ -50372,7 +50366,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MappedSignalModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: declaration_contract
           declared_variables: &id001
@@ -50414,7 +50408,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MappedSignalModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -50459,7 +50453,7 @@ module_records:
       identity: physicsguard.project_formula.MappedSignalModule.v1
       path: .physicsguard/module_formulas/MappedSignalModule.yaml
       selector: 'module_type: MappedSignalModule'
-      sha256: 60fd01f78d575654ef507b961d340e9e7d6adc354eddc3066485d1c908081c45
+      sha256: 0b4ee4124446b47234a8c4dd5fc825ab565d240fab24efffc657305283fdf602
       implementation_binding:
         path: src/physicsguard/modules/signal.py
         selector: class MappedSignalModule
@@ -50617,7 +50611,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: MappedSignalModule
-    subject_fingerprint: acc39bd4687ef334023d3cffeac7dd5ee0a7a90da0034182d1f292f6b5eb1ca3
+    subject_fingerprint: 581f531043876bc01a44fe3c4e8a1d2ed6df16adbbebbabcbb053ace740b4590
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 0b9605608e50c0bc6bd0bca5f99188f1cb9ef5216ef6331594a3b9738f19082f
@@ -50875,7 +50869,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MassBalanceRateModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -50924,7 +50918,7 @@ module_records:
         module_parameter:
           name: module_type
           value: MassBalanceRateModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -51071,7 +51065,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: MassBalanceRateModule
-    subject_fingerprint: b3dd64dbee2fb84c39e30ee5c2da33870233d08c2156baf084a7ba432448e11b
+    subject_fingerprint: 12b3577207724d7eacae16056c533ddab1471454a423f1b718be76259b8480be
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: c5b98b2f88a10f38af9587127e5362acc5fc858bfb1660da66a0aeff991295f3
@@ -51157,12 +51151,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: dff5b3f01796d2dbbdab0c81d10c01a21cf6f148085e67134040e9659a7091fb
+      contract_fingerprint: 088d4c93dd9b3b450727b85065f75d4ffc532203d51ee8d4d641c7c2c0a48f5c
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: 42e6b22faa7031fc082bcf077ca031a83685be7091fd0aa8a067586fa0f8875e
+      authority_evidence_fingerprint: f88c08825b519d843d0bea5f9876a4281908674d906f51d6a9968d0335a6a193
   residual_definitions:
   - name: mass_molar_flow_conversion
     role: equation
@@ -51512,7 +51506,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: MassMolarFlowConversionModule
-    subject_fingerprint: 279af7e580d1ce0f73636663896f6ff4015092cca5cde4db6ee615975df31e1e
+    subject_fingerprint: 283581b30960aadb806360966e9b30c6b24cd88307a2b5223ba7450707ab48c1
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: e0c656912d72e25ef3261dc74901b1568a9220bd4b6432fd708de5664a26c172
@@ -51856,12 +51850,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: fc67e21e2999c52580fbd5095855c0fb7e7d6be057e53e7ac7a91394304fc5ff
+      contract_fingerprint: 897a12bc40045cf226acdfc5f7f6852547107c93a50a26f2ec2308d3dace564b
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: 0ced09d4239a8a8168da94886ce74b60586552a84a26cb184fde65e72223d10d
+      authority_evidence_fingerprint: 190b0f93ba9e6b49a07f6b6033cd497f4ba81718e2f53ee07a5562b10f85f8c2
   residual_definitions:
   - name: mole_fraction_flow
     role: equation
@@ -52184,7 +52178,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: MoleFractionFlowModule
-    subject_fingerprint: 03976e74aa07f6e8ea8214648ac0e61cea5d2cc73cd92ba35fe2f5a7b22aa7e2
+    subject_fingerprint: 465e4692b54a547da4e0cf904a045838a387f77495f8c94e04c22ce995b17cd5
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: f802a7374983583cb831b5963a4966ae63209e834c65bdc0358fd0aed2f781f7
@@ -52366,13 +52360,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 2615b2bb3af511bf5539eb0611b8687091074efdf802ac36aa7ba98c597c4c56
+      contract_fingerprint: 323fd96ede1e088eb06dd0b8139288301dcf8a472083fa2c2dbce4cff457b528
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 2d27e08f300cc1b5d776ef5653a1b8bf9386344b537be8e9807ca04910fae36e
+      authority_evidence_fingerprint: a0a06c89f8aa06ed4aabad285fd56aafedd673a1223673a57b1d1137b8ed949e
   residual_definitions:
   - name: ohmic_relation
     role: equation
@@ -52588,7 +52582,7 @@ module_records:
         module_parameter:
           name: module_type
           value: OhmicRelationModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -52637,7 +52631,7 @@ module_records:
         module_parameter:
           name: module_type
           value: OhmicRelationModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -52669,7 +52663,7 @@ module_records:
       identity: physicsguard.project_formula.OhmicRelationModule.v1
       path: .physicsguard/module_formulas/OhmicRelationModule.yaml
       selector: 'module_type: OhmicRelationModule'
-      sha256: 8e7b0ef0079a7611462bfdf2315f7c1ef3de29692f0a893e7b820673e54ca8c9
+      sha256: 77aaae4a44a8fe4e02ea73f5e53a67c4906873ea3c4021a7c1d4dfd82383eedf
       implementation_binding:
         path: src/physicsguard/modules/physical/electrical.py
         selector: class OhmicRelationModule
@@ -52818,7 +52812,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/OhmicRelationModule.yaml
         selector: 'module_type: OhmicRelationModule'
-        sha256: 8e7b0ef0079a7611462bfdf2315f7c1ef3de29692f0a893e7b820673e54ca8c9
+        sha256: 77aaae4a44a8fe4e02ea73f5e53a67c4906873ea3c4021a7c1d4dfd82383eedf
       expressions:
       - name: ohmic_relation
         expression: V_drop_V - current_A * resistance_ohm
@@ -52881,7 +52875,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: OhmicRelationModule
-    subject_fingerprint: 0c5d72bad3176c9010a3cb4b1f33a92b22c04e09063bf2719e8e09b85c1216ea
+    subject_fingerprint: 0a810a7aa39097d1120dcc02a88f86b161ef7060893cdfd3631a99e5643ed5ff
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 63da9f92699a3f8d9214ea60fffedcbfd268e13fee24087474c62dd7fdb49fa0
@@ -53221,13 +53215,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 6c43bedd30f2485e43629035f3b93deb356ecc54394f9a8ae7658fde2260d94f
+      contract_fingerprint: 895c97fb0db03e35884c5b2e8a926df2f164e2602f0d2b2bb17faf4388a38682
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: d21da2f172e17968e88105111f7626758bb25776afdd6da205ccdf3adf23dd6d
+      authority_evidence_fingerprint: 3884c7f25698c1250a07e6eec9c405c5055577a7e8a7309d659725931fa5c7c5
   residual_definitions:
   - name: pid_algebraic
     role: equation
@@ -53556,7 +53550,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PIDAlgebraicModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -53618,7 +53612,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PIDAlgebraicModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -53656,7 +53650,7 @@ module_records:
       identity: physicsguard.project_formula.PIDAlgebraicModule.v1
       path: .physicsguard/module_formulas/PIDAlgebraicModule.yaml
       selector: 'module_type: PIDAlgebraicModule'
-      sha256: 41787b7ceeb3c1c4c59425ce16285bb91adc4954935eb820d3b9007deb5a4b8e
+      sha256: 91ff8a6af53bb6bfa14177b6faeddeca99bebfff8764aefaaee30f931cb3924b
       implementation_binding:
         path: src/physicsguard/modules/control.py
         selector: class PIDAlgebraicModule
@@ -53941,7 +53935,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/PIDAlgebraicModule.yaml
         selector: 'module_type: PIDAlgebraicModule'
-        sha256: 41787b7ceeb3c1c4c59425ce16285bb91adc4954935eb820d3b9007deb5a4b8e
+        sha256: 91ff8a6af53bb6bfa14177b6faeddeca99bebfff8764aefaaee30f931cb3924b
       expressions:
       - name: pid_algebraic
         expression: output - (Kp * error + Ki * integral_error + Kd * derivative_error + bias)
@@ -54022,7 +54016,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: PIDAlgebraicModule
-    subject_fingerprint: 0ccfba814e8cefe76d995e4f05e7a1158817fb0ad255160945584856b42f8222
+    subject_fingerprint: 6899ca9defb609a8bb204ddab56c60d2fac7c8ff7640f31d0347a502b2f5af34
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: ab9170ba7cf289eac735e7774e10666af34e6a584cd101e5e90ac2451f5851da
@@ -54719,13 +54713,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 681d12e9e2ec8c4536c04179ccbd57fdbba820892ab2df6af827fa358074a855
+      contract_fingerprint: d24f97d27573776062e7ef0f339e6f6accf40b55990265fad5eea3c0f71a5529
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 768ae29791022baf7a73422616d028036f6349aff0135055b20bbd4faa2b0d05
+      authority_evidence_fingerprint: 164fbb828480afb0fc0f04c143fd4241ba3b9ea076c1c531a8549ddcf7dfcd41
   residual_definitions:
   - name: pid_error
     role: equation
@@ -55500,7 +55494,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PIDControllerStepModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -55593,7 +55587,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PIDControllerStepModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -55633,7 +55627,7 @@ module_records:
       identity: physicsguard.project_formula.PIDControllerStepModule.v1
       path: .physicsguard/module_formulas/PIDControllerStepModule.yaml
       selector: 'module_type: PIDControllerStepModule'
-      sha256: 08a1fdc94a4b1f88931d3cc4dec1c5cd2cfd12dd565f4e6abf30959807a4353a
+      sha256: 6bee67082b30dff6acd3095461c62afee75e43c633369538aa0d366d06d6b76d
       implementation_binding:
         path: src/physicsguard/modules/components/control.py
         selector: class PIDControllerStepModule
@@ -56252,7 +56246,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/PIDControllerStepModule.yaml
         selector: 'module_type: PIDControllerStepModule'
-        sha256: 08a1fdc94a4b1f88931d3cc4dec1c5cd2cfd12dd565f4e6abf30959807a4353a
+        sha256: 6bee67082b30dff6acd3095461c62afee75e43c633369538aa0d366d06d6b76d
       expressions:
       - name: pid_error
         expression: error - (setpoint - measurement)
@@ -56421,7 +56415,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: PIDControllerStepModule
-    subject_fingerprint: c9329e9e2f765a8dd95247ec6ee72a355bcbf5b780a3a5e02d7e3630d4eda59b
+    subject_fingerprint: 0042a5e127729697c6fb5dabc7a2a332d3f6c1600b7d6d1b47106db28e3e8ad5
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 2d76ceaed6ea50d4d07370288ebcd0d4aab6dce3a510b58ab4365a4555e0762a
@@ -56725,13 +56719,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 9e9cf0d44db2908b0d5ae5cfcef8654652181329da420a4b63d5b6b2bfa59d25
+      contract_fingerprint: 173b983423e25a96916c2e14cbffb7c5731e4d4001f51a974276627467812f5d
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 5a6c9c7e15c6c52c6ec624f34c9395522e1d12675bdf72715803c625f28fa286
+      authority_evidence_fingerprint: db6d612580499dc634746b2ddfa9a7e8b4bdbd278f5fd3956f8a475c396a9295
   residual_definitions:
   - name: pipe_segment_pressure_drop
     role: equation
@@ -57050,7 +57044,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PipeSegmentSimpleModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -57108,7 +57102,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PipeSegmentSimpleModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -57148,7 +57142,7 @@ module_records:
       identity: physicsguard.project_formula.PipeSegmentSimpleModule.v1
       path: .physicsguard/module_formulas/PipeSegmentSimpleModule.yaml
       selector: 'module_type: PipeSegmentSimpleModule'
-      sha256: 3f89b61fa50cf9ba42bcc6f3d030ef44aa0764a001af3e6ed06daf028e88ba9b
+      sha256: ef58c5859480e80dba07bbcc385f01415dba9f2252a6e802726ae88947169fd3
       implementation_binding:
         path: src/physicsguard/modules/components/fluid_network.py
         selector: class PipeSegmentSimpleModule
@@ -57393,7 +57387,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/PipeSegmentSimpleModule.yaml
         selector: 'module_type: PipeSegmentSimpleModule'
-        sha256: 3f89b61fa50cf9ba42bcc6f3d030ef44aa0764a001af3e6ed06daf028e88ba9b
+        sha256: ef58c5859480e80dba07bbcc385f01415dba9f2252a6e802726ae88947169fd3
       expressions:
       - name: pipe_segment_pressure_drop
         expression: p_in_Pa - p_out_Pa - (friction_factor * length_m / diameter_m + K_minor) * 0.5 * rho_kg_m3 * (m_dot_kg_s
@@ -57471,7 +57465,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: PipeSegmentSimpleModule
-    subject_fingerprint: a4ab1c44c871c23d04416a05ccd53cdfcaf7eae515b29fc35a72734c7304259f
+    subject_fingerprint: 4832386ef8fded922b7efc659c972ac700e8379d85d6c7ea5d04d1d2bf74ddd9
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: e1d51b85c10fa98934d8b033dcc1991f2a614dbc3331c2bfeceff215e89f4500
@@ -57575,12 +57569,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 8f0e6fccf79add6e8656ed8a8299627f632dd590ad66a8f67496056bea5729c3
+      contract_fingerprint: d6ec383833d71e11cebc7f0c0542d103aa26258a2420efeb86a088662c652e06
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: 05bc89b79411b46502337a8244db3d87e63b9a4bc90db21a64a40f875b0194f0
+      authority_evidence_fingerprint: 2f3d451a25abe88fc94514de5bdc336b78b88fb68b6650b9cd0eff6d626406e2
   residual_definitions:
   - name: pressure_ratio
     role: equation
@@ -57986,7 +57980,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: PressureRatioModule
-    subject_fingerprint: bc5c7509e70da6ddb66dc9820aedf98f3918b4fb58b578481aa701b1c1c22f7a
+    subject_fingerprint: a695f248533f6addf4e8db87e17662bb4e2955ca8273783b03b8c95515e368ee
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 543f07321023ea24e0c36837a47c279d2034a1df0a7c04e34e16991a05e8e006
@@ -58512,7 +58506,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ProductModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -58562,7 +58556,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ProductModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -58698,7 +58692,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ProductModule
-    subject_fingerprint: b88b9d37cac8ab7bcbd4e3467523afa2a03ffcdee997f94b6c690afa90fc2dc9
+    subject_fingerprint: 224d566bf211abc51066fc6a8b43f6b9b9765395b70150b2a30507b3d707985b
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 833e342c8d48e3d8fa1d7e823ab5d10f211ec20d7b75f7d1137dfd3cb824e8aa
@@ -58966,13 +58960,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: d267d290512a5342528ec3b896f1d423552ee1bccef93d9229919a9207c8614b
+      contract_fingerprint: 378ab50ed63195a3230eac96c6deb83a873d6415ac635648a428d56c5491492c
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 46d862cb95bb7ae76646d8375414fcbdfc669fa734ff8616eed1e9e38260aad4
+      authority_evidence_fingerprint: bd595728e042a12a6b9894b3e39435ff8f309e1a8a7934f47ab099c4e7f15eef
   residual_definitions:
   - name: pump_hydraulic_power
     role: equation
@@ -59264,7 +59258,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PumpHydraulicPowerModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -59321,7 +59315,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PumpHydraulicPowerModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -59357,7 +59351,7 @@ module_records:
       identity: physicsguard.project_formula.PumpHydraulicPowerModule.v1
       path: .physicsguard/module_formulas/PumpHydraulicPowerModule.yaml
       selector: 'module_type: PumpHydraulicPowerModule'
-      sha256: af58bbc287e33c499aeb9816738cd9d7a58026b4986ce48d054d11df01013edb
+      sha256: 4e6bd16016cc3b3b1884ff4c5145e9a6c729394d00762c728545ae00ae0c403d
       implementation_binding:
         path: src/physicsguard/modules/physical/fluid.py
         selector: class PumpHydraulicPowerModule
@@ -59578,7 +59572,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/PumpHydraulicPowerModule.yaml
         selector: 'module_type: PumpHydraulicPowerModule'
-        sha256: af58bbc287e33c499aeb9816738cd9d7a58026b4986ce48d054d11df01013edb
+        sha256: 4e6bd16016cc3b3b1884ff4c5145e9a6c729394d00762c728545ae00ae0c403d
       expressions:
       - name: pump_hydraulic_power
         expression: P_shaft_W - (p_out_Pa - p_in_Pa) * m_dot_kg_s / rho_kg_m3 / efficiency
@@ -59652,7 +59646,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: PumpHydraulicPowerModule
-    subject_fingerprint: 5bf91c7bdb42ef412079dbd22c19fcefe5d2203a7984f7b9e13d3fd7d8ec71cb
+    subject_fingerprint: b76119ecd40c4036002fe24d4c568ab1b9756546e1d6a6954a7c981e8b27852f
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: fa3f8037ce881adf15471f7e67bac794b3ba322c6c2b11565f85aebf0233750a
@@ -60586,13 +60580,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 0cfac17fef262d970c7ff8c52d4af9e311497cb038138c824df2306f4e10e181
+      contract_fingerprint: 7d2bfdf4d071187d2ae03aca8fa3e2dec31805d926c88545be31716c4752b386
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 3e4bde757b4ebf2a4a608aa7439c3d93672e283f3590361f029ca75968811459
+      authority_evidence_fingerprint: f7f156164323c9f01d7514dd3a45303247cadc28076dc606be6306bc4e4fba5f
   residual_definitions:
   - name: pump_power
     role: equation
@@ -60938,7 +60932,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PumpSimpleModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -61002,7 +60996,7 @@ module_records:
         module_parameter:
           name: module_type
           value: PumpSimpleModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -61034,7 +61028,7 @@ module_records:
       identity: physicsguard.project_formula.PumpSimpleModule.v1
       path: .physicsguard/module_formulas/PumpSimpleModule.yaml
       selector: 'module_type: PumpSimpleModule'
-      sha256: 4576e69b41a473e45e3d3cd9cc5d98bcc90f7b7c34ee9d80e825c2b4a9a12066
+      sha256: f289d9cc02b099193bbd4724910d0be0e51fddf6966da73724a259fef5843039
       implementation_binding:
         path: src/physicsguard/modules/components/fluid_machines.py
         selector: class PumpSimpleModule
@@ -61327,7 +61321,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/PumpSimpleModule.yaml
         selector: 'module_type: PumpSimpleModule'
-        sha256: 4576e69b41a473e45e3d3cd9cc5d98bcc90f7b7c34ee9d80e825c2b4a9a12066
+        sha256: f289d9cc02b099193bbd4724910d0be0e51fddf6966da73724a259fef5843039
       expressions:
       - name: pump_power
         expression: P_shaft_W - (p_out_Pa - p_in_Pa) * m_dot_kg_s / rho_kg_m3 / efficiency
@@ -61408,7 +61402,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: PumpSimpleModule
-    subject_fingerprint: ec0d52ef979db129a3aa05177869a8a1f932930a9245013cef693a0ebfe43efd
+    subject_fingerprint: 429b5b698f8834c447c26c97f24d8c33cc43fb629a5f93bcb8d57b3b9c511de5
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: a49db75bbf8faf319b520f4ce2bde9a50196ebc6a51423d6359e2301414c859a
@@ -61668,13 +61662,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 868bc5faa80beb6330954254c58cde51da5a3dd4f49fcadf2b53f9f9da7f1621
+      contract_fingerprint: 259f605f83cc07e97a14452613bf4716a92c21f5ea332322c8ec91878ace7f90
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 2711f4cc4960dfbfc8f480fd1f61a1b37102ebdf43a61b0bfa88ddc74b86abaf
+      authority_evidence_fingerprint: de026596cca7c522defab32c2e36ba726b5ab8041a47851b591040301e83b838
   residual_definitions:
   - name: radiative_heat_transfer
     role: equation
@@ -61945,7 +61939,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RadiativeHeatTransferModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -62000,7 +61994,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RadiativeHeatTransferModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -62034,7 +62028,7 @@ module_records:
       identity: physicsguard.project_formula.RadiativeHeatTransferModule.v1
       path: .physicsguard/module_formulas/RadiativeHeatTransferModule.yaml
       selector: 'module_type: RadiativeHeatTransferModule'
-      sha256: 536e51a594b01fe39adc1a7e3a93292f3696e0cc52212fffd95fdd472930beec
+      sha256: 396af35ddce43da869f2f9588a231a0334e39fa9c2a496e979f77050d1d8d62f
       implementation_binding:
         path: src/physicsguard/modules/physical/thermodynamics.py
         selector: class RadiativeHeatTransferModule
@@ -62243,7 +62237,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/RadiativeHeatTransferModule.yaml
         selector: 'module_type: RadiativeHeatTransferModule'
-        sha256: 536e51a594b01fe39adc1a7e3a93292f3696e0cc52212fffd95fdd472930beec
+        sha256: 396af35ddce43da869f2f9588a231a0334e39fa9c2a496e979f77050d1d8d62f
       expressions:
       - name: radiative_heat_transfer
         expression: Q_dot_W - emissivity * 5.670374419e-8 * area_m2 * (T_hot_K ** 4 - T_cold_K ** 4)
@@ -62314,7 +62308,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: RadiativeHeatTransferModule
-    subject_fingerprint: 86283fde86acc0cad1c255a3a6bf2d6c3b2f62b9d26040f9cf63cd3e6c7a08ee
+    subject_fingerprint: bf105928f93fb6e0199038996d36b3965fb9932344cc524eef41bbaf13844a03
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 99b6ee1843c70feee052783518511bc35fe3effa91af5285e6e4ecbbea017938
@@ -63438,7 +63432,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RangeCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -63484,7 +63478,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RangeCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -63666,7 +63660,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: RangeCheckModule
-    subject_fingerprint: 0c59676124bc70da48a9aa246f06883ec6cc13d115860dd123e48fde56787dd0
+    subject_fingerprint: d3468063aa6ae2594373a1314e67b2e1704a2e0356c8529600074c8361a98e29
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 8567bcdccbe030ef43ade54287fbc96b57ccbc824fa7237a6bb6551abb11c432
@@ -63873,13 +63867,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 912c5da64600053b50e23873753ed1545380852617f2d0b8c7667bc382aa0214
+      contract_fingerprint: 581885ae48171e56eb637efc8b95a4b3a22e7c59f6b1704b23df08c04fac3e8e
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 5e160cc33b0125b018d468dea5dbee47154e264d3a6c4fd93b6fb810992d0d74
+      authority_evidence_fingerprint: 4cfe4ab67e8bdf5bdad0f2d957b3a666bac6626dfcef77af28b660beb16ed60e
   residual_definitions:
   - name: rate_limiter
     role: post_check
@@ -64140,7 +64134,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RateLimiterModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -64191,7 +64185,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RateLimiterModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -64227,7 +64221,7 @@ module_records:
       identity: physicsguard.project_formula.RateLimiterModule.v1
       path: .physicsguard/module_formulas/RateLimiterModule.yaml
       selector: 'module_type: RateLimiterModule'
-      sha256: 0e52ba05221f007b0479e3822264c892ec7ccf24b1a8431ef4dd66ed627e5b18
+      sha256: 95ddff7583655e0bd5f9b7a1f0b7bcaa8c754e61e507beab07c7e0d00f8a0842
       implementation_binding:
         path: src/physicsguard/modules/control.py
         selector: class RateLimiterModule
@@ -64401,7 +64395,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/RateLimiterModule.yaml
         selector: 'module_type: RateLimiterModule'
-        sha256: 0e52ba05221f007b0479e3822264c892ec7ccf24b1a8431ef4dd66ed627e5b18
+        sha256: 95ddff7583655e0bd5f9b7a1f0b7bcaa8c754e61e507beab07c7e0d00f8a0842
       expressions:
       - name: rate_limiter
         expression: (y_current - y_previous) / dt_s - rising_rate_limit if (y_current - y_previous) / dt_s > rising_rate_limit
@@ -64470,7 +64464,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: RateLimiterModule
-    subject_fingerprint: 771bf837210afec951023d53660dc6c44d3774060c55c2e6fd1b6c0ae62484a7
+    subject_fingerprint: 59e1771e6b35685097d2a933903ecc6732d0ebbefe69ddc0d30ff71dfb6b4b35
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 8066e4cb284b18bf46206875f392059aeabc75011973f647b1a1cf99efa198fc
@@ -64794,7 +64788,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RatioModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -64845,7 +64839,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RatioModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -64993,7 +64987,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: RatioModule
-    subject_fingerprint: 152fe4aaac3334899a6ab7a12f6a97a5c9f9a05b608bfc037939d94e1cd449d8
+    subject_fingerprint: c6b037b98446cc767fb93a9c2f4630ad5023841af79c7f1d52b58e39a3784245
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: a22183b1968999aef8acdee242a08c0c2147e6fb00954df1069d7500389d4d5c
@@ -66348,7 +66342,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RotationalInertiaTorqueModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -66389,7 +66383,7 @@ module_records:
         module_parameter:
           name: module_type
           value: RotationalInertiaTorqueModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -66530,7 +66524,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: RotationalInertiaTorqueModule
-    subject_fingerprint: 0fa006f36bd188a029d9bfa2eda6c6b5c7184cbf5c74c88fbf8953364e66fb3c
+    subject_fingerprint: 0589c765096a0c887a27e0abb090d844933c51926ed95a72e3b144d4b2c9796c
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: b967b41e7cea980ec786fe952bbcde0d07dc3ed1573f58f44f5610f38038e3f5
@@ -67020,13 +67014,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: ca3c2840d314c18611f34219e4878f4eca2fa3d8d3f9924fd214bc50ae9dab1f
+      contract_fingerprint: e5c62665ffabdc31b2203f4613be5e13ad6db629e08d7b7a1915e6b3297c225a
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: f645b58b010600d9fbdb65d1f9f4a35fce4b45a92e3c0100ce4ce6131948da6c
+      authority_evidence_fingerprint: 9aaf5ad5fda4b5d98e0416b77be551d8a7eb0f6bb04ec0733da827c32f3041fc
   residual_definitions:
   - name: saturation
     role:
@@ -67285,7 +67279,7 @@ module_records:
         module_parameter:
           name: module_type
           value: SaturationModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -67336,7 +67330,7 @@ module_records:
         module_parameter:
           name: module_type
           value: SaturationModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -67370,7 +67364,7 @@ module_records:
       identity: physicsguard.project_formula.SaturationModule.v1
       path: .physicsguard/module_formulas/SaturationModule.yaml
       selector: 'module_type: SaturationModule'
-      sha256: a107ffc7f1364e44fc5ad6ed23920034f6bb1400d2469a3eac59c6cb501fb679
+      sha256: 881fe60bc9500d03d373866125bac0af071c7c5d58152afe92786e3d2e6f855e
       implementation_binding:
         path: src/physicsguard/modules/control.py
         selector: class SaturationModule
@@ -67543,7 +67537,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/SaturationModule.yaml
         selector: 'module_type: SaturationModule'
-        sha256: a107ffc7f1364e44fc5ad6ed23920034f6bb1400d2469a3eac59c6cb501fb679
+        sha256: 881fe60bc9500d03d373866125bac0af071c7c5d58152afe92786e3d2e6f855e
       expressions:
       - name: saturation
         expression: y - min(max(u, lower), upper)
@@ -67610,7 +67604,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: SaturationModule
-    subject_fingerprint: 073d201db75cee82a9db2bdc2e78adbbb8ac4ec64c08c4f0f42228e6f0ef902d
+    subject_fingerprint: 907f14fbeb7a5531535a8e1516e203737ceb5560a77cc151d88b28e56734e90c
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: df3f9217a8203e37ccddc48b103ed88797108285092403694dac3e2fdbdc3f69
@@ -68091,13 +68085,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 9bc549db48e4b90a32e783069bc47c66ff8f58ce9db92439b531770a6520bbe5
+      contract_fingerprint: 094d6e5cb540a48f24afbbf5a4a714c5d977e903cfa515baa72d98caa1ab15c9
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: cb2ba00a7d4a89ebf13fee6d4c87003d8f0d396307f3641feba667464a2af302
+      authority_evidence_fingerprint: ec57f38c5f14f6101526ab43119b263af7291e45f7ef2f31bc7751d3e49745a0
   residual_definitions:
   - name: sensor_scale_offset
     role: equation
@@ -68321,7 +68315,7 @@ module_records:
         module_parameter:
           name: module_type
           value: SensorScaleOffsetModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -68371,7 +68365,7 @@ module_records:
         module_parameter:
           name: module_type
           value: SensorScaleOffsetModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -68414,7 +68408,7 @@ module_records:
       identity: physicsguard.project_formula.SensorScaleOffsetModule.v1
       path: .physicsguard/module_formulas/SensorScaleOffsetModule.yaml
       selector: 'module_type: SensorScaleOffsetModule'
-      sha256: e9fb5db8c488b183768b6d92554074c1b6c9b9bb152cc488e94268116202c4dd
+      sha256: 83eea6aaa705c2afbe794e76c9f26faf6997120f8e333037e8ca127cf3b8b1b1
       implementation_binding:
         path: src/physicsguard/modules/signal.py
         selector: class SensorScaleOffsetModule
@@ -68575,7 +68569,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/SensorScaleOffsetModule.yaml
         selector: 'module_type: SensorScaleOffsetModule'
-        sha256: e9fb5db8c488b183768b6d92554074c1b6c9b9bb152cc488e94268116202c4dd
+        sha256: 83eea6aaa705c2afbe794e76c9f26faf6997120f8e333037e8ca127cf3b8b1b1
       expressions:
       - name: sensor_scale_offset
         expression: measured_value - (scale_factor * true_value + offset)
@@ -68640,7 +68634,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: SensorScaleOffsetModule
-    subject_fingerprint: c2ddbe4f4c3fadf18df2327c102ccd069aacda188165314ef69bdd8df8785a25
+    subject_fingerprint: ff464df1db57146c88a34a4d1fc20008f9c04129d67f2d83aa64df34a09afc84
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 0953f3aa52c7091fb98747c7cdcaafc296e385c47b9ea6ebfa597303c316fbeb
@@ -68949,12 +68943,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 19376f1e278b6ce62c06592cc1bd6b18f5d1cbcc49cb4723c9293721e8869433
+      contract_fingerprint: fe802b449ad06f013909d6fa14ceb331734cb73c805d0490cfa9e2a18bdf3824
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: b36001fb63d620d65c338f8c06647b329468a93a23ef49d1d4f91ae23cbf3000
+      authority_evidence_fingerprint: afb2319a51b7afe58519f6501f5c1458da81c55e502c50d1f107d0e1eb9edeb4
   residual_definitions:
   - name: specific_enthalpy_flow
     role: equation
@@ -69356,7 +69350,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: SpecificEnthalpyFlowModule
-    subject_fingerprint: 4904a241c130adae71919b1dffc13b8c8251eac0e63445cc557fb31d041ee508
+    subject_fingerprint: 0c4565116542e4111a53929d200087199ae80ab675f216c4e91f605a78cdcdef
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 5f6f946bc7aef34bc2d9db3b659e91169f4c939653dc66ac19546aa2fe33fd56
@@ -69451,12 +69445,12 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: d243a7c3dd0ddbf84ac393cbb681148ba90058cc3b186abb6d8a39f12c58bbe5
+      contract_fingerprint: 8da22aaa429eb316a3502f494d89e0655225934d7b0db9a1f48c22d7bccaf6c4
       direction_scope: exact_instantiation_scenario
       relation_directionality: direction_neutral
       claim_boundary: canonical reviewed scenario roles only; the module relation remains direction-neutral and another
         legal boundary set may solve it in another direction
-      authority_evidence_fingerprint: c284d091fe36315ed077920ae9dbcbda0293f8110e7910e164f59df96de5831a
+      authority_evidence_fingerprint: bd60dfff9abf5152e43b1a5b239ac4f45404bb924bd3bc7053363a0af624c69c
   residual_definitions:
   - name: stack_chemical_efficiency
     role: equation
@@ -69867,7 +69861,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: StackChemicalEfficiencyModule
-    subject_fingerprint: 9b0afcd46a5390f514c385d96c6f2b5cc376690ae67cd9f9dc2d6f428accc967
+    subject_fingerprint: 8f35ab0f68f10c5ad6204aede7c01b9943aa2c8931982e8a2137ce2869a36434
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 07e30b4904072bb9a1b4c14b5e0c0896cf1ebcd80f2918378d9279724911fcc0
@@ -70327,7 +70321,7 @@ module_records:
         module_parameter:
           name: module_type
           value: SumModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -70375,7 +70369,7 @@ module_records:
         module_parameter:
           name: module_type
           value: SumModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -70520,7 +70514,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: SumModule
-    subject_fingerprint: 0d093eddde149aa8358e5b8a4d58835fd3c13300cdb8bf49d46dfb6f9cca2fee
+    subject_fingerprint: bd5724f56ebee35c3eac391a6c0b09a7db3eeb2875b572fcfd9fa0487a0bf2a5
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 8cb8a8c96fdbe61d06f8cc3d1414d210c052fb916da3bbdb711e2fa864966e58
@@ -70811,7 +70805,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TankLevelVolumeModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -70852,7 +70846,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TankLevelVolumeModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -70992,7 +70986,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: TankLevelVolumeModule
-    subject_fingerprint: 08b1726300274d115101d32baf28aac047348c5dce7cf2210fd298f203da2bac
+    subject_fingerprint: 2f7901e1075965e50795318bad6edfd03fb9ea6e77fdf716a882f34bc631b436
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 00f6f3c66810049a7c8d3418bf26ee97a3a72309e567af50527a2a826cbf95a8
@@ -71329,7 +71323,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TankVolumeRateModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -71372,7 +71366,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TankVolumeRateModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -71519,7 +71513,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: TankVolumeRateModule
-    subject_fingerprint: ce033fbe22a4303fbf19f686a07f43fc69cb7fc268a5655098a0f830398dff93
+    subject_fingerprint: e8c5561e8f55eb31035d74750c150789204affee61e8badf7a3d0fba9dc6d5a1
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: fa111f6b3157f6484bba77b0bb5af7c83444e05aee587e596e98e50b16ae3807
@@ -71701,13 +71695,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 7f3c3cdd2902892a0f4f3a39c4675d158b228f26a7237fba7d5c5a3f6ae28488
+      contract_fingerprint: 6ad5c7d65bc1b2d956d3bac32a4fa06db047c24a99a83b16bbf53589f270c5dc
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: e137dd78a7aac501e294a89c09a1ca66c018b756f75311f4cc9355e3a78e026a
+      authority_evidence_fingerprint: f84766e4df208676b9a21e7169cd3112a534d000d3bbf695523979cef77cefca
   residual_definitions:
   - name: thermal_capacitance_rate
     role: equation
@@ -71923,7 +71917,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ThermalCapacitanceRateModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -71972,7 +71966,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ThermalCapacitanceRateModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -72004,7 +71998,7 @@ module_records:
       identity: physicsguard.project_formula.ThermalCapacitanceRateModule.v1
       path: .physicsguard/module_formulas/ThermalCapacitanceRateModule.yaml
       selector: 'module_type: ThermalCapacitanceRateModule'
-      sha256: b9af56c9473117b6ba657b1742eaf90c94358ab352890b7119b4eca32789a46f
+      sha256: d3e42ea1ac66f78e090cf12ad06a98f7cda2fcbf94c3efc9f7ae0431beb78fb3
       implementation_binding:
         path: src/physicsguard/modules/physical/thermal.py
         selector: class ThermalCapacitanceRateModule
@@ -72153,7 +72147,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ThermalCapacitanceRateModule.yaml
         selector: 'module_type: ThermalCapacitanceRateModule'
-        sha256: b9af56c9473117b6ba657b1742eaf90c94358ab352890b7119b4eca32789a46f
+        sha256: d3e42ea1ac66f78e090cf12ad06a98f7cda2fcbf94c3efc9f7ae0431beb78fb3
       expressions:
       - name: thermal_capacitance_rate
         expression: Q_net_W - C_J_K * dT_dt_K_s
@@ -72216,7 +72210,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ThermalCapacitanceRateModule
-    subject_fingerprint: c4edb54ea5a1ad54a5a97531fa11cf534308e16a61db945ff38561ccebe9179e
+    subject_fingerprint: 165db4c065f38071d91dd0890f6e0e6e4263a3a49925f5fbc4e2e4a6c7dc6936
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 8881e112ccb97328fc6b160bd099fb5080abb784a4086c27b7c4035b47c544f6
@@ -72425,13 +72419,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 763fd20823560efdd026a0bc7dfab9c0902393dba9cbe7f6dc51229fbab5df9b
+      contract_fingerprint: 38d3bbf0ef9acfe2b2951466dfae3113655ea0bc487afb67bf558bbf37f83fa9
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 75d6c2bc97b6b3555cc9846774ed5b72b21351618bd1a10f7ffd3a44b147ae79
+      authority_evidence_fingerprint: 3168a75e572a240a7022b688b16b47e504621e69599dfbbd220793227b2823a7
   residual_definitions:
   - name: thermal_conductor
     role: equation
@@ -72667,7 +72661,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ThermalConductorModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -72718,7 +72712,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ThermalConductorModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -72751,7 +72745,7 @@ module_records:
       identity: physicsguard.project_formula.ThermalConductorModule.v1
       path: .physicsguard/module_formulas/ThermalConductorModule.yaml
       selector: 'module_type: ThermalConductorModule'
-      sha256: 03b4c1f2135ce11c3a5f35405082a00048fb141934eec1de34ff5fc0ee33ebfb
+      sha256: 1a3890afbea0e50123b5b5375869cc2f1ecf020d0111f92047bfd74496e4082b
       implementation_binding:
         path: src/physicsguard/modules/physical/thermal.py
         selector: class ThermalConductorModule
@@ -72912,7 +72906,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/ThermalConductorModule.yaml
         selector: 'module_type: ThermalConductorModule'
-        sha256: 03b4c1f2135ce11c3a5f35405082a00048fb141934eec1de34ff5fc0ee33ebfb
+        sha256: 1a3890afbea0e50123b5b5375869cc2f1ecf020d0111f92047bfd74496e4082b
       expressions:
       - name: thermal_conductor
         expression: Q_dot_W - G_W_K * (T_a_K - T_b_K)
@@ -72978,7 +72972,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ThermalConductorModule
-    subject_fingerprint: 3bb272360263bd6993cafcfa547014190cc460f3d024418f80988bbf48a34983
+    subject_fingerprint: 9f7c9cd33609d563e3497c5b4955a05600e64c0b89fd97dcc75d23140941c3b4
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 165a2b337651396e098a98461dfcc17b29958c9966f97b411b300b0c2d350e9a
@@ -74322,7 +74316,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ThresholdStateCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -74366,7 +74360,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ThresholdStateCheckModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -74545,7 +74539,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ThresholdStateCheckModule
-    subject_fingerprint: f1e2ff59adce5498b24f3ba1197fd70fbbd2b630bec310f4a6992ef5151dbc35
+    subject_fingerprint: 15eebe51f7a4003cdc81df49d16f155cd9ee1376d65f198bddcf56c471b63ee6
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: cd9ea371b0e1028ebfc81de0071e5044ea1bd843549455009f434eca8e387104
@@ -75065,7 +75059,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TorqueSpeedPowerModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -75106,7 +75100,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TorqueSpeedPowerModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -75235,7 +75229,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: TorqueSpeedPowerModule
-    subject_fingerprint: 0bbda88bfc25c6e5f27652be20d75b0401da38e427375da8be76d1e59785a7a9
+    subject_fingerprint: 23dfa5e9b5c07b081073d0ecf68c701c950986756261596452767c1a56c8a08e
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: d84fdf39ea8cd7a56ac486ce0553456a0b3795c43e22254ef8ef5a3ce6aa1546
@@ -75510,7 +75504,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TranslationalInertiaForceModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -75551,7 +75545,7 @@ module_records:
         module_parameter:
           name: module_type
           value: TranslationalInertiaForceModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -75691,7 +75685,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: TranslationalInertiaForceModule
-    subject_fingerprint: eb426340f154de763645f6013535f3baf81466e0be49091c79d16d39f3453518
+    subject_fingerprint: 6031888eaee6ed145a040f020db068857e0303119d3375a5929dbf5add152e51
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 799c665ebae1476a62961156384cc48655ff2bb83a5f70b76032d5d6fbfe8b69
@@ -76136,13 +76130,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: 80438eb136c26e2c8fd45259c09ec3a561f409a8eb970f408f6a1c35598bc412
+      contract_fingerprint: 5eb8a42e8eb23012de9c44f4cecd9e57904b6bd323a6dd149479456e7667b1df
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: da67f183783798d0021ad9ab859b82ccfc65d54ce6444095d61ec7f66f2fbf55
+      authority_evidence_fingerprint: 91158e2c2d6bbfba5aa5d3c12030b9693af153b9d9c7a519407b32fff76b007c
   residual_definitions:
   - name: unit_conversion_audit
     role: equation
@@ -76379,7 +76373,7 @@ module_records:
         module_parameter:
           name: module_type
           value: UnitConversionAuditModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -76431,7 +76425,7 @@ module_records:
         module_parameter:
           name: module_type
           value: UnitConversionAuditModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -76470,7 +76464,7 @@ module_records:
       identity: physicsguard.project_formula.UnitConversionAuditModule.v1
       path: .physicsguard/module_formulas/UnitConversionAuditModule.yaml
       selector: 'module_type: UnitConversionAuditModule'
-      sha256: 38e9f16a7b5e0fd2efaf3a7de98d9a8a52b919583cff3590d36f446a638da543
+      sha256: d3a164161e141e60b505c1be9d1181cc6ecb548335e2443e6f96c4d966c5bf6d
       implementation_binding:
         path: src/physicsguard/modules/components/control_sensor_actuator.py
         selector: class UnitConversionAuditModule
@@ -76655,7 +76649,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/UnitConversionAuditModule.yaml
         selector: 'module_type: UnitConversionAuditModule'
-        sha256: 38e9f16a7b5e0fd2efaf3a7de98d9a8a52b919583cff3590d36f446a638da543
+        sha256: d3a164161e141e60b505c1be9d1181cc6ecb548335e2443e6f96c4d966c5bf6d
       expressions:
       - name: unit_conversion_audit
         expression: target_value - (factor * source_value + offset)
@@ -76722,7 +76716,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: UnitConversionAuditModule
-    subject_fingerprint: f312bcda008f8647442c65239c00e1c3b233a3e304f0a8b5a6ba4d79d1afe1ca
+    subject_fingerprint: 6fbf697fbeeca18399a8ab0eced716fe9002cccec5221c311c004de160343646
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: f150c09a49435d5ddf584914da7aa63ba89c00ce6417f6cff1b9478c11fd181b
@@ -76948,13 +76942,13 @@ module_records:
     role_authority:
       kind: runtime_port_contract
       producer_identity: physicsguard.module_runtime_port_contract.v1
-      contract_fingerprint: c1f5babf080c82427faa441ce2cab9c71d9fcc14f196ed3d48fab85b99759db0
+      contract_fingerprint: 4c55ea3d62448a9d35b003a47b0864b8ad96f0d7eec952f3b94cf1e7d94b1b61
       direction_scope: exact_instantiation_source_first_reconstruction
       relation_directionality: direction_neutral
       claim_boundary: This is an unlicensed source-first reconstruction for one exact maintained instantiation. It
         does not prove physical correctness, external FMI coverage, or arbitrary-target reconstruction until separate
         evidence accepts those claims.
-      authority_evidence_fingerprint: 111c666e573a9320a318ef9318fc02793297fe912c734e9e22708247c62a63ac
+      authority_evidence_fingerprint: 0ca673e46f0296ce1e65d6a7ab7c1de7e044ef206b8d94953b91bd83d77d9c22
   residual_definitions:
   - name: unit_scale
     role: equation
@@ -77193,7 +77187,7 @@ module_records:
         module_parameter:
           name: module_type
           value: UnitScaleModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -77245,7 +77239,7 @@ module_records:
         module_parameter:
           name: module_type
           value: UnitScaleModule
-        sha256: d362e443fdda96e06764e922c7f204cecabfcc67e259d133b9893f04625def6c
+        sha256: 8230a0b2dec710a402fa45576db5a246b5504159a293381ca84786989fe4cb08
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -77292,7 +77286,7 @@ module_records:
       identity: physicsguard.project_formula.UnitScaleModule.v1
       path: .physicsguard/module_formulas/UnitScaleModule.yaml
       selector: 'module_type: UnitScaleModule'
-      sha256: 76b0399d53e21148af05f37dbce78e917e6441ad4345ff08f83870005beac3c2
+      sha256: e6e3e80c63a49f4e234fe2131d9ee504c20807442b0c35fb68bc39de9324f2bd
       implementation_binding:
         path: src/physicsguard/modules/signal.py
         selector: class UnitScaleModule
@@ -77477,7 +77471,7 @@ module_records:
         kind: project_formula
         path: .physicsguard/module_formulas/UnitScaleModule.yaml
         selector: 'module_type: UnitScaleModule'
-        sha256: 76b0399d53e21148af05f37dbce78e917e6441ad4345ff08f83870005beac3c2
+        sha256: e6e3e80c63a49f4e234fe2131d9ee504c20807442b0c35fb68bc39de9324f2bd
       expressions:
       - name: unit_scale
         expression: y - (factor * x + offset)
@@ -77544,7 +77538,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: UnitScaleModule
-    subject_fingerprint: 38f2a0326cf18f94e4a1aaaa319ad0893fbe9859f98840b2e6d875dde51874e1
+    subject_fingerprint: a559ad5c20ed29ce06d0a5e330b382f67cfe9350a2c81bd6612c184f3346da72
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 03edad490797e6740dc1fa415078b6334b9cd12559867d5037fb87e28aab39fe
@@ -78437,7 +78431,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ViscousDamperForceModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -78478,7 +78472,7 @@ module_records:
         module_parameter:
           name: module_type
           value: ViscousDamperForceModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -78618,7 +78612,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: ViscousDamperForceModule
-    subject_fingerprint: e1cc9e8a3060a1b758102e19a2d5c384348aa04e964c50b25d79589fe4101661
+    subject_fingerprint: a0c48de36b2e7193a22c08837da431316d228837acbc1beca8fad7e48d3ad5a1
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: af4f0ed9478af403e49757d1d06df4d29778db277b307362731bacc22d24eecf
@@ -78894,7 +78888,7 @@ module_records:
         module_parameter:
           name: module_type
           value: VolumetricMassFlowConversionModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -78935,7 +78929,7 @@ module_records:
         module_parameter:
           name: module_type
           value: VolumetricMassFlowConversionModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -79075,7 +79069,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: VolumetricMassFlowConversionModule
-    subject_fingerprint: 692ff179f453e4d4e751a927595783f8d446c692f3604ccfc29a1ee67fae7ff0
+    subject_fingerprint: 6816edf2c3c21e1f355fbb858617e640709f9fcd32dc0780f10b8f5e4b6b5487
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: 811bfaceacb83f323c4cc7a0749897050c3b31bb1c0f9c6ee4e07d72f61ede37
@@ -79429,7 +79423,7 @@ module_records:
         module_parameter:
           name: module_type
           value: WaterProductionFaradayModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: residual_record
           residual_fields:
@@ -79471,7 +79465,7 @@ module_records:
         module_parameter:
           name: module_type
           value: WaterProductionFaradayModule
-        sha256: 65c23467d8471764435251c81e0f85802d9303e285d1f52bfaaadc220e999eb9
+        sha256: e9bc083cce728a771f79a834b429bcced32f1b293fe044c96e76d267d8d3f793
         expected_outcome:
           kind: raises
           exception_type: ValueError
@@ -79629,7 +79623,7 @@ module_records:
       result_id: null
       status: awaiting_external_review
       record_id: WaterProductionFaradayModule
-    subject_fingerprint: c7e4fac3deb5b703eb8e2b671f491d0f0f6ad00d25d12efd66ffd638afb3b757
+    subject_fingerprint: 2a9588ea41f3c1eb9ff779b7c5efdf17e20c37c819b6415af4712e1fe756ae24
   source_semantic_ir:
     schema: physicsguard.module_source_semantic_ir.v1
     fingerprint: bb31addda5dca447fd0d1eb79db92aa8d272f45bc2eae801a9d9bed3d146c8ba

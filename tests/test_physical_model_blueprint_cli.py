@@ -159,8 +159,7 @@ def test_blueprint_cli_internal_failure_has_distinct_exit(
         raise RuntimeError("unexpected reviewer failure")
 
     monkeypatch.setattr(
-        physicsguard_cli,
-        "load_physical_model_blueprint",
+        "physicsguard.io.physical_model_blueprint_loader.load_physical_model_blueprint",
         _unexpected_failure,
     )
 

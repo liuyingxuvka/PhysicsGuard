@@ -35,7 +35,6 @@
         "validation"
       ],
       "tests": [
-        "src/physicsguard/core/test_file_contract.py",
         "tests/test_assumption_cli.py",
         "tests/test_assumption_diagnostics.py",
         "tests/test_cli.py",
@@ -76,9 +75,6 @@
         "tests/test_workflow_governance.py"
       ],
       "models": [
-        ".flowguard/verification/owners/authoritative_model_system/run_checks.py",
-        ".flowguard/verification/owners/compositional_verification_kernel/run_checks.py",
-        ".flowguard/verification/owners/model_test_code_alignment/run_checks.py",
         ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
         ".flowguard/verification/owners/ai_workflow/run_checks.py",
         ".flowguard/verification/owners/core/run_checks.py",
@@ -90,7 +86,7 @@
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:28774975f394ea7ea2b5387c310c66410c879941759bdbc8dc3fcb07b6185223"
+      "fingerprint": "sha256:56528a5bdcbbead51a988d20d85075f532524e2eb53f8141231b8f27a8b8bc97"
     },
     {
       "id": "purpose",
@@ -157,13 +153,13 @@
       "files": [
         "src/physicsguard/core/__init__.py",
         "src/physicsguard/core/assumptions.py",
+        "src/physicsguard/core/diagnosability.py",
         "src/physicsguard/core/diagnostics.py",
         "src/physicsguard/core/evaluator.py",
         "src/physicsguard/core/hierarchy.py",
         "src/physicsguard/core/registry.py",
         "src/physicsguard/core/residual.py",
-        "src/physicsguard/core/solver.py",
-        "src/physicsguard/core/diagnosability.py"
+        "src/physicsguard/core/solver.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -177,7 +173,6 @@
         "validation"
       ],
       "tests": [
-        "src/physicsguard/core/test_file_contract.py",
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
         "tests/test_agriculture_food_bioprocess_starter_pack.py",
@@ -299,9 +294,7 @@
         "tests/test_signal_mapping_ledger.py",
         "tests/test_validation_blueprint_coverage.py"
       ],
-      "models": [
-        ".flowguard/verification/owners/hierarchical_model_mesh/run_checks.py"
-      ],
+      "models": [],
       "status": "confirmed",
       "fingerprint": "sha256:e3f2a7367ce3d6c3852fe55c2e08ab2a38078443d137627b58f4cee2823ae041"
     },
@@ -316,9 +309,9 @@
       "files": [
         "src/physicsguard/core/dataset_identity.py",
         "src/physicsguard/core/model_dataset_validation.py",
-        "src/physicsguard/core/validation_depth.py",
+        "src/physicsguard/core/predictive_rollout.py",
         "src/physicsguard/core/validation_adequacy.py",
-        "src/physicsguard/core/predictive_rollout.py"
+        "src/physicsguard/core/validation_depth.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -390,17 +383,17 @@
         "Recompute relevant native validation when deriving project closure"
       ],
       "files": [
-        "src/physicsguard/core/target_inventory_authority.py",
-        "src/physicsguard/core/evidence_mesh.py",
-        "src/physicsguard/core/parameter_coverage.py",
+        "src/physicsguard/core/contract_diff.py",
         "src/physicsguard/core/data_file_manifest.py",
-        "src/physicsguard/core/project_closure.py",
-        "src/physicsguard/core/project_evidence.py",
+        "src/physicsguard/core/evidence_mesh.py",
         "src/physicsguard/core/fmi_observation.py",
         "src/physicsguard/core/model_library.py",
-        "src/physicsguard/core/contract_diff.py",
-        "src/physicsguard/core/test_file_contract.py",
-        "src/physicsguard/core/signal_mapping.py"
+        "src/physicsguard/core/parameter_coverage.py",
+        "src/physicsguard/core/project_closure.py",
+        "src/physicsguard/core/project_evidence.py",
+        "src/physicsguard/core/signal_mapping.py",
+        "src/physicsguard/core/target_inventory_authority.py",
+        "src/physicsguard/core/test_file_contract.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -414,7 +407,6 @@
         "validation"
       ],
       "tests": [
-        "src/physicsguard/core/test_file_contract.py",
         "tests/test_cli.py",
         "tests/test_dataset_identity.py",
         "tests/test_dynamic_model_purpose.py",
@@ -463,16 +455,16 @@
         "Validate structured inputs before domain operations"
       ],
       "files": [
-        "src/physicsguard/schema/*.py"
+        "src/physicsguard/schema/*.py",
+        "src/physicsguard/schema/test_file_contract.py"
       ],
       "entrypoints": [],
       "state": [],
       "side_effects": [],
-      "depends_on": [],
+      "depends_on": [
+        "loaders"
+      ],
       "tests": [
-        "src/physicsguard/core/test_file_contract.py",
-        "src/physicsguard/io/test_file_contract_loader.py",
-        "src/physicsguard/schema/test_file_contract.py",
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
         "tests/test_assumption_manager.py",
@@ -573,7 +565,7 @@
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:f8381c646e1cda83255b0b67008c129de555726918d7018a5a768040e1dc1637"
+      "fingerprint": "sha256:00f9539dbc12a4d1442a8d008bb2cec98951d6f20126a77a99e49463bfa23068"
     },
     {
       "id": "loaders",
@@ -583,7 +575,8 @@
         "Read native files without silently changing observations"
       ],
       "files": [
-        "src/physicsguard/io/*.py"
+        "src/physicsguard/io/*.py",
+        "src/physicsguard/io/test_file_contract_loader.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -593,7 +586,6 @@
         "schema"
       ],
       "tests": [
-        "src/physicsguard/core/test_file_contract.py",
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
         "tests/test_agriculture_food_bioprocess_starter_pack.py",
@@ -661,7 +653,7 @@
         ".flowguard/verification/owners/core/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:2db2908a706c35fadf89db4a893c8bbcc294049bdc4f7bfa2f59d8138dd95a72"
+      "fingerprint": "sha256:3abba38d62586285470d9f74d37c21ce4f1d15af3229302d10676c165ebb1110"
     },
     {
       "id": "modules",
@@ -734,18 +726,23 @@
       "responsibilities": [
         "Generate the ten consumer projections from one source",
         "Install ordinary consumer files with safe staging and rollback",
-        "Review real model/code/test and equation bindings without default nested pytest"
+        "Review real model/code/test and equation bindings without default nested pytest",
+        "Publish the exact final version commit through the repository release workflow"
       ],
       "files": [
         "scripts/*.py"
       ],
       "entrypoints": [],
       "state": [],
-      "side_effects": [],
+      "side_effects": [
+        "Write staged consumer files and replace installed members transactionally",
+        "Create the final version tag and stable GitHub Release via .github/workflows/publish-release.yml"
+      ],
       "depends_on": [
         "evidence",
         "loaders",
         "modules",
+        "schema",
         "simulation"
       ],
       "tests": [
@@ -768,7 +765,7 @@
         ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:1b282b02c8b4213a9ec4a73bf06e78d0aa8fae61afdd6513a985ad2283d554d1"
+      "fingerprint": "sha256:37243baf212586368b2f10a527f5a92ab5c65623af2f8a97523f5410fa396e84"
     },
     {
       "id": "consumer_scripts",

@@ -486,7 +486,7 @@ def test_caller_cannot_shrink_the_live_registry_denominator(tmp_path: Path) -> N
     payload = _payload()
     omitted = payload["module_records"].pop()["module_type"]
 
-    review = checker.review_ledger(ROOT, _write(tmp_path, payload))
+    review = checker.review_ledger(ROOT, _write(tmp_path, payload), review_scope="module", module=omitted)
 
     assert review["status"] == "fail"
     assert review["aggregate_results"]["registry_inventory"]["status"] == "blocked"
@@ -499,7 +499,7 @@ def test_duplicate_module_record_is_structural_failure(tmp_path: Path) -> None:
     payload = _payload()
     payload["module_records"].append(copy.deepcopy(payload["module_records"][0]))
 
-    review = checker.review_ledger(ROOT, _write(tmp_path, payload))
+    review = checker.review_ledger(ROOT, _write(tmp_path, payload), review_scope="module", module=payload["module_records"][0]["module_type"])
 
     assert review["status"] == "fail"
     assert any("duplicate_module_record" in error for error in review["errors"])
@@ -859,7 +859,7 @@ def test_registry_only_selector_mutation_is_blocked() -> None:
     assert "registry_only_test_selector" in _codes(result, "behavioral_test")
 
 
-def test_parameterized_noop_helper_binding_is_rejected_despite_collectable_nodeid() -> None:
+def test_parameterized_noop_helper_binding_is_rejected_despite_collectable_nodeid(tmp_path: Path) -> None:
     checker = _load_checker()
     path = ROOT / "tests" / "test_module_equation_ledger.py"
     nodeid = (
@@ -897,6 +897,19 @@ def test_parameterized_noop_helper_binding_is_rejected_despite_collectable_nodei
     assert "test_case_contract_missing" in codes
     assert "test_module_not_exercised" in codes
     assert "test_behavior_not_exercised" in codes
+
+    dynamic = tmp_path / "test_fixture_cases.py"
+    dynamic.write_text(
+        "import pytest\n@pytest.fixture(params=[1, 2])\ndef row(request): return request.param\n"
+        "def test_case(row): assert row\n",
+        encoding="utf-8",
+    )
+    assert not checker._parametrize_declares_module_case(dynamic, "test_case", None, "unparameterized")
+    dynamic.write_text(
+        "def pytest_generate_tests(metafunc): pass\ndef test_case(): assert True\n",
+        encoding="utf-8",
+    )
+    assert not checker._parametrize_declares_module_case(dynamic, "test_case", None, "unparameterized")
 
 
 def test_real_parameterized_helper_graph_reaches_module_and_residual_assertions() -> None:
