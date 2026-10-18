@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Test File Contract"
   short_description: "Check concrete test-file coverage contracts"
-  default_prompt: "Use $physicsguard-test-file-contract-review directly; bind deterministic files, fields, datasets, and testbench I/O to the exact affected blueprint interfaces, state, obligations, and evidence, with no full-blueprint fallback."
+  default_prompt: "Use $physicsguard-test-file-contract-review; ordinary bounded native work can start without a blueprint: report its absence and unexamined scope. If a blueprint is supplied/project-declared, or required by a target/whole-boundary claim, require its exact current review/projection; stale, foreign and unknown identities still block. Check deterministic files, fields, units, timing and mappings; bind the selected blueprint interfaces without full-blueprint fallback."

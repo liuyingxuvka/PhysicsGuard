@@ -24,13 +24,13 @@
     "declared_artifacts",
     "binding_expectations",
     "project_profile",
-    "current_blueprint_summary_or_affected_slice"
+    "current_blueprint_summary_or_affected_slice_when_present"
   ],
   "required_outputs": [
     "reconciled_inventory",
     "binding_map",
-    "affected_slice_fingerprint",
-    "blueprint_binding_gaps",
+    "affected_slice_fingerprint_when_present",
+    "blueprint_binding_gaps_when_present",
     "critical_gaps",
     "closure_handoff"
   ],
@@ -44,15 +44,15 @@
       "path": "references/native-route-protocol.md",
       "load_when": [
         "route_selected_and_domain_execution_required",
-        "blueprint_summary_required",
-        "blueprint_affected_evidence_slice_required",
-        "whole_boundary_handoff_required"
+        "blueprint_summary_required_when_present",
+        "blueprint_affected_evidence_slice_required_when_present",
+        "whole_boundary_handoff_required_when_present"
       ],
       "required_for": [
         "target_native_domain_workflow",
-        "blueprint_evidence_binding_projection"
+        "blueprint_evidence_binding_projection_when_present"
       ],
-      "sha256": "92ca4910d2dc24e36c1f708cc0f2b4278d25d8eb82c4d132ef8e332bb61ac9ae"
+      "sha256": "ed614f4ef4f0909eae4c4a4c3961e2cf315803fba5627d40e03e1451b4f817f4"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -95,6 +95,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "a726ded8ac4af1bc8d6ad105af007f75bc0d9ccbd3ac763d45615ab7c7a05b6c",
+  "entry_prompt_sha256": "d7675c84791447af10b06d1570d8134f2e92ebab255a450a4d5a797e770344ca",
   "claim_boundary": "Registry closure covers only the exact current project evidence bundle and declared roles/bindings; unresolved critical gaps or out-of-scope files remain blocking."
 }

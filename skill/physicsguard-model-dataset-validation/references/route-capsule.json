@@ -25,14 +25,14 @@
     "dataset_identity",
     "validation_plan",
     "mapping_evidence",
-    "current_affected_or_whole_blueprint_projection"
+    "current_affected_or_whole_blueprint_projection_when_present"
   ],
   "required_outputs": [
     "validation_status",
     "depth_receipt",
     "adequacy_findings",
-    "per_blueprint_element_coverage",
-    "affected_slice_fingerprint",
+    "per_blueprint_element_coverage_when_present",
+    "affected_slice_fingerprint_when_present",
     "unsupported_claims",
     "bounded_validation_claim"
   ],
@@ -46,14 +46,14 @@
       "path": "references/native-route-protocol.md",
       "load_when": [
         "route_selected_and_domain_execution_required",
-        "blueprint_affected_validation_slice_required",
-        "whole_target_validation_required"
+        "blueprint_affected_validation_slice_required_when_present",
+        "whole_target_validation_required_when_present"
       ],
       "required_for": [
         "target_native_domain_workflow",
-        "blueprint_validation_coverage_projection"
+        "blueprint_validation_coverage_projection_when_present"
       ],
-      "sha256": "8971cf31594b531fdc5f4ce26050108c4a8d7d584e1974c45815ce44c0bdf0fe"
+      "sha256": "f7cd4653982107247ad0697a7764b984eff90524e9bb9d9f89148c525e2c5fa3"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -96,6 +96,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "d8bb39a14a7a7cd064f5b60cb23b2e7306f224c4792d9eb610bcb2b7ad9cd26b",
+  "entry_prompt_sha256": "46034fdd39f23cd08b3d6a0cf6b9a734d51fd3a00c2a04be85dac6835a7240ad",
   "claim_boundary": "A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the receipt."
 }

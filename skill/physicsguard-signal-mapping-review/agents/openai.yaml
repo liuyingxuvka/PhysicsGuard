@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Signal Mapping"
   short_description: "Review exact signal and parameter mappings"
-  default_prompt: "Use $physicsguard-signal-mapping-review directly on the exact affected interface slice; validate source/target identity, units, frames, conversion, time semantics, revision, evidence, and downstream blueprint consumers."
+  default_prompt: "Use $physicsguard-signal-mapping-review; ordinary bounded native work can start without a blueprint: report its absence and unexamined scope. If a blueprint is supplied/project-declared, or required by a target/whole-boundary claim, require its exact current review/projection; stale, foreign and unknown identities still block. Validate source/target identity, units, conversion, timing, revision and evidence; preserve the selected interface slice and consumers."

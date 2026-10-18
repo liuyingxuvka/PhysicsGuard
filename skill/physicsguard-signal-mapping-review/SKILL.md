@@ -29,7 +29,9 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 ## Blueprint slice
 
-Consume only the exact affected interface projection and its downstream consumers. Check source/target identity, unit, reference frame, sign convention, conversion semantic, time basis, revision, evidence fingerprint, and every selected consumer. This route does not author or fully review the blueprint. Omitted branches are outside scope, not passed. A missing/stale/ambiguous projection blocks and never triggers a full-blueprint or repository scan.
+If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
+
+For this selected blueprint path: Consume only the exact affected interface projection and its downstream consumers. Check source/target identity, unit, reference frame, sign convention, conversion semantic, time basis, revision, evidence fingerprint, and every selected consumer. This route does not author or fully review the blueprint. Omitted branches are outside scope, not passed. A missing/stale/ambiguous projection blocks the selected blueprint path and never triggers a full-blueprint or repository scan.
 
 ## Conditional detail loading
 
@@ -49,8 +51,8 @@ Consume only the exact affected interface projection and its downstream consumer
 
 - `mapping_status`
 - `review_gaps`
-- `affected_slice_fingerprint`
-- `downstream_blueprint_consumers`
+- `affected_slice_fingerprint_when_present`
+- `downstream_blueprint_consumers_when_present`
 - `temporal_boundary`
 - `safe_mapping_claim`
 

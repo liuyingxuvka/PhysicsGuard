@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard Model Preflight"
   short_description: "Bound external-model understanding before audit"
-  default_prompt: "Use $physicsguard-model-understanding-preflight directly to freeze target identity, boundary, inventory providers, capabilities, and the first useful blueprint layer; consume only the current summary or affected slice and do not claim full blueprint qualification."
+  default_prompt: "Use $physicsguard-model-understanding-preflight; ordinary bounded native work can start without a blueprint: report its absence and unexamined scope. If a blueprint is supplied/project-declared, or required by a target/whole-boundary claim, require its exact current review/projection; stale, foreign and unknown identities still block. Freeze target boundary, inventory, capabilities and the first useful layer; never claim full blueprint qualification."

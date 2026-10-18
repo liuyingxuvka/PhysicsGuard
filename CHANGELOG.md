@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15.14 - 2026-10-18
+
+- Let ordinary bounded native skills start without a supplied or declared blueprint, while retaining strict exact-current identity on selected blueprint paths.
+- Separate initial blueprint inventory/drafts with explicit gaps from validated target-model generation eligibility, revision, and closure.
+- Regenerate the ten consumer entries from their single route source, refresh live native fixture identities, and use the official FlowGuard v0.70.5 consumer.
+
 ## v0.15.13 - 2026-10-18
 
 - Restore one blocked readiness JSON when package import raises an ordinary exception; preserve exact version and distribution-origin checks.

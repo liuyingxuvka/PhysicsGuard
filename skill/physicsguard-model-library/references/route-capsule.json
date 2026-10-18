@@ -24,12 +24,12 @@
     "target_context",
     "validation_receipts",
     "known_limits",
-    "current_blueprint_fingerprint_and_projection"
+    "current_blueprint_fingerprint_and_projection_when_present"
   ],
   "required_outputs": [
     "compatible_assets",
     "reuse_status",
-    "selected_blueprint_fingerprints",
+    "selected_blueprint_fingerprints_when_present",
     "verified_reuse_limits",
     "gaps",
     "bounded_reuse_scope"
@@ -44,15 +44,15 @@
       "path": "references/native-route-protocol.md",
       "load_when": [
         "route_selected_and_domain_execution_required",
-        "blueprint_summary_for_discovery_required",
-        "blueprint_affected_reuse_slice_required",
-        "whole_target_reuse_qualification_required"
+        "blueprint_summary_for_discovery_required_when_present",
+        "blueprint_affected_reuse_slice_required_when_present",
+        "whole_target_reuse_qualification_required_when_present"
       ],
       "required_for": [
         "target_native_domain_workflow",
-        "blueprint_reuse_compatibility_projection"
+        "blueprint_reuse_compatibility_projection_when_present"
       ],
-      "sha256": "3c78ed244fde8778bc8855d4858dd5e3d177b4c2879ab2db9c50e75835db4ae9"
+      "sha256": "3c652125afb3e6d9fde45dbf6cb05b08b393640de35ee5b8f277a48ac9879170"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -95,6 +95,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "46ef52e4e5d6a425e9fc0f2eeff40befd6c021c2a66547a3186441ecdc6953c5",
+  "entry_prompt_sha256": "ff586db8d8b6d6547e10ddd4dce01438fcf7759ba7a9cac93bc5857a81b73045",
   "claim_boundary": "Library readiness licenses only the selected asset/profile/testbench combination and exact bounded reuse scope; it does not validate a new project automatically."
 }

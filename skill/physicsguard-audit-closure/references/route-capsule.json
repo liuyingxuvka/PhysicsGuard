@@ -24,16 +24,16 @@
     "closure_plan",
     "native_receipts",
     "open_blockers",
-    "current_whole_or_affected_blueprint_review",
+    "current_whole_or_affected_blueprint_review_when_present",
     "current_execution_receipts_if_claimed"
   ],
   "required_outputs": [
     "closure_status",
     "safe_claim",
-    "blueprint_scope_fingerprint",
-    "blueprint_depth_and_first_gap",
-    "in_memory_projection_identity",
-    "in_memory_query_status",
+    "blueprint_scope_fingerprint_when_present",
+    "blueprint_depth_and_first_gap_when_present",
+    "in_memory_projection_identity_when_present",
+    "in_memory_query_status_when_present",
     "current_execution_status",
     "execution_claim_licensed",
     "blockers",
@@ -49,16 +49,16 @@
       "path": "references/native-route-protocol.md",
       "load_when": [
         "route_selected_and_domain_execution_required",
-        "blueprint_affected_closure_required",
-        "blueprint_whole_boundary_closure_required",
-        "in_memory_blueprint_projection_closure_required"
+        "blueprint_affected_closure_required_when_present",
+        "blueprint_whole_boundary_closure_required_when_present",
+        "in_memory_blueprint_projection_closure_required_when_present"
       ],
       "required_for": [
         "target_native_domain_workflow",
-        "blueprint_closure_projection",
-        "in_memory_blueprint_projection_claim_boundary"
+        "blueprint_closure_projection_when_present",
+        "in_memory_blueprint_projection_claim_boundary_when_present"
       ],
-      "sha256": "3021e80ac849c9b3dccf67a58fa553ec7e0b715c025912896df7fd681b1bd687"
+      "sha256": "3f5027ebbeccc28f4859eba3872340ea5057e4a86be6204a27e17b6f3d897a07"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -101,6 +101,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "bfc9ce35f9125e460a03505ad65802aa536488629ddc003d4f9cdf124cbe68e1",
+  "entry_prompt_sha256": "021263284a84a80eb2f3401ad79fcb1acea364423717126f43486e669adf2332",
   "claim_boundary": "Closure proves only the exact requested audit scope represented by current native receipts; skipped, stale, partial, and predictive gaps remain non-pass."
 }

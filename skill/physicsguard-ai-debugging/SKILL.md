@@ -38,7 +38,9 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 ## Blueprint coordination boundary
 
-Consume a current summary to choose the minimum direct route, an affected or reverse-trace projection to localize a named symptom, and never author or fully review `PhysicalModelBlueprint`. Whole-blueprint work belongs to `physicsguard-candidate-model-blueprint`; final claims belong to the relevant direct owner. A missing/stale/ambiguous projection blocks the handoff and does not authorize loading every skill, every blueprint member, or the repository as fallback.
+If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
+
+For this selected blueprint path: Consume a current summary to choose the minimum direct route, an affected or reverse-trace projection to localize a named symptom, and never author or fully review `PhysicalModelBlueprint`. Whole-blueprint work belongs to `physicsguard-candidate-model-blueprint`; final claims belong to the relevant direct owner. A missing/stale/ambiguous projection blocks the selected blueprint handoff and does not authorize loading every skill, every blueprint member, or the repository as fallback.
 
 ## Conditional detail loading
 
@@ -58,8 +60,8 @@ Consume a current summary to choose the minimum direct route, an affected or rev
 
 - `selected_native_routes`
 - `localized_findings`
-- `blueprint_trace_projection`
-- `delegated_blueprint_owner`
+- `blueprint_trace_projection_when_present`
+- `delegated_blueprint_owner_when_present`
 - `next_required_evidence`
 - `bounded_claim`
 

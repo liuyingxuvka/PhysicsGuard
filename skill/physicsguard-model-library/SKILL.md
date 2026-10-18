@@ -29,7 +29,9 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 ## Blueprint slice
 
-Index and select assets by exact blueprint fingerprint, physical obligation, target profile, validity boundary, testbench, native receipt, and verified reuse limit. Use summary for discovery, affected projection for one reuse decision, and full projection only for whole-target qualification. This route does not author or fully review the blueprint. Loose similarity is not compatibility. Missing/stale projection identity is blocking and does not authorize scanning or validating unrelated assets.
+If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
+
+For this selected blueprint path: Index and select assets by exact blueprint fingerprint, physical obligation, target profile, validity boundary, testbench, native receipt, and verified reuse limit. Use summary for discovery, affected projection for one reuse decision, and full projection only for whole-target qualification. This route does not author or fully review the blueprint. Loose similarity is not compatibility. Missing/stale projection identity blocks the selected blueprint path and does not authorize scanning or validating unrelated assets.
 
 ## Conditional detail loading
 
@@ -49,7 +51,7 @@ Index and select assets by exact blueprint fingerprint, physical obligation, tar
 
 - `compatible_assets`
 - `reuse_status`
-- `selected_blueprint_fingerprints`
+- `selected_blueprint_fingerprints_when_present`
 - `verified_reuse_limits`
 - `gaps`
 - `bounded_reuse_scope`

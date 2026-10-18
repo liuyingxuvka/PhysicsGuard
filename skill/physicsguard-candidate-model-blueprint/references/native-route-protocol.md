@@ -4,7 +4,7 @@
 
 Pass an already qualified exact current summary, affected projection or reverse trace to the next native owner when its source, material, authority, revision and selector identities remain unchanged. Combine all affected seed ids for the requested scope into one affected API call. Inspect the existing returned slice before asking for another projection of the same scope. If inputs or raw target material change, run the existing canonical qualification gate again; a prior review, summary or hash label does not bypass it. Unknown or invalid seeds block the whole request; never join separately accepted fragments to hide a rejected seed. This is task-local reuse of an actual result, without a persistent cache or new receipt.
 
-Use this route when the user asks to build a candidate model from PhysicsGuard evidence.
+Use this route for first target inventory and blueprint draft authoring, full blueprint review, or validated target-model generation eligibility. An initial draft may expose missing inventory, semantics, or validation evidence as explicit gaps; it grants no validated status, generation eligibility, strict revision, or closure. Missing evidence does not force a draft-authoring handoff loop. Current independent target authority and native validation remain required for qualification and generation eligibility.
 
 ## Canonical physical DNA
 
@@ -46,6 +46,8 @@ Compose only a bounded in-memory projection when the user or downstream workflow
 Every in-memory projection reports the native directory fingerprint, target system id, subject revision, source fingerprints, review status, deepest licensed layer, coverage counts, first gap, safe claim, claim boundary, and the selected query kind/id when present. A projection never proves current execution and always keeps `execution_claim_licensed=false`. Preserve identity-only gaps when a content-addressed source/test/resource is identified but its bytes are not available to the current owner.
 
 ## Workflow
+
+For initial inventory/draft authoring, use the available target material and return the bounded draft with explicit gaps. Canonical review may report non-pass gaps; never invent its authorities or native evidence. The following generation/revision/closure workflow applies only when those outcomes are requested and their current native prerequisites are available.
 
 1. Start from a passed model-understanding preflight and an independent target inventory.
 2. Use validated low-fidelity hierarchy blocks, interfaces, units, assumptions, and examples.

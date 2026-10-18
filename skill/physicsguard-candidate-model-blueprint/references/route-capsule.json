@@ -6,42 +6,43 @@
   "route_role": "direct",
   "broad_route_prerequisite": false,
   "accept_when": [
-    "The user asks to build a candidate model from already validated PhysicsGuard evidence.",
-    "Generation readiness, interfaces, or rollout boundaries must be decided before target-model creation."
+    "The user asks for initial target inventory or a candidate blueprint draft, including explicit evidence gaps.",
+    "The user requests full blueprint review or target-model generation eligibility from current validated PhysicsGuard evidence."
   ],
   "reject_handoffs": [
     {
-      "condition": "The hierarchy or external-model boundary is not yet understood.",
+      "condition": "Understanding or validation work is requested as its own task, rather than drafting or reviewing the blueprint.",
       "target_skill_id": "physicsguard-model-understanding-preflight"
     },
     {
-      "condition": "The model still lacks current dataset validation evidence.",
+      "condition": "Dataset validation evidence must be produced before a generation-eligibility claim.",
       "target_skill_id": "physicsguard-model-dataset-validation"
     }
   ],
   "minimum_inputs": [
-    "validated_hierarchy",
-    "independent_target_inventory",
-    "current_blueprint_or_authoring_target",
-    "blueprint_artifact_root",
+    "authoring_target",
+    "available_hierarchy_and_inventory",
+    "current_blueprint_when_present",
+    "blueprint_artifact_root_if_reviewing",
     "explicit_material_root_if_declared",
-    "ready_blocks",
-    "interface_inventory",
-    "model_semantics",
+    "validated_hierarchy_if_claiming_generation_eligibility",
+    "current_native_validation_if_claiming_generation_eligibility",
+    "interface_inventory_when_available",
+    "model_semantics_when_known",
     "in_memory_projection_if_requested",
     "in_memory_selector_if_requested"
   ],
   "required_outputs": [
     "candidate_blueprint",
-    "physical_blueprint_review",
-    "blueprint_fingerprint",
+    "physical_blueprint_review_if_requested",
+    "blueprint_fingerprint_when_present",
     "material_root_disposition",
     "native_execution_status",
     "deepest_licensed_layer",
     "first_gap",
     "safe_claim",
     "native_directory_dna_status",
-    "in_memory_query_identity_and_gaps",
+    "in_memory_query_identity_and_gaps_if_requested",
     "execution_claim_licensed",
     "generation_eligibility",
     "rollout_boundary",
@@ -68,7 +69,7 @@
         "canonical_physical_blueprint_authority",
         "in_memory_physical_blueprint_projection"
       ],
-      "sha256": "820c5dba10940fd35d5b1fd0e88dcf7fbedec7fdfe1f2bb198afb2bb1ad9d0a8"
+      "sha256": "f9028e057a5bedf68685a6dee10b0ff2ce995c3f41f5305cfab946d4ff2f37e6"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -111,6 +112,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "88393473e8b3ef8ec1169e5e6e2485c257b8918b9be9566c7f6f8a798afb9dcf",
+  "entry_prompt_sha256": "3a43f11c3ffb4e78f52404fdf5a29ebe59be5f3d3fb88ede6d67c78344e562ed",
   "claim_boundary": "Generation eligibility covers only a candidate low-fidelity blueprint for the declared target and interfaces; it is not an implemented or validated high-fidelity model."
 }

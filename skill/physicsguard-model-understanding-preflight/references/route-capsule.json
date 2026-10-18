@@ -25,13 +25,13 @@
     "physical_boundary",
     "known_inventory",
     "inventory_provider_capabilities",
-    "current_blueprint_summary_or_affected_slice"
+    "current_blueprint_summary_or_affected_slice_when_present"
   ],
   "required_outputs": [
     "preflight_status",
     "understanding_record",
-    "blueprint_summary_inputs",
-    "first_useful_layer",
+    "blueprint_summary_inputs_when_present",
+    "first_useful_layer_when_present",
     "access_gaps",
     "next_route"
   ],
@@ -45,14 +45,14 @@
       "path": "references/native-route-protocol.md",
       "load_when": [
         "route_selected_and_domain_execution_required",
-        "blueprint_summary_required",
-        "blueprint_affected_boundary_required"
+        "blueprint_summary_required_when_present",
+        "blueprint_affected_boundary_required_when_present"
       ],
       "required_for": [
         "target_native_domain_workflow",
-        "blueprint_preflight_projection"
+        "blueprint_preflight_projection_when_present"
       ],
-      "sha256": "01b98d3c0026e53b7f48a624a3a0f44b4e6be9ad19b6ef7b26591bd4e61aef60"
+      "sha256": "a1d85161d6b143d00818835190b5199bf53717d50a155870c38e7e15f4326f32"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -95,6 +95,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "d422b8f4a9ca82ab3b9ece3bd985dabed77bccffb7a56f9d13695bd09c3ea57e",
+  "entry_prompt_sha256": "23d53dd21fa50f4a5f30112c673ffa1ae794f3e996c0ccf538cc8061c71d84b0",
   "claim_boundary": "Preflight licenses only that the declared low-fidelity audit boundary is sufficiently understood to proceed; unresolved access or inventory gaps remain visible blockers."
 }

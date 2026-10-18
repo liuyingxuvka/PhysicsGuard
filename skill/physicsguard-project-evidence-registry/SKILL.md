@@ -29,7 +29,9 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 ## Blueprint slice
 
-Consume the summary for navigation and the exact affected slice when an evidence or resource identity changes. Bind each current artifact, resource, oracle, receipt, and freshness result to its exact blueprint element/semantic/obligation; return missing or stale bindings as explicit gaps, never as a project-wide pass. This route does not author or fully review the blueprint. Full blueprint loading is reserved for a whole-boundary handoff or closure. Projection fingerprints and target revision must be current; no source-scan fallback is allowed.
+If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
+
+For this selected blueprint path: Consume the summary for navigation and the exact affected slice when an evidence or resource identity changes. Bind each current artifact, resource, oracle, receipt, and freshness result to its exact blueprint element/semantic/obligation; return missing or stale bindings as explicit gaps, never as a project-wide pass. This route does not author or fully review the blueprint. Full blueprint loading is reserved for a whole-boundary handoff or closure. Projection fingerprints and target revision must be current; no source-scan fallback is allowed.
 
 ## Conditional detail loading
 
@@ -49,8 +51,8 @@ Consume the summary for navigation and the exact affected slice when an evidence
 
 - `reconciled_inventory`
 - `binding_map`
-- `affected_slice_fingerprint`
-- `blueprint_binding_gaps`
+- `affected_slice_fingerprint_when_present`
+- `blueprint_binding_gaps_when_present`
 - `critical_gaps`
 - `closure_handoff`
 

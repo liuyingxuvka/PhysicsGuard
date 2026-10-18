@@ -29,7 +29,9 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 ## Blueprint closure input
 
-Consume a current whole or affected `PhysicalModelBlueprintReview` projection matching the requested claim. The native blueprint directory, its tests, and its model/code/evidence bindings are the only DNA authority. A compact projection may be composed in memory for one requested selector, but it is not a second artifact or transport package and it never becomes execution evidence. Report current native execution separately and never turn a projection, a frozen interpretation, or an AI answer into fresh evidence or closure. This route does not author or fully review the blueprint; missing, stale, ambiguous, unsupported, unresolved, or not-run evidence remains non-pass and cannot broaden to a repository scan or larger projection.
+If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
+
+For this selected blueprint path: Consume a current whole or affected `PhysicalModelBlueprintReview` projection matching the requested claim. The native blueprint directory, its tests, and its model/code/evidence bindings are the only DNA authority. A compact projection may be composed in memory for one requested selector, but it is not a second artifact or transport package and it never becomes execution evidence. Report current native execution separately and never turn a projection, a frozen interpretation, or an AI answer into fresh evidence or closure. This route does not author or fully review the blueprint; missing, stale, ambiguous, unsupported, unresolved, or not-run evidence remains non-pass and cannot broaden to a repository scan or larger projection.
 
 ## Conditional detail loading
 
@@ -49,10 +51,10 @@ Consume a current whole or affected `PhysicalModelBlueprintReview` projection ma
 
 - `closure_status`
 - `safe_claim`
-- `blueprint_scope_fingerprint`
-- `blueprint_depth_and_first_gap`
-- `in_memory_projection_identity`
-- `in_memory_query_status`
+- `blueprint_scope_fingerprint_when_present`
+- `blueprint_depth_and_first_gap_when_present`
+- `in_memory_projection_identity_when_present`
+- `in_memory_query_status_when_present`
 - `current_execution_status`
 - `execution_claim_licensed`
 - `blockers`

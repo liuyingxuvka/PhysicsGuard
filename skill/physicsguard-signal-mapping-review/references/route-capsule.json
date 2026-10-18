@@ -24,13 +24,13 @@
     "target_variable",
     "unit_and_conversion_evidence",
     "revision_identity",
-    "current_affected_interface_projection"
+    "current_affected_interface_projection_when_present"
   ],
   "required_outputs": [
     "mapping_status",
     "review_gaps",
-    "affected_slice_fingerprint",
-    "downstream_blueprint_consumers",
+    "affected_slice_fingerprint_when_present",
+    "downstream_blueprint_consumers_when_present",
     "temporal_boundary",
     "safe_mapping_claim"
   ],
@@ -44,14 +44,14 @@
       "path": "references/native-route-protocol.md",
       "load_when": [
         "route_selected_and_domain_execution_required",
-        "blueprint_affected_interface_slice_required",
-        "blueprint_reverse_trace_required"
+        "blueprint_affected_interface_slice_required_when_present",
+        "blueprint_reverse_trace_required_when_present"
       ],
       "required_for": [
         "target_native_domain_workflow",
-        "blueprint_interface_mapping_projection"
+        "blueprint_interface_mapping_projection_when_present"
       ],
-      "sha256": "a7e299817cd8cdb6cdba3e09ae6580a1b50668776fe147f27cd2c95e031c7c0e"
+      "sha256": "23b8c5ffe7cbc0a30ec0d0621ab2775d1b2c18b13fdac9d2bcd0d2d85474c105"
     },
     {
       "path": "references/native-depth-and-purpose.md",
@@ -94,6 +94,6 @@
   ],
   "maximum_reference_depth": 1,
   "cross_skill_reference_loading": "typed_handoff_only",
-  "entry_prompt_sha256": "b15d50a1f5330b1fe5888a22f30296ba908f6cb760e9bd9542e46988296dbe85",
+  "entry_prompt_sha256": "704c8eebe64c200eba6f012ff5a436f37c12287ce46055cf77917b6de46e42bc",
   "claim_boundary": "A mapping pass licenses only the exact external signal, target variable, conversion, revision, temporal range, and reviewed confidence in the receipt."
 }

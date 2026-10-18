@@ -26,41 +26,41 @@ BLUEPRINT_ROUTE_EXPECTATIONS = {
     "physicsguard-candidate-model-blueprint": (
         "This route alone authors",
         {
-            "physical_blueprint_review",
-            "blueprint_fingerprint",
+            "physical_blueprint_review_if_requested",
+            "blueprint_fingerprint_when_present",
             "material_root_disposition",
             "native_execution_status",
             "deepest_licensed_layer",
             "first_gap",
             "safe_claim",
             "native_directory_dna_status",
-            "in_memory_query_identity_and_gaps",
+            "in_memory_query_identity_and_gaps_if_requested",
             "execution_claim_licensed",
         },
     ),
     "physicsguard-model-understanding-preflight": (
         "first useful understanding layer",
-        {"blueprint_summary_inputs", "first_useful_layer"},
+        {"blueprint_summary_inputs_when_present", "first_useful_layer_when_present"},
     ),
     "physicsguard-project-evidence-registry": (
         "exact blueprint element",
-        {"affected_slice_fingerprint", "blueprint_binding_gaps"},
+        {"affected_slice_fingerprint_when_present", "blueprint_binding_gaps_when_present"},
     ),
     "physicsguard-test-file-contract-review": (
         "exact blueprint input/output/state/effect ports",
-        {"blueprint_interface_bindings", "affected_slice_fingerprint"},
+        {"blueprint_interface_bindings_when_present", "affected_slice_fingerprint_when_present"},
     ),
     "physicsguard-signal-mapping-review": (
         "exact affected interface projection",
-        {"affected_slice_fingerprint", "downstream_blueprint_consumers"},
+        {"affected_slice_fingerprint_when_present", "downstream_blueprint_consumers_when_present"},
     ),
     "physicsguard-model-dataset-validation": (
         "per blueprint element and obligation",
-        {"per_blueprint_element_coverage", "affected_slice_fingerprint", "unsupported_claims"},
+        {"per_blueprint_element_coverage_when_present", "affected_slice_fingerprint_when_present", "unsupported_claims"},
     ),
     "physicsguard-model-library": (
         "exact current blueprint fingerprint",
-        {"selected_blueprint_fingerprints", "verified_reuse_limits"},
+        {"selected_blueprint_fingerprints_when_present", "verified_reuse_limits"},
     ),
     "physicsguard-project-adoption": (
         "Blueprint adoption identity",
@@ -69,17 +69,17 @@ BLUEPRINT_ROUTE_EXPECTATIONS = {
     "physicsguard-audit-closure": (
         "one current whole or affected",
         {
-            "blueprint_scope_fingerprint",
-            "blueprint_depth_and_first_gap",
-            "in_memory_projection_identity",
-            "in_memory_query_status",
+            "blueprint_scope_fingerprint_when_present",
+            "blueprint_depth_and_first_gap_when_present",
+            "in_memory_projection_identity_when_present",
+            "in_memory_query_status_when_present",
             "current_execution_status",
             "execution_claim_licensed",
         },
     ),
     "physicsguard-ai-debugging": (
         "never authors or fully reviews",
-        {"blueprint_trace_projection", "delegated_blueprint_owner"},
+        {"blueprint_trace_projection_when_present", "delegated_blueprint_owner_when_present"},
     ),
 }
 

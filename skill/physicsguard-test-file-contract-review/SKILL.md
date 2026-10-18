@@ -29,7 +29,9 @@ Before executing a native command, verify the installed `physicsguard` version a
 
 ## Blueprint slice
 
-Consume the affected slice for the concrete file/dataset/testbench path. Bind deterministic files and fields to exact blueprint input/output/state/effect ports, physical obligations, expected evidence, units, frames, and time semantics. The contract does not author or qualify the full blueprint. A missing, stale, foreign, or ambiguous slice blocks without broadening to all fields, all models, or the full blueprint.
+If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
+
+For this selected blueprint path: Consume the affected slice for the concrete file/dataset/testbench path. Bind deterministic files and fields to exact blueprint input/output/state/effect ports, physical obligations, expected evidence, units, frames, and time semantics. The contract does not author or qualify the full blueprint. A missing, stale, foreign, or ambiguous slice blocks the selected blueprint path without broadening to all fields, all models, or the full blueprint.
 
 ## Conditional detail loading
 
@@ -49,8 +51,8 @@ Consume the affected slice for the concrete file/dataset/testbench path. Bind de
 
 - `contract_status`
 - `field_dispositions`
-- `blueprint_interface_bindings`
-- `affected_slice_fingerprint`
+- `blueprint_interface_bindings_when_present`
+- `affected_slice_fingerprint_when_present`
 - `mapping_gaps`
 - `safe_analysis_boundary`
 
