@@ -86,7 +86,7 @@
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:56528a5bdcbbead51a988d20d85075f532524e2eb53f8141231b8f27a8b8bc97"
+      "fingerprint": "sha256:6df62f75b42a9fa90c4ced912b464653f25133ce39b3e91018e1fed8f2c33527"
     },
     {
       "id": "purpose",
@@ -846,5 +846,12 @@
       ]
     }
   ],
-  "accepted_debts": []
+  "accepted_debts": [
+    {
+      "code": "dependency_cycle",
+      "component": "blueprint",
+      "contains": "blueprint <-> evidence <-> interface <-> loaders <-> modules <-> routing <-> schema <-> simulation <-> task_revision <-> validation; imports:",
+      "reason": "Existing at audited a762d73c3693582286022a13fb1d9ff2cb86bffc and unchanged by the readiness import-boundary repair: blueprint/evidence/interface/loaders/modules/routing/schema/simulation/task_revision/validation form one native import SCC, including lazy public API and provider adapters. Resolving these coupled domain owners requires a separate architecture change; retain all real import edges and domain tests rather than merging owners or weakening checks in this patch. Other lint findings remain visible."
+    }
+  ]
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.15.13 - 2026-10-18
+
+- Restore one blocked readiness JSON when package import raises an ordinary exception; preserve exact version and distribution-origin checks.
+- Cover real malformed package imports in fresh processes and use the official FlowGuard v0.70.4 consumer.
+- Record the unchanged baseline native import cycle as explicit architecture debt; retain all imports, domain owners and the remaining lint warnings.
+- Refresh the current pump-loop fixture through native replays and exact artifact hashes, and renew the workflow-only project adoption record with its existing owner.
+
 ## v0.15.12 - 2026-10-17
 
 - Retire SkillGuard author control and fixed baseline proof loops; preserve target-local current-purpose, candidate, oracle and failure-case binding.
