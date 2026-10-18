@@ -727,7 +727,8 @@
         "Generate the ten consumer projections from one source",
         "Install ordinary consumer files with safe staging and rollback",
         "Review real model/code/test and equation bindings without default nested pytest",
-        "Publish the exact final version commit through the repository release workflow"
+        "Publish the exact final version commit through the repository release workflow",
+        "Report ordinary package import failures as one blocked readiness JSON without relaxing version or origin identity"
       ],
       "files": [
         "scripts/*.py"
@@ -765,7 +766,7 @@
         ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:37243baf212586368b2f10a527f5a92ab5c65623af2f8a97523f5410fa396e84"
+      "fingerprint": "sha256:03179a95477cbd977645a2ded40b8ca670397888065d3d31339a85066e3772a3"
     },
     {
       "id": "consumer_scripts",

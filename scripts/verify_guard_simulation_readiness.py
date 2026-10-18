@@ -46,7 +46,8 @@ def _check_package_identity(repository_root: Path = ROOT) -> dict[str, Any]:
         origin_matches = bool(spec_origin) and Path(spec_origin).resolve() == module_path and module_path in origins
         ok = metadata_version == module_version == expected_version and origin_matches
         return {"check": "canonical_package_identity", "ok": ok, "expected_version": expected_version, "metadata_version": metadata_version, "module_version": module_version, "module_path": str(module_path), "distribution_module_origins": sorted(str(path) for path in origins), "origin_matches_distribution": origin_matches}
-    except (ImportError, OSError, ValueError, KeyError, AttributeError) as exc:
+    # Import executes external package code; ordinary failures must remain machine-readable.
+    except Exception as exc:
         return {"check": "canonical_package_identity", "ok": False, "expected_version": expected_version, "findings": [f"{type(exc).__name__}:{exc}"]}
 
 
