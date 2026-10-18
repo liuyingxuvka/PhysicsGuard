@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
+import pytest
 
 from physicsguard.core.project_closure import run_project_closure
 from physicsguard.schema.project_closure import ProjectClosureReportSpec
@@ -95,10 +96,13 @@ def test_review_only_evidence_gap_makes_closure_partial(tmp_path: Path) -> None:
     assert any(item["type"] == "project_profile_project_name_unknown" for item in report.review_findings)
 
 
-def test_skipped_required_validation_blocks_closure(tmp_path: Path) -> None:
+@pytest.mark.parametrize("allow_skip", [False, True])
+@pytest.mark.parametrize("scope", ["validation_ready", "prediction_ready", "fault_localization_ready"])
+def test_skipped_required_checks_never_license_strong_scope(tmp_path: Path, scope: str, allow_skip: bool) -> None:
     plan = _write_plan(
         tmp_path,
-        claim_scope="validation_ready",
+        claim_scope=scope,
+        allow_skipped_required_checks=allow_skip,
         validation_plans=[],
         required_checks={
             "project_audit": True,
@@ -106,19 +110,26 @@ def test_skipped_required_validation_blocks_closure(tmp_path: Path) -> None:
             "evidence_gap_check": True,
             "evidence_map": True,
             "test_contracts": False,
-            "validation": True,
+            "validation": scope != "fault_localization_ready",
+            "validation_depth": scope == "prediction_ready",
+            "predictive_rollout": scope == "prediction_ready",
             "model_library": False,
             "evidence_mesh": False,
-            "hierarchy_closure": False,
+            "hierarchy_closure": scope == "fault_localization_ready",
         },
     )
 
     report = run_project_closure(plan)
 
     assert not report.ok
-    assert report.closure_status == "blocked"
-    assert any(item["check"] == "validation" for item in report.skipped_checks)
-    assert any(item["type"] == "project_closure_required_check_skipped" for item in report.blocking_findings)
+    assert report.closure_status == ("partial" if allow_skip else "blocked")
+    expected = "hierarchy_closure" if scope == "fault_localization_ready" else "validation"
+    assert any(item["check"] == expected and item["required"] for item in report.skipped_checks)
+    assert f"provide required closure input for {expected}" in report.next_actions
+    assert "closure passed" not in report.safe_claim
+    assert ProjectClosureReportSpec.model_validate(report.to_dict()).ok is False
+    if not allow_skip:
+        assert any(item["type"] == "project_closure_required_check_skipped" for item in report.blocking_findings)
 
 
 def test_skipped_required_evidence_mesh_blocks_closure(tmp_path: Path) -> None:

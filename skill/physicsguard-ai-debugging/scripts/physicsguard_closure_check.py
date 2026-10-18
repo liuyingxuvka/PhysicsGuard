@@ -21,11 +21,14 @@ def _load_json(path: Path | None) -> dict[str, Any]:
 
 
 def _run(command: list[str]) -> dict[str, Any]:
-    completed = subprocess.run(command, text=True, capture_output=True)
+    try:
+        completed = subprocess.run(command, text=True, capture_output=True)
+    except OSError as exc:
+        return {"command": " ".join(command), "returncode": -1, "stdout": "", "stderr": str(exc)}
     return {
         "command": " ".join(command),
         "returncode": completed.returncode,
-        "stdout": completed.stdout[-6000:],
+        "stdout": completed.stdout,
         "stderr": completed.stderr[-4000:],
     }
 
@@ -71,23 +74,23 @@ def check(args: argparse.Namespace) -> dict[str, Any]:
         if result["returncode"] != 0:
             findings.append(_finding("error", "physicsguard_evaluate_failed", "PhysicsGuard hierarchy evaluate failed.", command=result["command"]))
         audit_data = _extract_json(result["stdout"])
+        required_lists = ("missing_required_variables", "missing_required_parameters", "recommended_refinements", "bug_family_followups", "signal_mapping_ledger")
+        if type(audit_data.get("audit_pass")) is not bool or any(not isinstance(audit_data.get(field), list) for field in required_lists):
+            findings.append(_finding("error", "physicsguard_invalid_evaluate_result", "PhysicsGuard hierarchy evaluate did not return the required native audit fields."))
+        # Only the displayed command log is bounded; interpretation uses the full JSON.
+        result["stdout"] = result["stdout"][-6000:]
 
-        plan = _run([sys.executable, "-m", "physicsguard.cli", "hierarchy", "plan", str(args.audit), "--pretty"])
-        command_results.append(plan)
-        if plan["returncode"] != 0:
-            findings.append(_finding("warning", "physicsguard_plan_failed", "PhysicsGuard hierarchy plan did not produce refinement data.", command=plan["command"]))
-
-    merged = {**audit_data, **ledger}
-    if merged.get("audit_pass") is False:
+    # Caller metadata may add gaps, but can never erase or replace native findings.
+    if audit_data.get("audit_pass") is False or ledger.get("audit_pass") is False:
         findings.append(_finding("error", "audit_failed", "PhysicsGuard audit_pass is false."))
 
     for field in ("missing_required_variables", "missing_required_parameters", "recommended_refinements", "bug_family_followups"):
-        rows = _list(merged.get(field))
+        rows = _list(audit_data.get(field)) + _list(ledger.get(field))
         if rows:
             severity = "error" if field.startswith("missing_required") else "warning"
             findings.append(_finding(severity, field, f"PhysicsGuard reported {field}.", count=len(rows), rows=rows))
 
-    signal_rows = _list(merged.get("signal_mapping_ledger"))
+    signal_rows = _list(audit_data.get("signal_mapping_ledger")) + _list(ledger.get("signal_mapping_ledger"))
     review_issue_codes = {
         "review_required",
         "low_confidence",
@@ -125,9 +128,9 @@ def check(args: argparse.Namespace) -> dict[str, Any]:
     declared = str(ledger.get("closure_status", "")).lower()
     if hard:
         closure_status = "blocked"
-    elif declared in {"passed", "partial", "blocked", "downgraded"}:
+    elif declared in {"blocked", "downgraded"}:
         closure_status = declared
-    elif findings or missing_inputs:
+    elif findings or missing_inputs or declared == "partial":
         closure_status = "partial"
     else:
         closure_status = "passed"
@@ -158,8 +161,8 @@ def check(args: argparse.Namespace) -> dict[str, Any]:
         "stale_evidence": stale_evidence,
         "skipped_checks": skipped_checks,
         "next_actions": next_actions,
-        "safe_claim": ledger.get("safe_claim", "PhysicsGuard can localize low-fidelity residual and mapping issues within the checked audit boundary."),
-        "unsafe_claim_boundary": ledger.get("unsafe_claim_boundary", "Do not claim commercial-model equivalence, high-fidelity proof, or full localization while variables, mappings, refinements, or same-family followups remain open."),
+        "safe_claim": f"PhysicsGuard observed closure is {closure_status} inside the checked low-fidelity audit boundary; unresolved findings remain open.",
+        "unsafe_claim_boundary": "Do not claim commercial-model equivalence, high-fidelity proof, or full localization while variables, mappings, refinements, or same-family followups remain open.",
         "command_results": command_results,
     }
 

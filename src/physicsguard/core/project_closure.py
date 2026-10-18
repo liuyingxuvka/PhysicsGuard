@@ -112,7 +112,7 @@ def run_project_closure(path: str | Path) -> ProjectClosureReport:
         status = "blocked"
     elif review and not plan.allow_review_gaps:
         status = "blocked"
-    elif review:
+    elif review or any(item.required for item in skipped):
         status = "partial"
     elif optional and not plan.allow_optional_gaps:
         status = "downgraded"

@@ -1,11 +1,9 @@
-"""Target-owned execution-depth receipts for PhysicsGuard satellite skills.
+"""Optional declared-package shape diagnostics for PhysicsGuard satellite skills.
 
-This module does not recompute physical models.  It verifies that the selected
-native PhysicsGuard route accounted for its complete governed object universe,
-that every required route obligation has current evidence, and that every
-time-varying object was sampled deeply enough across its own time axis.
-The selected PhysicsGuard skill consumes this immutable receipt and keeps this
-evaluator as its sole execution-depth authority.
+This module checks declared inventory, content-addressed references and sampled
+time-point distribution. It does not execute or attest native physical checks,
+authenticate a scheduler, or license closure. A pass means package shape only.
+Strict task-native and model-dataset validation receipts have separate owners.
 """
 
 from __future__ import annotations
@@ -373,9 +371,8 @@ def build_skill_execution_fixture(
 ) -> dict[str, Any]:
     """Build a deterministic target-owned calibration/capability input.
 
-    The package is deliberately evaluated by the same native route used for
-    real execution-depth receipts.  A shallow case removes exactly one named
-    route obligation; it does not self-report the expected outcome.
+    The package exercises shape diagnostics only. A shallow case removes one
+    named declaration; neither case proves that a native route was executed.
     """
 
     policy = ROUTE_POLICIES[target_skill_id]
@@ -482,7 +479,7 @@ def build_skill_execution_fixture(
         "object_results": object_results,
         "blockers": [],
         "residual_risk": ["Low-fidelity PhysicsGuard scope only."],
-        "claim_boundary": "The current native route and every governed object are covered; this is not high-fidelity physical proof.",
+        "claim_boundary": "Synthetic package-shape calibration only; native execution is not run and closure is not licensed.",
     }
 
 
@@ -493,12 +490,13 @@ def build_skill_scheduled_production_package(
     project_relative: str,
     run_id: str,
 ) -> dict[str, Any]:
-    """Discover a real target project and build its scheduled route package.
+    """Discover target files and build a declared inventory/hash snapshot.
 
     Production never calls the calibration fixture constructor.  The object
     denominator comes from every current project file plus every CSV series,
     and each time-varying series carries its own independently discovered point
-    universe and distributed dynamic-floor selection.
+    universe and distributed dynamic-floor selection. Sorted text files supply
+    declaration anchors only, not evidence of completed native obligations.
     """
 
     if not run_id.strip():
@@ -738,7 +736,7 @@ def build_skill_scheduled_production_package(
         obligation_results.append(
             {
                 "obligation_id": obligation_id,
-                "status": "complete",
+                "status": "declared",
                 "evidence_ref": ref,
                 "evidence_sha256": digest,
                 "native_range": {
@@ -765,9 +763,9 @@ def build_skill_scheduled_production_package(
         "native_route_id": policy.native_route_id,
         "run_id": run_id,
         "evidence_domain": "scheduled_production",
-        "input_origin": "target_native_scheduled_execution",
+        "input_origin": "target_project_inventory_snapshot",
         "native_discovery_root_ref": project_relative.replace("\\", "/"),
-        "operation_status": "pass",
+        "operation_status": "declared",
         "native_artifacts": artifacts,
         "obligation_results": obligation_results,
         "object_universe": {
@@ -781,11 +779,11 @@ def build_skill_scheduled_production_package(
         "object_results": object_results,
         "blockers": [],
         "residual_risk": [
-            "This controlled route run proves native artifact, object, and time-depth handling; it is not high-fidelity physical proof."
+            "This snapshot checks artifact inventory and sampled time-point shape; no native route or physical validation was executed."
         ],
         "claim_boundary": (
-            "The exact current project artifact universe and every discovered CSV series are reconciled for this target route. "
-            "External physical truth and commercial-tool fidelity remain outside this receipt."
+            "The current project file inventory and CSV point declarations are reconciled. "
+            "Native execution is not run; this package cannot license closure."
         ),
     }
 
@@ -990,7 +988,7 @@ def _valid_evidence_row(
         _error(errors, "invalid_evidence", path, "Evidence row must be an object.")
         return False
     ok = True
-    if row.get("status") not in {"current", "complete", "pass"}:
+    if row.get("status") not in {"current", "complete", "pass", "declared"}:
         _error(errors, "evidence_not_current", f"{path}.status", "Evidence must be current and successful.")
         ok = False
     if not isinstance(row.get("evidence_ref"), str) or not row.get("evidence_ref", "").strip():
@@ -1190,7 +1188,7 @@ def _validate_time_depth(
 
 
 def evaluate_skill_execution_package(payload: Mapping[str, Any]) -> dict[str, Any]:
-    """Evaluate one target-owned PhysicsGuard satellite execution package."""
+    """Check one declared package's shape, never native execution or closure."""
 
     errors: list[dict[str, str]] = []
     target = str(payload.get("target_skill_id", "")).strip()
@@ -1210,14 +1208,16 @@ def evaluate_skill_execution_package(payload: Mapping[str, Any]) -> dict[str, An
     if domain not in EVIDENCE_DOMAINS:
         _error(errors, "invalid_evidence_domain", "evidence_domain", "Evidence domain must be fixture_calibration, capability_validation, or scheduled_production.")
     input_origin = payload.get("input_origin")
-    if domain == "scheduled_production" and input_origin != "target_native_scheduled_execution":
+    scheduled_origins = ("target_project_inventory_snapshot", "target_native_scheduled_execution")
+    # The legacy origin token is a declaration, not proof of native execution.
+    if domain == "scheduled_production" and input_origin not in scheduled_origins:
         _error(
             errors,
             "fixture_as_production",
             "input_origin",
-            "Scheduled production requires the target-native scheduled execution constructor; relabeling a fixture is forbidden.",
+            "Scheduled shape checks require a target project inventory snapshot; relabeling a fixture is forbidden.",
         )
-    if domain != "scheduled_production" and input_origin == "target_native_scheduled_execution":
+    if domain != "scheduled_production" and input_origin in scheduled_origins:
         _error(
             errors,
             "scheduled_origin_on_nonproduction_evidence",
@@ -1234,8 +1234,8 @@ def evaluate_skill_execution_package(payload: Mapping[str, Any]) -> dict[str, An
         evidence_domain=domain,
         errors=errors,
     )
-    if payload.get("operation_status") != "pass":
-        _error(errors, "native_operation_not_passed", "operation_status", "The target-owned native route did not pass.")
+    if payload.get("operation_status") not in ("pass", "declared"):
+        _error(errors, "native_operation_not_passed", "operation_status", "A supported operation-status declaration is required; it does not establish execution.")
     blockers = payload.get("blockers")
     if not isinstance(blockers, list) or blockers:
         _error(errors, "unresolved_blockers", "blockers", "Broad closure requires an explicit empty blocker list.")
@@ -1416,6 +1416,9 @@ def evaluate_skill_execution_package(payload: Mapping[str, Any]) -> dict[str, An
         "artifact_kind": "physicsguard_skill_execution_depth_receipt",
         "receipt_version": "physicsguard.skill-depth.v1",
         "status": "pass" if not errors else "blocked",
+        "evaluation_scope": "declared_package_shape",
+        "native_execution_status": "not_run",
+        "closure_licensed": False,
         "target_skill_id": target,
         "native_owner_id": payload.get("native_owner_id"),
         "native_route_id": payload.get("native_route_id"),
@@ -1444,7 +1447,7 @@ def evaluate_skill_execution_package(payload: Mapping[str, Any]) -> dict[str, An
         "native_obligation_evidence": [
             {
                 "obligation_id": obligation_id,
-                "status": "pass",
+                "status": "declared_unverified",
                 "native_object_id": f"native-obligation:{target}:{obligation_id}",
                 "evidence_ref": row.get("evidence_ref"),
                 "evidence_sha256": row.get("evidence_sha256"),
@@ -1470,7 +1473,8 @@ def evaluate_skill_execution_package(payload: Mapping[str, Any]) -> dict[str, An
         "errors": errors,
         "blockers": list(blockers) if isinstance(blockers, list) else [],
         "residual_risk": payload.get("residual_risk", []),
-        "claim_boundary": payload.get("claim_boundary", ""),
+        "claim_boundary": "Package shape and declared references only; native execution is not run and closure is not licensed.",
+        "declared_claim_boundary": payload.get("claim_boundary", ""),
     }
     receipt_core_hash = _sha256(receipt)
     receipt["receipt_id"] = f"physicsguard.skill-depth:{target or 'unknown'}:{run_id or 'missing'}:{receipt_core_hash[:16]}"
@@ -1725,7 +1729,7 @@ def load_execution_package(path: str | Path) -> dict[str, Any]:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Issue a target-owned PhysicsGuard skill execution-depth receipt.")
+    parser = argparse.ArgumentParser(description="Check optional PhysicsGuard declared-package shape; native execution is not run and closure is not licensed.")
     parser.add_argument("package", type=Path, help="JSON PhysicsGuard skill execution package")
     parser.add_argument(
         "--target-root",

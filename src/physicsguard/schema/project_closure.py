@@ -72,7 +72,10 @@ class ProjectClosurePlanSpec(BaseModel):
     required_checks: ProjectClosureRequiredChecksSpec = Field(default_factory=ProjectClosureRequiredChecksSpec)
     allow_review_gaps: bool = True
     allow_optional_gaps: bool = True
-    allow_skipped_required_checks: bool = False
+    allow_skipped_required_checks: bool = Field(
+        default=False,
+        description="Allow bounded partial work with skipped required checks; never licenses a passed claim scope.",
+    )
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("closure_id")

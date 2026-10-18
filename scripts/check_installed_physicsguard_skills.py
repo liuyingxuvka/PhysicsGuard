@@ -1,4 +1,4 @@
-"""Read-only comparison of installed PhysicsGuard consumer files with their source."""
+"""Read-only consumer comparison; the CLI emits blocked JSON on ordinary audit exceptions."""
 from __future__ import annotations
 
 import argparse
@@ -63,7 +63,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repository-root", type=Path, default=ROOT)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
-    result = check_installed_skills(args.installed_root, repository_root=args.repository_root)
+    try:
+        result = check_installed_skills(args.installed_root, repository_root=args.repository_root)
+    except Exception as exc:
+        result = blocked_installed_skill_audit(
+            installed_root=args.installed_root, repository_root=args.repository_root,
+            finding_type="installed_skill_audit_exception", detail=f"{type(exc).__name__}:{exc}",
+        )
     print(json.dumps(result, ensure_ascii=False, indent=None if args.json else 2, sort_keys=True))
     return 0 if result["ok"] else 1
 

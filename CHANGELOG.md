@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.15.15 - 2026-10-18
+
+- Parse complete observed audit JSON in the closure helper; preserve native failures and gaps against caller overrides, and consume refinement results without an unused reference solve.
+- Keep explicitly skipped required checks partial rather than granting a passed project claim scope; retain the existing skip API and native validation owners.
+- Label optional execution-package diagnostics as declared shape only, with native execution not run and closure unlicensed. Preserve strict task and model-dataset validation receipts.
+- Exercise real installation recovery failures and installed-byte/residual rejection; make ordinary native audit exceptions one blocked JSON at the public audit/readiness boundaries.
+- Refresh current version-bound native fixtures and consumer runtime requirements, preserving historical observation dates, and use the official FlowGuard v0.70.6 consumer.
+
 ## v0.15.14 - 2026-10-18
 
 - Let ordinary bounded native skills start without a supplied or declared blueprint, while retaining strict exact-current identity on selected blueprint paths.

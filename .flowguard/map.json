@@ -86,15 +86,15 @@
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:ce21925a263911fa67d668a01e684588691c51e6cf5a15effa0a2f8c2ad39bd7"
+      "fingerprint": "sha256:a9f604409dfcf31280820ff160b16701abbf1453f790beeec564ea915f51f72b"
     },
     {
       "id": "purpose",
       "layer": "",
-      "summary": "Target-local current-purpose, candidate and native execution depth",
+      "summary": "Strict current-purpose and candidate identity; optional declared-package shape diagnostics",
       "responsibilities": [
-        "Bind the current candidate and failure universe to exact target-native evidence",
-        "Keep required current good/bad proofs and scheduled runtime identities current"
+        "Bind strict current candidates and failure universes to exact target-native evidence",
+        "Keep required current good/bad proofs current; optional file/hash/time-point declarations report native execution not_run and never license closure"
       ],
       "files": [
         "src/physicsguard/guard_model_contract.py",
@@ -113,7 +113,7 @@
         ".flowguard/verification/owners/dynamic_model_purpose/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:ea1fa8bd56b9ac07fdf4560401c9e3e6dbbe9a4dee493496be14fe005fa56925"
+      "fingerprint": "sha256:4033895a8b80a45b5a5512129c7256e06904749a7e75204d088aab077cffc02b"
     },
     {
       "id": "routing",
@@ -380,7 +380,8 @@
       "summary": "Project evidence, contracts, library and closure",
       "responsibilities": [
         "Keep source, evidence, mapping and inventory identities traceable",
-        "Recompute relevant native validation when deriving project closure"
+        "Recompute relevant native validation when deriving project closure",
+        "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
       ],
       "files": [
         "src/physicsguard/core/contract_diff.py",
@@ -445,14 +446,15 @@
         ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:0d5b006eefa1aaa6b33006bfd03a515b77f8c4a66f6468a6c09a4b8cbc847af2"
+      "fingerprint": "sha256:403334236d3f971737cb6399855bc43926b80bc2dfcf58932f3cb4cf8eda3f46"
     },
     {
       "id": "schema",
       "layer": "",
       "summary": "Validated schemas and explicit claim boundaries",
       "responsibilities": [
-        "Validate structured inputs before domain operations"
+        "Validate structured inputs before domain operations",
+        "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority"
       ],
       "files": [
         "src/physicsguard/schema/*.py",
@@ -565,7 +567,7 @@
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:00f9539dbc12a4d1442a8d008bb2cec98951d6f20126a77a99e49463bfa23068"
+      "fingerprint": "sha256:c398fe65af0c9839310d13d20f22345bfac491b344f97b0811641439a852bed2"
     },
     {
       "id": "loaders",
@@ -728,7 +730,7 @@
         "Install ordinary consumer files with safe staging and rollback",
         "Review real model/code/test and equation bindings without default nested pytest",
         "Publish the exact final version commit through the repository release workflow",
-        "Report ordinary package import failures as one blocked readiness JSON without relaxing version or origin identity",
+        "Report ordinary package import and native installation-audit exceptions as one blocked readiness/audit JSON without relaxing identity",
         "Keep ordinary bounded native work independent of absent blueprints; enforce current projections when a blueprint path is supplied, declared or required, and distinguish draft authoring from generation eligibility"
       ],
       "files": [
@@ -767,14 +769,15 @@
         ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:199653761783f51dab47666622bfb88d64ee07b04fcd98397e5ac3174e08219e"
+      "fingerprint": "sha256:67ece5c8a8bd903575a3831fe629706789e45e8255187be2cd0fc04409eaff73"
     },
     {
       "id": "consumer_scripts",
       "layer": "",
       "summary": "Maintained skill consumer helper entrypoints",
       "responsibilities": [
-        "Delegate helper operations to existing PhysicsGuard native owners"
+        "Delegate helper operations to existing PhysicsGuard native owners",
+        "Parse complete observed native audits before bounded logging; retain native failures and gaps over caller metadata without an unused reference solve"
       ],
       "files": [
         "skill/*/scripts/*.py"
@@ -792,7 +795,7 @@
         ".flowguard/verification/owners/ai_workflow/run_checks.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:0afa5373ed6797fc47b65f485d0cdde80dafda93e2c35e59a856ea99bae48fc9"
+      "fingerprint": "sha256:9f1830b29fc85401b79b02fcf097abc04c814174f7ef443e9902d1e4ad5462ca"
     },
     {
       "id": "example_tools",

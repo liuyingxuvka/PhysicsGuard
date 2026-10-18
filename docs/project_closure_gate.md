@@ -72,11 +72,14 @@ the same downstream evidence.
   mesh is the strong chain that proves parent models consumed child evidence,
   required model obligations bind to code and tests, generated bad cases are
   covered, behavior fields are closed, and the risk row consumed each route.
-- Skipped required checks block by default.
+- Skipped required checks block by default. Setting
+  `allow_skipped_required_checks: true` permits bounded partial work, with
+  `ok: false`, visible skipped inputs and no passed claim scope.
 - `validation_ready` and `validated_reuse_ready` consume a passing native
   `physicsguard_validation_depth_receipt` bound to report type, status, and
-  SHA-256. The closure gate records `physical_recomputation: false`; it does
-  not duplicate PhysicsGuard's residual or physical-envelope calculations.
+  SHA-256. The receipt-consumption step records `physical_recomputation: false`
+  and does not repeat physical calculations. The whole closure command still
+  calls native model-dataset validation for the current validation-plan inputs.
 - Non-snapshot validation and reuse closure require a passing quantitative
   adequacy receipt and a compatible `covered_scope`; a snapshot receipt cannot
   close a time-window, scenario-set, reuse, or prediction claim.

@@ -23,6 +23,13 @@ CASES = json.loads(
 )["cases"]
 
 
+def _assert_shape_only(receipt: dict) -> None:
+    assert receipt["evaluation_scope"] == "declared_package_shape"
+    assert receipt["native_execution_status"] == "not_run"
+    assert receipt["closure_licensed"] is False
+    assert all(row["status"] == "declared_unverified" for row in receipt["native_obligation_evidence"])
+
+
 def _write_production_package(
     target_root: Path,
     package: dict,
@@ -234,6 +241,7 @@ def test_every_satellite_positive_and_genuinely_shallow_calibration(target_skill
     case = next(item for item in CASES if item["target_skill_id"] == target_skill_id)
     package = _positive_package(case["target_skill_id"])
     positive = evaluate_skill_execution_package(package)
+    _assert_shape_only(positive)
     assert positive["status"] == "pass", positive["errors"]
     assert positive["target_skill_id"] == case["target_skill_id"]
     assert positive["receipt_sha256"]
@@ -253,6 +261,7 @@ def test_every_satellite_positive_and_genuinely_shallow_calibration(target_skill
         if row["obligation_id"] != case["shallow_missing_obligation_id"]
     ]
     blocked = evaluate_skill_execution_package(shallow)
+    _assert_shape_only(blocked)
     assert blocked["status"] == "blocked"
     assert "missing_target_obligation" in {item["code"] for item in blocked["errors"]}
 
@@ -438,7 +447,9 @@ def _scheduled_identity() -> dict:
 def test_capability_and_scheduled_production_evidence_are_typed_and_disjoint(tmp_path: Path) -> None:
     capability = _positive_package("physicsguard-ai-debugging")
     capability["evidence_domain"] = "capability_validation"
-    assert evaluate_skill_execution_package(capability)["status"] == "pass"
+    capability_receipt = evaluate_skill_execution_package(capability)
+    assert capability_receipt["status"] == "pass"
+    _assert_shape_only(capability_receipt)
 
     relabeled = copy.deepcopy(capability)
     relabeled["evidence_domain"] = "scheduled_production"
@@ -454,13 +465,19 @@ def test_capability_and_scheduled_production_evidence_are_typed_and_disjoint(tmp
         item["code"] for item in result["errors"]
     }
 
-    _copy_production_project(tmp_path)
+    # Valid file hashes/anchors can prove shape, never execution of a physical model.
+    project = tmp_path / "project"
+    project.mkdir()
+    for index in range(30):
+        (project / f"declaration-{index:02d}.txt").write_text("No native model was performed.\n", encoding="utf-8")
     production = build_skill_scheduled_production_package(
         "physicsguard-ai-debugging",
         target_root=tmp_path,
         project_relative="project",
         run_id="run:physicsguard-ai-debugging:scheduled-production",
     )
+    assert production["operation_status"] == "declared"
+    assert {row["status"] for row in production["obligation_results"]} == {"declared"}
     relative = ".physicsguard/executions/physicsguard-ai-debugging-scheduled-production.json"
     target_inputs = _write_production_inputs(
         tmp_path,
@@ -480,6 +497,7 @@ def test_capability_and_scheduled_production_evidence_are_typed_and_disjoint(tmp
     )
     result = evaluate_skill_execution_package(loaded)
     assert result["status"] == "pass", result["errors"]
+    _assert_shape_only(result)
     assert result["scheduled_production_identity"] == _scheduled_identity()
     assert result["scheduled_production_identity_source"]["sidecar_ref"].endswith(
         "-identity.json"

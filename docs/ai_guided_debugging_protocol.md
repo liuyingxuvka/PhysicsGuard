@@ -139,6 +139,12 @@ Do not convert a suspicious-block ranking into a broad debugging success claim w
 
 Use `skill/physicsguard-ai-debugging/scripts/physicsguard_closure_check.py` when audit and observed files are available. A partial, downgraded, blocked, stale, or skipped closure can still be useful, but the final wording must say exactly what remains unresolved.
 
+The helper parses the complete native `hierarchy evaluate` JSON before bounding
+its displayed log. It consumes the observed audit and its refinement results;
+it does not start a reference solve. Missing or malformed native audit fields
+cannot pass. Caller ledger fields may add gaps or downgrade the claim, but
+cannot replace native failures, warnings or missing inputs with success.
+
 ## Portable YAML Headers
 
 Every retained PhysicsGuard audit YAML, hierarchy template, observed snapshot, or candidate-model blueprint should start with a short YAML comment header. The header must identify the file as a PhysicsGuard artifact, state the file-specific purpose, point to `https://github.com/liuyingxuvka/PhysicsGuard`, give a likely CLI use hint, and state the low-fidelity SI-unit boundary. Keep this as comments so it does not change schema validation.

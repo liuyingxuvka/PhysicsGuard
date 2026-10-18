@@ -15,7 +15,7 @@ sys.dont_write_bytecode = True
 SCRIPT_ROOT = Path(__file__).resolve().parent
 if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
-from check_installed_physicsguard_skills import check_installed_skills  # noqa: E402
+from check_installed_physicsguard_skills import blocked_installed_skill_audit, check_installed_skills  # noqa: E402
 from install_physicsguard_skills import DEFAULT_CODEX_HOME, ROOT  # noqa: E402
 
 HOME_SKILLS = DEFAULT_CODEX_HOME / "skills"
@@ -52,8 +52,15 @@ def _check_package_identity(repository_root: Path = ROOT) -> dict[str, Any]:
 
 
 def build_report(repository_root: Path = ROOT, installed_root: Path = HOME_SKILLS) -> dict[str, Any]:
+    """Return blocked JSON-compatible data on ordinary package or native audit failures."""
     package = _check_package_identity(repository_root)
-    installation = check_installed_skills(installed_root, repository_root=repository_root)
+    try:
+        installation = check_installed_skills(installed_root, repository_root=repository_root)
+    except Exception as exc:
+        installation = blocked_installed_skill_audit(
+            installed_root=installed_root, repository_root=repository_root,
+            finding_type="installed_skill_audit_exception", detail=f"{type(exc).__name__}:{exc}",
+        )
     ok = package["ok"] and installation["ok"]
     return {"artifact_kind": "physicsguard_runtime_readiness", "ok": ok, "status": "pass" if ok else "blocked", "package": package, "consumer_installation_audit": installation, "claim_boundary": "Checks package identity and consumer file parity only; executes no domain check or installation."}
 

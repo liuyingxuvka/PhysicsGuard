@@ -100,3 +100,33 @@ def test_activation_failure_rolls_prior_activations_back_in_reverse(tmp_path: Pa
     assert restored == list(reversed(installer.PHYSICSGUARD_SKILL_IDS[:4]))
     assert _snapshot(home) == before
     assert list((tmp_path / "stage").iterdir()) == []
+
+
+def test_restore_failure_preserves_backup_and_continues_reverse_recovery(tmp_path: Path, monkeypatch) -> None:
+    repository = _repository(tmp_path)
+    home = tmp_path / "codex-home"
+    before = _old_installation(home)
+    original_replace = installer.os.replace
+    activation_failure = installer.PHYSICSGUARD_SKILL_IDS[3]
+    restore_failure = installer.PHYSICSGUARD_SKILL_IDS[2]
+    restored: list[str] = []
+
+    def fail_replace(source, destination):
+        source = Path(source)
+        if source.parent.name == "new" and source.name == activation_failure:
+            raise OSError("activation interrupted")
+        if source.parent.name == "old":
+            restored.append(source.name)
+            if source.name == restore_failure:
+                raise OSError("old backup restore interrupted")
+        return original_replace(source, destination)
+
+    monkeypatch.setattr(installer.os, "replace", fail_replace)
+    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home)
+    assert result["status"] == "blocked"
+    assert result["phase"] == "activate"
+    assert result["recovery_errors"] == [f"{restore_failure}:old backup restore interrupted"]
+    assert restored == list(reversed(installer.PHYSICSGUARD_SKILL_IDS[:4]))
+    recovery = Path(result["recovery_path"])
+    assert (recovery / "old" / restore_failure / "old.txt").read_bytes() == before[f"skills/{restore_failure}/old.txt"]
+    assert _snapshot(home) == {path: content for path, content in before.items() if not path.startswith(f"skills/{restore_failure}/")}
