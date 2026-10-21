@@ -56,3 +56,9 @@
 - `python <本动作核验脚本> map-change`：exit 0；0.606秒；run: python -m pytest -q tests/test_workflow_governance.py。
 - `python <本动作核验脚本> workflow-tests`：exit 0；2.475秒；8 passed in 0.32s。
 - 适配：首次仓库外格式断言误设 TOML 缩进而失败，修正核验脚本后重验，保留失败原日志。
+
+### PG-05 合并重复物理规则
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> rule-deduplication`：exit 0；0.046秒；57 []；post_check=1；Map-based=1；假设卡片与维护块逐字保留。
+- 提交后完整检查：`python -m pytest -q`：exit 0；1427 passed in 510.44s (0:08:30)；命令总耗时 512.682 秒。检查结束后仅补记本行，无业务源码变化。

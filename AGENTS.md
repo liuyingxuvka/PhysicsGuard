@@ -14,7 +14,7 @@
 - Do not add external simulation-tool dependencies.
 - DummyResidualModule is for framework tests only and has no physical meaning.
 - Generic mathematical audit modules are framework validation utilities only; do not treat them as real physical modules.
-- Real physical modules are allowed only when explicitly requested.
+- Real physical, foundation, control/signal, thermodynamic, humidity, rotating-machine, mechanical, electrochemical, component and engineering-component modules, and hierarchical audit features, are added only when explicitly requested.
 - Keep every physical module low-fidelity, documented, tested, and explicit about validity.
 - Never add undocumented equations.
 - Never imply equivalence with commercial solver internals.
@@ -22,36 +22,19 @@
 - Do not confuse reference solve with observed audit.
 - CSV and commercial-tool adapters remain future work.
 - Observed values are assumed to be SI unless unit conversion is explicitly implemented later.
-- Foundation modules may be added only when explicitly requested.
-- Every physical module must document assumptions, limitations, units, residual equation, validity range, and diagnostic key.
+- Every physical, component and engineering module must document assumptions, limitations, SI units, residual equations, validity range, and diagnostic keys.
 - Prefer simple first-principles algebraic residuals.
 - Do not add empirical correlations unless the source and validity range are documented.
-- Do not add complex models without explicit request.
-- Control and signal modules may be added only when explicitly requested.
+- Do not add complex, detailed or commercial-equivalent models without explicit request: no compressor maps or surge/choke models, detailed pump maps, fuel-cell polarization physics, detailed electrolyzer or heat-exchanger maps, combustion/emissions models, thermal derating models, or detailed GT/Simulink/Modelica/Amesim-equivalent models.
 - Piecewise diagnostic checks should default to post_check unless they are intended to define the solved reference model.
 - Lookup-table modules must document extrapolation behavior.
 - Rate-limiter modules must be single-step checks unless a real time-series evaluator is explicitly requested.
-- Control, thermodynamic, humidity, rotating-machine, mechanical, and electrochemical helper modules may be added only when explicitly requested.
-- Prefer simple first-principles algebraic residuals.
-- Do not add empirical correlations unless the source and validity range are documented.
 - Do not add saturation vapor pressure correlations unless explicitly requested.
-- Do not add compressor maps, pump maps, fuel-cell polarization models, or heat-exchanger detailed maps without explicit request.
-- Piecewise diagnostic checks should default to post_check unless they define the reference model.
-- Every new module must document assumptions, limitations, SI units, residual equations, validity range, and diagnostic keys.
-- Component-level modules may be added only when explicitly requested.
-- Every component module must document residual equations, assumptions, limitations, SI units, validity range, and diagnostic keys.
 - Map-based modules must document axis units, output units, and extrapolation behavior.
-- Do not add compressor surge/choke models, detailed pump maps, full fuel-cell polarization physics, detailed electrolyzer models, combustion/emissions models, or thermal derating models unless explicitly requested.
 - Prefer low-fidelity explicit residuals over complex empirical correlations.
-- Engineering component modules may be added only when explicitly requested.
-- Every engineering component module must document residual equations, assumptions, limitations, SI units, validity range, and diagnostic keys.
 - Prefer simple first-principles algebraic residuals and single-step audit relations over hidden stateful solvers.
-- Do not add detailed GT/Simulink/Modelica/Amesim-equivalent models.
 - Do not add hidden unit conversion tables; conversion audit modules must use explicit user-provided factors and offsets.
-- Map-based engineering modules must document axis units, output units, and extrapolation behavior.
-- Piecewise diagnostic checks should default to post_check unless they define the solved reference model.
 - Every new engineering component module must include tests and at least one example.
-- Hierarchical audit features may be added only when explicitly requested.
 - Hierarchical audit should support coarse-to-fine debugging with machine-readable reports.
 - Hierarchical observed evaluation should substitute external values directly and must not move or solve observed values.
 - Use `hierarchy evaluate` for AI-guided debugging of mapped external simulation snapshots; use `hierarchy compare` only when a solved low-fidelity reference is intentionally needed.
