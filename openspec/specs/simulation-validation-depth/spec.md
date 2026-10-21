@@ -1,46 +1,47 @@
 # simulation-validation-depth Specification
 
 ## Purpose
-TBD - created by archiving change add-dataset-time-scenario-depth-receipts. Update Purpose after archive.
-## Requirements
-### Requirement: Exact dataset identity
-PhysicsGuard SHALL bind every validation claim to the exact dataset files, content hashes, testbench version, field schema, and parameter roles used.
+Bound every model-dataset validation claim to the files, mappings, time and scenario scope, split and residual series that were actually checked, and report adequacy shortfalls as warnings in a compact `depth_summary`.
 
-#### Scenario: Dataset changes after validation
-- **WHEN** a bound file or schema changes after a receipt
-- **THEN** that receipt SHALL be stale
+## Requirements
+### Requirement: Declared dataset files are checked
+`validation run` SHALL fail when a declared data, schema, profile or series file is missing, and SHALL compare training and holdout files byte for byte.
+
+#### Scenario: A declared series file is missing
+- **WHEN** an observed series named in the plan does not exist
+- **THEN** the status SHALL be `fail` with the finding `observed_series_missing`
 
 ### Requirement: Current mapping gate
-Validation MUST consume a current signal-mapping review with units, confidence, unresolved mappings, and reviewer status.
+Validation MUST read the mapping edges of the referenced test-file contracts and require unit evidence, confidence at or above `depth.mapping_review.minimum_confidence`, and no review flag for every required signal.
 
-#### Scenario: Required signal is uncertain
-- **WHEN** a required signal mapping is unresolved or unit evidence is missing
+#### Scenario: A required signal is uncertain
+- **WHEN** a required signal mapping lacks unit evidence or enough confidence
 - **THEN** broad validation SHALL be blocked or bounded to unaffected relations
 
 ### Requirement: Time and scenario scope
-PhysicsGuard SHALL report whether evidence is a scalar snapshot, a time window, or a declared scenario set and MUST NOT silently extrapolate between scopes.
+PhysicsGuard SHALL report whether the evidence is a scalar snapshot, a time window or a declared scenario set and MUST NOT silently extrapolate between scopes.
 
 #### Scenario: Snapshot only
 - **WHEN** only one timestamp is evaluated
-- **THEN** the receipt SHALL identify snapshot scope and SHALL NOT claim time-series behavior
+- **THEN** the report SHALL state snapshot scope and SHALL NOT claim time-series behavior
 
-### Requirement: Disjoint calibration and holdout identity
-When calibration is enabled, training and holdout evidence MUST be identity-disjoint.
+### Requirement: Disjoint calibration and holdout
+When calibration is enabled, training and holdout evidence MUST be disjoint.
 
-#### Scenario: Same data under different labels
-- **WHEN** train and holdout labels refer to identical content or case ids
+#### Scenario: The same data under different labels
+- **WHEN** the training and holdout files have identical bytes or share case ids
 - **THEN** holdout validation SHALL fail with an overlap finding
 
 ### Requirement: Residual-series and envelope evidence
-Time-series validation SHALL preserve pointwise residual results, missing/invalid intervals, physical envelope violations, and aggregate statistics.
+Time-series validation SHALL keep pointwise residual results, missing or invalid intervals, physical envelope violations and aggregate statistics.
 
-#### Scenario: Short violation hidden by average
-- **WHEN** average residual passes but a bounded interval violates a hard physical envelope
-- **THEN** audit pass SHALL be false or explicitly partial according to the relation contract
+#### Scenario: A short violation hidden by the average
+- **WHEN** the average residual passes but a bounded interval violates a hard physical envelope
+- **THEN** the audit pass SHALL be false or explicitly partial
 
-### Requirement: Native validation-depth receipt
-PhysicsGuard SHALL emit a receipt bound to dataset, mapping, time, scenario, split, residual, envelope, assumptions, report hash, report type, and pass/partial/block status.
+### Requirement: Adequacy floors are warnings
+PhysicsGuard SHALL compute per-signal, per-parameter and temporal adequacy and report each shortfall as a warning that limits the status to `partial`; the report SHALL carry the compact `depth_summary` and the full computation under `depth`.
 
-#### Scenario: Native project closure
-- **WHEN** PhysicsGuard evaluates execution depth for project closure
-- **THEN** it SHALL consume the native receipt and SHALL NOT recompute physical residuals
+#### Scenario: A time-varying parameter is shallow
+- **WHEN** a time-varying parameter has fewer points than its floor
+- **THEN** the status SHALL be `partial` and `depth_summary.adequacy.parameters_below_floor` SHALL name the parameter

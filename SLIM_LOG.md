@@ -645,3 +645,15 @@
 - 适配：模板替换实际计数为2（含PG45新增hypothesis功能），保持reference2而不采用过时summary1；6模板全与premerge字节相等，根目录实际存在的4模板另验同字节，2个PG45 skill-only模板未伪造根副本。。
 - 适配：11focused/861collect承接6条额外原生回归，五完整native protocol经限定词替换后全文保留；不强凑原审计字节数。。
 - 提交工具恢复：首次 staging 因 git rename 显示仅新路径而拒绝旧已删路径；按 --no-renames 核对索引后恢复，未改业务源码、未重复验证。
+
+### PG-63 归档完成变更并收敛现行OpenSpec规范
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> archive-specs-offline`：exit 1；0.088秒；见同编号JSON/日志中的结构化结果。
+- `python <本动作核验脚本> offline-boundary-review`：exit 1；0.079秒；AssertionError。
+- `python <本动作核验脚本> map-check`：exit 0；0.416秒；check: 0 error(s), 4 warning(s), 0 info。
+- `python <本动作核验脚本> archive-specs-offline-corrected`：exit 0；0.106秒；OpenSpec CLI absent; authorized offline git-mv fallback archives 8 completed changes with current date and exact content hashes; 3 active specs rewritten。
+- `python <本动作核验脚本> offline-boundary-review-corrected`：exit 0；0.061秒；见同编号JSON/日志中的结构化结果。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：OpenSpec CLI不存在，按动作明确允许的git mv离线归档；仅声明内容哈希一致和spec结构核验，未冒称CLI严格验证通过。
+- 适配：归档父目录随授权旧档案删除而消失，首次git mv失败；补建父目录后从已完成删除继续，原始失败与依赖核验失败均保留。
