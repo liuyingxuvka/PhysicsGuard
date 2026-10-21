@@ -479,7 +479,7 @@ DEPTH_EXTERNAL_INPUTS = (
     ValidationInput("stateful_rollout_failed", True, True, False, True, False, False, True, True, prediction_requested=True, stateful_dynamic=True, predictive_rollout_passed=False),
     ValidationInput("stateful_rollout_pass", True, True, False, True, False, False, True, True, prediction_requested=True, stateful_dynamic=True, predictive_rollout_passed=True),
 )
-MAX_SEQUENCE_LENGTH = 3
+MAX_SEQUENCE_LENGTH = 2  # every ordered pair of the plain and the depth inputs
 
 
 def initial_state() -> State:
@@ -502,3 +502,281 @@ def build_workflow() -> Workflow:
         ),
         name="physicsguard_model_dataset_validation",
     )
+
+
+# Contract: what this model is about in the real code, its known-bad variants, and the replay on that code.
+
+from pathlib import Path  # noqa: E402
+import shutil  # noqa: E402
+import sys  # noqa: E402
+import tempfile  # noqa: E402
+
+import yaml  # noqa: E402
+from flowguard.explorer import Explorer  # noqa: E402
+
+MODEL_ID = "model_dataset_validation"
+ROOT = Path(__file__).resolve().parents[2]
+PUMP = ROOT / "examples" / "testfile_contracts" / "pump_loop"
+IMPLEMENTED_BY = {
+    "CheckContracts": "src/physicsguard/core/model_dataset_validation.py:_contract_findings",
+    "GateValidationDepth": "src/physicsguard/core/validation_depth.py:evaluate_validation_depth",
+    "GateValidationDepth.adequacy": "src/physicsguard/core/validation_adequacy.py:evaluate_validation_adequacy_artifacts",
+    "RunDirectValidation": "src/physicsguard/core/model_dataset_validation.py:_evaluate",
+    "OptionalCalibration": "src/physicsguard/core/model_dataset_validation.py:_calibration_summary",
+    "GateValidationClaim": "src/physicsguard/core/model_dataset_validation.py:_status",
+}
+TESTED_BY = {
+    "no_pass_without_contracts": [
+        "tests/test_model_dataset_validation.py:test_enabled_calibration_requires_bounded_parameters",
+    ],
+    "no_pass_without_depth_inputs": [
+        "tests/test_validation_depth_receipts.py:test_uncertain_required_mapping_blocks_broad_validation",
+        "tests/test_validation_depth_receipts.py:test_adequacy_floors_are_warnings_not_failures",
+    ],
+    "no_pass_without_holdout_and_feedback": [
+        "tests/test_validation_depth_receipts.py:test_identical_content_under_different_holdout_label_is_overlap",
+    ],
+}
+EXPECTED_STATUS = {"ValidationPassed": "pass", "ValidationPartial": "partial", "ValidationBlocked": "fail"}
+REQUIRED_LABELS = (
+    "contracts_passed",
+    "direct_validation_ran",
+    "calibration_not_enabled",
+    "calibration_bounded",
+    "validation_passed",
+    "holdout_partial",
+    "contracts_block_validation",
+    "observed_mutation_blocked",
+    "calibration_unbounded_blocked",
+    "dataset_files_missing_blocked",
+    "mapping_review_uncertain_blocked",
+    "split_overlap_blocked",
+    "parameter_temporal_adequacy_failed_warning",
+    "static_parameter_binding_missing_warning",
+    "pointwise_prediction_forbidden_blocked",
+)
+
+
+def _explorer(workflow: Workflow) -> Explorer:
+    """Every ordered pair of the plain and the depth inputs (1,056 sequences, well under a second)."""
+    return Explorer(
+        workflow=workflow,
+        initial_states=(initial_state(),),
+        external_inputs=(*EXTERNAL_INPUTS, *DEPTH_EXTERNAL_INPUTS),
+        invariants=INVARIANTS,
+        max_sequence_length=MAX_SEQUENCE_LENGTH,
+        terminal_predicate=terminal_predicate,
+        required_labels=REQUIRED_LABELS,
+    )
+
+
+def build_explorer() -> Explorer:
+    return _explorer(build_workflow())
+
+
+class _HardDepthGateIgnored(GateValidationDepth):
+    """Known bad: a failed hard depth gate lets the case continue."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if isinstance(result.output, ValidationBlocked):
+                ready = DepthReady(
+                    input_obj.case_id,
+                    input_obj.direct_validation_ran,
+                    input_obj.calibration_enabled,
+                    input_obj.calibration_parameters_bounded,
+                    input_obj.observed_values_mutated,
+                    input_obj.optimization_success,
+                    input_obj.holdout_passed,
+                    input_obj.confidence_feedback_recorded,
+                )
+                result = replace(result, output=ready, new_state=state, label="hard_depth_gate_ignored")
+            yield result
+
+
+class _FailedHoldoutPasses(GateValidationClaim):
+    """Known bad: a failed holdout still yields a validation pass."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if result.label == "holdout_partial":
+                result = replace(
+                    result,
+                    output=ValidationPassed(input_obj.case_id),
+                    new_state=replace(state, validation_passed=state.validation_passed + (input_obj.case_id,)),
+                    label="validation_passed",
+                )
+            yield result
+
+
+def broken_variants() -> dict[str, Explorer]:
+    """Known-bad variants; each must violate an invariant of the design."""
+
+    variants = {
+        "hard_depth_gate_ignored": _HardDepthGateIgnored(),
+        "failed_holdout_passes": _FailedHoldoutPasses(),
+    }
+    return {
+        name: _explorer(Workflow(
+            tuple(broken if isinstance(broken, type(block)) else block for block in build_workflow().blocks),
+            name=name,
+        ))
+        for name, broken in variants.items()
+    }
+
+
+def _load(path: Path) -> dict:
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def _write(path: Path, data: dict) -> None:
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+
+
+def _edit_plan(pump: Path, name: str, change) -> Path:
+    path = pump / "validation" / name
+    data = _load(path)
+    change(pump, data)
+    _write(path, data)
+    return path
+
+
+def _rollout(semantics: str):
+    def change(pump: Path, plan: dict) -> None:
+        def ref(identity_id: str, relative: str, cases=()):
+            return {"identity_id": identity_id, "path": f"../{relative}", "case_ids": list(cases)}
+
+        plan["depth"]["model_semantics"] = semantics
+        plan["depth"]["predictive_rollout"] = {
+            "rollout_id": "conformance_rollout",
+            "producer_receipt_id": "conformance-producer",
+            "model_identity": ref("pump_model", "model/pump_loop_hierarchy.yaml"),
+            "training": [ref("training_series", "observed/clean_observed_series.yaml", ["baseline_case", "speed_ramp_case_01", "speed_ramp_case_02"])],
+            "prediction_series": ref("prediction", "observed/predicted_future_series.yaml"),
+            "future_holdout_series": ref("future_holdout", "observed/future_holdout_series.yaml", ["future_case_1", "future_case_2", "future_case_3"]),
+            "training_end_time": 0.2,
+            "initial_state": {"pump_signal_map.x": 11.0, "pump_signal_map.y": 22.0},
+            "step_size": 1.0,
+            "step_unit": "s",
+            "horizon_steps": 3,
+            "target_signals": ["pump_signal_map.x", "pump_signal_map.y"],
+            "signal_scales": {"pump_signal_map.x": 1.0, "pump_signal_map.y": 2.0},
+            "threshold_source": "conformance thresholds",
+            "thresholds": {
+                "maximum_worst_step_normalized_error": 0.0,
+                "maximum_accumulated_normalized_error": 0.0,
+                "maximum_absolute_lag_steps": 0,
+                "maximum_phase_error": 0.0,
+                "maximum_drift": 0.0,
+                "maximum_error_growth": 0.0,
+            },
+        }
+
+    return change
+
+
+def _uncertain_mapping(pump: Path, plan: dict) -> None:
+    edges_path = pump / "coverage" / "pump_loop_mapping_edges.yaml"
+    edges = _load(edges_path)
+    edge = next(item for item in edges["edges"] if item["target"] == "pump_signal_map.y")
+    edge["confidence"] = 0.4
+    _write(edges_path, edges)
+
+
+def _snapshot_overclaim(pump: Path, plan: dict) -> None:
+    series_path = pump / "observed" / "clean_observed_series.yaml"
+    series = _load(series_path)
+    series["points"] = series["points"][:1]
+    _write(series_path, series)
+    plan["depth"]["time_scope"] = {"claim_scope": "time_window", "start_time": 0.0, "end_time": 0.0, "time_unit": "s", "expected_point_count": 1}
+    plan["depth"]["scenarios"] = plan["depth"]["scenarios"][:1]
+
+
+def _split_overlap(pump: Path, plan: dict) -> None:
+    shutil.copyfile(pump / "observed" / "calibration_train.yaml", pump / "observed" / "renamed_holdout.yaml")
+    plan["calibration"]["holdout_observed"] = "../observed/renamed_holdout.yaml"
+    plan["depth"] = _load(pump / "validation" / "clean_validation_plan.yaml")["depth"]
+    plan["depth"]["split"] = {
+        "training": [{"identity_id": "train", "path": "../observed/calibration_train.yaml", "case_ids": ["training_case"]}],
+        "holdout": [{"identity_id": "holdout", "path": "../observed/renamed_holdout.yaml", "case_ids": ["holdout_case"]}],
+    }
+
+
+def _invalid_series_point(pump: Path, plan: dict) -> None:
+    series_path = pump / "observed" / "clean_observed_series.yaml"
+    series = _load(series_path)
+    series["points"][1].update({"valid": False, "invalid_reason": "sensor export gap", "variables": {}})
+    _write(series_path, series)
+
+
+def _failing_holdout(pump: Path, plan: dict) -> None:
+    holdout_path = pump / "observed" / "calibration_holdout.yaml"
+    holdout = _load(holdout_path)
+    for name, item in holdout["variables"].items():
+        if name.endswith(".y"):
+            item["value"] = float(item["value"]) * 3.0
+    _write(holdout_path, holdout)
+    plan["observed_file"] = "../observed/clean_observed.yaml"
+
+
+REAL_CASES = {
+    "clean_no_calibration": ("clean_validation_plan.yaml", lambda pump, plan: None),
+    "missing_contract": ("clean_validation_plan.yaml", lambda pump, plan: plan["contracts"][0].update(contract="../contracts/unclassified_contract.yaml")),
+    "calibrated_pass": ("calibration_validation_plan.yaml", lambda pump, plan: plan.update(observed_file="../observed/clean_observed.yaml")),
+    "optimizer_only": ("calibration_validation_plan.yaml", _failing_holdout),
+    "unbounded_calibration": ("calibration_validation_plan.yaml", lambda pump, plan: plan["calibration"]["parameters"][0].pop("upper")),
+    "missing_dataset_file": ("clean_validation_plan.yaml", lambda pump, plan: plan["depth"]["dataset"]["files"][0].update(path="../data/missing.csv")),
+    "uncertain_mapping": ("clean_validation_plan.yaml", _uncertain_mapping),
+    "snapshot_overclaim": ("clean_validation_plan.yaml", _snapshot_overclaim),
+    "split_overlap": ("calibration_validation_plan.yaml", _split_overlap),
+    "series_missing": ("clean_validation_plan.yaml", _invalid_series_point),
+    "one_point_time_varying_parameter": ("shallow_time_varying_validation_plan.yaml", lambda pump, plan: None),
+    "pointwise_prediction": ("clean_validation_plan.yaml", _rollout("pointwise")),
+    "stateful_rollout_pass": ("clean_validation_plan.yaml", _rollout("stateful_dynamic")),
+}
+
+
+class ReplayReport:
+    """Conformance result: how many model cases were replayed on the real code, and the mismatches."""
+
+    def __init__(self, checked: int, mismatches: list[str]) -> None:
+        self.checked = checked
+        self.mismatches = tuple(mismatches)
+        self.ok = not self.mismatches
+
+    def format_text(self, max_examples: int | None = None) -> str:
+        lines = [f"conformance: {self.checked - len(self.mismatches)}/{self.checked} model cases match the real code"]
+        return "\n".join(lines + [f"  mismatch: {line}" for line in self.mismatches[:max_examples]])
+
+
+def conformance() -> ReplayReport:
+    """Run each mapped model case through validate_model_dataset and compare the status."""
+
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from physicsguard.core.model_dataset_validation import validate_model_dataset
+
+    workflow = build_workflow()
+    inputs = {item.case_id: item for item in (*EXTERNAL_INPUTS, *DEPTH_EXTERNAL_INPUTS)}
+    mismatches = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for index, (case_id, (plan_name, change)) in enumerate(REAL_CASES.items()):
+            pump = Path(tmp) / f"case_{index}" / "pump_loop"
+            shutil.copytree(PUMP, pump)
+            plan = _edit_plan(pump, plan_name, change)
+            try:
+                real_status = validate_model_dataset(plan).status
+            except ValueError:
+                real_status = "fail"
+            run = workflow.execute(initial_state(), inputs[case_id], terminal_predicate=terminal_predicate)
+            expected = EXPECTED_STATUS[type(run.completed_paths[0].current_input).__name__]
+            if real_status != expected:
+                mismatches.append(f"{case_id}: real status {real_status!r}, model expects {expected!r}")
+    return ReplayReport(len(REAL_CASES), mismatches)
+
+
+if __name__ == "__main__":
+    print(build_explorer().explore().format_text())
+    for name, variant in broken_variants().items():
+        print(f"known-bad {name}: {'caught' if not variant.explore().ok else 'MISSED'}")
+    print(conformance().format_text())

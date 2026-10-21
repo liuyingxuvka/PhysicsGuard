@@ -60,7 +60,7 @@
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py",
-        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
+        ".flowguard/models/physicsguard_model_dataset_validation_model.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
@@ -228,7 +228,7 @@
         "tests/test_validation_depth_receipts.py"
       ],
       "models": [
-        ".flowguard/verification/owners/model_dataset_validation/run_checks.py"
+        ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:91f39524a38027cc5a90e48aa372d427108b8de83c458ecb0360d18acda9ce6b"
@@ -301,7 +301,7 @@
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py",
-        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
+        ".flowguard/models/physicsguard_model_dataset_validation_model.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
@@ -391,7 +391,7 @@
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py",
-        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
+        ".flowguard/models/physicsguard_model_dataset_validation_model.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
