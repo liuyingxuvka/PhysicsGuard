@@ -23,7 +23,7 @@ Reject or hand off when:
 2. Load the native route protocol and run direct residual, envelope, adequacy, split, and rollout checks required by the claim.
 3. Return the native receipt, current blockers, and only the exact covered scope.
 
-Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
 ## Blueprint slice
 

@@ -29,7 +29,7 @@ PHYSICSGUARD_SKILL_IDS = (
     "physicsguard-signal-mapping-review",
     "physicsguard-test-file-contract-review",
 )
-CONSUMER_FILES = {"SKILL.md", "runtime-requirements.json"}
+CONSUMER_FILES = {"SKILL.md"}
 CONSUMER_DIRECTORIES = {"agents", "references", "scripts"}
 
 

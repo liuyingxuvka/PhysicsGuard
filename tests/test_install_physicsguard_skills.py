@@ -12,7 +12,6 @@ def _repository(tmp_path: Path) -> Path:
         source = repository / "skill" / skill_id
         (source / "references").mkdir(parents=True)
         (source / "SKILL.md").write_text(f"# {skill_id}\n", encoding="utf-8")
-        (source / "runtime-requirements.json").write_text("{}\n", encoding="utf-8")
         (source / "references" / "protocol.md").write_text("Native protocol.\n", encoding="utf-8")
         (source / ".skillguard").mkdir()
         (source / ".skillguard" / "author.json").write_text("{}\n", encoding="utf-8")

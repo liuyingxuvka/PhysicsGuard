@@ -23,7 +23,7 @@ Reject or hand off when:
 2. Load the native route protocol and reconcile every field, role, unit, timing, mapping, and model binding.
 3. Block broad analysis until the exact contract passes; hand validation to the dataset route afterward.
 
-Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
 ## Blueprint slice
 

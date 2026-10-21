@@ -25,7 +25,7 @@ Reject or hand off when:
 4. Use the full projection only for authoring or a whole-boundary review. Keep the native blueprint directory, tests, and bindings as DNA; on explicit request, compose only an in-memory projection or one selector while preserving every identity-only and execution-licensing gap.
 5. Only after current native validation establishes generation eligibility, generate a target-model candidate through an official or user-owned interface, map outputs back to PhysicsGuard, and accept only inside the checked validation and rollout boundary.
 
-Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
 ## Blueprint ownership and loading
 

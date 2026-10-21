@@ -23,7 +23,7 @@ Reject or hand off when:
 2. Load the native route protocol and reconcile failures, skips, stale evidence, mappings, refinements, predictive conditions, and any in-memory projection identity or query gap.
 3. Keep in-memory interpretation projections and current target-native execution as separate states; return one exact closure state and a claim that does not exceed current evidence.
 
-Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
 ## Blueprint closure input
 

@@ -32,7 +32,7 @@ Reject or hand off when:
 3. Keep every specialist's native judgment and evidence separate while coordinating the smallest necessary handoff chain.
 4. Close only through the direct native owner that owns the requested final claim.
 
-Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
 ## Blueprint coordination boundary
 

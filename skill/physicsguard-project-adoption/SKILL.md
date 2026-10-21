@@ -23,7 +23,7 @@ Reject or hand off when:
 2. Load the native route protocol; adopt or upgrade only when authorized and necessary.
 3. Report workflow readiness separately from physical execution, validation, installation, and release.
 
-Before executing a native command, verify the installed `physicsguard` version against `runtime-requirements.json`; a missing or mismatched runtime is a visible blocker with no fallback.
+If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
 ## Blueprint adoption record
 
