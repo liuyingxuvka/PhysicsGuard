@@ -712,3 +712,18 @@
 - 适配：根复核统一contract在baselineFG0.70.6和新版都支持，授权顺序提前执行至PG67；首次新版验证留PG68，不改本动作目的。
 - 适配：只删除确认空的旧模型目录；未删除任何非空或外来缓存，精确旧pyc size/mtime保持。
 - 适配：原生损坏对照在独立tracked源码副本：conformance11/13且FlowGuard单模型exit1，并精确报告_manifest_findings未执行；活动src不作临时sed/git restore。
+
+### PG-68 确认实际变更职责并通过两版FlowGuard检查
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> prepare-isolated-new-fg`：exit 0；28.75秒；baselineFG0.70.6 kept; newFG0.70.7 metadata/module and local immutable archive origin verified。
+- `python <本动作核验脚本> affected-owner-read`：exit 2；0.161秒；python -m flowguard read: error: unrecognized arguments: interface maintenance simulation。
+- `python <本动作核验脚本> affected-owner-read-corrected-describe-confirm`：exit 0；1.614秒；affected owners read separately; four descriptions/current fingerprints confirmed; accepted debt/ignore unchanged。
+- `python <本动作核验脚本> baseline-strict`：exit 0；0.407秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> baseline-lint`：exit 0；1.011秒；lint: 0 error(s), 10 warning(s), 20 info。
+- `python <本动作核验脚本> baseline-release`：exit 0；19.124秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
+- `python <本动作核验脚本> new-fg-strict`：exit 0；4.767秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> new-fg-release`：exit 0；30.399秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
+- 适配：按rootFG98信号解除尾部屏障；新版为用户指定0.70.7，独立venv安装批准的bc8c519源码git archive构建包，保留原0.70.6环境；不用PYTHONPATH/global install。
+- 适配：新FG真实输出12条非阻断invariant known-bad coverage warning（core10、dataset2），如实保留，未为警告擅增测试或坏变体。
+- 适配：初次尝试把四个owner传给单值--component被CLI拒绝；随后逐owner读取并confirm，原始exit2保留。

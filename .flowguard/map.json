@@ -13,7 +13,8 @@
       "layer": "",
       "summary": "CLI and lazy public API",
       "responsibilities": [
-        "Dispatch commands without running unrelated owners"
+        "Dispatch commands without running unrelated owners",
+        "Print a compact summary for hierarchy and validation commands and the full report with --json"
       ],
       "files": [
         "src/physicsguard/__init__.py",
@@ -64,7 +65,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:b7e3b5ef6e7b696e078022721ec9de0db91bfdcdc3b1171c6c94891b5758533e"
+      "fingerprint": "sha256:7a2306c5ca29e71fb6a67965c06790221ea53624428fd34ae1db087825eb7391"
     },
     {
       "id": "routing",
@@ -94,7 +95,8 @@
       "summary": "Residual assembly, bounded solve, observed evaluation and hierarchy",
       "responsibilities": [
         "Validate inputs and finite solver bounds before residual evaluation",
-        "Separate numerical optimization success, observed audit and diagnostic limits"
+        "Separate numerical optimization success, observed audit and diagnostic limits",
+        "Skip only the residuals that need unobserved variables and list those variables as missing"
       ],
       "files": [
         "src/physicsguard/core/__init__.py",
@@ -191,7 +193,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:9ca713e6cd97a59dd149da20b723fd16f2b2f5ee9a40fa507c03b8dd4f9c48e1"
+      "fingerprint": "sha256:bc76ff7b386cac6edd4a7c27eb9b3011d52e7e6d03da9386c8d30e147481ea50"
     },
     {
       "id": "validation",
@@ -265,6 +267,7 @@
       "summary": "Test-file contracts, coverage, contract diff and signal mapping",
       "responsibilities": [
         "Keep source files, manifests and mapping evidence traceable",
+        "Report an observed value without a source signal or unit as a mapping gap",
         "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
       ],
       "files": [
@@ -305,7 +308,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:c46a5be1e56f7ab367501aa42a86a87e29dd3fe3ce4435e6654ab34c7851242a"
+      "fingerprint": "sha256:52b15c46249402ae44fb606478205028b94c3353f85e1b3a432bc698b9e379ec"
     },
     {
       "id": "schema",
@@ -547,7 +550,7 @@
       "layer": "",
       "summary": "Skill installation, starter-pack generation and example headers",
       "responsibilities": [
-        "Install ordinary consumer files with safe staging and rollback",
+        "Install the physicsguard skill by replacing its copy in --target and removing retired skill directories; --check and --dry-run change nothing",
         "Publish the exact final version commit through the repository release workflow"
       ],
       "files": [
@@ -572,7 +575,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:c42caafd3cb9ac737afbb8d9d772169211d30c9a34354dee5bf85724a084e402"
+      "fingerprint": "sha256:c427982e84da2fa0de12f52225d50650db9eb1ae11a176b236a4029ae3e124e3"
     },
     {
       "id": "example_tools",
