@@ -5,7 +5,7 @@
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 # PhysicsGuard intentionally shallow bounded observed series
 # Purpose: negative calibration showing that one value cannot validate a time-varying parameter.
-# Boundary: SkillGuard/PhysicsGuard shallow-depth regression fixture only.
+# Boundary: PhysicsGuard shallow-depth regression fixture only.
 series_id: pump_loop_shallow_time_varying_parameter_series
 time_unit: s
 points:

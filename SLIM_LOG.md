@@ -297,3 +297,12 @@
 - `python <本动作核验脚本> map-read`：exit 0；0.212秒；  Explicit external-tool example helper scripts。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：同步发布版本按用户覆盖为PhysicsGuard0.15.16先于FlowGuard0.70.7；本动作只在隔离baseline工具链执行删除与验收，发布由root统筹。
+
+### PG-33 清理旧工具残留并保持真实数据哈希绑定
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> hash-binding-native-rejection`：exit 0；2.963秒；实际新SHA绑定生效；浅数据原生拒绝exit1/fail且4类原发现完整保留；现行旧工具残留零匹配。
+- `python <本动作核验脚本> pump-loop-tests`：exit 0；52.681秒；165 passed in 50.26s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：根确认可执行测试选择：原始grep35路径含19个全部当前跟踪.py及16具体旧__pycache__字节码；逐缓存分类并保留raw/mtime，选择全部19个.py运行，不删缓存或排除活跃.py。
+- 适配：调度更新：根扩展独立执行至PG67；PG63汇报但不暂停，PG67后等FG98/root grant，原动作目的与验证不变。
