@@ -614,3 +614,18 @@
 - 适配：经检查的应用脚本保留仓库外证据；协议bytes因授权PG57 followup范围说明较原审计多，不为匹配14216删除边界；全量承接5条额外原生回归，实际预期861而非856。。
 - 提交后完整检查：`python -m pytest -q`：exit 0；861 passed in 78.72s (0:01:18)；命令总耗时 79.544 秒。检查结束后仅补记本行，无业务源码变化。
 - 更正上条适配中的长度方向：本项实际协议13616 bytes，小于原审计14216；此前“较原审计多”是记录用词错误。以仓库外guidance.json的真实数值为准，不为凑原审计长度删改有效边界。
+
+### PG-61 简化安装到显式目标并保无缓存内容检查
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> update-readme-ci`：exit 0；0.033秒；PG-61 applied。
+- `python <本动作核验脚本> focused-tests`：exit 0；0.826秒；10 passed in 0.50s。
+- `python <本动作核验脚本> collect`：exit 0；2.129秒；860 tests collected in 1.72s。
+- `python <本动作核验脚本> map-check`：exit 0；0.509秒；check: 0 error(s), 4 warning(s), 0 info。
+- `python <本动作核验脚本> reference-native-control`：exit 1；0.226秒；ModuleNotFoundError: No module named 'scripts'。
+- `python <本动作核验脚本> native-install-boundaries`：exit 0；0.369秒；见同编号JSON/日志中的结构化结果。
+- `python <本动作核验脚本> reference-native-control-corrected`：exit 0；0.573秒；reference cached comparator misses real same-stat installer rewrite (expected control); product remains direct read_bytes。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：Root确认installer reference filecmp缓存风险；保白名单/退役语义，采用read_bytes内容比较并保同stat内容变化负例，不退化当前正确比较。。
+- 适配：在现有installer测试模块加1条真实main/pending_changes同stat改动/恢复检查；reference缓存注入真实路径时应漏报，产品始终直接字节比较。。
+- 适配：外部reference对照首次未加入仓库根导入脚本路径而在导入前失败；明确当前owner根后控制通过，未改业务代码或全局环境。实际10focused/collect860承接已有额外回归，不强凑原文9/854。。

@@ -83,9 +83,9 @@ python -m pip install -e .
 Install the skills for your agent (only the consumer files are copied):
 
 ```powershell
-python scripts/install_physicsguard_skills.py --install --target ~/.codex/skills    # Codex
-python scripts/install_physicsguard_skills.py --install --target ~/.claude/skills   # Claude Code
-python scripts/install_physicsguard_skills.py --check --target ~/.claude/skills     # installed copy equals this checkout?
+python scripts/install_physicsguard_skills.py --target ~/.codex/skills              # Codex
+python scripts/install_physicsguard_skills.py --target ~/.claude/skills             # Claude Code
+python scripts/install_physicsguard_skills.py --target ~/.claude/skills --check     # installed copy equals this checkout?
 ```
 
 Run the public example:
@@ -272,9 +272,9 @@ python -m pip install -e .
 为你的 agent 安装技能（只复制使用者需要的文件）：
 
 ```powershell
-python scripts/install_physicsguard_skills.py --install --target ~/.codex/skills    # Codex
-python scripts/install_physicsguard_skills.py --install --target ~/.claude/skills   # Claude Code
-python scripts/install_physicsguard_skills.py --check --target ~/.claude/skills     # installed copy equals this checkout?
+python scripts/install_physicsguard_skills.py --target ~/.codex/skills              # Codex
+python scripts/install_physicsguard_skills.py --target ~/.claude/skills             # Claude Code
+python scripts/install_physicsguard_skills.py --target ~/.claude/skills --check     # installed copy equals this checkout?
 ```
 
 运行公开示例：

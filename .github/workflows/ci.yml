@@ -42,5 +42,5 @@ jobs:
       - name: Install the skills into a scratch directory and check them
         if: matrix.python == '3.11'
         run: |
-          python scripts/install_physicsguard_skills.py --install --target "$RUNNER_TEMP/skills"
-          python scripts/install_physicsguard_skills.py --check --target "$RUNNER_TEMP/skills"
+          python scripts/install_physicsguard_skills.py --target "$RUNNER_TEMP/skills"
+          python scripts/install_physicsguard_skills.py --target "$RUNNER_TEMP/skills" --check
