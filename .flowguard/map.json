@@ -59,7 +59,7 @@
         "tests/test_workflow_governance.py"
       ],
       "models": [
-        ".flowguard/verification/owners/core/run_checks.py",
+        ".flowguard/models/physicsguard_core_model.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
@@ -188,7 +188,7 @@
       ],
       "models": [
         ".flowguard/verification/owners/interval_diagnosability/run_checks.py",
-        ".flowguard/verification/owners/core/run_checks.py"
+        ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:9ca713e6cd97a59dd149da20b723fd16f2b2f5ee9a40fa507c03b8dd4f9c48e1"
@@ -300,7 +300,7 @@
         "tests/test_validation_depth_receipts.py"
       ],
       "models": [
-        ".flowguard/verification/owners/core/run_checks.py",
+        ".flowguard/models/physicsguard_core_model.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
@@ -390,7 +390,7 @@
         "tests/test_yaml_loader.py"
       ],
       "models": [
-        ".flowguard/verification/owners/core/run_checks.py",
+        ".flowguard/models/physicsguard_core_model.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
@@ -474,7 +474,7 @@
         "tests/test_yaml_loader.py"
       ],
       "models": [
-        ".flowguard/verification/owners/core/run_checks.py"
+        ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:c5568e9119334a4f8ffa7c3c23dbe4bbb1d8b2804b72dd2eded9adcbfaece10e"
@@ -537,7 +537,7 @@
         "tests/test_variable_registry.py"
       ],
       "models": [
-        ".flowguard/verification/owners/core/run_checks.py"
+        ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:eb37c7f62f67246bd7bedbed6e67be9d51c143853a82d6c4e86aa4234d73cfe7"

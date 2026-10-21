@@ -657,3 +657,19 @@
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：OpenSpec CLI不存在，按动作明确允许的git mv离线归档；仅声明内容哈希一致和spec结构核验，未冒称CLI严格验证通过。
 - 适配：归档父目录随授权旧档案删除而消失，首次git mv失败；补建父目录后从已完成删除继续，原始失败与依赖核验失败均保留。
+
+### PG-64 核心模型迁移统一合约并真实重放部分快照
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> contract-migration`：exit 2；0.037秒；.venv/bin/python: can't open file '/workspace/guard-repair-20261021/results/PhysicsGuard/PG-64/apply.py': [Errno 2] No such file or directory。
+- `python <本动作核验脚本> contract-native-replay`：exit 1；0.039秒；FileNotFoundError: [Errno 2] No such file or directory: '/workspace/skill-review/repos/PhysicsGuard/.flowguard/models/physicsguard_core_model.py'。
+- `python <本动作核验脚本> models`：exit 0；17.575秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> contract-migration-corrected`：exit 0；0.06秒；core contract migration; exact map references replaced: 6。
+- `python <本动作核验脚本> contract-native-replay-corrected`：exit 0；1.431秒；conformance: 18/18 model cases match the real code。
+- `python <本动作核验脚本> models-after-migration`：exit 0；18.275秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> known-bad-native`：exit 0；1.467秒；real native bad variant rejected by conformance; active source byte unchanged。
+- `python <本动作核验脚本> anchors`：exit 0；0.334秒；anchors ok。
+- `python <本动作核验脚本> map-check`：exit 0；0.364秒；check: 0 error(s), 4 warning(s), 0 info。
+- 适配：根复核统一contract在baselineFG0.70.6和新版都支持，授权顺序提前执行至PG67；首次新版验证留PG68，不改本动作目的。
+- 适配：外部证据目录尚未建立导致首次脚本写入/调用失败，源码未动；建立目录后顺序执行，保留并关联失败记录；首次models是迁移前检查，迁移后另有明确通过证据。
+- 适配：破坏性验收在独立tracked源码副本运行，不对活动源码sed/git restore；实际conformance精确17/18并命中partial_snapshot，活动src字节不变。

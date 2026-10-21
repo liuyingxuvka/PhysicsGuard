@@ -17,6 +17,8 @@ Risk intent brief:
 - Add AssumptionGuard Lite without hidden assumptions: parameter assumptions are
   explicit fills or overrides before module construction; variable assumptions
   become fixed residuals, not free solver variables; every assumption is reported.
+- A partial snapshot in hierarchy evaluate skips only the residuals that need
+  unobserved variables and lists those variables; it never passes silently.
 - Model only the framework lifecycle, not numerical optimizer details or physics.
 """
 
@@ -166,6 +168,8 @@ class State:
     audit_failures: tuple[str, ...] = ()
     diagnostics_emitted: tuple[str, ...] = ()
     failures: tuple[str, ...] = ()
+    unobserved_skipped: tuple[str, ...] = ()
+    unobserved_listed: tuple[str, ...] = ()
 
 
 class ValidateSystem:
@@ -337,6 +341,22 @@ class AssembleResiduals:
                 output=SetupFailed(input_obj.case_id, "post_check_in_solver"),
                 new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
                 label="post_check_solver_selection_failed",
+            )
+            return
+        if (
+            input_obj.mode == "hierarchy_evaluate"
+            and not input_obj.observed_values_complete
+            and "partial" in input_obj.case_id
+        ):
+            yield FunctionResult(
+                output=ResidualsReady(input_obj.case_id, input_obj.mode, input_obj.observed_values_complete),
+                new_state=replace(
+                    state,
+                    residuals_normalized=state.residuals_normalized + (input_obj.case_id,),
+                    unobserved_skipped=state.unobserved_skipped + (input_obj.case_id,),
+                    unobserved_listed=state.unobserved_listed + (input_obj.case_id,),
+                ),
+                label="unobserved_residuals_skipped",
             )
             return
         if input_obj.mode in {
@@ -909,6 +929,14 @@ def assumption_overrides_are_warned(state: State, trace) -> InvariantResult:
     return InvariantResult.pass_()
 
 
+def unobserved_variables_stay_listed(state: State, trace) -> InvariantResult:
+    del trace
+    hidden = tuple(sorted(set(state.unobserved_skipped) - set(state.unobserved_listed)))
+    if hidden:
+        return InvariantResult.fail(f"residuals skipped without listing the unobserved variables: {hidden!r}")
+    return InvariantResult.pass_()
+
+
 INVARIANTS = (
     Invariant(
         name="no_solve_without_valid_registry",
@@ -970,6 +998,11 @@ INVARIANTS = (
         description="Assumption overrides remain explicit and warning-bearing.",
         predicate=assumption_overrides_are_warned,
     ),
+    Invariant(
+        name="unobserved_variables_stay_listed",
+        description="A partial snapshot skips residuals only while listing the unobserved variables.",
+        predicate=unobserved_variables_stay_listed,
+    ),
 )
 
 
@@ -991,6 +1024,7 @@ EXTERNAL_INPUTS = (
     AuditInput("hierarchy_evaluate_clean", True, True, True, True, True, True, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_missing_observed", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
+    AuditInput("hierarchy_evaluate_partial_snapshot", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
     AuditInput("hierarchy_compare_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_compare", True),
     AuditInput("hierarchy_inspect", True, True, True, True, True, True, False, False, "hierarchy_inspect", True),
     AuditInput("assumption_parameter_fill", True, True, True, True, True, True, has_assumptions=True, parameter_assumption=True),
@@ -1034,3 +1068,326 @@ __all__ = [
     "initial_state",
     "terminal_predicate",
 ]
+
+
+# Contract: what this model is about in the real code, its known-bad variants, and the replay on that code.
+
+from contextlib import contextmanager  # noqa: E402
+from pathlib import Path  # noqa: E402
+import sys  # noqa: E402
+
+from flowguard.explorer import Explorer  # noqa: E402
+
+MODEL_ID = "core"
+ROOT = Path(__file__).resolve().parents[2]
+IMPLEMENTED_BY = {
+    "ValidateSystem": "src/physicsguard/io/yaml_loader.py:load_system_spec",
+    "AssembleResiduals": "src/physicsguard/core/residual.py:ResidualBuilder",
+    "ExecuteMode.solve": "src/physicsguard/core/solver.py:BoundedSolver.solve",
+    "ExecuteMode.evaluate": "src/physicsguard/core/evaluator.py:AuditEvaluator.evaluate_observed",
+    "ExecuteMode.hierarchy": "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner",
+    "ExecuteMode.inspect": "src/physicsguard/core/hierarchy.py:inspect_hierarchy",
+    "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
+}
+TESTED_BY = {
+    "audit_pass_and_failure_are_disjoint": [
+        "tests/test_diagnostics.py:test_report_distinguishes_optimization_success_from_audit_pass",
+    ],
+    "observed_evaluation_does_not_solve": [
+        "tests/test_evaluator.py:test_evaluate_observed_does_not_call_solver",
+        "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_clean_does_not_solve_and_passes",
+    ],
+    "variable_assumptions_are_fixed_residuals": [
+        "tests/test_assumption_residuals.py:test_variable_assumption_creates_active_assumption_residual",
+    ],
+    "assumption_overrides_are_warned": [
+        "tests/test_assumption_manager.py:test_explicit_parameter_override_requires_allow_override_and_warns",
+    ],
+    "unobserved_variables_stay_listed": [
+        "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_skips_residuals_that_need_unobserved_variables",
+        "tests/test_hierarchy_cli.py:test_hierarchy_evaluate_reports_a_partial_snapshot",
+    ],
+}
+REQUIRED_LABELS = (
+    "schema_valid",
+    "registry_ready",
+    "residuals_ready",
+    "solver_attempted",
+    "optimizer_converged_audit_failed",
+    "diagnostics_after_solver",
+    "observed_evaluated_without_solver",
+    "diagnostics_after_observed_evaluation",
+    "compare_solved_and_evaluated",
+    "diagnostics_after_comparison",
+    "hierarchy_index_ready",
+    "hierarchy_run_solved_and_reported",
+    "hierarchy_plan_solved_and_recommended",
+    "hierarchy_observed_evaluated_without_solver",
+    "hierarchy_compare_solved_and_evaluated",
+    "hierarchy_inspected_without_solver",
+    "diagnostics_after_hierarchy_run",
+    "diagnostics_after_hierarchy_plan",
+    "diagnostics_after_hierarchy_evaluate",
+    "diagnostics_after_hierarchy_compare",
+    "diagnostics_after_hierarchy_inspect",
+    "parameter_assumption_filled",
+    "variable_assumption_boundary_ready",
+    "assumption_override_warned",
+    "proposed_assumption_not_applied",
+    "rejected_assumption_not_applied",
+    "assumption_free_variable_failed",
+    "schema_failed",
+    "registry_failed",
+    "residual_reference_failed",
+    "residual_normalization_failed",
+    "post_check_solver_selection_failed",
+    "missing_observed_values_failed",
+    "unobserved_residuals_skipped",
+)
+ASSUMPTION_LABELS = {
+    "parameter_fill": "parameter_assumption_filled",
+    "parameter_override": "assumption_override_warned",
+    "not_applied_proposed": "proposed_assumption_not_applied",
+    "not_applied_rejected": "rejected_assumption_not_applied",
+    "boundary_residual": "variable_assumption_boundary_ready",
+}
+
+
+def _explorer(workflow: Workflow) -> Explorer:
+    return Explorer(
+        workflow=workflow,
+        initial_states=(initial_state(),),
+        external_inputs=EXTERNAL_INPUTS,
+        invariants=INVARIANTS,
+        max_sequence_length=MAX_SEQUENCE_LENGTH,
+        terminal_predicate=terminal_predicate,
+        required_labels=REQUIRED_LABELS,
+    )
+
+
+def build_explorer() -> Explorer:
+    return _explorer(build_workflow())
+
+
+class _EvaluateCallsSolver(ExecuteMode):
+    """Known bad: observed evaluation also runs the solver."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            new = result.new_state
+            added = tuple(case for case in new.observed_without_solver if case not in state.observed_without_solver)
+            yield replace(result, new_state=replace(new, solve_attempted=new.solve_attempted + added))
+
+
+class _FailedAuditAlsoPasses(ExecuteMode):
+    """Known bad: a failed audit is also recorded as a pass."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            new = result.new_state
+            added = tuple(case for case in new.audit_failures if case not in state.audit_failures)
+            yield replace(result, new_state=replace(new, audit_passes=new.audit_passes + added))
+
+
+class _SkipsUnobservedSilently(AssembleResiduals):
+    """Known bad: a partial snapshot skips residuals without listing the unobserved variables."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if result.label == "unobserved_residuals_skipped":
+                result = replace(result, new_state=replace(result.new_state, unobserved_listed=state.unobserved_listed))
+            yield result
+
+
+def broken_variants() -> dict[str, Explorer]:
+    """Known-bad variants; each must violate an invariant of the design."""
+
+    variants = {
+        "evaluate_calls_solver": _EvaluateCallsSolver(),
+        "failed_audit_also_passes": _FailedAuditAlsoPasses(),
+        "partial_snapshot_hides_unobserved": _SkipsUnobservedSilently(),
+    }
+    return {
+        name: _explorer(Workflow(
+            tuple(broken if isinstance(broken, type(block)) else block for block in build_workflow().blocks),
+            name=name,
+        ))
+        for name, broken in variants.items()
+    }
+
+
+@contextmanager
+def _solver_counted():
+    from physicsguard.core.solver import BoundedSolver
+
+    calls = []
+    original = BoundedSolver.solve
+
+    def counting(self, *args, **kwargs):
+        calls.append(1)
+        return original(self, *args, **kwargs)
+
+    BoundedSolver.solve = counting
+    try:
+        yield calls
+    finally:
+        BoundedSolver.solve = original
+
+
+def _solve(relative: str) -> tuple[str, bool]:
+    from physicsguard.core.diagnostics import DiagnosticReporter
+    from physicsguard.core.residual import ResidualBuilder
+    from physicsguard.core.solver import BoundedSolver
+    from physicsguard.io.yaml_loader import load_system_spec
+
+    system = load_system_spec(ROOT / relative)
+    builder = ResidualBuilder(system)
+    result = BoundedSolver(builder, system.solver).solve()
+    report = DiagnosticReporter().generate(system, builder, result)
+    if report.optimization_success and not report.audit_pass:
+        return "optimizer_converged_audit_failed", report.audit_pass
+    return "solver_attempted", report.audit_pass
+
+
+def _evaluate(system_file: str, observed_file: str, keep: int | None = None) -> tuple[str, bool | None]:
+    from physicsguard.core.evaluator import AuditEvaluator
+    from physicsguard.io.observation_loader import load_observed_values
+    from physicsguard.io.yaml_loader import load_system_spec
+
+    observed = load_observed_values(ROOT / observed_file)
+    if keep is not None:
+        observed = observed.model_copy(update={"variables": dict(list(observed.variables.items())[:keep])})
+    with _solver_counted() as calls:
+        try:
+            report = AuditEvaluator(load_system_spec(ROOT / system_file)).evaluate_observed(observed)
+        except ValueError as exc:
+            if "observed values missing required registered variables" in str(exc):
+                return "missing_observed_values_failed", None
+            raise
+    return ("observed_evaluated_without_solver" if not calls else "solver_attempted"), report.audit_pass
+
+
+def _hierarchy(mode: str, audit_file: str, observed_file: str | None = None, keep: int | None = None):
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    spec = load_hierarchical_audit_spec(ROOT / audit_file)
+    with _solver_counted() as calls:
+        if mode == "inspect":
+            inspect_hierarchy(spec)
+            return ("hierarchy_inspected_without_solver" if not calls else "solver_attempted"), None
+        if mode == "run":
+            report = HierarchicalAuditRunner(spec).run()
+            return ("hierarchy_run_solved_and_reported" if calls else "no_solver_call"), report.audit_pass
+        observed = load_observed_values(ROOT / observed_file)
+        if keep is not None:
+            observed = observed.model_copy(update={"variables": dict(list(observed.variables.items())[:keep])})
+        try:
+            report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+        except ValueError as exc:
+            if "observed values missing required registered variables" in str(exc):
+                return "missing_observed_values_failed", None
+            raise
+    return ("hierarchy_observed_evaluated_without_solver" if not calls else "solver_attempted"), report.audit_pass
+
+
+def _partial_snapshot(audit_file: str, unobserved: str) -> tuple[str, bool]:
+    """The CLI path: a solved snapshot without one variable, evaluated with skip_unobserved."""
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.core.residual import ResidualBuilder
+    from physicsguard.core.solver import BoundedSolver
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    spec = load_hierarchical_audit_spec(ROOT / audit_file)
+    solved = BoundedSolver(ResidualBuilder(spec.system), spec.system.solver).solve().variables
+    observed = ObservedValuesSpec(variables={name: {"value": value} for name, value in solved.items() if name != unobserved})
+    with _solver_counted() as calls:
+        report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    listed = unobserved in report.missing_required_variables and bool(report.metadata["skipped_residuals"])
+    label = "unobserved_residuals_skipped" if listed and not calls else "unobserved_residuals_hidden"
+    return label, report.audit_pass
+
+
+def _bad_schema() -> tuple[str, None]:
+    from pydantic import ValidationError
+
+    from physicsguard.schema.system_spec import SystemSpec
+
+    try:
+        SystemSpec.model_validate({"system_name": "missing_components"})
+    except ValidationError:
+        return "schema_failed", None
+    return "schema_valid", None
+
+
+def _assumption(relative: str) -> tuple[str, None]:
+    from physicsguard.core.residual import ResidualBuilder
+    from physicsguard.io.yaml_loader import load_system_spec
+
+    summary = ResidualBuilder(load_system_spec(ROOT / relative)).assumption_summary()
+    return ASSUMPTION_LABELS.get(summary.cards[0].application, summary.cards[0].application), None
+
+
+PITCH = "examples/hierarchical/observed_debugging"
+REAL_CASES = {
+    "clean": lambda: _solve("examples/dummy_system.yaml"),
+    "converged_bad_audit": lambda: _solve("examples/dummy_conflict_system.yaml"),
+    "bad_schema": _bad_schema,
+    "evaluate_clean": lambda: _evaluate("examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_clean.yaml"),
+    "evaluate_bad_audit": lambda: _evaluate("examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_conflict.yaml"),
+    "evaluate_missing_observed": lambda: _evaluate("examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_clean.yaml", keep=1),
+    "hierarchy_clean": lambda: _hierarchy("run", "examples/hierarchical/coolant_loop/level_0_cooling_balance.yaml"),
+    "hierarchy_bad_audit": lambda: _hierarchy("run", "examples/hierarchical/coolant_loop/conflict_level_0_heat_rejection.yaml"),
+    "hierarchy_evaluate_clean": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_clean.yaml"),
+    "hierarchy_evaluate_bad_audit": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_fault.yaml"),
+    "hierarchy_evaluate_missing_observed": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_clean.yaml", keep=1),
+    "hierarchy_evaluate_partial_snapshot": lambda: _partial_snapshot("examples/hierarchical/coolant_loop/level_1_components.yaml", "cool.Q_stack_heat_W"),
+    "hierarchy_inspect": lambda: _hierarchy("inspect", f"{PITCH}/pitch_feedback_level_0.yaml"),
+    "assumption_parameter_fill": lambda: _assumption("examples/assumptions/parameter_assumption.yaml"),
+    "assumption_parameter_override": lambda: _assumption("examples/assumptions/parameter_override_warning.yaml"),
+    "assumption_proposed": lambda: _assumption("examples/assumptions/proposed_assumption.yaml"),
+    "assumption_rejected": lambda: _assumption("examples/assumptions/rejected_assumption.yaml"),
+    "assumption_variable_boundary": lambda: _assumption("examples/assumptions/variable_assumption.yaml"),
+}
+
+
+class ReplayReport:
+    """Conformance result: how many model cases were replayed on the real code, and the mismatches."""
+
+    def __init__(self, checked: int, mismatches: list[str]) -> None:
+        self.checked = checked
+        self.mismatches = tuple(mismatches)
+        self.ok = not self.mismatches
+
+    def format_text(self, max_examples: int | None = None) -> str:
+        lines = [f"conformance: {self.checked - len(self.mismatches)}/{self.checked} model cases match the real code"]
+        return "\n".join(lines + [f"  mismatch: {line}" for line in self.mismatches[:max_examples]])
+
+
+def conformance() -> ReplayReport:
+    """Run each mapped model case through the real code and compare labels and audit_pass."""
+
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    workflow = build_workflow()
+    inputs = {item.case_id: item for item in EXTERNAL_INPUTS}
+    mismatches = []
+    for case_id, real in REAL_CASES.items():
+        run = workflow.execute(initial_state(), inputs[case_id], terminal_predicate=terminal_predicate)
+        model_labels = [step.label for step in run.completed_paths[0].trace.steps]
+        real_label, real_audit_pass = real()
+        if real_label not in model_labels:
+            mismatches.append(f"{case_id}: real code gave {real_label!r}, model labels {model_labels}")
+        expected_pass = inputs[case_id].residual_within_threshold
+        if real_audit_pass is not None and real_audit_pass != expected_pass:
+            mismatches.append(f"{case_id}: real audit_pass={real_audit_pass}, model expects {expected_pass}")
+    return ReplayReport(len(REAL_CASES), mismatches)
+
+
+if __name__ == "__main__":
+    print(build_explorer().explore().format_text())
+    for name, variant in broken_variants().items():
+        print(f"known-bad {name}: {'caught' if not variant.explore().ok else 'MISSED'}")
+    print(conformance().format_text())
