@@ -144,8 +144,6 @@ depth:
     expected_point_count: 3
     start_time: 0.0
     time_unit: s
-evidence_bundle_id: pump_loop_validation_bundle_001
-evidence_registry: ../evidence/project_evidence_registry.yaml
 metadata:
   fixture: shallow_time_varying_parameter_validation
 observed_file: ../observed/clean_observed.yaml

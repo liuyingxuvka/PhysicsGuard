@@ -10,9 +10,7 @@ from pydantic import BaseModel, ValidationError
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.dataset_identity import LogicalDatasetRecordSpec, TestFileRelationIndexSpec
-from physicsguard.schema.evidence_mesh import EvidenceMeshSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
-from physicsguard.schema.model_library import ModelLibraryIndexSpec
 from physicsguard.schema.parameter_coverage import (
     CoveragePolicySpec,
     ParameterCatalogSpec,
@@ -26,7 +24,6 @@ from physicsguard.schema.test_file_contract import (
     TestFileContractSpec,
     TestFileProjectIndexSpec,
 )
-from physicsguard.schema.project_evidence import ProjectEvidenceRegistrySpec
 
 
 SpecT = TypeVar("SpecT", bound=BaseModel)
@@ -72,20 +69,6 @@ def load_model_validation_plan(path: str | Path) -> ModelValidationPlanSpec:
     return load_spec(path, ModelValidationPlanSpec)
 
 
-def load_model_library_index(path: str | Path) -> ModelLibraryIndexSpec:
-    return load_spec(path, ModelLibraryIndexSpec)
-
-
-def load_project_evidence_registry(path: str | Path) -> ProjectEvidenceRegistrySpec:
-    return load_spec(path, ProjectEvidenceRegistrySpec)
-
-
-
-
-def load_evidence_mesh(path: str | Path) -> EvidenceMeshSpec:
-    return load_spec(path, EvidenceMeshSpec)
-
-
 def load_testbench_profile(path: str | Path) -> TestBenchProfileSpec:
     return load_spec(path, TestBenchProfileSpec)
 
@@ -126,15 +109,12 @@ __all__ = [
     "load_coverage_policy",
     "load_data_file_manifest",
     "load_extractor_profile",
-    "load_evidence_mesh",
     "load_logical_dataset_record",
     "load_model_binding",
-    "load_model_library_index",
     "load_model_validation_plan",
     "load_parameter_catalog",
     "load_parameter_mapping_edges",
     "load_parameter_role_matrix",
-    "load_project_evidence_registry",
     "load_spec",
     "load_test_file_contract",
     "load_test_file_project_index",

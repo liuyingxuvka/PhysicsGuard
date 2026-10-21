@@ -39,17 +39,14 @@
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
         "tests/test_evaluator.py",
-        "tests/test_evidence_mesh.py",
         "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
         "tests/test_hierarchy_refinement.py",
         "tests/test_hierarchy_runner.py",
         "tests/test_hierarchy_scoring.py",
         "tests/test_model_dataset_validation.py",
-        "tests/test_model_library.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_project_evidence_registry.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_solver.py",
         "tests/test_task_local_revision.py",
@@ -63,10 +60,7 @@
       ],
       "models": [
         ".flowguard/verification/owners/core/run_checks.py",
-        ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
-        ".flowguard/verification/owners/model_library/run_checks.py",
-        ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
@@ -228,15 +222,13 @@
         "tests/test_dataset_identity.py",
         "tests/test_model_dataset_validation.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_project_evidence_registry.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_test_file_contract_cli.py",
         "tests/test_validation_adequacy.py",
         "tests/test_validation_depth_receipts.py"
       ],
       "models": [
-        ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
-        ".flowguard/verification/owners/validation_depth/run_checks.py"
+        ".flowguard/verification/owners/model_dataset_validation/run_checks.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:dbcabe760a0839f8d871205776c6d17f21e3e694cea356f3e7ad6be06632b2ee"
@@ -278,10 +270,7 @@
       "files": [
         "src/physicsguard/core/contract_diff.py",
         "src/physicsguard/core/data_file_manifest.py",
-        "src/physicsguard/core/evidence_mesh.py",
-        "src/physicsguard/core/model_library.py",
         "src/physicsguard/core/parameter_coverage.py",
-        "src/physicsguard/core/project_evidence.py",
         "src/physicsguard/core/signal_mapping.py",
         "src/physicsguard/core/test_file_contract.py"
       ],
@@ -296,16 +285,13 @@
       "tests": [
         "tests/test_cli.py",
         "tests/test_dataset_identity.py",
-        "tests/test_evidence_mesh.py",
         "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
         "tests/test_hierarchy_refinement.py",
         "tests/test_hierarchy_runner.py",
         "tests/test_hierarchy_scoring.py",
         "tests/test_model_dataset_validation.py",
-        "tests/test_model_library.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_project_evidence_registry.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_test_file_contract_cli.py",
         "tests/test_test_file_contract_core.py",
@@ -315,10 +301,7 @@
       ],
       "models": [
         ".flowguard/verification/owners/core/run_checks.py",
-        ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
-        ".flowguard/verification/owners/model_library/run_checks.py",
-        ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
@@ -369,7 +352,6 @@
         "tests/test_domain_judgment_module_behaviors.py",
         "tests/test_electrochemical_extra_helpers.py",
         "tests/test_evaluator.py",
-        "tests/test_evidence_mesh.py",
         "tests/test_gas_rotating_helpers.py",
         "tests/test_heat_exchanger_helpers.py",
         "tests/test_hierarchy_block_index.py",
@@ -380,7 +362,6 @@
         "tests/test_lookup_modules.py",
         "tests/test_mechanical_helpers.py",
         "tests/test_model_dataset_validation.py",
-        "tests/test_model_library.py",
         "tests/test_module_semantics_batch_mechanically_draftable_01.py",
         "tests/test_module_spec.py",
         "tests/test_observation_spec.py",
@@ -393,7 +374,6 @@
         "tests/test_physical_thermal.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_project_evidence_registry.py",
         "tests/test_residual_builder.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_solver.py",
@@ -411,10 +391,7 @@
       ],
       "models": [
         ".flowguard/verification/owners/core/run_checks.py",
-        ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
-        ".flowguard/verification/owners/model_library/run_checks.py",
-        ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",

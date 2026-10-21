@@ -15,13 +15,7 @@ __all__ = [
     "VariableDeviationDiagnostic",
     "VariableRegistry",
     "check_parameter_coverage",
-    "build_project_evidence_map",
     "check_logical_dataset_record",
-    "check_model_library_index",
-    "check_evidence_bundle",
-    "check_evidence_gaps",
-    "check_evidence_mesh",
-    "check_project_evidence_registry",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
     "check_test_file_project_index",
@@ -29,13 +23,11 @@ __all__ = [
     "field_signature_hash",
     "generate_delimited_manifest",
     "inspect_test_file_contract",
-    "scan_project_evidence_candidates",
     "sha256_file",
     "validate_model_dataset",
     "evaluate_hypothesis_observation",
     "freeze_hypothesis_plan",
     "rank_observation_candidates",
-    "review_project_profile_authority",
     "review_signal_mapping_ledger",
 ]
 
@@ -87,10 +79,6 @@ def __getattr__(name: str):
             "check_test_file_project_index": check_test_file_project_index,
             "inspect_test_file_contract": inspect_test_file_contract,
         }[name]
-    if name == "review_project_profile_authority":
-        from physicsguard.core.project_evidence import review_project_profile_authority
-
-        return review_project_profile_authority
     if name == "review_signal_mapping_ledger":
         from physicsguard.core.signal_mapping import review_signal_mapping_ledger
 
@@ -109,38 +97,6 @@ def __getattr__(name: str):
         from physicsguard.core.model_dataset_validation import validate_model_dataset
 
         return validate_model_dataset
-    if name == "check_model_library_index":
-        from physicsguard.core.model_library import check_model_library_index
-
-        return check_model_library_index
-    if name in {
-        "check_evidence_mesh",
-    }:
-        from physicsguard.core.evidence_mesh import check_evidence_mesh
-
-        return check_evidence_mesh
-    if name in {
-        "check_evidence_bundle",
-        "check_evidence_gaps",
-        "check_project_evidence_registry",
-        "build_project_evidence_map",
-        "scan_project_evidence_candidates",
-    }:
-        from physicsguard.core.project_evidence import (
-            build_project_evidence_map,
-            check_evidence_bundle,
-            check_evidence_gaps,
-            check_project_evidence_registry,
-            scan_project_evidence_candidates,
-        )
-
-        return {
-            "check_evidence_bundle": check_evidence_bundle,
-            "check_evidence_gaps": check_evidence_gaps,
-            "check_project_evidence_registry": check_project_evidence_registry,
-            "build_project_evidence_map": build_project_evidence_map,
-            "scan_project_evidence_candidates": scan_project_evidence_candidates,
-        }[name]
     if name in {
         "AuditEvaluator",
         "ComparisonResult",

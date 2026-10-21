@@ -12,7 +12,6 @@ from scipy.optimize import least_squares
 
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
-from physicsguard.core.project_evidence import check_evidence_gaps
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.test_file_contract import check_test_file_contract
 from physicsguard.core.validation_depth import (
@@ -78,7 +77,6 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
     base_dir = plan_path.parent
     findings: list[ContractFinding] = []
     findings.extend(_contract_findings(plan, base_dir))
-    evidence_gap_summary = _evidence_gap_findings(plan, base_dir, findings)
 
     audit_path = _resolve_path(base_dir, plan.audit_file)
     observed_path = _resolve_path(base_dir, plan.observed_file)
@@ -160,7 +158,6 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
         "envelope_count": len(plan.physical_envelopes),
         "redundant_sensor_check_count": len(plan.redundant_sensor_checks),
         "calibration_enabled": plan.calibration.enabled,
-        "evidence_gaps": evidence_gap_summary,
         "validation_depth_declared": plan.depth is not None,
         "validation_depth_status": depth_evaluation.payload["status"],
         "validation_claim_scope": depth_evaluation.payload["claim_scope"],
@@ -208,57 +205,6 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
         next_actions=next_actions,
         summary=summary,
     )
-
-
-def _evidence_gap_findings(
-    plan: ModelValidationPlanSpec,
-    base_dir: Path,
-    findings: list[ContractFinding],
-) -> dict[str, Any]:
-    if not plan.evidence_registry and not plan.evidence_bundle_id:
-        return {"checked": False, "reason": "no evidence registry or bundle declared"}
-    if not plan.evidence_registry or not plan.evidence_bundle_id:
-        findings.append(
-            ContractFinding(
-                severity="warning",
-                type="validation_evidence_bundle_incomplete",
-                message="validation plan should declare both evidence_registry and evidence_bundle_id",
-                details={
-                    "evidence_registry": plan.evidence_registry,
-                    "evidence_bundle_id": plan.evidence_bundle_id,
-                },
-            )
-        )
-        return {"checked": False, "reason": "evidence registry and bundle id are both required"}
-    report = check_evidence_gaps(_resolve_path(base_dir, plan.evidence_registry), plan.evidence_bundle_id)
-    for gap in report.blocking_gaps:
-        findings.append(
-            ContractFinding(
-                severity="error",
-                type="validation_blocking_evidence_gap",
-                message="blocking project evidence gap prevents validation pass",
-                target=gap.get("target"),
-                details=gap,
-            )
-        )
-    for gap in report.review_gaps:
-        findings.append(
-            ContractFinding(
-                severity="warning",
-                type="validation_review_evidence_gap",
-                message="review project evidence gap must remain visible",
-                target=gap.get("target"),
-                details=gap,
-            )
-        )
-    return {
-        "checked": True,
-        "registry": plan.evidence_registry,
-        "bundle_id": plan.evidence_bundle_id,
-        "blocking_gap_count": len(report.blocking_gaps),
-        "review_gap_count": len(report.review_gaps),
-        "optional_gap_count": len(report.optional_gaps),
-    }
 
 
 def _contract_findings(plan: ModelValidationPlanSpec, base_dir: Path) -> list[ContractFinding]:

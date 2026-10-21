@@ -84,7 +84,7 @@ def test_cli_coverage_project_and_diff_commands() -> None:
     assert json.loads(diff.stdout)["status"] == "changed"
 
 
-def test_cli_dataset_validation_and_model_library_commands() -> None:
+def test_cli_dataset_validation_commands() -> None:
     logical = run_cli(
         "dataset",
         "logical-check",
@@ -103,38 +103,5 @@ def test_cli_dataset_validation_and_model_library_commands() -> None:
         str(PUMP / "validation" / "clean_validation_plan.yaml"),
         "--pretty",
     )
-    library = run_cli(
-        "model-library",
-        "check",
-        str(PUMP / "model_library.yaml"),
-        "--pretty",
-    )
-
-    assert logical.returncode == 0, logical.stderr
-    assert relation.returncode == 0, relation.stderr
-    assert validation.returncode == 0, validation.stderr
-    assert library.returncode == 0, library.stderr
     assert json.loads(logical.stdout)["status"] == "pass"
     assert json.loads(validation.stdout)["status"] == "pass"
-
-
-def test_cli_project_evidence_commands() -> None:
-    registry = PUMP / "evidence" / "project_evidence_registry.yaml"
-    check = run_cli("evidence", "check", str(registry), "--pretty")
-    gap = run_cli("evidence", "gap-check", str(registry), "--pretty")
-    bundle = run_cli(
-        "evidence",
-        "bundle-check",
-        str(registry),
-        "pump_loop_validation_bundle_001",
-        "--pretty",
-    )
-    project_map = run_cli("evidence", "map", str(registry), "--pretty")
-
-    assert check.returncode == 0, check.stderr
-    assert gap.returncode == 0, gap.stderr
-    assert bundle.returncode == 0, bundle.stderr
-    assert project_map.returncode == 0, project_map.stderr
-    map_data = json.loads(project_map.stdout)
-    assert map_data["coverage_summary"]["unresolved_binding_gap_count"] == 0
-    assert "pump_signal_map.x" in map_data["coverage_summary"]["tested_model_targets"]

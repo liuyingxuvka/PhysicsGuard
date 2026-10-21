@@ -103,7 +103,6 @@ Project and model-understanding checks:
 ```powershell
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
-python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
 ```
 
 Test-file and dataset checks:
@@ -115,12 +114,6 @@ python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
 python -m physicsguard.cli dataset logical-check DATASET.yaml --pretty
 python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
-```
-
-Candidate model and reusable-library checks:
-
-```powershell
-python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
 ```
 
 ## Assumption Cards
@@ -182,10 +175,7 @@ Each relation is low fidelity by design. The value is not that it replaces the t
 | [`docs/hierarchical_audit_workflow.md`](./docs/hierarchical_audit_workflow.md) | hierarchy and residual audit route |
 | [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | concrete test-file manifests and binding contracts |
 | [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | dataset validation and bounded calibration |
-| [`docs/project_evidence_registry.md`](./docs/project_evidence_registry.md) | project-level evidence registry |
-| [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | strong parent-child evidence mesh before broad claims |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption-card lifecycle |
-| [`docs/model_library.md`](./docs/model_library.md) | reusable low-fidelity model library |
 
 ## Repository Layout
 
@@ -300,7 +290,6 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 ```powershell
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
-python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
 ```
 
 测试文件和数据集检查：
@@ -312,12 +301,6 @@ python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
 python -m physicsguard.cli dataset logical-check DATASET.yaml --pretty
 python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
-```
-
-候选模型和复用库检查：
-
-```powershell
-python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
 ```
 
 ## 假设卡片
@@ -378,10 +361,7 @@ PhysicsGuard 包含这些低保真审计关系：
 | [`docs/hierarchical_audit_workflow.md`](./docs/hierarchical_audit_workflow.md) | hierarchy 和 residual audit 路线 |
 | [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | 测试文件 manifest 和 binding contract |
 | [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | 数据集验证和有界 calibration |
-| [`docs/project_evidence_registry.md`](./docs/project_evidence_registry.md) | 项目级 evidence registry |
-| [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | broad claim 前的父子证据网格 |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption card 生命周期 |
-| [`docs/model_library.md`](./docs/model_library.md) | 可复用低保真模型库 |
 
 ## 仓库结构
 

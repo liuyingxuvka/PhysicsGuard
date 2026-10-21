@@ -35,16 +35,10 @@ def tracked_example_yaml_files(root: Path) -> list[Path]:
 
 
 def artifact_kind(data: dict[str, Any]) -> str:
-    if "mesh_id" in data and "required_routes" in data and "risk_ledger" in data:
-        return "evidence mesh"
-    if "registry_id" in data and "project_profile" in data and "artifacts" in data:
-        return "project evidence registry"
     if "logical_dataset_id" in data:
         return "logical dataset record"
     if "validation_id" in data and "audit_file" in data:
         return "model-dataset validation plan"
-    if "library_id" in data and "entries" in data:
-        return "model library index"
     if "project_id" in data and "relations" in data:
         return "test-file relation index"
     if "project_id" in data and "test_files" in data:
@@ -78,7 +72,7 @@ def purpose_for(path: Path, data: dict[str, Any]) -> str:
     description = data.get("description")
     if isinstance(description, str) and description.strip():
         return _sentence(description)
-    for key in ("audit_name", "observation_name", "system_name", "closure_id", "mesh_id"):
+    for key in ("audit_name", "observation_name", "system_name"):
         value = data.get(key)
         if isinstance(value, str) and value.strip():
             return _sentence(value.replace("_", " "))
@@ -92,16 +86,10 @@ def purpose_for(path: Path, data: dict[str, Any]) -> str:
 
 def use_hint(path: Path, data: dict[str, Any]) -> str:
     rel = path.as_posix()
-    if "mesh_id" in data and "required_routes" in data and "risk_ledger" in data:
-        return f"python -m physicsguard.cli evidence mesh-check {rel} --pretty"
-    if "registry_id" in data and "project_profile" in data and "artifacts" in data:
-        return f"python -m physicsguard.cli evidence check {rel} --pretty"
     if "logical_dataset_id" in data:
         return f"python -m physicsguard.cli dataset logical-check {rel} --pretty"
     if "validation_id" in data and "audit_file" in data:
         return f"python -m physicsguard.cli validation run {rel} --pretty"
-    if "library_id" in data and "entries" in data:
-        return f"python -m physicsguard.cli model-library check {rel} --pretty"
     if "project_id" in data and "relations" in data:
         return f"python -m physicsguard.cli dataset relation-check {rel} --pretty"
     if "project_id" in data and "test_files" in data:

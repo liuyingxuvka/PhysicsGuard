@@ -8,7 +8,6 @@ test data inside an explicit boundary.
 
 ```text
 contract pass
-  -> project evidence bundle gap-check when declared
   -> exact dataset/schema/testbench/parameter-role identity
   -> current signal-mapping review gate
   -> direct no-fit validation
@@ -55,10 +54,6 @@ review state, and the containing report identity. A legacy plan without
 `depth` remains executable but its receipt is partial and snapshot-only. One
 or two scalar checks never imply temporal behavior or general model
 understanding.
-
-When a validation plan declares `evidence_registry` and `evidence_bundle_id`,
-blocking project evidence gaps prevent validation pass. Review and optional gaps
-remain visible in the validation claim boundary.
 
 If the project is listed in an external database ledger, report the current
 validation status, safe claim boundary, and remaining gaps as provider evidence

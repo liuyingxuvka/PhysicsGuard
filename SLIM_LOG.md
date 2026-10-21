@@ -431,3 +431,14 @@
 - `python <本动作核验脚本> map-check`：exit 0；0.833秒；check: 0 error(s), 8 warning(s), 0 info。
 - `python <本动作核验脚本> models`：exit 0；50.943秒；models: 8 passed, 0 failed。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-47 退役证据账本与模型库及对应自建模型
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.168秒；registry/mesh/library sources, routes and receipt-only models removed; native contracts, signal mapping and four real models retained。
+- `python <本动作核验脚本> exports-names-cli-native-scan`：exit 0；3.588秒；retired CLIs exit2; active references zero; real contract and validation PASS; native signal_mapping byte unchanged。
+- `python <本动作核验脚本> collect`：exit 0；6.816秒；849 tests collected in 5.50s。
+- `python <本动作核验脚本> focused-tests`：exit 0；40.276秒；71 passed in 39.28s。
+- `python <本动作核验脚本> map-check`：exit 0；2.021秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；1.925秒；models: 4 passed, 0 failed。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
