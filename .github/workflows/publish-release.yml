@@ -49,13 +49,11 @@ jobs:
         run: |
           python - <<'PY'
           import ast
-          from email.parser import Parser
           import json
           import os
           from pathlib import Path
           import re
           import subprocess
-          import sys
           import tempfile
           import time
           import tomllib
@@ -116,27 +114,22 @@ jobs:
           assert api("git/ref/heads/main")["object"]["sha"].lower() == source_sha, "main advanced; publish its final frozen source instead"
           existing_tag = tag_commit(tag)
           assert existing_tag in (None, source_sha), "existing tag points to a different commit"
-          expected_assets = []
           existing = api(f"releases/tags/{tag}", missing_ok=True)
           if existing is not None:
               assert existing_tag == source_sha and existing["tag_name"] == tag, "existing release tag identity mismatch"
               assert not existing["draft"] and not existing["prerelease"], "existing release is not stable; do not overwrite it automatically"
-              assets = {asset["name"]: asset for asset in existing["assets"]}
-              assert all(name in assets and assets[name]["size"] > 0 for name in expected_assets), "existing release lacks expected assets; do not clobber or silently repair it"
               print(f"Existing stable release is unchanged: {existing['html_url']}")
               raise SystemExit(0)
 
           with tempfile.TemporaryDirectory(prefix="physicsguard-release-", dir=os.environ["RUNNER_TEMP"]) as temporary:
               work = Path(temporary)
-              assets = []
-
               notes += f"\n\nSource commit: `{source_sha}`.\n"
               if ci_url:
                   notes += f"\n[Successful CI for this source]({ci_url}).\n"
               notes_path = work / "release-notes.md"
               notes_path.write_text(notes, encoding="utf-8")
               # This is the sole publication action. gh creates a missing tag at --target.
-              command = ["gh", "release", "create", tag, *map(str, assets), "--repo", repository,
+              command = ["gh", "release", "create", tag, "--repo", repository,
                          "--target", source_sha, "--title", f"PhysicsGuard {tag}", "--notes-file", str(notes_path),
                          "--draft=false", "--prerelease=false", "--latest"]
               if existing_tag is not None:
@@ -145,6 +138,5 @@ jobs:
           assert tag_commit(tag) == source_sha, "published tag does not resolve to the selected source"
           published = api(f"releases/tags/{tag}")
           assert published["tag_name"] == tag and not published["draft"] and not published["prerelease"], "published release is not stable"
-          assert set(expected_assets) <= {asset["name"] for asset in published["assets"]}, "published release assets are incomplete"
           print(published["html_url"])
           PY
