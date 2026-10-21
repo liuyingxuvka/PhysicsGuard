@@ -31,9 +31,6 @@ def test_project_audit_reports_missing_record(tmp_path: Path) -> None:
 
 def test_project_adopt_writes_record_and_log(tmp_path: Path) -> None:
     (tmp_path / "AGENTS.md").write_text("rules", encoding="utf-8")
-    skill = tmp_path / "skill" / "physicsguard-ai-debugging"
-    skill.mkdir(parents=True)
-    (skill / "SKILL.md").write_text("name: physicsguard-ai-debugging", encoding="utf-8")
 
     result = adopt_project(tmp_path)
     audit = audit_project(tmp_path)
@@ -61,9 +58,6 @@ def test_project_adopt_writes_record_and_log(tmp_path: Path) -> None:
 
 def test_project_audit_rejects_retired_navigation_policy(tmp_path: Path) -> None:
     (tmp_path / "AGENTS.md").write_text("rules", encoding="utf-8")
-    skill = tmp_path / "skill" / "physicsguard-ai-debugging"
-    skill.mkdir(parents=True)
-    (skill / "SKILL.md").write_text("name: physicsguard-ai-debugging", encoding="utf-8")
     adopt_project(tmp_path)
     project_path = tmp_path / ".physicsguard" / "project.yaml"
     payload = yaml.safe_load(project_path.read_text(encoding="utf-8"))

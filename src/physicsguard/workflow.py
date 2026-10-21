@@ -86,9 +86,6 @@ def project_record_payload(root: Path) -> dict[str, Any]:
         },
         "paths": {
             "adoption_log": DEFAULT_ADOPTION_LOG.as_posix(),
-            "module_equation_ledger": DEFAULT_MODULE_LEDGER.as_posix(),
-            "main_skill": "skill/physicsguard-ai-debugging/SKILL.md",
-            "installed_skill_root": "~/.codex/skills",
         },
         "policy": {
             "require_model_understanding_preflight": True,
@@ -200,15 +197,12 @@ def audit_project(root: Path) -> dict[str, Any]:
         )
 
     paths = data.get("paths") if isinstance(data.get("paths"), dict) else {}
-    for key in ("adoption_log", "main_skill"):
+    for key in ("adoption_log",):
         value = paths.get(key)
         if not isinstance(value, str) or not value.strip():
             errors.append(f"paths.{key} must be a non-empty path")
         elif not (root / value).exists():
             errors.append(f"paths.{key} does not exist: {value}")
-    ledger = paths.get("module_equation_ledger")
-    if isinstance(ledger, str) and ledger.strip() and not (root / ledger).exists():
-        warnings.append(f"module equation ledger not found yet: {ledger}")
 
     policy = data.get("policy")
     if not isinstance(policy, dict):
