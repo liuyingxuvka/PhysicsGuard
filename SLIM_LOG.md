@@ -288,3 +288,12 @@
 - `python <本动作核验脚本> models`：exit 0；40.603秒；models: 9 passed, 0 failed。
 - `python <本动作核验脚本> expected-metrics`：exit 0；0.029秒；探索258条序列，0不变量违反，0可达性失败；9模型全部通过。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-32 移除退役模型快照与孤儿预检文件
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> inventory-references`：exit 0；0.082秒；.flowguard跟踪文件19；现行残留仅授权保留的1条普通模型说明，原始扫描另存。
+- `python <本动作核验脚本> map-check`：exit 0；0.405秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> map-read`：exit 0；0.212秒；  Explicit external-tool example helper scripts。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：同步发布版本按用户覆盖为PhysicsGuard0.15.16先于FlowGuard0.70.7；本动作只在隔离baseline工具链执行删除与验收，发布由root统筹。
