@@ -698,3 +698,17 @@
 - `python <本动作核验脚本> map-check`：exit 0；0.748秒；check: 0 error(s), 4 warning(s), 0 info。
 - 适配：根复核统一contract在baselineFG0.70.6和新版都支持，授权顺序提前执行至PG67；首次新版验证留PG68，不改本动作目的。
 - 适配：实际缺合同反例在独立tracked源码副本运行，conformance12/13且精确missing_contract；活动src/examples字节不变，避免git restore覆盖。
+
+### PG-67 测试文件模型迁移合约并验证原生锚点真实执行
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> contract-migration`：exit 0；0.07秒；PG-67 test_file_contract model bytes preserved as prefix; contract appended; map references 3。
+- `python <本动作核验脚本> contract-native-replay`：exit 0；1.097秒；conformance: 13/13 model cases match the real code。
+- `python <本动作核验脚本> known-bad-native-and-anchor`：exit 0；5.448秒；real native bad variant rejected by conformance; active source byte unchanged。
+- `python <本动作核验脚本> models`：exit 0；18.973秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> anchors`：exit 0；0.443秒；anchors ok。
+- `python <本动作核验脚本> map-check`：exit 0；0.532秒；check: 0 error(s), 4 warning(s), 0 info。
+- `python <本动作核验脚本> cleanup-and-layout`：exit 0；0.046秒；4 contract models + map =5 trackedfiles; no runners/owners/verification; removed only empty directories; exact foreign bytecode preserved。
+- 适配：根复核统一contract在baselineFG0.70.6和新版都支持，授权顺序提前执行至PG67；首次新版验证留PG68，不改本动作目的。
+- 适配：只删除确认空的旧模型目录；未删除任何非空或外来缓存，精确旧pyc size/mtime保持。
+- 适配：原生损坏对照在独立tracked源码副本：conformance11/13且FlowGuard单模型exit1，并精确报告_manifest_findings未执行；活动src不作临时sed/git restore。
