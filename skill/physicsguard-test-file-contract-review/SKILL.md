@@ -14,7 +14,7 @@ Accept this route only when:
 
 Reject or hand off when:
 
-- No concrete test-data file is in scope. Handoff: `physicsguard-model-understanding-preflight`.
+- No concrete test-data file is in scope. Handoff: `physicsguard-ai-debugging`.
 - Current file contracts pass and model/dataset consistency is now the request. Handoff: `physicsguard-model-dataset-validation`.
 
 ## Minimum workflow

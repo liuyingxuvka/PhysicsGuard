@@ -249,3 +249,9 @@
 - `python <本动作核验脚本> entry-plan`：exit 0；0.227秒；physicsguard-ai-debugging 379；直接调试入口、六项移交与安装计划正确；现行协调术语无残留。
 - `python <本动作核验脚本> consumer-tests`：exit 0；3.332秒；6 passed in 0.32s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-27 统一测试文件移交并标注替代检查
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> native-project-check`：exit 0；1.609秒；见同编号JSON/日志中的结构化结果。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

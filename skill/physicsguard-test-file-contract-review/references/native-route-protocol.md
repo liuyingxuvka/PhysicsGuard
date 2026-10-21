@@ -59,13 +59,13 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
    python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
    ```
 
-7. Run coverage-only checks when debugging field coverage:
+7. Run the coverage-only check only when step 6 was not run; step 6 already includes it:
 
    ```powershell
    python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
    ```
 
-8. Run project-level checks when multiple files are in scope:
+8. When several files are in scope, run this once instead of step 6 for each file; it checks every listed contract:
 
    ```powershell
    python -m physicsguard.cli testfile project-check INDEX.yaml --pretty
