@@ -5,15 +5,12 @@ from pathlib import Path
 
 import pytest
 
-from physicsguard.cli import main
 from physicsguard.core.physical_blueprint_bundle import (
     COMPACT_PROJECTION_BYTE_LIMIT,
     DEEP_PROJECTION_BYTE_LIMIT,
     PhysicalBlueprintBundleError,
     build_module_behavior_contract_index,
     build_physical_blueprint_export_bundle,
-    load_physical_blueprint_export_bundle,
-    materialize_physical_blueprint_export_bundle,
     query_physical_blueprint_export_bundle,
 )
 from physicsguard.schema.physical_blueprint_bundle import canonical_portable_bytes
@@ -158,22 +155,6 @@ def _module_index(*, large: bool = False):
     return build_module_behavior_contract_index(review, registry)
 
 
-def test_retired_disk_materialization_is_hard_blocked(
-    complete_physical_blueprint,
-    tmp_path: Path,
-) -> None:
-    _, review, bundle = _reviewed_bundle(complete_physical_blueprint)
-    output = tmp_path / "bundle.json"
-
-    with pytest.raises(PhysicalBlueprintBundleError) as materialize_error:
-        materialize_physical_blueprint_export_bundle(bundle, output)
-    assert materialize_error.value.category == "native_directory_only"
-    assert not output.exists()
-
-    with pytest.raises(PhysicalBlueprintBundleError) as load_error:
-        load_physical_blueprint_export_bundle(output)
-    assert load_error.value.category == "native_directory_only"
-    assert review.status == bundle.review.status
 
 
 def test_default_projection_is_compact_and_never_contains_the_full_bundle(
@@ -351,60 +332,3 @@ def test_unknown_id_and_oversized_deep_projection_fail_without_full_bundle_fallb
     assert blocked.gaps[0].code == "portable_projection_budget_exceeded"
     assert "behavior_contract" not in blocked.payload
     assert blocked.projection_canonical_bytes <= DEEP_PROJECTION_BYTE_LIMIT
-
-
-def test_retired_disk_loader_does_not_read_an_existing_file(
-    complete_physical_blueprint,
-    tmp_path: Path,
-) -> None:
-    _, _, bundle = _reviewed_bundle(complete_physical_blueprint)
-    existing = tmp_path / "physical-dna.json"
-    existing.write_bytes(canonical_portable_bytes(bundle))
-
-    with pytest.raises(PhysicalBlueprintBundleError) as error:
-        load_physical_blueprint_export_bundle(existing)
-    assert error.value.category == "native_directory_only"
-    assert existing.is_file()
-
-
-def test_cli_disk_routes_report_native_directory_only_without_writing(
-    complete_physical_blueprint,
-    tmp_path: Path,
-    capsys,
-) -> None:
-    blueprint, base_dir = complete_physical_blueprint()
-    blueprint_path = base_dir / "blueprint.json"
-    blueprint_path.write_text(
-        json.dumps(blueprint.model_dump(mode="json", exclude_none=False), sort_keys=True),
-        encoding="utf-8",
-    )
-    bundle_path = tmp_path / "handoff" / "bundle.json"
-
-    assert main(
-        [
-            "blueprint",
-            "bundle-export",
-            str(blueprint_path),
-            "--target-authority",
-            str(complete_physical_blueprint.target_inventory_authority_path),
-            "--output",
-            str(bundle_path),
-        ]
-    ) == 3
-    compact = json.loads(capsys.readouterr().out)
-    assert compact["code"] == "native_directory_only"
-    assert compact["status"] == "blocked"
-    assert not bundle_path.exists()
-
-    assert main(
-        [
-            "blueprint",
-            "bundle-query",
-            str(bundle_path),
-            "--element",
-            "pipe",
-        ]
-    ) == 3
-    detail = json.loads(capsys.readouterr().out)
-    assert detail["code"] == "native_directory_only"
-    assert detail["status"] == "blocked"

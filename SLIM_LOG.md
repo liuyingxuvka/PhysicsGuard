@@ -207,3 +207,12 @@
 - `python <本动作核验脚本> focused-tests`：exit 0；16.821秒；12 passed in 14.97s。
 - `python <本动作核验脚本> collect`：exit 0；3.524秒；1036 tests collected in 1.45s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-22 删除退役蓝图磁盘桩与不可达实现
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> exports-cli-references`：exit 0；3.195秒；exports ok；唯一blueprint review保留；退役export明确exit2；所选源码/测试/脚本零残留。
+- `python <本动作核验脚本> map-check`：exit 0；1.694秒；check: 0 error(s), 9 warning(s), 0 info。
+- `python <本动作核验脚本> focused-tests`：exit 0；35.234秒；35 passed in 32.08s。
+- `python <本动作核验脚本> collect`：exit 0；3.531秒；1030 tests collected in 1.26s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

@@ -372,49 +372,6 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     blueprint_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    blueprint_export = blueprint_subparsers.add_parser(
-        "bundle-export",
-        help="retired: physical-DNA authority is directory-native and in-memory only",
-        description=(
-            "Portable physical-DNA disk export is retired. The canonical authority "
-            "remains the native blueprint directory and review result."
-        ),
-    )
-    blueprint_export.add_argument("blueprint", type=Path)
-    blueprint_export.add_argument("--target-authority", required=True, type=Path)
-    blueprint_export.add_argument(
-        "--material-root",
-        type=Path,
-        help=(
-            "explicit root containing content-addressed target material; required "
-            "when artifact_root is explicit_material_root"
-        ),
-    )
-    blueprint_export.add_argument("--output", required=True, type=Path)
-    blueprint_export.add_argument(
-        "--module-review",
-        type=Path,
-        help="optional exact full module-ledger review JSON; requires --runtime-port-registry",
-    )
-    blueprint_export.add_argument(
-        "--runtime-port-registry",
-        type=Path,
-        help="optional exact runtime-port registry YAML/JSON; requires --module-review",
-    )
-    blueprint_export.add_argument("--pretty", action="store_true")
-
-    blueprint_query = blueprint_subparsers.add_parser(
-        "bundle-query",
-        help="retired: portable physical-DNA disk bundle queries are not a public route",
-    )
-    blueprint_query.add_argument("bundle", type=Path)
-    blueprint_selector = blueprint_query.add_mutually_exclusive_group()
-    blueprint_selector.add_argument("--module")
-    blueprint_selector.add_argument("--element")
-    blueprint_selector.add_argument("--case")
-    blueprint_selector.add_argument("--impact")
-    blueprint_selector.add_argument("--reverse")
-    blueprint_query.add_argument("--pretty", action="store_true")
 
     return parser
 
@@ -843,51 +800,8 @@ def blueprint_review_command(
     return 3
 
 
-def blueprint_bundle_export_command(
-    blueprint_path: Path,
-    target_authority_path: Path,
-    output_path: Path,
-    *,
-    material_root: Path | None = None,
-    module_review_path: Path | None = None,
-    runtime_port_registry_path: Path | None = None,
-    pretty: bool = False,
-) -> int:
-    _print_json(
-        {
-            "artifact_type": "physicsguard_native_directory_only",
-            "status": "blocked",
-            "code": "native_directory_only",
-            "route": "blueprint.bundle-export",
-            "message": "Portable physical-DNA disk export is retired; the native blueprint directory and in-memory review are authoritative.",
-            "output": str(output_path),
-            "safe_claim": "No disk bundle was written and no portable-DNA claim is licensed.",
-        },
-        pretty,
-    )
-    return 3
 
 
-def blueprint_bundle_query_command(
-    bundle_path: Path,
-    *,
-    selector_kind: str = "status",
-    selector_id: str | None = None,
-    pretty: bool = False,
-) -> int:
-    _print_json(
-        {
-            "artifact_type": "physicsguard_native_directory_only",
-            "status": "blocked",
-            "code": "native_directory_only",
-            "route": "blueprint.bundle-query",
-            "message": "Portable physical-DNA disk bundle queries are retired; query the native blueprint review in place.",
-            "bundle": str(bundle_path),
-            "safe_claim": "No disk bundle was read and no portable-DNA claim is licensed.",
-        },
-        pretty,
-    )
-    return 3
 
 
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
@@ -1004,29 +918,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.target_authority,
                     args.material_root,
                     args.pretty,
-                )
-            if args.blueprint_command == "bundle-export":
-                return blueprint_bundle_export_command(
-                    args.blueprint,
-                    args.target_authority,
-                    args.output,
-                    material_root=args.material_root,
-                    module_review_path=args.module_review,
-                    runtime_port_registry_path=args.runtime_port_registry,
-                    pretty=args.pretty,
-                )
-            if args.blueprint_command == "bundle-query":
-                selectors = [
-                    (name, getattr(args, name))
-                    for name in ("module", "element", "case", "impact", "reverse")
-                    if getattr(args, name) is not None
-                ]
-                selector_kind, selector_id = selectors[0] if selectors else ("status", None)
-                return blueprint_bundle_query_command(
-                    args.bundle,
-                    selector_kind=selector_kind,
-                    selector_id=selector_id,
-                    pretty=args.pretty,
                 )
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)

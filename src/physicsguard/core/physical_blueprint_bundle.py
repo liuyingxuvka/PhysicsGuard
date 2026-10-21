@@ -325,78 +325,8 @@ def build_physical_blueprint_export_bundle(
         ) from exc
 
 
-def materialize_physical_blueprint_export_bundle(
-    bundle: PhysicalBlueprintExportBundle,
-    path: str | Path,
-) -> int:
-    """Reject retired disk materialization; composition remains in-memory only."""
-
-    raise PhysicalBlueprintBundleError(
-        "native_directory_only",
-        "portable physical-DNA materialization is retired; keep the canonical blueprint and review in the native directory",
-    )
-
-    # Historical implementation intentionally unreachable; retained only as
-    # an audit reference for the old disk route.
-    output_path = Path(path)
-    if output_path.suffix.lower() != ".json":
-        raise PhysicalBlueprintBundleError(
-            "unsupported_bundle_format",
-            "portable physical blueprint bundles use only the current canonical .json format",
-        )
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    content = canonical_portable_bytes(bundle)
-    output_path.write_bytes(content)
-    return len(content)
 
 
-def load_physical_blueprint_export_bundle(
-    path: str | Path,
-) -> PhysicalBlueprintExportBundle:
-    """Reject retired disk loading; only in-memory bundle queries remain internal."""
-
-    raise PhysicalBlueprintBundleError(
-        "native_directory_only",
-        "portable physical-DNA disk loading is retired; query the native blueprint review in place",
-    )
-
-    # Historical implementation intentionally unreachable; retained only as
-    # an audit reference for the old disk route.
-    bundle_path = Path(path)
-    if bundle_path.suffix.lower() != ".json":
-        raise PhysicalBlueprintBundleError(
-            "unsupported_bundle_format",
-            "portable physical blueprint bundles use only the current canonical .json format",
-        )
-    try:
-        payload = json.loads(bundle_path.read_text(encoding="utf-8"))
-    except OSError as exc:
-        raise PhysicalBlueprintBundleError(
-            "bundle_read_error",
-            f"failed to read portable bundle '{bundle_path}': {exc}",
-        ) from exc
-    except json.JSONDecodeError as exc:
-        raise PhysicalBlueprintBundleError(
-            "malformed_bundle",
-            f"malformed portable bundle '{bundle_path}': {exc}",
-        ) from exc
-    if not isinstance(payload, dict):
-        raise PhysicalBlueprintBundleError(
-            "invalid_bundle_root",
-            "portable bundle root must be an object",
-        )
-    if payload.get("schema_version") != PHYSICAL_BLUEPRINT_EXPORT_BUNDLE_SCHEMA:
-        raise PhysicalBlueprintBundleError(
-            "unsupported_bundle_schema",
-            f"expected {PHYSICAL_BLUEPRINT_EXPORT_BUNDLE_SCHEMA!r}",
-        )
-    try:
-        return PhysicalBlueprintExportBundle.model_validate(payload)
-    except ValidationError as exc:
-        raise PhysicalBlueprintBundleError(
-            "invalid_bundle_contract",
-            f"invalid portable bundle '{bundle_path}': {exc}",
-        ) from exc
 
 
 def query_physical_blueprint_export_bundle(
@@ -1012,7 +942,5 @@ __all__ = [
     "PhysicalBlueprintBundleError",
     "build_module_behavior_contract_index",
     "build_physical_blueprint_export_bundle",
-    "load_physical_blueprint_export_bundle",
-    "materialize_physical_blueprint_export_bundle",
     "query_physical_blueprint_export_bundle",
 ]

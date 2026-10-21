@@ -250,23 +250,17 @@ def __getattr__(name: str):
     if name in {
         "build_module_behavior_contract_index",
         "build_physical_blueprint_export_bundle",
-        "load_physical_blueprint_export_bundle",
-        "materialize_physical_blueprint_export_bundle",
         "query_physical_blueprint_export_bundle",
     }:
         from physicsguard.core.physical_blueprint_bundle import (
             build_module_behavior_contract_index,
             build_physical_blueprint_export_bundle,
-            load_physical_blueprint_export_bundle,
-            materialize_physical_blueprint_export_bundle,
             query_physical_blueprint_export_bundle,
         )
 
         return {
             "build_module_behavior_contract_index": build_module_behavior_contract_index,
             "build_physical_blueprint_export_bundle": build_physical_blueprint_export_bundle,
-            "load_physical_blueprint_export_bundle": load_physical_blueprint_export_bundle,
-            "materialize_physical_blueprint_export_bundle": materialize_physical_blueprint_export_bundle,
             "query_physical_blueprint_export_bundle": query_physical_blueprint_export_bundle,
         }[name]
     if name in {
