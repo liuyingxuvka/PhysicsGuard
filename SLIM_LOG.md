@@ -345,3 +345,16 @@
 - `python <本动作核验脚本> readme-parser-rows`：exit 0；0.326秒；readme commands ok：24条只做真实parser校验，未冒称全部执行；版本仅当前三处/版本表/绑定示例，历史日志单列。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：外部核验首次误要求版本表含badge字面量；实际为两条标准版本表行，改按精确行核验，产品内容未为核验改动；原始失败日志保留。
+
+### PG-39 核对缩小的既存依赖环并确认地图
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> descriptions-and-debts`：exit 1；0.966秒；见同编号JSON/日志中的结构化结果。
+- `python <本动作核验脚本> lint-after`：exit 1；0.738秒；lint: 2 error(s), 20 warning(s), 19 info。
+- `python <本动作核验脚本> descriptions-and-debts-corrected`：exit 0；0.626秒；actual two existing dependency cycles precisely matched; four descriptions updated; fingerprints untouched。
+- `python <本动作核验脚本> lint-after-corrected`：exit 0；0.628秒；lint: 0 error(s), 19 warning(s), 21 info。
+- `python <本动作核验脚本> confirm-map`：exit 0；3.58秒；eight changed owners reviewed and CLI-confirmed; fingerprints only written by FlowGuard。
+- `python <本动作核验脚本> strict-map`：exit 0；0.3秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> release-gate`：exit 0；26.298秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：外部核验脚本首次按单空格解析CLI对齐输出失败；修正为任意空白并保留失败日志，实际两个既存SCC未变，后续lint无错误。。
