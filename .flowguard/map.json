@@ -187,7 +187,7 @@
         "tests/test_wastewater_starter_pack.py"
       ],
       "models": [
-        ".flowguard/verification/owners/interval_diagnosability/run_checks.py",
+        ".flowguard/models/physicsguard_interval_diagnosability_model.py",
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",

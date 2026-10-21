@@ -673,3 +673,16 @@
 - 适配：根复核统一contract在baselineFG0.70.6和新版都支持，授权顺序提前执行至PG67；首次新版验证留PG68，不改本动作目的。
 - 适配：外部证据目录尚未建立导致首次脚本写入/调用失败，源码未动；建立目录后顺序执行，保留并关联失败记录；首次models是迁移前检查，迁移后另有明确通过证据。
 - 适配：破坏性验收在独立tracked源码副本运行，不对活动源码sed/git restore；实际conformance精确17/18并命中partial_snapshot，活动src字节不变。
+
+### PG-65 区间诊断模型迁移统一合约并保留真实反例重放
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> contract-migration`：exit 0；0.078秒；PG-65 interval_diagnosability model bytes preserved as prefix; contract appended; map references 1。
+- `python <本动作核验脚本> contract-native-replay`：exit 0；0.262秒；conformance: 3/3 model cases match the real code。
+- `python <本动作核验脚本> known-bad-native`：exit 0；0.324秒；real native bad variant rejected by conformance; active source byte unchanged。
+- `python <本动作核验脚本> models`：exit 0；17.906秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> anchors`：exit 0；0.334秒；anchors ok。
+- `python <本动作核验脚本> map-check`：exit 0；0.356秒；check: 0 error(s), 4 warning(s), 0 info。
+- 适配：根复核统一contract在baselineFG0.70.6和新版都支持，授权顺序提前执行至PG67；首次新版验证留PG68，不改本动作目的。
+- 适配：原生损坏对照在独立当前tracked源码副本运行，精确conformance2/3且命中crossing interval；活动src不作临时sed或git restore。
+- 提交后完整检查：`python -m pytest -q`：exit 0；861 passed in 50.67s；命令总耗时 51.361 秒。检查结束后仅补记本行，无业务源码变化。
