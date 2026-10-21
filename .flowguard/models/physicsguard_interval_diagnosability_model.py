@@ -203,6 +203,22 @@ def scenarios() -> tuple[Scenario, ...]:
             workflow=current,
             invariants=INVARIANTS,
         ),
+        Scenario(
+            name="PGD04_outside_fail",
+            description="An interval wholly outside acceptance robustly fails.",
+            initial_state=DiagnosticState(),
+            external_input_sequence=(DiagnosticRequest("outside"),),
+            expected=ScenarioExpectation(
+                expected_status="ok",
+                required_trace_labels=(
+                    "interval_robust_fail",
+                    "diagnosis_isolable",
+                ),
+                summary="outside interval fails without truth claim",
+            ),
+            workflow=current,
+            invariants=INVARIANTS,
+        ),
     )
 
 
@@ -304,6 +320,7 @@ REAL_CASES = {
     "PGD01_inside_pass": (_interval({"lower": -0.2, "upper": 0.4}), _signatures(0.0, 5.0)),
     "PGD02_crossing_indeterminate": (_interval({"lower": 0.5, "upper": 1.5}), _signatures(0.0, 0.5, 5.0)),
     "PGD03_indistinguishable_visible": (_interval(None), _signatures(0.0, 0.0)),
+    "PGD04_outside_fail": (_interval({"lower": 1.5, "upper": 2.0}), _signatures(0.0, 5.0)),
 }
 
 

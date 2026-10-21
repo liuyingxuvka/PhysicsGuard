@@ -794,3 +794,23 @@
 - 适配：新发布版本按用户要求仍为0.15.16，最低FlowGuard仍0.70.6；使用正式安装的私人FG0.70.7环境而非PYTHONPATH。
 - 适配：新FG installed105个.py逐字节等于bc8c519批准源码快照，无FG editable/.pth；保留12条非阻断known-bad coverage警告，不扩测试消警告。
 - 提交后完整检查：`python -m pytest -q`：exit 0；863 passed in 60.86s (0:01:00)；命令总耗时 62.16 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-74 补全区间越界失败分支并在两版工具链证实模型能检出破坏
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> before-old-model-misses-outside`：exit 0；1.391秒；BEFORE control: deliberately broken outside branch is missed by old3-case model (3/3 +singlemodelPASS); active source untouched。
+- `python <本动作核验脚本> add-outside-model-case`：exit 0；0.05秒；interval model covers robust_fail。
+- `python <本动作核验脚本> contract-native-replay`：exit 0；0.43秒；conformance: 4/4 model cases match the real code。
+- `python <本动作核验脚本> outside-native-bad-baseline`：exit 0；20.996秒；real native bad variant rejected by conformance; active source byte unchanged。
+- `python <本动作核验脚本> outside-native-bad-new-fg`：exit 0；23.044秒；real native bad variant rejected by conformance; active source byte unchanged。
+- `python <本动作核验脚本> preservation`：exit 0；0.069秒；original3scenarios/native/domainclasses/invariants/badvariants/anchors unchanged; only4thoutside coverage and changelog added。
+- `python <本动作核验脚本> anchors`：exit 0；2.8秒；anchors ok。
+- `python <本动作核验脚本> version-test`：exit 0；0.405秒；1 passed in 0.03s。
+- `python <本动作核验脚本> baseline-strict`：exit 0；0.351秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> baseline-lint`：exit 0；0.723秒；lint: 0 error(s), 10 warning(s), 20 info。
+- `python <本动作核验脚本> baseline-release`：exit 0；22.521秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
+- `python <本动作核验脚本> new-fg-strict`：exit 0；4.163秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> new-fg-release`：exit 0；31.883秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
+- 适配：先在独立tracked源码副本确认旧3场景漏掉人为改坏outside分支；新4场景后同一原生损坏在FG0.70.6/0.70.7均为conformance3/4、models3pass1fail，活动src逐字节未改，不执行宽git restore。
+- 适配：正常两版release均4/4含模型检查，不为相同正常源另重复一轮map models；保留12条新版非阻断coverage提示，版本仍用户指定0.15.16。
+- 提交后完整检查：`python -m pytest -q`：exit 0；863 passed in 71.34s (0:01:11)；命令总耗时 71.929 秒。检查结束后仅补记本行，无业务源码变化。
