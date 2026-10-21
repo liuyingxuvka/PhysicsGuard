@@ -3,24 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-import importlib.metadata
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from physicsguard import __version__
 
 
-PHYSICSGUARD_REPOSITORY = "https://github.com/liuyingxuvka/PhysicsGuard"
-PHYSICSGUARD_WORKFLOW_SCHEMA_VERSION = "1.0"
-DEFAULT_PROJECT_RECORD = Path(".physicsguard") / "project.yaml"
-DEFAULT_ADOPTION_LOG = Path("docs") / "physicsguard_adoption_log.md"
-DEFAULT_MODULE_LEDGER = Path(".physicsguard") / "module_equation_ledger.yaml"
-MODULE_SEMANTIC_LEDGER_SCHEMA = "physicsguard.module_semantics_ledger.v2"
-MODULE_SEMANTIC_REGISTRY_DENOMINATOR = 152
-MODULE_SEMANTIC_PHYSICAL_DENOMINATOR = 151
 
 
 @dataclass(frozen=True)
@@ -64,192 +53,6 @@ class WorkflowReview:
             "next_actions": list(self.next_actions),
             "summary": self.summary,
         }
-
-
-def installed_physicsguard_version() -> str:
-    try:
-        return importlib.metadata.version("physicsguard")
-    except importlib.metadata.PackageNotFoundError:
-        return __version__
-
-
-def project_record_payload(root: Path) -> dict[str, Any]:
-    version = installed_physicsguard_version()
-    return {
-        "physicsguard": {
-            "repository": PHYSICSGUARD_REPOSITORY,
-            "adopted_package_version": version,
-            "schema_version": PHYSICSGUARD_WORKFLOW_SCHEMA_VERSION,
-            "last_verified_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "last_verified_by": "PhysicsGuard project-adopt",
-            "rules_path": "AGENTS.md",
-        },
-        "paths": {
-            "adoption_log": DEFAULT_ADOPTION_LOG.as_posix(),
-        },
-        "policy": {
-            "require_model_understanding_preflight": True,
-            "require_external_model_intake_for_observed_debugging": True,
-            "require_test_file_contract_for_test_data": True,
-            "require_project_evidence_registry_for_project_maps": True,
-            "require_project_profile_for_project_evidence": True,
-            "require_binding_expectations_for_project_evidence": True,
-            "require_model_dataset_validation_for_validated_reuse": True,
-            "require_explicit_scope_before_cross_project_comparison": True,
-            "require_signal_mapping_review_before_fault_claims": True,
-            "require_closure_before_localization_claim": True,
-            "require_project_closure_before_broad_claims": True,
-            "require_current_module_semantic_ledger": True,
-            "module_semantic_ledger_schema": MODULE_SEMANTIC_LEDGER_SCHEMA,
-            "module_semantic_registry_denominator": MODULE_SEMANTIC_REGISTRY_DENOMINATOR,
-            "module_semantic_physical_denominator": MODULE_SEMANTIC_PHYSICAL_DENOMINATOR,
-            "dummy_module_physical_claim_licensed": False,
-        },
-        "skill_routes": [
-            "physicsguard-ai-debugging",
-            "physicsguard-project-adoption",
-            "physicsguard-model-understanding-preflight",
-            "physicsguard-test-file-contract-review",
-            "physicsguard-project-evidence-registry",
-            "physicsguard-model-dataset-validation",
-            "physicsguard-signal-mapping-review",
-            "physicsguard-audit-closure",
-            "physicsguard-candidate-model-blueprint",
-            "physicsguard-model-library",
-        ],
-    }
-
-
-def adopt_project(root: Path, action: str = "adopt") -> dict[str, Any]:
-    root = root.resolve()
-    record_path = root / DEFAULT_PROJECT_RECORD
-    record_path.parent.mkdir(parents=True, exist_ok=True)
-    payload = project_record_payload(root)
-    if action == "upgrade":
-        payload["physicsguard"]["last_verified_by"] = "PhysicsGuard project-upgrade"
-    record_path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
-
-    log_path = root / DEFAULT_ADOPTION_LOG
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    if not log_path.exists():
-        log_path.write_text(
-            "# PhysicsGuard Adoption Log\n\n"
-            "This log records project-level PhysicsGuard workflow adoption, audits, "
-            "closure evidence, and validation notes. It does not replace runtime "
-            "PhysicsGuard CLI reports, FlowGuard checks, pytest, or closure evidence.\n",
-            encoding="utf-8",
-        )
-    with log_path.open("a", encoding="utf-8") as handle:
-        handle.write(
-            "\n"
-            f"## physicsguard-project-{action}\n\n"
-            f"- Version: {payload['physicsguard']['adopted_package_version']}\n"
-            f"- Schema: {payload['physicsguard']['schema_version']}\n"
-            f"- Record: {DEFAULT_PROJECT_RECORD.as_posix()}\n"
-            "- Boundary: workflow adoption only; not runtime audit proof.\n"
-        )
-
-    audit = audit_project(root)
-    return {
-        "artifact_type": "physicsguard_project_adoption",
-        "action": action,
-        "status": audit["status"],
-        "written_files": [
-            str(record_path),
-            str(log_path),
-        ],
-        "record": DEFAULT_PROJECT_RECORD.as_posix(),
-        "audit": audit,
-    }
-
-
-def audit_project(root: Path) -> dict[str, Any]:
-    root = root.resolve()
-    errors: list[str] = []
-    warnings: list[str] = []
-    record_path = root / DEFAULT_PROJECT_RECORD
-    if not record_path.exists():
-        return {
-            "artifact_type": "physicsguard_project_audit",
-            "status": "fail",
-            "ok": False,
-            "errors": [f"missing project record: {DEFAULT_PROJECT_RECORD.as_posix()}"],
-            "warnings": [],
-        }
-    data = _load_yaml(record_path)
-    if not isinstance(data, dict):
-        errors.append("project record root must be a mapping")
-        data = {}
-
-    section = data.get("physicsguard")
-    if not isinstance(section, dict):
-        errors.append("missing physicsguard section")
-        section = {}
-    if section.get("repository") != PHYSICSGUARD_REPOSITORY:
-        errors.append("physicsguard.repository is missing or unexpected")
-    if section.get("schema_version") != PHYSICSGUARD_WORKFLOW_SCHEMA_VERSION:
-        errors.append("physicsguard.schema_version is missing or unexpected")
-    adopted_version = section.get("adopted_package_version")
-    installed_version = installed_physicsguard_version()
-    if adopted_version != installed_version:
-        warnings.append(
-            f"project version {adopted_version!r} differs from installed version {installed_version!r}"
-        )
-
-    paths = data.get("paths") if isinstance(data.get("paths"), dict) else {}
-    for key in ("adoption_log",):
-        value = paths.get(key)
-        if not isinstance(value, str) or not value.strip():
-            errors.append(f"paths.{key} must be a non-empty path")
-        elif not (root / value).exists():
-            errors.append(f"paths.{key} does not exist: {value}")
-
-    policy = data.get("policy")
-    if not isinstance(policy, dict):
-        errors.append("missing policy section")
-    else:
-        for key in (
-            "require_model_understanding_preflight",
-            "require_external_model_intake_for_observed_debugging",
-            "require_test_file_contract_for_test_data",
-            "require_project_evidence_registry_for_project_maps",
-            "require_project_profile_for_project_evidence",
-            "require_binding_expectations_for_project_evidence",
-            "require_model_dataset_validation_for_validated_reuse",
-            "require_explicit_scope_before_cross_project_comparison",
-            "require_signal_mapping_review_before_fault_claims",
-            "require_closure_before_localization_claim",
-            "require_project_closure_before_broad_claims",
-            "require_current_module_semantic_ledger",
-        ):
-            if policy.get(key) is not True:
-                errors.append(f"policy.{key} must be true")
-        expected_module_policy = {
-            "module_semantic_ledger_schema": MODULE_SEMANTIC_LEDGER_SCHEMA,
-            "module_semantic_registry_denominator": MODULE_SEMANTIC_REGISTRY_DENOMINATOR,
-            "module_semantic_physical_denominator": MODULE_SEMANTIC_PHYSICAL_DENOMINATOR,
-            "dummy_module_physical_claim_licensed": False,
-        }
-        for key, expected in expected_module_policy.items():
-            if policy.get(key) != expected:
-                errors.append(f"policy.{key} must be {expected!r}")
-        if "ledger_is_navigation_not_physics_proof" in policy:
-            errors.append(
-                "policy.ledger_is_navigation_not_physics_proof is retired; use the current module semantic ledger policy"
-            )
-
-    status = "fail" if errors else "pass_with_gaps" if warnings else "pass"
-    return {
-        "artifact_type": "physicsguard_project_audit",
-        "status": status,
-        "ok": not errors,
-        "record": DEFAULT_PROJECT_RECORD.as_posix(),
-        "installed_package_version": installed_version,
-        "adopted_package_version": adopted_version,
-        "schema_version": PHYSICSGUARD_WORKFLOW_SCHEMA_VERSION,
-        "errors": errors,
-        "warnings": warnings,
-    }
 
 
 def review_model_understanding_preflight(path: Path) -> WorkflowReview:
@@ -451,17 +254,8 @@ def _preflight_next_actions(
 
 
 __all__ = [
-    "DEFAULT_PROJECT_RECORD",
-    "MODULE_SEMANTIC_LEDGER_SCHEMA",
-    "MODULE_SEMANTIC_PHYSICAL_DENOMINATOR",
-    "MODULE_SEMANTIC_REGISTRY_DENOMINATOR",
-    "PHYSICSGUARD_REPOSITORY",
-    "PHYSICSGUARD_WORKFLOW_SCHEMA_VERSION",
     "WorkflowFinding",
     "WorkflowReview",
-    "adopt_project",
-    "audit_project",
-    "installed_physicsguard_version",
     "review_external_model_intake",
     "review_model_understanding_preflight",
 ]

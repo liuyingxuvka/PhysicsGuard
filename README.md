@@ -111,7 +111,6 @@ The example represents a mapped controller feedback signal. The fault case has a
 Project and model-understanding checks:
 
 ```powershell
-python -m physicsguard.cli project audit --pretty
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
@@ -325,7 +324,6 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 项目和模型理解检查：
 
 ```powershell
-python -m physicsguard.cli project audit --pretty
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty

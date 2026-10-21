@@ -12,7 +12,6 @@ EXPECTED_SKILLS = {
     "physicsguard-model-dataset-validation",
     "physicsguard-model-library",
     "physicsguard-model-understanding-preflight",
-    "physicsguard-project-adoption",
     "physicsguard-project-evidence-registry",
     "physicsguard-signal-mapping-review",
     "physicsguard-test-file-contract-review",

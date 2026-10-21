@@ -160,19 +160,6 @@ def build_parser() -> argparse.ArgumentParser:
     assumptions_inspect.add_argument("system", type=Path, help="path to a YAML SystemSpec")
     assumptions_inspect.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
-    project_parser = subparsers.add_parser(
-        "project",
-        help="PhysicsGuard project adoption commands",
-    )
-    project_subparsers = project_parser.add_subparsers(dest="project_command", required=True)
-    for command_name in ("adopt", "audit", "upgrade"):
-        command_parser = project_subparsers.add_parser(
-            command_name,
-            help=f"{command_name} PhysicsGuard workflow adoption records",
-        )
-        command_parser.add_argument("--root", type=Path, default=Path("."), help="project root")
-        command_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
     preflight_parser = subparsers.add_parser(
         "preflight",
         help="model-understanding preflight commands",
@@ -641,15 +628,6 @@ def assumptions_inspect(path: Path, pretty: bool = False) -> int:
     return 0
 
 
-def project_command(command: str, root: Path, pretty: bool = False) -> int:
-    from physicsguard.workflow import adopt_project, audit_project
-
-    if command == "audit":
-        output = audit_project(root)
-    else:
-        output = adopt_project(root, action=command)
-    _print_json(output, pretty)
-    return 0 if output.get("ok", output.get("status") in {"pass", "pass_with_gaps"}) else 1
 
 
 
@@ -992,8 +970,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "assumptions":
             if args.assumptions_command == "inspect":
                 return assumptions_inspect(args.system, args.pretty)
-        if args.command == "project":
-            return project_command(args.project_command, args.root, args.pretty)
         if args.command == "preflight":
             if args.preflight_command == "review":
                 return preflight_review(args.preflight, args.pretty)

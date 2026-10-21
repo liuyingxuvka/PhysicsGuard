@@ -64,7 +64,6 @@ Rules return `RecommendedRefinement` objects with template ids, required variabl
 
 ## Recommended Workflow
 
-1. Run `physicsguard project audit` so the AI has the active repository, package version, skill routes, and adoption record.
 2. Complete or review the model-understanding preflight before writing the first hierarchy.
 3. Run a Level 0 whole-system hierarchical audit. For external model results, prefer `hierarchy evaluate` so observed values are not moved by a solver.
 4. If the source is a concrete testbench data file, run the file's

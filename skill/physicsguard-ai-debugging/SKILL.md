@@ -15,7 +15,6 @@ Accept this route only when:
 
 Reject or hand off when:
 
-- Repository adoption or upgrade is the whole request. Handoff: `physicsguard-project-adoption`.
 - External-model boundary and inventory understanding is the whole request. Handoff: `physicsguard-model-understanding-preflight`.
 - Signal identity, units, conversion, confidence, or temporal mapping is the whole request. Handoff: `physicsguard-signal-mapping-review`.
 - A concrete test-data file contract is the whole request. Handoff: `physicsguard-test-file-contract-review`.

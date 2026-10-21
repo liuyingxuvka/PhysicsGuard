@@ -153,3 +153,16 @@
 - `python <本动作核验脚本> models`：exit 0；46.874秒；models: 11 passed, 0 failed。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 提交后完整检查：`python -m pytest -q`：exit 0；1043 passed in 105.43s (0:01:45)；命令总耗时 108.593 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-16 移除采用记录路线并保留预检与输入审查
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> exports-cli-plan-references`：exit 1；0.373秒；见同编号JSON/日志中的结构化结果。
+- `python <本动作核验脚本> exports-cli-plan-references-corrected`：exit 0；1.584秒；exports ok；退役CLI exit2；preflight pass；8成员计划passed；仅剩授权后续文档2行。
+- `python <本动作核验脚本> map-check`：exit 0；0.526秒；check: 0 error(s), 9 warning(s), 0 info。
+- `python <本动作核验脚本> focused-tests`：exit 0；14.052秒；32 passed in 12.53s。
+- `python <本动作核验脚本> collect`：exit 0；3.1秒；1040 tests collected in 1.09s。
+- `python <本动作核验脚本> active-scan-journal-boundary`：exit 0；0.145秒；active仅2条授权后续文档引用；原始扫描另有1条SLIM历史，原文保留且已独立归档。
+- `python <本动作核验脚本> models`：exit 0；42.813秒；models: 10 passed, 0 failed。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：根代理统一规则：日志为历史，保留原命令摘要；现行产品残留扫描仅额外排除根SLIM_LOG.md，原始grep与日志单独命中保存外部，不扩大文档或目录豁免。

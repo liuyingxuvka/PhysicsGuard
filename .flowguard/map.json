@@ -72,7 +72,6 @@
       ],
       "models": [
         ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
-        ".flowguard/verification/owners/ai_workflow/run_checks.py",
         ".flowguard/verification/owners/core/run_checks.py",
         ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
@@ -96,15 +95,11 @@
       "entrypoints": [],
       "state": [],
       "side_effects": [],
-      "depends_on": [
-        "interface"
-      ],
+      "depends_on": [],
       "tests": [
         "tests/test_workflow_governance.py"
       ],
-      "models": [
-        ".flowguard/verification/owners/ai_workflow/run_checks.py"
-      ],
+      "models": [],
       "status": "confirmed",
       "fingerprint": "sha256:76516a25cd7bdfaa3425c81b2a6edb4189df5a1905cd883d80eded6ccf03bb3a"
     },
@@ -704,7 +699,6 @@
       ],
       "models": [
         ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
-        ".flowguard/verification/owners/ai_workflow/run_checks.py",
         ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
       ],
       "status": "confirmed",
@@ -728,9 +722,7 @@
         "interface"
       ],
       "tests": [],
-      "models": [
-        ".flowguard/verification/owners/ai_workflow/run_checks.py"
-      ],
+      "models": [],
       "status": "confirmed",
       "fingerprint": "sha256:9f1830b29fc85401b79b02fcf097abc04c814174f7ef443e9902d1e4ad5462ca"
     },

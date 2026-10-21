@@ -80,13 +80,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    convergence as temporal/system understanding. A `pointwise` model may
    support bounded consistency only; prediction requires a declared
    `stateful_dynamic` model and a passing disjoint future-holdout rollout.
-7. Check project adoption when working inside a repository:
 
-   ```powershell
-   python -m physicsguard.cli project audit --pretty
-   ```
-
-   If adoption is missing and setup is in scope, run `project adopt` or `project upgrade`. Project adoption is workflow evidence only.
 8. Create or review a model-understanding preflight before residual interpretation:
 
    ```powershell

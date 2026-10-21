@@ -1,18 +1,17 @@
 # AI-Guided PhysicsGuard Debugging Protocol
 
-PhysicsGuard is a tool for AI-assisted engineering debugging. It is not expected to understand every external model automatically, and it does not need to contain every possible physical module ahead of time. The intended workflow is iterative and evidence-gated: an AI agent checks the active project record, writes or reviews a model-understanding preflight, maps available external signals into PhysicsGuard variables, evaluates residuals, and asks for the next small set of signals or parameters that would narrow the problem.
+PhysicsGuard is a tool for AI-assisted engineering debugging. It is not expected to understand every external model automatically, and it does not need to contain every possible physical module ahead of time. The intended workflow is iterative and evidence-gated: an AI agent writes or reviews a model-understanding preflight, maps available external signals into PhysicsGuard variables, evaluates residuals, and asks for the next small set of signals or parameters that would narrow the problem.
 
 ## Project And Intake Gates
 
 Before a non-trivial AI debugging claim, run or account for these gates:
 
 ```powershell
-python -m physicsguard.cli project audit --pretty
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 ```
 
-The project audit identifies the repository, package version, workflow schema, local skill routes, and adoption log. The preflight records the visible symptom, physical boundary, unit basis, first audit level, assumptions, uncertain mappings, and stop conditions. The intake review records source-of-truth model context, mapped signals, unit/conversion evidence, confidence, stale conditions, and required reviews.
+The preflight records the visible symptom, physical boundary, unit basis, first audit level, assumptions, uncertain mappings, and stop conditions. The intake review records source-of-truth model context, mapped signals, unit/conversion evidence, confidence, stale conditions, and required reviews.
 
 When the work includes a concrete testbench/test-data file, add the test-file
 contract gate before broad analysis:
@@ -29,7 +28,6 @@ contract.
 ## Core Loop
 
 1. Start with the user-visible failure: wrong final value, impossible pressure, excessive heat, bad power, unstable response, or similar.
-2. Check the project record with `physicsguard project audit`; adopt or upgrade the project record when it is missing or stale.
 3. Complete or review the model-understanding preflight before writing the first audit file.
 4. Build a Level 0 audit with coarse balances or simple signal relations.
 5. If a concrete test data file is the source, generate or review its
