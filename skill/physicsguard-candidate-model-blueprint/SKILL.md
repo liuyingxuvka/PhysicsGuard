@@ -7,8 +7,6 @@ description: "Use directly for initial target inventory or a bounded candidate b
 
 ## Entry boundary
 
-Route: `route:physicsguard-candidate-model-blueprint:build`; native owner: `physicsguard.candidate-model-blueprint`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - The user asks for initial target inventory or a candidate blueprint draft, including explicit evidence gaps.

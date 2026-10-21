@@ -7,8 +7,6 @@ description: "Use directly when concrete testbench or test-data files require de
 
 ## Entry boundary
 
-Route: `route:physicsguard-test-file-contract-review:check`; native owner: `physicsguard.test-file-contract-review`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - One or more concrete testbench, test-data, log, sensor, command, measurement, calibration, or fixture files are in scope.

@@ -7,8 +7,6 @@ description: "Use directly to index or select reusable PhysicsGuard model assets
 
 ## Entry boundary
 
-Route: `route:physicsguard-model-library:reuse`; native owner: `physicsguard.model-library`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - The task is to index validated model assets or decide whether one is reusable for a named target context.

@@ -7,8 +7,6 @@ description: "Use directly before a non-trivial external-model audit to capture 
 
 ## Entry boundary
 
-Route: `route:physicsguard-model-understanding-preflight:review`; native owner: `physicsguard.model-understanding-preflight`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - A non-trivial external model must be understood before residual interpretation or blueprint work.

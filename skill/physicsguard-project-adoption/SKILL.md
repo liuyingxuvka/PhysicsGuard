@@ -7,8 +7,6 @@ description: "Use directly to audit, adopt, or upgrade a target repository's Phy
 
 ## Entry boundary
 
-Route: `route:physicsguard-project-adoption:audit`; native owner: `physicsguard.project-adoption`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - The task is to check, create, or upgrade PhysicsGuard repository adoption records.

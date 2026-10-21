@@ -57,7 +57,6 @@
         "tests/test_physical_model_blueprint_cli.py",
         "tests/test_physical_model_blueprint_external_target.py",
         "tests/test_physical_model_blueprint_native_authorities.py",
-        "tests/test_physicsguard_skill_entry_loading.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_predictive_rollout_validation.py",
         "tests/test_project_closure.py",
@@ -105,7 +104,6 @@
       "depends_on": [],
       "tests": [
         "tests/test_dynamic_model_purpose.py",
-        "tests/test_physicsguard_skill_blueprint_contracts.py",
         "tests/test_skill_execution_depth.py"
       ],
       "models": [
@@ -359,7 +357,6 @@
       "tests": [
         "tests/test_cli.py",
         "tests/test_native_directory_only_routes.py",
-        "tests/test_physicsguard_skill_entry_loading.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_task_local_revision.py"
@@ -528,7 +525,6 @@
         "tests/test_physical_model_blueprint_schema.py",
         "tests/test_physical_model_blueprint_target_authority.py",
         "tests/test_physical_thermal.py",
-        "tests/test_physicsguard_skill_entry_loading.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_predictive_rollout_validation.py",
         "tests/test_project_closure.py",
@@ -741,12 +737,9 @@
         "schema"
       ],
       "tests": [
-        "tests/test_guard_skill_mesh.py",
         "tests/test_install_physicsguard_skills.py",
         "tests/test_installed_skill_sync.py",
         "tests/test_physicsguard_family_maintenance.py",
-        "tests/test_physicsguard_skill_entry_loading.py",
-        "tests/test_physicsguard_skill_install_authority.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_portable_model_headers.py",
         "tests/test_task_local_revision.py"

@@ -7,12 +7,10 @@ description: "Use only for mixed or unclear AI-guided engineering-simulation deb
 
 ## Entry boundary
 
-Route: `route:physicsguard-ai-debugging:audit`; native owner: `physicsguard.ai-debugging`; role: `mixed/unclear coordinator`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - The visible engineering fault spans several PhysicsGuard responsibilities and cannot be owned by one direct route.
-- The correct PhysicsGuard route remains genuinely ambiguous after comparing the ten route capsules.
+- The correct PhysicsGuard route remains ambiguous after reading the hand-off list below.
 - Coarse-to-fine localization requires typed handoffs among preflight, mapping, validation, and closure owners.
 
 Reject or hand off when:
@@ -29,7 +27,7 @@ Reject or hand off when:
 
 ## Minimum workflow
 
-1. Confirm that no single direct capsule owns the complete request; otherwise hand off and stop this composite route.
+1. If one hand-off listed above owns the complete request, hand off and stop.
 2. Verify the current PhysicsGuard runtime, then load the native route protocol only for the selected debugging work.
 3. Keep every specialist's native judgment and evidence separate while coordinating the smallest necessary handoff chain.
 4. Close only through the direct native owner that owns the requested final claim.

@@ -7,8 +7,6 @@ description: "Use directly to create, audit, or navigate one PhysicsGuard projec
 
 ## Entry boundary
 
-Route: `route:physicsguard-project-evidence-registry:check`; native owner: `physicsguard.project-evidence-registry`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - One project's files, facts, bindings, bundles, and evidence gaps must be discovered or reconciled.

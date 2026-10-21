@@ -7,8 +7,6 @@ description: "Use directly before claiming a PhysicsGuard audit, localization, v
 
 ## Entry boundary
 
-Route: `route:physicsguard-audit-closure:close`; native owner: `physicsguard.audit-closure`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - The requested outcome is a final audit, localization, validation, reuse, handoff, or prediction-readiness claim.

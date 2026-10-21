@@ -7,8 +7,6 @@ description: "Use directly when external signals or parameters are mapped into P
 
 ## Entry boundary
 
-Route: `route:physicsguard-signal-mapping-review:review`; native owner: `physicsguard.signal-mapping-review`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - The task concerns external-signal or parameter mapping identity, unit, conversion, confidence, review, timing, or staleness.

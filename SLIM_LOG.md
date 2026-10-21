@@ -82,3 +82,14 @@
 - `python <本动作核验脚本> reference-scan`：exit 0；0.061秒；仅剩清单授权后续处理的三个历史/常量引用。
 - `python <本动作核验脚本> collect`：exit 0；2.87秒；1181 tests collected in 1.20s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-08 移除路由胶囊与文本生成锁定
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> map-check`：exit 0；0.477秒；check: 0 error(s), 4 warning(s), 0 info。
+- `python <本动作核验脚本> installer-plan`：exit 0；0.089秒；见同编号JSON/日志中的结构化结果。
+- `python <本动作核验脚本> consumer-tests`：exit 0；3.637秒；19 passed in 1.63s。
+- `python <本动作核验脚本> reference-scan`：exit 1；0.08秒；UnicodeDecodeError: 'utf-8' codec can't decode byte 0xcb in position 0: invalid continuation byte。
+- `python <本动作核验脚本> reference-scan-binary-safe`：exit 0；0.083秒；技能、脚本、源码、地图和现行文档无胶囊/生成器残留。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：外部残留扫描首次将既存缓存按文本解码失败，改为二进制安全搜索后重验；未删除缓存或改产品行为。

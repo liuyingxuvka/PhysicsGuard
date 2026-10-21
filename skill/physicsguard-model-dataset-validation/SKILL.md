@@ -7,8 +7,6 @@ description: "Use directly after current test-file contracts pass to validate a 
 
 ## Entry boundary
 
-Route: `route:physicsguard-model-dataset-validation`; native owner: `physicsguard-model-dataset-validation`; role: `independent direct route`. Read `references/route-capsule.json` to confirm this exact identity and the machine-checkable decision boundary.
-
 Accept this route only when:
 
 - A concrete model and contracted dataset must be checked for bounded consistency, validation, or prediction readiness.
