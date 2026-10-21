@@ -72,3 +72,13 @@
 - `python <本动作核验脚本> reference-scan`：exit 0；0.056秒；仅剩保留到 PG38 的文档3行。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：仓库外提交辅助器首次重复暂存已由 git rm 暂存的路径而停止；改为仅暂存本动作尚存文件并校验已暂存路径集合，无产品改动或检查失败。
+
+### PG-07 删除永久阻断的语义账本并保留真实模块行为
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> map-check`：exit 0；0.469秒；check: 0 error(s), 4 warning(s), 0 info。
+- `python <本动作核验脚本> physical-behavior`：exit 0；3.016秒；58 passed in 0.20s。
+- `python <本动作核验脚本> maintenance-tests`：exit 0；5.342秒；11 passed in 3.85s。
+- `python <本动作核验脚本> reference-scan`：exit 0；0.061秒；仅剩清单授权后续处理的三个历史/常量引用。
+- `python <本动作核验脚本> collect`：exit 0；2.87秒；1181 tests collected in 1.20s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

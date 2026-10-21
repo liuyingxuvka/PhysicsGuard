@@ -116,15 +116,7 @@ python -m physicsguard.cli preflight review templates/model_understanding_prefli
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
 python -m physicsguard.cli project closure templates/project_closure_plan.yaml --pretty
-python scripts/check_module_equation_ledger.py --json
 ```
-
-The module command checks the sole current per-module semantic ledger against
-all 152 live public registry members. A pass requires one independently
-reviewed record and exact implementation/test/example/resource bindings per
-module. It reports 151 physical-semantic members and keeps
-`DummyResidualModule` as framework-only behavior with no physical claim
-license. See [`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md).
 
 Test-file and dataset checks:
 
@@ -216,7 +208,6 @@ lists, and a green regression alone cannot close the task.
 | [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | closure gate before final debugging claims |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption-card lifecycle |
 | [`docs/model_library.md`](./docs/model_library.md) | reusable low-fidelity model library |
-| [`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md) | one independently reviewed semantic and binding record for every public module |
 | [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger and evidence freshness |
 
 ## Repository Layout
@@ -341,14 +332,7 @@ python -m physicsguard.cli preflight review templates/model_understanding_prefli
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
 python -m physicsguard.cli project closure templates/project_closure_plan.yaml --pretty
-python scripts/check_module_equation_ledger.py --json
 ```
-
-这个命令会把唯一有效的逐模块语义账本与实时公开 registry 的 152 个成员逐一
-核对。通过检查必须做到每个模块都有一条独立复审过的记录，并精确绑定实现、
-测试、反例、示例、资源和 oracle。物理语义分母是 151；
-`DummyResidualModule` 只保留为框架测试行为，不拥有物理结论许可。详见
-[`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md)。
 
 测试文件和数据集检查：
 
@@ -432,7 +416,6 @@ PhysicsGuard `v0.15.15` 包含严格、由原生回执驱动的任务局部模�
 | [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | 最终 debugging claim 前的 closure gate |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption card 生命周期 |
 | [`docs/model_library.md`](./docs/model_library.md) | 可复用低保真模型库 |
-| [`docs/module_equation_ledger.md`](./docs/module_equation_ledger.md) | 每个公开模块各自拥有一条独立复审的语义与绑定记录 |
 | [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger 和 evidence freshness |
 
 ## 仓库结构
