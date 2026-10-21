@@ -10,6 +10,9 @@ from physicsguard.core.data_file_manifest import field_signature_hash, sha256_fi
 from physicsguard.core.parameter_coverage import (
     ContractFinding,
     ContractReview,
+    _metadata_is_stale,
+    _next_actions,
+    _status,
     check_parameter_coverage,
 )
 from physicsguard.core.residual import ResidualBuilder
@@ -718,17 +721,8 @@ def _artifact_hash(artifact: ResolvedArtifact[Any]) -> str:
     return stable_json_hash(asdict(artifact.value))
 
 
-def _metadata_is_stale(metadata: dict[str, Any]) -> bool:
-    status = str(metadata.get("status", "")).lower()
-    return bool(metadata.get("stale") is True or metadata.get("is_stale") is True or status == "stale")
 
 
-def _status(findings: list[ContractFinding]) -> str:
-    if any(finding.severity == "error" for finding in findings):
-        return "fail"
-    if any(finding.severity == "warning" for finding in findings):
-        return "partial"
-    return "pass"
 
 
 def _analysis_claim_gate(status: str) -> str:
@@ -739,18 +733,6 @@ def _analysis_claim_gate(status: str) -> str:
     return "blocked_until_contract_errors_are_fixed"
 
 
-def _next_actions(findings: list[ContractFinding]) -> list[str]:
-    actions: list[str] = []
-    for finding in findings:
-        if finding.severity == "error":
-            actions.append(f"fix {finding.type}")
-        elif finding.severity == "warning":
-            actions.append(f"review {finding.type}")
-    result: list[str] = []
-    for action in actions:
-        if action not in result:
-            result.append(action)
-    return result
 
 
 __all__ = [
