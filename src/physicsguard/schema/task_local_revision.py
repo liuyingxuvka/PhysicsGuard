@@ -16,7 +16,6 @@ from typing import Any, Literal, Mapping
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from physicsguard.schema.predictive_rollout import PredictiveRolloutReceiptSpec
 
 
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -43,19 +42,6 @@ ExpectationOperator = Literal[
     "after",
     "simultaneous",
 ]
-RevisionKind = Literal[
-    "mapping_update",
-    "unit_or_sign_update",
-    "parameter_update",
-    "add_state",
-    "add_relation",
-    "boundary_update",
-    "reject_hypothesis",
-    "retain_multiple_hypotheses",
-    "revise_hypothesis_universe",
-]
-RevisionCheckKind = Literal["regression", "holdout", "predictive_rollout"]
-CheckStatus = Literal["pass", "fail", "blocked", "not_run"]
 ModelMissEvidenceKind = Literal[
     "runtime",
     "test",
@@ -122,12 +108,6 @@ def _canonical_fingerprint(value: Any) -> str:
 
 
 def fingerprint_native_depth_receipt(value: Mapping[str, Any]) -> str:
-    payload = dict(value)
-    payload.pop("receipt_fingerprint", None)
-    return _canonical_fingerprint(payload)
-
-
-def fingerprint_revision_check_receipt(value: Mapping[str, Any]) -> str:
     payload = dict(value)
     payload.pop("receipt_fingerprint", None)
     return _canonical_fingerprint(payload)
@@ -637,171 +617,7 @@ class DiagnosticObservationSpec(BaseModel):
         return _unique_text(values, "external_input_id")
 
 
-class TaskRevisionCheckReceiptSpec(BaseModel):
-    """Typed current check receipt bound to exactly one task candidate."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    artifact_kind: Literal["physicsguard_task_revision_check_receipt"]
-    receipt_version: Literal["1.0"] = "1.0"
-    check_id: str
-    kind: RevisionCheckKind
-    status: CheckStatus
-    task_id: str
-    plan_id: str
-    revision_id: str
-    candidate_model_sha256: str
-    coverage_universe_fingerprint: str
-    blueprint: TaskBlueprintBindingSpec
-    evidence: EvidenceIdentitySpec
-    independent_of_evidence_ids: list[str]
-    predictive_receipt: dict[str, Any] | None
-    receipt_fingerprint: str
-
-    @field_validator("check_id", "task_id", "plan_id", "revision_id")
-    @classmethod
-    def _text_valid(cls, value: str, info) -> str:
-        return _non_empty(value, info.field_name)
-
-    @field_validator(
-        "candidate_model_sha256",
-        "coverage_universe_fingerprint",
-        "receipt_fingerprint",
-    )
-    @classmethod
-    def _hash_valid(cls, value: str, info) -> str:
-        return _sha256(value, info.field_name)
-
-    @field_validator("independent_of_evidence_ids")
-    @classmethod
-    def _independence_ids_valid(cls, values: list[str]) -> list[str]:
-        return _unique_text(values, "independent evidence id")
-
-    @model_validator(mode="after")
-    def _receipt_valid(self) -> "TaskRevisionCheckReceiptSpec":
-        if self.kind == "predictive_rollout":
-            if not isinstance(self.predictive_receipt, dict):
-                raise ValueError("predictive rollout checks require the native predictive receipt")
-            PredictiveRolloutReceiptSpec.model_validate(self.predictive_receipt)
-        elif self.predictive_receipt is not None:
-            raise ValueError("predictive_receipt is valid only for predictive rollout checks")
-        expected = fingerprint_revision_check_receipt(self.model_dump(mode="json"))
-        if self.receipt_fingerprint != expected:
-            raise ValueError("revision check receipt fingerprint is stale or invalid")
-        return self
-
-
-class CandidateModelRevisionSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    revision_id: str
-    task_id: str
-    plan_id: str
-    frozen_plan_fingerprint: str
-    predecessor_observation_fingerprint: str
-    iteration: int = Field(ge=1)
-    max_iterations: int = Field(ge=1)
-    base_model: TaskModelIdentitySpec
-    candidate_model: TaskModelIdentitySpec
-    coverage: CoverageUniverseSpec
-    base_blueprint: TaskBlueprintBindingSpec
-    candidate_blueprint: TaskBlueprintBindingSpec
-    base_native_depth_receipt: NativeDepthReceiptSpec
-    candidate_native_depth_receipt: NativeDepthReceiptSpec
-    revision_kind: RevisionKind
-    triggering_mismatch_ids: list[str]
-    candidate_construction_evidence_id: str
-    required_check_ids: list[str]
-    checks: list[TaskRevisionCheckReceiptSpec]
-    candidate_applied: bool
-    rollback_model: TaskModelIdentitySpec | None
-
-    @field_validator(
-        "revision_id",
-        "task_id",
-        "plan_id",
-        "candidate_construction_evidence_id",
-    )
-    @classmethod
-    def _text_valid(cls, value: str, info) -> str:
-        return _non_empty(value, info.field_name)
-
-    @field_validator("frozen_plan_fingerprint", "predecessor_observation_fingerprint")
-    @classmethod
-    def _hash_valid(cls, value: str, info) -> str:
-        return _sha256(value, info.field_name)
-
-    @field_validator("triggering_mismatch_ids", "required_check_ids")
-    @classmethod
-    def _non_empty_unique(cls, values: list[str], info) -> list[str]:
-        return _unique_text(values, info.field_name, non_empty=True)
-
-    @model_validator(mode="after")
-    def _inventory_valid(self) -> "CandidateModelRevisionSpec":
-        check_ids = [item.check_id for item in self.checks]
-        if len(check_ids) != len(set(check_ids)):
-            raise ValueError("revision check ids must be unique")
-        if set(check_ids) != set(self.required_check_ids):
-            raise ValueError("revision checks must exactly equal required_check_ids")
-        kinds = [item.kind for item in self.checks]
-        if set(kinds) != {"regression", "holdout", "predictive_rollout"} or len(kinds) != 3:
-            raise ValueError("candidate revisions require exactly one regression, holdout, and predictive rollout check")
-        for receipt, model, label in (
-            (self.base_native_depth_receipt, self.base_model, "base"),
-            (self.candidate_native_depth_receipt, self.candidate_model, "candidate"),
-        ):
-            if receipt.task_id != self.task_id or receipt.plan_id != self.plan_id:
-                raise ValueError(f"{label} native depth receipt task/plan mismatch")
-            if receipt.model_sha256 != model.sha256:
-                raise ValueError(f"{label} native depth receipt model mismatch")
-            if receipt.coverage_universe_fingerprint != self.coverage.coverage_universe_fingerprint:
-                raise ValueError(f"{label} native depth receipt coverage mismatch")
-        if self.base_native_depth_receipt.blueprint != self.base_blueprint:
-            raise ValueError("base native depth receipt blueprint mismatch")
-        if self.candidate_native_depth_receipt.blueprint != self.candidate_blueprint:
-            raise ValueError("candidate native depth receipt blueprint mismatch")
-        if self.base_blueprint.blueprint_fingerprint == self.candidate_blueprint.blueprint_fingerprint:
-            raise ValueError("candidate revision requires a new blueprint fingerprint")
-        if (
-            self.base_blueprint.target_system_id != self.candidate_blueprint.target_system_id
-            or self.base_blueprint.subject_revision != self.candidate_blueprint.subject_revision
-        ):
-            raise ValueError("base and candidate blueprints must describe the same target revision")
-        if self.base_native_depth_receipt.iteration != self.iteration - 1:
-            raise ValueError("base native depth receipt must belong to the preceding iteration")
-        if self.candidate_native_depth_receipt.iteration != self.iteration:
-            raise ValueError("candidate native depth receipt iteration mismatch")
-        evidence_ids = [item.evidence.evidence_id for item in self.checks]
-        evidence_hashes = [item.evidence.evidence_fingerprint for item in self.checks]
-        if len(evidence_ids) != len(set(evidence_ids)) or len(evidence_hashes) != len(set(evidence_hashes)):
-            raise ValueError("regression, holdout, and predictive evidence identities must be distinct")
-        by_kind = {item.kind: item for item in self.checks}
-        holdout = by_kind["holdout"]
-        regression = by_kind["regression"]
-        if holdout.evidence.independence_group == regression.evidence.independence_group:
-            raise ValueError("holdout evidence must be independent from regression evidence")
-        if self.candidate_construction_evidence_id not in holdout.independent_of_evidence_ids:
-            raise ValueError("holdout receipt must declare independence from candidate construction")
-        for check in self.checks:
-            if (
-                check.task_id != self.task_id
-                or check.plan_id != self.plan_id
-                or check.revision_id != self.revision_id
-                or check.candidate_model_sha256 != self.candidate_model.sha256
-                or check.coverage_universe_fingerprint
-                != self.coverage.coverage_universe_fingerprint
-                or check.blueprint != self.candidate_blueprint
-            ):
-                raise ValueError("revision check receipt identity mismatch")
-        if self.candidate_applied and self.rollback_model is None:
-            raise ValueError("applied candidates require an explicit rollback model identity")
-        if not self.candidate_applied and self.rollback_model is not None:
-            raise ValueError("rollback_model is valid only after candidate application")
-        return self
-
-
 __all__ = [
-    "CandidateModelRevisionSpec",
     "CoverageUniverseSpec",
     "DiagnosticHypothesisSpec",
     "DiagnosticObservationSpec",
@@ -819,8 +635,6 @@ __all__ = [
     "ResolutionClass",
     "TaskModelIdentitySpec",
     "TaskBlueprintBindingSpec",
-    "TaskRevisionCheckReceiptSpec",
     "TerminalReason",
     "fingerprint_native_depth_receipt",
-    "fingerprint_revision_check_receipt",
 ]

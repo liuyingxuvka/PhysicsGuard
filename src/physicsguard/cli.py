@@ -117,16 +117,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="path to a DiagnosticObservationSpec YAML",
     )
     task_model_observe.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    task_model_revision = task_model_subparsers.add_parser(
-        "revision",
-        help="derive candidate gap transition and closure from exact typed receipts",
-    )
-    task_model_revision.add_argument(
-        "revision",
-        type=Path,
-        help="path to a CandidateModelRevisionSpec YAML",
-    )
-    task_model_revision.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     task_model_interval = task_model_subparsers.add_parser(
         "interval-residual",
         help="classify one residual interval as robust pass, fail, indeterminate, or not-run",
@@ -474,17 +464,6 @@ def task_model_observe_command(
     return 0 if output["status"] == "pass" else 1
 
 
-def task_model_revision_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.task_local_revision import evaluate_candidate_model_revision
-    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
-    from physicsguard.schema.task_local_revision import CandidateModelRevisionSpec
-
-    revision = CandidateModelRevisionSpec.model_validate(load_yaml_mapping(path))
-    output = evaluate_candidate_model_revision(revision, base_dir=path.parent)
-    _print_json(output, pretty)
-    return 0 if output["status"] == "pass" else 1
-
-
 def task_model_interval_residual_command(
     path: Path,
     pretty: bool = False,
@@ -737,8 +716,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.observation,
                     args.pretty,
                 )
-            if args.task_model_command == "revision":
-                return task_model_revision_command(args.revision, args.pretty)
             if args.task_model_command == "interval-residual":
                 return task_model_interval_residual_command(
                     args.residual,

@@ -32,7 +32,6 @@ __all__ = [
     "scan_project_evidence_candidates",
     "sha256_file",
     "validate_model_dataset",
-    "evaluate_candidate_model_revision",
     "evaluate_hypothesis_observation",
     "freeze_hypothesis_plan",
     "rank_observation_candidates",
@@ -187,20 +186,17 @@ def __getattr__(name: str):
 
         return ModuleRegistry
     if name in {
-        "evaluate_candidate_model_revision",
         "evaluate_hypothesis_observation",
         "freeze_hypothesis_plan",
         "rank_observation_candidates",
     }:
         from physicsguard.core.task_local_revision import (
-            evaluate_candidate_model_revision,
             evaluate_hypothesis_observation,
             freeze_hypothesis_plan,
             rank_observation_candidates,
         )
 
         return {
-            "evaluate_candidate_model_revision": evaluate_candidate_model_revision,
             "evaluate_hypothesis_observation": evaluate_hypothesis_observation,
             "freeze_hypothesis_plan": freeze_hypothesis_plan,
             "rank_observation_candidates": rank_observation_candidates,
