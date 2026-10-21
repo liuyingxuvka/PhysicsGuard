@@ -1,5 +1,35 @@
 # PhysicsGuard AI Debugging
 
+## Entry boundary
+
+Accept this route when:
+
+- An engineering-simulation result looks wrong and the fault must be localized: residual audit, coarse-to-fine refinement, competing hypotheses, next signals.
+- A candidate low-fidelity model must be built from a validated hierarchy (Workflow B below).
+
+Reject or hand off when:
+
+- External-model boundary and inventory understanding is the whole request. Handoff: the `model-understanding-preflight` route.
+- Signal identity, units, conversion, confidence, or temporal mapping is the whole request. Handoff: the `signal-mapping-review` route.
+- A concrete test-data file contract is the whole request. Handoff: the `test-file-contract-review` route.
+- Exact model/dataset validation is the whole request. Handoff: the `model-dataset-validation` route.
+
+## Minimum workflow
+
+1. If one hand-off listed above owns the complete request, hand off and stop.
+2. Write or review the model-understanding preflight.
+3. Map the external signals into an observed snapshot; review the intake when mappings are uncertain.
+4. Run `python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml`.
+5. Read `top_blocks`, `recommended_refinements` and the mapping issues; request the next small set of signals and refine one block. Repeat.
+
+## Required outputs
+
+- `localized_findings`
+- `next_required_evidence`
+- `bounded_claim`
+
+Claim boundary: This route can license only a low-fidelity, evidence-bounded fault localization. It does not prove high-fidelity model truth or behavior outside the checked operating envelope.
+
 ## Purpose
 
 Use PhysicsGuard as a transparent audit and blueprint layer for complex engineering simulations. Do not try to reproduce a full Simulink, GT-SUITE, Modelica, FMI, Amesim, MATLAB, Python, or commercial model from hidden internals. Build low-fidelity residual checks, evaluate mapped external results, rank suspicious blocks, ask for the next useful signals, and when requested, use the validated low-fidelity hierarchy as a blueprint for generating a candidate target model through official scripting interfaces.
@@ -20,12 +50,12 @@ Diagrams explain the audit; they are not validation evidence. Claims come only f
    it does not own database ledger
    intake, lifecycle, freshness, query, or navigation.
 3. If the work includes a concrete testbench/test-data file, first route through
-   `physicsguard-test-file-contract-review`. Generate or inspect the file
+   the `test-file-contract-review` route. Generate or inspect the file
    manifest, check the file-specific contract, and do not make broad AI analysis
    claims until the contract passes. If there is no concrete test data file,
    continue with the normal model-only or observed-snapshot route.
 4. When a passing test-file contract will be used to validate a model against
-   that dataset, route through `physicsguard-model-dataset-validation` before
+   that dataset, route through the `model-dataset-validation` route before
    broad model-data consistency claims. Run direct no-fit residual checks,
    physical envelope checks, redundant-sensor checks, optional conservative
    bounded calibration, holdout validation, and confidence feedback. When the

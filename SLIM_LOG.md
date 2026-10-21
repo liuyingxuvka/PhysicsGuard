@@ -629,3 +629,19 @@
 - 适配：Root确认installer reference filecmp缓存风险；保白名单/退役语义，采用read_bytes内容比较并保同stat内容变化负例，不退化当前正确比较。。
 - 适配：在现有installer测试模块加1条真实main/pending_changes同stat改动/恢复检查；reference缓存注入真实路径时应漏报，产品始终直接字节比较。。
 - 适配：外部reference对照首次未加入仓库根导入脚本路径而在导入前失败；明确当前owner根后控制通过，未改业务代码或全局环境。实际10focused/collect860承接已有额外回归，不强凑原文9/854。。
+
+### PG-62 单一技能入口按需加载五条完整路线
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> merge-routes`：exit 0；0.079秒；merged 5 routes into skill/physicsguard。
+- `python <本动作核验脚本> update-installer-templates`：exit 0；0.084秒；PG-62 code applied。
+- `python <本动作核验脚本> focused-tests`：exit 0；1.527秒；11 passed in 0.61s。
+- `python <本动作核验脚本> collect`：exit 0；3.111秒；861 tests collected in 2.52s。
+- `python <本动作核验脚本> map-check`：exit 0；0.362秒；check: 0 error(s), 4 warning(s), 0 info。
+- `python <本动作核验脚本> migration-native-parity`：exit 0；0.412秒；见同编号JSON/日志中的结构化结果。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：Root确认以git rm移除26个tracked旧文件而非reference rmtree；唯一既存外国cache保持12612bytes/mtime不变，raw17/active16明确分类。。
+- 适配：Root确认source技能入口按真实*/SKILL.md枚举；缓存残余目录不是技能，不宽泛豁免ignored文件。保安装器read_bytes。。
+- 适配：模板替换实际计数为2（含PG45新增hypothesis功能），保持reference2而不采用过时summary1；6模板全与premerge字节相等，根目录实际存在的4模板另验同字节，2个PG45 skill-only模板未伪造根副本。。
+- 适配：11focused/861collect承接6条额外原生回归，五完整native protocol经限定词替换后全文保留；不强凑原审计字节数。。
+- 提交工具恢复：首次 staging 因 git rename 显示仅新路径而拒绝旧已删路径；按 --no-renames 核对索引后恢复，未改业务源码、未重复验证。

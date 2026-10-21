@@ -1,8 +1,37 @@
 # PhysicsGuard Model Understanding Preflight
 
+## Entry boundary
+
+Accept this route only when:
+
+- A non-trivial external model must be understood before residual interpretation or blueprint work.
+- The physical boundary, inventory, assumptions, access gaps, semantics, or stop conditions need a current review.
+
+Reject or hand off when:
+
+- The request is only to resolve signal identity, unit, conversion, or confidence. Handoff: the `signal-mapping-review` route.
+- A concrete test-data file needs field-level coverage first. Handoff: the `test-file-contract-review` route.
+
+## Minimum workflow
+
+1. Freeze the symptom, external authority, physical boundary, and required inventory.
+2. Following the route protocol below, review subsystems, signals, parameters, assumptions, uncertainty, and prediction access.
+3. Proceed only inside the passed planning boundary; send unresolved mappings or files to their direct owners.
+
+## Required outputs
+
+- `preflight_status`
+- `understanding_record`
+- `access_gaps`
+- `next_route`
+
+Claim boundary: Preflight licenses only that the declared low-fidelity audit boundary is sufficiently understood to proceed; unresolved access or inventory gaps remain visible blockers.
+
+## Route protocol
+
 Use this route before interpreting residuals for a non-trivial external model.
 If a concrete testbench data file is part of the work, record the file/bench
-boundary and route to `physicsguard-test-file-contract-review` before broad
+boundary and route to the `test-file-contract-review` route before broad
 analysis claims.
 
 ## Workflow

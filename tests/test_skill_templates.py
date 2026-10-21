@@ -17,16 +17,13 @@ SKILL_ROOT = ROOT / "skill"
 
 
 def test_skill_preflight_and_intake_templates_pass_their_reviews() -> None:
-    for skill in ("physicsguard-ai-debugging", "physicsguard-model-understanding-preflight"):
-        review = review_model_understanding_preflight(SKILL_ROOT / skill / "references/templates/model_understanding_preflight.yaml")
-        assert review.status == "pass"
-    for skill in ("physicsguard-ai-debugging", "physicsguard-signal-mapping-review"):
-        review = review_external_model_intake(SKILL_ROOT / skill / "references/templates/external_model_intake.yaml")
-        assert review.status == "pass"
+    templates = SKILL_ROOT / "physicsguard" / "references" / "templates"
+    assert review_model_understanding_preflight(templates / "model_understanding_preflight.yaml").status == "pass"
+    assert review_external_model_intake(templates / "external_model_intake.yaml").status == "pass"
 
 
 def test_skill_task_model_templates_are_valid_inputs() -> None:
-    templates = SKILL_ROOT / "physicsguard-ai-debugging" / "references" / "templates"
+    templates = SKILL_ROOT / "physicsguard" / "references" / "templates"
     residual = IntervalResidualSpec.model_validate(load_yaml_mapping(templates / "interval_residual.yaml"))
     assert evaluate_interval_residual(residual)["status"] == "robust_pass"
     request = DiagnosabilityRequestSpec.model_validate(load_yaml_mapping(templates / "diagnosability_request.yaml"))
@@ -34,7 +31,7 @@ def test_skill_task_model_templates_are_valid_inputs() -> None:
 
 
 def test_skill_hypothesis_templates_block_until_the_model_path_is_real(tmp_path: Path) -> None:
-    templates = SKILL_ROOT / "physicsguard-ai-debugging" / "references" / "templates"
+    templates = SKILL_ROOT / "physicsguard" / "references" / "templates"
     plan = HypothesisPlanSpec.model_validate(load_yaml_mapping(templates / "hypothesis_plan.yaml"))
     assert freeze_hypothesis_plan(plan, base_dir=templates)["status"] == "blocked"
     shutil.copy(templates / "hypothesis_plan.yaml", tmp_path / "hypothesis_plan.yaml")

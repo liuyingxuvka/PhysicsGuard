@@ -1,4 +1,4 @@
-"""Install the PhysicsGuard skills into an agent's skills directory.
+"""Install the PhysicsGuard skill into an agent's skills directory.
 
     python scripts/install_physicsguard_skills.py --target ~/.codex/skills             # or ~/.claude/skills
     python scripts/install_physicsguard_skills.py --target ~/.codex/skills --dry-run   # show what would change
@@ -17,19 +17,18 @@ import shutil
 import sys
 
 SKILL_ROOT = Path(__file__).resolve().parents[1] / "skill"
-PHYSICSGUARD_SKILL_IDS = (
-    "physicsguard-ai-debugging",
-    "physicsguard-model-dataset-validation",
-    "physicsguard-model-understanding-preflight",
-    "physicsguard-signal-mapping-review",
-    "physicsguard-test-file-contract-review",
-)
+PHYSICSGUARD_SKILL_IDS = ("physicsguard",)
 RETIRED_SKILL_IDS = (
+    "physicsguard-ai-debugging",
     "physicsguard-audit-closure",
     "physicsguard-candidate-model-blueprint",
+    "physicsguard-model-dataset-validation",
     "physicsguard-model-library",
+    "physicsguard-model-understanding-preflight",
     "physicsguard-project-adoption",
     "physicsguard-project-evidence-registry",
+    "physicsguard-signal-mapping-review",
+    "physicsguard-test-file-contract-review",
 )
 CONSUMER_FILES = {"SKILL.md"}
 CONSUMER_DIRECTORIES = {"agents", "references", "scripts"}
@@ -117,7 +116,7 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--check", action="store_true", help="exit 1 if the installed copy differs from this checkout")
     args = parser.parse_args(argv)
     target = args.target.expanduser()
-    found = sorted(path.name for path in SKILL_ROOT.iterdir() if path.is_dir())
+    found = sorted(path.parent.name for path in SKILL_ROOT.glob("*/SKILL.md") if path.is_file())
     if found != sorted(PHYSICSGUARD_SKILL_IDS):
         print(f"skill/ holds {found}, expected {list(PHYSICSGUARD_SKILL_IDS)}", file=sys.stderr)
         return 2

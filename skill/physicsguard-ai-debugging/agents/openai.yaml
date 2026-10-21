@@ -1,4 +1,0 @@
-interface:
-  display_name: "PhysicsGuard AI Debugging"
-  short_description: "Localize engineering-simulation faults with residual audits"
-  default_prompt: "Use $physicsguard-ai-debugging to localize an engineering-simulation fault: map the signals, run hierarchy evaluate, read top_blocks and recommended_refinements, and request the next small set of signals."

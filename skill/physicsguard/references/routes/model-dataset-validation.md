@@ -1,7 +1,37 @@
 # PhysicsGuard Model-Dataset Validation
 
+## Entry boundary
+
+Accept this route only when:
+
+- A concrete model and contracted dataset must be checked for bounded consistency, validation, or prediction readiness.
+- Coverage adequacy, calibration/holdout separation, residual envelopes, or future rollout must be evaluated.
+
+Reject or hand off when:
+
+- A concrete data file lacks a current passing contract. Handoff: the `test-file-contract-review` route.
+- Required mappings remain unresolved before validation. Handoff: the `signal-mapping-review` route.
+
+## Minimum workflow
+
+1. Check that every referenced test-file contract passes.
+2. Following the route protocol below, run `python -m physicsguard.cli validation run PLAN.yaml`.
+3. Return the status, the `depth_summary`, open warnings, and only the covered scope.
+
+## Required outputs
+
+- `validation_status`
+- `depth_summary`
+- `adequacy_findings`
+- `unsupported_claims`
+- `bounded_validation_claim`
+
+Claim boundary: A pass licenses only the exact low-fidelity model, dataset identities, mappings, sampled universe, operating envelope, semantics, and claim scope in the report.
+
+## Route protocol
+
 Use this route after concrete test data has passed
-`physicsguard-test-file-contract-review`. Do not use it to bypass failed,
+the `test-file-contract-review` route. Do not use it to bypass failed,
 partial, stale, or review-required contracts.
 
 ## Workflow

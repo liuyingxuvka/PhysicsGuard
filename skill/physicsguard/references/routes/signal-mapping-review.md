@@ -1,8 +1,37 @@
 # PhysicsGuard Signal Mapping Review
 
+## Entry boundary
+
+Accept this route only when:
+
+- The task concerns external-signal or parameter mapping identity, unit, conversion, confidence, review, timing, or staleness.
+- Mapping evidence must be resolved before residual, adequacy, or predictive checks can use it.
+
+Reject or hand off when:
+
+- A concrete many-field test file first needs a complete field contract. Handoff: the `test-file-contract-review` route.
+- Mappings are current and the task is exact model/dataset validation. Handoff: the `model-dataset-validation` route.
+
+## Minimum workflow
+
+1. Bind every governed external object to its exact target, unit, conversion, revision, and evidence.
+2. Following the route protocol below, check confidence, review, time coverage, intervals, and stale conditions.
+3. Keep unresolved mappings visible and do not mutate observed values.
+
+## Required outputs
+
+- `mapping_status`
+- `review_gaps`
+- `temporal_boundary`
+- `safe_mapping_claim`
+
+Claim boundary: A mapping pass licenses only the exact external signal, target variable, conversion, revision, temporal range, and reviewed confidence in the command output.
+
+## Route protocol
+
 Use this route when external model outputs are mapped into PhysicsGuard observed values.
 When the source is a concrete test data file with many fields, use
-`physicsguard-test-file-contract-review` first or in parallel so every file
+the `test-file-contract-review` route first or in parallel so every file
 field has a catalog row, role/disposition, and evidence-backed mapping.
 
 ## Workflow

@@ -1,5 +1,34 @@
 # PhysicsGuard Test File Contract Review
 
+## Entry boundary
+
+Accept this route only when:
+
+- One or more concrete testbench, test-data, log, sensor, command, measurement, calibration, or fixture files are in scope.
+- File and field contracts must pass before broad AI analysis or dataset validation.
+
+Reject or hand off when:
+
+- No concrete test-data file is in scope. Handoff: the `ai-debugging` route.
+- Current file contracts pass and model/dataset consistency is now the request. Handoff: the `model-dataset-validation` route.
+
+## Minimum workflow
+
+1. Generate deterministic file and field identity before AI mapping judgment.
+2. Following the route protocol below, reconcile every field, role, unit, timing, mapping, and model binding.
+3. Block broad analysis until the exact contract passes; hand validation to the dataset route afterward.
+
+## Required outputs
+
+- `contract_status`
+- `field_dispositions`
+- `mapping_gaps`
+- `safe_analysis_boundary`
+
+Claim boundary: A pass covers only the exact test files, fields, units, timing, model/testbench versions, signal mappings, and depth represented in the command output.
+
+## Route protocol
+
 Use this route only when concrete test data files are in scope: CSV/TSV exports,
 database extracts already materialized as files, testbench logs, sensor tables,
 command/measurement files, calibration snapshots, or project fixtures that stand
@@ -22,10 +51,9 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
   model gap and request a child model/model extension or human evidence.
 - A passing contract is coverage evidence only; it does not prove physical
   correctness and does not mutate observed values.
-- Before the contract feeds a broad validation-depth claim, preserve exact
-  hashes for the concrete data, manifest/field schema, testbench profile and
-  version, and parameter-role matrix. Any later content change makes the depth
-  receipt stale even if filenames remain unchanged.
+- The manifest records content hashes of the data file, extraction script and
+  configuration; a later content change makes the contract `manifest_stale`
+  even if filenames remain unchanged.
 - Treat the current manifest row count and field catalog as the available
   point/signal universe for downstream adequacy. Preserve row identities,
   timestamps, operating-mode/event/peak/boundary evidence, and parameter roles;
@@ -38,7 +66,7 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
 ## Workflow
 
 1. Confirm this is a test-data workflow. If there is no concrete test data file,
-   return to the normal `physicsguard-ai-debugging` route.
+   return to the normal `ai-debugging` route.
 2. Generate or refresh the manifest:
 
    ```powershell
