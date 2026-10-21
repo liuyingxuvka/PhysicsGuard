@@ -190,9 +190,11 @@ def derive_bug_family_followups(
     top_blocks: Iterable[Any],
     top_residuals: Iterable[ResidualDiagnostic],
     mapping_records: Iterable[SignalMappingRecord],
+    audit_threshold: float = 0.0,
 ) -> tuple[BugFamilyFollowUp, ...]:
     records = tuple(mapping_records)
     residuals = tuple(top_residuals)
+    active = tuple(residual for residual in residuals if residual.abs_normalized_value > audit_threshold)
     blocks = tuple(top_blocks)
     followups: list[BugFamilyFollowUp] = []
     mapping_issue_records = [record for record in records if record.issue_codes]
@@ -209,7 +211,7 @@ def derive_bug_family_followups(
                 recommended_action="Review the same signal family for sign convention, unit conversion, source variable selection, and stale mapping notes before refining physics.",
             )
         )
-    if any(_mentions(residual, ("linear", "gain", "sign", "feedback")) for residual in residuals):
+    if any(_mentions(residual, ("linear", "gain", "sign", "feedback")) for residual in active):
         followups.append(
             BugFamilyFollowUp(
                 followup_id="linear_gain_sign_family",
@@ -217,8 +219,8 @@ def derive_bug_family_followups(
                 severity="warning",
                 trigger="top residuals suggest a linear relation, feedback, gain, or sign mismatch",
                 affected_blocks=tuple(_dedupe(block.block_id for block in blocks[:3])),
-                affected_variables=tuple(_variables_from_residuals(residuals)),
-                evidence_residuals=tuple(residual.name for residual in residuals[:5]),
+                affected_variables=tuple(_variables_from_residuals(active)),
+                evidence_residuals=tuple(residual.name for residual in active[:5]),
                 recommended_action="Check peer gain/sign/direction mappings in the same controller or signal chain instead of stopping at the first failed residual.",
             )
         )
@@ -235,7 +237,7 @@ def derive_bug_family_followups(
                 recommended_action="Review related variables that share the same physical dimension before trusting the residual localization.",
             )
         )
-    if any(_mentions(residual, ("balance", "mass", "energy", "power", "heat", "flow")) for residual in residuals):
+    if any(_mentions(residual, ("balance", "mass", "energy", "power", "heat", "flow")) for residual in active):
         followups.append(
             BugFamilyFollowUp(
                 followup_id="conservation_balance_family",
@@ -243,8 +245,8 @@ def derive_bug_family_followups(
                 severity="info",
                 trigger="top residuals touch a balance-like physical relation",
                 affected_blocks=tuple(_dedupe(block.block_id for block in blocks[:3])),
-                affected_variables=tuple(_variables_from_residuals(residuals)),
-                evidence_residuals=tuple(residual.name for residual in residuals[:5]),
+                affected_variables=tuple(_variables_from_residuals(active)),
+                evidence_residuals=tuple(residual.name for residual in active[:5]),
                 recommended_action="Inspect sibling inflow/outflow, loss, storage, and boundary-condition variables before adding deeper component physics.",
             )
         )

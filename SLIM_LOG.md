@@ -34,3 +34,10 @@
 - `python <本动作核验脚本> native-probes`：exit 0；1.969秒；project adopt: status pass/errors []; copied user-project closure: passed; all exit 0。
 - `python <本动作核验脚本> targeted-tests`：exit 0；3.714秒；19 passed in 2.17s。
 - 适配：root授权首批提前，不再等LW09；无跨仓库实际源码依赖，仍使用基线FG隔离环境。
+
+### PG-02 仅由超阈值残差触发增益和平衡后续建议
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> native-probes`：exit 0；2.637秒；clean: audit_pass true / empty followups; fault: audit_pass false / native gain-family followup preserved; both exit0。
+- `python <本动作核验脚本> targeted-tests`：exit 0；20.3秒；34 passed in 18.34s。
+- `python <本动作核验脚本> dependent-tests`：exit 0；24.394秒；23 passed in 22.00s。

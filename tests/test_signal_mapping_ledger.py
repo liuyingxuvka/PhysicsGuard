@@ -110,3 +110,13 @@ def test_signal_mapping_public_api_is_exported() -> None:
     assert "BugFamilyFollowUp" in exported
     assert "build_signal_mapping_ledger" in exported
     assert "derive_bug_family_followups" in exported
+
+
+def test_clean_audit_has_no_gain_or_balance_followups() -> None:
+    spec = load_hierarchical_audit_spec(OBSERVED / "pitch_feedback_level_0.yaml")
+    observed = load_observed_values(OBSERVED / "pitch_feedback_observed_clean.yaml")
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+    assert report.audit_pass is True
+    families = {item.family for item in report.bug_family_followups}
+    assert "gain_sign_or_direction" not in families
+    assert "conservation_balance" not in families

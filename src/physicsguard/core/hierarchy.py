@@ -754,6 +754,7 @@ def _attach_signal_mapping_context(
         top_blocks=report.top_blocks,
         top_residuals=report.top_residuals,
         mapping_records=ledger,
+        audit_threshold=spec.system.solver.audit_threshold,
     )
     ledger_warnings = list(mapping_warnings(ledger))
     metadata = {

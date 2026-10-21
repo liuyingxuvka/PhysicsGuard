@@ -92,9 +92,9 @@ def test_closure_consumes_full_native_observed_audit_without_reference_solve(tmp
         assert result["closure_status"] == "blocked"
         assert {"audit_failed", "recommended_refinements", "bug_family_followups"} <= codes
     elif state == "clean":
-        # Numerical residual success does not close an unreviewed native family followup.
-        assert result["closure_status"] == "partial"
-        assert "bug_family_followups" in codes
+        # A clean audit (all residuals within the audit threshold) raises no family followup.
+        assert result["closure_status"] == "passed", result["findings"]
+        assert "bug_family_followups" not in codes
     else:
         assert result["closure_status"] == "passed", result["findings"]
 
