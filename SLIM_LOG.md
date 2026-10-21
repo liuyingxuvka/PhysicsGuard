@@ -727,3 +727,14 @@
 - 适配：按rootFG98信号解除尾部屏障；新版为用户指定0.70.7，独立venv安装批准的bc8c519源码git archive构建包，保留原0.70.6环境；不用PYTHONPATH/global install。
 - 适配：新FG真实输出12条非阻断invariant known-bad coverage warning（core10、dataset2），如实保留，未为警告擅增测试或坏变体。
 - 适配：初次尝试把四个owner传给单值--component被CLI拒绝；随后逐owner读取并confirm，原始exit2保留。
+
+### PG-69 发布候选版本统一为0.15.16并保留历史与依赖
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> patch-version-and-changelog`：exit 0；0.038秒；version 0.15.16。
+- `python <本动作核验脚本> confirm-interface`：exit 0；2.648秒；confirmed 1 component(s)。
+- `python <本动作核验脚本> version-test`：exit 0；0.458秒；1 passed in 0.03s。
+- `python <本动作核验脚本> strict-map`：exit 0；0.39秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> version-projection-and-metadata`：exit 0；10.144秒；PG0.15.16 source/metadata across both privateenvs; minFG.6 unchanged; historical binding bytes unchanged。
+- 适配：用户明确版本覆盖：新发布与提交标题统一0.15.16，原文0.16.0只作为权威参考保留；历史基线版本不改。
+- 适配：用户patch-only覆盖参考0.16.0为0.15.16；仅改新版本投影与新CHANGELOG，依赖与历史样例binding0.15.15逐字节不变；两私人env正常pip刷新自身metadata。
