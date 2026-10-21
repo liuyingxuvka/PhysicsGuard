@@ -483,3 +483,14 @@
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：承接PG48额外2条领域重叠回归，collect853而非原文851；18条本项定向用例不变。。
 - 提交后完整检查：`python -m pytest -q`：exit 0；853 passed in 79.02s (0:01:19)；命令总耗时 80.498 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-51 核心自建模型重放17个真实用例并验证坏变体拒绝
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> real-runner`：exit 0；3.256秒；FLOWGUARD_RUNNER_DONE {"exit_code": 0, "checked": 1}。
+- `python <本动作核验脚本> known-bad-native`：exit 0；4.557秒；conformance: 15/17 model cases match the real code; real native bad variant rejected exit1; active source byte unchanged。
+- `python <本动作核验脚本> anchors`：exit 0；0.487秒；declared anchors valid; known later-action missing owners: interval_diagnosability,model_dataset_validation,test_file_contract。
+- `python <本动作核验脚本> models`：exit 0；4.071秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> map-check`：exit 0；0.3秒；check: 0 error(s), 8 warning(s), 0 info。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：已知坏变体只在仓库外当前tracked-source临时副本修改evaluator.py并执行同一真实runner；不按reference临时改活动src再git restore，验证同样2个mismatch/exit1且活动源码字节未变。。
