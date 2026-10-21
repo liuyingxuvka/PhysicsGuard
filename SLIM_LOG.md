@@ -46,3 +46,13 @@
 
 - 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
 - `python <本动作核验脚本> quick-start`：exit 0；1.723秒；README 两处命令正确，真实 CLI exit 0，保留 pitch_rate_feedback 诊断。
+
+### PG-04 更新六条维护规则
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> rule-boundary`：exit 1；0.09秒；AssertionError。
+- `python <本动作核验脚本> rule-boundary-corrected`：exit 0；0.058秒；六条维护规则已替换，物理规则保持，最低版本仅在 test extra 声明。
+- `python <本动作核验脚本> map-read`：exit 0；0.521秒；  Explicit external-tool example helper scripts。
+- `python <本动作核验脚本> map-change`：exit 0；0.606秒；run: python -m pytest -q tests/test_workflow_governance.py。
+- `python <本动作核验脚本> workflow-tests`：exit 0；2.475秒；8 passed in 0.32s。
+- 适配：首次仓库外格式断言误设 TOML 缩进而失败，修正核验脚本后重验，保留失败原日志。

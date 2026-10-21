@@ -79,14 +79,13 @@
 
 ## FlowGuard map and model maintenance
 
-Use the current single `flowguard` skill from the normal installed consumer surface. This project does not vendor a second skill suite or require an old engine version.
+1. Start each session with `python -m flowguard read` before opening source.
+2. Before adding behavior, use `python -m flowguard read --find WORDS`; extend its existing owner.
+3. Open only the affected component's files (`python -m flowguard read --component ID`).
+4. After editing, run `python -m flowguard change`, fix errors, and run the affected tests and models it selects.
+5. Re-read each REVIEW component, update its description if behavior changed, then `python -m flowguard map confirm ID`.
+6. At final release, freeze the source and run the full suite and `python -m flowguard release` once on that revision (same-SHA CI may provide this); report failures and unrun checks honestly.
 
-The current software map is `.flowguard/map.json`; Git records its revisions. Before editing, inspect the affected component's responsibilities, files, entrypoints, dependencies, tests and models. Read the relevant source when its confirmed fingerprint is stale. Preserve one native implementation owner and the real model/code/test binding when moving pointers.
-
-Use `python -m flowguard.map check --root . --strict` for current structural checks and `python -m flowguard.map impact --root . --files <changed paths>` to select affected tests and models. Use the current command help for execution options. Run the selected ordinary tests and native models once for the actual changed behavior. An abstract model or static current map does not prove implementation behavior. `physicsguard self-dna check` observes current bindings and explicitly leaves model/test execution `not_run`.
-
-Maintain executable domain models in `.flowguard/models/owners/<owner>/` and their sole execution entrypoints in `.flowguard/verification/owners/<owner>/run_checks.py`. Shared tests execute once in one ordinary pytest selection. Confirm a component only after reading the changed implementation and updating its description. Historical model-mesh snapshots are history, not a runtime or release prerequisite.
-
-Keep real physical equations, unit/state relationships, dataset identities, strict current-model proof actions and honest failure evidence. Ordinary explanation, residual evaluation, mapping review and small changes require only the relevant native owner and bounded result; strict model creation/revision/closure keeps its stronger native contracts.
+Maintenance needs FlowGuard at or above the tag in the `test` extra of `pyproject.toml` (install with `python -m pip install -e ".[test]"`).
 
 <!-- END FLOWGUARD PROJECT RULES -->
