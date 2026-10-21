@@ -232,3 +232,13 @@
 - `python <本动作核验脚本> user-directory-templates`：exit 0；3.596秒；空目录4条原生命令均通过；6模板随安装计划分发；地图0error且无test_unbound；根模板未改。
 - `python <本动作核验脚本> template-tests`：exit 0；2.866秒；16 passed in 0.52s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-25 说明完整快照边界并重排调试步骤
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> workflow-snapshot-boundary`：exit 1；2.058秒；AssertionError: grep: skill/physicsguard-ai-debugging/scripts/__pycache__/physicsguard_closure_check.cpython-312.pyc: binary file matches。
+- `python <本动作核验脚本> workflow-snapshot-boundary-tracked`：exit 0；1.762秒；步骤1–17连续；真实缺变量命令exit1并保留精确错误；跟踪技能无FlowGuard维护证据混入；旧忽略缓存命中另存。
+- `python <本动作核验脚本> focused-tests`：exit 0；2.644秒；7 passed in 0.24s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：原始grep仅命中PG23已归档的10月18日忽略缓存，保持该缓存不动；raw命中如实存证，所有跟踪技能均严格零匹配，不豁免任何现行技能或文档。
+- 提交后完整检查：`python -m pytest -q`：exit 0；1032 passed in 115.90s (0:01:55)；命令总耗时 118.07 秒。检查结束后仅补记本行，无业务源码变化。

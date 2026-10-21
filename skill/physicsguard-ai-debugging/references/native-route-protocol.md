@@ -24,7 +24,7 @@ Choose from the PhysicsGuard visual toolbox:
 
 Do not flatten these modes into a generic flowchart. When a diagram mixes relationship types, label the edge semantics or pair the diagram with a small table. Formulae are useful as local residual labels or companion tables, but they should not replace the physical audit map unless the user's question is specifically about the equation.
 
-Diagrams and tables explain the audit route; they are not validation evidence. Validation claims must come from PhysicsGuard CLI output, FlowGuard checks, pytest, example regressions, or release evidence. Skip diagrams for tiny status answers, direct command results, or simple low-stakes explanations where a visual adds no clarity.
+Diagrams and tables explain the audit route; they are not validation evidence. Validation claims must come from PhysicsGuard command output. Skip diagrams for tiny status answers, direct command results, or simple low-stakes explanations where a visual adds no clarity.
 
 ## Workflow A: Audit External Results
 
@@ -40,7 +40,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    manifest, check the file-specific contract, and do not make broad AI analysis
    claims until the contract passes. If there is no concrete test data file,
    continue with the normal model-only or observed-snapshot route.
-6. When a passing test-file contract will be used to validate a model against
+4. When a passing test-file contract will be used to validate a model against
    that dataset, route through `physicsguard-model-dataset-validation` before
    broad model-data consistency claims. Run direct no-fit residual checks,
    physical envelope checks, redundant-sensor checks, optional conservative
@@ -62,29 +62,31 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    support bounded consistency only; prediction requires a declared
    `stateful_dynamic` model and a passing disjoint future-holdout rollout.
 
-8. Create or review a model-understanding preflight (start from `references/templates/model_understanding_preflight.yaml` in this skill's directory) before residual interpretation:
+5. Create or review a model-understanding preflight (start from `references/templates/model_understanding_preflight.yaml` in this skill's directory) before residual interpretation:
 
    ```powershell
    python -m physicsguard.cli preflight review PREFLIGHT.yaml --pretty
    ```
 
    The preflight must name the visible symptom, external model source of truth, physical boundary, subsystem blocks, conserved quantities, expected SI units, assumptions, uncertain mappings, first audit level, and stop conditions.
-9. Build or choose the coarsest useful PhysicsGuard audit YAML.
-10. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record (start from `references/templates/external_model_intake.yaml`):
+6. Build or choose the coarsest useful PhysicsGuard audit YAML.
+7. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record (start from `references/templates/external_model_intake.yaml`):
 
    ```powershell
    python -m physicsguard.cli intake review INTAKE.yaml --pretty
    ```
 
    AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards must be labeled as lower-confidence evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
-11. Prefer direct observed evaluation:
+8. Prefer direct observed evaluation:
 
    ```powershell
    python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
    ```
 
-12. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
-13. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations. Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and freeze each hypothesis's signal, residual, and timing expectations plus its weakening condition:
+   Every variable of the audited components must be in the snapshot; otherwise the command stops with `observed values missing required registered variables`. When signals are missing, audit a smaller block instead.
+
+9. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
+10. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations. Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and freeze each hypothesis's signal, residual, and timing expectations plus its weakening condition:
 
    ```powershell
    python -m physicsguard.cli task-model plan HYPOTHESIS_PLAN.yaml --pretty
@@ -93,7 +95,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    Rank the next observation from both residual relevance and the declared
    difference between hypothesis outcomes. Do not choose only the largest
    residual when a lower-residual signal distinguishes the live explanations.
-14. Acquire the selected observation only after the plan is frozen, then compare
+11. Acquire the selected observation only after the plan is frozen, then compare
    it without rewriting the old prediction:
 
    ```powershell
@@ -102,19 +104,19 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 
    Preserve supported, weakened, and undetermined hypotheses. Missing targets
    remain missing; they are not retroactive support.
-15. When measurement, mapping, or low-fidelity model uncertainty is bounded by
+12. When measurement, mapping, or low-fidelity model uncertainty is bounded by
    intervals, keep it as an interval. Use `task-model interval-residual` (start from `references/templates/interval_residual.yaml`) and
    report `robust_pass`, `robust_fail`, `indeterminate`, or `not_run`; never
    collapse an interval-crossing result into the ordinary audit pass/fail.
-16. For fault localization, use the existing task-local hypotheses as fault
+13. For fault localization, use the existing task-local hypotheses as fault
    signatures and run `task-model diagnose` (start from `references/templates/diagnosability_request.yaml`). Report pairwise
    distinguishability, viable and rejected hypotheses, unresolved pairs, and
    the ranked next signal. The result is task-local and does not prove that the
    hypothesis inventory exhausts physical reality.
-17. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
-18. Request or export only the next small set of signals/parameters needed by the suspicious block and the live-hypothesis distinction.
-19. Refine that block with a lower-level audit template.
-20. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
+14. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+15. Request or export only the next small set of signals/parameters needed by the suspicious block and the live-hypothesis distinction.
+16. Refine that block with a lower-level audit template.
+17. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
 
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
