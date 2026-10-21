@@ -125,3 +125,12 @@
 - `python <本动作核验脚本> collect`：exit 0；2.985秒；1105 tests collected in 0.98s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：另用真实3.11做受影响导入边界复核及不加载无关conftest的单个版本测试；仅最小伴随环境，不声称3.11全套已通过。
+
+### PG-13 删除纯目的证明模块并保留领域模型
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> map-check`：exit 0；0.509秒；check: 0 error(s), 5 warning(s), 0 info。
+- `python <本动作核验脚本> collect`：exit 0；3.911秒；1070 tests collected in 1.47s。
+- `python <本动作核验脚本> exports-references-flows`：exit 0；2.052秒；exports ok；残留零命中；仅保留三个功能流程。
+- `python <本动作核验脚本> models`：exit 0；92.039秒；models: 13 passed, 0 failed。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

@@ -41,7 +41,6 @@
         "tests/test_dataset_identity.py",
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
-        "tests/test_dynamic_model_purpose.py",
         "tests/test_evaluator.py",
         "tests/test_evidence_mesh.py",
         "tests/test_fmi_observation.py",
@@ -85,32 +84,6 @@
       ],
       "status": "confirmed",
       "fingerprint": "sha256:a9f604409dfcf31280820ff160b16701abbf1453f790beeec564ea915f51f72b"
-    },
-    {
-      "id": "purpose",
-      "layer": "",
-      "summary": "Strict current-purpose and candidate identity; optional declared-package shape diagnostics",
-      "responsibilities": [
-        "Bind strict current candidates and failure universes to exact target-native evidence",
-        "Keep required current good/bad proofs current; optional file/hash/time-point declarations report native execution not_run and never license closure"
-      ],
-      "files": [
-        "src/physicsguard/guard_model_contract.py",
-        "src/physicsguard/skill_execution_depth.py"
-      ],
-      "entrypoints": [],
-      "state": [],
-      "side_effects": [],
-      "depends_on": [],
-      "tests": [
-        "tests/test_dynamic_model_purpose.py",
-        "tests/test_skill_execution_depth.py"
-      ],
-      "models": [
-        ".flowguard/verification/owners/dynamic_model_purpose/run_checks.py"
-      ],
-      "status": "confirmed",
-      "fingerprint": "sha256:4033895a8b80a45b5a5512129c7256e06904749a7e75204d088aab077cffc02b"
     },
     {
       "id": "routing",
@@ -317,7 +290,6 @@
       "tests": [
         "tests/test_cli.py",
         "tests/test_dataset_identity.py",
-        "tests/test_dynamic_model_purpose.py",
         "tests/test_model_dataset_validation.py",
         "tests/test_native_directory_only_routes.py",
         "tests/test_physical_model_blueprint_native_authorities.py",
@@ -401,7 +373,6 @@
       "tests": [
         "tests/test_cli.py",
         "tests/test_dataset_identity.py",
-        "tests/test_dynamic_model_purpose.py",
         "tests/test_evidence_mesh.py",
         "tests/test_fmi_observation.py",
         "tests/test_hierarchy_block_index.py",
@@ -484,7 +455,6 @@
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
         "tests/test_domain_judgment_module_behaviors.py",
-        "tests/test_dynamic_model_purpose.py",
         "tests/test_electrochemical_extra_helpers.py",
         "tests/test_evaluator.py",
         "tests/test_evidence_mesh.py",
@@ -803,13 +773,6 @@
         "interface",
         "loaders",
         "simulation"
-      ]
-    },
-    {
-      "id": "current_purpose",
-      "steps": [
-        "interface",
-        "purpose"
       ]
     },
     {
