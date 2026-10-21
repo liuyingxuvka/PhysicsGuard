@@ -20,14 +20,13 @@ field has a catalog row, role/disposition, and evidence-backed mapping.
    interval with its midpoint for robust residual or fault-signature analysis.
    An interval that overlaps an acceptance boundary remains `indeterminate`.
 
-For model-dataset validation depth, the current project evidence registry and
-named bundle are the consumed mapping review. Every required model input,
-validation output, diagnostic check, or redundant measurement must have an
-active bundle binding with unit evidence, confidence at or above the declared
-threshold, and an accepted reviewer state. Bind the registry by SHA-256.
-Missing units, low/unknown confidence, inactive bindings, review-required
-status, bundle absence, or a changed registry blocks the broad validation
-receipt or confines work to unaffected relations.
+For model-dataset validation depth, the mapping edges of the test-file
+contracts that the validation plan references are the consumed mapping review.
+Every required model input, validation output, diagnostic check, or redundant
+measurement needs a mapping edge with unit evidence, confidence at or above
+`depth.mapping_review.minimum_confidence`, and no `review_required` or stale
+marker. Otherwise the broad validation stays blocked or is confined to
+unaffected relations.
 
 For quantitative adequacy, review the entire artifact-derived signal universe,
 not only the signals selected by the validation plan. Mark critical signals and

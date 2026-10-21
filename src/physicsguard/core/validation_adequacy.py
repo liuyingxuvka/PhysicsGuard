@@ -14,13 +14,13 @@ from physicsguard.io.test_file_contract_loader import (
     load_spec,
     load_data_file_manifest,
     load_parameter_role_matrix,
-    load_project_evidence_registry,
 )
+from physicsguard.core.parameter_coverage import _metadata_is_stale
+from physicsguard.core.test_file_contract import resolve_test_file_contract
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
-from physicsguard.schema.parameter_coverage import ParameterRoleMatrixSpec
-from physicsguard.schema.project_evidence import EvidenceBindingRecordSpec
+from physicsguard.schema.parameter_coverage import MappingEdgeSpec, ParameterRoleMatrixSpec
 from physicsguard.schema.validation_adequacy import (
     ANTI_DEGENERACY_FLOOR_ALGORITHM,
     FamilyQuotaPlanSpec,
@@ -74,13 +74,7 @@ def evaluate_validation_adequacy(
         "validation_role_matrix_unreadable",
         load_findings,
     )
-    registry = _load_or_find(
-        load_project_evidence_registry,
-        _resolve_path(base_dir, depth.mapping_review.registry.path),
-        "validation_evidence_registry_unreadable",
-        load_findings,
-    )
-    if manifest is None or role_matrix is None or registry is None:
+    if manifest is None or role_matrix is None:
         receipt = _blocked_empty_receipt(
             series,
             residual_receipt,
@@ -89,30 +83,8 @@ def evaluate_validation_adequacy(
         )
         return ValidationAdequacyEvaluation(receipt=receipt, findings=load_findings)
 
-    bundle = next(
-        (item for item in registry.evidence_bundles if item.bundle_id == depth.mapping_review.bundle_id),
-        None,
-    )
-    if bundle is None:
-        finding = _finding(
-            "error",
-            "validation_adequacy_bundle_missing",
-            "the mapping-review bundle required for target coverage does not exist",
-            depth.mapping_review.bundle_id,
-        )
-        receipt = _blocked_empty_receipt(
-            series,
-            residual_receipt,
-            [finding["type"]],
-            depth.adequacy,
-        )
-        return ValidationAdequacyEvaluation(receipt=receipt, findings=[finding])
-    binding_ids = set(bundle.bindings)
-    bindings = [
-        item
-        for item in registry.evidence_bindings
-        if item.binding_id in binding_ids and item.status == "active"
-    ]
+    mapping_edges, _ = load_contract_mapping_edges(plan, base_dir, load_findings)
+
     result = evaluate_validation_adequacy_artifacts(
         adequacy=depth.adequacy,
         claim_scope=depth.time_scope.claim_scope,
@@ -123,7 +95,7 @@ def evaluate_validation_adequacy(
         audit_spec=audit_spec,
         series=series,
         residual_receipt=residual_receipt,
-        bindings=bindings,
+        mapping_edges=mapping_edges,
     )
     return ValidationAdequacyEvaluation(
         receipt=result.receipt,
@@ -142,7 +114,7 @@ def evaluate_validation_adequacy_artifacts(
     audit_spec: HierarchicalAuditSpec,
     series: ObservedSeriesSpec | None,
     residual_receipt: dict[str, Any],
-    bindings: Iterable[EvidenceBindingRecordSpec] = (),
+    mapping_edges: Iterable[MappingEdgeSpec] = (),
 ) -> ValidationAdequacyEvaluation:
     """Pure evaluator used by the runtime integration and shallow-negative tests."""
 
@@ -187,24 +159,22 @@ def evaluate_validation_adequacy_artifacts(
         and role_by_source[source_id].coverage_status == "covered"
     )
 
-    binding_list = list(bindings)
+    edge_list = [
+        item
+        for item in mapping_edges
+        if not item.review_required and not _metadata_is_stale(item.metadata)
+    ]
     selected_signal_ids = {
         item.source_id for item in plan.variable_roles if item.source_id in available_signal_ids
     }
     selected_signal_ids.update(
-        item.source_field
-        for item in binding_list
-        if item.source_field in available_signal_ids and item.model_target
+        item.source_id for item in edge_list if item.source_id in available_signal_ids
     )
     target_to_sources: dict[str, set[str]] = {}
     covered_model_targets: set[str] = set()
-    for item in binding_list:
-        if item.model_target:
-            covered_model_targets.add(item.model_target)
-        if item.source_field and item.model_target:
-            target_to_sources.setdefault(item.model_target, set()).add(item.source_field)
-        if item.source_fact and item.model_target:
-            target_to_sources.setdefault(item.model_target, set()).add(f"fact:{item.source_fact}")
+    for item in edge_list:
+        covered_model_targets.add(item.target)
+        target_to_sources.setdefault(item.target, set()).add(item.source_id)
     for item in plan.variable_roles:
         if item.source_id:
             target_to_sources.setdefault(item.target, set()).add(item.source_id)
@@ -226,9 +196,9 @@ def evaluate_validation_adequacy_artifacts(
         if item.validation_role == "calibration_candidate"
     }
     bound_parameter_targets = {
-        item.model_target
-        for item in binding_list
-        if item.binding_kind == "fact_to_model_parameter" and item.model_target
+        item.target
+        for item in edge_list
+        if item.target_type in {"model_parameter", "parameter"}
     }
     parameter_policies = {
         item.parameter_id: item
@@ -241,12 +211,16 @@ def evaluate_validation_adequacy_artifacts(
         | set(parameter_policies)
     )
     required_parameters |= parameter_role_targets
-    covered_parameters = sorted(set(available_parameter_ids) & covered_model_targets)
     model_parameter_ids = {
         f"{component.id}.{parameter_name}"
         for component in audit_spec.system.components
         for parameter_name in component.parameters
     }
+    # A parameter that the executable model declares is bound by that declaration.
+    for parameter_id in set(available_parameter_ids) & model_parameter_ids:
+        covered_model_targets.add(parameter_id)
+        target_to_sources.setdefault(parameter_id, set()).add(f"model:{parameter_id}")
+    covered_parameters = sorted(set(available_parameter_ids) & covered_model_targets)
     contribution_by_parameter = {
         str(item.get("parameter_id")): item
         for item in residual_receipt.get("parameter_contributions", [])
@@ -1140,6 +1114,36 @@ def _empty_temporal(status: str) -> dict[str, Any]:
         "missing_source_lineage": [],
         "strata_results": [],
     }
+
+
+def load_contract_mapping_edges(
+    plan: ModelValidationPlanSpec,
+    base_dir: Path,
+    findings: list[dict[str, Any]],
+) -> tuple[list[MappingEdgeSpec], list[str]]:
+    """Mapping edges of every test-file contract that the validation plan references."""
+
+    edges: list[MappingEdgeSpec] = []
+    files: list[str] = []
+    for reference in plan.contracts:
+        contract_path = _resolve_path(base_dir, reference.contract)
+        try:
+            resolved = resolve_test_file_contract(contract_path)
+        except Exception as exc:
+            findings.append(
+                _finding(
+                    "error",
+                    "validation_mapping_edges_unreadable",
+                    "a referenced test-file contract or its mapping edges could not be read",
+                    str(contract_path),
+                    {"error": str(exc)},
+                )
+            )
+            continue
+        if resolved.mapping_edges is not None:
+            edges.extend(resolved.mapping_edges.value.edges)
+            files.append(str(resolved.mapping_edges.path or contract_path))
+    return edges, files
 
 
 def _load_or_find(loader, path: Path, code: str, findings: list[dict[str, Any]]):

@@ -108,15 +108,7 @@ depth:
       sha256: 5a346f92f5a100c7dfe7bbe7bd310d943a1ea66a7fcc55d02332d18cbd8bbe01
     testbench_version: v1
   mapping_review:
-    accepted_review_states:
-    - ai_registered
-    - human_confirmed
-    bundle_id: pump_loop_validation_bundle_001
     minimum_confidence: 0.75
-    registry:
-      identity_id: pump_loop_mapping_registry
-      path: ../evidence/project_evidence_registry.yaml
-      sha256: 3262335919a236e6b7026322c3f8e6320d84b723b49cfc394e2ef50fa50dcbf8
   model_semantics: pointwise
   observed_series:
     identity_id: deep_time_varying_parameter_series

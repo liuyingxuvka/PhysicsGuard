@@ -15,7 +15,6 @@ from physicsguard.schema.predictive_rollout import (
     PredictiveRolloutPlanSpec,
     PredictiveRolloutReceiptSpec,
 )
-from physicsguard.schema.project_evidence import ReviewState
 from physicsguard.schema.validation_adequacy import (
     ValidationAdequacyPlanSpec,
     ValidationAdequacyReceiptSpec,
@@ -99,21 +98,11 @@ class DatasetIdentityPlanSpec(BaseModel):
 
 
 class MappingReviewPlanSpec(BaseModel):
-    """Current project-evidence mapping review consumed by validation."""
+    """Review of the referenced contracts' mapping edges consumed by validation."""
 
     model_config = ConfigDict(extra="forbid")
 
-    registry: ValidationIdentityReferenceSpec
-    bundle_id: str
     minimum_confidence: float = 0.75
-    accepted_review_states: list[ReviewState] = Field(
-        default_factory=lambda: ["ai_registered", "ai_extracted", "human_confirmed"]
-    )
-
-    @field_validator("bundle_id")
-    @classmethod
-    def _bundle_id_valid(cls, value: str) -> str:
-        return ensure_non_empty(value, "bundle_id")
 
     @field_validator("minimum_confidence")
     @classmethod
@@ -121,14 +110,6 @@ class MappingReviewPlanSpec(BaseModel):
         if not math.isfinite(value) or not 0 <= value <= 1:
             raise ValueError("minimum_confidence must be between 0 and 1")
         return value
-
-    @model_validator(mode="after")
-    def _review_states_valid(self) -> "MappingReviewPlanSpec":
-        if not self.accepted_review_states:
-            raise ValueError("accepted_review_states cannot be empty")
-        if len(self.accepted_review_states) != len(set(self.accepted_review_states)):
-            raise ValueError("accepted_review_states must be unique")
-        return self
 
 
 class TimeScopePlanSpec(BaseModel):
@@ -407,8 +388,6 @@ class MappingSignalReceiptSpec(BaseModel):
     unit: Optional[str] = None
     confidence: Optional[float] = None
     mapping_status: Literal["resolved", "uncertain", "missing"]
-    reviewer_status: Optional[ReviewState] = None
-    reviewer: Optional[str] = None
     issue_codes: list[str] = Field(default_factory=list)
 
 
@@ -416,8 +395,7 @@ class MappingReviewReceiptSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     status: DepthStatus
-    registry_identity: Optional[IdentityCheckReceiptSpec] = None
-    bundle_id: Optional[str] = None
+    mapping_edge_files: list[str] = Field(default_factory=list)
     minimum_confidence: Optional[float] = None
     signals: list[MappingSignalReceiptSpec] = Field(default_factory=list)
     unresolved_targets: list[str] = Field(default_factory=list)

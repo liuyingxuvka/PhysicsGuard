@@ -420,3 +420,14 @@
 - `python <本动作核验脚本> models`：exit 0；41.976秒；models: 8 passed, 0 failed。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 提交后完整检查：`python -m pytest -q`：exit 0；864 passed in 66.43s (0:01:06)；命令总耗时 67.278 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-46 从真实契约映射边核验验证信号而非证据账本
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.198秒；mapping review consumes actual referenced contract edges; unit/confidence/review/stale rejection retained; model-declared parameters bound。
+- `python <本动作核验脚本> native-plans`：exit 0；5.821秒；actual clean/deep PASS; shallow FAIL with exactly four native errors; mapped file path correct; protected owner and edges byte unchanged。
+- `python <本动作核验脚本> focused-tests`：exit 0；29.97秒；63 passed in 28.68s。
+- `python <本动作核验脚本> collect`：exit 0；4.662秒；864 tests collected in 3.32s。
+- `python <本动作核验脚本> map-check`：exit 0；0.833秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；50.943秒；models: 8 passed, 0 failed。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

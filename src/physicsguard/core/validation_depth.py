@@ -17,12 +17,10 @@ from typing import Any, Iterable
 
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.predictive_rollout import evaluate_predictive_rollout
-from physicsguard.core.validation_adequacy import evaluate_validation_adequacy
+from physicsguard.core.parameter_coverage import _metadata_is_stale
+from physicsguard.core.validation_adequacy import evaluate_validation_adequacy, load_contract_mapping_edges
 from physicsguard.io.observation_loader import load_observed_series
-from physicsguard.io.test_file_contract_loader import (
-    load_project_evidence_registry,
-    load_testbench_profile,
-)
+from physicsguard.io.test_file_contract_loader import load_testbench_profile
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
 from physicsguard.schema.observation_spec import ObservedValuesSpec
@@ -252,8 +250,7 @@ def _legacy_snapshot_depth(
         },
         "mapping": {
             "status": "partial",
-            "registry_identity": None,
-            "bundle_id": plan.evidence_bundle_id,
+            "mapping_edge_files": [],
             "minimum_confidence": None,
             "signals": [],
             "unresolved_targets": [role.target for role in _required_mapping_roles(plan)],
@@ -454,69 +451,18 @@ def _mapping_review_receipt(
 ) -> dict[str, Any]:
     assert plan.depth is not None
     mapping = plan.depth.mapping_review
-    identity = _identity_receipt(mapping.registry, base_dir)
-    if identity["status"] != "current":
-        _add_finding(
-            findings,
-            "error",
-            "mapping_review_identity_stale",
-            "signal-mapping review registry is missing or stale",
-            mapping.registry.path,
-            {"identity": identity},
-        )
+    load_findings: list[dict[str, Any]] = []
+    edges, edge_files = load_contract_mapping_edges(plan, base_dir, load_findings)
+    findings.extend(load_findings)
 
     signal_receipts: list[dict[str, Any]] = []
     unresolved: list[str] = []
-    registry_path = _resolve_path(base_dir, mapping.registry.path)
-    try:
-        registry = load_project_evidence_registry(registry_path)
-    except Exception as exc:
-        _add_finding(
-            findings,
-            "error",
-            "mapping_review_unreadable",
-            "project evidence registry could not be read as a mapping review",
-            mapping.registry.path,
-            {"error": str(exc)},
-        )
-        registry = None
-
-    bundle = None
-    if registry is not None:
-        bundle = next((item for item in registry.evidence_bundles if item.bundle_id == mapping.bundle_id), None)
-        if bundle is None:
-            _add_finding(
-                findings,
-                "error",
-                "mapping_review_bundle_missing",
-                "mapping review bundle does not exist in the current evidence registry",
-                mapping.bundle_id,
-            )
-        elif bundle.status != "active" or bundle.review.needs_human_review:
-            _add_finding(
-                findings,
-                "error",
-                "mapping_review_bundle_not_current",
-                "mapping review bundle is not active or still requires review",
-                mapping.bundle_id,
-                {"status": bundle.status, "review_state": bundle.review.state},
-            )
-
-    allowed_binding_ids = set(bundle.bindings) if bundle is not None else set()
-    binding_records = (
-        [item for item in registry.evidence_bindings if item.binding_id in allowed_binding_ids]
-        if registry is not None and bundle is not None
-        else []
-    )
     for role in _required_mapping_roles(plan):
-        candidates = [item for item in binding_records if item.model_target == role.target]
+        candidates = [item for item in edges if item.target == role.target]
         if role.source_id:
-            exact = [item for item in candidates if item.source_field == role.source_id]
-            candidates = exact
-        candidate = max(candidates, key=lambda item: item.mapping_confidence or -1.0, default=None)
-        issues: list[str] = []
+            candidates = [item for item in candidates if item.source_id == role.source_id]
+        candidate = max(candidates, key=lambda item: item.confidence or -1.0, default=None)
         if candidate is None:
-            issues.append("mapping_missing")
             signal_receipts.append(
                 {
                     "target": role.target,
@@ -524,9 +470,7 @@ def _mapping_review_receipt(
                     "unit": None,
                     "confidence": None,
                     "mapping_status": "missing",
-                    "reviewer_status": None,
-                    "reviewer": None,
-                    "issue_codes": issues,
+                    "issue_codes": ["mapping_missing"],
                 }
             )
             unresolved.append(role.target)
@@ -534,32 +478,27 @@ def _mapping_review_receipt(
                 findings,
                 "error",
                 "mapping_required_signal_missing",
-                "required validation signal has no current evidence binding",
+                "required validation signal has no mapping edge in the referenced contracts",
                 role.target,
-                {"source_id": role.source_id, "bundle_id": mapping.bundle_id},
+                {"source_id": role.source_id},
             )
             continue
-        if candidate.status != "active":
-            issues.append("binding_inactive")
-        if not candidate.unit:
+        issues: list[str] = []
+        if _metadata_is_stale(candidate.metadata):
+            issues.append("mapping_stale")
+        if not candidate.unit_evidence:
             issues.append("unit_evidence_missing")
-        if candidate.mapping_confidence is None or candidate.mapping_confidence < mapping.minimum_confidence:
+        if candidate.confidence is None or candidate.confidence < mapping.minimum_confidence:
             issues.append("confidence_below_threshold")
-        if candidate.review.state not in mapping.accepted_review_states:
-            issues.append("review_state_not_accepted")
-        if candidate.review.needs_human_review:
+        if candidate.review_required:
             issues.append("human_review_required")
-
-        mapping_status = "resolved" if not issues else "uncertain"
         signal_receipts.append(
             {
                 "target": role.target,
-                "source_id": candidate.source_field or role.source_id,
-                "unit": candidate.unit,
-                "confidence": candidate.mapping_confidence,
-                "mapping_status": mapping_status,
-                "reviewer_status": candidate.review.state,
-                "reviewer": candidate.review.reviewer,
+                "source_id": candidate.source_id,
+                "unit": candidate.unit_evidence,
+                "confidence": candidate.confidence,
+                "mapping_status": "resolved" if not issues else "uncertain",
                 "issue_codes": issues,
             }
         )
@@ -569,20 +508,19 @@ def _mapping_review_receipt(
                 findings,
                 "error",
                 "mapping_required_signal_uncertain",
-                "required signal mapping lacks current unit, confidence, active, or reviewer evidence",
+                "required signal mapping edge lacks unit evidence, enough confidence, or review",
                 role.target,
                 {
-                    "binding_id": candidate.binding_id,
+                    "edge_id": candidate.id,
                     "issue_codes": issues,
                     "minimum_confidence": mapping.minimum_confidence,
                 },
             )
 
-    status = "blocked" if unresolved or identity["status"] != "current" or bundle is None else "pass"
+    status = "blocked" if unresolved or load_findings else "pass"
     return {
         "status": status,
-        "registry_identity": identity,
-        "bundle_id": mapping.bundle_id,
+        "mapping_edge_files": edge_files,
         "minimum_confidence": mapping.minimum_confidence,
         "signals": signal_receipts,
         "unresolved_targets": sorted(set(unresolved)),

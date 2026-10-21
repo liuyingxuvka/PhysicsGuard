@@ -13,12 +13,12 @@ from physicsguard.io.observation_loader import load_observed_series
 from physicsguard.io.test_file_contract_loader import (
     load_data_file_manifest,
     load_model_validation_plan,
+    load_parameter_mapping_edges,
     load_parameter_role_matrix,
-    load_project_evidence_registry,
 )
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec, ValidationVariableRoleSpec
-from physicsguard.schema.parameter_coverage import ParameterRoleMatrixSpec
+from physicsguard.schema.parameter_coverage import MappingEdgeSpec, ParameterRoleMatrixSpec
 from physicsguard.schema.validation_adequacy import ParameterTemporalPolicySpec, ValidationAdequacyPlanSpec
 from physicsguard.schema.validation_depth import ObservedSeriesSpec
 
@@ -33,9 +33,7 @@ def _inputs():
     manifest = load_data_file_manifest(PUMP / "data" / "clean_manifest.yaml")
     roles = load_parameter_role_matrix(PUMP / "coverage" / "pump_loop_role_matrix.yaml")
     series = load_observed_series(PUMP / "observed" / "clean_observed_series.yaml")
-    registry = load_project_evidence_registry(PUMP / "evidence" / "project_evidence_registry.yaml")
-    bundle = next(item for item in registry.evidence_bundles if item.bundle_id == "pump_loop_validation_bundle_001")
-    bindings = [item for item in registry.evidence_bindings if item.binding_id in set(bundle.bindings)]
+    bindings = load_parameter_mapping_edges(PUMP / "coverage" / "pump_loop_mapping_edges.yaml").edges
     return plan, audit, manifest, roles, series, bindings
 
 
@@ -305,7 +303,7 @@ def test_sensitive_time_varying_parameter_with_effectless_native_replay_is_block
         audit_spec=audit,
         series=zero_relation,
         residual_receipt=residual,
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     assert result.receipt["per_parameter"][0]["contribution_status"] == "blocked"
     assert result.receipt["status"] == "blocked"
@@ -393,7 +391,7 @@ def test_verified_non_sensitive_parameter_requires_native_ceiling_and_bounded_di
         audit_spec=audit,
         series=zero_relation,
         residual_receipt=residual,
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     parameter = result.receipt["per_parameter"][0]
     assert parameter["contribution_status"] == "verified_non_sensitive"
@@ -451,7 +449,7 @@ def test_three_distributed_points_from_1000_still_fail_dynamic_floor() -> None:
         audit_spec=audit,
         series=sampled,
         residual_receipt=_residual(sampled.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     floor = result.receipt["universe"]["selection_floor"]
     parameter = result.receipt["per_parameter"][0]
@@ -474,7 +472,7 @@ def test_dynamic_representative_parameter_can_pass_without_full_1000_rows() -> N
         audit_spec=audit,
         series=series,
         residual_receipt=_residual(series.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     parameter = result.receipt["per_parameter"][0]
     assert result.receipt["status"] == "pass"
@@ -507,7 +505,7 @@ def test_parameter_floor_uses_strictest_universal_project_and_convergence_term()
         audit_spec=audit,
         series=series,
         residual_receipt=_residual(series.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     floor = result.receipt["per_parameter"][0]["coverage_floor"]
     assert floor["universal_minimum_count"] == 32
@@ -532,7 +530,7 @@ def test_disconnected_parameter_evidence_cannot_pass_deep_coverage() -> None:
             series.points,
             blocked_parameters={"pump_signal_map.a"},
         ),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     parameter = result.receipt["per_parameter"][0]
     assert parameter["validated_point_count"] == 32
@@ -571,7 +569,7 @@ def test_1000_point_endpoints_are_blocked() -> None:
         audit_spec=audit,
         series=shallow,
         residual_receipt=_residual(shallow.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
     assert result.receipt["status"] == "blocked"
@@ -596,7 +594,7 @@ def test_duplicate_timestamp_and_missing_transient_are_blocked() -> None:
         audit_spec=audit,
         series=shallow,
         residual_receipt=_residual(shallow.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
     assert "temporal_duplicate_timestamps" in codes
@@ -639,7 +637,7 @@ def test_long_signal_history_requires_gap_tags_modes_and_source_lineage() -> Non
         audit_spec=audit,
         series=shallow,
         residual_receipt=_residual(shallow.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
     assert {
@@ -677,7 +675,7 @@ def test_all_declared_sampling_modes_execute_the_native_adequacy_gate() -> None:
             audit_spec=audit,
             series=series,
             residual_receipt=_residual(series.points),
-            bindings=bindings,
+            mapping_edges=bindings,
         )
         assert result.receipt["status"] == "pass", mode
         assert result.receipt["sampling_mode"] == mode
@@ -746,7 +744,7 @@ def test_time_varying_parameter_cannot_use_one_point_from_long_series() -> None:
         audit_spec=audit,
         series=sparse_parameter_series,
         residual_receipt=_residual(sparse_parameter_series.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     parameter = next(
         item
@@ -817,7 +815,7 @@ def test_1000_point_parameter_endpoints_do_not_count_as_deep_history() -> None:
         audit_spec=audit,
         series=sparse,
         residual_receipt=_residual(sparse.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     parameter = result.receipt["per_parameter"][0]
     assert parameter["available_point_count"] == 1000
@@ -886,7 +884,7 @@ def test_same_early_stage_points_cannot_impersonate_early_middle_late() -> None:
         audit_spec=audit,
         series=sampled,
         residual_receipt=_residual(sampled.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     parameter = result.receipt["per_parameter"][0]
     assert parameter["validated_point_count"] == 3
@@ -941,15 +939,14 @@ def test_one_shallow_parameter_is_not_hidden_by_other_deep_parameters() -> None:
     parameter_audit = audit.model_copy(
         update={"hierarchy": audit.hierarchy.model_copy(update={"blocks": [parameter_block]})}
     )
-    signal_bindings = [item for item in bindings if item.binding_kind != "fact_to_model_parameter"]
-    binding_template = next(item for item in bindings if item.binding_kind == "fact_to_model_parameter")
+    signal_bindings = list(bindings)
     parameter_bindings = [
-        binding_template.model_copy(
-            update={
-                "binding_id": f"binding_{parameter_id}",
-                "source_fact": parameter_id,
-                "model_target": parameter_id,
-            }
+        MappingEdgeSpec(
+            id=f"edge:{parameter_id}",
+            source_id=f"fact:{parameter_id}",
+            relation="parameter_of",
+            target_type="model_parameter",
+            target=parameter_id,
         )
         for parameter_id in parameter_ids
     ]
@@ -1018,7 +1015,7 @@ def test_one_shallow_parameter_is_not_hidden_by_other_deep_parameters() -> None:
         audit_spec=parameter_audit,
         series=sampled,
         residual_receipt=_residual(sampled.points),
-        bindings=[*signal_bindings, *parameter_bindings],
+        mapping_edges=[*signal_bindings, *parameter_bindings],
     )
     by_id = {row["parameter_id"]: row for row in result.receipt["per_parameter"]}
     assert result.receipt["universe"]["parameter_selection_ratio"] == 1.0
@@ -1034,16 +1031,15 @@ def test_10000_parameter_universe_with_only_two_bound_is_blocked() -> None:
     parameter_audit = audit.model_copy(
         update={"hierarchy": audit.hierarchy.model_copy(update={"blocks": [parameter_block]})}
     )
-    signal_bindings = [item for item in bindings if item.binding_kind != "fact_to_model_parameter"]
-    binding_template = next(item for item in bindings if item.binding_kind == "fact_to_model_parameter")
+    signal_bindings = list(bindings)
     selected = parameter_ids[:2]
     parameter_bindings = [
-        binding_template.model_copy(
-            update={
-                "binding_id": f"binding_{parameter_id}",
-                "source_fact": parameter_id,
-                "model_target": parameter_id,
-            }
+        MappingEdgeSpec(
+            id=f"edge:{parameter_id}",
+            source_id=f"fact:{parameter_id}",
+            relation="parameter_of",
+            target_type="model_parameter",
+            target=parameter_id,
         )
         for parameter_id in selected
     ]
@@ -1072,7 +1068,7 @@ def test_10000_parameter_universe_with_only_two_bound_is_blocked() -> None:
         audit_spec=parameter_audit,
         series=series,
         residual_receipt=_residual(series.points),
-        bindings=[*signal_bindings, *parameter_bindings],
+        mapping_edges=[*signal_bindings, *parameter_bindings],
     )
     universe = result.receipt["universe"]
     assert len(universe["available_parameter_ids"]) == 10_000
@@ -1096,7 +1092,7 @@ def test_parameter_universe_requires_static_or_time_varying_classification() -> 
         audit_spec=audit,
         series=series,
         residual_receipt=_residual(series.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     assert result.receipt["universe"]["available_parameter_ids"] == [
         "pump_signal_map.a"
@@ -1238,7 +1234,7 @@ def test_repeated_template_exclusions_are_blocked() -> None:
         audit_spec=audit,
         series=series,
         residual_receipt=_residual(series.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
     assert "repeated_exclusion_reason" in codes
@@ -1273,7 +1269,7 @@ def test_conflicting_manifest_point_counts_fail_closed_on_larger_denominator() -
         audit_spec=audit,
         series=series,
         residual_receipt=_residual(series.points),
-        bindings=bindings,
+        mapping_edges=bindings,
     )
 
     assert "manifest_point_count_mismatch" in {

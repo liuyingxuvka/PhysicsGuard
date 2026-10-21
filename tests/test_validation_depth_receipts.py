@@ -96,21 +96,14 @@ def test_changed_field_schema_makes_receipt_stale_even_when_data_is_unchanged(tm
 
 def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> None:
     pump = _copy_pump(tmp_path)
-    registry_path = pump / "evidence" / "project_evidence_registry.yaml"
-    registry = _load(registry_path)
-    binding = next(
-        item
-        for item in registry["evidence_bindings"]
-        if item["model_target"] == "pump_signal_map.y"
-    )
-    binding["unit"] = None
-    binding["mapping_confidence"] = 0.4
-    binding["review"] = {"state": "review_required", "needs_human_review": True}
-    _write(registry_path, registry)
+    edges_path = pump / "coverage" / "pump_loop_mapping_edges.yaml"
+    edges = _load(edges_path)
+    edge = next(item for item in edges["edges"] if item["target"] == "pump_signal_map.y")
+    edge.pop("unit_evidence")
+    edge["confidence"] = 0.4
+    edge["review_required"] = True
+    _write(edges_path, edges)
     plan_path = _clean_plan(pump)
-    plan = _load(plan_path)
-    plan["depth"]["mapping_review"]["registry"]["sha256"] = _sha256(registry_path)
-    _write(plan_path, plan)
 
     report = validate_model_dataset(plan_path)
     mapping = report.depth_receipt["mapping"]
@@ -121,7 +114,7 @@ def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> N
     signal = next(item for item in mapping["signals"] if item["target"] == "pump_signal_map.y")
     assert "unit_evidence_missing" in signal["issue_codes"]
     assert "confidence_below_threshold" in signal["issue_codes"]
-    assert "review_state_not_accepted" in signal["issue_codes"]
+    assert "human_review_required" in signal["issue_codes"]
     assert any(item["type"] == "mapping_required_signal_uncertain" for item in report.findings)
 
 

@@ -17,7 +17,7 @@ analysis claims.
 3. If missing inputs or uncertain mappings are reported, complete them or route to signal mapping review before fault claims.
 4. Before planning validation, name the intended claim scope and model
    semantics (`pointwise` or `stateful_dynamic`). Identify the authoritative
-   manifest, role matrix, hierarchy, evidence registry/bundle, available time
+   manifest, role matrix, hierarchy, contract mapping edges, available time
    range, operating modes, important events/peaks/boundaries, critical
    signals/parameters, subsystem families, and the project source for
    quantitative adequacy thresholds. Classify each available model parameter
