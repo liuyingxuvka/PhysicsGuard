@@ -814,3 +814,29 @@
 - 适配：先在独立tracked源码副本确认旧3场景漏掉人为改坏outside分支；新4场景后同一原生损坏在FG0.70.6/0.70.7均为conformance3/4、models3pass1fail，活动src逐字节未改，不执行宽git restore。
 - 适配：正常两版release均4/4含模型检查，不为相同正常源另重复一轮map models；保留12条新版非阻断coverage提示，版本仍用户指定0.15.16。
 - 提交后完整检查：`python -m pytest -q`：exit 0；863 passed in 71.34s (0:01:11)；命令总耗时 71.929 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-75 修正陈旧模板指令与可选producer的真实结论边界
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> owner-read`：exit 0；3.65秒；  used by: interface, simulation。
+- `python <本动作核验脚本> add-existing-test-assertions`：exit 0；0.04秒；two assertions added to existing tests only; engine/template unchanged for RED。
+- `python <本动作核验脚本> red-conditional-boundary`：exit 1；2.055秒；1 failed, 1 passed in 1.56s。
+- `python <本动作核验脚本> conditional-text-fix`：exit 0；0.04秒；PG75 stale SHA instruction removed; producer phrase conditional; changelog updated without judgment changes。
+- `python <本动作核验脚本> green-predictive-tests`：exit 0；1.476秒；7 passed in 1.03s。
+- `python <本动作核验脚本> preservation`：exit 0；1.276秒；given boundary exact previous text; omitted boundary exact minus optional phrase; rest engine AST identical; single template line removed/YAML valid。
+- `python <本动作核验脚本> confirm-validation`：exit 0；0.22秒；confirmed 1 component(s)。
+- `python <本动作核验脚本> version-test`：exit 0；0.378秒；1 passed in 0.04s。
+- `python <本动作核验脚本> exports-names`：exit 0；1.263秒；all names ok。
+- `python <本动作核验脚本> anchors`：exit 0；0.338秒；anchors ok。
+- `python <本动作核验脚本> collect`：exit 0；2.422秒；863 tests collected in 1.87s。
+- `python <本动作核验脚本> final-section5-finite`：exit 0；5.88秒；见同编号JSON/日志中的结构化结果。
+- 适配：本方案项实际实施，不作仅review结论；先仅加两条既有测试断言实测RED1fail/1pass，再改条件文字GREEN7pass，测试个数保持863。
+- 适配：最终正常模型验收复用提交后同一clean源码的两版flowguard release（含4模型），再完整pytest一次；随后只补记journal，不重复 unchanged业务源码门禁。
+- 适配：第5节实际native5路径、scratch单技能安装/检查、18READMEparser及原始残留扫描已通过；只按root明确允许的精确SLIM_LOG历史例外分类，保留特定外来pyc，不删外来文件；OpenSpec CLI仍缺失，未冒称strict validate。
+- 提交后完整检查：`python -m pytest -q`：exit 0；863 passed in 54.01s；命令总耗时 54.578 秒。检查结束后仅补记本行，无业务源码变化。
+- 最终业务源码冻结提交为 `9aeb0de4935130aed397ba38d2799c34e9b8afd4`；两版模型检查和完整测试均在这个 clean 提交执行，检查前后 SHA/clean 一致。随后只补记本日志，不重新运行相同业务源码。
+- `python -m flowguard release`（私人 FlowGuard0.70.6）：exit0，17.167秒；`<FG0.70.7隔离环境>/bin/python -m flowguard release`：exit0，26.391秒。两者均4模型通过、4 declared/4 executed；strict均0errors/0warnings，lint保留10warnings/20info、1条既有依赖环债务，新版另有12条非阻断invariant坏变体覆盖提示，未为消警告扩测试。
+- 基线完整测试1426passed/524.00秒（命令总耗时526.563秒）；基线14模型/66.167秒。最终完整测试863项；较参考857多6个保留的真实回归：PG48无缓存内容比较2个、PG57授权非线性补正3个、PG61安装器同stat漂移1个。
+- 跟踪统计：总文件1268→593，.flowguard文件283→5，OpenSpec文件204→52；技能10入口→1入口，75tracked文件/252942字节→16tracked文件/48866字节。原始现场技能统计76文件/265554字节→17文件/61478字节，差额均为明确保留的同一个12612字节旧pyc，非当前技能入口且不进入安装产物。
+- 第5节补充：5条真实CLI冒烟、临时目录安装/check、18条README参数解析、原始残留扫描及物理模块源码与基线逐字节一致均通过；OpenSpec CLI不可用，仅有PG63授权离线归档/结构复核，未声称其strict validate已跑。
+- 运行范围：完整pytest用Python3.12私人旧FG0.70.6环境；新版FG0.70.7为批准的bc8c519源码快照构建的普通安装包，105个.py逐字节核对，双版模型互操作通过。Python3.11仅执行PG12指定兼容边界窄验，本轮未声称完整3.11/3.13或远端CI已通过；未推送/打tag/发布或安装到用户真实技能目录。

@@ -124,7 +124,6 @@ depth:
       case_ids:
         - baseline_case
   assumptions:
-    - Replace every placeholder hash with the current exact file SHA-256 before validation.
     - Declare event, peak, boundary, and operating-mode tags in the observed series when the claim depends on them.
 # For a predictive claim, change model_semantics to stateful_dynamic and add a
 # depth.predictive_rollout block with exact model, training, generated

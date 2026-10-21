@@ -2,7 +2,7 @@
 
 ## v0.15.16 - 2026-10-21
 
-- Done: PG-01, PG-02, PG-03, PG-04, PG-05, PG-06, PG-07, PG-08, PG-09, PG-10, PG-11, PG-12, PG-13, PG-14, PG-15, PG-16, PG-17, PG-18, PG-19, PG-20, PG-21, PG-22, PG-23, PG-24, PG-25, PG-26, PG-27, PG-28, PG-29, PG-30, PG-31, PG-32, PG-33, PG-34, PG-35, PG-36, PG-37, PG-38, PG-39, PG-40, PG-41, PG-42, PG-43, PG-44, PG-45, PG-46, PG-47, PG-48, PG-49, PG-50, PG-51, PG-52, PG-53, PG-54, PG-55, PG-56, PG-57, PG-58, PG-59, PG-60, PG-61, PG-62, PG-63, PG-64, PG-65, PG-66, PG-67, PG-68, PG-69, PG-70, PG-71, PG-72, PG-73, PG-74.
+- Done: PG-01, PG-02, PG-03, PG-04, PG-05, PG-06, PG-07, PG-08, PG-09, PG-10, PG-11, PG-12, PG-13, PG-14, PG-15, PG-16, PG-17, PG-18, PG-19, PG-20, PG-21, PG-22, PG-23, PG-24, PG-25, PG-26, PG-27, PG-28, PG-29, PG-30, PG-31, PG-32, PG-33, PG-34, PG-35, PG-36, PG-37, PG-38, PG-39, PG-40, PG-41, PG-42, PG-43, PG-44, PG-45, PG-46, PG-47, PG-48, PG-49, PG-50, PG-51, PG-52, PG-53, PG-54, PG-55, PG-56, PG-57, PG-58, PG-59, PG-60, PG-61, PG-62, PG-63, PG-64, PG-65, PG-66, PG-67, PG-68, PG-69, PG-70, PG-71, PG-72, PG-73, PG-74, PG-75.
 - Skipped: none.
 - One `physicsguard` skill with a route table replaces the ten skill entries. The installer copies it into `--target`
   (rmtree + copytree), removes retired skill directories, and offers `--check` and `--dry-run`.
@@ -14,6 +14,8 @@
   predictive rollout's `producer_receipt_id` is optional.
 - The interval-diagnosability self-model also explores and replays an interval wholly outside acceptance
   (`robust_fail`), so breaking that branch of `evaluate_interval_residual` fails the model.
+- The validation-plan template no longer asks for file SHA-256 values, and the predictive-rollout claim boundary
+  mentions a producer receipt only when one is given.
 - `hierarchy evaluate` skips only the residuals that need unobserved variables and lists those variables; an observed
   value without a unit is a mapping gap; hierarchy and validation commands print a compact summary (`--json` for the
   full report).

@@ -69,6 +69,7 @@ def _plan() -> PredictiveRolloutPlanSpec:
 def test_passing_future_holdout_rollout_has_all_metrics() -> None:
     result = evaluate_predictive_rollout("stateful_dynamic", _plan(), base_dir=PUMP)
     assert result.receipt["status"] == "pass"
+    assert "producer receipt" in result.receipt["claim_boundary"]
     assert result.receipt["metrics"] == {
         "aligned_step_count": 3,
         "worst_step_normalized_error": 0.0,
@@ -186,3 +187,4 @@ def test_rollout_plan_without_producer_receipt_id_still_passes() -> None:
     result = evaluate_predictive_rollout("stateful_dynamic", plan, base_dir=PUMP)
     assert result.receipt["status"] == "pass"
     assert result.receipt["producer_receipt_id"] is None
+    assert "producer receipt" not in result.receipt["claim_boundary"]

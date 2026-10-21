@@ -118,8 +118,9 @@ def evaluate_predictive_rollout(
             "threshold_source": rollout.threshold_source,
         },
         "claim_boundary": (
-            "prediction is authorized only for the exact model, producer receipt, initial state, "
-            "step, future holdout, targets, horizon, scales, and thresholds in this receipt"
+            "prediction is authorized only for the exact model, "
+            + ("producer receipt, " if rollout.producer_receipt_id else "")
+            + "initial state, step, future holdout, targets, horizon, scales, and thresholds in this receipt"
         ),
     }
     validated = PredictiveRolloutReceiptSpec.model_validate(receipt).model_dump(mode="json")
