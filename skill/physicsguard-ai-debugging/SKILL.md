@@ -1,17 +1,16 @@
 ---
 name: physicsguard-ai-debugging
-description: "Use only for mixed or unclear AI-guided engineering-simulation debugging that genuinely spans multiple specialized PhysicsGuard routes, including coarse-to-fine localization and candidate-model coordination. For a clear adoption, preflight, mapping, test-file, dataset-validation, library, evidence-registry, blueprint, or closure request, use that direct skill instead."
+description: "Use for AI-guided debugging of engineering-simulation results: low-fidelity residual audits with hierarchy evaluate, coarse-to-fine localization of the suspicious block, competing hypotheses and the next signal to request, and candidate-model generation from a validated hierarchy. For a test-data file contract or model-vs-dataset validation alone, use the direct skill instead."
 ---
 
 # PhysicsGuard AI Debugging
 
 ## Entry boundary
 
-Accept this route only when:
+Accept this route when:
 
-- The visible engineering fault spans several PhysicsGuard responsibilities and cannot be owned by one direct route.
-- The correct PhysicsGuard route remains ambiguous after reading the hand-off list below.
-- Coarse-to-fine localization requires typed handoffs among preflight, mapping, validation, and closure owners.
+- An engineering-simulation result looks wrong and the fault must be localized: residual audit, coarse-to-fine refinement, competing hypotheses, next signals.
+- A candidate low-fidelity model must be built from a validated hierarchy (Workflow B in the native route protocol).
 
 Reject or hand off when:
 
@@ -25,9 +24,10 @@ Reject or hand off when:
 ## Minimum workflow
 
 1. If one hand-off listed above owns the complete request, hand off and stop.
-2. Verify the current PhysicsGuard runtime, then load the native route protocol only for the selected debugging work.
-3. Keep every specialist's native judgment and evidence separate while coordinating the smallest necessary handoff chain.
-4. Close only through the direct native owner that owns the requested final claim.
+2. Write or review the model-understanding preflight.
+3. Map the external signals into an observed snapshot; review the intake when mappings are uncertain.
+4. Run `python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml`.
+5. Read `top_blocks`, `recommended_refinements` and the mapping issues; request the next small set of signals and refine one block. Repeat.
 
 If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
@@ -44,7 +44,6 @@ If `python -m physicsguard.cli --help` fails, install the engine once with `pyth
 
 ## Required outputs
 
-- `selected_native_routes`
 - `localized_findings`
 - `next_required_evidence`
 - `bounded_claim`
