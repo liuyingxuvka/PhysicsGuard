@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
 from itertools import combinations
 from typing import Any
 
@@ -12,16 +10,6 @@ from physicsguard.schema.diagnosability import (
     IntervalResidualSpec,
     IntervalValueSpec,
 )
-
-
-def _fingerprint(value: Any) -> str:
-    payload = json.dumps(
-        value,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-    )
-    return "sha256:" + hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _overlaps(left: IntervalValueSpec, right: IntervalValueSpec) -> bool:
@@ -48,7 +36,6 @@ def evaluate_interval_residual(
     else:
         status = "indeterminate"
         reason = "observed_interval_crosses_acceptance_boundary"
-    content = residual.model_dump(mode="json")
     return {
         "artifact_kind": "physicsguard_interval_residual_receipt",
         "receipt_version": "1.0",
@@ -62,7 +49,6 @@ def evaluate_interval_residual(
         ),
         "acceptable_interval": residual.acceptable.model_dump(mode="json"),
         "source_ref": residual.source_ref,
-        "input_fingerprint": _fingerprint(content),
         "claim_boundary": (
             "This robust status covers only the supplied interval and "
             "acceptance interval. It does not replace the ordinary PhysicsGuard "
@@ -151,7 +137,6 @@ def evaluate_diagnosability(
         status = "partially_isolable"
     else:
         status = "indistinguishable"
-    content = request.model_dump(mode="json")
     return {
         "artifact_kind": "physicsguard_diagnosability_receipt",
         "receipt_version": "1.0",
@@ -163,7 +148,6 @@ def evaluate_diagnosability(
         "unresolved_hypothesis_pairs": unresolved,
         "ranked_next_signal_candidates": ranked,
         "recommended_next_signal_id": next_signal,
-        "request_fingerprint": _fingerprint(content),
         "claim_boundary": (
             "This result is task-local to the declared fault signatures, "
             "intervals, observations, and available signals. It does not prove "
