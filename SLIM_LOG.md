@@ -368,3 +368,12 @@
 - `python <本动作核验脚本> scratch-install-check`：exit 0；0.262秒；scratch install and check passed, 7 current members; temporary target only。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：本地按CI顺序完整验证使用既有专属Python3.12.14；新增远端CI矩阵为3.11/3.13，仅静态核对配置，不冒称两矩阵已在本地或GitHub执行。。
+
+### PG-41 退役候选蓝图技能并验证重装清理
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.052秒；PG-41 retired skill files, installer declaration, test inventory and handoff updated。
+- `python <本动作核验脚本> retired-install`：exit 0；0.293秒；plan 6 current skills; actual retired cleanup ['physicsguard-candidate-model-blueprint']; scratch install/check passed; only retired declarations remain。
+- `python <本动作核验脚本> focused-tests`：exit 0；1.984秒；15 passed in 0.40s。
+- `python <本动作核验脚本> map-check`：exit 0；0.349秒；check: 0 error(s), 1 warning(s), 0 info。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

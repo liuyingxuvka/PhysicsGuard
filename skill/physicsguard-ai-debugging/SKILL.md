@@ -19,7 +19,6 @@ Reject or hand off when:
 - A concrete test-data file contract is the whole request. Handoff: `physicsguard-test-file-contract-review`.
 - Exact model/dataset validation is the whole request. Handoff: `physicsguard-model-dataset-validation`.
 - Reusable model asset compatibility is the whole request. Handoff: `physicsguard-model-library`.
-- Candidate blueprint generation is the whole request. Handoff: `physicsguard-candidate-model-blueprint`.
 
 ## Minimum workflow
 
