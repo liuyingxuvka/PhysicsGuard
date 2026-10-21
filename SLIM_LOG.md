@@ -517,3 +517,16 @@
 - `python <本动作核验脚本> map-check`：exit 0；0.313秒；check: 0 error(s), 8 warning(s), 0 info。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：移除manifest核验的已知坏变体只在仓库外当前tracked-source副本执行；要求精确source_missing/manifest_stale两mismatch与exit1，活动src及样例原字节不动。。
+
+### PG-54 区间模型接入真实场景并让塌缩不变量生效
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.045秒；interval-collapse invariant now rejects wrong status; real 3-scenario replay and 2 known-bad variants installed。
+- `python <本动作核验脚本> real-runner`：exit 0；0.298秒；FLOWGUARD_RUNNER_DONE {"exit_code": 0, "checked": 6}。
+- `python <本动作核验脚本> known-bad-native`：exit 0；0.437秒；conformance: 2/3 scenarios match the real code; real native bad variant rejected exit1; active source byte unchanged。
+- `python <本动作核验脚本> anchors`：exit 0；0.3秒；anchors ok。
+- `python <本动作核验脚本> models`：exit 0；12.892秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> focused-tests`：exit 0；0.676秒；6 passed in 0.32s。
+- `python <本动作核验脚本> map-check`：exit 0；0.271秒；check: 0 error(s), 8 warning(s), 0 info。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：真实diagnosability已知坏变体在仓库外当前tracked-source副本执行，保同一真实runner的crossing精确mismatch/exit1；活动core及3场景/no_true_fault_claim保持原字节逻辑。。

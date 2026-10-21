@@ -28,6 +28,7 @@ class DiagnosticRequest:
 @dataclass(frozen=True)
 class DiagnosticState:
     phase: str = "declared"
+    observed_interval: str = ""
     robust_status: str = ""
     diagnosability_status: str = ""
     recommended_signal: str = ""
@@ -38,7 +39,7 @@ class EvaluateInterval:
     name = "EvaluateInterval"
     accepted_input_type = DiagnosticRequest
     reads = ("observed_interval",)
-    writes = ("phase", "robust_status")
+    writes = ("phase", "observed_interval", "robust_status")
     input_description = "one declared residual interval"
     output_description = "one robust interval status"
     idempotency = "the same interval class produces the same status"
@@ -52,7 +53,12 @@ class EvaluateInterval:
         }.get(request.observed_interval, "not_run")
         yield FunctionResult(
             request,
-            replace(state, phase="interval_evaluated", robust_status=status),
+            replace(
+                state,
+                phase="interval_evaluated",
+                observed_interval=request.observed_interval,
+                robust_status=status,
+            ),
             label=f"interval_{status}",
         )
 
@@ -76,8 +82,9 @@ class EvaluateDiagnosability:
 
     def apply(self, request: DiagnosticRequest, state: DiagnosticState):
         if request.unresolved_pair_count == 0:
+            # Every pair is separated by some signal; the best one is still recommended.
             status = "isolable"
-            signal = ""
+            signal = "declared-next-signal"
         elif request.available_distinguishing_signal:
             status = "partially_isolable"
             signal = "declared-next-signal"
@@ -99,8 +106,10 @@ class EvaluateDiagnosability:
 
 def no_interval_collapse() -> Invariant:
     def predicate(state: DiagnosticState, _trace):
-        if state.robust_status == "indeterminate" and state.phase == "terminal":
-            return InvariantResult.pass_()
+        if state.observed_interval == "crossing" and state.robust_status != "indeterminate":
+            return InvariantResult.fail(
+                f"boundary-crossing interval collapsed to {state.robust_status!r}"
+            )
         return InvariantResult.pass_()
 
     return Invariant(
@@ -197,4 +206,4 @@ def scenarios() -> tuple[Scenario, ...]:
     )
 
 
-__all__ = ["INVARIANTS", "DiagnosticRequest", "DiagnosticState", "scenarios"]
+__all__ = ["INVARIANTS", "DiagnosticRequest", "DiagnosticState", "scenarios", "workflow"]
