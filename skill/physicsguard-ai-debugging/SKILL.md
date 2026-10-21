@@ -19,7 +19,6 @@ Reject or hand off when:
 - Signal identity, units, conversion, confidence, or temporal mapping is the whole request. Handoff: `physicsguard-signal-mapping-review`.
 - A concrete test-data file contract is the whole request. Handoff: `physicsguard-test-file-contract-review`.
 - Exact model/dataset validation is the whole request. Handoff: `physicsguard-model-dataset-validation`.
-- Project evidence inventory and binding gaps are the whole request. Handoff: `physicsguard-project-evidence-registry`.
 - Reusable model asset compatibility is the whole request. Handoff: `physicsguard-model-library`.
 - Candidate blueprint generation is the whole request. Handoff: `physicsguard-candidate-model-blueprint`.
 

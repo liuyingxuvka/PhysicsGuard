@@ -46,11 +46,6 @@ Executable projection entry (only for a supplied/project-declared blueprint or a
 - Preserve enough evidence to classify every model parameter as static or
   time-varying. Time-varying parameters require their own field/series mapping;
   one catalog or binding row cannot establish temporal depth.
-- If a project evidence registry exists, the contract should declare
-  `project_evidence_registry` and `registered_artifact_id` so the file contract
-  appears in the project map. Covered fields should also have project-level
-  binding summaries or explicit binding exemptions in
-  `physicsguard-project-evidence-registry`.
 
 ## Workflow
 
@@ -103,18 +98,6 @@ Executable projection entry (only for a supplied/project-declared blueprint or a
     checks quantitative selection ratio, temporal spread and gaps, per-signal
     depth, critical/family coverage, and exclusions under a declared sampling
     policy.
-11. If project-level evidence is in scope, run:
-
-    ```powershell
-    python -m physicsguard.cli evidence gap-check EVIDENCE.yaml --pretty
-    python -m physicsguard.cli evidence map EVIDENCE.yaml --pretty
-    ```
-
-    Resolve or report missing project profile, file registration, test-field
-    binding, physical-parameter binding, and binding-exemption gaps.
-12. If the project is listed in an external database ledger, report the current
-    field coverage, binding state, and contract gaps as provider evidence only.
-    Do not update the ledger from this PhysicsGuard skill.
 
 ## Safe Claim Boundary
 

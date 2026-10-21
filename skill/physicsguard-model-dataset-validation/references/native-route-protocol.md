@@ -28,8 +28,6 @@ Executable projection entry (only for a supplied/project-declared blueprint or a
 
    ```yaml
    validation_id: example_validation
-   evidence_registry: path/to/project_evidence_registry.yaml
-   evidence_bundle_id: example_validation_bundle
    audit_file: path/to/hierarchy.yaml
    observed_file: path/to/observed.yaml
    contracts:
@@ -130,13 +128,6 @@ Executable projection entry (only for a supplied/project-declared blueprint or a
    contribution sentinels as critical, and consume the precommitted native
    per-object floor. Treating every ordinary raw row as critical incorrectly
    turns representative validation into full validation and is a blocker.
-6. If `evidence_registry` and `evidence_bundle_id` are declared, inspect
-   evidence gap counts. Blocking gaps prevent validation pass; review and
-   optional gaps must stay visible in the claim boundary.
-7. If the validated project is listed in an external database ledger, report
-   the current validation status, closure boundary, and remaining gaps as
-   provider evidence only. Do not update the ledger from this PhysicsGuard
-   skill.
 
 
 ## Predictive Boundary

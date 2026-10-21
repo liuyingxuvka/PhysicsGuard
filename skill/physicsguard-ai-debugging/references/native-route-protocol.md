@@ -52,13 +52,6 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    manifest, check the file-specific contract, and do not make broad AI analysis
    claims until the contract passes. If there is no concrete test data file,
    continue with the normal model-only or observed-snapshot route.
-5. For project-level work with multiple files, source documents, physical
-   parameters, validation bundles, reusable models, or AI handoff needs, route
-   through `physicsguard-project-evidence-registry`. Run `evidence map` early so
-   the AI can see the project profile, file map, model parts, test coverage,
-   binding expectations, explicit exemptions, and open gaps. Do not hide missing
-   project name, run period, location, physical-parameter binding, or test-field
-   binding gaps.
 6. When a passing test-file contract will be used to validate a model against
    that dataset, route through `physicsguard-model-dataset-validation` before
    broad model-data consistency claims. Run direct no-fit residual checks,
@@ -130,7 +123,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    distinguishability, viable and rejected hypotheses, unresolved pairs, and
    the ranked next signal. The result is task-local and does not prove that the
    hypothesis inventory exhausts physical reality.
-17. Use a residual localization overlay, signal-mapping table, same-family follow-up list, project-evidence map, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
+17. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
 18. Request or export only the next small set of signals/parameters needed by the suspicious block and the live-hypothesis distinction.
 19. Refine that block with a lower-level audit template.
 20. Repeat until the problem is localized to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary condition. If `bug_family_followups` names gain/sign, unit-conversion, signal-mapping, or balance siblings, inspect the sibling family before declaring the first failed residual fully localized.
@@ -189,10 +182,6 @@ Keep the header as comments only. Do not add provenance metadata solely for this
 - Do not mark test-file fields as covered without mapping evidence. Unknown
   field meaning or unknown model binding must stay review-required, planned as a
   model extension, or fail the contract.
-- Do not leave project-level basics or binding maintenance implicit. Project
-  name, run period, location, test-field bindings, physical-parameter bindings,
-  and explicit binding exemptions belong in the project evidence registry when
-  project evidence work is in scope.
 - Do not answer multi-project, historical-test, or database-level questions by
   reading only one project. State that this PhysicsGuard route does not own the
   database ledger and keep the claim scoped to checked project evidence.
