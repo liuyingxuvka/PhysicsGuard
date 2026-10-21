@@ -198,6 +198,8 @@ class AuditEvaluator:
                     f"{name}: observed unit '{observed_unit}' differs from registry unit "
                     f"'{expected_unit}'; numeric value was used as SI"
                 )
+            if expected_unit and not observed_unit:
+                warnings.append(f"{name}: observed value has no unit; registry unit is '{expected_unit}'")
         return warnings
 
     def _warnings(

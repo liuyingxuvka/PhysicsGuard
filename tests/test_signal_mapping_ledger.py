@@ -120,3 +120,20 @@ def test_clean_audit_has_no_gain_or_balance_followups() -> None:
     families = {item.family for item in report.bug_family_followups}
     assert "gain_sign_or_direction" not in families
     assert "conservation_balance" not in families
+
+
+def test_observed_value_without_a_unit_is_a_mapping_gap(tmp_path: Path) -> None:
+    payload = yaml.safe_load((OBSERVED / "pitch_feedback_observed_clean.yaml").read_text(encoding="utf-8"))
+    del payload["variables"]["controller_q_gain.x"]["unit"]
+    path = tmp_path / "unitless.yaml"
+    path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+    spec = load_hierarchical_audit_spec(OBSERVED / "pitch_feedback_level_0.yaml")
+
+    report = HierarchicalAuditRunner(spec).evaluate_observed(load_observed_values(path))
+
+    ledger = {record.physics_variable: record for record in report.signal_mapping_ledger}
+    assert ledger["controller_q_gain.x"].expected_unit == "rad/s"
+    assert ledger["controller_q_gain.x"].issue_codes == ("missing_unit",)
+    assert "Record the unit" in ledger["controller_q_gain.x"].recommended_action
+    assert "controller_q_gain.x: signal mapping needs review (missing_unit)" in report.warnings
+    assert [item.followup_id for item in report.bug_family_followups] == ["signal_mapping_review"]

@@ -129,7 +129,7 @@ Do not convert a suspicious-block ranking into a broad debugging success claim w
 - `audit_pass` is false;
 - required variables or parameters are missing;
 - `recommended_refinements` remain unexecuted or intentionally skipped;
-- `signal_mapping_ledger` rows contain `review_required`, `low_confidence`, `missing_conversion`, or `stale_mapping`;
+- `signal_mapping_ledger` rows contain `review_required`, `low_confidence`, `missing_unit`, `missing_conversion`, or `stale_mapping`;
 - `bug_family_followups` point to same-family sign, gain, unit, map, or balance checks that have not been reviewed;
 - observed snapshots changed after the audit;
 - any listed check was skipped.

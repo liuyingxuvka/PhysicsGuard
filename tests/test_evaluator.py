@@ -102,6 +102,12 @@ def test_unit_mismatch_is_reported_as_warning() -> None:
     assert result.audit_pass
     assert result.unit_warnings
     assert "coolant.Q_dot_W" in result.unit_warnings[0]
+    data = observed.model_dump(mode="json")
+    del data["variables"]["coolant.T_in_K"]["unit"]
+    unitless = AuditEvaluator(coolant_system()).evaluate_observed(ObservedValuesSpec.model_validate(data))
+    assert unitless.audit_pass
+    assert "coolant.T_in_K: observed value has no unit; registry unit is 'K'" in unitless.unit_warnings
+    assert "coolant.T_in_K: observed value has no unit; registry unit is 'K'" in unitless.warnings
 
 
 def test_post_check_residuals_are_reported_but_do_not_control_audit_pass() -> None:

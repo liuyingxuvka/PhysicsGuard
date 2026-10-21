@@ -569,3 +569,18 @@
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：原文新增部分快照测试中增加solve trap与observed.model_dump前后一致断言，不新增测试数量；覆盖CLI/库partial路径不求解且不改已观测值。。
 - 适配：经检查的外部应用脚本保存在本项仓库外证据目录以便复核，不进产品；承接PG48两回归，collect855而非原文853。。
+
+### PG-58 单位缺失记为映射缺口并保留真实残差判定
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> examples-before`：exit 0；11.282秒；before: six genuine CLI reports captured before unit-gap change。
+- `python <本动作核验脚本> apply`：exit 0；0.038秒；PG-58 applied。
+- `python <本动作核验脚本> evaluator-unit-gap`：exit 0；0.069秒；single-system evaluator preserves audit values and surfaces unit-less input in both warning fields。
+- `python <本动作核验脚本> examples-after`：exit 0；8.265秒；after: six genuine CLI reports captured and byte-identical with unchanged exit codes/no missing_unit。
+- `python <本动作核验脚本> focused-tests`：exit 0；4.856秒；54 passed in 4.34s。
+- `python <本动作核验脚本> collect`：exit 0；3.097秒；856 tests collected in 2.36s。
+- `python <本动作核验脚本> map-check`：exit 0；0.976秒；check: 0 error(s), 3 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；16.684秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> native-unitless-scan`：exit 0；1.241秒；actual single-system unitless evaluate keeps audit PASS, names gap in both warnings; exactly four active missing_unit declarations。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：外部经检查应用脚本留在本项证据目录；承接PG48两条回归collect856而非854。另有限6条真实CLI前后完整bytes/exit比对一致，未以grep无missing_unit冒称完整输出保留。。

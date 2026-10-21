@@ -14,7 +14,8 @@ field has a catalog row, role/disposition, and evidence-backed mapping.
    python -m physicsguard.cli intake review INTAKE.yaml
    ```
 
-3. If mappings are low confidence, missing conversion notes, review-required, or stale, review signal names, units, sign conventions, timing, and neighboring balance signals before blaming a physical parameter.
+3. If `signal_mapping_ledger` rows report `low_confidence`, `missing_unit`, `missing_conversion`, `review_required` or `stale_mapping`, review signal names, units, sign conventions, timing, and neighboring balance signals before blaming a physical parameter.
+   Every variable a residual uses is either observed with its source signal and unit, or listed in `missing_required_variables` with its residuals skipped; both kinds of gap stay open in the claim.
 4. If mapping or measurement error is bounded, preserve the lower and upper
    bounds as an interval and identify the bound source. Do not replace a bounded
    interval with its midpoint for robust residual or fault-signature analysis.
