@@ -109,3 +109,10 @@
 - `python <本动作核验脚本> blueprint-tests`：exit 0；31.742秒；108 passed in 29.97s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 提交后完整检查：`python -m pytest -q`：exit 0；1118 passed in 133.23s (0:02:13)；命令总耗时 135.071 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-11 删除十技能的重复深度与模板参考
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> references-plan`：exit 0；0.164秒；两份重复参考无残留，10成员真实安装计划 passed。
+- `python <本动作核验脚本> consumer-tests`：exit 0；3.501秒；16 passed in 0.69s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

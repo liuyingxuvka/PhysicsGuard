@@ -34,8 +34,6 @@ For this selected blueprint path: Consume the current affected projection for bo
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
-- Load `references/native-depth-and-purpose.md` before creating, materially deepening, revising, or closing a task-local model. Do not load it for an ordinary bounded action.
-- Load `references/template-pack-routing.md` only for target-owned template selection, preview, instantiation, validation, or harvest. Preview is not proof.
 - Do not load another PhysicsGuard skill's references merely because the skills are related. Use an explicit typed handoff.
 
 ## Hard gates
