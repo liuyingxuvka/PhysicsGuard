@@ -1,21 +1,9 @@
 # PhysicsGuard Test File Contract Review
 
-## Reuse within one read-only task
-
-Pass an already qualified exact current summary, affected projection or reverse trace to the next native owner when its source, material, authority, revision and selector identities remain unchanged. Combine all affected seed ids for the requested scope into one affected API call. Inspect the existing returned slice before asking for another projection of the same scope. If inputs or raw target material change, run the existing canonical qualification gate again; a prior review, summary or hash label does not bypass it. Unknown or invalid seeds block the whole request; never join separately accepted fragments to hide a rejected seed. This is task-local reuse of an actual result, without a persistent cache or new receipt.
-
 Use this route only when concrete test data files are in scope: CSV/TSV exports,
 database extracts already materialized as files, testbench logs, sensor tables,
 command/measurement files, calibration snapshots, or project fixtures that stand
 for those files. Do not require it for ordinary model-only PhysicsGuard work.
-
-## Blueprint contract projection
-
-If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
-
-For this selected blueprint path: For each concrete file or dataset, consume the current affected slice and bind file/manifest/field/testbench identities to the exact blueprint input/output/state/effect ports, physical obligations, units, frames, time semantics, and expected evidence. Preserve the affected projection fingerprint and every unmatched endpoint. This route neither authors nor fully qualifies the blueprint. Missing/stale/ambiguous projection identity blocks the selected blueprint path without broadening to every file, every model, or the full blueprint.
-
-Executable projection entry (only for a supplied/project-declared blueprint or a claim requiring its boundary): call `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` with the exact file path, manifest, dataset, binding, port, or obligation identity. It first reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result; non-current review identity and unknown or mixed-validity seeds fail atomically and do not authorize a partial contract review.
 
 ## Hard Rules
 

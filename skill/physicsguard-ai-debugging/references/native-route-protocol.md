@@ -1,20 +1,8 @@
 # PhysicsGuard AI Debugging
 
-## Reuse within one read-only task
-
-Pass an already qualified exact current summary, affected projection or reverse trace to the next native owner when its source, material, authority, revision and selector identities remain unchanged. Combine all affected seed ids for the requested scope into one affected API call. Inspect the existing returned slice before asking for another projection of the same scope. If inputs or raw target material change, run the existing canonical qualification gate again; a prior review, summary or hash label does not bypass it. Unknown or invalid seeds block the whole request; never join separately accepted fragments to hide a rejected seed. This is task-local reuse of an actual result, without a persistent cache or new receipt.
-
 ## Purpose
 
 Use PhysicsGuard as a transparent audit and blueprint layer for complex engineering simulations. Do not try to reproduce a full Simulink, GT-SUITE, Modelica, FMI, Amesim, MATLAB, Python, or commercial model from hidden internals. Build low-fidelity residual checks, evaluate mapped external results, rank suspicious blocks, ask for the next useful signals, and when requested, use the validated low-fidelity hierarchy as a blueprint for generating a candidate target model through official scripting interfaces.
-
-## Blueprint coordination
-
-If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
-
-For this selected blueprint path: Use a current summary for route selection and ordinary bounded work. Use affected or reverse-trace projection for a named symptom, element, interface, semantic, binding, dataset, resource, test, or output. Preserve the projection and source fingerprints, first gap, outside-scope members, and direction-specific dependency boundary. This composite route never authors or fully reviews `PhysicalModelBlueprint`; hand that to `physicsguard-candidate-model-blueprint`, and close through the direct claim owner. Missing/stale/ambiguous projection identity blocks the selected blueprint path without loading all ten skills, all blueprint members, or the repository as fallback.
-
-Executable projection entry (only for a supplied/project-declared blueprint or a claim requiring its boundary): call the exported `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for forward impact or `physicsguard.reverse_trace_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for physical-ground tracing. Both rerun the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material, then require the supplied review to equal that passing result field-for-field before graph compilation; a projection is not a second qualification result and never repairs a stale or foreign review.
 
 ## Visual Audit Communication
 

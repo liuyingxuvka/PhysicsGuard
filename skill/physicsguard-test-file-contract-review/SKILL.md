@@ -25,12 +25,6 @@ Reject or hand off when:
 
 If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
-## Blueprint slice
-
-If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
-
-For this selected blueprint path: Consume the affected slice for the concrete file/dataset/testbench path. Bind deterministic files and fields to exact blueprint input/output/state/effect ports, physical obligations, expected evidence, units, frames, and time semantics. The contract does not author or qualify the full blueprint. A missing, stale, foreign, or ambiguous slice blocks the selected blueprint path without broadening to all fields, all models, or the full blueprint.
-
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -47,8 +41,6 @@ For this selected blueprint path: Consume the affected slice for the concrete fi
 
 - `contract_status`
 - `field_dispositions`
-- `blueprint_interface_bindings_when_present`
-- `affected_slice_fingerprint_when_present`
 - `mapping_gaps`
 - `safe_analysis_boundary`
 

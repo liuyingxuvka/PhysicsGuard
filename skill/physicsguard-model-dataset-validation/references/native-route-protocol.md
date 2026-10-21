@@ -1,20 +1,8 @@
 # PhysicsGuard Model-Dataset Validation
 
-## Reuse within one read-only task
-
-Pass an already qualified exact current summary, affected projection or reverse trace to the next native owner when its source, material, authority, revision and selector identities remain unchanged. Combine all affected seed ids for the requested scope into one affected API call. Inspect the existing returned slice before asking for another projection of the same scope. If inputs or raw target material change, run the existing canonical qualification gate again; a prior review, summary or hash label does not bypass it. Unknown or invalid seeds block the whole request; never join separately accepted fragments to hide a rejected seed. This is task-local reuse of an actual result, without a persistent cache or new receipt.
-
 Use this route after concrete test data has passed
 `physicsguard-test-file-contract-review`. Do not use it to bypass failed,
 partial, stale, or review-required contracts.
-
-## Blueprint validation projection
-
-If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
-
-For this selected blueprint path: Use the current affected projection for bounded validation and full only when the requested claim covers the entire declared target. The receipt must account per blueprint element and obligation: validation mode, validity boundary, residual/oracle, dataset and evidence fingerprints, tested and untested members, deepest validation-supported layer, first unresolved gap, and bounded safe claim. Aggregate counts never cover an omitted element. A missing/stale/ambiguous projection blocks the selected blueprint path without run-all or source-scan fallback.
-
-Executable projection entry (only for a supplied/project-declared blueprint or a claim requiring its boundary): call `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for bounded validation, or `physicsguard.full_physical_blueprint_projection(blueprint, review)` only when the requested validation claim names the whole target boundary. The affected query reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result before graph compilation.
 
 ## Workflow
 

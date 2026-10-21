@@ -25,12 +25,6 @@ Reject or hand off when:
 
 If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 
-## Blueprint slice
-
-If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
-
-For this selected blueprint path: Index and select assets by exact blueprint fingerprint, physical obligation, target profile, validity boundary, testbench, native receipt, and verified reuse limit. Use summary for discovery, affected projection for one reuse decision, and full projection only for whole-target qualification. This route does not author or fully review the blueprint. Loose similarity is not compatibility. Missing/stale projection identity blocks the selected blueprint path and does not authorize scanning or validating unrelated assets.
-
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
@@ -47,7 +41,6 @@ For this selected blueprint path: Index and select assets by exact blueprint fin
 
 - `compatible_assets`
 - `reuse_status`
-- `selected_blueprint_fingerprints_when_present`
 - `verified_reuse_limits`
 - `gaps`
 - `bounded_reuse_scope`

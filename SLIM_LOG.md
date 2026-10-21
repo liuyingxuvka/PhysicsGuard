@@ -173,3 +173,10 @@
 - `python <本动作核验脚本> references-plan`：exit 0；0.118秒；技能现行引用零命中；7目录与真实安装计划7成员一致且passed。
 - `python <本动作核验脚本> consumer-tests`：exit 0；2.83秒；16 passed in 0.74s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-18 删除六条普通路线的强制蓝图投影要求
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> text-yaml-plan`：exit 0；0.192秒；yaml ok；6条普通路线无强制投影残留，原用途说明与安装计划均通过。
+- `python <本动作核验脚本> consumer-tests`：exit 0；2.405秒；16 passed in 0.51s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

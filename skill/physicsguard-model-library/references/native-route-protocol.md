@@ -1,26 +1,8 @@
 # PhysicsGuard Model Library
 
-## Reuse within one read-only task
-
-Pass an already qualified exact current summary, affected projection or reverse trace to the next native owner when its source, material, authority, revision and selector identities remain unchanged. Combine all affected seed ids for the requested scope into one affected API call. Inspect the existing returned slice before asking for another projection of the same scope. If inputs or raw target material change, run the existing canonical qualification gate again; a prior review, summary or hash label does not bypass it. Unknown or invalid seeds block the whole request; never join separately accepted fragments to hide a rejected seed. This is task-local reuse of an actual result, without a persistent cache or new receipt.
-
 Use this route after model-dataset validation reports exist. The model library
 is an evidence index, not a raw-data database and not proof of universal model
 validity.
-
-## Blueprint reuse projection
-
-If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
-
-For this selected blueprint path: Index and select by exact current blueprint fingerprint, physical obligation, target profile, validity boundary, testbench, native validation receipt, and verified reuse limit. Summary supports discovery; affected supports one bounded reuse decision; full is reserved for whole-target qualification. Loose similarity, matching names, or an old validation report is not compatibility. Missing/stale projection identity blocks the selected blueprint path without scanning or validating unrelated assets.
-
-Executable projection entry (only for a supplied/project-declared blueprint or a claim requiring its boundary): use `physicsguard.summary_physical_blueprint_projection(blueprint, review)` for discovery, `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` for one reuse decision, and `physicsguard.full_physical_blueprint_projection(blueprint, review)` only for explicit whole-target qualification. The affected query reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result before licensing the bounded reuse scope.
-
-For cross-project discovery, historical search, or "which projects/models have
-we tested before" questions, do not answer from one model library index alone.
-Model libraries can provide provider evidence to an external database ledger,
-but this PhysicsGuard route does not own database indexes, lifecycle, query, or
-freshness gates.
 
 ## Workflow
 

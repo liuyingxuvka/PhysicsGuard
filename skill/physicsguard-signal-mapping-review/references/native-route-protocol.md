@@ -1,21 +1,9 @@
 # PhysicsGuard Signal Mapping Review
 
-## Reuse within one read-only task
-
-Pass an already qualified exact current summary, affected projection or reverse trace to the next native owner when its source, material, authority, revision and selector identities remain unchanged. Combine all affected seed ids for the requested scope into one affected API call. Inspect the existing returned slice before asking for another projection of the same scope. If inputs or raw target material change, run the existing canonical qualification gate again; a prior review, summary or hash label does not bypass it. Unknown or invalid seeds block the whole request; never join separately accepted fragments to hide a rejected seed. This is task-local reuse of an actual result, without a persistent cache or new receipt.
-
 Use this route when external model outputs are mapped into PhysicsGuard observed values.
 When the source is a concrete test data file with many fields, use
 `physicsguard-test-file-contract-review` first or in parallel so every file
 field has a catalog row, role/disposition, and evidence-backed mapping.
-
-## Blueprint interface projection
-
-If no blueprint is supplied or project-declared and the request is ordinary bounded native work, run the native owner directly; report blueprint_not_provided and the unexamined scope, without a blueprint PASS. If a blueprint is supplied, project-declared, or needed for a target/whole-boundary claim, require the exact current review/projection below. Missing, stale, foreign, ambiguous, or unknown-seed identity blocks that selected path; never downgrade it to bypass the requirement.
-
-For this selected blueprint path: Consume the exact affected interface projection and its downstream dependency closure. Verify source and target identities, units, reference frames, sign conventions, conversion semantics, time basis, revision, evidence fingerprint, and all selected consumers. Preserve omitted branches as outside scope. A missing, stale, ambiguous, or foreign projection blocks the selected blueprint path and never triggers full-blueprint or repository scanning.
-
-Executable projection entry (only for a supplied/project-declared blueprint or a claim requiring its boundary): call `physicsguard.affected_physical_blueprint_projection(blueprint, review, seed_ids, target_inventory_authority=authority, blueprint_base_dir=blueprint_root, authority_base_dir=authority_root)` with the exact mapped interface, conversion semantic, source binding, or consumer identity. It first reruns the canonical reviewer once against the exact blueprint artifacts, frozen authority, and raw target material and requires the supplied review to equal that passing result; non-current review identity and mixed valid/invalid seeds fail atomically rather than returning a partial mapping boundary.
 
 ## Workflow
 
