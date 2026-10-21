@@ -23,6 +23,7 @@
   `diagnose` exit 1 on `robust_fail` or inseparable hypotheses.
 - The four self-models are FlowGuard contract models with code and test anchors, known-bad variants and replay on the
   real code; `flowguard release` passes with FlowGuard 0.70.6 and the new FlowGuard.
+- Cross-repo pass: XR-04; skipped none. Details in the cross-repo action list.
 
 ## v0.15.15 - 2026-10-18
 

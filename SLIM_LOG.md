@@ -840,3 +840,8 @@
 - 跟踪统计：总文件1268→593，.flowguard文件283→5，OpenSpec文件204→52；技能10入口→1入口，75tracked文件/252942字节→16tracked文件/48866字节。原始现场技能统计76文件/265554字节→17文件/61478字节，差额均为明确保留的同一个12612字节旧pyc，非当前技能入口且不进入安装产物。
 - 第5节补充：5条真实CLI冒烟、临时目录安装/check、18条README参数解析、原始残留扫描及物理模块源码与基线逐字节一致均通过；OpenSpec CLI不可用，仅有PG63授权离线归档/结构复核，未声称其strict validate已跑。
 - 运行范围：完整pytest用Python3.12私人旧FG0.70.6环境；新版FG0.70.7为批准的bc8c519源码快照构建的普通安装包，105个.py逐字节核对，双版模型互操作通过。Python3.11仅执行PG12指定兼容边界窄验，本轮未声称完整3.11/3.13或远端CI已通过；未推送/打tag/发布或安装到用户真实技能目录。
+
+## Cross-repository implementation handoff
+
+Implemented repository changes: XR-04. Their affected checks and real cross-repository native paths passed; exact commands and failures/adaptations are retained in the external XR_LOG and results/CrossReview.
+Shared XR02–14 checks used the new Python 3.12 editable joint environment. XR15 final native bridge and final frozen Release-SHA full suites, official GitHub CI/publication and local FlowGuard update remain pending at the time of this journal entry. No final deployment or all-invariant-coverage claim is made.
