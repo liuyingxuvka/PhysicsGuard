@@ -187,3 +187,14 @@
 - `python <本动作核验脚本> text-scan`：exit 0；0.039秒；仅AI路线保留PG26将重写的2处协调措辞；六条实际路线保留非通过/预测边界。
 - `python <本动作核验脚本> consumer-tests`：exit 0；1.839秒；6 passed in 0.23s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-20 删除单独重算收据命令并保留验证计算
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> native-cli-references`：exit 1；0.117秒；AssertionError。
+- `python <本动作核验脚本> native-cli-references-py312`：exit 0；2.143秒；原生validation run pass；退役命令exit2；仅1条授权后续技能引用；workflow及三节边界正确。
+- `python <本动作核验脚本> focused-tests`：exit 0；23.509秒；24 passed in 21.42s。
+- `python <本动作核验脚本> collect`：exit 0；3.518秒；1039 tests collected in 1.42s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：Python3.12 argparse单候选输出不带引号，外部核验改为检查退役receipt无效、唯一run和exit2；原失败输出保留，产品不改。
+- 提交后完整检查：`python -m pytest -q`：exit 0；1039 passed in 144.18s (0:02:24)；命令总耗时 146.738 秒。检查结束后仅补记本行，无业务源码变化。

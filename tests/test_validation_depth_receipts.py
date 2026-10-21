@@ -6,7 +6,6 @@ import shutil
 
 import yaml
 
-from physicsguard.cli import main as cli_main
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.schema.model_dataset_validation import ModelDatasetValidationReportSpec
 from physicsguard.schema.validation_depth import ValidationDepthReceiptSpec
@@ -238,14 +237,3 @@ def test_invalid_series_interval_is_preserved_and_blocks_depth(tmp_path: Path) -
     assert residual["status"] == "blocked"
     assert residual["aggregate"]["invalid_point_count"] == 1
     assert residual["invalid_intervals"][0]["reason"] == "sensor export gap"
-
-
-
-
-def test_validation_receipt_cli_emits_only_native_receipt(capsys) -> None:
-    exit_code = cli_main(["validation", "receipt", str(_clean_plan(PUMP))])
-    output = capsys.readouterr().out
-
-    assert exit_code == 0
-    assert '"artifact_kind": "physicsguard_validation_depth_receipt"' in output
-    assert '"report_sha256"' in output

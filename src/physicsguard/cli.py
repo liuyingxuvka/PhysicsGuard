@@ -271,12 +271,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validation_run.add_argument("plan", type=Path, help="path to ModelValidationPlan YAML")
     validation_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    validation_receipt = validation_subparsers.add_parser(
-        "receipt",
-        help="emit the native validation-depth receipt for a validation plan",
-    )
-    validation_receipt.add_argument("plan", type=Path, help="path to ModelValidationPlan YAML")
-    validation_receipt.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     model_library_parser = subparsers.add_parser(
         "model-library",
@@ -741,13 +735,6 @@ def validation_run_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
-def validation_receipt_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.model_dataset_validation import validate_model_dataset
-
-    report = validate_model_dataset(path)
-    receipt = report.depth_receipt
-    _print_json(receipt, pretty)
-    return 0 if receipt.get("ok") is True else 1
 
 
 def model_library_check_command(path: Path, pretty: bool = False) -> int:
@@ -1006,8 +993,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "validation":
             if args.validation_command == "run":
                 return validation_run_command(args.plan, args.pretty)
-            if args.validation_command == "receipt":
-                return validation_receipt_command(args.plan, args.pretty)
         if args.command == "model-library":
             if args.model_library_command == "check":
                 return model_library_check_command(args.index, args.pretty)

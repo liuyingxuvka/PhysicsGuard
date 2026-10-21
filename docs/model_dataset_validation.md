@@ -37,12 +37,7 @@ not change observed values.
 python -m physicsguard.cli validation run PLAN.yaml --pretty
 ```
 
-The run output already contains `depth_receipt`. If only that receipt is needed,
-choose this alternative command instead of running both:
-
-```powershell
-python -m physicsguard.cli validation receipt PLAN.yaml --pretty
-```
+The run output already contains `depth_receipt`.
 
 The report separates direct audit pass, calibration optimizer status, holdout
 audit pass, final validation status, safe claim, unsafe claim boundary, and next

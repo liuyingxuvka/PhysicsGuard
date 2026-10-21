@@ -6,13 +6,7 @@ partial, stale, or review-required contracts.
 
 ## Workflow
 
-1. Check every referenced test-file contract:
-
-   ```powershell
-   python scripts/run_physicsguard.py testfile contract-check CONTRACT.yaml --pretty
-   ```
-
-2. Create or review a model validation plan:
+1. Create or review a model validation plan:
 
    ```yaml
    validation_id: example_validation
@@ -83,13 +77,13 @@ partial, stale, or review-required contracts.
    use. Static parameters declare no time or contribution fields and pass only
    through current binding evidence.
 
-3. Run validation once; this report already includes `depth_receipt`:
+2. Run validation once; this report already includes `depth_receipt`:
 
    ```powershell
    python scripts/run_physicsguard.py validation run PLAN.yaml --pretty
    ```
 
-4. Inspect direct no-fit residuals, physical envelope findings,
+3. Inspect direct no-fit residuals, physical envelope findings,
    redundant-sensor findings, calibration status, holdout status, confidence
    updates, safe claim, unsafe claim boundary, and next actions.
    Also inspect `depth_receipt`: dataset and mapping identity, declared versus
@@ -104,18 +98,7 @@ partial, stale, or review-required contracts.
    and exclusion diagnostics must pass. A scalar plan without
    `depth` remains usable only as a snapshot and must not support time-series,
    scenario, or general-understanding claims.
-5. Alternatively, if only the target-owned receipt is needed, use this command instead of step 3; do not run both for the same unchanged inputs:
 
-   ```powershell
-   python scripts/run_physicsguard.py validation receipt PLAN.yaml --pretty
-   ```
-
-   Read-only consumers may inspect the receipt from either output. The receipt
-   command performs validation again; it does not extract a prior report. PhysicsGuard must reconcile every
-   native object and raw denominator, retain only true event/boundary/
-   contribution sentinels as critical, and consume the precommitted native
-   per-object floor. Treating every ordinary raw row as critical incorrectly
-   turns representative validation into full validation and is a blocker.
 
 
 ## Predictive Boundary
@@ -132,26 +115,6 @@ worst-step and accumulated normalized error, lag/phase error, drift, error
 growth, and stability. Only a passing stateful receipt can be handed to
 `prediction_ready` closure. PhysicsGuard validates an externally generated
 trajectory; it does not turn a pointwise residual function into a simulator.
-
-## PhysicsGuard Execution-Depth Boundary
-
-Any non-trivial, broad, validation-ready, reuse-ready, or predictive conclusion
-must run the target-owned PhysicsGuard validation route against the exact plan,
-hierarchy, manifest, role matrix, evidence registry, observed series, and
-prediction or holdout artifacts when present. A bundled calibration fixture
-proves only the fixture and cannot stand in for current target execution.
-
-Counts, parameter-name lists, catalog expansion, whole-receipt hashes, and
-ordinal time ranges are not per-obligation evidence. Every satisfied parameter,
-time-stratum, counterfactual, convergence, and prediction obligation must retain
-its exact target-native semantic object, evidence reference, and content hash.
-Missing, renamed, overlapping, mechanically generated, or summary-only mappings
-block validation-ready, reuse-ready, and predictive closure.
-
-A local quick check without a current PhysicsGuard execution-depth receipt is
-`BOUNDARY_ONLY` or `BOUNDED_PARTIAL`. It may report the exact checked rows and
-remaining gaps, but it must not claim general model understanding, deep
-validation, reusable validation readiness, or prediction.
 
 ## Calibration Boundary
 
