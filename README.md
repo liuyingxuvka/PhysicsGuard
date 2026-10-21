@@ -18,7 +18,7 @@ English comes first. A Chinese mirror follows below.
 
 ## What PhysicsGuard Is
 
-PhysicsGuard is a Python toolkit and Codex skill for AI-guided debugging of physical simulation workflows.
+PhysicsGuard is a Python toolkit and agent skill set (Codex, Claude Code) for AI-guided debugging of physical simulation workflows.
 
 It helps an agent build a low-fidelity physical understanding map before it tries to fix, explain, or generate anything. That map names the visible symptom, subsystem boundary, interfaces, SI units, conservation relations, mapped signals, assumptions, residual checks, and stop condition.
 
@@ -96,6 +96,14 @@ Install the package in editable mode:
 
 ```powershell
 python -m pip install -e .
+```
+
+Install the skills for your agent (only the consumer files are copied):
+
+```powershell
+python scripts/install_physicsguard_skills.py --install --target ~/.codex/skills    # Codex
+python scripts/install_physicsguard_skills.py --install --target ~/.claude/skills   # Claude Code
+python scripts/install_physicsguard_skills.py --check --target ~/.claude/skills     # installed copy equals this checkout?
 ```
 
 Run the public example:
@@ -214,7 +222,7 @@ src/physicsguard/       Core package
 examples/               Low-fidelity relation and conflict examples
 templates/              Project, closure, intake, and model templates
 docs/                   Protocol and route documentation
-skill/                  Codex skill material
+skill/                  agent skill material
 scripts/                Validation and release checks
 assets/readme-hero/     README hero image assets
 VERSION                 Current public version
@@ -241,7 +249,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 ## 它是什么
 
-PhysicsGuard 是一个用于 AI 辅助物理仿真调试的 Python 工具包和 Codex skill。
+PhysicsGuard 是一个用于 AI 辅助物理仿真调试的 Python 工具包和 agent 技能（Codex、Claude Code）。
 
 它让 agent 在修模型、解释问题或生成候选模型之前，先建立一个低保真的物理理解图：可见症状、子系统边界、接口、SI 单位、守恒关系、映射信号、假设、residual 检查和停止条件。
 
@@ -309,6 +317,14 @@ Physical Model Blueprint：里面连着目标身份、独立清单、父子物�
 
 ```powershell
 python -m pip install -e .
+```
+
+为你的 agent 安装技能（只复制使用者需要的文件）：
+
+```powershell
+python scripts/install_physicsguard_skills.py --install --target ~/.codex/skills    # Codex
+python scripts/install_physicsguard_skills.py --install --target ~/.claude/skills   # Claude Code
+python scripts/install_physicsguard_skills.py --check --target ~/.claude/skills     # installed copy equals this checkout?
 ```
 
 运行公开示例：
@@ -419,7 +435,7 @@ src/physicsguard/       核心包
 examples/               低保真关系和 conflict 示例
 templates/              项目、closure、intake 和 model 模板
 docs/                   协议和路线文档
-skill/                  Codex skill material
+skill/                  agent skill material
 scripts/                验证和发布检查
 assets/readme-hero/     README hero 素材
 VERSION                 当前公开版本

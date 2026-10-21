@@ -261,3 +261,12 @@
 - 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
 - `python <本动作核验脚本> compact-native-command`：exit 0；1.295秒；8875字节；故障诊断保留；6条技能命令无pretty；README/docs/候选技能未改。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-29 支持目标目录与软链上级并精简安装审计
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> native-linked-install`：exit 0；0.301秒；真实linked-parent安装/检查passed；退役目录清除且恰7成员；旧参数exit2无副作用；现行旧审计引用零残留。
+- `python <本动作核验脚本> map-check`：exit 0；0.735秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> installer-tests`：exit 0；2.621秒；8 passed in 0.20s。
+- `python <本动作核验脚本> collect`：exit 0；2.794秒；1021 tests collected in 0.99s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

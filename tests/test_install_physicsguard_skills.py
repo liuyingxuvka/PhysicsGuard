@@ -13,8 +13,8 @@ def _repository(tmp_path: Path) -> Path:
         (source / "references").mkdir(parents=True)
         (source / "SKILL.md").write_text(f"# {skill_id}\n", encoding="utf-8")
         (source / "references" / "protocol.md").write_text("Native protocol.\n", encoding="utf-8")
-        (source / ".skillguard").mkdir()
-        (source / ".skillguard" / "author.json").write_text("{}\n", encoding="utf-8")
+        (source / ".author-tools").mkdir()
+        (source / ".author-tools" / "author.json").write_text("{}\n", encoding="utf-8")
         (source / "guard-model").mkdir()
         (source / "guard-model" / "candidate.json").write_text("{}\n", encoding="utf-8")
     return repository
@@ -46,13 +46,13 @@ def test_all_members_are_prepared_then_all_verified_before_any_activation(tmp_pa
     repository = _repository(tmp_path)
     home = tmp_path / "codex-home"
     _old_installation(home)
-    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home)
+    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home / "skills")
     assert result["status"] == "passed"
     for skill_id in installer.PHYSICSGUARD_SKILL_IDS:
         source = repository / "skill" / skill_id
         destination = home / "skills" / skill_id
         assert installer.consumer_files(destination, installed=True) == installer.consumer_files(source)
-        assert not (destination / ".skillguard").exists()
+        assert not (destination / ".author-tools").exists()
         assert not (destination / "guard-model").exists()
         assert not (destination / "old.txt").exists()
     assert list((tmp_path / "stage").iterdir()) == []
@@ -69,7 +69,7 @@ def test_pre_activation_failure_never_activates(tmp_path: Path, monkeypatch) -> 
             raise OSError("copy interrupted")
         return original_copy(source, destination, *args, **kwargs)
     monkeypatch.setattr(installer.shutil, "copy2", fail_copy)
-    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home)
+    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home / "skills")
     assert result["status"] == "blocked"
     assert result["phase"] == "prepare"
     assert result["activated"] == []
@@ -92,7 +92,7 @@ def test_activation_failure_rolls_prior_activations_back_in_reverse(tmp_path: Pa
             restored.append(source.name)
         return original_replace(source, destination)
     monkeypatch.setattr(installer.os, "replace", fail_replace)
-    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home)
+    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home / "skills")
     assert result["status"] == "blocked"
     assert result["phase"] == "activate"
     assert result["recovery_errors"] == []
@@ -121,7 +121,7 @@ def test_restore_failure_preserves_backup_and_continues_reverse_recovery(tmp_pat
         return original_replace(source, destination)
 
     monkeypatch.setattr(installer.os, "replace", fail_replace)
-    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home)
+    result = installer.coordinate_suite_install(repository, tmp_path / "stage", home / "skills")
     assert result["status"] == "blocked"
     assert result["phase"] == "activate"
     assert result["recovery_errors"] == [f"{restore_failure}:old backup restore interrupted"]
@@ -129,3 +129,31 @@ def test_restore_failure_preserves_backup_and_continues_reverse_recovery(tmp_pat
     recovery = Path(result["recovery_path"])
     assert (recovery / "old" / restore_failure / "old.txt").read_bytes() == before[f"skills/{restore_failure}/old.txt"]
     assert _snapshot(home) == {path: content for path, content in before.items() if not path.startswith(f"skills/{restore_failure}/")}
+
+
+def test_install_removes_retired_skill_dirs_and_check_passes(tmp_path: Path) -> None:
+    repository = _repository(tmp_path)
+    target = tmp_path / "codex-home" / "skills"
+    retired = target / installer.RETIRED_SKILL_IDS[0]
+    retired.mkdir(parents=True)
+    (retired / "SKILL.md").write_text("retired skill\n", encoding="utf-8")
+
+    result = installer.coordinate_suite_install(repository, tmp_path / "stage", target)
+
+    assert result["status"] == "passed"
+    assert result["removed_retired"] == [installer.RETIRED_SKILL_IDS[0]]
+    assert not retired.exists()
+    assert installer.check_installed_skills(repository, target)["status"] == "passed"
+
+
+def test_install_accepts_a_symlinked_parent_directory(tmp_path: Path) -> None:
+    repository = _repository(tmp_path)
+    real_home = tmp_path / "real-home"
+    real_home.mkdir()
+    linked_home = tmp_path / "linked-home"
+    linked_home.symlink_to(real_home, target_is_directory=True)
+
+    result = installer.coordinate_suite_install(repository, tmp_path / "stage", linked_home / "skills")
+
+    assert result["status"] == "passed"
+    assert (real_home / "skills" / installer.PHYSICSGUARD_SKILL_IDS[0] / "SKILL.md").is_file()

@@ -1,4 +1,4 @@
-"""Copy the ten PhysicsGuard consumer skills with recoverable directory replacement."""
+"""Copy the PhysicsGuard consumer skills with recoverable directory replacement."""
 from __future__ import annotations
 
 import argparse
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_ROOT = Path(__file__).resolve().parent
 if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
-DEFAULT_CODEX_HOME = Path(os.environ.get("CODEX_HOME") or (Path.home() / ".codex"))
+DEFAULT_TARGET = Path(os.environ.get("CODEX_HOME") or (Path.home() / ".codex")) / "skills"
 PHYSICSGUARD_SKILL_IDS = (
     "physicsguard-ai-debugging",
     "physicsguard-candidate-model-blueprint",
@@ -26,17 +26,22 @@ PHYSICSGUARD_SKILL_IDS = (
     "physicsguard-signal-mapping-review",
     "physicsguard-test-file-contract-review",
 )
+RETIRED_SKILL_IDS = (
+    "physicsguard-audit-closure",
+    "physicsguard-project-adoption",
+    "physicsguard-project-evidence-registry",
+)
 CONSUMER_FILES = {"SKILL.md"}
 CONSUMER_DIRECTORIES = {"agents", "references", "scripts"}
 
 
 def safe_path(path: Path) -> Path:
-    """Reject traversal, symlinks and Windows junction/reparse paths, including ancestors."""
+    """Reject traversal and a path that is itself a symlink or Windows junction; linked parent directories are allowed."""
     candidate = Path(path).expanduser()
     if ".." in candidate.parts:
         raise ValueError(f"path_traversal:{candidate}")
     candidate = candidate.absolute()
-    for part in reversed((candidate, *candidate.parents)):
+    for part in (candidate,):
         if part.is_symlink():
             raise ValueError(f"symlink_path:{part}")
         try:
@@ -97,24 +102,25 @@ def build_suite_plan(repository_root: Path) -> dict[str, Any]:
     return {"status": "blocked" if blockers else "passed", "member_ids": list(PHYSICSGUARD_SKILL_IDS), "members": members, "blockers": blockers}
 
 
-def coordinate_suite_install(repository_root: Path, stage_root: Path | None, codex_home: Path) -> dict[str, Any]:
+def coordinate_suite_install(repository_root: Path, stage_root: Path | None, target: Path) -> dict[str, Any]:
     """Stage every member first, then replace directories; restore old trees on failure."""
     plan = build_suite_plan(repository_root)
     if plan["status"] != "passed":
         return {**plan, "phase": "plan"}
     activated: list[str] = []
     moved_old: list[str] = []
+    removed_retired: list[str] = []
     recovery_errors: list[str] = []
     temporary: Path | None = None
     phase = "prepare"
     try:
-        installed_root = safe_path(codex_home) / "skills"
+        installed_root = safe_path(target)
         safe_path(installed_root)
         source_root = safe_path(repository_root)
         if installed_root.is_relative_to(source_root) or source_root.is_relative_to(installed_root):
             raise ValueError("installation_source_destination_overlap")
         if installed_root.is_dir():
-            extra = sorted(path.name for path in installed_root.iterdir() if path.name.startswith("physicsguard-") and path.name not in PHYSICSGUARD_SKILL_IDS)
+            extra = sorted(path.name for path in installed_root.iterdir() if path.name.startswith("physicsguard-") and path.name not in PHYSICSGUARD_SKILL_IDS and path.name not in RETIRED_SKILL_IDS)
             if extra:
                 raise ValueError(f"unexpected_installed_skills:{extra}")
         for skill_id in PHYSICSGUARD_SKILL_IDS:
@@ -150,6 +156,11 @@ def coordinate_suite_install(repository_root: Path, stage_root: Path | None, cod
                 moved_old.append(skill_id)
             os.replace(staged / skill_id, destination)
             activated.append(skill_id)
+        for skill_id in RETIRED_SKILL_IDS:
+            retired = installed_root / skill_id
+            if retired.is_dir() and not retired.is_symlink():
+                shutil.rmtree(retired)
+                removed_retired.append(skill_id)
     except (OSError, ValueError) as exc:
         if temporary is not None:
             for skill_id in reversed(PHYSICSGUARD_SKILL_IDS):
@@ -169,7 +180,26 @@ def coordinate_suite_install(repository_root: Path, stage_root: Path | None, cod
             shutil.rmtree(temporary)
         except OSError as exc:
             return {"status": "blocked", "phase": "cleanup", "blockers": [str(exc)], "activated": activated, "recovery_path": str(temporary)}
-    return {"status": "passed", "phase": "complete", "member_ids": list(PHYSICSGUARD_SKILL_IDS), "installed_root": str(installed_root), "activated": activated, "blockers": []}
+    return {"status": "passed", "phase": "complete", "member_ids": list(PHYSICSGUARD_SKILL_IDS), "installed_root": str(installed_root), "activated": activated, "blockers": [], "removed_retired": removed_retired}
+
+
+def check_installed_skills(repository_root: Path, target: Path) -> dict[str, Any]:
+    plan = build_suite_plan(repository_root)
+    if plan["status"] != "passed":
+        return {**plan, "phase": "plan"}
+    blockers: list[str] = []
+    for row in plan["members"]:
+        try:
+            installed = consumer_files(Path(target) / row["skill_id"], installed=True)
+        except (OSError, ValueError) as exc:
+            blockers.append(f"{row['skill_id']}:{exc}")
+            continue
+        if installed != row["files"]:
+            blockers.append(f"{row['skill_id']}:files_differ")
+    for skill_id in RETIRED_SKILL_IDS:
+        if (Path(target) / skill_id).exists():
+            blockers.append(f"{skill_id}:retired_skill_still_installed")
+    return {"status": "blocked" if blockers else "passed", "target": str(target), "member_ids": list(PHYSICSGUARD_SKILL_IDS), "blockers": blockers}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -180,16 +210,15 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--check", action="store_true")
     parser.add_argument("--repository-root", type=Path, default=ROOT)
     parser.add_argument("--stage-root", type=Path)
-    parser.add_argument("--codex-home", type=Path, default=DEFAULT_CODEX_HOME)
+    parser.add_argument("--target", type=Path, default=DEFAULT_TARGET, help="skills directory, for example ~/.codex/skills or ~/.claude/skills")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     if args.check:
-        from check_installed_physicsguard_skills import check_installed_skills
-        result = check_installed_skills(args.codex_home / "skills", repository_root=args.repository_root)
+        result = check_installed_skills(args.repository_root, args.target)
     elif args.plan:
         result = build_suite_plan(args.repository_root)
     else:
-        result = coordinate_suite_install(args.repository_root, args.stage_root, args.codex_home)
+        result = coordinate_suite_install(args.repository_root, args.stage_root, args.target)
     print(json.dumps(result, ensure_ascii=False, indent=None if args.json else 2, sort_keys=True))
     return 0 if result["status"] in {"pass", "passed"} else 1
 

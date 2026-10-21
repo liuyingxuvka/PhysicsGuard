@@ -684,8 +684,6 @@
       ],
       "tests": [
         "tests/test_install_physicsguard_skills.py",
-        "tests/test_installed_skill_sync.py",
-        "tests/test_physicsguard_family_maintenance.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_portable_model_headers.py",
         "tests/test_task_local_revision.py"
