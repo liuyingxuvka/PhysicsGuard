@@ -65,7 +65,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 5. Create or review a model-understanding preflight (start from `references/templates/model_understanding_preflight.yaml` in this skill's directory) before residual interpretation:
 
    ```powershell
-   python -m physicsguard.cli preflight review PREFLIGHT.yaml --pretty
+   python -m physicsguard.cli preflight review PREFLIGHT.yaml
    ```
 
    The preflight must name the visible symptom, external model source of truth, physical boundary, subsystem blocks, conserved quantities, expected SI units, assumptions, uncertain mappings, first audit level, and stop conditions.
@@ -73,14 +73,14 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 7. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record (start from `references/templates/external_model_intake.yaml`):
 
    ```powershell
-   python -m physicsguard.cli intake review INTAKE.yaml --pretty
+   python -m physicsguard.cli intake review INTAKE.yaml
    ```
 
    AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards must be labeled as lower-confidence evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
 8. Prefer direct observed evaluation:
 
    ```powershell
-   python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty
+   python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml
    ```
 
    Every variable of the audited components must be in the snapshot; otherwise the command stops with `observed values missing required registered variables`. When signals are missing, audit a smaller block instead.
@@ -89,7 +89,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 10. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations. Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and freeze each hypothesis's signal, residual, and timing expectations plus its weakening condition:
 
    ```powershell
-   python -m physicsguard.cli task-model plan HYPOTHESIS_PLAN.yaml --pretty
+   python -m physicsguard.cli task-model plan HYPOTHESIS_PLAN.yaml
    ```
 
    Rank the next observation from both residual relevance and the declared
@@ -99,7 +99,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    it without rewriting the old prediction:
 
    ```powershell
-   python -m physicsguard.cli task-model observe HYPOTHESIS_PLAN.yaml OBSERVATION.yaml --pretty
+   python -m physicsguard.cli task-model observe HYPOTHESIS_PLAN.yaml OBSERVATION.yaml
    ```
 
    Preserve supported, weakened, and undetermined hypotheses. Missing targets
@@ -121,7 +121,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 Use compare mode only when a solved low-fidelity reference is intentionally useful:
 
 ```powershell
-python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty
+python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml
 ```
 
 ## Claim Boundary

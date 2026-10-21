@@ -11,7 +11,7 @@ analysis claims.
 2. Run:
 
    ```powershell
-   python -m physicsguard.cli preflight review PREFLIGHT.yaml --pretty
+   python -m physicsguard.cli preflight review PREFLIGHT.yaml
    ```
 
 3. If missing inputs or uncertain mappings are reported, complete them or route to signal mapping review before fault claims.

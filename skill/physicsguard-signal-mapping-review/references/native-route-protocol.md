@@ -11,7 +11,7 @@ field has a catalog row, role/disposition, and evidence-backed mapping.
 2. Run:
 
    ```powershell
-   python -m physicsguard.cli intake review INTAKE.yaml --pretty
+   python -m physicsguard.cli intake review INTAKE.yaml
    ```
 
 3. If mappings are low confidence, missing conversion notes, review-required, or stale, review signal names, units, sign conventions, timing, and neighboring balance signals before blaming a physical parameter.

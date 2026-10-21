@@ -24,7 +24,7 @@ validity.
 2. Check the index:
 
    ```powershell
-   python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml --pretty
+   python -m physicsguard.cli model-library check MODEL_LIBRARY.yaml
    ```
 
 3. Treat missing model files, stale hashes, missing validation reports, or

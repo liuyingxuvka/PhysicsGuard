@@ -56,25 +56,25 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
 6. Run the contract check:
 
    ```powershell
-   python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
+   python -m physicsguard.cli testfile contract-check CONTRACT.yaml
    ```
 
 7. Run the coverage-only check only when step 6 was not run; step 6 already includes it:
 
    ```powershell
-   python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
+   python -m physicsguard.cli coverage check CONTRACT.yaml
    ```
 
 8. When several files are in scope, run this once instead of step 6 for each file; it checks every listed contract:
 
    ```powershell
-   python -m physicsguard.cli testfile project-check INDEX.yaml --pretty
+   python -m physicsguard.cli testfile project-check INDEX.yaml
    ```
 
 9. When testbench files change, compare contracts:
 
    ```powershell
-   python -m physicsguard.cli testfile diff OLD_CONTRACT.yaml NEW_CONTRACT.yaml --pretty
+   python -m physicsguard.cli testfile diff OLD_CONTRACT.yaml NEW_CONTRACT.yaml
    ```
 
 10. Do not claim broad AI analysis readiness until contract status is `pass`.
