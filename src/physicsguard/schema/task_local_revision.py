@@ -17,10 +17,20 @@ from typing import Any, Literal, Mapping
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.predictive_rollout import PredictiveRolloutReceiptSpec
-from physicsguard.schema.physical_model_blueprint import BlueprintLayerName
 
 
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+BlueprintLayerName = Literal[
+    "target_inventory",
+    "hierarchy_ownership",
+    "typed_interfaces",
+    "independent_physical_semantics",
+    "parent_child_refinement",
+    "native_model_code_test",
+    "resource_oracle",
+    "static_blueprint",
+]
 ExpectationKind = Literal["signal", "residual", "timing"]
 ExpectationOperator = Literal[
     "between",

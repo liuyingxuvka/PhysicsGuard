@@ -332,47 +332,6 @@ def build_parser() -> argparse.ArgumentParser:
     evidence_mesh.add_argument("mesh", type=Path, help="path to EvidenceMesh YAML")
     evidence_mesh.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
-    blueprint_parser = subparsers.add_parser(
-        "blueprint",
-        help="canonical physical-model blueprint commands",
-    )
-    blueprint_subparsers = blueprint_parser.add_subparsers(
-        dest="blueprint_command",
-        required=True,
-    )
-    blueprint_review = blueprint_subparsers.add_parser(
-        "review",
-        help="read-only review of one canonical YAML or JSON PhysicalModelBlueprint",
-        description=(
-            "Read one canonical PhysicalModelBlueprint, report the deepest supported "
-            "layer and first actionable gap, and make no writes. Parsing or local "
-            "checks alone do not claim that the target is reconstructable."
-        ),
-    )
-    blueprint_review.add_argument(
-        "blueprint",
-        type=Path,
-        help=(
-            "path to the canonical YAML or JSON PhysicalModelBlueprint; its containing "
-            "directory is the declared root for every local repo_path"
-        ),
-    )
-    blueprint_review.add_argument(
-        "--target-authority",
-        required=True,
-        type=Path,
-        help="path to the frozen TargetInventoryAuthority issued outside the blueprint",
-    )
-    blueprint_review.add_argument(
-        "--material-root",
-        type=Path,
-        help=(
-            "explicit root containing content-addressed target material; required "
-            "when artifact_root is explicit_material_root"
-        ),
-    )
-    blueprint_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
     return parser
 
 
@@ -738,72 +697,6 @@ def evidence_mesh_check_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
-def blueprint_review_command(
-    path: Path,
-    target_authority_path: Path,
-    material_root: Path | None = None,
-    pretty: bool = False,
-) -> int:
-    from physicsguard.core.physical_model_blueprint import physical_model_blueprint_review_to_dict, review_physical_model_blueprint
-    from physicsguard.io.physical_model_blueprint_loader import BlueprintLoadError, load_physical_model_blueprint, load_target_inventory_authority
-
-    try:
-        blueprint = load_physical_model_blueprint(path)
-        target_inventory_authority = load_target_inventory_authority(target_authority_path)
-    except BlueprintLoadError as exc:
-        _print_json(
-            {
-                "artifact_type": "physicsguard_physical_blueprint_error",
-                "category": exc.category,
-                "status": "invalid",
-                "message": str(exc),
-                "safe_claim": "No physical-blueprint claim is licensed because the canonical contract did not load.",
-            },
-            pretty,
-        )
-        return 2
-    review_root = (
-        material_root
-        if material_root is not None
-        else (None if blueprint.artifact_root == "explicit_material_root" else path.parent)
-    )
-    authority_root = (
-        material_root
-        if material_root is not None
-        else (
-            None
-            if blueprint.artifact_root == "explicit_material_root"
-            else target_authority_path.parent
-        )
-    )
-    review = review_physical_model_blueprint(
-        blueprint,
-        target_inventory_authority=target_inventory_authority,
-        base_dir=review_root,
-        authority_base_dir=authority_root,
-    )
-    _print_json(physical_model_blueprint_review_to_dict(review), pretty)
-    if review.status == "pass":
-        return 0
-    if review.status == "stale" or any(gap.status == "stale" for gap in review.gaps):
-        return 4
-    adapter_codes = {
-        "required_provider_capability_not_current",
-        "inventory_provider_missing_capability",
-        "inventory_provider_payload_mismatch",
-        "target_inventory_authority_not_verified",
-        "blueprint_inventory_authority_fingerprint_mismatch",
-        "native_binding_not_current",
-    }
-    if any(gap.code in adapter_codes for gap in review.gaps):
-        return 5
-    return 3
-
-
-
-
-
-
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
     from physicsguard.io.test_file_contract_loader import load_yaml_mapping
     from physicsguard.schema.test_file_contract import ExtractorProfileSpec, TestBenchProfileSpec
@@ -911,14 +804,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return evidence_map_command(args.registry, args.pretty)
             if args.evidence_command == "mesh-check":
                 return evidence_mesh_check_command(args.mesh, args.pretty)
-        if args.command == "blueprint":
-            if args.blueprint_command == "review":
-                return blueprint_review_command(
-                    args.blueprint,
-                    args.target_authority,
-                    args.material_root,
-                    args.pretty,
-                )
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

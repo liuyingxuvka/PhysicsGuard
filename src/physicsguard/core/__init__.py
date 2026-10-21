@@ -27,20 +27,10 @@ __all__ = [
     "check_test_file_project_index",
     "diff_test_file_contracts",
     "field_signature_hash",
-    "load_fmi_observation_request",
-    "observe_fmi_observation_request",
-    "review_fmi_observation_request",
     "generate_delimited_manifest",
     "inspect_test_file_contract",
-    "affected_physical_blueprint_projection",
-    "compile_physical_blueprint_graph",
-    "full_physical_blueprint_projection",
-    "physical_model_blueprint_review_to_dict",
-    "reverse_trace_physical_blueprint_projection",
-    "review_physical_model_blueprint",
     "scan_project_evidence_candidates",
     "sha256_file",
-    "summary_physical_blueprint_projection",
     "validate_model_dataset",
     "evaluate_candidate_model_revision",
     "evaluate_hypothesis_observation",
@@ -52,22 +42,6 @@ __all__ = [
 
 
 def __getattr__(name: str):
-    if name in {
-        "load_fmi_observation_request",
-        "observe_fmi_observation_request",
-        "review_fmi_observation_request",
-    }:
-        from physicsguard.core.fmi_observation import (
-            load_fmi_observation_request,
-            observe_fmi_observation_request,
-            review_fmi_observation_request,
-        )
-
-        return {
-            "load_fmi_observation_request": load_fmi_observation_request,
-            "observe_fmi_observation_request": observe_fmi_observation_request,
-            "review_fmi_observation_request": review_fmi_observation_request,
-        }[name]
     if name == "DiagnosticReporter":
         from physicsguard.core.diagnostics import DiagnosticReporter
 
@@ -212,57 +186,6 @@ def __getattr__(name: str):
         from physicsguard.modules.registry import ModuleRegistry
 
         return ModuleRegistry
-    if name in {
-        "affected_physical_blueprint_projection",
-        "compile_physical_blueprint_graph",
-        "full_physical_blueprint_projection",
-        "reverse_trace_physical_blueprint_projection",
-        "summary_physical_blueprint_projection",
-    }:
-        from physicsguard.core.physical_blueprint_trace import (
-            affected_physical_blueprint_projection,
-            compile_physical_blueprint_graph,
-            full_physical_blueprint_projection,
-            reverse_trace_physical_blueprint_projection,
-            summary_physical_blueprint_projection,
-        )
-
-        return {
-            "affected_physical_blueprint_projection": affected_physical_blueprint_projection,
-            "compile_physical_blueprint_graph": compile_physical_blueprint_graph,
-            "full_physical_blueprint_projection": full_physical_blueprint_projection,
-            "reverse_trace_physical_blueprint_projection": reverse_trace_physical_blueprint_projection,
-            "summary_physical_blueprint_projection": summary_physical_blueprint_projection,
-        }[name]
-    if name in {
-        "physical_model_blueprint_review_to_dict",
-        "review_physical_model_blueprint",
-    }:
-        from physicsguard.core.physical_model_blueprint import (
-            physical_model_blueprint_review_to_dict,
-            review_physical_model_blueprint,
-        )
-
-        return {
-            "physical_model_blueprint_review_to_dict": physical_model_blueprint_review_to_dict,
-            "review_physical_model_blueprint": review_physical_model_blueprint,
-        }[name]
-    if name in {
-        "build_module_behavior_contract_index",
-        "build_physical_blueprint_export_bundle",
-        "query_physical_blueprint_export_bundle",
-    }:
-        from physicsguard.core.physical_blueprint_bundle import (
-            build_module_behavior_contract_index,
-            build_physical_blueprint_export_bundle,
-            query_physical_blueprint_export_bundle,
-        )
-
-        return {
-            "build_module_behavior_contract_index": build_module_behavior_contract_index,
-            "build_physical_blueprint_export_bundle": build_physical_blueprint_export_bundle,
-            "query_physical_blueprint_export_bundle": query_physical_blueprint_export_bundle,
-        }[name]
     if name in {
         "evaluate_candidate_model_revision",
         "evaluate_hypothesis_observation",

@@ -17,7 +17,6 @@ from physicsguard.schema.predictive_rollout import (
 )
 from physicsguard.schema.project_evidence import ReviewState
 from physicsguard.schema.validation_adequacy import (
-    BlueprintValidationCoverageReceiptSpec,
     ValidationAdequacyPlanSpec,
     ValidationAdequacyReceiptSpec,
 )
@@ -579,7 +578,6 @@ class ValidationDepthReceiptSpec(BaseModel):
     residual_series: ResidualSeriesReceiptSpec
     envelopes: EnvelopeEvidenceReceiptSpec
     adequacy: ValidationAdequacyReceiptSpec
-    blueprint_coverage: BlueprintValidationCoverageReceiptSpec
     predictive: PredictiveRolloutReceiptSpec
     assumptions: list[str] = Field(default_factory=list)
     findings: list[ValidationDepthFindingSpec] = Field(default_factory=list)
@@ -591,8 +589,6 @@ class ValidationDepthReceiptSpec(BaseModel):
     def _receipt_consistent(self) -> "ValidationDepthReceiptSpec":
         if self.ok != (self.status == "pass"):
             raise ValueError("depth receipt ok must be true exactly when status is pass")
-        if self.blueprint_coverage != self.adequacy.blueprint_coverage:
-            raise ValueError("depth blueprint coverage must exactly equal adequacy blueprint coverage")
         return self
 
 

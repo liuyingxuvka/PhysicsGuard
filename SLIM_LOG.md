@@ -386,3 +386,15 @@
 - `python <本动作核验脚本> focused-tests`：exit 0；1.898秒；15 passed in 0.34s。
 - `python <本动作核验脚本> map-check`：exit 0；0.343秒；check: 0 error(s), 1 warning(s), 0 info。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-43 退役蓝图与FMI层并验证主路径
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.302秒；authorized blueprint/FMI layer and coverage removed; transient task layer names retained locally; hierarchy/evaluate/compare untouched。
+- `python <本动作核验脚本> exports-names-cli-scan`：exit 0；1.172秒；blueprint CLI rejects with exit2; selected active source/tests/scripts/templates/README references zero。
+- `python <本动作核验脚本> collect`：exit 0；2.042秒；879 tests collected in 1.50s。
+- `python <本动作核验脚本> lint-boundary`：exit 0；1.501秒；expected one reduced evidence cycle and two stale debts, preserved until PG56; no release attempted。
+- `python <本动作核验脚本> focused-tests`：exit 0；14.927秒；88 passed in 14.51s。
+- `python <本动作核验脚本> map-check`：exit 0；0.384秒；check: 0 error(s), 7 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；25.372秒；models: 9 passed, 0 failed。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

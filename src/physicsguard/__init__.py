@@ -14,12 +14,7 @@ __all__ = [
     "DiagnosticReporter",
     "ResidualDiagnostic",
     "SignalMappingRecord",
-    "TargetInventoryAuthority",
     "build_signal_mapping_ledger",
-    # These are bounded in-memory projections for domain review only. Disk
-    # materialization/loading is retired by the native-directory boundary.
-    "build_physical_blueprint_export_bundle",
-    "affected_physical_blueprint_projection",
     "build_project_evidence_map",
     "check_test_file_contract",
     "check_test_file_parameter_coverage",
@@ -33,12 +28,9 @@ __all__ = [
     "check_test_file_relation_index",
     "derive_bug_family_followups",
     "field_signature_hash",
-    "full_physical_blueprint_projection",
     "generate_delimited_manifest",
     "mapping_warnings",
     "review_signal_mapping_ledger",
-    "PhysicalModelBlueprint",
-    "PhysicalModelBlueprintReview",
     "sha256_file",
     "scan_project_evidence_candidates",
     "review_project_profile_authority",
@@ -49,10 +41,6 @@ __all__ = [
     "evaluate_interval_residual",
     "freeze_hypothesis_plan",
     "rank_observation_candidates",
-    "reverse_trace_physical_blueprint_projection",
-    "review_physical_model_blueprint",
-    "summary_physical_blueprint_projection",
-    "query_physical_blueprint_export_bundle",
 ]
 
 _PUBLIC_EXPORTS = {
@@ -63,10 +51,7 @@ _PUBLIC_EXPORTS = {
     'DiagnosticReporter': 'physicsguard.core.diagnostics',
     'ResidualDiagnostic': 'physicsguard.core.diagnostics',
     'SignalMappingRecord': 'physicsguard.core.signal_mapping',
-    'TargetInventoryAuthority': 'physicsguard.schema.physical_model_blueprint',
     'build_signal_mapping_ledger': 'physicsguard.core.signal_mapping',
-    'build_physical_blueprint_export_bundle': 'physicsguard.core.physical_blueprint_bundle',
-    'affected_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
     'build_project_evidence_map': 'physicsguard.core.project_evidence',
     'check_test_file_contract': 'physicsguard.core.test_file_contract',
     'check_test_file_parameter_coverage': 'physicsguard.core.test_file_contract',
@@ -80,12 +65,9 @@ _PUBLIC_EXPORTS = {
     'check_test_file_relation_index': 'physicsguard.core.dataset_identity',
     'derive_bug_family_followups': 'physicsguard.core.signal_mapping',
     'field_signature_hash': 'physicsguard.core.data_file_manifest',
-    'full_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
     'generate_delimited_manifest': 'physicsguard.core.data_file_manifest',
     'mapping_warnings': 'physicsguard.core.signal_mapping',
     'review_signal_mapping_ledger': 'physicsguard.core.signal_mapping',
-    'PhysicalModelBlueprint': 'physicsguard.schema.physical_model_blueprint',
-    'PhysicalModelBlueprintReview': 'physicsguard.schema.physical_model_blueprint',
     'sha256_file': 'physicsguard.core.data_file_manifest',
     'scan_project_evidence_candidates': 'physicsguard.core.project_evidence',
     'review_project_profile_authority': 'physicsguard.core.project_evidence',
@@ -96,10 +78,6 @@ _PUBLIC_EXPORTS = {
     'evaluate_interval_residual': 'physicsguard.core.diagnosability',
     'freeze_hypothesis_plan': 'physicsguard.core.task_local_revision',
     'rank_observation_candidates': 'physicsguard.core.task_local_revision',
-    'reverse_trace_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
-    'review_physical_model_blueprint': 'physicsguard.core.physical_model_blueprint',
-    'summary_physical_blueprint_projection': 'physicsguard.core.physical_blueprint_trace',
-    'query_physical_blueprint_export_bundle': 'physicsguard.core.physical_blueprint_bundle',
 }
 
 
