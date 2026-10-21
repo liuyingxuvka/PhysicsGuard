@@ -502,7 +502,7 @@ DEPTH_EXTERNAL_INPUTS = (
     ValidationInput("stateful_rollout_failed", True, True, False, True, False, False, True, True, prediction_requested=True, stateful_dynamic=True, predictive_rollout_passed=False),
     ValidationInput("stateful_rollout_pass", True, True, False, True, False, False, True, True, prediction_requested=True, stateful_dynamic=True, predictive_rollout_passed=True),
 )
-MAX_SEQUENCE_LENGTH = 5
+MAX_SEQUENCE_LENGTH = 3
 
 
 def initial_state() -> State:

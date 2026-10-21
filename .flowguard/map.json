@@ -385,8 +385,7 @@
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
         ".flowguard/verification/owners/model_library/run_checks.py",
         ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
-        ".flowguard/verification/owners/test_file_contract/run_checks.py",
-        ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
+        ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:403334236d3f971737cb6399855bc43926b80bc2dfcf58932f3cb4cf8eda3f46"
@@ -688,8 +687,7 @@
         "tests/test_task_local_revision.py"
       ],
       "models": [
-        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
-        ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
+        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:67ece5c8a8bd903575a3831fe629706789e45e8255187be2cd0fc04409eaff73"
