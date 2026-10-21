@@ -64,18 +64,18 @@ Rules return `RecommendedRefinement` objects with template ids, required variabl
 
 ## Recommended Workflow
 
-2. Complete or review the model-understanding preflight before writing the first hierarchy.
-3. Run a Level 0 whole-system hierarchical audit. For external model results, prefer `hierarchy evaluate` so observed values are not moved by a solver.
-4. If the source is a concrete testbench data file, run the file's
+1. Complete or review the model-understanding preflight before writing the first hierarchy.
+2. Run a Level 0 whole-system hierarchical audit. For external model results, prefer `hierarchy evaluate` so observed values are not moved by a solver.
+3. If the source is a concrete testbench data file, run the file's
    `TestFileContract` and parameter coverage checks before treating all file
    columns as audit evidence.
-5. Review the external-model intake and signal mappings before treating residuals as fault-localization evidence.
-6. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `signal_mapping_ledger`, `bug_family_followups`, and `recommended_refinements`.
-7. If the Level 0 score is acceptable and closure evidence is clean, stop or accept coarse plausibility within the stated boundary.
-8. If a block fails, export the required variables and parameters listed by the recommendation.
-9. Run the next-level template for that block.
-10. Repeat until the issue is narrowed to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary.
-11. Before a final localization claim, run closure checks or explicitly mark the claim partial, downgraded, blocked, stale, or skipped.
+4. Review the external-model intake and signal mappings before treating residuals as fault-localization evidence.
+5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `signal_mapping_ledger`, `bug_family_followups`, and `recommended_refinements`.
+6. If the Level 0 score is acceptable and no refinement, mapping issue or missing input is open, stop or accept coarse plausibility within the stated boundary.
+7. If a block fails, export the required variables and parameters listed by the recommendation.
+8. Run the next-level template for that block.
+9. Repeat until the issue is narrowed to a subsystem, component, signal chain, parameter, map, unit conversion, or boundary.
+10. Before a final localization claim, list every open refinement, mapping issue and missing input, or mark the claim partial.
 
 ## Visualizing Hierarchical Audits
 

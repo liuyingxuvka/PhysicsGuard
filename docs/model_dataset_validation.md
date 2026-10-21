@@ -56,10 +56,6 @@ review state, and the containing report identity. A legacy plan without
 or two scalar checks never imply temporal behavior or general model
 understanding.
 
-Project closure and supervisory contract tools consume the native receipt.
-They must not recompute physical residuals or reinterpret PhysicsGuard's
-physical pass/fail logic.
-
 When a validation plan declares `evidence_registry` and `evidence_bundle_id`,
 blocking project evidence gaps prevent validation pass. Review and optional gaps
 remain visible in the validation claim boundary.
@@ -156,5 +152,3 @@ accumulated normalized error, lag/phase error, drift, error growth, and
 stability. PhysicsGuard validates the supplied stateful trajectory; it does not
 pretend a pointwise residual formula is a simulator or reconstruct hidden
 commercial-model dynamics.
-
-Project closure recomputes current validation from its plan. The receipt consumer's `physical_recomputation: false` flag covers that final consume step only; a prior JSON result does not bypass current source validation.

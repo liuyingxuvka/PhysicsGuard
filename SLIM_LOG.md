@@ -320,3 +320,12 @@
 - `python <本动作核验脚本> publisher-syntax`：exit 0；0.064秒；ok；只编译未执行publisher；time、版本与tag/main核对及发布调用保留。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 提交后完整检查：`python -m pytest -q`：exit 0；1021 passed in 117.69s (0:01:57)；命令总耗时 120.427 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-36 移除文档退役闭合步骤并明确开放缺口
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> docs-boundaries`：exit 0；0.042秒；文档只剩授权保留的跨项目概念1处；两组工作流分别连续1–12和1–10，开放缺口边界保留。
+- `python <本动作核验脚本> format-check`：exit 2；0.007秒；SLIM_LOG.md:323: new blank line at EOF.。
+- `python <本动作核验脚本> format-clean`：exit 0；0.008秒；。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：移除末尾退役段落后两文档多留EOF空行，提交前diffcheck报错；仅归一化这两文件结尾为单newline后重验，不改业务内容。

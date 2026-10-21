@@ -8,7 +8,7 @@ Use:
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 ```
 
-The preflight is planning evidence only. It does not replace `hierarchy evaluate`, `hierarchy compare`, FlowGuard checks, pytest, examples, or closure evidence.
+The preflight is planning evidence only. It does not replace `hierarchy evaluate` or `hierarchy compare` results.
 
 ## Required Sections
 

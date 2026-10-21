@@ -55,28 +55,12 @@ risk_ledger: []
 In a real mesh, each required route must have rows. Empty required sections
 block the report.
 
-## Project Closure Handoff
-
-Project closure can require one or more meshes:
-
-```yaml
-evidence_meshes:
-  - evidence_mesh.yaml
-required_checks:
-  evidence_mesh: true
-```
-
-When the mesh fails, project closure also fails and includes the specific mesh
-finding, such as a missing parent-child consumption receipt or a risk row that
-forgot a required route.
-
 ## Example
 
 The pump-loop fixture includes a complete example:
 
 ```powershell
 python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
-python -m physicsguard.cli project closure examples/testfile_contracts/pump_loop/project_closure_plan.yaml --pretty
 ```
 
 The fixture remains a low-fidelity relation example. Passing it does not imply a

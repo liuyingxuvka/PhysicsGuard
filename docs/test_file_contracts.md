@@ -120,8 +120,7 @@ choose one of these actions:
 
 A passing contract does not prove the physical model is correct. It only proves
 that the file fields were accounted for and bound or disposed under explicit
-rules. Residual audits, FlowGuard checks, pytest, and closure evidence still
-govern physical debugging claims.
+rules. Residual audits still govern physical debugging claims.
 
 For downstream non-snapshot validation, the current manifest and role matrix
 become coverage authorities. Preserve their exact hashes, raw row and field

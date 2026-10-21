@@ -28,19 +28,19 @@ contract.
 ## Core Loop
 
 1. Start with the user-visible failure: wrong final value, impossible pressure, excessive heat, bad power, unstable response, or similar.
-3. Complete or review the model-understanding preflight before writing the first audit file.
-4. Build a Level 0 audit with coarse balances or simple signal relations.
-5. If a concrete test data file is the source, generate or review its
+2. Complete or review the model-understanding preflight before writing the first audit file.
+3. Build a Level 0 audit with coarse balances or simple signal relations.
+4. If a concrete test data file is the source, generate or review its
    `DataFileManifest` and `TestFileContract` before treating its fields as audit
    evidence.
-6. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings should use first-class mapping fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, conversion notes, or stale conditions.
-7. Review the external-model intake before treating residuals as fault-localization evidence.
-8. Run `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty`.
-9. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, and `bug_family_followups`.
-10. Request or export only the next variables and parameters named by `recommended_refinements`.
-11. Create or choose the next-level audit template for the suspicious block.
-12. Run closure checks or clearly downgrade the final claim when closure is partial, blocked, stale, skipped, or still has mapping-review gaps.
-13. Repeat until the issue is localized to a subsystem, component, signal chain, map, unit conversion, parameter, or boundary condition.
+5. Map external signals into `ObservedValuesSpec`. Signal mapping can be AI-proposed, but uncertain mappings should use first-class mapping fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, conversion notes, or stale conditions.
+6. Review the external-model intake before treating residuals as fault-localization evidence.
+7. Run `physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty`.
+8. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, and `bug_family_followups`.
+9. Request or export only the next variables and parameters named by `recommended_refinements`.
+10. Create or choose the next-level audit template for the suspicious block.
+11. List every open refinement, review-required mapping, follow-up and missing input in the final claim, and downgrade the claim while any remain.
+12. Repeat until the issue is localized to a subsystem, component, signal chain, map, unit conversion, parameter, or boundary condition.
 
 Use `physicsguard hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty` when a solved low-fidelity reference is useful for ranking variable deviations. Use direct `hierarchy evaluate` when the external result itself is the evidence and PhysicsGuard must not move values.
 
@@ -132,15 +132,7 @@ Do not convert a suspicious-block ranking into a broad debugging success claim w
 - `signal_mapping_ledger` rows contain `review_required`, `low_confidence`, `missing_conversion`, or `stale_mapping`;
 - `bug_family_followups` point to same-family sign, gain, unit, map, or balance checks that have not been reviewed;
 - observed snapshots changed after the audit;
-- closure evidence records skipped checks.
-
-Use `skill/physicsguard-ai-debugging/scripts/physicsguard_closure_check.py` when audit and observed files are available. A partial, downgraded, blocked, stale, or skipped closure can still be useful, but the final wording must say exactly what remains unresolved.
-
-The helper parses the complete native `hierarchy evaluate` JSON before bounding
-its displayed log. It consumes the observed audit and its refinement results;
-it does not start a reference solve. Missing or malformed native audit fields
-cannot pass. Caller ledger fields may add gaps or downgrade the claim, but
-cannot replace native failures, warnings or missing inputs with success.
+- any listed check was skipped.
 
 ## Portable YAML Headers
 
