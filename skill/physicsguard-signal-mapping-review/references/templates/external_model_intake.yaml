@@ -1,0 +1,24 @@
+# PhysicsGuard external-model intake
+# Purpose: Record external model snapshot and signal mapping review state.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+# Boundary: Mapping evidence only; does not convert or mutate observed values.
+external_model_snapshot:
+  model_name: "example_external_model"
+  tool: "user-provided tool or model source"
+  tool_version: "unknown"
+  model_version: "unknown"
+  scenario: "example operating point"
+  export_time: "2026-06-08T00:00:00Z"
+  observed_file: "examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml"
+  signals:
+    - external_signal: "external.path.signal"
+      physicsguard_variable: "component.variable"
+      unit_from_source: "W"
+      expected_si_unit: "W"
+      conversion_note: "Already exported in SI units."
+      mapping_confidence: "medium"
+      review_required: false
+      stale_when:
+        - "External model signal names changed."
+        - "Observed snapshot was regenerated after this intake."

@@ -7,7 +7,7 @@ field has a catalog row, role/disposition, and evidence-backed mapping.
 
 ## Workflow
 
-1. Create or review an intake file based on templates/external_model_intake.yaml.
+1. Create or review an intake file starting from `references/templates/external_model_intake.yaml` in this skill's directory.
 2. Run:
 
    ```powershell

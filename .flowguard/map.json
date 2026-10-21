@@ -95,6 +95,7 @@
       "side_effects": [],
       "depends_on": [],
       "tests": [
+        "tests/test_skill_templates.py",
         "tests/test_workflow_governance.py"
       ],
       "models": [],

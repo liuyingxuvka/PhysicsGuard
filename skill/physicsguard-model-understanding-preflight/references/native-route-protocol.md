@@ -7,7 +7,7 @@ analysis claims.
 
 ## Workflow
 
-1. Create or review a preflight file based on templates/model_understanding_preflight.yaml.
+1. Create or review a preflight file starting from `references/templates/model_understanding_preflight.yaml` in this skill's directory.
 2. Run:
 
    ```powershell

@@ -225,3 +225,10 @@
 - `python <本动作核验脚本> installer-tests`：exit 0；3.2秒；15 passed in 0.81s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：既存10月18日忽略缓存使原始ls仍exit0；跟踪技能脚本、引用及安装文件均已无wrapper，外部单列原始目录结果；遵守不清非本轮文件规则保留缓存。
+
+### PG-24 分发可执行技能模板与功能验证
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> user-directory-templates`：exit 0；3.596秒；空目录4条原生命令均通过；6模板随安装计划分发；地图0error且无test_unbound；根模板未改。
+- `python <本动作核验脚本> template-tests`：exit 0；2.866秒；16 passed in 0.52s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

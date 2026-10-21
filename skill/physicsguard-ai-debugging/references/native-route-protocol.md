@@ -62,7 +62,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    support bounded consistency only; prediction requires a declared
    `stateful_dynamic` model and a passing disjoint future-holdout rollout.
 
-8. Create or review a model-understanding preflight before residual interpretation:
+8. Create or review a model-understanding preflight (start from `references/templates/model_understanding_preflight.yaml` in this skill's directory) before residual interpretation:
 
    ```powershell
    python -m physicsguard.cli preflight review PREFLIGHT.yaml --pretty
@@ -70,7 +70,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 
    The preflight must name the visible symptom, external model source of truth, physical boundary, subsystem blocks, conserved quantities, expected SI units, assumptions, uncertain mappings, first audit level, and stop conditions.
 9. Build or choose the coarsest useful PhysicsGuard audit YAML.
-10. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record:
+10. Map external simulation signals into `ObservedValuesSpec` and, for non-trivial external-model work, review an intake record (start from `references/templates/external_model_intake.yaml`):
 
    ```powershell
    python -m physicsguard.cli intake review INTAKE.yaml --pretty
@@ -103,11 +103,11 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    Preserve supported, weakened, and undetermined hypotheses. Missing targets
    remain missing; they are not retroactive support.
 15. When measurement, mapping, or low-fidelity model uncertainty is bounded by
-   intervals, keep it as an interval. Use `task-model interval-residual` and
+   intervals, keep it as an interval. Use `task-model interval-residual` (start from `references/templates/interval_residual.yaml`) and
    report `robust_pass`, `robust_fail`, `indeterminate`, or `not_run`; never
    collapse an interval-crossing result into the ordinary audit pass/fail.
 16. For fault localization, use the existing task-local hypotheses as fault
-   signatures and run `task-model diagnose`. Report pairwise
+   signatures and run `task-model diagnose` (start from `references/templates/diagnosability_request.yaml`). Report pairwise
    distinguishability, viable and rejected hypotheses, unresolved pairs, and
    the ranked next signal. The result is task-local and does not prove that the
    hypothesis inventory exhausts physical reality.

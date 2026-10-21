@@ -1,0 +1,20 @@
+# PhysicsGuard fault-signature diagnosability request
+# Purpose: Compare live hypotheses by their predicted signal intervals and rank the next signal.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli task-model diagnose diagnosability_request.yaml
+# Boundary: Task-local; it does not prove that the hypothesis list exhausts physical reality.
+diagnosis_id: example_diagnosis
+fault_signatures:
+  - hypothesis_id: gain
+    predicted_intervals:
+      speed: {lower: 9.0, upper: 11.0}
+      current: {lower: 4.0, upper: 5.0}
+  - hypothesis_id: mapping
+    predicted_intervals:
+      speed: {lower: -11.0, upper: -9.0}
+      current: {lower: 4.5, upper: 5.5}
+  - hypothesis_id: sensor
+    predicted_intervals:
+      speed: {lower: 9.5, upper: 10.5}
+      current: {lower: 7.0, upper: 8.0}
+available_signal_ids: [current, speed]
