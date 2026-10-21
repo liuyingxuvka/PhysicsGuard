@@ -99,12 +99,14 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 12. When measurement, mapping, or low-fidelity model uncertainty is bounded by
    intervals, keep it as an interval. Use `task-model interval-residual` (start from `references/templates/interval_residual.yaml`) and
    report `robust_pass`, `robust_fail`, `indeterminate`, or `not_run`; never
-   collapse an interval-crossing result into the ordinary audit pass/fail.
+   collapse an interval-crossing result into the ordinary audit pass/fail. The
+   command exits 1 only on `robust_fail`.
 13. For fault localization, use the existing task-local hypotheses as fault
    signatures and run `task-model diagnose` (start from `references/templates/diagnosability_request.yaml`). Report pairwise
    distinguishability, viable and rejected hypotheses, unresolved pairs, and
-   the ranked next signal. The result is task-local and does not prove that the
-   hypothesis inventory exhausts physical reality.
+   the ranked next signal. The command exits 1 when the declared signatures
+   cannot be separated (`indistinguishable`). The result is task-local and does
+   not prove that the hypothesis inventory exhausts physical reality.
 14. Use a residual localization overlay, signal-mapping table, same-family follow-up list, or refinement-path view when it helps explain why a block is suspicious and which data is needed next.
 15. Request or export only the next small set of signals/parameters needed by the suspicious block and the live-hypothesis distinction.
 16. Refine that block with a lower-level audit template.

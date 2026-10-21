@@ -121,3 +121,25 @@ def test_task_model_diagnose_cli(tmp_path, capsys) -> None:
     )
     assert main(["task-model", "diagnose", str(path)]) == 0
     assert json.loads(capsys.readouterr().out)["status"] == "isolable"
+
+
+def test_interval_residual_cli_exits_1_only_on_robust_fail(tmp_path, capsys) -> None:
+    passing = tmp_path / "pass.yaml"
+    failing = tmp_path / "fail.yaml"
+    base = {"residual_id": "r", "acceptable": {"lower": -1.0, "upper": 1.0}, "source_ref": "test:interval"}
+    passing.write_text(json.dumps({**base, "observed": {"lower": 0.5, "upper": 1.5}}), encoding="utf-8")
+    failing.write_text(json.dumps({**base, "observed": {"lower": 1.2, "upper": 1.5}}), encoding="utf-8")
+    assert main(["task-model", "interval-residual", str(passing)]) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "indeterminate"
+    assert main(["task-model", "interval-residual", str(failing)]) == 1
+    assert json.loads(capsys.readouterr().out)["status"] == "robust_fail"
+
+
+def test_task_model_diagnose_cli_exits_1_when_hypotheses_cannot_be_separated(tmp_path, capsys) -> None:
+    payload = _request().model_dump(mode="json")
+    payload["fault_signatures"] = payload["fault_signatures"][:2]
+    payload["fault_signatures"][1]["predicted_intervals"] = payload["fault_signatures"][0]["predicted_intervals"]
+    path = tmp_path / "indistinguishable.yaml"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    assert main(["task-model", "diagnose", str(path)]) == 1
+    assert json.loads(capsys.readouterr().out)["status"] == "indistinguishable"

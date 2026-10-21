@@ -20,6 +20,8 @@ best separates them, and compares that observation with the frozen predictions.
    hypothesis list instead of inventing a cause.
 3. `task-model interval-residual` and `task-model diagnose` keep interval
    uncertainty explicit and recommend the next signal from fault signatures.
+   `interval-residual` exits 1 on `robust_fail`; `diagnose` exits 1 when the
+   declared signatures cannot be separated (`indistinguishable`).
 
 Templates for the first two inputs ship with the ai-debugging skill
 (`references/templates/hypothesis_plan.yaml` and

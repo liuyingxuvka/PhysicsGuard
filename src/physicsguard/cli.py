@@ -415,7 +415,7 @@ def task_model_interval_residual_command(
     residual = IntervalResidualSpec.model_validate(load_yaml_mapping(path))
     output = evaluate_interval_residual(residual)
     _print_json(output, pretty)
-    return 0
+    return 1 if output["status"] == "robust_fail" else 0
 
 
 def task_model_diagnose_command(
@@ -431,7 +431,7 @@ def task_model_diagnose_command(
     )
     output = evaluate_diagnosability(diagnosis)
     _print_json(output, pretty)
-    return 0
+    return 1 if output["status"] == "indistinguishable" else 0
 
 
 def assumptions_inspect(path: Path, pretty: bool = False) -> int:
