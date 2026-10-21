@@ -79,6 +79,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    Missing-variable checks use bounded probes of supported native modules, not a proof of arbitrary custom-function independence; unclassified custom residuals remain skipped.
 
 9. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
+   `hierarchy run|plan|evaluate|compare` print a compact summary with these fields (only the mapping rows that need review); add `--json` only when you need every residual, the block assignments or the full mapping ledger.
 10. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations (start from `references/templates/hypothesis_plan.yaml` and point `model.path` at the audited hierarchy YAML). Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and give each hypothesis at least one signal, residual, or timing expectation plus its weakening condition:
 
    ```powershell

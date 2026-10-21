@@ -53,6 +53,7 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_run = hierarchy_subparsers.add_parser("run", help="run a hierarchical audit")
     hierarchy_run.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
     hierarchy_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    hierarchy_run.add_argument("--json", action="store_true", help="print the full report instead of the summary")
 
     hierarchy_inspect = hierarchy_subparsers.add_parser(
         "inspect",
@@ -67,6 +68,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     hierarchy_plan.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
     hierarchy_plan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    hierarchy_plan.add_argument("--json", action="store_true", help="print the full report instead of the summary")
 
     hierarchy_evaluate = hierarchy_subparsers.add_parser(
         "evaluate",
@@ -79,6 +81,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="path to a YAML ObservedValuesSpec",
     )
     hierarchy_evaluate.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    hierarchy_evaluate.add_argument("--json", action="store_true", help="print the full report instead of the summary")
 
     hierarchy_compare = hierarchy_subparsers.add_parser(
         "compare",
@@ -91,6 +94,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="path to a YAML ObservedValuesSpec",
     )
     hierarchy_compare.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    hierarchy_compare.add_argument("--json", action="store_true", help="print the full report instead of the summary")
 
     task_model_parser = subparsers.add_parser(
         "task-model",
@@ -261,6 +265,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validation_run.add_argument("plan", type=Path, help="path to ModelValidationPlan YAML")
     validation_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    validation_run.add_argument("--json", action="store_true", help="print the full report instead of the summary")
 
     return parser
 
@@ -270,6 +275,93 @@ def _print_json(output: dict, pretty: bool) -> None:
         print(json.dumps(output, indent=2, sort_keys=True))
     else:
         print(json.dumps(output, sort_keys=True))
+
+
+SUMMARY_HINT = "summary only; add --json for the full report"
+
+
+def _pick(row: dict, keys: tuple[str, ...]) -> dict:
+    return {key: row.get(key) for key in keys}
+
+
+def _hierarchy_summary(report: dict) -> dict:
+    """Compact view of a hierarchical audit report: verdict, suspicious blocks, open gaps; no input echo."""
+    metadata = report.get("metadata", {})
+    summary = {
+        "output": SUMMARY_HINT,
+        "mode": metadata.get("mode"),
+        "audit_name": report.get("audit_name"),
+        "audit_pass": report.get("audit_pass"),
+        "max_abs_normalized_residual": report.get("max_abs_normalized_residual"),
+        "top_blocks": [
+            _pick(block, ("block_id", "level", "score", "confidence", "audit_pass", "missing_required_variables", "missing_required_parameters"))
+            for block in report.get("top_blocks", [])[:5]
+        ],
+        "top_residuals": [
+            _pick(residual, ("name", "normalized_value", "role", "diagnostic_key"))
+            for residual in report.get("top_residuals", [])[:5]
+        ],
+        "recommended_refinements": [
+            _pick(item, ("block_id", "rule_id", "next_template_ids", "next_required_variables", "next_required_parameters"))
+            for item in report.get("recommended_refinements", [])[:5]
+        ],
+        "signal_mapping_ledger": [
+            _pick(row, ("physics_variable", "external_signal", "expected_unit", "observed_unit", "issue_codes", "recommended_action"))
+            for row in report.get("signal_mapping_ledger", [])
+            if row.get("issue_codes")
+        ],
+        "bug_family_followups": [
+            _pick(item, ("followup_id", "affected_blocks", "affected_variables", "recommended_action"))
+            for item in report.get("bug_family_followups", [])
+        ],
+        "missing_required_variables": report.get("missing_required_variables", []),
+        "missing_required_parameters": report.get("missing_required_parameters", []),
+        "warnings": report.get("warnings", []),
+    }
+    if metadata.get("solver_attempted"):
+        summary["optimization_success"] = report.get("optimization_success")
+    return summary
+
+
+def _comparison_summary(report: dict) -> dict:
+    observed = _hierarchy_summary(report["observed_hierarchy"])
+    del observed["output"]
+    return {
+        "output": SUMMARY_HINT,
+        "mode": "hierarchy_compare",
+        "audit_name": report.get("audit_name"),
+        "reference_optimization_success": report.get("reference_optimization_success"),
+        "reference_audit_pass": report.get("reference_audit_pass"),
+        "observed_audit_pass": report.get("observed_audit_pass"),
+        "top_variable_deviations": [
+            _pick(item, ("variable", "reference_value", "observed_value", "normalized_delta", "unit"))
+            for item in report.get("top_variable_deviations", [])[:5]
+        ],
+        "observed_hierarchy": observed,
+        "warnings": report.get("warnings", []),
+    }
+
+
+def _validation_summary(report: dict) -> dict:
+    direct = report.get("direct_validation", {})
+    calibration = report.get("calibration", {})
+    return {
+        "output": SUMMARY_HINT,
+        "validation_id": report.get("validation_id"),
+        "status": report.get("status"),
+        "ok": report.get("ok"),
+        "direct_validation": {
+            "audit_pass": direct.get("audit_pass"),
+            "max_abs_normalized_residual": direct.get("max_abs_normalized_residual"),
+            "top_blocks": [block.get("block_id") for block in direct.get("top_blocks", [])[:5]],
+        },
+        "calibration": _pick(calibration, ("enabled", "optimization_success", "holdout_audit_pass", "parameters_at_bounds")),
+        "depth_summary": report.get("depth_summary", {}),
+        "findings": [_pick(item, ("severity", "type", "target", "message")) for item in report.get("findings", [])],
+        "safe_claim": report.get("safe_claim"),
+        "unsafe_claim_boundary": report.get("unsafe_claim_boundary"),
+        "next_actions": report.get("next_actions", []),
+    }
 
 
 def solve(path: Path, pretty: bool = False) -> int:
@@ -314,14 +406,14 @@ def compare(system_path: Path, observed_path: Path, pretty: bool = False) -> int
     return 0
 
 
-def hierarchy_run(path: Path, pretty: bool = False) -> int:
+def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 
     spec = load_hierarchical_audit_spec(path)
     runner = HierarchicalAuditRunner(spec)
-    report = runner.run()
-    _print_json(runner.to_dict(report), pretty)
+    report = runner.to_dict(runner.run())
+    _print_json(report if full else _hierarchy_summary(report), pretty)
     return 0
 
 
@@ -334,18 +426,18 @@ def hierarchy_inspect(path: Path, pretty: bool = False) -> int:
     return 0
 
 
-def hierarchy_plan(path: Path, pretty: bool = False) -> int:
+def hierarchy_plan(path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner, plan_from_report
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 
     spec = load_hierarchical_audit_spec(path)
     runner = HierarchicalAuditRunner(spec)
     report = runner.run()
-    _print_json(plan_from_report(report), pretty)
+    _print_json(plan_from_report(report) if full else _hierarchy_summary(runner.to_dict(report)), pretty)
     return 0
 
 
-def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False) -> int:
+def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
@@ -353,12 +445,12 @@ def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False) ->
     spec = load_hierarchical_audit_spec(path)
     observed = load_observed_values(observed_path)
     runner = HierarchicalAuditRunner(spec)
-    report = runner.evaluate_observed(observed, skip_unobserved=True)
-    _print_json(runner.to_dict(report), pretty)
+    report = runner.to_dict(runner.evaluate_observed(observed, skip_unobserved=True))
+    _print_json(report if full else _hierarchy_summary(report), pretty)
     return 0
 
 
-def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False) -> int:
+def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
@@ -366,8 +458,8 @@ def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False) -> 
     spec = load_hierarchical_audit_spec(path)
     observed = load_observed_values(observed_path)
     runner = HierarchicalAuditRunner(spec)
-    report = runner.compare_observed(observed)
-    _print_json(runner.to_dict(report), pretty)
+    report = runner.to_dict(runner.compare_observed(observed))
+    _print_json(report if full else _comparison_summary(report), pretty)
     return 0
 
 
@@ -550,11 +642,11 @@ def dataset_relation_check_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
-def validation_run_command(path: Path, pretty: bool = False) -> int:
+def validation_run_command(path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.core.model_dataset_validation import validate_model_dataset
 
     report = validate_model_dataset(path)
-    _print_json(report.to_dict(), pretty)
+    _print_json(report.to_dict() if full else _validation_summary(report.to_dict()), pretty)
     return 0 if report.ok else 1
 
 
@@ -582,15 +674,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             return compare(args.system, args.observed, args.pretty)
         if args.command == "hierarchy":
             if args.hierarchy_command == "run":
-                return hierarchy_run(args.audit, args.pretty)
+                return hierarchy_run(args.audit, args.pretty, args.json)
             if args.hierarchy_command == "inspect":
                 return hierarchy_inspect(args.audit, args.pretty)
             if args.hierarchy_command == "plan":
-                return hierarchy_plan(args.audit, args.pretty)
+                return hierarchy_plan(args.audit, args.pretty, args.json)
             if args.hierarchy_command == "evaluate":
-                return hierarchy_evaluate(args.audit, args.observed, args.pretty)
+                return hierarchy_evaluate(args.audit, args.observed, args.pretty, args.json)
             if args.hierarchy_command == "compare":
-                return hierarchy_compare(args.audit, args.observed, args.pretty)
+                return hierarchy_compare(args.audit, args.observed, args.pretty, args.json)
         if args.command == "task-model":
             if args.task_model_command == "plan":
                 return task_model_plan_command(args.plan, args.pretty)
@@ -648,7 +740,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return dataset_relation_check_command(args.index, args.pretty)
         if args.command == "validation":
             if args.validation_command == "run":
-                return validation_run_command(args.plan, args.pretty)
+                return validation_run_command(args.plan, args.pretty, args.json)
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1

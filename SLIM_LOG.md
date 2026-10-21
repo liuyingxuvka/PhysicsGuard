@@ -592,3 +592,15 @@
 - `python -m pytest -q <两条新增原生反例>`：RED exit 1，2 failed，分别未拒绝空范围和漏掉 range_check；原失败输出留存。
 - `python -m pytest -q tests/test_hierarchy_runner.py tests/test_hierarchy_cli.py tests/test_evaluator.py tests/test_model_dataset_validation.py tests/test_validation_depth_receipts.py`：exit 0，45 passed；四模型与全部锚点通过，地图无错误。
 - `python <严格模式原生探针>`：default library、compare、dataset 仍拒绝缺变量；原生保护 owner 字节未变，观测值及不调用求解器断言通过。有限数值探测不声称任意自定义函数的结构独立性。
+
+### PG-59 默认摘要保留关键结论并按需输出完整报告
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.039秒；PG-59 applied。
+- `python <本动作核验脚本> focused-tests`：exit 0；46.87秒；31 passed in 46.31s。
+- `python <本动作核验脚本> collect`：exit 0；2.326秒；861 tests collected in 1.82s。
+- `python <本动作核验脚本> map-check`：exit 0；0.539秒；check: 0 error(s), 3 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；18.244秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> native-summary-full-exports`：exit 0；27.521秒；10 actual CLI reports: five summary/full pairs retain verdict/gaps/followups/exit codes; summaries under4KB, full details retained; 18 README parser checks。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：应用脚本留仓库外证据；承接PG48两回归及PG57 followup三回归，collect861而非856。五条真实命令各summary/full共10执行，验证判定/缺口/followups/退出码与完整细节，不以体积数字替代功能一致性。。

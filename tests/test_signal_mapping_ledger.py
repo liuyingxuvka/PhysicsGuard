@@ -89,6 +89,7 @@ def test_signal_mapping_cli_output_is_top_level_json(tmp_path: Path) -> None:
             str(OBSERVED / "pitch_feedback_level_0.yaml"),
             str(observed_file),
             "--pretty",
+            "--json",
         ],
         cwd=ROOT,
         env=cli_env(),

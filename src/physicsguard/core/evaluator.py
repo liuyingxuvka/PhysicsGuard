@@ -108,7 +108,6 @@ class AuditEvaluator:
             metadata={
                 "mode": "evaluate",
                 "audit_threshold": self.system.solver.audit_threshold,
-                "observation_metadata": observed.metadata,
                 "active_residual_count": len(solver_records),
                 "diagnostic_residual_count": len(diagnostic_records),
             },
@@ -162,7 +161,6 @@ class AuditEvaluator:
                     "cost": solver_result.cost,
                     "optimality": solver_result.optimality,
                 },
-                "observation_metadata": observed.metadata,
             },
         )
 

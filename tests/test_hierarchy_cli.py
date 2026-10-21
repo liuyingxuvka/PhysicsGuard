@@ -31,7 +31,7 @@ def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def test_hierarchy_run_clean_example_returns_valid_json() -> None:
-    result = run_cli("hierarchy", "run", str(FC / "level_0_system_balance.yaml"), "--pretty")
+    result = run_cli("hierarchy", "run", str(FC / "level_0_system_balance.yaml"), "--pretty", "--json")
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
     assert data["audit_pass"]
@@ -71,7 +71,7 @@ def test_hierarchy_inspect_returns_block_tree_json() -> None:
 
 
 def test_hierarchy_plan_returns_recommendations_only() -> None:
-    result = run_cli("hierarchy", "plan", str(FC / "conflict_level_0_h2_power.yaml"), "--pretty")
+    result = run_cli("hierarchy", "plan", str(FC / "conflict_level_0_h2_power.yaml"), "--pretty", "--json")
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
     assert set(data) == {
@@ -93,6 +93,7 @@ def test_hierarchy_evaluate_observed_fault_returns_block_rollup_without_solver()
         str(OBSERVED / "pitch_feedback_level_0.yaml"),
         str(OBSERVED / "pitch_feedback_observed_fault.yaml"),
         "--pretty",
+        "--json",
     )
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
@@ -110,6 +111,7 @@ def test_hierarchy_compare_observed_fault_returns_deviations_and_hierarchy() -> 
         str(OBSERVED / "pitch_feedback_level_0.yaml"),
         str(OBSERVED / "pitch_feedback_observed_fault.yaml"),
         "--pretty",
+        "--json",
     )
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
@@ -156,3 +158,18 @@ def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
     result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(tmp_path / "nothing_left.yaml"))
     assert result.returncode == 1
     assert "no residual can be evaluated without them" in result.stderr
+
+
+def test_hierarchy_evaluate_prints_a_compact_summary_without_input_echo() -> None:
+    args = ("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(OBSERVED / "pitch_feedback_observed_fault.yaml"))
+    summary = run_cli(*args)
+    full = run_cli(*args, "--json")
+    assert summary.returncode == 0, summary.stderr
+    assert len(summary.stdout) < 4096 < len(full.stdout)
+    data = json.loads(summary.stdout)
+    assert data["output"] == "summary only; add --json for the full report"
+    assert data["audit_pass"] is False
+    assert data["top_blocks"][0]["block_id"] == "pitch_rate_feedback"
+    assert {item["followup_id"] for item in data["bug_family_followups"]} == {"linear_gain_sign_family"}
+    assert "metadata" not in data and "block_assignments" not in data
+    assert "hierarchy" not in json.loads(full.stdout)["metadata"]

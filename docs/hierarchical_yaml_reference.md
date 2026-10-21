@@ -153,7 +153,7 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 python -m physicsguard.cli hierarchy compare examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
 ```
 
-`hierarchy run` emits the full solve-based hierarchical report. `hierarchy inspect` validates and summarizes the block tree without solving. `hierarchy plan` runs the solve-based audit and emits top blocks, recommended refinements, signal-mapping ledger rows when present, bug-family follow-ups when present, missing variables, missing parameters, and warnings. `hierarchy evaluate` substitutes observed external values without solving and rolls residuals up by block. `hierarchy compare` solves a low-fidelity reference, evaluates observed values, and returns both block diagnostics and variable deviations.
+`hierarchy run` emits the full solve-based hierarchical report. `hierarchy inspect` validates and summarizes the block tree without solving. `hierarchy plan` runs the solve-based audit and emits top blocks, recommended refinements, signal-mapping ledger rows when present, bug-family follow-ups when present, missing variables, missing parameters, and warnings. `hierarchy evaluate` substitutes observed external values without solving and rolls residuals up by block. `hierarchy compare` solves a low-fidelity reference, evaluates observed values, and returns both block diagnostics and variable deviations. `run`, `plan`, `evaluate` and `compare` print a compact summary by default; `--json` prints the full report.
 
 Observed snapshots may include per-variable mapping evidence:
 

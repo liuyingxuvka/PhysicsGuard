@@ -105,3 +105,16 @@ def test_cli_dataset_validation_commands() -> None:
     )
     assert json.loads(logical.stdout)["status"] == "pass"
     assert json.loads(validation.stdout)["status"] == "pass"
+
+
+def test_cli_validation_run_prints_a_compact_summary() -> None:
+    plan = str(PUMP / "validation" / "shallow_time_varying_validation_plan.yaml")
+    summary = run_cli("validation", "run", plan)
+    full = run_cli("validation", "run", plan, "--json")
+    assert summary.returncode == full.returncode == 1
+    assert len(summary.stdout) < 4096 < len(full.stdout)
+    data = json.loads(summary.stdout)
+    assert data["output"] == "summary only; add --json for the full report"
+    assert data["status"] == json.loads(full.stdout)["status"]
+    assert data["depth_summary"] == json.loads(full.stdout)["depth_summary"]
+    assert "depth" not in data and "critical_parameter_uncovered" in {item["type"] for item in data["findings"]}

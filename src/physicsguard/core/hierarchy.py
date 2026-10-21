@@ -519,7 +519,6 @@ class HierarchicalAuditRunner:
                 "optimization_success_semantics": "not_applicable_no_solver",
                 "audit_threshold": self.spec.system.solver.audit_threshold,
                 "observation_name": observed.observation_name,
-                "observation_metadata": observed.metadata,
                 "observed_variable_count": len(observed.variables),
                 "unknown_observed_variables": unknown,
                 "unobserved_variables": missing,
@@ -585,7 +584,6 @@ class HierarchicalAuditRunner:
             metadata={
                 "mode": "hierarchy_compare",
                 "solver_attempted": True,
-                "observation_metadata": observed.metadata,
                 "reference_solver": {
                     "status": solver_result.status,
                     "message": solver_result.message,
@@ -717,10 +715,7 @@ class HierarchicalAuditRunner:
             recommended_refinements=recommendations,
             assumptions=assumptions,
             warnings=_dedupe(report_warnings),
-            metadata={
-                **metadata,
-                "hierarchy": inspect_hierarchy(self.spec),
-            },
+            metadata=dict(metadata),
         )
 
     def to_dict(self, report: Any) -> dict[str, Any]:

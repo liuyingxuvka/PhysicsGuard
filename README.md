@@ -96,6 +96,8 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 
 The example represents a mapped controller feedback signal. The fault case has a reversed sign, so PhysicsGuard ranks `pitch_rate_feedback` as suspicious and recommends checking sign convention, gain, mapping confidence, unit conversion, and related signal-chain mappings.
 
+`hierarchy run|plan|evaluate|compare` and `validation run` print a compact summary; add `--json` for the full report.
+
 ## Main CLI Paths
 
 Project and model-understanding checks:
@@ -282,6 +284,8 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 ```
 
 这个例子表示一个映射过的 controller feedback signal。故障 case 的符号反了，所以 PhysicsGuard 会把 `pitch_rate_feedback` 排为可疑项，并建议检查 sign convention、gain、mapping confidence、unit conversion 和相关 signal-chain mapping。
+
+`hierarchy run|plan|evaluate|compare` 和 `validation run` 默认输出紧凑摘要；加 `--json` 输出完整报告。
 
 ## 主要 CLI 路线
 

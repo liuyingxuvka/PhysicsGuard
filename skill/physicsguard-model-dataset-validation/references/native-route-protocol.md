@@ -46,9 +46,11 @@ partial, stale, or review-required contracts.
    python -m physicsguard.cli validation run PLAN.yaml
    ```
 
-3. Inspect direct no-fit residuals, physical envelope findings,
-   redundant-sensor findings, calibration status, holdout status, confidence
-   updates, safe claim, unsafe claim boundary, and next actions. Then read
+3. The default output is a compact summary: `status`, the direct no-fit
+   result, calibration and holdout status, `findings` (envelope,
+   redundant-sensor, mapping and adequacy), safe claim, unsafe claim boundary
+   and next actions. Add `--json` only for the full `depth` computation or the
+   confidence updates. Then read
    `depth_summary`: covered scope, mapping status, series audit result,
    envelope violations, split status, and `adequacy` (signals and parameters
    below their floors). Every adequacy warning narrows the claim; a plan
