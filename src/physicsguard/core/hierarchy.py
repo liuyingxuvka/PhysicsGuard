@@ -443,6 +443,8 @@ class HierarchicalAuditRunner:
         observed: ObservedValuesSpec,
         top_n_residuals: int = 20,
         top_n_blocks: int = 10,
+        *,
+        skip_unobserved: bool = False,
     ) -> HierarchicalAuditReport:
         """Evaluate external observed values directly and roll residuals up by block.
 
@@ -450,29 +452,48 @@ class HierarchicalAuditRunner:
         as supplied, so this path is suitable for AI-guided debugging of external
         simulations where PhysicsGuard should identify suspicious blocks without
         fitting the values away.
+
+        With ``skip_unobserved`` the snapshot may omit registered variables: every
+        residual that changes with an unobserved variable is skipped, the variables
+        are listed in ``missing_required_variables`` and the skipped residuals in the
+        warnings and ``metadata["skipped_residuals"]``.
         """
 
         builder = ResidualBuilder(self.spec.system)
         registry = builder.build_registry()
         values, missing, unknown = _observed_values_for_registry(observed, registry)
-        if missing:
+        if missing and not skip_unobserved:
             raise ValueError(
                 "observed values missing required registered variables: "
                 + ", ".join(missing)
             )
+        skipped: dict[str, list[str]] = {}
+        if missing:
+            values, skipped = _fill_unobserved(builder, registry, values, missing)
         x = registry.dict_to_vector(values)
         diagnostic_records = sorted(
-            builder.diagnostic_residual_records(x),
+            (record for record in builder.diagnostic_residual_records(x) if record.name not in skipped),
             key=lambda record: record.abs_normalized_value,
             reverse=True,
         )
-        solver_records = builder.solver_residual_records(x)
+        solver_records = [record for record in builder.solver_residual_records(x) if record.name not in skipped]
+        if missing and not solver_records:
+            raise ValueError(
+                "observed values missing required registered variables: "
+                + ", ".join(missing)
+                + "; no residual can be evaluated without them"
+            )
         residual_norm, max_abs = _active_residual_metrics(solver_records)
         audit_pass = max_abs <= self.spec.system.solver.audit_threshold
         unit_warnings = _unit_warnings(observed, registry)
         warnings: list[str] = []
         if unknown:
             warnings.append("unknown observed variables ignored: " + ", ".join(unknown))
+        if skipped:
+            warnings.append(
+                f"{len(skipped)} residual(s) skipped because they need unobserved variables: "
+                + "; ".join(f"{name} ({', '.join(needs)})" for name, needs in skipped.items())
+            )
         warnings.extend(unit_warnings)
         if not audit_pass:
             warnings.append("observed audit did not pass")
@@ -501,6 +522,8 @@ class HierarchicalAuditRunner:
                 "observation_metadata": observed.metadata,
                 "observed_variable_count": len(observed.variables),
                 "unknown_observed_variables": unknown,
+                "unobserved_variables": missing,
+                "skipped_residuals": skipped,
                 "unit_warnings": unit_warnings,
                 "active_residual_count": len(solver_records),
                 "diagnostic_residual_count": len(diagnostic_records),
@@ -508,6 +531,7 @@ class HierarchicalAuditRunner:
             },
             top_n_residuals=top_n_residuals,
             top_n_blocks=top_n_blocks,
+            unobserved=missing,
         )
         return _attach_signal_mapping_context(report, self.spec, observed, registry)
 
@@ -588,6 +612,7 @@ class HierarchicalAuditRunner:
         metadata: dict[str, Any],
         top_n_residuals: int,
         top_n_blocks: int,
+        unobserved: Iterable[str] = (),
     ) -> HierarchicalAuditReport:
         all_diagnostics = [_diagnostic_from_record(record) for record in all_records]
         block_index = BlockIndex(self.spec.hierarchy, builder.system)
@@ -608,10 +633,16 @@ class HierarchicalAuditRunner:
         block_diagnostics: list[BlockDiagnostic] = []
         registry = builder.build_registry()
         component_parameters = {component.id: component.parameters for component in builder.system.components}
+        unobserved_by_block: dict[str, set[str]] = {}
+        for variable in unobserved:
+            unobserved_by_block.setdefault(block_index.block_for_variable(variable) or "", set()).add(variable)
         for block in self.spec.hierarchy.blocks:
             block_residuals = residuals_by_block.get(block.id, [])
             scored_residuals = scorer.filter_scored(block_residuals, self.spec.hierarchy.scoring)
-            missing_variables = _missing_variables(block.required_variables, registry.names())
+            missing_variables = sorted(
+                set(_missing_variables(block.required_variables, registry.names()))
+                | unobserved_by_block.get(block.id, set())
+            )
             missing_parameters = _missing_parameters(block, component_parameters)
             score = scorer.score_block(block, block_residuals, self.spec.hierarchy.scoring)
             confidence = confidence_scorer.score(
@@ -656,7 +687,9 @@ class HierarchicalAuditRunner:
 
         top_blocks = sorted(block_diagnostics, key=lambda item: (-item.score, item.level, item.block_id))[:top_n_blocks]
         recommendations = planner.overall_plan(top_blocks)
-        missing_required_variables = sorted({item for block in block_diagnostics for item in block.missing_required_variables})
+        missing_required_variables = sorted(
+            {item for block in block_diagnostics for item in block.missing_required_variables} | set(unobserved)
+        )
         missing_required_parameters = sorted({item for block in block_diagnostics for item in block.missing_required_parameters})
         report_warnings = list(warnings)
         if unassigned:
@@ -824,6 +857,43 @@ def _missing_parameters(block: AuditBlockSpec, component_parameters: dict[str, d
         elif not any(parameter in component_parameters.get(component_id, {}) for component_id in block.components):
             missing.append(parameter)
     return missing
+
+
+def _fill_unobserved(
+    builder: ResidualBuilder,
+    registry: VariableRegistry,
+    values: dict[str, float],
+    missing: list[str],
+) -> tuple[dict[str, float], dict[str, list[str]]]:
+    """Fill unobserved variables with their initial guess; return the residuals that change with each.
+
+    Each unobserved variable is moved by one scale step up and down inside its bounds.
+    A residual whose value changes needs that variable. When a probe value cannot be
+    evaluated, every residual of the variable's component or naming the variable needs it.
+    """
+
+    filled = dict(values)
+    for name in missing:
+        filled[name] = registry.get_record(name).initial_guess
+    base = {record.name: record.value for record in builder.diagnostic_residual_records(registry.dict_to_vector(filled))}
+    needs: dict[str, set[str]] = {}
+    for name in missing:
+        record = registry.get_record(name)
+        changed: set[str] = set()
+        for value in (min(record.initial_guess + record.scale, record.upper_bound),
+                      max(record.initial_guess - record.scale, record.lower_bound)):
+            if value == record.initial_guess:
+                continue
+            try:
+                probe = builder.diagnostic_residual_records(registry.dict_to_vector({**filled, name: value}))
+            except (ValueError, ArithmeticError):
+                component = name.split(".", 1)[0]
+                changed |= {item for item in base if item.split(".", 1)[0] == component or name in item}
+                continue
+            changed |= {item.name for item in probe if item.value != base.get(item.name)}
+        for residual in changed:
+            needs.setdefault(residual, set()).add(name)
+    return filled, {residual: sorted(names) for residual, names in sorted(needs.items())}
 
 
 def _observed_values_for_registry(

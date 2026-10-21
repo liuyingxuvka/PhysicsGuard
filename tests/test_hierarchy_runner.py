@@ -102,3 +102,34 @@ def test_existing_normal_run_path_remains_unchanged() -> None:
     report = DiagnosticReporter().generate(system, builder, result)
     assert report.system_name == "dummy_clean_system"
     assert report.audit_pass
+
+
+def test_hierarchy_evaluate_skips_residuals_that_need_unobserved_variables(monkeypatch) -> None:
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+    import pytest
+
+    spec = load_hierarchical_audit_spec(ROOT / "examples" / "hierarchical" / "coolant_loop" / "level_1_components.yaml")
+    solved = BoundedSolver(ResidualBuilder(spec.system), spec.system.solver).solve().variables
+    observed = ObservedValuesSpec(
+        variables={name: {"value": value} for name, value in solved.items() if name != "cool.Q_stack_heat_W"}
+    )
+    def forbidden_solve(*args, **kwargs):
+        raise AssertionError("partial observed evaluation must not solve")
+
+    monkeypatch.setattr(BoundedSolver, "solve", forbidden_solve)
+    before = observed.model_dump(mode="json")
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    assert observed.model_dump(mode="json") == before
+    skipped = {
+        "boundary:cool.Q_stack_heat_W": ["cool.Q_stack_heat_W"],
+        "cool.fc_coolant_heat_interface": ["cool.Q_stack_heat_W"],
+    }
+    assert report.audit_pass
+    assert report.missing_required_variables == ["cool.Q_stack_heat_W"]
+    assert report.metadata["skipped_residuals"] == skipped
+    assert not {item.name for item in report.top_residuals} & set(skipped)
+    stack = next(block for block in report.top_blocks if block.block_id == "stack_heat_interface")
+    assert stack.missing_required_variables == ["cool.Q_stack_heat_W"]
+    assert stack.confidence < 1.0
+    with pytest.raises(ValueError, match="observed values missing required registered variables"):
+        HierarchicalAuditRunner(spec).evaluate_observed(observed)

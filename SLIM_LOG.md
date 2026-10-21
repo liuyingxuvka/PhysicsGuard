@@ -555,3 +555,17 @@
 - `python <本动作核验脚本> strict-map`：exit 0；0.225秒；check: 0 error(s), 0 warning(s), 0 info。
 - `python <本动作核验脚本> release-gate`：exit 0；12.848秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-57 不完整快照仅评估可观测残差并公开缺口
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.026秒；PG-57 applied。
+- `python <本动作核验脚本> focused-tests`：exit 0；11.092秒；28 passed in 10.63s。
+- `python <本动作核验脚本> collect`：exit 0；1.75秒；855 tests collected in 1.37s。
+- `python <本动作核验脚本> map-check`：exit 0；0.5秒；check: 0 error(s), 2 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；11.459秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> anchors`：exit 0；0.311秒；anchors ok。
+- `python <本动作核验脚本> native-exports-names`：exit 0；3.075秒；actual empty-residual partial snapshot rejects exit1; protocol singular; validation/depth/evaluator protected byte unchanged。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：原文新增部分快照测试中增加solve trap与observed.model_dump前后一致断言，不新增测试数量；覆盖CLI/库partial路径不求解且不改已观测值。。
+- 适配：经检查的外部应用脚本保存在本项仓库外证据目录以便复核，不进产品；承接PG48两回归，collect855而非原文853。。

@@ -129,3 +129,30 @@ def test_existing_run_command_still_works_after_hierarchy_cli_added() -> None:
     result = run_cli("run", str(ROOT / "examples" / "dummy_system.yaml"), "--pretty")
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)["system_name"] == "dummy_clean_system"
+
+
+def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
+    import yaml
+
+    from physicsguard.core.residual import ResidualBuilder
+    from physicsguard.core.solver import BoundedSolver
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+
+    audit = ROOT / "examples" / "hierarchical" / "coolant_loop" / "level_1_components.yaml"
+    spec = load_hierarchical_audit_spec(audit)
+    solved = BoundedSolver(ResidualBuilder(spec.system), spec.system.solver).solve().variables
+    snapshot = {"variables": {name: {"value": float(value)} for name, value in solved.items() if name != "cool.Q_stack_heat_W"}}
+    (tmp_path / "partial.yaml").write_text(yaml.safe_dump(snapshot), encoding="utf-8")
+    result = run_cli("hierarchy", "evaluate", str(audit), str(tmp_path / "partial.yaml"))
+    assert result.returncode == 0, result.stderr
+    data = json.loads(result.stdout)
+    assert data["audit_pass"]
+    assert data["missing_required_variables"] == ["cool.Q_stack_heat_W"]
+    assert any("2 residual(s) skipped" in warning for warning in data["warnings"])
+
+    fault = yaml.safe_load((OBSERVED / "pitch_feedback_observed_fault.yaml").read_text(encoding="utf-8"))
+    del fault["variables"]["controller_q_gain.y"]
+    (tmp_path / "nothing_left.yaml").write_text(yaml.safe_dump(fault), encoding="utf-8")
+    result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(tmp_path / "nothing_left.yaml"))
+    assert result.returncode == 1
+    assert "no residual can be evaluated without them" in result.stderr

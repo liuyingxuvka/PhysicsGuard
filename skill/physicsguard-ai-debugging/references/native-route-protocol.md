@@ -75,7 +75,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml
    ```
 
-   Every variable of the audited components must be in the snapshot; otherwise the command stops with `observed values missing required registered variables`. When signals are missing, audit a smaller block instead.
+   The snapshot may omit variables. Residuals that need an unobserved variable are skipped and named in `warnings`; the variables are listed in `missing_required_variables` and stay open. If no residual is left, the command stops with `observed values missing required registered variables`.
 
 9. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
 10. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations (start from `references/templates/hypothesis_plan.yaml` and point `model.path` at the audited hierarchy YAML). Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and give each hypothesis at least one signal, residual, or timing expectation plus its weakening condition:

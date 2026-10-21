@@ -353,7 +353,7 @@ def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False) ->
     spec = load_hierarchical_audit_spec(path)
     observed = load_observed_values(observed_path)
     runner = HierarchicalAuditRunner(spec)
-    report = runner.evaluate_observed(observed)
+    report = runner.evaluate_observed(observed, skip_unobserved=True)
     _print_json(runner.to_dict(report), pretty)
     return 0
 
