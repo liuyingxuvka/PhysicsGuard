@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass
-import hashlib
-import json
 import math
 from pathlib import Path
 from typing import Any, Iterable
@@ -54,7 +52,7 @@ def evaluate_validation_adequacy(
         )
     if depth.adequacy is None:
         finding = _finding(
-            "error",
+            "warning",
             "validation_adequacy_plan_missing",
             "every non-snapshot claim requires a target-owned adequacy plan",
         )
@@ -828,6 +826,8 @@ def evaluate_validation_adequacy_artifacts(
     if adequacy.sampling_mode == "adaptive" and adequacy.adaptive_converged is not True:
         findings.append(_finding("error", "adaptive_sampling_not_converged", "adaptive sampling lacks convergence evidence"))
 
+    # Adequacy floors are advisory: every shortfall is reported as a warning.
+    findings = [{**item, "severity": "warning"} for item in findings]
     status = _status(findings)
     universe_payload = {
         "available_point_count": available_points,
@@ -853,7 +853,6 @@ def evaluate_validation_adequacy_artifacts(
         "exclusion_ratio": exclusion_ratio,
         "selection_floor": selection_floor,
     }
-    universe_payload["universe_fingerprint"] = _fingerprint(universe_payload)
     receipt = {
         "artifact_kind": "physicsguard_validation_adequacy_receipt",
         "receipt_version": "1.0",
@@ -862,7 +861,6 @@ def evaluate_validation_adequacy_artifacts(
         "threshold_source": adequacy.threshold_source,
         "selection_policy_id": adequacy.selection_policy_id,
         "selection_rationale": adequacy.selection_rationale,
-        "sampling_policy_fingerprint": _fingerprint(adequacy.model_dump(mode="json")),
         "universe": universe_payload,
         "temporal": temporal,
         "per_signal": per_signal,
@@ -880,7 +878,7 @@ def evaluate_validation_adequacy_artifacts(
         "templated_exclusion_reasons": templated_reasons,
         "finding_codes": sorted({item["type"] for item in findings}),
         "claim_boundary": (
-            "adequacy covers only the exact hashed manifest, hierarchy, role matrix, evidence bundle, "
+            "adequacy warnings cover only the manifest, hierarchy, role matrix, contract mapping edges, "
             "selected source rows, timestamps, signals, classified static/time-varying parameters, "
             "resolved anti-degeneracy floors, native parameter-contribution counterfactuals, families, and declared thresholds"
         ),
@@ -1033,7 +1031,6 @@ def _not_applicable_receipt(series, residual_receipt) -> dict[str, Any]:
     selected = len(series.points) if series is not None else 0
     evaluated = sum(1 for item in residual_receipt.get("points", []) if item.get("status") in {"pass", "fail"})
     payload = _empty_universe(selected, evaluated)
-    payload["universe_fingerprint"] = _fingerprint(payload)
     return ValidationAdequacyReceiptSpec.model_validate(
         {
             "artifact_kind": "physicsguard_validation_adequacy_receipt",
@@ -1049,7 +1046,6 @@ def _blocked_empty_receipt(series, residual_receipt, codes, adequacy=None) -> di
     selected = len(series.points) if series is not None else 0
     evaluated = sum(1 for item in residual_receipt.get("points", []) if item.get("status") in {"pass", "fail"})
     payload = _empty_universe(selected, evaluated)
-    payload["universe_fingerprint"] = _fingerprint(payload)
     return ValidationAdequacyReceiptSpec.model_validate(
         {
             "artifact_kind": "physicsguard_validation_adequacy_receipt",
@@ -1066,7 +1062,6 @@ def _blocked_empty_receipt(series, residual_receipt, codes, adequacy=None) -> di
 
 def _empty_universe(selected: int, evaluated: int) -> dict[str, Any]:
     return {
-        "universe_fingerprint": "",
         "available_point_count": 0,
         "eligible_point_count": 0,
         "selected_point_count": selected,
@@ -1408,9 +1403,6 @@ def _ratio(numerator: int, denominator: int) -> float:
     return float(numerator / denominator) if denominator else 0.0
 
 
-def _fingerprint(payload: dict[str, Any]) -> str:
-    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
 
 
 def _status(findings: list[dict[str, Any]]) -> str:

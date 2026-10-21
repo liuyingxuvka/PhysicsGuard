@@ -1,7 +1,7 @@
-# PhysicsGuard system audit/model blueprint
+# PhysicsGuard observed series
 # Purpose: predicted future series.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: python -m physicsguard.cli run examples/testfile_contracts/pump_loop/observed/predicted_future_series.yaml --pretty
+# Use with: reference from a PhysicsGuard model validation plan (depth)
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 # PhysicsGuard externally produced stateful rollout artifact
 # Boundary: Fixture trajectory only; PhysicsGuard validates but does not invent the producer dynamics.

@@ -33,11 +33,12 @@ not only the signals selected by the validation plan. Mark critical signals and
 subsystem/declared families, preserve source-row lineage and time alignment,
 and ensure each selected signal has enough valid points, distinct timestamps,
 span, and gap coverage for the requested scope. A missing signal needs an
-explicit project-specific exclusion or remains a blocker; repeating one generic
+explicit project-specific exclusion or stays an adequacy warning that narrows the
+claim; repeating one generic
 reason across thousands of signals is not adequate coverage evidence.
 
 Classify model parameters separately from signals. A static parameter needs a
-current fact-to-parameter binding and classification source. A time-varying
+classification source; it is bound by the value the executable model declares. A time-varying
 parameter needs a series mapping and must independently pass per-parameter
 point count/ratio, distinct timestamps, span, and maximum-gap floors; one mapped
 value is not temporal coverage.

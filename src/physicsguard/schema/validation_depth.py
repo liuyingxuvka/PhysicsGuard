@@ -1,4 +1,4 @@
-"""Typed plans and receipts for dataset/time/scenario validation depth."""
+"""Typed plans and observed series for dataset/time/scenario validation depth."""
 
 from __future__ import annotations
 
@@ -9,20 +9,12 @@ from typing import Any, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.observation_spec import ObservedValueSpec
-from physicsguard.schema.predictive_rollout import (
-    ModelSemantics,
-    PredictiveRolloutPlanSpec,
-    PredictiveRolloutReceiptSpec,
-)
-from physicsguard.schema.validation_adequacy import (
-    ValidationAdequacyPlanSpec,
-    ValidationAdequacyReceiptSpec,
-)
+from physicsguard.schema.predictive_rollout import ModelSemantics, PredictiveRolloutPlanSpec
+from physicsguard.schema.validation_adequacy import ValidationAdequacyPlanSpec
 from physicsguard.schema.variable import ensure_non_empty, is_qualified_variable_name
 
 
 ValidationClaimScope = Literal["snapshot", "time_window", "scenario_set", "bounded_dataset"]
-DepthStatus = Literal["pass", "partial", "blocked"]
 
 
 def _json_serializable(value: Any, field_name: str) -> None:
@@ -332,230 +324,16 @@ class ObservedSeriesSpec(BaseModel):
         return self
 
 
-class IdentityCheckReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    identity_id: str
-    path: str
-    status: Literal["current", "missing"]
-    case_ids: list[str] = Field(default_factory=list)
-
-
-
-
-class DatasetIdentityReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    dataset_id: str
-    status: Literal["current", "stale", "missing", "not_declared"]
-    files: list[IdentityCheckReceiptSpec] = Field(default_factory=list)
-    field_schema: Optional[IdentityCheckReceiptSpec] = None
-    parameter_roles: Optional[IdentityCheckReceiptSpec] = None
-    testbench: Optional[IdentityCheckReceiptSpec] = None
-    expected_testbench_version: Optional[str] = None
-    observed_testbench_version: Optional[str] = None
-
-
-class MappingSignalReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    target: str
-    source_id: Optional[str] = None
-    unit: Optional[str] = None
-    confidence: Optional[float] = None
-    mapping_status: Literal["resolved", "uncertain", "missing"]
-    issue_codes: list[str] = Field(default_factory=list)
-
-
-class MappingReviewReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    status: DepthStatus
-    mapping_edge_files: list[str] = Field(default_factory=list)
-    minimum_confidence: Optional[float] = None
-    signals: list[MappingSignalReceiptSpec] = Field(default_factory=list)
-    unresolved_targets: list[str] = Field(default_factory=list)
-
-
-class TimeCoverageReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    status: DepthStatus
-    declared_scope: ValidationClaimScope
-    observed_scope: ValidationClaimScope
-    time_unit: str
-    point_count: int
-    valid_point_count: int
-    start_time: Optional[float] = None
-    end_time: Optional[float] = None
-    snapshot_only: bool
-
-
-class ScenarioCoverageReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    status: DepthStatus
-    declared_scenarios: list[str] = Field(default_factory=list)
-    observed_scenarios: list[str] = Field(default_factory=list)
-    missing_scenarios: list[str] = Field(default_factory=list)
-    undeclared_scenarios: list[str] = Field(default_factory=list)
-    perturbation_count: int = 0
-    perturbations: list[dict[str, Any]] = Field(default_factory=list)
-
-
-class SplitIdentityReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    status: Literal["pass", "blocked", "not_applicable", "not_declared"]
-    training: list[IdentityCheckReceiptSpec] = Field(default_factory=list)
-    holdout: list[IdentityCheckReceiptSpec] = Field(default_factory=list)
-    overlapping_paths: list[str] = Field(default_factory=list)
-    overlapping_contents: list[str] = Field(default_factory=list)
-    overlapping_case_ids: list[str] = Field(default_factory=list)
-
-
-class ParameterContributionReceiptSpec(BaseModel):
-    """Native counterfactual proof that an observed parameter reaches model residuals."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    parameter_id: str
-    expectation: Literal["sensitive", "verified_non_sensitive"]
-    model_parameter_exists: bool
-    observed_point_ids: list[str] = Field(default_factory=list)
-    applied_point_ids: list[str] = Field(default_factory=list)
-    counterfactual_point_ids: list[str] = Field(default_factory=list)
-    distinct_observed_value_count: int = 0
-    maximum_normalized_residual_effect: Optional[float] = None
-    affected_residual_ids: list[str] = Field(default_factory=list)
-    status: Literal["pass", "blocked", "verified_non_sensitive"]
-    non_sensitive_reason: Optional[str] = None
-    non_sensitive_claim_boundary: Optional[str] = None
-
-
-class ResidualPointReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    point_id: str
-    timestamp: Optional[float] = None
-    scenario_id: str
-    case_id: Optional[str] = None
-    status: Literal["pass", "fail", "invalid", "missing"]
-    audit_pass: bool
-    max_abs_normalized_residual: Optional[float] = None
-    residual_norm: Optional[float] = None
-    missing_variables: list[str] = Field(default_factory=list)
-    warnings: list[str] = Field(default_factory=list)
-    top_residuals: list[dict[str, Any]] = Field(default_factory=list)
-    applied_parameter_values: dict[str, float] = Field(default_factory=dict)
-    parameter_contribution_effects: list[dict[str, Any]] = Field(default_factory=list)
-
-
-class ResidualSeriesReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    status: DepthStatus
-    audit_pass: bool
-    points: list[ResidualPointReceiptSpec] = Field(default_factory=list)
-    invalid_intervals: list[dict[str, Any]] = Field(default_factory=list)
-    missing_intervals: list[dict[str, Any]] = Field(default_factory=list)
-    aggregate: dict[str, Any] = Field(default_factory=dict)
-    parameter_contributions: list[ParameterContributionReceiptSpec] = Field(default_factory=list)
-
-
-class EnvelopeViolationReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    point_id: str
-    timestamp: Optional[float] = None
-    scenario_id: str
-    target: str
-    value: float
-    lower: Optional[float] = None
-    upper: Optional[float] = None
-    unit: Optional[str] = None
-    severity: Literal["error", "warning"]
-
-
-class EnvelopeEvidenceReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    status: DepthStatus
-    checked_point_count: int
-    violations: list[EnvelopeViolationReceiptSpec] = Field(default_factory=list)
-    violation_intervals: list[dict[str, Any]] = Field(default_factory=list)
-    aggregate: dict[str, Any] = Field(default_factory=dict)
-
-
-class ValidationDepthFindingSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    severity: Literal["error", "warning", "info"]
-    type: str
-    message: str
-    target: Optional[str] = None
-    details: dict[str, Any] = Field(default_factory=dict)
-
-
-class ValidationDepthReceiptSpec(BaseModel):
-    """Native receipt consumed by closure/supervision without recomputing physics."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    artifact_kind: Literal["physicsguard_validation_depth_receipt"]
-    receipt_version: Literal["1.0", "2.0"] = "2.0"
-    validation_id: str
-    status: DepthStatus
-    ok: bool
-    claim_scope: ValidationClaimScope
-    covered_scope: ValidationClaimScope
-    model_semantics: ModelSemantics
-    dataset: DatasetIdentityReceiptSpec
-    mapping: MappingReviewReceiptSpec
-    time: TimeCoverageReceiptSpec
-    scenarios: ScenarioCoverageReceiptSpec
-    split: SplitIdentityReceiptSpec
-    residual_series: ResidualSeriesReceiptSpec
-    envelopes: EnvelopeEvidenceReceiptSpec
-    adequacy: ValidationAdequacyReceiptSpec
-    predictive: PredictiveRolloutReceiptSpec
-    assumptions: list[str] = Field(default_factory=list)
-    findings: list[ValidationDepthFindingSpec] = Field(default_factory=list)
-    safe_claim: str
-    unsafe_claim_boundary: str
-
-    @model_validator(mode="after")
-    def _receipt_consistent(self) -> "ValidationDepthReceiptSpec":
-        if self.ok != (self.status == "pass"):
-            raise ValueError("depth receipt ok must be true exactly when status is pass")
-        return self
-
-
 __all__ = [
     "CalibrationSplitPlanSpec",
     "DatasetIdentityPlanSpec",
-    "DatasetIdentityReceiptSpec",
-    "DepthStatus",
-    "EnvelopeEvidenceReceiptSpec",
-    "EnvelopeViolationReceiptSpec",
-    "IdentityCheckReceiptSpec",
     "MappingReviewPlanSpec",
-    "MappingReviewReceiptSpec",
-    "MappingSignalReceiptSpec",
-    "ParameterContributionReceiptSpec",
     "ObservedSeriesPointSpec",
     "ObservedSeriesSpec",
-    "ResidualPointReceiptSpec",
-    "ResidualSeriesReceiptSpec",
-    "ScenarioCoverageReceiptSpec",
     "ScenarioDefinitionSpec",
     "ScenarioPerturbationSpec",
-    "SplitIdentityReceiptSpec",
-    "TimeCoverageReceiptSpec",
     "TimeScopePlanSpec",
     "ValidationClaimScope",
-    "ValidationDepthFindingSpec",
     "ValidationDepthPlanSpec",
-    "ValidationDepthReceiptSpec",
     "ValidationIdentityReferenceSpec",
 ]

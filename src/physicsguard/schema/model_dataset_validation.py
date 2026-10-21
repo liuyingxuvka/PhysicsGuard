@@ -9,7 +9,7 @@ from typing import Any, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.parameter_coverage import UsePolicy, ValidationRole
-from physicsguard.schema.validation_depth import ValidationDepthPlanSpec, ValidationDepthReceiptSpec
+from physicsguard.schema.validation_depth import ValidationDepthPlanSpec
 from physicsguard.schema.variable import ensure_non_empty, is_qualified_variable_name
 
 
@@ -302,7 +302,8 @@ class ModelDatasetValidationReportSpec(BaseModel):
     envelope_findings: list[ValidationFindingReportSpec] = Field(default_factory=list)
     redundant_sensor_findings: list[ValidationFindingReportSpec] = Field(default_factory=list)
     calibration: CalibrationReportSpec
-    depth_receipt: ValidationDepthReceiptSpec
+    depth_summary: dict[str, Any] = Field(default_factory=dict)
+    depth: dict[str, Any] = Field(default_factory=dict)
     confidence_updates: list[ConfidenceUpdateSpec] = Field(default_factory=list)
     findings: list[ValidationFindingReportSpec] = Field(default_factory=list)
     safe_claim: str
@@ -344,5 +345,4 @@ __all__ = [
     "ValidationFindingReportSpec",
     "ValidationVariableRoleSpec",
     "ValidationDepthPlanSpec",
-    "ValidationDepthReceiptSpec",
 ]

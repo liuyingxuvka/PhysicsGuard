@@ -445,7 +445,6 @@ class CoverageFloorReceiptSpec(BaseModel):
 class ValidationUniverseReceiptSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    universe_fingerprint: str
     available_point_count: int
     eligible_point_count: int
     selected_point_count: int
@@ -584,7 +583,6 @@ class ValidationAdequacyReceiptSpec(BaseModel):
     threshold_source: Optional[str] = None
     selection_policy_id: Optional[str] = None
     selection_rationale: Optional[str] = None
-    sampling_policy_fingerprint: Optional[str] = None
     universe: ValidationUniverseReceiptSpec
     temporal: TemporalAdequacyReceiptSpec
     per_signal: list[PerSignalCoverageReceiptSpec] = Field(default_factory=list)

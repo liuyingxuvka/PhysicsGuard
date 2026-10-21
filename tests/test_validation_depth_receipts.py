@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import shutil
 
@@ -7,7 +8,6 @@ import yaml
 
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.schema.model_dataset_validation import ModelDatasetValidationReportSpec
-from physicsguard.schema.validation_depth import ValidationDepthReceiptSpec
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,12 +34,12 @@ def _clean_plan(pump: Path) -> Path:
     return pump / "validation" / "clean_validation_plan.yaml"
 
 
-def test_passing_depth_receipt_preserves_exact_pointwise_scope() -> None:
+def test_passing_depth_preserves_exact_pointwise_scope() -> None:
     report = validate_model_dataset(_clean_plan(PUMP))
-    receipt = report.depth_receipt
+    receipt = report.depth
 
     assert report.ok
-    assert receipt["artifact_kind"] == "physicsguard_validation_depth_receipt"
+    assert receipt["artifact_kind"] == "physicsguard_validation_depth"
     assert receipt["status"] == "pass"
     assert receipt["dataset"]["status"] == "current"
     assert {item["identity_id"] for item in receipt["dataset"]["files"]} == {
@@ -56,7 +56,6 @@ def test_passing_depth_receipt_preserves_exact_pointwise_scope() -> None:
     assert receipt["residual_series"]["aggregate"]["evaluated_point_count"] == 3
     assert receipt["envelopes"]["aggregate"]["violation_count"] == 0
     assert "commercial" in receipt["unsafe_claim_boundary"]
-    assert ValidationDepthReceiptSpec.model_validate(receipt).ok
     assert ModelDatasetValidationReportSpec.model_validate(report.to_dict()).status == "pass"
 
 
@@ -76,7 +75,7 @@ def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> N
     plan_path = _clean_plan(pump)
 
     report = validate_model_dataset(plan_path)
-    mapping = report.depth_receipt["mapping"]
+    mapping = report.depth["mapping"]
 
     assert report.status == "fail"
     assert mapping["status"] == "blocked"
@@ -109,8 +108,8 @@ def test_single_point_cannot_claim_time_window(tmp_path: Path) -> None:
     report = validate_model_dataset(plan_path)
 
     assert report.status == "fail"
-    assert report.depth_receipt["time"]["observed_scope"] == "snapshot"
-    assert report.depth_receipt["time"]["snapshot_only"] is True
+    assert report.depth["time"]["observed_scope"] == "snapshot"
+    assert report.depth["time"]["snapshot_only"] is True
     assert any(item["type"] == "snapshot_scope_overclaim" for item in report.findings)
 
 
@@ -142,7 +141,7 @@ def test_identical_content_under_different_holdout_label_is_overlap(tmp_path: Pa
     _write(plan_path, plan)
 
     report = validate_model_dataset(plan_path)
-    split = report.depth_receipt["split"]
+    split = report.depth["split"]
 
     assert report.status == "fail"
     assert split["status"] == "blocked"
@@ -164,7 +163,7 @@ def test_short_hard_envelope_violation_cannot_hide_behind_series_aggregate(tmp_p
     _write(plan_path, plan)
 
     report = validate_model_dataset(plan_path)
-    receipt = report.depth_receipt
+    receipt = report.depth
 
     assert report.status == "fail"
     assert receipt["envelopes"]["status"] == "blocked"
@@ -188,7 +187,7 @@ def test_invalid_series_interval_is_preserved_and_blocks_depth(tmp_path: Path) -
     _write(plan_path, plan)
 
     report = validate_model_dataset(plan_path)
-    residual = report.depth_receipt["residual_series"]
+    residual = report.depth["residual_series"]
 
     assert report.status == "fail"
     assert residual["status"] == "blocked"
@@ -217,19 +216,42 @@ def test_same_stat_holdout_rewrite_is_rejected_as_content_overlap(tmp_path: Path
     }
     _write(plan_path, plan)
     separate = validate_model_dataset(plan_path)
-    assert separate.depth_receipt["split"]["status"] == "pass"
-    assert separate.depth_receipt["split"]["overlapping_contents"] == []
+    assert separate.depth["split"]["status"] == "pass"
+    assert separate.depth["split"]["overlapping_contents"] == []
     assert not any(item["type"] == "calibration_holdout_identity_overlap" for item in separate.findings)
 
     holdout.write_bytes(content)
     os.utime(holdout, ns=(stat.st_atime_ns, stat.st_mtime_ns))
     assert (holdout.stat().st_size, holdout.stat().st_mtime_ns) == (stat.st_size, stat.st_mtime_ns)
     overlap = validate_model_dataset(plan_path)
-    split = overlap.depth_receipt["split"]
+    split = overlap.depth["split"]
     assert split["overlapping_paths"] == []
     assert split["overlapping_case_ids"] == []
     assert split["overlapping_contents"] == ["training=holdout"]
     assert any(item["type"] == "calibration_holdout_identity_overlap" for item in overlap.findings)
     assert split["status"] == "blocked"
-    assert overlap.depth_receipt["status"] == "blocked"
+    assert overlap.depth["status"] == "blocked"
     assert overlap.status == "fail"
+
+
+def test_report_carries_a_compact_depth_summary() -> None:
+    report = validate_model_dataset(_clean_plan(PUMP))
+    summary = report.depth_summary
+    assert summary["status"] == "pass"
+    assert summary["claim_scope"] == "scenario_set"
+    assert summary["adequacy"]["status"] == "pass"
+    assert len(json.dumps(summary)) < 2000
+
+
+def test_adequacy_floors_are_warnings_not_failures() -> None:
+    report = validate_model_dataset(PUMP / "validation" / "shallow_time_varying_validation_plan.yaml")
+    severities = {item["type"]: item["severity"] for item in report.findings}
+    adequacy_codes = {
+        "critical_parameter_uncovered",
+        "subsystem_critical_coverage_missing",
+        "time_varying_parameter_model_contribution_missing",
+        "time_varying_parameter_time_coverage_insufficient",
+    }
+    assert report.status == "partial"
+    assert {severities[code] for code in adequacy_codes} == {"warning"}
+    assert report.depth_summary["adequacy"]["parameters_below_floor"] == ["pump_signal_map.a"]

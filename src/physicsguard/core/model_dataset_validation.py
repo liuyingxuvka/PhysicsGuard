@@ -14,7 +14,7 @@ from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.test_file_contract import check_test_file_contract
-from physicsguard.core.validation_depth import evaluate_validation_depth
+from physicsguard.core.validation_depth import evaluate_validation_depth, summarize_validation_depth
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
 from physicsguard.io.test_file_contract_loader import load_model_validation_plan
@@ -55,13 +55,14 @@ class ModelDatasetValidationReport:
     envelope_findings: list[dict[str, Any]]
     redundant_sensor_findings: list[dict[str, Any]]
     calibration: dict[str, Any]
-    depth_receipt: dict[str, Any]
+    depth_summary: dict[str, Any]
     confidence_updates: list[dict[str, Any]]
     findings: list[dict[str, Any]]
     safe_claim: str
     unsafe_claim_boundary: str
     next_actions: list[str]
     summary: dict[str, Any]
+    depth: dict[str, Any]
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -159,11 +160,10 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
         "validation_claim_scope": depth_evaluation.payload["claim_scope"],
         "semantics": (
             "optimizer convergence is reported separately from validation pass; "
-            "observed values are not mutated; depth receipts bind exact identities "
+            "observed values are not mutated; validation-depth shortfalls are warnings "
             "and never imply commercial-model equivalence"
         ),
     }
-    depth_receipt = depth_evaluation.payload
     return ModelDatasetValidationReport(
         artifact_kind="model_dataset_validation",
         validation_id=plan.validation_id,
@@ -173,13 +173,14 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
         envelope_findings=envelope_findings,
         redundant_sensor_findings=redundant_findings,
         calibration=calibration_dict,
-        depth_receipt=depth_receipt,
+        depth_summary=summarize_validation_depth(depth_evaluation.payload),
         confidence_updates=confidence_dicts,
         findings=finding_dicts,
         safe_claim=safe_claim,
         unsafe_claim_boundary=unsafe_claim_boundary,
         next_actions=next_actions,
         summary=summary,
+        depth=depth_evaluation.payload,
     )
 
 
@@ -524,7 +525,7 @@ def _safe_claim(status: str, *, depth_status: str, claim_scope: str) -> str:
     if status == "pass":
         if depth_status == "pass":
             return (
-                "model-dataset validation and native execution-depth evidence passed "
+                "model-dataset validation and validation-depth checks passed "
                 f"inside the exact low-fidelity {claim_scope} boundary"
             )
         return (

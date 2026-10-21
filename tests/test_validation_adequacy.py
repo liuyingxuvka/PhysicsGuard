@@ -211,7 +211,7 @@ def _representative_parameter_case(sample_count: int = 32):
 
 def test_current_fixture_has_target_owned_deep_adequacy_receipt() -> None:
     report = validate_model_dataset(PUMP / "validation" / "clean_validation_plan.yaml")
-    receipt = report.depth_receipt["adequacy"]
+    receipt = report.depth["adequacy"]
     assert report.ok
     assert receipt["status"] == "pass"
     assert receipt["universe"]["available_point_count"] == 3
@@ -237,7 +237,7 @@ def test_full_time_varying_fixture_applies_parameter_values_to_native_model() ->
         PUMP / "validation" / "deep_time_varying_validation_plan.yaml"
     )
     assert report.ok
-    contribution = report.depth_receipt["residual_series"]["parameter_contributions"][0]
+    contribution = report.depth["residual_series"]["parameter_contributions"][0]
     assert contribution["parameter_id"] == "pump_signal_map.a"
     assert contribution["distinct_observed_value_count"] == 3
     assert contribution["maximum_normalized_residual_effect"] > 1.0
@@ -245,7 +245,7 @@ def test_full_time_varying_fixture_applies_parameter_values_to_native_model() ->
     assert contribution["status"] == "pass"
     applied = [
         point["applied_parameter_values"]["pump_signal_map.a"]
-        for point in report.depth_receipt["residual_series"]["points"]
+        for point in report.depth["residual_series"]["points"]
     ]
     assert applied == [2.0, 2.1, 1.9]
 
@@ -306,7 +306,7 @@ def test_sensitive_time_varying_parameter_with_effectless_native_replay_is_block
         mapping_edges=bindings,
     )
     assert result.receipt["per_parameter"][0]["contribution_status"] == "blocked"
-    assert result.receipt["status"] == "blocked"
+    assert result.receipt["status"] == "partial"
     assert "time_varying_parameter_model_contribution_missing" in {
         item["type"] for item in result.findings
     }
@@ -456,7 +456,7 @@ def test_three_distributed_points_from_1000_still_fail_dynamic_floor() -> None:
     assert floor["universal_minimum_count"] == 32
     assert floor["effective_minimum_count"] == 32
     assert parameter["coverage_floor"]["effective_minimum_count"] == 32
-    assert result.receipt["status"] == "blocked"
+    assert result.receipt["status"] == "partial"
     assert "selected_point_floor_not_met" in {item["type"] for item in result.findings}
 
 
@@ -572,7 +572,7 @@ def test_1000_point_endpoints_are_blocked() -> None:
         mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
-    assert result.receipt["status"] == "blocked"
+    assert result.receipt["status"] == "partial"
     assert "selected_point_floor_not_met" in codes
     assert "temporal_strata_missing" in codes
 

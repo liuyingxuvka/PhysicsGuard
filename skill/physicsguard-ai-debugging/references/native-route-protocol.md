@@ -45,18 +45,10 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    broad model-data consistency claims. Run direct no-fit residual checks,
    physical envelope checks, redundant-sensor checks, optional conservative
    bounded calibration, holdout validation, and confidence feedback. When the
-   claim spans time or scenarios, require exact dataset/mapping identities,
-   a bounded observed series, declared scenarios/perturbations, pointwise
-   residuals and envelopes, and passing native depth and adequacy receipts.
-   The adequacy gate must derive the available universe from current hashed
-   project artifacts and check temporal spread, per-signal depth, critical
-   signals/parameters, subsystem or declared family quotas, and exclusions.
-   Every available parameter must be source-classified as static or
-   time-varying; a time-varying parameter must pass its own growing native,
-   project, and convergence time-depth floors and prove that its observed
-   values reach executable model residuals (or carry a bounded verified-
-   non-sensitive disposition), while a static parameter needs current binding
-   evidence.
+   claim spans time or scenarios, declare the dataset files, a bounded observed
+   series, scenarios/perturbations, and an adequacy policy; PhysicsGuard reports
+   temporal spread, per-signal depth, and time-varying parameter coverage
+   shortfalls as warnings in `depth_summary`, and every warning narrows the claim.
    Do not treat a few scalar points, a few convenient signals, or optimizer
    convergence as temporal/system understanding. A `pointwise` model may
    support bounded consistency only; prediction requires a declared
@@ -177,19 +169,9 @@ Keep the header as comments only. Do not add provenance metadata solely for this
   database ledger and keep the claim scoped to checked project evidence.
 - Do not treat `signal_mapping_ledger` as a conversion engine. It records evidence and review state; observed values are still used exactly as supplied.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.
-- Do not generalize from a hand-picked subset until the native adequacy receipt
-  passes for the requested scope. Missing critical signals/parameters,
-  temporal gaps, shallow per-signal histories, or mass/template exclusions are
-  blockers, not prose caveats.
-- Do not count one value as adequate coverage for a time-varying parameter,
-  even when the overall series and other signals are deep.
-- Do not describe pointwise evaluation as simulation or prediction. Prediction
-  requires state propagation and an exact, disjoint future-holdout rollout.
-- Do not learn by modifying PhysicsGuard itself during a diagnostic episode.
-  Hypotheses, predictions, observations, mismatches, and candidate revisions
-  are task-local artifacts. Core thresholds, Guard code, reusable library
-  defaults, and installed skills remain unchanged.
-- For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard blueprint and explain what interface is missing.
+- Do not generalize from a hand-picked subset. Report every adequacy warning
+  (missing critical signals/parameters, temporal gaps, shallow per-signal
+  histories, mass/template exclusions) and narrow the claim to the covered scope.
 
 ## When To Create A New PhysicsGuard Relation
 

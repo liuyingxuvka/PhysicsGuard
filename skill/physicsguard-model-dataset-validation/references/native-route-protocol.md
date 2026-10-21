@@ -20,64 +20,27 @@ partial, stale, or review-required contracts.
      method: none
    ```
 
-   A broad validation claim also requires `depth`. Bind the exact data files,
-   field-schema file, parameter-role file, testbench profile/version, mapping
-   registry and bundle, observed-series file, and every expected SHA-256. Then
-   declare `time_scope`, scenario/case ids, perturbations, and assumptions.
-   When calibration is enabled, declare content- and case-disjoint `training`
-   and `holdout` identities under `depth.split`.
+   A broad validation claim also needs `depth`: name the data files, field
+   schema, parameter roles, testbench profile/version, and observed series by
+   path, then declare `time_scope`, scenario/case ids, perturbations, and
+   assumptions. When calibration is enabled, declare disjoint `training` and
+   `holdout` files under `depth.split`. Every required signal needs a mapping
+   edge with unit evidence, enough confidence, and no review flag in the
+   referenced contracts.
 
    Set `depth.model_semantics` explicitly. `pointwise` means independent
    evaluations and cannot authorize prediction. `stateful_dynamic` means an
-   external producer advances explicit state and is eligible for the separate
-   future-rollout gate; the label alone is not predictive evidence.
+   external producer advances explicit state and is eligible for the
+   future-rollout check; the label alone is not predictive evidence.
 
-   Every non-snapshot plan must also declare `depth.adequacy`. Select one of
-   `full`, `stratified`, `event_aware`, `adaptive`, or `project_declared`, name
-   the project/testbench/engineering source of every threshold, and declare
-   quantitative floors for selected points and ratio, distinct timestamps,
-   time span and maximum gap, signal coverage, per-signal valid points and
-   ratio, exclusions, critical signals/parameters, required event/peak/
-   boundary/mode tags, and any family quotas. Adaptive sampling requires a
-   current convergence evidence id plus precommitted convergence count/ratio
-   floors globally and for every time-varying parameter.
+   For a non-snapshot claim, add `depth.adequacy` with project-sourced floors
+   (selected points, distinct timestamps, span, maximum gap, per-signal and
+   per-parameter depth, critical signals and parameters, families) and classify
+   each relevant parameter as `static` or `time_varying` in
+   `parameter_temporal_policies`. PhysicsGuard computes these coverages and
+   reports every shortfall as a warning.
 
-   Classify every hierarchy-required, critical, calibration-role, or actively
-   fact-bound parameter in `parameter_temporal_policies` as `static` or
-   `time_varying`, with a named classification source. Static parameters need
-   current binding evidence. Each time-varying parameter must itself meet the
-   declared per-parameter point count/ratio, distinct-time, span, and maximum-
-   gap floors; depth in other signals cannot compensate for a one-point
-   parameter history. PhysicsGuard also applies the `sqrt_n_stage_v1`
-   anti-degeneracy floor `min(N, max(12, ceil(sqrt(N))))`; the effective count
-   is the strictest of that floor, plan, project, convergence, and (for `full`)
-   the complete raw denominator. Project policy may strengthen this floor but
-   cannot weaken it.
-
-   When a complete aligned sequence is available, use `full` and evaluate all
-   rows with the native vectorized route. Representative sampling is allowed
-   only for an explicitly bounded claim and only when the plan already carries
-   a stable `selection_policy_id`, a concrete `selection_rationale`, a named
-   threshold source, non-lowerable count/ratio floors, and event coverage. The
-   native receipt computes and binds the current policy fingerprint. The AI
-   must not choose one or two convenient points after seeing the result.
-
-   A time-varying parameter must name its target-owned denominator
-   (`manifest:rows` or a bound manifest field), its own point/ratio/distinct-
-   time/span/maximum-gap floors, and at least three project-declared row-
-   position strata. PhysicsGuard also requires universal early/middle/late
-   coverage, so several points from one phase cannot impersonate a long
-   history. For representative sampling, each time-varying parameter also
-   needs current residual evidence, a declared perturbation with observed
-   direction, and a physical envelope. It must declare `sensitive` with a
-   positive normalized contribution floor or `verified_non_sensitive` with an
-   effect ceiling, exact reason, and bounded claim disposition. PhysicsGuard
-   applies each observed value to the executable model and replays a baseline
-   counterfactual; merely carrying the parameter value in a row is not model
-   use. Static parameters declare no time or contribution fields and pass only
-   through current binding evidence.
-
-2. Run validation once; this report already includes `depth_receipt`:
+2. Run validation once:
 
    ```powershell
    python -m physicsguard.cli validation run PLAN.yaml
@@ -85,36 +48,19 @@ partial, stale, or review-required contracts.
 
 3. Inspect direct no-fit residuals, physical envelope findings,
    redundant-sensor findings, calibration status, holdout status, confidence
-   updates, safe claim, unsafe claim boundary, and next actions.
-   Also inspect `depth_receipt`: dataset and mapping identity, declared versus
-   observed scope, scenario perturbations, split overlap, every residual point,
-   invalid/missing intervals, envelope intervals, report hash, and receipt
-   status. Inspect `depth_receipt.adequacy` separately: the artifact-derived
-   available/eligible/selected/evaluated/validated universe, source-row
-   lineage, start/middle/end strata, time gaps, event/peak/boundary/mode
-   coverage, every signal's history, the signal-time matrix, critical and
-   family coverage, every parameter's classification, resolved dynamic floor,
-   row-gap bound, own time coverage, and counterfactual residual contribution,
-   and exclusion diagnostics must pass. A scalar plan without
-   `depth` remains usable only as a snapshot and must not support time-series,
-   scenario, or general-understanding claims.
-
-
+   updates, safe claim, unsafe claim boundary, and next actions. Then read
+   `depth_summary`: covered scope, mapping status, series audit result,
+   envelope violations, split status, and `adequacy` (signals and parameters
+   below their floors). Every adequacy warning narrows the claim; a plan
+   without `depth` supports only a snapshot.
 
 ## Predictive Boundary
 
-When prediction is requested, a stateful model must declare
-`depth.predictive_rollout` with exact model identity, training identities,
-producer receipt, generated trajectory, unseen future-holdout identity,
-training end time, initial state, step size/unit, horizon, target signals and
-scales, project-sourced thresholds, and expected case ids. Training and future
-evidence must be disjoint by resolved path, SHA-256, and case identity.
-
-Inspect the native rollout receipt for alignment and strict future separation,
-worst-step and accumulated normalized error, lag/phase error, drift, error
-growth, and stability. Only a passing stateful receipt can be handed to
-`prediction_ready` closure. PhysicsGuard validates an externally generated
-trajectory; it does not turn a pointwise residual function into a simulator.
+Prediction needs `model_semantics: stateful_dynamic` and a
+`depth.predictive_rollout` plan whose future holdout is disjoint from training by
+path, file content, and case id. PhysicsGuard compares the externally generated
+trajectory (alignment, error, lag, drift, stability); it does not turn a
+pointwise relation into a simulator.
 
 ## Calibration Boundary
 
@@ -128,17 +74,17 @@ trajectory; it does not turn a pointwise residual function into a simulator.
 - `optimization_success` is not `validation_pass`.
 - If holdout validation fails, the final validation claim is partial or failed
   even when the optimizer converged.
-- Training and holdout must be disjoint by resolved path, content hash, and
+- Training and holdout must be disjoint by resolved path, file content, and
   case id. Renaming identical content does not create a valid holdout.
 - The plan's selected rows and signals do not define the coverage universe.
   PhysicsGuard derives it from current manifests, role matrices, hierarchy,
-  and evidence bindings; exclusions need explicit, non-template reasons.
+  and contract mapping edges; exclusions need explicit, non-template reasons.
 
 ## Safe Claim Boundary
 
 A passing validation supports only a scoped low-fidelity model-dataset claim
-inside the exact checked contract, file hashes, mapping review, time points,
-scenarios, perturbations, model, assumptions, residual series, and physical
-envelopes plus the referenced project evidence bundle. It is not high-fidelity
+inside the checked contracts, files, mapping review, time points, scenarios,
+perturbations, model, assumptions, residual series, and physical envelopes. It
+is not high-fidelity
 proof, dynamic interpolation, universal model understanding, or
 commercial-model equivalence.

@@ -31,18 +31,18 @@ from physicsguard.schema.validation_depth import (
 )
 
 
-DEPTH_RECEIPT_KIND = "physicsguard_validation_depth_receipt"
+DEPTH_KIND = "physicsguard_validation_depth"
 UNSAFE_BOUNDARY = (
-    "this receipt covers only the exact checked low-fidelity relations, files, mappings, "
+    "validation depth covers only the checked low-fidelity relations, files, mappings, "
     "time points, and scenarios; it does not prove high-fidelity behavior, recover a "
     "commercial model, establish commercial-tool equivalence, or support extrapolation "
-    "outside the receipt boundary"
+    "outside that boundary"
 )
 
 
 @dataclass(frozen=True)
 class ValidationDepthEvaluation:
-    """Depth payload before its report-identity binding is finalized."""
+    """Depth computations, findings promoted to the report, and series validation."""
 
     payload: dict[str, Any]
     promoted_findings: list[dict[str, Any]]
@@ -58,7 +58,7 @@ def evaluate_validation_depth(
     scalar_observed: ObservedValuesSpec,
     scalar_direct: dict[str, Any],
 ) -> ValidationDepthEvaluation:
-    """Evaluate the optional depth plan and always return a native receipt payload."""
+    """Evaluate the optional depth plan and always return the depth payload."""
 
     if plan.depth is None:
         return _legacy_snapshot_depth(plan, base_dir, scalar_observed, scalar_direct)
@@ -126,8 +126,7 @@ def evaluate_validation_depth(
 
     status = _depth_status(findings)
     payload = {
-        "artifact_kind": DEPTH_RECEIPT_KIND,
-        "receipt_version": "2.0",
+        "artifact_kind": DEPTH_KIND,
         "validation_id": plan.validation_id,
         "status": status,
         "ok": status == "pass",
@@ -154,6 +153,50 @@ def evaluate_validation_depth(
         envelope_findings=envelope_findings,
         series_direct_validation=series_direct,
     )
+
+
+def summarize_validation_depth(payload: dict[str, Any]) -> dict[str, Any]:
+    """Compact view of the depth computations for the default validation report."""
+
+    adequacy = payload.get("adequacy", {})
+    universe = adequacy.get("universe", {})
+    temporal = adequacy.get("temporal", {})
+    residual = payload.get("residual_series", {})
+    aggregate = residual.get("aggregate", {})
+    return {
+        "status": payload.get("status"),
+        "claim_scope": payload.get("claim_scope"),
+        "covered_scope": payload.get("covered_scope"),
+        "model_semantics": payload.get("model_semantics"),
+        "dataset_status": payload.get("dataset", {}).get("status"),
+        "mapping_status": payload.get("mapping", {}).get("status"),
+        "unresolved_mapping_targets": payload.get("mapping", {}).get("unresolved_targets", []),
+        "point_count": payload.get("time", {}).get("point_count"),
+        "valid_point_count": payload.get("time", {}).get("valid_point_count"),
+        "series_audit_pass": residual.get("audit_pass"),
+        "series_max_abs_normalized_residual": aggregate.get("max_abs_normalized_residual"),
+        "invalid_point_count": aggregate.get("invalid_point_count", 0),
+        "envelope_violation_count": payload.get("envelopes", {}).get("aggregate", {}).get("violation_count", 0),
+        "split_status": payload.get("split", {}).get("status"),
+        "adequacy": {
+            "status": adequacy.get("status"),
+            "selected_point_count": universe.get("selected_point_count"),
+            "available_point_count": universe.get("available_point_count"),
+            "distinct_timestamp_count": temporal.get("distinct_timestamp_count"),
+            "time_span": temporal.get("time_span"),
+            "maximum_observed_gap": temporal.get("maximum_observed_gap"),
+            "missing_strata": temporal.get("missing_strata", []),
+            "signals_below_floor": [
+                row.get("signal_id") for row in adequacy.get("per_signal", []) if row.get("status") != "pass"
+            ],
+            "parameters_below_floor": [
+                row.get("parameter_id") for row in adequacy.get("per_parameter", []) if row.get("status") != "pass"
+            ],
+        },
+        "predictive_status": payload.get("predictive", {}).get("status"),
+        "finding_codes": sorted({item["type"] for item in payload.get("findings", [])}),
+        "safe_claim": payload.get("safe_claim"),
+    }
 
 
 def _legacy_snapshot_depth(
@@ -194,8 +237,7 @@ def _legacy_snapshot_depth(
     ]
     status = "blocked" if any(item["severity"] == "error" for item in findings) else "partial"
     payload = {
-        "artifact_kind": DEPTH_RECEIPT_KIND,
-        "receipt_version": "2.0",
+        "artifact_kind": DEPTH_KIND,
         "validation_id": plan.validation_id,
         "status": status,
         "ok": False,
@@ -270,7 +312,6 @@ def _legacy_snapshot_depth(
             "sampling_mode": None,
             "threshold_source": None,
             "universe": {
-                "universe_fingerprint": "0" * 64,
                 "available_point_count": 0,
                 "eligible_point_count": 0,
                 "selected_point_count": 1,
@@ -1375,4 +1416,5 @@ def _normalized_optional_path(base: Path, value: str | None) -> str | None:
 __all__ = [
     "ValidationDepthEvaluation",
     "evaluate_validation_depth",
+    "summarize_validation_depth",
 ]

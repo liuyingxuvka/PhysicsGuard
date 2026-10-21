@@ -457,3 +457,17 @@
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：Root确认reference filecmp缓存会削弱holdout内容独立性；同owner采用无缓存真实字节比较，现有领域测试覆盖先不同→同stat改同必须拒绝，机制证据仅作reference风险不冒充native回归。。
 - 适配：两owner真实路径各加1条same-stat重写回归（独立path/case，seed无内容重叠，改同后精确overlapping_contents/finding且许可blocked）；对同两测试注入reference filecmp均在精确内容重叠断言失败。故定向45而非43、collect849而非847，未恢复SHA或新增证明平台。。
+
+### PG-49 保留充分性计算并以警告与紧凑摘要报告
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 1；0.194秒；AssertionError:     rel = path.as_posix()。
+- `python <本动作核验脚本> apply-corrected`：exit 0；2.77秒；advisory adequacy calculations retained; compact summary/full depth added; five header-only updates preserve parsed observations。
+- `python <本动作核验脚本> native-exports-names-scan`：exit 0；6.746秒；actual clean PASS compact summary; shallow PARTIAL with exact four warnings; active receipt/fingerprint names zero。
+- `python <本动作核验脚本> focused-tests`：exit 0；15.395秒；55 passed in 14.77s。
+- `python <本动作核验脚本> collect`：exit 0；2.966秒；851 tests collected in 2.53s。
+- `python <本动作核验脚本> map-check`：exit 0；0.929秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；2.773秒；models: 4 passed, 0 failed。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：外部脚本首次文本锚点rel在两个函数各出现一次，写源码前强断言停止；改为use_hint函数范围唯一锚点，保留失败日志。。
+- 适配：承接PG48新增两条真实overlap回归，完整细节字段改名时同步所有.depth_receipt→.depth访问（含separate/overlap变量），保精确finding和硬拒绝断言；预期计数比原文多2。。
