@@ -6,7 +6,6 @@ from pathlib import Path
 import yaml
 
 from physicsguard.core.model_dataset_validation import validate_model_dataset
-from physicsguard.core.project_closure import _consume_validation_depth_receipt
 from physicsguard.core.predictive_rollout import (
     evaluate_predictive_rollout,
     evaluate_predictive_rollout_artifacts,
@@ -155,50 +154,3 @@ def test_drift_and_stability_fail_even_when_early_steps_are_good() -> None:
     codes = {item["type"] for item in findings}
     assert "predictive_drift_threshold_failed" in codes
     assert "predictive_stability_threshold_failed" in codes
-
-
-def test_stateful_prediction_receipt_integrates_with_prediction_ready_closure(tmp_path: Path) -> None:
-    source_plan = PUMP / "validation" / "clean_validation_plan.yaml"
-    data = yaml.safe_load(source_plan.read_text(encoding="utf-8"))
-    source_base = source_plan.parent
-
-    def absolute(value: str) -> str:
-        path = Path(value)
-        return str(path if path.is_absolute() else (source_base / path).resolve())
-
-    data["evidence_registry"] = absolute(data["evidence_registry"])
-    data["audit_file"] = absolute(data["audit_file"])
-    data["observed_file"] = absolute(data["observed_file"])
-    for item in data["contracts"]:
-        item["contract"] = absolute(item["contract"])
-    depth = data["depth"]
-    for item in depth["dataset"]["files"]:
-        item["path"] = absolute(item["path"])
-    for key in ("field_schema", "parameter_roles", "testbench"):
-        depth["dataset"][key]["path"] = absolute(depth["dataset"][key]["path"])
-    depth["mapping_review"]["registry"]["path"] = absolute(depth["mapping_review"]["registry"]["path"])
-    depth["observed_series"]["path"] = absolute(depth["observed_series"]["path"])
-    rollout = _plan().model_dump(mode="json")
-    for key in ("model_identity", "prediction_series", "future_holdout_series"):
-        rollout[key]["path"] = str((PUMP / rollout[key]["path"]).resolve())
-    for item in rollout["training"]:
-        item["path"] = str((PUMP / item["path"]).resolve())
-    depth["model_semantics"] = "stateful_dynamic"
-    depth["predictive_rollout"] = rollout
-    plan_path = tmp_path / "stateful_validation_plan.yaml"
-    plan_path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
-
-    report = validate_model_dataset(plan_path)
-    assert report.ok
-    assert report.depth_receipt["model_semantics"] == "stateful_dynamic"
-    assert report.depth_receipt["predictive"]["status"] == "pass"
-
-    checked, findings = [], []
-    _consume_validation_depth_receipt(
-        plan_path,
-        report.to_dict(),
-        checked,
-        findings,
-        requested_claim_scope="prediction_ready",
-    )
-    assert findings == []

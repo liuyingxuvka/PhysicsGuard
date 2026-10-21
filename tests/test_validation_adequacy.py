@@ -6,7 +6,6 @@ import pytest
 from pydantic import ValidationError
 
 from physicsguard.core.model_dataset_validation import validate_model_dataset
-from physicsguard.core.project_closure import _consume_validation_depth_receipt
 from physicsguard.core.validation_adequacy import evaluate_validation_adequacy_artifacts
 from physicsguard.core.validation_depth import _residual_series_receipt
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
@@ -1282,23 +1281,3 @@ def test_conflicting_manifest_point_counts_fail_closed_on_larger_denominator() -
     }
     assert result.receipt["universe"]["available_point_count"] == 1000
     assert result.receipt["universe"]["eligible_point_count"] == 1000
-
-
-def test_snapshot_receipt_cannot_satisfy_validation_ready_closure() -> None:
-    report = validate_model_dataset(PUMP / "validation" / "clean_validation_plan.yaml").to_dict()
-    receipt = dict(report["depth_receipt"])
-    receipt["claim_scope"] = "snapshot"
-    receipt["covered_scope"] = "snapshot"
-    receipt["time"] = {**receipt["time"], "observed_scope": "snapshot", "snapshot_only": True}
-    receipt["adequacy"] = {**receipt["adequacy"], "status": "not_applicable"}
-    report["depth_receipt"] = receipt
-    checked, findings = [], []
-    _consume_validation_depth_receipt(
-        Path("memory-plan.yaml"),
-        report,
-        checked,
-        findings,
-        requested_claim_scope="validation_ready",
-    )
-    assert findings
-    assert "snapshot_scope_incompatible" in findings[0].details["issue_codes"]

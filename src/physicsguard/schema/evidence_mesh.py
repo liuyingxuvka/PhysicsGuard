@@ -6,8 +6,18 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from physicsguard.schema.project_closure import ClaimScope, FindingSeverity
 from physicsguard.schema.variable import ensure_non_empty
+
+
+ClaimScope = Literal[
+    "project_ready",
+    "analysis_ready",
+    "validation_ready",
+    "validated_reuse_ready",
+    "prediction_ready",
+    "fault_localization_ready",
+]
+FindingSeverity = Literal["error", "warning", "info"]
 
 
 EvidenceStatus = Literal["pass", "partial", "fail", "blocked", "skipped", "not_run"]

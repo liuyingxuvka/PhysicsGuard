@@ -19,7 +19,6 @@ from physicsguard.schema.parameter_coverage import (
     ParameterMappingEdgesSpec,
     ParameterRoleMatrixSpec,
 )
-from physicsguard.schema.project_closure import ProjectClosurePlanSpec
 from physicsguard.schema.test_file_contract import (
     ExtractorProfileSpec,
     ModelBindingSpec,
@@ -81,8 +80,6 @@ def load_project_evidence_registry(path: str | Path) -> ProjectEvidenceRegistryS
     return load_spec(path, ProjectEvidenceRegistrySpec)
 
 
-def load_project_closure_plan(path: str | Path) -> ProjectClosurePlanSpec:
-    return load_spec(path, ProjectClosurePlanSpec)
 
 
 def load_evidence_mesh(path: str | Path) -> EvidenceMeshSpec:
@@ -137,7 +134,6 @@ __all__ = [
     "load_parameter_catalog",
     "load_parameter_mapping_edges",
     "load_parameter_role_matrix",
-    "load_project_closure_plan",
     "load_project_evidence_registry",
     "load_spec",
     "load_test_file_contract",

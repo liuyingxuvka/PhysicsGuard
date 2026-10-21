@@ -58,7 +58,6 @@
         "tests/test_physical_model_blueprint_native_authorities.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_project_closure.py",
         "tests/test_project_evidence_registry.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_solver.py",
@@ -78,7 +77,6 @@
         ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
         ".flowguard/verification/owners/model_library/run_checks.py",
-        ".flowguard/verification/owners/project_closure/run_checks.py",
         ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],
@@ -353,7 +351,6 @@
         "src/physicsguard/core/fmi_observation.py",
         "src/physicsguard/core/model_library.py",
         "src/physicsguard/core/parameter_coverage.py",
-        "src/physicsguard/core/project_closure.py",
         "src/physicsguard/core/project_evidence.py",
         "src/physicsguard/core/signal_mapping.py",
         "src/physicsguard/core/target_inventory_authority.py",
@@ -365,10 +362,8 @@
       "depends_on": [
         "interface",
         "loaders",
-        "routing",
         "schema",
-        "simulation",
-        "validation"
+        "simulation"
       ],
       "tests": [
         "tests/test_cli.py",
@@ -386,7 +381,6 @@
         "tests/test_physical_model_blueprint_object_dna.py",
         "tests/test_physical_model_blueprint_target_authority.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_project_closure.py",
         "tests/test_project_evidence_registry.py",
         "tests/test_reference_fmus_bouncing_ball_example.py",
         "tests/test_signal_mapping_ledger.py",
@@ -397,12 +391,10 @@
         "tests/test_validation_depth_receipts.py"
       ],
       "models": [
-        ".flowguard/verification/owners/guard_closure_contract/run_checks.py",
         ".flowguard/verification/owners/core/run_checks.py",
         ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
         ".flowguard/verification/owners/model_library/run_checks.py",
-        ".flowguard/verification/owners/project_closure/run_checks.py",
         ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py",
         ".flowguard/verification/owners/test_file_contract_development/run_checks.py"
@@ -495,7 +487,6 @@
         "tests/test_physical_thermal.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_project_closure.py",
         "tests/test_project_evidence_registry.py",
         "tests/test_reference_fmus_bouncing_ball_example.py",
         "tests/test_residual_builder.py",
@@ -520,7 +511,6 @@
         ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
         ".flowguard/verification/owners/model_library/run_checks.py",
-        ".flowguard/verification/owners/project_closure/run_checks.py",
         ".flowguard/verification/owners/project_evidence_registry/run_checks.py",
         ".flowguard/verification/owners/test_file_contract/run_checks.py"
       ],

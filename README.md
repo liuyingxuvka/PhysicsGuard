@@ -115,7 +115,6 @@ python -m physicsguard.cli project audit --pretty
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
-python -m physicsguard.cli project closure templates/project_closure_plan.yaml --pretty
 ```
 
 Test-file and dataset checks:
@@ -205,7 +204,6 @@ lists, and a green regression alone cannot close the task.
 | [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | dataset validation and bounded calibration |
 | [`docs/project_evidence_registry.md`](./docs/project_evidence_registry.md) | project-level evidence registry |
 | [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | strong parent-child evidence mesh before broad claims |
-| [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | closure gate before final debugging claims |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption-card lifecycle |
 | [`docs/model_library.md`](./docs/model_library.md) | reusable low-fidelity model library |
 | [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger and evidence freshness |
@@ -331,7 +329,6 @@ python -m physicsguard.cli project audit --pretty
 python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
 python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
 python -m physicsguard.cli evidence mesh-check examples/testfile_contracts/pump_loop/evidence_mesh.yaml --pretty
-python -m physicsguard.cli project closure templates/project_closure_plan.yaml --pretty
 ```
 
 测试文件和数据集检查：
@@ -413,7 +410,6 @@ PhysicsGuard `v0.15.15` 包含严格、由原生回执驱动的任务局部模�
 | [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | 数据集验证和有界 calibration |
 | [`docs/project_evidence_registry.md`](./docs/project_evidence_registry.md) | 项目级 evidence registry |
 | [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | broad claim 前的父子证据网格 |
-| [`docs/project_closure_gate.md`](./docs/project_closure_gate.md) | 最终 debugging claim 前的 closure gate |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption card 生命周期 |
 | [`docs/model_library.md`](./docs/model_library.md) | 可复用低保真模型库 |
 | [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger 和 evidence freshness |

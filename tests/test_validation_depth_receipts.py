@@ -8,7 +8,6 @@ import yaml
 
 from physicsguard.cli import main as cli_main
 from physicsguard.core.model_dataset_validation import validate_model_dataset
-from physicsguard.core.project_closure import run_project_closure
 from physicsguard.schema.model_dataset_validation import ModelDatasetValidationReportSpec
 from physicsguard.schema.validation_depth import ValidationDepthReceiptSpec
 
@@ -241,15 +240,6 @@ def test_invalid_series_interval_is_preserved_and_blocks_depth(tmp_path: Path) -
     assert residual["invalid_intervals"][0]["reason"] == "sensor export gap"
 
 
-def test_project_closure_consumes_native_depth_receipt_without_supervisory_physics() -> None:
-    report = run_project_closure(PUMP / "project_closure_plan.yaml")
-
-    assert report.ok
-    receipt_check = next(item for item in report.checked_inputs if item["check"] == "validation_depth_receipt")
-    assert receipt_check["artifact_kind"] == "physicsguard_validation_depth_receipt"
-    assert receipt_check["receipt_status"] == "pass"
-    assert receipt_check["physical_recomputation"] is False
-    assert len(receipt_check["report_sha256"]) == 64
 
 
 def test_validation_receipt_cli_emits_only_native_receipt(capsys) -> None:

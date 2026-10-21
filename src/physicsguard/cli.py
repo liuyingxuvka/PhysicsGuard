@@ -172,12 +172,6 @@ def build_parser() -> argparse.ArgumentParser:
         )
         command_parser.add_argument("--root", type=Path, default=Path("."), help="project root")
         command_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    project_closure = project_subparsers.add_parser(
-        "closure",
-        help="run project-level closure readiness checks",
-    )
-    project_closure.add_argument("plan", type=Path, help="path to ProjectClosurePlan YAML")
-    project_closure.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     preflight_parser = subparsers.add_parser(
         "preflight",
@@ -658,12 +652,6 @@ def project_command(command: str, root: Path, pretty: bool = False) -> int:
     return 0 if output.get("ok", output.get("status") in {"pass", "pass_with_gaps"}) else 1
 
 
-def project_closure_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.project_closure import run_project_closure
-
-    report = run_project_closure(path)
-    _print_json(report.to_dict(), pretty)
-    return 0 if report.ok else 1
 
 
 def preflight_review(path: Path, pretty: bool = False) -> int:
@@ -1005,8 +993,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.assumptions_command == "inspect":
                 return assumptions_inspect(args.system, args.pretty)
         if args.command == "project":
-            if args.project_command == "closure":
-                return project_closure_command(args.plan, args.pretty)
             return project_command(args.project_command, args.root, args.pretty)
         if args.command == "preflight":
             if args.preflight_command == "review":

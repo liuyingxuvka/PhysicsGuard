@@ -38,7 +38,6 @@ __all__ = [
     "physical_model_blueprint_review_to_dict",
     "reverse_trace_physical_blueprint_projection",
     "review_physical_model_blueprint",
-    "run_project_closure",
     "scan_project_evidence_candidates",
     "sha256_file",
     "summary_physical_blueprint_projection",
@@ -141,10 +140,6 @@ def __getattr__(name: str):
         from physicsguard.core.model_library import check_model_library_index
 
         return check_model_library_index
-    if name == "run_project_closure":
-        from physicsguard.core.project_closure import run_project_closure
-
-        return run_project_closure
     if name in {
         "check_evidence_mesh",
     }:
