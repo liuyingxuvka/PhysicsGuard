@@ -34,14 +34,13 @@ If `python -m physicsguard.cli --help` fails, install the engine once with `pyth
 ## Conditional detail loading
 
 - Load `references/native-route-protocol.md` after route selection when domain execution needs the detailed workflow.
-- Do not load another PhysicsGuard skill's references merely because the skills are related. Use an explicit typed handoff.
+- Do not load another PhysicsGuard skill's references merely because the skills are related; hand off to that skill instead.
 
 ## Hard gates
 
-- Preserve the target's native judgment, exact evidence identities, explicit unknowns, and non-pass states.
-- Never treat AI self-report, prose completeness, progress, an inventory, or a template preview as native execution evidence.
+- Keep non-pass states and unknowns visible.
+- AI narration, inventories and template previews are not evidence; only PhysicsGuard command output is.
 - Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.
-- Do not add a compatibility route, alias, fallback, copied runtime, or alternate success owner.
 
 ## Required outputs
 
