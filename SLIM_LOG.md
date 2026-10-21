@@ -604,3 +604,13 @@
 - `python <本动作核验脚本> native-summary-full-exports`：exit 0；27.521秒；10 actual CLI reports: five summary/full pairs retain verdict/gaps/followups/exit codes; summaries under4KB, full details retained; 18 README parser checks。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：应用脚本留仓库外证据；承接PG48两回归及PG57 followup三回归，collect861而非856。五条真实命令各summary/full共10执行，验证判定/缺口/followups/退出码与完整细节，不以体积数字替代功能一致性。。
+
+### PG-60 绘图建议缩为三行并保留原生验证边界
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.034秒；visual gate: 22 -> 6 lines。
+- `python <本动作核验脚本> guidance-boundary`：exit 0；0.64秒；3 guidance lines; only visual section changed; protected Workflow A/README/docs byte unchanged; raw skill retired visual phrases zero; actual bytes 13616。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：经检查的应用脚本保留仓库外证据；协议bytes因授权PG57 followup范围说明较原审计多，不为匹配14216删除边界；全量承接5条额外原生回归，实际预期861而非856。。
+- 提交后完整检查：`python -m pytest -q`：exit 0；861 passed in 78.72s (0:01:18)；命令总耗时 79.544 秒。检查结束后仅补记本行，无业务源码变化。
+- 更正上条适配中的长度方向：本项实际协议13616 bytes，小于原审计14216；此前“较原审计多”是记录用词错误。以仓库外guidance.json的真实数值为准，不为凑原审计长度删改有效边界。

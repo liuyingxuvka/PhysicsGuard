@@ -6,25 +6,9 @@ Use PhysicsGuard as a transparent audit and blueprint layer for complex engineer
 
 ## Visual Audit Communication
 
-For non-trivial PhysicsGuard debugging, audit explanation, refinement, or candidate-model blueprint work, default to showing one compact Mermaid diagram or table once the physical-audit path is stable enough to explain. First run a PhysicsGuard diagram intent gate:
-
-- What relationship is being explained: physical topology, residual localization, observed signal mapping, assumption boundary, coarse-to-fine refinement, or candidate-model blueprint?
-- What do the edges mean: mass/energy/heat/power/signal flow, `maps_to`, `checked_by`, `bounds`, `refines_to`, or `requires_signal`?
-- Does the visual help the user see the suspicious block, evidence boundary, and next signal or parameter request?
-- Could the visual be mistaken for a recovered high-fidelity or commercial-tool topology?
-
-Choose from the PhysicsGuard visual toolbox:
-
-- Physical topology map: system boundary, subsystems, components, interfaces, and physical or signal flows.
-- Residual localization overlay: topology plus `top_blocks`, `top_residuals`, normalized residuals, `audit_pass` or `audit_fail`, and recommended next inspection.
-- Observed signal mapping map: external signal names mapped into PhysicsGuard variables, with units, confidence, `review_required`, stale mapping notes, missing conversion evidence, and same-family follow-up checks where relevant.
-- Assumption boundary overlay: active, proposed, and rejected Assumption Cards attached to affected variables, parameters, blocks, or residual checks.
-- Coarse-to-fine refinement path: Level 0 or parent block to deeper template, required variables, required parameters, rationale, and stop/defer conditions.
-- Candidate model blueprint: validated low-fidelity blocks, interfaces, units, assumptions, examples, and target-model generation boundary.
-
-Do not flatten these modes into a generic flowchart. When a diagram mixes relationship types, label the edge semantics or pair the diagram with a small table. Formulae are useful as local residual labels or companion tables, but they should not replace the physical audit map unless the user's question is specifically about the equation.
-
-Diagrams and tables explain the audit route; they are not validation evidence. Validation claims must come from PhysicsGuard command output. Skip diagrams for tiny status answers, direct command results, or simple low-stakes explanations where a visual adds no clarity.
+Show one compact Mermaid diagram or table only when it makes the suspicious block, the signal mapping or the next signal request clearer; skip it for short status answers.
+Label what the edges mean (heat, mass, power or signal flow, `maps_to`, `refines_to`, `requires_signal`) and never draw it as a recovered high-fidelity or commercial-tool topology.
+Diagrams explain the audit; they are not validation evidence. Claims come only from PhysicsGuard command output.
 
 ## Workflow A: Audit External Results
 
