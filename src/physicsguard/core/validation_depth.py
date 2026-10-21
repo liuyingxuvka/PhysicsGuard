@@ -8,8 +8,6 @@ downstream gates; it is not a second physical simulator.
 from __future__ import annotations
 
 from dataclasses import dataclass
-import hashlib
-import json
 import math
 from pathlib import Path
 import statistics
@@ -29,7 +27,6 @@ from physicsguard.schema.validation_depth import (
     CalibrationSplitPlanSpec,
     ObservedSeriesPointSpec,
     ObservedSeriesSpec,
-    ValidationDepthReceiptSpec,
     ValidationIdentityReferenceSpec,
 )
 
@@ -77,8 +74,8 @@ def evaluate_validation_depth(
         _add_finding(
             findings,
             "error",
-            "observed_series_identity_stale",
-            "observed series is missing or does not match its declared content hash",
+            "observed_series_missing",
+            "observed series file is missing",
             depth.observed_series.path,
             {"identity": series_identity},
         )
@@ -159,37 +156,6 @@ def evaluate_validation_depth(
     )
 
 
-def finalize_validation_depth_receipt(
-    payload: dict[str, Any],
-    *,
-    report_status: str,
-    report_sha256: str,
-) -> dict[str, Any]:
-    """Bind a depth payload to the exact containing validation outcome."""
-
-    receipt = dict(payload)
-    receipt["report_identity"] = {
-        "report_type": "model_dataset_validation",
-        "report_status": report_status,
-        "report_sha256": report_sha256,
-        "hash_scope": "validation_outcome_excluding_depth_report_identity",
-    }
-    return ValidationDepthReceiptSpec.model_validate(receipt).model_dump(mode="json")
-
-
-def validation_outcome_sha256(payload: dict[str, Any]) -> str:
-    """Hash the canonical outcome payload referenced by a depth receipt."""
-
-    encoded = json.dumps(
-        payload,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-        allow_nan=False,
-    ).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
-
-
 def _legacy_snapshot_depth(
     plan: ModelValidationPlanSpec,
     base_dir: Path,
@@ -198,8 +164,6 @@ def _legacy_snapshot_depth(
 ) -> ValidationDepthEvaluation:
     """Preserve scalar commands while explicitly preventing broad depth claims."""
 
-    observed_path = _resolve_path(base_dir, plan.observed_file)
-    actual_hash = _file_sha256(observed_path)
     point = {
         "point_id": observed.observation_name or "legacy_snapshot",
         "timestamp": None,
@@ -286,7 +250,6 @@ def _legacy_snapshot_depth(
                 "point_count": 1,
                 "evaluated_point_count": 1,
                 "source_observed_file": plan.observed_file,
-                "source_observed_sha256": actual_hash,
                 "scope_boundary": "single scalar snapshot only",
             },
         },
@@ -396,8 +359,8 @@ def _dataset_identity_receipt(dataset, base_dir: Path, findings: list[dict[str, 
             _add_finding(
                 findings,
                 "error",
-                "dataset_identity_stale",
-                "validation input is missing or its current content hash differs from the declared identity",
+                "dataset_file_missing",
+                "validation input file is missing",
                 identity["identity_id"],
                 {"identity": identity},
             )
@@ -710,7 +673,7 @@ def _split_receipt(
             "training": [],
             "holdout": [],
             "overlapping_paths": [],
-            "overlapping_hashes": [],
+            "overlapping_contents": [],
             "overlapping_case_ids": [],
         }
 
@@ -727,7 +690,7 @@ def _split_receipt(
             "training": [],
             "holdout": [],
             "overlapping_paths": [],
-            "overlapping_hashes": [],
+            "overlapping_contents": [],
             "overlapping_case_ids": [],
         }
 
@@ -745,20 +708,26 @@ def _split_receipt(
         _add_finding(
             findings,
             "error",
-            "calibration_split_identity_stale",
-            "training or holdout content no longer matches its declared identity",
+            "calibration_split_file_missing",
+            "training or holdout file is missing",
             item["identity_id"],
             {"identity": item},
         )
 
     train_paths = {_normalized_resolved_path(base_dir, item["path"]) for item in training}
     holdout_paths = {_normalized_resolved_path(base_dir, item["path"]) for item in holdout}
-    train_hashes = {item["actual_sha256"] for item in training if item["actual_sha256"]}
-    holdout_hashes = {item["actual_sha256"] for item in holdout if item["actual_sha256"]}
     train_cases = {case_id for item in training for case_id in item["case_ids"]}
     holdout_cases = {case_id for item in holdout for case_id in item["case_ids"]}
     overlap_paths = sorted(train_paths & holdout_paths)
-    overlap_hashes = sorted(train_hashes & holdout_hashes)
+    overlap_contents = sorted(
+        f"{train['identity_id']}={held['identity_id']}"
+        for train in training
+        for held in holdout
+        if _same_content(
+            _resolve_path(base_dir, train["path"]),
+            _resolve_path(base_dir, held["path"]),
+        )
+    )
     overlap_cases = sorted(train_cases & holdout_cases)
 
     if split is not None:
@@ -779,26 +748,26 @@ def _split_receipt(
                 {"missing_active_paths": missing_active},
             )
 
-    if overlap_paths or overlap_hashes or overlap_cases:
+    if overlap_paths or overlap_contents or overlap_cases:
         _add_finding(
             findings,
             "error",
             "calibration_holdout_identity_overlap",
-            "training and holdout evidence overlap by path, content hash, or case id",
+            "training and holdout evidence overlap by path, file content, or case id",
             plan.validation_id,
             {
                 "overlapping_paths": overlap_paths,
-                "overlapping_hashes": overlap_hashes,
+                "overlapping_contents": overlap_contents,
                 "overlapping_case_ids": overlap_cases,
             },
         )
-    blocked = bool(stale or overlap_paths or overlap_hashes or overlap_cases)
+    blocked = bool(stale or overlap_paths or overlap_contents or overlap_cases)
     return {
         "status": "blocked" if blocked else "pass",
         "training": training,
         "holdout": holdout,
         "overlapping_paths": overlap_paths,
-        "overlapping_hashes": overlap_hashes,
+        "overlapping_contents": overlap_contents,
         "overlapping_case_ids": overlap_cases,
     }
 
@@ -1236,14 +1205,11 @@ def _parameter_contribution_receipts(
 
 
 def _identity_receipt(reference: ValidationIdentityReferenceSpec, base_dir: Path) -> dict[str, Any]:
-    actual = _file_sha256(_resolve_path(base_dir, reference.path))
-    status = "missing" if actual is None else "current" if actual == reference.sha256 else "stale"
+    path = _resolve_path(base_dir, reference.path)
     return {
         "identity_id": reference.identity_id,
         "path": reference.path,
-        "expected_sha256": reference.sha256,
-        "actual_sha256": actual,
-        "status": status,
+        "status": "current" if path.is_file() else "missing",
         "case_ids": list(reference.case_ids),
     }
 
@@ -1255,12 +1221,10 @@ def _inferred_split_refs(
 ) -> list[ValidationIdentityReferenceSpec]:
     if not path_value:
         return []
-    actual = _file_sha256(_resolve_path(base_dir, path_value)) or ("0" * 64)
     return [
         ValidationIdentityReferenceSpec(
             identity_id=identity_id,
             path=path_value,
-            sha256=actual,
             case_ids=[],
         )
     ]
@@ -1391,12 +1355,8 @@ def _percentile(values: list[float], fraction: float) -> float | None:
     return ordered[index]
 
 
-def _file_sha256(path: Path) -> str | None:
-    try:
-        data = path.read_bytes()
-    except OSError:
-        return None
-    return hashlib.sha256(data).hexdigest()
+def _same_content(left: Path, right: Path) -> bool:
+    return left.is_file() and right.is_file() and left.read_bytes() == right.read_bytes()
 
 
 def _resolve_path(base: Path, value: str) -> Path:
@@ -1415,6 +1375,4 @@ def _normalized_optional_path(base: Path, value: str | None) -> str | None:
 __all__ = [
     "ValidationDepthEvaluation",
     "evaluate_validation_depth",
-    "finalize_validation_depth_receipt",
-    "validation_outcome_sha256",
 ]

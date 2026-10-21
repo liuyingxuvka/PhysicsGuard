@@ -14,11 +14,7 @@ from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.test_file_contract import check_test_file_contract
-from physicsguard.core.validation_depth import (
-    evaluate_validation_depth,
-    finalize_validation_depth_receipt,
-    validation_outcome_sha256,
-)
+from physicsguard.core.validation_depth import evaluate_validation_depth
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
 from physicsguard.io.test_file_contract_loader import load_model_validation_plan
@@ -167,27 +163,7 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
             "and never imply commercial-model equivalence"
         ),
     }
-    hash_payload = {
-        "artifact_kind": "model_dataset_validation",
-        "validation_id": plan.validation_id,
-        "status": status,
-        "direct_validation": direct,
-        "envelope_findings": envelope_findings,
-        "redundant_sensor_findings": redundant_findings,
-        "calibration": calibration_dict,
-        "confidence_updates": confidence_dicts,
-        "findings": finding_dicts,
-        "safe_claim": safe_claim,
-        "unsafe_claim_boundary": unsafe_claim_boundary,
-        "next_actions": next_actions,
-        "summary": summary,
-        "depth_receipt_without_report_identity": depth_evaluation.payload,
-    }
-    depth_receipt = finalize_validation_depth_receipt(
-        depth_evaluation.payload,
-        report_status=status,
-        report_sha256=validation_outcome_sha256(hash_payload),
-    )
+    depth_receipt = depth_evaluation.payload
     return ModelDatasetValidationReport(
         artifact_kind="model_dataset_validation",
         validation_id=plan.validation_id,
@@ -578,12 +554,11 @@ def _next_actions(findings: list[ContractFinding]) -> list[str]:
         elif finding.type == "calibration_parameter_at_bound":
             actions.append("review calibration parameter bounds, model structure, and source mapping")
         elif finding.type in {
-            "dataset_identity_stale",
-            "observed_series_identity_stale",
-            "mapping_review_identity_stale",
-            "calibration_split_identity_stale",
+            "dataset_file_missing",
+            "observed_series_missing",
+            "calibration_split_file_missing",
         }:
-            actions.append("refresh exact file hashes and rerun validation before using the depth receipt")
+            actions.append("restore the missing validation input files and rerun validation")
         elif finding.type.startswith("mapping_required_signal"):
             actions.append("resolve units, confidence, active binding, and reviewer status for required mappings")
         elif finding.type in {"snapshot_scope_overclaim", "scenario_set_scope_overclaim"}:

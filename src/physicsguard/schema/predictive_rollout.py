@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import math
-import re
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -12,7 +11,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from physicsguard.schema.variable import ensure_non_empty
 
 
-SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 ModelSemantics = Literal["pointwise", "stateful_dynamic"]
 PredictiveStatus = Literal["pass", "blocked", "not_authorized", "not_declared"]
 
@@ -22,7 +20,6 @@ class RolloutArtifactIdentitySpec(BaseModel):
 
     identity_id: str
     path: str
-    sha256: str
     case_ids: list[str] = Field(default_factory=list)
 
     @field_validator("identity_id", "path")
@@ -30,13 +27,6 @@ class RolloutArtifactIdentitySpec(BaseModel):
     def _text_valid(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
 
-    @field_validator("sha256")
-    @classmethod
-    def _hash_valid(cls, value: str) -> str:
-        normalized = ensure_non_empty(value, "sha256").lower()
-        if not SHA256_PATTERN.fullmatch(normalized):
-            raise ValueError("sha256 must be a lowercase 64-character digest")
-        return normalized
 
     @field_validator("case_ids")
     @classmethod
@@ -152,9 +142,7 @@ class PredictiveIdentityReceiptSpec(BaseModel):
 
     identity_id: str
     path: str
-    expected_sha256: str
-    actual_sha256: str | None = None
-    status: Literal["current", "stale", "missing"]
+    status: Literal["current", "missing"]
     case_ids: list[str] = Field(default_factory=list)
 
 
@@ -186,7 +174,7 @@ class PredictiveRolloutReceiptSpec(BaseModel):
     prediction_series: PredictiveIdentityReceiptSpec | None = None
     future_holdout_series: PredictiveIdentityReceiptSpec | None = None
     overlapping_paths: list[str] = Field(default_factory=list)
-    overlapping_hashes: list[str] = Field(default_factory=list)
+    overlapping_contents: list[str] = Field(default_factory=list)
     overlapping_case_ids: list[str] = Field(default_factory=list)
     alignment_gaps: list[str] = Field(default_factory=list)
     metrics: PredictiveMetricsReceiptSpec

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 import yaml
@@ -18,16 +17,12 @@ ROOT = Path(__file__).resolve().parents[1]
 PUMP = ROOT / "examples" / "testfile_contracts" / "pump_loop"
 
 
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _ref(identity_id: str, relative: str, case_ids=()):
-    path = PUMP / relative
     return {
         "identity_id": identity_id,
         "path": relative,
-        "sha256": _sha(path),
         "case_ids": list(case_ids),
     }
 
@@ -107,7 +102,7 @@ def test_training_future_identity_overlap_is_blocked() -> None:
     result = evaluate_predictive_rollout("stateful_dynamic", overlap, base_dir=PUMP)
     assert result.receipt["status"] == "blocked"
     assert result.receipt["overlapping_paths"]
-    assert result.receipt["overlapping_hashes"]
+    assert result.receipt["overlapping_contents"] == ["training_series"]
     assert result.receipt["overlapping_case_ids"]
 
 
@@ -154,3 +149,31 @@ def test_drift_and_stability_fail_even_when_early_steps_are_good() -> None:
     codes = {item["type"] for item in findings}
     assert "predictive_drift_threshold_failed" in codes
     assert "predictive_stability_threshold_failed" in codes
+
+
+def test_same_stat_training_rewrite_is_rejected_as_content_overlap(tmp_path: Path) -> None:
+    import os
+
+    plan = _plan()
+    holdout = PUMP / plan.future_holdout_series.path
+    content = holdout.read_bytes()
+    training = tmp_path / "independent_training.yaml"
+    training.write_bytes(bytes([content[0] ^ 1]) + content[1:])
+    stat = training.stat()
+    plan = plan.model_copy(update={
+        "training": [plan.training[0].model_copy(update={"path": str(training)})],
+    })
+    separate = evaluate_predictive_rollout("stateful_dynamic", plan, base_dir=PUMP)
+    assert separate.receipt["status"] == "pass"
+    assert separate.receipt["overlapping_contents"] == []
+    assert "predictive_training_future_overlap" not in separate.receipt["finding_codes"]
+
+    training.write_bytes(content)
+    os.utime(training, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    assert (training.stat().st_size, training.stat().st_mtime_ns) == (stat.st_size, stat.st_mtime_ns)
+    overlap = evaluate_predictive_rollout("stateful_dynamic", plan, base_dir=PUMP)
+    assert overlap.receipt["overlapping_paths"] == []
+    assert overlap.receipt["overlapping_case_ids"] == []
+    assert overlap.receipt["overlapping_contents"] == ["training_series"]
+    assert "predictive_training_future_overlap" in overlap.receipt["finding_codes"]
+    assert overlap.receipt["status"] == "blocked"

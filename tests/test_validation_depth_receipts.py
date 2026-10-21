@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 import shutil
 
@@ -29,15 +28,13 @@ def _write(path: Path, data: dict) -> None:
     path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _clean_plan(pump: Path) -> Path:
     return pump / "validation" / "clean_validation_plan.yaml"
 
 
-def test_passing_depth_receipt_preserves_exact_pointwise_scope_and_report_identity() -> None:
+def test_passing_depth_receipt_preserves_exact_pointwise_scope() -> None:
     report = validate_model_dataset(_clean_plan(PUMP))
     receipt = report.depth_receipt
 
@@ -58,40 +55,13 @@ def test_passing_depth_receipt_preserves_exact_pointwise_scope_and_report_identi
     assert len(receipt["residual_series"]["points"]) == 3
     assert receipt["residual_series"]["aggregate"]["evaluated_point_count"] == 3
     assert receipt["envelopes"]["aggregate"]["violation_count"] == 0
-    assert len(receipt["report_identity"]["report_sha256"]) == 64
     assert "commercial" in receipt["unsafe_claim_boundary"]
     assert ValidationDepthReceiptSpec.model_validate(receipt).ok
     assert ModelDatasetValidationReportSpec.model_validate(report.to_dict()).status == "pass"
 
 
-def test_changed_dataset_content_makes_receipt_stale(tmp_path: Path) -> None:
-    pump = _copy_pump(tmp_path)
-    data_file = pump / "data" / "clean.csv"
-    data_file.write_text(data_file.read_text(encoding="utf-8") + "0.3,12.0,24.0,true\n", encoding="utf-8")
-
-    report = validate_model_dataset(_clean_plan(pump))
-
-    assert report.status == "fail"
-    assert report.depth_receipt["status"] == "blocked"
-    assert report.depth_receipt["dataset"]["status"] == "stale"
-    assert any(item["type"] == "dataset_identity_stale" for item in report.findings)
 
 
-def test_changed_field_schema_makes_receipt_stale_even_when_data_is_unchanged(tmp_path: Path) -> None:
-    pump = _copy_pump(tmp_path)
-    manifest_path = pump / "data" / "clean_manifest.yaml"
-    manifest = _load(manifest_path)
-    manifest["metadata"]["unexpected_revision"] = "changed_after_receipt"
-    _write(manifest_path, manifest)
-
-    report = validate_model_dataset(_clean_plan(pump))
-
-    assert report.status == "fail"
-    assert report.depth_receipt["dataset"]["field_schema"]["status"] == "stale"
-    assert any(
-        item["type"] == "dataset_identity_stale" and item["target"] == "clean_manifest_schema"
-        for item in report.findings
-    )
 
 
 def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> None:
@@ -126,7 +96,6 @@ def test_single_point_cannot_claim_time_window(tmp_path: Path) -> None:
     _write(series_path, series)
     plan_path = _clean_plan(pump)
     plan = _load(plan_path)
-    plan["depth"]["observed_series"]["sha256"] = _sha256(series_path)
     plan["depth"]["time_scope"] = {
         "claim_scope": "time_window",
         "start_time": 0.0,
@@ -154,13 +123,11 @@ def test_identical_content_under_different_holdout_label_is_overlap(tmp_path: Pa
     plan = _load(plan_path)
     plan["calibration"]["holdout_observed"] = "../observed/renamed_holdout.yaml"
     plan["depth"] = _load(_clean_plan(pump))["depth"]
-    digest = _sha256(train)
     plan["depth"]["split"] = {
         "training": [
             {
                 "identity_id": "calibration_training",
                 "path": "../observed/calibration_train.yaml",
-                "sha256": digest,
                 "case_ids": ["training_case"],
             }
         ],
@@ -168,7 +135,6 @@ def test_identical_content_under_different_holdout_label_is_overlap(tmp_path: Pa
             {
                 "identity_id": "renamed_holdout",
                 "path": "../observed/renamed_holdout.yaml",
-                "sha256": digest,
                 "case_ids": ["holdout_case"],
             }
         ],
@@ -181,7 +147,7 @@ def test_identical_content_under_different_holdout_label_is_overlap(tmp_path: Pa
     assert report.status == "fail"
     assert split["status"] == "blocked"
     assert split["overlapping_paths"] == []
-    assert split["overlapping_hashes"] == [digest]
+    assert split["overlapping_contents"] == ["calibration_training=renamed_holdout"]
     assert any(item["type"] == "calibration_holdout_identity_overlap" for item in report.findings)
 
 
@@ -193,7 +159,6 @@ def test_short_hard_envelope_violation_cannot_hide_behind_series_aggregate(tmp_p
     _write(series_path, series)
     plan_path = _clean_plan(pump)
     plan = _load(plan_path)
-    plan["depth"]["observed_series"]["sha256"] = _sha256(series_path)
     envelope = next(item for item in plan["physical_envelopes"] if item["target"] == "pump_signal_map.y")
     envelope["severity"] = "error"
     _write(plan_path, plan)
@@ -220,7 +185,6 @@ def test_invalid_series_interval_is_preserved_and_blocks_depth(tmp_path: Path) -
     _write(series_path, series)
     plan_path = _clean_plan(pump)
     plan = _load(plan_path)
-    plan["depth"]["observed_series"]["sha256"] = _sha256(series_path)
     _write(plan_path, plan)
 
     report = validate_model_dataset(plan_path)
@@ -230,3 +194,42 @@ def test_invalid_series_interval_is_preserved_and_blocks_depth(tmp_path: Path) -
     assert residual["status"] == "blocked"
     assert residual["aggregate"]["invalid_point_count"] == 1
     assert residual["invalid_intervals"][0]["reason"] == "sensor export gap"
+
+
+def test_same_stat_holdout_rewrite_is_rejected_as_content_overlap(tmp_path: Path) -> None:
+    import os
+
+    pump = _copy_pump(tmp_path)
+    training = pump / "observed" / "calibration_train.yaml"
+    holdout = pump / "observed" / "independent_holdout.yaml"
+    content = training.read_bytes()
+    distinct = content.replace(b"PhysicsGuard", b"physicsGuard", 1)
+    assert distinct != content and len(distinct) == len(content)
+    holdout.write_bytes(distinct)
+    stat = holdout.stat()
+    plan_path = pump / "validation" / "calibration_validation_plan.yaml"
+    plan = _load(plan_path)
+    plan["calibration"]["holdout_observed"] = "../observed/independent_holdout.yaml"
+    plan["depth"] = _load(_clean_plan(pump))["depth"]
+    plan["depth"]["split"] = {
+        "training": [{"identity_id": "training", "path": "../observed/calibration_train.yaml", "case_ids": ["train"]}],
+        "holdout": [{"identity_id": "holdout", "path": "../observed/independent_holdout.yaml", "case_ids": ["future"]}],
+    }
+    _write(plan_path, plan)
+    separate = validate_model_dataset(plan_path)
+    assert separate.depth_receipt["split"]["status"] == "pass"
+    assert separate.depth_receipt["split"]["overlapping_contents"] == []
+    assert not any(item["type"] == "calibration_holdout_identity_overlap" for item in separate.findings)
+
+    holdout.write_bytes(content)
+    os.utime(holdout, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    assert (holdout.stat().st_size, holdout.stat().st_mtime_ns) == (stat.st_size, stat.st_mtime_ns)
+    overlap = validate_model_dataset(plan_path)
+    split = overlap.depth_receipt["split"]
+    assert split["overlapping_paths"] == []
+    assert split["overlapping_case_ids"] == []
+    assert split["overlapping_contents"] == ["training=holdout"]
+    assert any(item["type"] == "calibration_holdout_identity_overlap" for item in overlap.findings)
+    assert split["status"] == "blocked"
+    assert overlap.depth_receipt["status"] == "blocked"
+    assert overlap.status == "fail"

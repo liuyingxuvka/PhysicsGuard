@@ -42,28 +42,23 @@ depth:
     files:
       - identity_id: example_data_file
         path: path/to/data.csv
-        sha256: 0000000000000000000000000000000000000000000000000000000000000000
         case_ids:
           - baseline_case
     field_schema:
       identity_id: example_field_schema
       path: path/to/manifest.yaml
-      sha256: 0000000000000000000000000000000000000000000000000000000000000000
     parameter_roles:
       identity_id: example_parameter_roles
       path: path/to/role_matrix.yaml
-      sha256: 0000000000000000000000000000000000000000000000000000000000000000
     testbench:
       identity_id: example_testbench
       path: path/to/testbench_profile.yaml
-      sha256: 0000000000000000000000000000000000000000000000000000000000000000
     testbench_version: v1
   mapping_review:
     minimum_confidence: 0.75
   observed_series:
     identity_id: example_observed_series
     path: path/to/observed_series.yaml
-    sha256: 0000000000000000000000000000000000000000000000000000000000000000
     case_ids:
       - baseline_case
   time_scope:

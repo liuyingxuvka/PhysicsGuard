@@ -442,3 +442,18 @@
 - `python <本动作核验脚本> map-check`：exit 0；2.021秒；check: 0 error(s), 8 warning(s), 0 info。
 - `python <本动作核验脚本> models`：exit 0；1.925秒；models: 4 passed, 0 failed。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-48 移除报告哈希绑定并用无缓存字节比较守住独立留出
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.251秒；file id/path existence retained; report hashes removed; both native content-overlap owners use uncached byte comparisons; contract hashes untouched。
+- `python <本动作核验脚本> add-domain-regressions`：exit 0；0.034秒；two real owner-path same-stat content-overlap regressions added, with clean seed and exact finding assertions。
+- `python <本动作核验脚本> same-stat-domain-tests`：exit 0；1.756秒；2 passed in 1.24s。
+- `python <本动作核验脚本> reference-native-control`：exit 0；1.496秒；cached reference comparator misses content overlap on both real native paths; exact overlapping_contents assertions fail (expected control)。
+- `python <本动作核验脚本> native-template-names-scan`：exit 0；6.539秒；见同编号JSON/日志中的结构化结果。
+- `python <本动作核验脚本> focused-tests`：exit 0；5.014秒；45 passed in 4.23s。
+- `python <本动作核验脚本> collect`：exit 0；2.762秒；849 tests collected in 2.23s。
+- `python <本动作核验脚本> map-check`：exit 0；0.583秒；check: 0 error(s), 8 warning(s), 0 info。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：Root确认reference filecmp缓存会削弱holdout内容独立性；同owner采用无缓存真实字节比较，现有领域测试覆盖先不同→同stat改同必须拒绝，机制证据仅作reference风险不冒充native回归。。
+- 适配：两owner真实路径各加1条same-stat重写回归（独立path/case，seed无内容重叠，改同后精确overlapping_contents/finding且许可blocked）；对同两测试注入reference filecmp均在精确内容重叠断言失败。故定向45而非43、collect849而非847，未恢复SHA或新增证明平台。。

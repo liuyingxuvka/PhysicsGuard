@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import math
-import re
 from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -22,16 +21,8 @@ from physicsguard.schema.validation_adequacy import (
 from physicsguard.schema.variable import ensure_non_empty, is_qualified_variable_name
 
 
-SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 ValidationClaimScope = Literal["snapshot", "time_window", "scenario_set", "bounded_dataset"]
 DepthStatus = Literal["pass", "partial", "blocked"]
-
-
-def _sha256(value: str, field_name: str = "sha256") -> str:
-    normalized = ensure_non_empty(value, field_name).lower()
-    if not SHA256_PATTERN.fullmatch(normalized):
-        raise ValueError(f"{field_name} must be a lowercase 64-character SHA-256 digest")
-    return normalized
 
 
 def _json_serializable(value: Any, field_name: str) -> None:
@@ -42,13 +33,12 @@ def _json_serializable(value: Any, field_name: str) -> None:
 
 
 class ValidationIdentityReferenceSpec(BaseModel):
-    """One exact file/content identity used by a validation claim."""
+    """One validation input file, named by an id and a path."""
 
     model_config = ConfigDict(extra="forbid")
 
     identity_id: str
     path: str
-    sha256: str
     case_ids: list[str] = Field(default_factory=list)
 
     @field_validator("identity_id", "path")
@@ -56,10 +46,6 @@ class ValidationIdentityReferenceSpec(BaseModel):
     def _required_text(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
 
-    @field_validator("sha256")
-    @classmethod
-    def _digest_valid(cls, value: str) -> str:
-        return _sha256(value)
 
     @field_validator("case_ids")
     @classmethod
@@ -351,20 +337,10 @@ class IdentityCheckReceiptSpec(BaseModel):
 
     identity_id: str
     path: str
-    expected_sha256: str
-    actual_sha256: Optional[str] = None
-    status: Literal["current", "stale", "missing"]
+    status: Literal["current", "missing"]
     case_ids: list[str] = Field(default_factory=list)
 
-    @field_validator("expected_sha256")
-    @classmethod
-    def _expected_digest_valid(cls, value: str) -> str:
-        return _sha256(value, "expected_sha256")
 
-    @field_validator("actual_sha256")
-    @classmethod
-    def _actual_digest_valid(cls, value: Optional[str]) -> Optional[str]:
-        return _sha256(value, "actual_sha256") if value is not None else value
 
 
 class DatasetIdentityReceiptSpec(BaseModel):
@@ -434,7 +410,7 @@ class SplitIdentityReceiptSpec(BaseModel):
     training: list[IdentityCheckReceiptSpec] = Field(default_factory=list)
     holdout: list[IdentityCheckReceiptSpec] = Field(default_factory=list)
     overlapping_paths: list[str] = Field(default_factory=list)
-    overlapping_hashes: list[str] = Field(default_factory=list)
+    overlapping_contents: list[str] = Field(default_factory=list)
     overlapping_case_ids: list[str] = Field(default_factory=list)
 
 
@@ -521,20 +497,6 @@ class ValidationDepthFindingSpec(BaseModel):
     details: dict[str, Any] = Field(default_factory=dict)
 
 
-class ReportIdentityReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    report_type: Literal["model_dataset_validation"]
-    report_status: str
-    report_sha256: str
-    hash_scope: Literal["validation_outcome_excluding_depth_report_identity"]
-
-    @field_validator("report_sha256")
-    @classmethod
-    def _report_digest_valid(cls, value: str) -> str:
-        return _sha256(value, "report_sha256")
-
-
 class ValidationDepthReceiptSpec(BaseModel):
     """Native receipt consumed by closure/supervision without recomputing physics."""
 
@@ -559,7 +521,6 @@ class ValidationDepthReceiptSpec(BaseModel):
     predictive: PredictiveRolloutReceiptSpec
     assumptions: list[str] = Field(default_factory=list)
     findings: list[ValidationDepthFindingSpec] = Field(default_factory=list)
-    report_identity: ReportIdentityReceiptSpec
     safe_claim: str
     unsafe_claim_boundary: str
 
@@ -584,7 +545,6 @@ __all__ = [
     "ParameterContributionReceiptSpec",
     "ObservedSeriesPointSpec",
     "ObservedSeriesSpec",
-    "ReportIdentityReceiptSpec",
     "ResidualPointReceiptSpec",
     "ResidualSeriesReceiptSpec",
     "ScenarioCoverageReceiptSpec",

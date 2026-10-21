@@ -90,7 +90,6 @@ depth:
     field_schema:
       identity_id: clean_manifest_schema
       path: ../data/clean_manifest.yaml
-      sha256: 1fabd2b6b4f8af07c5391bfceda30aeab09ed25d9c590f63ec83eecee7716524
     files:
     - case_ids:
       - baseline_case
@@ -98,15 +97,12 @@ depth:
       - speed_ramp_case_02
       identity_id: clean_csv
       path: ../data/clean.csv
-      sha256: a187027e2b4251c607c72405051574034f0ec35b40dec26f8ad8d6b6a0a78a84
     parameter_roles:
       identity_id: pump_loop_parameter_roles
       path: ../coverage/pump_loop_role_matrix.yaml
-      sha256: fb8d627c33fa0927486601b872a3b377d6804775a6991255e8da4d9a0659419d
     testbench:
       identity_id: pump_loop_testbench_profile
       path: ../profiles/pump_loop_testbench_profile.yaml
-      sha256: 5a346f92f5a100c7dfe7bbe7bd310d943a1ea66a7fcc55d02332d18cbd8bbe01
     testbench_version: v1
   mapping_review:
     minimum_confidence: 0.75
@@ -114,7 +110,6 @@ depth:
   observed_series:
     identity_id: shallow_time_varying_parameter_series
     path: ../observed/shallow_time_varying_parameter_series.yaml
-    sha256: 3c75eb663b10b3b5fcff5def77ab553038405f53531d3fa9d85041313dbeae4c
     case_ids:
     - baseline_case
     - speed_ramp_case_01

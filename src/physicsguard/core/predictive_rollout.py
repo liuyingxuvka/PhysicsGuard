@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import hashlib
 import math
 from pathlib import Path
 from typing import Any
@@ -56,24 +55,28 @@ def evaluate_predictive_rollout(
     holdout_identity = _identity_receipt(rollout.future_holdout_series, base_dir)
     identities = [model_identity, *training, prediction_identity, holdout_identity]
     if any(item["status"] != "current" for item in identities):
-        findings.append(_finding("error", "predictive_identity_stale", "one or more predictive artifacts are missing or stale"))
+        findings.append(_finding("error", "predictive_artifact_missing", "one or more predictive artifacts are missing"))
 
     train_paths = {_normalized_path(base_dir, item.path) for item in rollout.training}
-    train_hashes = {item.sha256 for item in rollout.training}
     train_cases = {case for item in rollout.training for case in item.case_ids}
     holdout_path = _normalized_path(base_dir, rollout.future_holdout_series.path)
     overlap_paths = sorted(train_paths & {holdout_path})
-    overlap_hashes = sorted(train_hashes & {rollout.future_holdout_series.sha256})
+    holdout_file = _resolve_path(base_dir, rollout.future_holdout_series.path)
+    overlap_contents = sorted(
+        item.identity_id
+        for item in rollout.training
+        if _same_content(_resolve_path(base_dir, item.path), holdout_file)
+    )
     overlap_cases = sorted(train_cases & set(rollout.future_holdout_series.case_ids))
-    if overlap_paths or overlap_hashes or overlap_cases:
+    if overlap_paths or overlap_contents or overlap_cases:
         findings.append(
             _finding(
                 "error",
                 "predictive_training_future_overlap",
-                "training and future holdout overlap by path, content hash, or case id",
+                "training and future holdout overlap by path, file content, or case id",
                 details={
                     "paths": overlap_paths,
-                    "hashes": overlap_hashes,
+                    "contents": overlap_contents,
                     "case_ids": overlap_cases,
                 },
             )
@@ -100,7 +103,7 @@ def evaluate_predictive_rollout(
         "prediction_series": prediction_identity,
         "future_holdout_series": holdout_identity,
         "overlapping_paths": overlap_paths,
-        "overlapping_hashes": overlap_hashes,
+        "overlapping_contents": overlap_contents,
         "overlapping_case_ids": overlap_cases,
         "alignment_gaps": alignment_gaps,
         "metrics": metrics,
@@ -248,13 +251,10 @@ def _step_alignment_gaps(times: list[float], step_size: float) -> list[str]:
 
 def _identity_receipt(reference: RolloutArtifactIdentitySpec, base_dir: Path) -> dict[str, Any]:
     path = _resolve_path(base_dir, reference.path)
-    actual = _sha256(path) if path.exists() and path.is_file() else None
     return {
         "identity_id": reference.identity_id,
         "path": reference.path,
-        "expected_sha256": reference.sha256,
-        "actual_sha256": actual,
-        "status": "missing" if actual is None else "current" if actual == reference.sha256 else "stale",
+        "status": "current" if path.is_file() else "missing",
         "case_ids": list(reference.case_ids),
     }
 
@@ -307,12 +307,10 @@ def _normalized_path(base_dir: Path, value: str) -> str:
     return str(_resolve_path(base_dir, value).resolve()).casefold()
 
 
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+
+
+def _same_content(left: Path, right: Path) -> bool:
+    return left.is_file() and right.is_file() and left.read_bytes() == right.read_bytes()
 
 
 __all__ = [
