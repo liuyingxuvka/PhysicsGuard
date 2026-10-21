@@ -45,7 +45,7 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
    search, reusable model discovery across projects, or cross-project
    comparison, do not answer from this PhysicsGuard route alone. PhysicsGuard
    can inspect one project's physical evidence, contracts, validation, model
-   library records, and closure boundary, but it does not own database ledger
+   library records, but it does not own database ledger
    intake, lifecycle, freshness, query, or navigation.
 3. If the work includes a concrete testbench/test-data file, first route through
    `physicsguard-test-file-contract-review`. Generate or inspect the file
@@ -147,40 +147,13 @@ Use compare mode only when a solved low-fidelity reference is intentionally usef
 python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty
 ```
 
-Before claiming the audit is localized or complete, run the closure helper when
-available. A partial, blocked, downgraded, stale, skipped, or mapping-review
-closure must downgrade the final claim:
+## Claim Boundary
 
-```powershell
-python scripts\physicsguard_closure_check.py --ledger <physicsguard-closure-ledger.json> --audit AUDIT.yaml --observed OBSERVED.yaml --json
-```
+Base the final debugging claim on the latest `hierarchy evaluate` output:
 
-For project-level debugging with evidence registries, test contracts,
-validation plans, model libraries, external database-ledger inputs, or reusable handoff
-claims, also run or inspect:
-
-```powershell
-python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
-```
-
-Carry the project closure `closure_status` into the final claim. Do not say the
-project is complete, validated, reusable, or localization-ready from an
-evidence map alone. For validation-ready claims, closure must consume a passing
-native depth receipt; it must not recreate physical residual logic in a
-supervisory skill. A prediction claim additionally requires
-`claim_scope: prediction_ready`, stateful semantics, and a passing native
-predictive-rollout receipt with stability evidence.
-
-The helper reads `audit_pass`, `top_blocks`, `top_residuals`,
-`recommended_refinements`, `signal_mapping_ledger`,
-`bug_family_followups`, `missing_required_variables`, and
-`missing_required_parameters`. It also treats review-required mapping issue
-codes, stale evidence, and skipped checks as closure evidence. If it returns
-`partial`, `blocked`, or `downgraded`, continue with the named next action:
-request the next required signals or parameters, review uncertain signal
-mappings, refine the suspicious block one level, inspect same-family
-unit/sign/map/balance follow-ups, rerun after observed snapshots change, run or
-scope skipped checks, or downgrade the localization claim.
+- Name the suspicious block from `top_blocks` and the residuals that support it; report `audit_pass` exactly as printed.
+- List every open `recommended_refinements`, `bug_family_followups`, review-required mapping in `signal_mapping_ledger`, and `missing_required_variables` / `missing_required_parameters` entry as open.
+- Never claim high-fidelity or commercial-tool equivalence; pointwise consistency is not prediction.
 
 ## Workflow B: Build A Candidate Model From A PhysicsGuard Blueprint
 

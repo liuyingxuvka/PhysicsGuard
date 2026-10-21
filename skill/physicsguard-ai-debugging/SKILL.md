@@ -23,7 +23,6 @@ Reject or hand off when:
 - Project evidence inventory and binding gaps are the whole request. Handoff: `physicsguard-project-evidence-registry`.
 - Reusable model asset compatibility is the whole request. Handoff: `physicsguard-model-library`.
 - Candidate blueprint generation is the whole request. Handoff: `physicsguard-candidate-model-blueprint`.
-- Audit completion or localization closure is the whole request. Handoff: `physicsguard-audit-closure`.
 
 ## Minimum workflow
 

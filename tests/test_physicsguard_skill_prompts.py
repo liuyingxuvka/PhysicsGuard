@@ -8,7 +8,6 @@ SKILL_ROOT = ROOT / "skill"
 
 EXPECTED_SKILLS = {
     "physicsguard-ai-debugging",
-    "physicsguard-audit-closure",
     "physicsguard-candidate-model-blueprint",
     "physicsguard-model-dataset-validation",
     "physicsguard-model-library",

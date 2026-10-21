@@ -115,13 +115,6 @@ Executable projection entry (only for a supplied/project-declared blueprint or a
 12. If the project is listed in an external database ledger, report the current
     field coverage, binding state, and contract gaps as provider evidence only.
     Do not update the ledger from this PhysicsGuard skill.
-13. For final analysis-readiness or validation-readiness claims, include the
-    passing contract in project closure. A passing file contract is coverage
-    evidence only; project closure checks whether the whole project is ready:
-
-    ```powershell
-    python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
-    ```
 
 ## Safe Claim Boundary
 

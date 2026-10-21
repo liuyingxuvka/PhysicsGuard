@@ -61,16 +61,8 @@ freshness gates.
 4. When evidence registry and bundle references exist, run or trust the
    `model-library check` gap gate. Blocking project evidence gaps prevent
    validated reuse; review gaps must remain visible.
-5. For `validated` reuse or broad reuse-readiness claims, include the model
-   library in a project closure plan and run:
 
-   ```powershell
-   python -m physicsguard.cli project closure PROJECT_CLOSURE_PLAN.yaml --pretty
-   ```
-
-   The closure report must be passed before broad reuse claims. Partial or
-   downgraded closure means only limited reuse wording is safe.
-6. Record predictive capability only when the entry references a current
+5. Record predictive capability only when the entry references a current
    `stateful_dynamic` future-rollout receipt with disjoint training/holdout,
    passing metrics and stability, and an explicit checked horizon. Pointwise
    validation or reuse evidence must never be relabeled predictive.

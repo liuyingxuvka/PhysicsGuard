@@ -737,9 +737,7 @@
       "depends_on": [
         "interface"
       ],
-      "tests": [
-        "tests/test_physicsguard_closure_helper.py"
-      ],
+      "tests": [],
       "models": [
         ".flowguard/verification/owners/ai_workflow/run_checks.py"
       ],

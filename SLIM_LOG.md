@@ -134,3 +134,11 @@
 - `python <本动作核验脚本> exports-references-flows`：exit 0；2.052秒；exports ok；残留零命中；仅保留三个功能流程。
 - `python <本动作核验脚本> models`：exit 0；92.039秒；models: 13 passed, 0 failed。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-14 退役重复闭合技能并保留诊断结论边界
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> references-plan`：exit 0；0.127秒；技能无退役闭合步骤，9成员安装计划 passed；预测与开放缺口边界保留。
+- `python <本动作核验脚本> map-check`：exit 0；0.534秒；check: 0 error(s), 6 warning(s), 0 info。
+- `python <本动作核验脚本> consumer-tests`：exit 0；4.547秒；16 passed in 0.90s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

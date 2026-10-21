@@ -19,7 +19,6 @@ if str(SCRIPT_ROOT) not in sys.path:
 DEFAULT_CODEX_HOME = Path(os.environ.get("CODEX_HOME") or (Path.home() / ".codex"))
 PHYSICSGUARD_SKILL_IDS = (
     "physicsguard-ai-debugging",
-    "physicsguard-audit-closure",
     "physicsguard-candidate-model-blueprint",
     "physicsguard-model-dataset-validation",
     "physicsguard-model-library",

@@ -137,19 +137,7 @@ Executable projection entry (only for a supplied/project-declared blueprint or a
    the current validation status, closure boundary, and remaining gaps as
    provider evidence only. Do not update the ledger from this PhysicsGuard
    skill.
-8. For final project validation-readiness claims, include the validation plan in
-   a project closure plan and run:
 
-   ```powershell
-   python scripts/run_physicsguard.py project closure PROJECT_CLOSURE_PLAN.yaml --pretty
-   ```
-
-   A passing validation report is necessary for validation claims, but project
-   closure checks whether the surrounding evidence, contracts, and skipped
-   checks also permit the claim. Set `required_checks.validation_depth: true`;
-   project closure recomputes current model-dataset validation before consuming
-   its native receipt. `physical_recomputation: false` describes only the
-   subsequent receipt-consumption step, not the whole closure command.
 
 ## Predictive Boundary
 
