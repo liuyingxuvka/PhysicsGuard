@@ -138,3 +138,38 @@ def test_observed_value_without_a_unit_is_a_mapping_gap(tmp_path: Path) -> None:
     assert "Record the unit" in ledger["controller_q_gain.x"].recommended_action
     assert "controller_q_gain.x: signal mapping needs review (missing_unit)" in report.warnings
     assert [item.followup_id for item in report.bug_family_followups] == ["signal_mapping_review"]
+
+
+def test_signal_mapping_ledger_review_ignores_a_retired_fingerprint(tmp_path: Path) -> None:
+    ledger = {
+        "artifact_kind": "physicsguard_signal_mapping_ledger",
+        "ledger_id": "pump_loop_mapping",
+        "target_system_id": "pump_loop",
+        "subject_revision": "r1",
+        "source_artifact_sha256": "a" * 64,
+        "entries": [
+            {
+                "mapping_id": "m1",
+                "physics_variable": "pump.flow",
+                "external_signal": "FT_101",
+                "expected_unit": "m^3/s",
+                "observed_unit": "m^3/s",
+                "mapping_status": "reviewed",
+                "source_revision": "r1",
+                "temporal_boundary": "whole run",
+            }
+        ],
+        "status": "pass",
+        "safe_mapping_claim": "FT_101 is pump.flow for run r1",
+    }
+    path = tmp_path / "ledger.yaml"
+    for retired in ({}, {"ledger_fingerprint": "0" * 64}):
+        path.write_text(yaml.safe_dump({**ledger, **retired}, sort_keys=False), encoding="utf-8")
+        review = physicsguard.review_signal_mapping_ledger(path)
+        assert review.status == "pass"
+        assert review.summary["entry_count"] == 1
+    blocked = {**ledger, "status": "blocked", "entries": [{**ledger["entries"][0], "issue_codes": ["missing_unit"]}]}
+    path.write_text(yaml.safe_dump(blocked, sort_keys=False), encoding="utf-8")
+    review = physicsguard.review_signal_mapping_ledger(path)
+    assert review.status == "fail"
+    assert [finding.type for finding in review.findings] == ["missing_unit"]

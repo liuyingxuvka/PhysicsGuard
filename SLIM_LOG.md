@@ -738,3 +738,18 @@
 - `python <本动作核验脚本> version-projection-and-metadata`：exit 0；10.144秒；PG0.15.16 source/metadata across both privateenvs; minFG.6 unchanged; historical binding bytes unchanged。
 - 适配：用户明确版本覆盖：新发布与提交标题统一0.15.16，原文0.16.0只作为权威参考保留；历史基线版本不改。
 - 适配：用户patch-only覆盖参考0.16.0为0.15.16；仅改新版本投影与新CHANGELOG，依赖与历史样例binding0.15.15逐字节不变；两私人env正常pip刷新自身metadata。
+
+### PG-70 移除台账自哈希并保留旧键兼容与真实数据检查
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> drop-ledger-self-hash`：exit 0；0.045秒；ledger fingerprint removed。
+- `python <本动作核验脚本> focused-tests`：exit 0；3.403秒；7 passed in 2.38s。
+- `python <本动作核验脚本> confirm-evidence`：exit 0；0.222秒；confirmed 1 component(s)。
+- `python <本动作核验脚本> confirm-schema`：exit 0；0.237秒；confirmed 1 component(s)。
+- `python <本动作核验脚本> exports-names`：exit 0；2.191秒；all names ok。
+- `python <本动作核验脚本> collect`：exit 0；2.53秒；862 tests collected in 1.96s。
+- `python <本动作核验脚本> strict`：exit 0；0.406秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> preservation-and-raw-scan`：exit 0；0.105秒；source digest/extra-forbid/entry checks AST unchanged; raw grep preserved, exactly3 active expected legacy-key lines。
+- 适配：兼容注释新版本边界使用用户指定0.15.16；源数据digest/extra-forbid/条目检查AST保持。
+- 适配：实际收集862而非审计856：保留前序已授权领域回归；原始grep与仅历史记录命中分开保存，不改写SLIM_LOG历史。
+- 提交后完整检查：`python -m pytest -q`：exit 0；862 passed in 62.94s (0:01:02)；命令总耗时 63.688 秒。检查结束后仅补记本行，无业务源码变化。

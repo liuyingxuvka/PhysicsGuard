@@ -169,7 +169,6 @@ def review_signal_mapping_ledger(path: str | Path) -> ContractReview:
             "target_system_id": ledger.target_system_id,
             "subject_revision": ledger.subject_revision,
             "entry_count": len(ledger.entries),
-            "ledger_fingerprint": ledger.ledger_fingerprint,
         },
         next_actions=([] if effective_status == "pass" else ["resolve exact signal mapping gaps"]),
     )

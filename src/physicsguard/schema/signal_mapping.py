@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
 import re
-from typing import Any, Literal, Mapping
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -21,23 +19,6 @@ def _sha256(value: str, field_name: str) -> str:
     if not SHA256_RE.fullmatch(normalized):
         raise ValueError(f"{field_name} must be a lowercase SHA-256 digest")
     return normalized
-
-
-def fingerprint_signal_mapping_ledger(value: Mapping[str, Any] | BaseModel) -> str:
-    payload = (
-        value.model_dump(mode="json", exclude_none=True)
-        if isinstance(value, BaseModel)
-        else dict(value)
-    )
-    payload.pop("ledger_fingerprint", None)
-    encoded = json.dumps(
-        payload,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-        allow_nan=False,
-    ).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
 
 
 class SignalMappingEntrySpec(BaseModel):
@@ -100,20 +81,27 @@ class SignalMappingLedgerSpec(BaseModel):
     entries: list[SignalMappingEntrySpec]
     status: SignalMappingStatus
     safe_mapping_claim: str
-    ledger_fingerprint: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def _ignore_retired_fingerprint(cls, data: Any) -> Any:
+        # Ledgers written before 0.15.16 carry a self-hash of the ledger; it is ignored.
+        if isinstance(data, dict) and "ledger_fingerprint" in data:
+            data = {key: value for key, value in data.items() if key != "ledger_fingerprint"}
+        return data
 
     @field_validator("ledger_id", "target_system_id", "subject_revision", "safe_mapping_claim")
     @classmethod
     def _identity_valid(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
 
-    @field_validator("source_artifact_sha256", "ledger_fingerprint")
+    @field_validator("source_artifact_sha256")
     @classmethod
-    def _fingerprint_valid(cls, value: str, info) -> str:
+    def _source_digest_valid(cls, value: str, info) -> str:
         return _sha256(value, info.field_name)
 
     @model_validator(mode="after")
-    def _ledger_current(self) -> "SignalMappingLedgerSpec":
+    def _entries_consistent(self) -> "SignalMappingLedgerSpec":
         if not self.entries:
             raise ValueError("signal mapping ledger requires at least one entry")
         mapping_ids = [entry.mapping_id for entry in self.entries]
@@ -124,9 +112,6 @@ class SignalMappingLedgerSpec(BaseModel):
             raise ValueError("passing signal mapping ledgers cannot contain issue codes")
         if self.status != "pass" and not has_issues:
             raise ValueError("non-passing signal mapping ledgers require at least one issue code")
-        expected = fingerprint_signal_mapping_ledger(self)
-        if self.ledger_fingerprint != expected:
-            raise ValueError("signal mapping ledger fingerprint is stale or invalid")
         return self
 
 
@@ -134,5 +119,4 @@ __all__ = [
     "SignalMappingEntrySpec",
     "SignalMappingLedgerSpec",
     "SignalMappingStatus",
-    "fingerprint_signal_mapping_ledger",
 ]
