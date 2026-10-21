@@ -506,3 +506,14 @@
 - `python <本动作核验脚本> map-check`：exit 0；0.388秒；check: 0 error(s), 8 warning(s), 0 info。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：已知坏_status变体在仓库外当前tracked-source临时副本执行真实runner，保6mismatch/exit1；不临时改活动src或git restore。三核心块仅移除授权退役receipt参数，其余AST相同。。
+
+### PG-53 测试文件契约模型重放13个真实用例并拒绝坏manifest检查
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> real-runner`：exit 0；2.204秒；FLOWGUARD_RUNNER_DONE {"exit_code": 0, "checked": 1}。
+- `python <本动作核验脚本> known-bad-native`：exit 0；2.163秒；conformance: 11/13 model cases match the real code; real native bad variant rejected exit1; active source byte unchanged。
+- `python <本动作核验脚本> anchors`：exit 0；0.308秒；declared anchors valid; known later-action missing owners: interval_diagnosability。
+- `python <本动作核验脚本> models`：exit 0；12.117秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> map-check`：exit 0；0.313秒；check: 0 error(s), 8 warning(s), 0 info。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：移除manifest核验的已知坏变体只在仓库外当前tracked-source副本执行；要求精确source_missing/manifest_stale两mismatch与exit1，活动src及样例原字节不动。。
