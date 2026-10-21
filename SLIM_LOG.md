@@ -100,3 +100,12 @@
 - `python <本动作核验脚本> native-install`：exit 0；0.367秒；CLI help、安装计划、临时HOME安装及复核全部通过；残留仅预定退役测试1行。
 - `python <本动作核验脚本> installer-tests`：exit 0；2.562秒；15 passed in 0.87s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-10 移除契约与执行证据的精确版本降级
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> native-version-compatibility`：exit 0；2.31秒；旧版本标记与当前契约均 pass；无版本降级残留；示例字节未改。
+- `python <本动作核验脚本> contract-tests`：exit 0；19.028秒；22 passed in 17.21s。
+- `python <本动作核验脚本> blueprint-tests`：exit 0；31.742秒；108 passed in 29.97s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 提交后完整检查：`python -m pytest -q`：exit 0；1118 passed in 133.23s (0:02:13)；命令总耗时 135.071 秒。检查结束后仅补记本行，无业务源码变化。

@@ -6,7 +6,6 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Callable, Generic, Optional, TypeVar
 
-import physicsguard
 from physicsguard.core.data_file_manifest import field_signature_hash, sha256_file, stable_json_hash
 from physicsguard.core.parameter_coverage import (
     ContractFinding,
@@ -509,18 +508,6 @@ def _model_binding_targets(
                 severity="error",
                 type="stale_model_binding",
                 message="model binding metadata marks this binding as stale",
-            )
-        )
-    if binding.physicsguard_version and binding.physicsguard_version != physicsguard.__version__:
-        findings.append(
-            ContractFinding(
-                severity="warning",
-                type="physicsguard_version_mismatch",
-                message="model binding was recorded against a different PhysicsGuard version",
-                details={
-                    "binding_version": binding.physicsguard_version,
-                    "runtime_version": physicsguard.__version__,
-                },
             )
         )
     if binding.compatible_testbench_profiles and resolved.testbench_profile is not None:

@@ -534,7 +534,6 @@ def _replay_native_owner(
             replayable=True,
         )
     native_owner_id, operation_id = operation
-    from physicsguard import __version__ as physicsguard_version
 
     identity_failures: list[str] = []
     if execution.native_owner_id != native_owner_id:
@@ -547,8 +546,6 @@ def _replay_native_owner(
         identity_failures.append("native execution target identity differs")
     if execution.subject_revision != subject_revision:
         identity_failures.append("native execution subject revision differs")
-    if execution.tool_version != physicsguard_version:
-        identity_failures.append("native execution tool version is stale")
     if identity_failures:
         return NativeAuthorityObservation(
             binding_id=binding.binding_id,
