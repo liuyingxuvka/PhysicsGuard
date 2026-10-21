@@ -530,3 +530,18 @@
 - `python <本动作核验脚本> map-check`：exit 0；0.271秒；check: 0 error(s), 8 warning(s), 0 info。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：真实diagnosability已知坏变体在仓库外当前tracked-source副本执行，保同一真实runner的crossing精确mismatch/exit1；活动core及3场景/no_true_fault_claim保持原字节逻辑。。
+
+### PG-55 为保留模型加入必须捕获的坏变体
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.054秒；three runners now require all 2/2/3 known-bad variants to be caught; original conformance cases retained。
+- `python <本动作核验脚本> core-runner`：exit 0；2.277秒；FLOWGUARD_RUNNER_DONE {"exit_code": 0, "checked": 3}。
+- `python <本动作核验脚本> dataset-runner`：exit 0；5.617秒；FLOWGUARD_RUNNER_DONE {"exit_code": 0, "checked": 4}。
+- `python <本动作核验脚本> contract-runner`：exit 0；1.82秒；FLOWGUARD_RUNNER_DONE {"exit_code": 0, "checked": 4}。
+- `python <本动作核验脚本> known-bad-invariant`：exit 0；2.257秒；known-bad variants: 2/3 caught; real native bad variant rejected exit1; active source byte unchanged。
+- `python <本动作核验脚本> anchors`：exit 0；0.342秒；anchors ok。
+- `python <本动作核验脚本> models`：exit 0；18.833秒；models: 4 passed, 0 failed。
+- `python <本动作核验脚本> map-check`：exit 0；0.297秒；check: 0 error(s), 8 warning(s), 0 info。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：将coverage不变量改永远通过的控制仅在仓库外tracked-source副本实施，保known-bad2/3 caught+精确missed+exit1；活动模型/源码不改。承接PG48两回归，全量预期853而非851。。
+- 提交后完整检查：`python -m pytest -q`：exit 0；853 passed in 39.77s；命令总耗时 40.312 秒。检查结束后仅补记本行，无业务源码变化。

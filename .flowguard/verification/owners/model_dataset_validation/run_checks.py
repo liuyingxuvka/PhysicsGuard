@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import shutil
+from dataclasses import replace
 import sys
 import tempfile
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "models/owners"))
 
 import yaml
+from flowguard import Workflow
 from flowguard.explorer import Explorer
 
 from model_dataset_validation import physicsguard_model_dataset_validation_model as model
@@ -175,6 +177,68 @@ def conformance() -> list[str]:
     return mismatches
 
 
+class _HardDepthGateIgnored(model.GateValidationDepth):
+    """Known bad: a failed hard depth gate lets the case continue."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if isinstance(result.output, model.ValidationBlocked):
+                ready = model.DepthReady(
+                    input_obj.case_id,
+                    input_obj.direct_validation_ran,
+                    input_obj.calibration_enabled,
+                    input_obj.calibration_parameters_bounded,
+                    input_obj.observed_values_mutated,
+                    input_obj.optimization_success,
+                    input_obj.holdout_passed,
+                    input_obj.confidence_feedback_recorded,
+                )
+                result = replace(result, output=ready, new_state=state, label="hard_depth_gate_ignored")
+            yield result
+
+
+class _FailedHoldoutPasses(model.GateValidationClaim):
+    """Known bad: a failed holdout still yields a validation pass."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if result.label == "holdout_partial":
+                result = replace(
+                    result,
+                    output=model.ValidationPassed(input_obj.case_id),
+                    new_state=replace(state, validation_passed=state.validation_passed + (input_obj.case_id,)),
+                    label="validation_passed",
+                )
+            yield result
+
+
+def broken_variants():
+    """Known-bad variants: name -> (broken block, invariants that must fail)."""
+
+    return {
+        "hard_depth_gate_ignored": (_HardDepthGateIgnored(), ("no_pass_without_depth_inputs",)),
+        "failed_holdout_passes": (_FailedHoldoutPasses(), ("no_pass_without_holdout_and_feedback",)),
+    }
+
+def missed_variants() -> list[str]:
+    """Explore every known-bad variant; return the invariants that did not catch it."""
+
+    missed = []
+    for name, (broken, invariants) in broken_variants().items():
+        blocks = tuple(broken if isinstance(broken, type(block)) else block for block in model.build_workflow().blocks)
+        report = Explorer(
+            workflow=Workflow(blocks, name=name),
+            initial_states=(model.initial_state(),),
+            external_inputs=(*model.EXTERNAL_INPUTS, *model.DEPTH_EXTERNAL_INPUTS),
+            invariants=model.INVARIANTS,
+            max_sequence_length=1,
+            terminal_predicate=model.terminal_predicate,
+        ).explore()
+        caught = {item.invariant_name for item in report.violations}
+        missed += [f"{name}: {invariant} did not fail" for invariant in invariants if invariant not in caught]
+    return missed
+
+
 def main() -> int:
     report = Explorer(
         workflow=model.build_workflow(),
@@ -218,7 +282,11 @@ def main() -> int:
     print(f"conformance: {len(REAL_CASES) - len(mismatches)}/{len(REAL_CASES)} model cases match the real code")
     for line in mismatches:
         print(f"  mismatch: {line}")
-    return 0 if report.ok and depth_report.ok and not mismatches else 1
+    missed = missed_variants()
+    print(f"known-bad variants: {len(broken_variants()) - len(missed)}/{len(broken_variants())} caught")
+    for line in missed:
+        print(f"  missed: {line}")
+    return 0 if report.ok and depth_report.ok and not mismatches and not missed else 1
 
 
 if __name__ == "__main__":

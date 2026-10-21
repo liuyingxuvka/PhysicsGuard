@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import shutil
+from dataclasses import replace
 import sys
 import tempfile
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "models/owners"))
 
 import yaml
+from flowguard import Workflow
 from flowguard.explorer import Explorer
 
 from test_file_contract import physicsguard_test_file_contract_model as model
@@ -141,6 +143,70 @@ def conformance() -> list[str]:
     return mismatches
 
 
+def _gate_ignored(block_class, **passing):
+    """Known bad: the gate's block is ignored; the case continues without the gate's record."""
+
+    class GateIgnored(block_class):
+        def apply(self, input_obj, state):
+            for result in super().apply(input_obj, state):
+                if isinstance(result.output, model.WorkflowBlocked):
+                    forced = next(iter(super().apply(replace(input_obj, **passing), state)))
+                    result = replace(result, output=forced.output, new_state=state, label=f"{result.label}_ignored")
+                yield result
+
+    return GateIgnored()
+
+
+def broken_variants():
+    """Known-bad variants: name -> (broken block, invariants that must fail)."""
+
+    return {
+        "freshness_gate_ignored": (
+            _gate_ignored(model.VerifyManifestFreshness, extractor_identity_recorded=True, manifest_fresh=True),
+            ("no_testfile_claim_without_manifest",),
+        ),
+        "mapping_gate_ignored": (
+            _gate_ignored(
+                model.ResolveMappingEdges,
+                mappings_complete=True,
+                mapping_evidence_complete=True,
+                all_model_targets_known=True,
+            ),
+            (
+                "no_testfile_claim_without_catalog_roles_and_mappings",
+                "no_testfile_claim_without_mapping_evidence_or_known_targets",
+            ),
+        ),
+        "coverage_gate_ignored": (
+            _gate_ignored(
+                model.EnforceCoverageContract,
+                review_required=False,
+                planned_model_gap=False,
+                contract_check_passed=True,
+            ),
+            ("no_testfile_claim_without_contract_pass",),
+        ),
+    }
+
+def missed_variants() -> list[str]:
+    """Explore every known-bad variant; return the invariants that did not catch it."""
+
+    missed = []
+    for name, (broken, invariants) in broken_variants().items():
+        blocks = tuple(broken if isinstance(broken, type(block)) else block for block in model.build_workflow().blocks)
+        report = Explorer(
+            workflow=Workflow(blocks, name=name),
+            initial_states=(model.initial_state(),),
+            external_inputs=model.EXTERNAL_INPUTS,
+            invariants=model.INVARIANTS,
+            max_sequence_length=model.MAX_SEQUENCE_LENGTH,
+            terminal_predicate=model.terminal_predicate,
+        ).explore()
+        caught = {item.invariant_name for item in report.violations}
+        missed += [f"{name}: {invariant} did not fail" for invariant in invariants if invariant not in caught]
+    return missed
+
+
 def main() -> int:
     report = Explorer(
         workflow=model.build_workflow(),
@@ -182,7 +248,11 @@ def main() -> int:
     print(f"conformance: {len(REAL_CASES) - len(mismatches)}/{len(REAL_CASES)} model cases match the real code")
     for line in mismatches:
         print(f"  mismatch: {line}")
-    return 0 if report.ok and not mismatches else 1
+    missed = missed_variants()
+    print(f"known-bad variants: {len(broken_variants()) - len(missed)}/{len(broken_variants())} caught")
+    for line in missed:
+        print(f"  missed: {line}")
+    return 0 if report.ok and not mismatches and not missed else 1
 
 
 if __name__ == "__main__":

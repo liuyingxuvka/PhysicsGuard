@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+from dataclasses import replace
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "models/owners"))
 
+from flowguard import Workflow
 from flowguard.explorer import Explorer
 
 from core import physicsguard_core_model as model
@@ -183,6 +185,53 @@ def conformance() -> list[str]:
     return mismatches
 
 
+class _EvaluateCallsSolver(model.ExecuteMode):
+    """Known bad: observed evaluation also runs the solver."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            new = result.new_state
+            added = tuple(case for case in new.observed_without_solver if case not in state.observed_without_solver)
+            yield replace(result, new_state=replace(new, solve_attempted=new.solve_attempted + added))
+
+
+class _FailedAuditAlsoPasses(model.ExecuteMode):
+    """Known bad: a failed audit is also recorded as a pass."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            new = result.new_state
+            added = tuple(case for case in new.audit_failures if case not in state.audit_failures)
+            yield replace(result, new_state=replace(new, audit_passes=new.audit_passes + added))
+
+
+def broken_variants():
+    """Known-bad variants: name -> (broken block, invariants that must fail)."""
+
+    return {
+        "evaluate_calls_solver": (_EvaluateCallsSolver(), ("observed_evaluation_does_not_solve",)),
+        "failed_audit_also_passes": (_FailedAuditAlsoPasses(), ("audit_pass_and_failure_are_disjoint",)),
+    }
+
+def missed_variants() -> list[str]:
+    """Explore every known-bad variant; return the invariants that did not catch it."""
+
+    missed = []
+    for name, (broken, invariants) in broken_variants().items():
+        blocks = tuple(broken if isinstance(broken, type(block)) else block for block in model.build_workflow().blocks)
+        report = Explorer(
+            workflow=Workflow(blocks, name=name),
+            initial_states=(model.initial_state(),),
+            external_inputs=model.EXTERNAL_INPUTS,
+            invariants=model.INVARIANTS,
+            max_sequence_length=model.MAX_SEQUENCE_LENGTH,
+            terminal_predicate=model.terminal_predicate,
+        ).explore()
+        caught = {item.invariant_name for item in report.violations}
+        missed += [f"{name}: {invariant} did not fail" for invariant in invariants if invariant not in caught]
+    return missed
+
+
 def main() -> int:
     report = Explorer(
         workflow=model.build_workflow(),
@@ -232,7 +281,11 @@ def main() -> int:
     print(f"conformance: {len(REAL_CASES) - len(mismatches)}/{len(REAL_CASES)} model cases match the real code")
     for line in mismatches:
         print(f"  mismatch: {line}")
-    return 0 if report.ok and not mismatches else 1
+    missed = missed_variants()
+    print(f"known-bad variants: {len(broken_variants()) - len(missed)}/{len(broken_variants())} caught")
+    for line in missed:
+        print(f"  missed: {line}")
+    return 0 if report.ok and not mismatches and not missed else 1
 
 
 if __name__ == "__main__":
