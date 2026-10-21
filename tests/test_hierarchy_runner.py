@@ -133,3 +133,74 @@ def test_hierarchy_evaluate_skips_residuals_that_need_unobserved_variables(monke
     assert stack.confidence < 1.0
     with pytest.raises(ValueError, match="observed values missing required registered variables"):
         HierarchicalAuditRunner(spec).evaluate_observed(observed)
+
+
+def test_partial_snapshot_does_not_invent_a_zero_product_residual(monkeypatch) -> None:
+    import pytest
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    spec = HierarchicalAuditSpec.model_validate({
+        "audit_name": "zero_product",
+        "system": {"system_name": "power", "components": [{
+            "id": "power", "type": "ElectricalPowerModule",
+            "parameters": {"V_initial_guess": 0.0, "current_initial_guess": 0.0, "P_initial_guess": 0.0},
+        }]},
+        "hierarchy": {"blocks": [{"id": "power_block", "name": "power", "level": 0,
+            "components": ["power"], "required_variables": ["power.V_V", "power.current_A", "power.P_W"]}]},
+    })
+    observed = ObservedValuesSpec(variables={"power.P_W": {"value": 0.0, "unit": "W"}})
+    before = observed.model_dump(mode="json")
+    def forbidden_solve(*args, **kwargs):
+        raise AssertionError("partial observations must not solve")
+    monkeypatch.setattr(BoundedSolver, "solve", forbidden_solve)
+    with pytest.raises(ValueError, match="no residual can be evaluated without them"):
+        HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    assert observed.model_dump(mode="json") == before
+
+
+def test_partial_snapshot_skips_a_range_check_with_a_flat_local_region() -> None:
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    spec = HierarchicalAuditSpec.model_validate({
+        "audit_name": "flat_range",
+        "system": {"system_name": "checks", "components": [
+            {"id": "unknown", "type": "DummyResidualModule", "parameters": {
+                "target": 0.0, "initial_guess": 0.0, "scale": 1.0, "lower_bound": -100.0, "upper_bound": 100.0}},
+            {"id": "known", "type": "DummyResidualModule", "parameters": {"target": 0.0}},
+            {"id": "limit", "type": "RangeCheckModule", "parameters": {
+                "variable": "unknown.x", "lower_bound": -10.0, "upper_bound": 10.0}},
+        ]},
+        "hierarchy": {"blocks": [{"id": "checks", "name": "checks", "level": 0,
+            "components": ["unknown", "known", "limit"], "required_variables": ["unknown.x", "known.x"]}]},
+    })
+    report = HierarchicalAuditRunner(spec).evaluate_observed(
+        ObservedValuesSpec(variables={"known.x": {"value": 0.0}}), skip_unobserved=True,
+    )
+    assert report.metadata["skipped_residuals"]["limit.range_check"] == ["unknown.x"]
+    assert {item.name for item in report.top_residuals} == {"known.dummy_target"}
+    assert report.missing_required_variables == ["unknown.x"]
+    assert report.audit_pass
+
+
+def test_unclassified_custom_residual_is_not_licensed_by_finite_probes() -> None:
+    from dataclasses import replace
+    from physicsguard.core.hierarchy import _fill_unobserved
+    from physicsguard.modules.dummy import DummyResidualModule
+    from physicsguard.modules.registry import ModuleRegistry
+    from physicsguard.schema.system_spec import SystemSpec
+
+    class UnclassifiedResidual(DummyResidualModule):
+        def residuals(self, x, registry):
+            return [replace(record, value=0.0) for record in super().residuals(x, registry)]
+
+    modules = ModuleRegistry()
+    modules.register("UnclassifiedResidual", lambda identifier, parameters: UnclassifiedResidual(identifier, parameters))
+    builder = ResidualBuilder(SystemSpec.model_validate({
+        "system_name": "custom", "components": [{"id": "custom", "type": "UnclassifiedResidual", "parameters": {"target": 0.0}}],
+    }), module_registry=modules)
+    values: dict[str, float] = {}
+    _, skipped = _fill_unobserved(builder, builder.build_registry(), values, ["custom.x"])
+    assert skipped == {"custom.dummy_target": ["custom.x"]}
+    assert values == {}

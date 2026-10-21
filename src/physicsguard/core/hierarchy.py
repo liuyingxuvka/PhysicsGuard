@@ -865,34 +865,101 @@ def _fill_unobserved(
     values: dict[str, float],
     missing: list[str],
 ) -> tuple[dict[str, float], dict[str, list[str]]]:
-    """Fill unobserved variables with their initial guess; return the residuals that change with each.
+    """Find missing-variable dependencies with bounded native numerical probes.
 
-    Each unobserved variable is moved by one scale step up and down inside its bounds.
-    A residual whose value changes needs that variable. When a probe value cannot be
-    evaluated, every residual of the variable's component or naming the variable needs it.
+    Probe the initial guesses and a staggered nonzero joint context, varying each
+    missing variable through scale steps and its feasible endpoints. The joint
+    context exposes multiplicative dependencies hidden at simultaneous zeros;
+    endpoints expose flat local checks. Observed values never change. These finite
+    probes are not a structural independence proof for arbitrary custom functions:
+    unclassified custom-module residuals and failed probe scopes are skipped
+    conservatively rather than licensed from a missing variable's initial guess.
     """
 
     filled = dict(values)
     for name in missing:
         filled[name] = registry.get_record(name).initial_guess
-    base = {record.name: record.value for record in builder.diagnostic_residual_records(registry.dict_to_vector(filled))}
+    base_records = builder.diagnostic_residual_records(registry.dict_to_vector(filled))
     needs: dict[str, set[str]] = {}
-    for name in missing:
+    modules = builder.build_modules()
+
+    def refers_to(value: Any, name: str) -> bool:
+        if isinstance(value, str):
+            return value == name
+        if isinstance(value, dict):
+            return any(refers_to(item, name) for item in value.values())
+        if isinstance(value, (list, tuple)):
+            return any(refers_to(item, name) for item in value)
+        return False
+
+    def conservative_scope(name: str) -> None:
+        sources = {name.split(".", 1)[0]}
+        sources.update(module.component_id for module in modules if refers_to(module.parameters, name))
+        for record in base_records:
+            if record.source in sources or name in record.name or record.role == "assumption":
+                needs.setdefault(record.name, set()).add(name)
+
+    custom_sources = {
+        module.component_id for module in modules
+        if not type(module).__module__.startswith("physicsguard.modules.")
+    }
+    custom_records = [record for record in base_records if record.source in custom_sources]
+    if custom_sources and not custom_records:
+        custom_records = base_records
+    for record in custom_records:
+        needs.setdefault(record.name, set()).update(missing)
+    # Native range checks already identify their exact referenced variable.
+    for module in modules:
+        referenced = getattr(module, "variable", None)
+        if isinstance(referenced, str) and referenced in missing:
+            for record in base_records:
+                if record.source == module.component_id:
+                    needs.setdefault(record.name, set()).add(referenced)
+
+    joint = dict(filled)
+    for index, name in enumerate(missing):
         record = registry.get_record(name)
-        changed: set[str] = set()
-        for value in (min(record.initial_guess + record.scale, record.upper_bound),
-                      max(record.initial_guess - record.scale, record.lower_bound)):
-            if value == record.initial_guess:
-                continue
-            try:
-                probe = builder.diagnostic_residual_records(registry.dict_to_vector({**filled, name: value}))
-            except (ValueError, ArithmeticError):
-                component = name.split(".", 1)[0]
-                changed |= {item for item in base if item.split(".", 1)[0] == component or name in item}
-                continue
-            changed |= {item.name for item in probe if item.value != base.get(item.name)}
-        for residual in changed:
-            needs.setdefault(residual, set()).add(name)
+        fraction = (index + 1) / (len(missing) + 1)
+        value = (1 - fraction) * record.lower_bound + fraction * record.upper_bound
+        if value == 0 or value == record.initial_guess:
+            candidates = (
+                min(record.initial_guess + record.scale, record.upper_bound),
+                max(record.initial_guess - record.scale, record.lower_bound),
+                record.lower_bound, record.upper_bound,
+            )
+            value = next((candidate for candidate in candidates
+                          if candidate != 0 and candidate != record.initial_guess),
+                         next(candidate for candidate in candidates if candidate != record.initial_guess))
+        joint[name] = value
+    contexts = [filled, joint] if len(missing) > 1 else [filled]
+    for context in contexts:
+        try:
+            base = {record.name: record.value for record in
+                    builder.diagnostic_residual_records(registry.dict_to_vector(context))}
+        except (ValueError, ArithmeticError):
+            for name in missing:
+                conservative_scope(name)
+            continue
+        for name in missing:
+            record = registry.get_record(name)
+            for value in dict.fromkeys((
+                record.initial_guess,
+                min(record.initial_guess + record.scale, record.upper_bound),
+                max(record.initial_guess - record.scale, record.lower_bound),
+                record.lower_bound, record.upper_bound,
+            )):
+                if value == context[name]:
+                    continue
+                try:
+                    probe = builder.diagnostic_residual_records(
+                        registry.dict_to_vector({**context, name: value})
+                    )
+                except (ValueError, ArithmeticError):
+                    conservative_scope(name)
+                    continue
+                for item in probe:
+                    if item.value != base.get(item.name):
+                        needs.setdefault(item.name, set()).add(name)
     return filled, {residual: sorted(names) for residual, names in sorted(needs.items())}
 
 

@@ -584,3 +584,11 @@
 - `python <本动作核验脚本> native-unitless-scan`：exit 0；1.241秒；actual single-system unitless evaluate keeps audit PASS, names gap in both warnings; exactly four active missing_unit declarations。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：外部经检查应用脚本留在本项证据目录；承接PG48两条回归collect856而非854。另有限6条真实CLI前后完整bytes/exit比对一致，未以grep无missing_unit冒称完整输出保留。。
+
+### PG-57 followup 非线性与平坦区间的缺失变量依赖补正
+
+- 独立原生探针发现原有限单变量算法会漏掉双零乘积与范围检查平坦段；保留原 PG-57 提交和 RED 证据，不改写成已通过。
+- 在原 helper 内保留初值上下 scale 探针，增加错开的合法非零联合上下文及可行端点；按上下文各自基线比较，已有变量引用用于精确范围，自定义或失败探针范围保守跳过。没有新 schema、求解器或证明平台。
+- `python -m pytest -q <两条新增原生反例>`：RED exit 1，2 failed，分别未拒绝空范围和漏掉 range_check；原失败输出留存。
+- `python -m pytest -q tests/test_hierarchy_runner.py tests/test_hierarchy_cli.py tests/test_evaluator.py tests/test_model_dataset_validation.py tests/test_validation_depth_receipts.py`：exit 0，45 passed；四模型与全部锚点通过，地图无错误。
+- `python <严格模式原生探针>`：default library、compare、dataset 仍拒绝缺变量；原生保护 owner 字节未变，观测值及不调用求解器断言通过。有限数值探测不声称任意自定义函数的结构独立性。
