@@ -358,3 +358,13 @@
 - `python <本动作核验脚本> release-gate`：exit 0；26.298秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：外部核验脚本首次按单空格解析CLI对齐输出失败；修正为任意空白并保留失败日志，实际两个既存SCC未变，后续lint无错误。。
+
+### PG-40 新增双版本CI并让发布等待同一提交
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> workflow-structure`：exit 0；0.065秒；exact 15-line baseline FG wait only; workflow compiled without publication; deadline count 1。
+- `python <本动作核验脚本> ci-full-pytest`：exit 0；84.552秒；1021 passed in 82.04s (0:01:22)。
+- `python <本动作核验脚本> ci-release`：exit 0；25.786秒；verify: PASS (map, lint and models only; tests not run; run python -m pytest -q separately)。
+- `python <本动作核验脚本> scratch-install-check`：exit 0；0.262秒；scratch install and check passed, 7 current members; temporary target only。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：本地按CI顺序完整验证使用既有专属Python3.12.14；新增远端CI矩阵为3.11/3.13，仅静态核对配置，不冒称两矩阵已在本地或GitHub执行。。
