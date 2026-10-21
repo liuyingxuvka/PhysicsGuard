@@ -377,3 +377,12 @@
 - `python <本动作核验脚本> focused-tests`：exit 0；1.984秒；15 passed in 0.40s。
 - `python <本动作核验脚本> map-check`：exit 0；0.349秒；check: 0 error(s), 1 warning(s), 0 info。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-42 退役模型库技能并保留原生引擎至后续动作
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.059秒；PG-42 retired skill files, installer declaration, test inventory and handoff updated。
+- `python <本动作核验脚本> retired-install`：exit 0；0.237秒；见同编号JSON/日志中的结构化结果。
+- `python <本动作核验脚本> focused-tests`：exit 0；1.898秒；15 passed in 0.34s。
+- `python <本动作核验脚本> map-check`：exit 0；0.343秒；check: 0 error(s), 1 warning(s), 0 info。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。

@@ -20,7 +20,6 @@ DEFAULT_TARGET = Path(os.environ.get("CODEX_HOME") or (Path.home() / ".codex")) 
 PHYSICSGUARD_SKILL_IDS = (
     "physicsguard-ai-debugging",
     "physicsguard-model-dataset-validation",
-    "physicsguard-model-library",
     "physicsguard-model-understanding-preflight",
     "physicsguard-signal-mapping-review",
     "physicsguard-test-file-contract-review",
@@ -28,6 +27,7 @@ PHYSICSGUARD_SKILL_IDS = (
 RETIRED_SKILL_IDS = (
     "physicsguard-audit-closure",
     "physicsguard-candidate-model-blueprint",
+    "physicsguard-model-library",
     "physicsguard-project-adoption",
     "physicsguard-project-evidence-registry",
 )

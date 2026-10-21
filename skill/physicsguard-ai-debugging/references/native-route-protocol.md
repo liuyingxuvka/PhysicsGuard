@@ -32,8 +32,8 @@ Diagrams and tables explain the audit route; they are not validation evidence. V
 2. If the user asks about multiple projects, historical tests, database-level
    search, reusable model discovery across projects, or cross-project
    comparison, do not answer from this PhysicsGuard route alone. PhysicsGuard
-   can inspect one project's physical evidence, contracts, validation, model
-   library records, but it does not own database ledger
+   can inspect one project's physical evidence, contracts and validation, but
+   it does not own database ledger
    intake, lifecycle, freshness, query, or navigation.
 3. If the work includes a concrete testbench/test-data file, first route through
    `physicsguard-test-file-contract-review`. Generate or inspect the file
