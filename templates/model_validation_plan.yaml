@@ -129,6 +129,6 @@ depth:
 # For a predictive claim, change model_semantics to stateful_dynamic and add a
 # depth.predictive_rollout block with exact model, training, generated
 # prediction-series, and future-holdout identities; initial state; step size;
-# horizon; signal scales; project-sourced thresholds; and producer receipt id.
+# horizon; signal scales; and project-sourced thresholds (producer_receipt_id is optional).
 metadata:
   boundary: low-fidelity validation only

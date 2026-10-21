@@ -74,7 +74,7 @@ class PredictiveRolloutPlanSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     rollout_id: str
-    producer_receipt_id: str
+    producer_receipt_id: str | None = None
     model_identity: RolloutArtifactIdentitySpec
     training: list[RolloutArtifactIdentitySpec]
     prediction_series: RolloutArtifactIdentitySpec
@@ -89,10 +89,15 @@ class PredictiveRolloutPlanSpec(BaseModel):
     threshold_source: str
     thresholds: PredictiveThresholdsSpec
 
-    @field_validator("rollout_id", "producer_receipt_id", "step_unit", "threshold_source")
+    @field_validator("rollout_id", "step_unit", "threshold_source")
     @classmethod
     def _text_valid(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
+
+    @field_validator("producer_receipt_id")
+    @classmethod
+    def _optional_text_valid(cls, value: str | None, info) -> str | None:
+        return None if value is None else ensure_non_empty(value, info.field_name)
 
     @field_validator("training_end_time", "step_size")
     @classmethod

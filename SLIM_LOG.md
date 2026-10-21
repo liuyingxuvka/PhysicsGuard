@@ -765,3 +765,15 @@
 - `python <本动作核验脚本> strict`：exit 0；0.423秒；check: 0 error(s), 0 warning(s), 0 info。
 - `python <本动作核验脚本> native-and-AST-preservation`：exit 0；1.674秒；only output-hash AST removals; native templates pass without fingerprints; honest status/schema/claim calculations unchanged。
 - 提交后完整检查：`python -m pytest -q`：exit 0；862 passed in 62.87s (0:01:02)；命令总耗时 64.58 秒。检查结束后仅补记本行，无业务源码变化。
+
+### PG-72 预测回放producer标识可选且提供时仍拒空值
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> optional-producer-id`：exit 0；0.055秒；producer_receipt_id optional。
+- `python <本动作核验脚本> focused-tests`：exit 0；3.092秒；7 passed in 1.99s。
+- `python <本动作核验脚本> confirm-schema`：exit 0；0.202秒；confirmed 1 component(s)。
+- `python <本动作核验脚本> exports-names`：exit 0；2.943秒；all names ok。
+- `python <本动作核验脚本> collect`：exit 0；5.454秒；863 tests collected in 4.01s。
+- `python <本动作核验脚本> strict`：exit 0；0.676秒；check: 0 error(s), 0 warning(s), 0 info。
+- `python <本动作核验脚本> optional-input-boundary`：exit 0；1.409秒；omitted ID=None; givenID preserved; empty/whitespace rejected; native predictive engine bytes unchanged。
+- 提交后完整检查：`python -m pytest -q`：exit 0；863 passed in 71.95s (0:01:11)；命令总耗时 72.871 秒。检查结束后仅补记本行，无业务源码变化。

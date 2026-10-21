@@ -177,3 +177,12 @@ def test_same_stat_training_rewrite_is_rejected_as_content_overlap(tmp_path: Pat
     assert overlap.receipt["overlapping_contents"] == ["training_series"]
     assert "predictive_training_future_overlap" in overlap.receipt["finding_codes"]
     assert overlap.receipt["status"] == "blocked"
+
+
+def test_rollout_plan_without_producer_receipt_id_still_passes() -> None:
+    payload = _plan().model_dump(mode="json")
+    del payload["producer_receipt_id"]
+    plan = PredictiveRolloutPlanSpec.model_validate(payload)
+    result = evaluate_predictive_rollout("stateful_dynamic", plan, base_dir=PUMP)
+    assert result.receipt["status"] == "pass"
+    assert result.receipt["producer_receipt_id"] is None

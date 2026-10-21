@@ -95,8 +95,9 @@ claim. Prediction requires `model_semantics: stateful_dynamic` plus a
 externally produced trajectory, and disjoint future holdout by path, file
 content, and case identity.
 
-The rollout must declare its producer receipt, initial state, step size and
-unit, horizon, target signals and scales, and project-sourced thresholds.
+The rollout must declare its initial state, step size and unit, horizon,
+target signals and scales, and project-sourced thresholds. A
+`producer_receipt_id` naming the run that produced the trajectory is optional.
 PhysicsGuard checks alignment, strict future separation, worst-step and
 accumulated normalized error, lag/phase error, drift, error growth, and
 stability. PhysicsGuard validates the supplied stateful trajectory; it does not
