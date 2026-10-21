@@ -1,125 +1,24 @@
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
 
-import physicsguard.core.task_local_revision as task_local_revision_runtime
 from physicsguard.cli import main as physicsguard_main
 from physicsguard.core.task_local_revision import (
     evaluate_hypothesis_observation,
     freeze_hypothesis_plan,
     rank_observation_candidates,
 )
-from physicsguard.schema.task_local_revision import (
-    DiagnosticObservationSpec,
-    HypothesisPlanSpec,
-    NativeDepthReceiptSpec,
-    fingerprint_native_depth_receipt,
-)
+from physicsguard.schema.task_local_revision import DiagnosticObservationSpec, HypothesisPlanSpec
 
 
-ROOT = Path(__file__).resolve().parents[1]
-FAMILIES = (
-    "execution_depth",
-    "mapping",
-    "residual",
-    "uncertainty",
-    "diagnosability",
-    "predictive_rollout",
-)
-COVERAGE_FINGERPRINT = hashlib.sha256(b"coverage-universe-v1").hexdigest()
-
-
-def _blueprint(label: str = "base") -> dict:
-    return {
-        "blueprint_id": f"blueprint:pump-loop:{label}",
-        "target_system_id": "pump-loop",
-        "subject_revision": "target-r1",
-        "blueprint_fingerprint": hashlib.sha256(
-            f"blueprint:{label}".encode()
-        ).hexdigest(),
-        "blueprint_review_fingerprint": hashlib.sha256(
-            f"blueprint-review:{label}".encode()
-        ).hexdigest(),
-        "scope": "whole",
-        "affected_slice_fingerprint": None,
-        "affected_element_ids": [],
-        "deepest_licensed_layer": "resource_oracle",
-        "first_gap_id": None,
-        "review_status": "pass",
-    }
-
-
-def _write_model(path: Path, content: str, *, model_id: str = "pump-loop") -> dict[str, str]:
-    path.write_text(content, encoding="utf-8")
-    return {
-        "model_id": model_id,
-        "model_version": "v1" if "base" in content else "v2",
-        "path": str(path),
-        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-    }
-
-
-def _coverage() -> dict:
-    return {
-        "coverage_universe_id": "coverage:pump-loop:v1",
-        "coverage_universe_fingerprint": COVERAGE_FINGERPRINT,
-        "owner_id": "physicsguard.project-evidence-registry",
-        "discovery_evidence_id": "evidence:coverage-discovery:v1",
-        "member_ids": ["speed", "balance", "timing"],
-    }
-
-
-def _gap(
-    gap_id: str,
-    family: str,
-    *,
-    resolution_class: str = "model_edit",
-    external_input_id: str | None = None,
-) -> dict:
-    return {
-        "gap_id": gap_id,
-        "family": family,
-        "resolution_class": resolution_class,
-        "next_action": f"resolve:{gap_id}",
-        "external_input_id": external_input_id,
-    }
-
-
-def _native_depth(
-    model: dict[str, str],
-    *,
-    iteration: int,
-    gaps: list[dict] | None = None,
-    task_id: str = "task-1",
-    plan_id: str = "diagnosis-1",
-    blueprint: dict | None = None,
-) -> dict:
-    gaps = list(gaps or [])
-    payload = {
-        "artifact_kind": "physicsguard_task_native_depth_receipt",
-        "receipt_version": "1.0",
-        "producer_id": "physicsguard.native-task-depth",
-        "status": "blocked" if gaps else "pass",
-        "task_id": task_id,
-        "plan_id": plan_id,
-        "iteration": iteration,
-        "model_sha256": model["sha256"],
-        "coverage_universe_fingerprint": COVERAGE_FINGERPRINT,
-        "blueprint": dict(blueprint or _blueprint()),
-        "source_receipt_ids": {family: f"receipt:{family}:{iteration}" for family in FAMILIES},
-        "source_receipt_fingerprints": {
-            family: hashlib.sha256(f"{family}:{iteration}".encode()).hexdigest()
-            for family in FAMILIES
-        },
-        "gaps": gaps,
-    }
-    payload["receipt_fingerprint"] = fingerprint_native_depth_receipt(payload)
-    return payload
+def _write_model(tmp_path: Path) -> dict[str, str]:
+    path = tmp_path / "pump_loop.yaml"
+    path.write_text("system_name: pump_loop\n", encoding="utf-8")
+    return {"model_id": "pump-loop", "model_version": "v1", "path": str(path)}
 
 
 def _expectations(prefix: str, *, signal_operator: str) -> list[dict]:
@@ -140,34 +39,16 @@ def _expectations(prefix: str, *, signal_operator: str) -> list[dict]:
             "upper": 0.1,
             "weakening_condition": "balance residual leaves the range",
         },
-        {
-            "expectation_id": f"{prefix}-timing",
-            "kind": "timing",
-            "target_id": "speed_change",
-            "compare_target_id": "temperature_change",
-            "operator": "after",
-            "tolerance": 0.0,
-            "weakening_condition": "speed does not change after temperature",
-        },
     ]
 
 
-def _plan_data(
-    model: dict[str, str],
-    *,
-    iteration: int = 0,
-    gaps: list[dict] | None = None,
-    predecessor: dict | None = None,
-) -> dict:
-    blueprint = _blueprint()
+def _plan_data(model: dict[str, str]) -> dict:
     return {
         "plan_id": "diagnosis-1",
         "task_id": "task-1",
         "purpose": "localize the bounded pump-loop mismatch",
         "non_trivial": True,
         "model": model,
-        "coverage": _coverage(),
-        "blueprint": blueprint,
         "assumptions": [],
         "unknowns": ["true physical cause is not yet known"],
         "prediction_sequence": 4,
@@ -197,141 +78,48 @@ def _plan_data(
                 "predicted_outcomes": {"H1": "up", "H2": "down"},
             },
         ],
-        "selection_weights": {
-            "residual_relevance": 0.5,
-            "hypothesis_discrimination": 0.5,
-        },
-        "iteration": iteration,
+        "iteration": 0,
         "max_iterations": 4,
-        "predecessor": predecessor,
-        "native_depth_receipt": _native_depth(
-            model, iteration=iteration, gaps=gaps, blueprint=blueprint
-        ),
     }
 
 
-def _plan(model: dict[str, str], *, gaps: list[dict] | None = None) -> HypothesisPlanSpec:
-    return HypothesisPlanSpec.model_validate(_plan_data(model, gaps=gaps))
+def _plan(tmp_path: Path) -> HypothesisPlanSpec:
+    return HypothesisPlanSpec.model_validate(_plan_data(_write_model(tmp_path)))
 
 
-def _evidence(evidence_id: str, group: str, *, evidence_kind: str = "test") -> dict:
-    return {
-        "evidence_id": evidence_id,
-        "evidence_fingerprint": hashlib.sha256(evidence_id.encode()).hexdigest(),
-        "producer_id": f"producer:{evidence_id}",
-        "source_ref": f"test:{evidence_id}",
-        "independence_group": group,
-        "evidence_kind": evidence_kind,
+def _observation(**overrides) -> DiagnosticObservationSpec:
+    data = {
+        "observation_id": "obs-1",
+        "task_id": "task-1",
+        "plan_id": "diagnosis-1",
+        "selected_candidate_id": "discriminating",
+        "observation_sequence": 5,
+        "evidence": {
+            "evidence_id": "evidence:speed-export",
+            "producer_id": "test-bench export",
+            "source_ref": "run-17.csv",
+            "independence_group": "run-17",
+            "evidence_kind": "test",
+        },
+        "signals": {"speed": {"trend": "increase"}},
+        "residuals": {"balance": 0.0},
+        "timings": {},
+        "external_input_ids": [],
     }
+    data.update(overrides)
+    return DiagnosticObservationSpec.model_validate(data)
 
 
-def _observation(
-    plan: HypothesisPlanSpec,
-    tmp_path: Path,
-    *,
-    sequence: int = 5,
-    signals: dict | None = None,
-    residuals: dict | None = None,
-    timings: dict | None = None,
-    external_input_ids: list[str] | None = None,
-    evidence_kind: str = "test",
-) -> DiagnosticObservationSpec:
-    frozen = freeze_hypothesis_plan(plan, base_dir=tmp_path)
-    return DiagnosticObservationSpec.model_validate(
-        {
-            "observation_id": "obs-1",
-            "task_id": plan.task_id,
-            "plan_id": plan.plan_id,
-            "frozen_plan_fingerprint": frozen["plan_fingerprint"],
-            "blueprint_fingerprint": plan.blueprint.blueprint_fingerprint,
-            "affected_slice_fingerprint": plan.blueprint.affected_slice_fingerprint,
-            "selected_candidate_id": "discriminating",
-            "observation_sequence": sequence,
-            "evidence": _evidence(
-                "observation-1",
-                "external-testbench-run-1",
-                evidence_kind=evidence_kind,
-            ),
-            "signals": (
-                {"speed": {"value": 10.0, "trend": "increase"}}
-                if signals is None
-                else signals
-            ),
-            "residuals": {"balance": 0.0} if residuals is None else residuals,
-            "timings": (
-                {"temperature_change": 1.0, "speed_change": 2.0}
-                if timings is None
-                else timings
-            ),
-            "external_input_ids": list(external_input_ids or []),
-        }
-    )
-
-
-def test_old_optional_plan_shape_is_rejected(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    retired = {
-        "plan_id": "legacy",
-        "non_trivial": True,
-        "model": model,
-        "prediction_sequence": 1,
-        "hypotheses": [],
-        "observation_candidates": [],
-    }
-    with pytest.raises(ValidationError):
-        HypothesisPlanSpec.model_validate(retired)
-
-
-def test_nontrivial_plan_requires_purpose_and_explicit_declarations(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    data = _plan_data(model)
-    data.pop("purpose")
-    with pytest.raises(ValidationError, match="purpose"):
-        HypothesisPlanSpec.model_validate(data)
-
-
-def test_native_depth_receipt_requires_all_six_families_and_current_fingerprint(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    missing_family = _native_depth(model, iteration=0)
-    missing_family["source_receipt_ids"].pop("mapping")
-    missing_family["receipt_fingerprint"] = fingerprint_native_depth_receipt(missing_family)
-    with pytest.raises(ValidationError, match="six native gap families"):
-        NativeDepthReceiptSpec.model_validate(missing_family)
-
-    stale = _native_depth(model, iteration=0)
-    stale["source_receipt_ids"]["mapping"] = "receipt:mapping:changed"
-    with pytest.raises(ValidationError, match="fingerprint"):
-        NativeDepthReceiptSpec.model_validate(stale)
-
-
-def test_plan_rejects_stale_blueprint_depth_or_first_gap_binding(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    data = _plan_data(model)
-    data["blueprint"]["deepest_licensed_layer"] = "native_model_code_test"
-    with pytest.raises(ValidationError, match="blueprint identity or depth mismatch"):
-        HypothesisPlanSpec.model_validate(data)
-
-    data = _plan_data(model)
-    data["blueprint"].update(
-        {
-            "review_status": "blocked",
-            "first_gap_id": "gap:resource-oracle",
-        }
-    )
-    with pytest.raises(ValidationError, match="blueprint identity or depth mismatch"):
-        HypothesisPlanSpec.model_validate(data)
-
-
-def test_later_iteration_requires_exact_predecessor(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "candidate.json", "candidate model")
-    data = _plan_data(model, iteration=1, predecessor=None)
-    with pytest.raises(ValidationError, match="predecessor"):
-        HypothesisPlanSpec.model_validate(data)
+def test_removed_receipt_fields_are_rejected(tmp_path: Path) -> None:
+    for key in ("native_depth_receipt", "blueprint", "coverage", "predecessor"):
+        data = _plan_data(_write_model(tmp_path))
+        data[key] = None
+        with pytest.raises(ValidationError):
+            HypothesisPlanSpec.model_validate(data)
 
 
 def test_nontrivial_plan_requires_competing_hypotheses(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    data = _plan_data(model)
+    data = _plan_data(_write_model(tmp_path))
     data["hypotheses"] = data["hypotheses"][:1]
     for candidate in data["observation_candidates"]:
         candidate["predicted_outcomes"] = {"H1": "up"}
@@ -339,134 +127,100 @@ def test_nontrivial_plan_requires_competing_hypotheses(tmp_path: Path) -> None:
         HypothesisPlanSpec.model_validate(data)
 
 
+def test_one_expectation_is_enough_but_none_is_rejected(tmp_path: Path) -> None:
+    data = _plan_data(_write_model(tmp_path))
+    data["hypotheses"][0]["expectations"] = data["hypotheses"][0]["expectations"][:1]
+    assert HypothesisPlanSpec.model_validate(data).hypotheses[0].expectations
+    data["hypotheses"][0]["expectations"] = []
+    with pytest.raises(ValidationError, match="at least one expectation"):
+        HypothesisPlanSpec.model_validate(data)
+
+
 def test_discriminating_observation_breaks_residual_relevance_tie(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan = _plan(model)
-    ranked = rank_observation_candidates(plan)
+    ranked = rank_observation_candidates(_plan(tmp_path))
     assert ranked[0]["candidate_id"] == "discriminating"
     assert ranked[0]["hypothesis_discrimination"] == 1.0
 
 
-def test_plan_receipt_exposes_native_gaps_and_never_closes_task(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    gap = _gap("mapping:unknown-speed", "mapping")
-    receipt = freeze_hypothesis_plan(_plan(model, gaps=[gap]), base_dir=tmp_path)
-    assert receipt["open_gap_ids"] == ["mapping:unknown-speed"]
-    assert receipt["next_iteration_required"]
-    assert receipt["terminal_reason"] == "continue_iteration"
+def test_plan_is_blocked_until_the_model_file_exists(tmp_path: Path) -> None:
+    data = _plan_data(_write_model(tmp_path))
+    data["model"]["path"] = str(tmp_path / "missing.yaml")
+    frozen = freeze_hypothesis_plan(HypothesisPlanSpec.model_validate(data), base_dir=tmp_path)
+    assert frozen["status"] == "blocked"
+    assert frozen["model"]["status"] == "missing"
+    passing = freeze_hypothesis_plan(_plan(tmp_path), base_dir=tmp_path)
+    assert passing["status"] == "pass"
+    assert "fingerprint" not in json.dumps(passing)
 
 
 def test_prediction_must_precede_observation(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan = _plan(model)
     with pytest.raises(ValueError, match="strictly later"):
+        evaluate_hypothesis_observation(_plan(tmp_path), _observation(observation_sequence=4), base_dir=tmp_path)
+
+
+def test_observation_must_name_a_declared_candidate(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="declared observation candidate"):
         evaluate_hypothesis_observation(
-            plan, _observation(plan, tmp_path, sequence=4), base_dir=tmp_path
+            _plan(tmp_path), _observation(selected_candidate_id="unknown"), base_dir=tmp_path
         )
 
 
-def test_observation_must_bind_current_frozen_plan(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan = _plan(model)
-    observation = _observation(plan, tmp_path).model_copy(
-        update={"frozen_plan_fingerprint": "0" * 64}
-    )
-    with pytest.raises(ValueError, match="frozen-plan"):
-        evaluate_hypothesis_observation(plan, observation, base_dir=tmp_path)
-
-
-def test_observation_from_stale_blueprint_cannot_update_current_task(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan = _plan(model)
-    observation = _observation(plan, tmp_path).model_copy(
-        update={"blueprint_fingerprint": "0" * 64}
-    )
-    with pytest.raises(ValueError, match="blueprint fingerprint is stale"):
-        evaluate_hypothesis_observation(plan, observation, base_dir=tmp_path)
-
-
 def test_observation_weakens_one_hypothesis_and_preserves_another(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan = _plan(model)
-    receipt = evaluate_hypothesis_observation(
-        plan, _observation(plan, tmp_path), base_dir=tmp_path
-    )
-    results = {item["hypothesis_id"]: item for item in receipt["hypothesis_results"]}
-    assert results["H1"]["disposition"] == "supported"
-    assert results["H2"]["disposition"] == "weakened"
-    assert not receipt["physical_cause_licensed"]
+    result = evaluate_hypothesis_observation(_plan(tmp_path), _observation(), base_dir=tmp_path)
+    dispositions = {row["hypothesis_id"]: row["disposition"] for row in result["hypothesis_results"]}
+    assert dispositions == {"H1": "supported", "H2": "weakened"}
+    assert result["terminal_reason"] == "continue_iteration"
+    assert not result["physical_cause_licensed"]
 
 
 def test_missing_target_remains_undetermined_and_open(tmp_path: Path) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan = _plan(model)
-    receipt = evaluate_hypothesis_observation(
-        plan,
-        _observation(plan, tmp_path, signals={}, residuals={}, timings={}),
-        base_dir=tmp_path,
+    result = evaluate_hypothesis_observation(
+        _plan(tmp_path), _observation(signals={}, residuals={}), base_dir=tmp_path
     )
-    assert all(row["disposition"] == "undetermined" for row in receipt["hypothesis_results"])
-    assert any(gap.startswith("observation_missing:") for gap in receipt["open_gap_ids"])
+    assert all(row["disposition"] == "undetermined" for row in result["hypothesis_results"])
+    assert any(gap.startswith("observation_missing:") for gap in result["open_gap_ids"])
 
 
-@pytest.mark.parametrize(
-    "evidence_kind",
-    ["runtime", "test", "replay", "manual", "production"],
-)
-def test_all_hypotheses_contradicted_creates_model_miss(
-    tmp_path: Path,
-    evidence_kind: str,
-) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan = _plan(model)
-    receipt = evaluate_hypothesis_observation(
-        plan,
-        _observation(
-            plan,
-            tmp_path,
-            signals={"speed": {"value": 0.0, "trend": "stable"}},
-            residuals={"balance": 2.0},
-            timings={"temperature_change": 2.0, "speed_change": 1.0},
-            evidence_kind=evidence_kind,
-        ),
-        base_dir=tmp_path,
+@pytest.mark.parametrize("evidence_kind", ["runtime", "test", "dataset"])
+def test_all_hypotheses_contradicted_creates_model_miss(tmp_path: Path, evidence_kind: str) -> None:
+    observation = _observation(
+        signals={"speed": {"trend": "stable"}},
+        residuals={"balance": 2.0},
+        evidence={
+            "evidence_id": "evidence:unexpected",
+            "producer_id": "test-bench export",
+            "source_ref": "run-18.csv",
+            "independence_group": "run-18",
+            "evidence_kind": evidence_kind,
+        },
     )
-    assert receipt["all_hypotheses_contradicted"]
-    assert receipt["terminal_reason"] == "model_miss"
-    assert receipt["model_miss_gap_id"] in receipt["open_gap_ids"]
-    assert receipt["blueprint_revision_required"]
-    assert receipt["invalidated_broad_claim_blueprint_fingerprints"] == [
-        plan.blueprint.blueprint_fingerprint
-    ]
-    assert receipt["model_miss_evidence_kind"] == evidence_kind
-    assert "revise_blueprint_or_native_bindings_from_model_miss" in receipt[
-        "required_next_actions"
-    ]
-    assert "rebind_native_depth_to_new_blueprint_revision" in receipt[
-        "required_next_actions"
-    ]
-    assert not receipt["physical_cause_licensed"]
+    result = evaluate_hypothesis_observation(_plan(tmp_path), observation, base_dir=tmp_path)
+    assert result["all_hypotheses_contradicted"]
+    assert result["terminal_reason"] == "model_miss"
+    assert result["model_miss_gap_id"] in result["open_gap_ids"]
+    assert result["model_miss_evidence_kind"] == evidence_kind
+    assert "revise_hypothesis_universe_from_unexpected_observation" in result["required_next_actions"]
 
 
-def test_task_model_plan_cli_emits_strict_receipt(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
-) -> None:
-    model = _write_model(tmp_path / "base.json", "base model")
-    plan_path = tmp_path / "plan.json"
-    plan_path.write_text(json.dumps(_plan_data(model)), encoding="utf-8")
-    exit_code = physicsguard_main(["task-model", "plan", str(plan_path)])
-    output = json.loads(capsys.readouterr().out)
-    assert exit_code == 0
-    assert output["status"] == "pass"
-    assert output["coverage"]["coverage_universe_fingerprint"] == COVERAGE_FINGERPRINT
-    assert output["ranked_observation_candidates"][0]["candidate_id"] == "discriminating"
-    assert output["terminal_reason"] == "continue_iteration"
+def test_external_input_is_reported_as_its_own_terminal_reason(tmp_path: Path) -> None:
+    result = evaluate_hypothesis_observation(
+        _plan(tmp_path), _observation(external_input_ids=["signal:pressure"]), base_dir=tmp_path
+    )
+    assert result["terminal_reason"] == "external_input_required"
+    assert result["external_input_ids"] == ["signal:pressure"]
 
 
-def test_task_local_revision_uses_the_canonical_package_runtime() -> None:
-    assert Path(task_local_revision_runtime.__file__).resolve() == (
-        ROOT / "src" / "physicsguard" / "core" / "task_local_revision.py"
-    ).resolve()
-    assert not (
-        ROOT / "skill" / "physicsguard-model-dataset-validation" / "runtime"
-    ).exists()
+def test_task_model_plan_and_observe_cli(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    import yaml
+
+    plan_path = tmp_path / "plan.yaml"
+    plan_path.write_text(yaml.safe_dump(_plan_data(_write_model(tmp_path))), encoding="utf-8")
+    observation_path = tmp_path / "observation.yaml"
+    observation_path.write_text(yaml.safe_dump(_observation().model_dump(mode="json")), encoding="utf-8")
+
+    assert physicsguard_main(["task-model", "plan", str(plan_path)]) == 0
+    plan_output = json.loads(capsys.readouterr().out)
+    assert plan_output["ranked_observation_candidates"][0]["candidate_id"] == "discriminating"
+    assert physicsguard_main(["task-model", "observe", str(plan_path), str(observation_path)]) == 0
+    observe_output = json.loads(capsys.readouterr().out)
+    assert observe_output["terminal_reason"] == "continue_iteration"

@@ -408,3 +408,15 @@
 - `python <本动作核验脚本> collect`：exit 0；2.789秒；869 tests collected in 2.11s。
 - `python <本动作核验脚本> map-check`：exit 0；0.5秒；check: 0 error(s), 8 warning(s), 0 info。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-45 以竞争假设和后续观测替代闭包收据并附模板
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> apply`：exit 0；0.9秒；task-local competing hypotheses and templates installed; ranking exact AST unchanged; retired receipt-only model removed。
+- `python <本动作核验脚本> exports-names-placeholder-scan`：exit 0；3.569秒；real placeholder CLI blocked/missing; best probe speed_trend; only negative retired-key assertion remains in active product。
+- `python <本动作核验脚本> collect`：exit 0；9.475秒；864 tests collected in 5.54s。
+- `python <本动作核验脚本> focused-tests`：exit 0；16.258秒；31 passed in 15.48s。
+- `python <本动作核验脚本> map-check`：exit 0；0.796秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> models`：exit 0；41.976秒；models: 8 passed, 0 failed。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 提交后完整检查：`python -m pytest -q`：exit 0；864 passed in 66.43s (0:01:06)；命令总耗时 67.278 秒。检查结束后仅补记本行，无业务源码变化。

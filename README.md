@@ -177,7 +177,7 @@ Each relation is low fidelity by design. The value is not that it replaces the t
 | File | Purpose |
 | --- | --- |
 | [`docs/model_understanding_preflight.md`](./docs/model_understanding_preflight.md) | visible symptom, subsystem boundary, units, assumptions, and stop condition |
-| [`docs/task_local_model_deepening.md`](./docs/task_local_model_deepening.md) | strict prediction, model-miss, native-gap, and candidate-receipt lifecycle |
+| [`docs/task_local_model_deepening.md`](./docs/task_local_model_deepening.md) | competing hypotheses, next-observation ranking, and model-miss detection |
 | [`docs/external_model_intake.md`](./docs/external_model_intake.md) | safe intake of external model facts without claiming parser support |
 | [`docs/hierarchical_audit_workflow.md`](./docs/hierarchical_audit_workflow.md) | hierarchy and residual audit route |
 | [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | concrete test-file manifests and binding contracts |

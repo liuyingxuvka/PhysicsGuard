@@ -62,7 +62,6 @@
         "tests/test_workflow_governance.py"
       ],
       "models": [
-        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
         ".flowguard/verification/owners/core/run_checks.py",
         ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
@@ -264,9 +263,7 @@
         "tests/test_signal_mapping_ledger.py",
         "tests/test_task_local_revision.py"
       ],
-      "models": [
-        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py"
-      ],
+      "models": [],
       "status": "confirmed",
       "fingerprint": "sha256:49092e52f099c5c7eefa2db34c6eb2b1a18245af8d71b24daccd333052ab6791"
     },
@@ -413,7 +410,6 @@
         "tests/test_yaml_loader.py"
       ],
       "models": [
-        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py",
         ".flowguard/verification/owners/core/run_checks.py",
         ".flowguard/verification/owners/evidence_mesh/run_checks.py",
         ".flowguard/verification/owners/model_dataset_validation/run_checks.py",
@@ -597,9 +593,7 @@
         "tests/test_portable_model_headers.py",
         "tests/test_task_local_revision.py"
       ],
-      "models": [
-        ".flowguard/verification/owners/task_local_model_deepening/run_checks.py"
-      ],
+      "models": [],
       "status": "confirmed",
       "fingerprint": "sha256:40795b95d1e900ad9b45ad9c94bd8f74a3407bc5f628c434ae83da6ae36ed340"
     },

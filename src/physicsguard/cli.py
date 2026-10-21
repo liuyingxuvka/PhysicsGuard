@@ -94,7 +94,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     task_model_parser = subparsers.add_parser(
         "task-model",
-        help="strict receipt-bound task-local hypothesis and candidate-model commands",
+        help="task-local hypothesis, interval-residual and diagnosability commands",
     )
     task_model_subparsers = task_model_parser.add_subparsers(
         dest="task_model_command",
@@ -102,7 +102,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     task_model_plan = task_model_subparsers.add_parser(
         "plan",
-        help="freeze purpose, coverage, assumptions, hypotheses, and native depth receipt",
+        help="freeze competing hypotheses and rank the next observation",
     )
     task_model_plan.add_argument("plan", type=Path, help="path to a HypothesisPlanSpec YAML")
     task_model_plan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
