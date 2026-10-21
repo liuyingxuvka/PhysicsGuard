@@ -87,7 +87,6 @@ example.
 | Decide what to export next | Targeted signal, parameter, unit, bound, map, or topology request | Missing data stays explicit |
 | Validate mapped data files | Test-file manifests, contracts, coverage checks, and model binding rows | File coverage is not physical correctness |
 | Compare model and dataset | Logical checks, relation checks, validation reports, and optional bounded calibration | Calibration is conservative and bounded |
-| Close project evidence claims | Evidence meshes and project closure reports | Claim-readiness proof, not physical correctness proof |
 | Build a candidate model | Interfaces, units, assumptions, block relations, examples, and validation order | Candidate models are new artifacts, not recovered commercial models |
 
 ## Quick Start
@@ -159,7 +158,7 @@ PhysicsGuard can use compact diagrams and tables to explain:
 - coarse-to-fine refinement paths;
 - candidate-model blueprints.
 
-Those visuals are explanation aids. Validation still comes from residual reports, explicit mappings, closure evidence, tests, and examples.
+Those visuals are explanation aids. Validation still comes from residual reports, explicit mappings, tests, and examples.
 
 ## When To Use It
 
@@ -180,7 +179,7 @@ Do not use it when:
 
 ## Library Coverage
 
-PhysicsGuard `v0.15.15` includes strict, receipt-driven task-local model revision loops and low-fidelity audit relations for:
+PhysicsGuard includes low-fidelity audit relations for:
 
 - controls, sensors, actuators, delays, saturation, maps, and PID-like steps;
 - drivetrain, vehicle, brake, wheel, gearbox, and road-load relations;
@@ -190,13 +189,6 @@ PhysicsGuard `v0.15.15` includes strict, receipt-driven task-local model revisio
 - fluid networks, pumps, valves, pressure drops, split/merge relations, and lumped volumes.
 
 Each relation is low fidelity by design. The value is not that it replaces the target model; the value is that it gives the AI a checkable physics boundary before it changes the target workflow.
-
-For a non-trivial task, the AI must freeze a purpose, independent coverage
-universe, assumptions, unknowns, hypotheses, and a target-owned native depth
-receipt before observing new evidence. Closure is derived from the native
-receipt's six gap families plus regression, independent holdout, and predictive
-receipts for the exact candidate. Self-reported understanding, rewritten gap
-lists, and a green regression alone cannot close the task.
 
 ## Documentation Map
 
@@ -213,14 +205,13 @@ lists, and a green regression alone cannot close the task.
 | [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | strong parent-child evidence mesh before broad claims |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption-card lifecycle |
 | [`docs/model_library.md`](./docs/model_library.md) | reusable low-fidelity model library |
-| [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger and evidence freshness |
 
 ## Repository Layout
 
 ```text
 src/physicsguard/       Core package
 examples/               Low-fidelity relation and conflict examples
-templates/              Project, closure, intake, and model templates
+templates/              Intake, preflight, test-file and model templates
 docs/                   Protocol and route documentation
 skill/                  agent skill material
 scripts/                Validation and release checks
@@ -308,7 +299,6 @@ Physical Model Blueprint：里面连着目标身份、独立清单、父子物�
 | 决定下一步导出什么 | 有针对性的 signal / parameter / unit / map 请求 | 缺失数据保持显式 |
 | 校验 mapped data files | manifest、contract、coverage、model binding | 文件覆盖不等于物理正确 |
 | 对比模型和数据 | logical check、relation check、validation report、bounded calibration | calibration 是保守有界的 |
-| 闭合项目证据 claim | evidence mesh 和 project closure report | claim-readiness 证明，不是物理正确证明 |
 | 生成候选模型 | interface、unit、assumption、block relation、example、validation order | 候选模型是新工件，不是恢复商业模型 |
 
 ## 快速开始
@@ -380,7 +370,7 @@ PhysicsGuard 可以用紧凑图表解释：
 - coarse-to-fine refinement path；
 - candidate-model blueprint。
 
-这些图是解释辅助。真正验证仍然来自 residual report、显式 mapping、closure evidence、tests 和 examples。
+这些图是解释辅助。真正验证仍然来自 residual report、显式 mapping、tests 和 examples。
 
 ## 什么时候用
 
@@ -401,7 +391,7 @@ PhysicsGuard 可以用紧凑图表解释：
 
 ## 模块覆盖
 
-PhysicsGuard `v0.15.15` 包含严格、由原生回执驱动的任务局部模型迭代和这些低保真审计关系：
+PhysicsGuard 包含这些低保真审计关系：
 
 - controls、sensors、actuators、delays、saturation、maps、PID-like steps；
 - drivetrain、vehicle、brake、wheel、gearbox、road-load；
@@ -426,14 +416,13 @@ PhysicsGuard `v0.15.15` 包含严格、由原生回执驱动的任务局部模�
 | [`docs/evidence_mesh.md`](./docs/evidence_mesh.md) | broad claim 前的父子证据网格 |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption card 生命周期 |
 | [`docs/model_library.md`](./docs/model_library.md) | 可复用低保真模型库 |
-| [`docs/model_code_traceability.md`](./docs/model_code_traceability.md) | model-to-code ledger 和 evidence freshness |
 
 ## 仓库结构
 
 ```text
 src/physicsguard/       核心包
 examples/               低保真关系和 conflict 示例
-templates/              项目、closure、intake 和 model 模板
+templates/              intake、preflight、test-file 和 model 模板
 docs/                   协议和路线文档
 skill/                  agent skill material
 scripts/                验证和发布检查

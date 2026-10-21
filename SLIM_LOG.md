@@ -337,3 +337,11 @@
 - `python <本动作核验脚本> contract-regressions`：exit 0；15.872秒；23 passed in 13.65s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
 - 适配：参考称逐字相同，实际metadata辅助函数仅参数注解dict与Mapping不同、函数体完全相同；外部首次全AST断言在写源码前停止，复核兼容后按相同目的复用Mapping owner，保留原始差异证明，其他两函数完整AST相同。
+
+### PG-38 清理README退役流程与重复账本文档
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> readme-parser-references`：exit 1；0.243秒；AssertionError: README.md:15:| `v0.15.15` | Python 3.11+ | `physicsguard` | MIT |。
+- `python <本动作核验脚本> readme-parser-rows`：exit 0；0.326秒；readme commands ok：24条只做真实parser校验，未冒称全部执行；版本仅当前三处/版本表/绑定示例，历史日志单列。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：外部核验首次误要求版本表含badge字面量；实际为两条标准版本表行，改按精确行核验，产品内容未为核验改动；原始失败日志保留。
