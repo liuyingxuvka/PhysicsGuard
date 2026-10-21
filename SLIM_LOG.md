@@ -270,3 +270,12 @@
 - `python <本动作核验脚本> installer-tests`：exit 0；2.621秒；8 passed in 0.20s。
 - `python <本动作核验脚本> collect`：exit 0；2.794秒；1021 tests collected in 0.99s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-30 按需加载观测序列并取消急切导入
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> import-boundary-exports`：exit 0；3.222秒；exports ok；hierarchy导入无蓝图/FMI/task revision；两个顶层懒加载API未改。
+- `python <本动作核验脚本> map-check`：exit 0；0.552秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> focused-tests`：exit 0；7.128秒；32 passed in 4.55s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 提交后完整检查：`python -m pytest -q`：exit 0；1021 passed in 113.70s (0:01:53)；命令总耗时 116.276 秒。检查结束后仅补记本行，无业务源码变化。

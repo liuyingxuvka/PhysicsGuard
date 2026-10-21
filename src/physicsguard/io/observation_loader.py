@@ -8,7 +8,6 @@ from pydantic import ValidationError
 import yaml
 
 from physicsguard.schema.observation_spec import ObservedValuesSpec
-from physicsguard.schema.validation_depth import ObservedSeriesSpec
 
 
 def load_observed_values(path: str | Path) -> ObservedValuesSpec:
@@ -35,6 +34,7 @@ def load_observed_values(path: str | Path) -> ObservedValuesSpec:
 
 def load_observed_series(path: str | Path) -> ObservedSeriesSpec:
     """Load a bounded pointwise observation series for validation-depth checks."""
+    from physicsguard.schema.validation_depth import ObservedSeriesSpec
 
     yaml_path = Path(path)
     try:
