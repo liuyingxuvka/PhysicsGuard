@@ -416,18 +416,6 @@ def build_parser() -> argparse.ArgumentParser:
     blueprint_selector.add_argument("--reverse")
     blueprint_query.add_argument("--pretty", action="store_true")
 
-    self_dna_parser = subparsers.add_parser(
-        "self-dna",
-        help="audit the FlowGuard-owned repository software DNA (repository-native only)",
-    )
-    self_dna_subparsers = self_dna_parser.add_subparsers(
-        dest="self_dna_command", required=True
-    )
-    self_dna_check = self_dna_subparsers.add_parser(
-        "check", help="audit the repository self-DNA in its native directory"
-    )
-    self_dna_check.add_argument("--root", type=Path, default=Path("."))
-    self_dna_check.add_argument("--compact", action="store_true")
     return parser
 
 
@@ -1040,12 +1028,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                     selector_id=selector_id,
                     pretty=args.pretty,
                 )
-        if args.command == "self-dna":
-            from physicsguard.self_dna import check as self_dna_check_run
-
-            payload, code = self_dna_check_run(args.root, compact=args.compact)
-            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
-            return code
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 1
