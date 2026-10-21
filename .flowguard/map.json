@@ -697,28 +697,6 @@
       "fingerprint": "sha256:67ece5c8a8bd903575a3831fe629706789e45e8255187be2cd0fc04409eaff73"
     },
     {
-      "id": "consumer_scripts",
-      "layer": "",
-      "summary": "Maintained skill consumer helper entrypoints",
-      "responsibilities": [
-        "Delegate helper operations to existing PhysicsGuard native owners",
-        "Parse complete observed native audits before bounded logging; retain native failures and gaps over caller metadata without an unused reference solve"
-      ],
-      "files": [
-        "skill/*/scripts/*.py"
-      ],
-      "entrypoints": [],
-      "state": [],
-      "side_effects": [],
-      "depends_on": [
-        "interface"
-      ],
-      "tests": [],
-      "models": [],
-      "status": "confirmed",
-      "fingerprint": "sha256:9f1830b29fc85401b79b02fcf097abc04c814174f7ef443e9902d1e4ad5462ca"
-    },
-    {
       "id": "example_tools",
       "layer": "",
       "summary": "Explicit external-tool example helper scripts",

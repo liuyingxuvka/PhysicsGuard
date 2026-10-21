@@ -216,3 +216,12 @@
 - `python <本动作核验脚本> focused-tests`：exit 0；35.234秒；35 passed in 32.08s。
 - `python <本动作核验脚本> collect`：exit 0；3.531秒；1030 tests collected in 1.26s。
 - 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+
+### PG-23 改用独立于工作目录的原生模块命令
+
+- 按本动作参考目的完成；验证命令和完整输出保存在仓库外同编号证据（机器路径不写入产品记录）。
+- `python <本动作核验脚本> references-plan-directory`：exit 0；0.118秒；现行技能引用/跟踪脚本/安装内容均无wrapper；安装计划passed；既存忽略缓存单列保留。
+- `python <本动作核验脚本> map-check`：exit 0；0.618秒；check: 0 error(s), 8 warning(s), 0 info。
+- `python <本动作核验脚本> installer-tests`：exit 0；3.2秒；15 passed in 0.81s。
+- 适配：XR独立复核仅依赖隔离baseline工具链，root授权提前并行；PG63后暂停复核，不改变动作目的与验收。
+- 适配：既存10月18日忽略缓存使原始ls仍exit0；跟踪技能脚本、引用及安装文件均已无wrapper，外部单列原始目录结果；遵守不清非本轮文件规则保留缓存。

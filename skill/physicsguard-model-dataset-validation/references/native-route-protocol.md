@@ -80,7 +80,7 @@ partial, stale, or review-required contracts.
 2. Run validation once; this report already includes `depth_receipt`:
 
    ```powershell
-   python scripts/run_physicsguard.py validation run PLAN.yaml --pretty
+   python -m physicsguard.cli validation run PLAN.yaml --pretty
    ```
 
 3. Inspect direct no-fit residuals, physical envelope findings,
