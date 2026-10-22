@@ -24,6 +24,8 @@
 - The four self-models are FlowGuard contract models with code and test anchors, known-bad variants and replay on the
   real code; `flowguard release` passes with FlowGuard 0.70.6 and the new FlowGuard.
 - Cross-repo pass: XR-04; skipped none. Details in the cross-repo action list.
+- `hierarchy evaluate` with a partial snapshot also refuses residuals whose unobserved variables multiply each other or sit in a flat range check, instead of passing them from initial guesses.
+- File comparisons in validation and in the skill installer compare bytes, so a rewrite with the same size and time stamp is detected.
 
 ## v0.15.15 - 2026-10-18
 
