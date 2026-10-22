@@ -32,6 +32,8 @@ the true physical fault.
 
 It does not parse commercial solver formats, reverse engineer proprietary models, replace the original solver, or claim high-fidelity equivalence. The original engineering model remains the source of truth.
 
+One reading is not adequate coverage for a time-varying parameter. Pointwise evaluation is not prediction: prediction needs state propagation and an exact, disjoint future holdout. Keep diagnostic hypotheses and revisions task-local; do not change PhysicsGuard thresholds, code, library defaults or installed skills. Use official, user-provided or documented tool interfaces, and stop at the audit when an interface is unavailable.
+
 ## The Problem
 
 Large simulation models often fail in ways that are easy for an AI agent to misread:
@@ -224,6 +226,8 @@ PhysicsGuard 是一个用于 AI 辅助物理仿真调试的 Python 工具包和 
 基于这个图，PhysicsGuard 可以代入 observed / user-mapped values，排序可疑 block，暴露假设，推荐下一步该检查的信号或参数，并产出一个独立候选模型的 blueprint。
 
 它不解析商业 solver 格式，不逆向专有模型，不替代原始 solver，也不声称高保真等价。原始工程模型仍然是事实来源。
+
+时变参数不能用一个值算作充分覆盖。逐点评估不等于预测，预测需要状态传播及精确、互不重叠的未来留出检验。诊断假设和修订只保存在当前任务中，不修改 PhysicsGuard 阈值、代码、库默认值或已安装技能。外部工具只使用官方、用户提供或有文档的接口；没有可用接口时止于审计。
 
 ## 为什么需要它
 

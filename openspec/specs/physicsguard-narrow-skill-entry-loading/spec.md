@@ -31,3 +31,18 @@ The installer SHALL replace the installed `physicsguard` copy and remove every d
 #### Scenario: Reinstall over the old multi-skill layout
 - **WHEN** `python scripts/install_physicsguard_skills.py --target <skills directory>` runs where old `physicsguard-*` directories exist
 - **THEN** only `physicsguard` SHALL remain of them and `--check` SHALL print `installed skills are current`
+
+### Requirement: AI debugging preserves four hard boundaries
+The selected AI-debugging route SHALL reject one-value coverage of a time-varying parameter, distinguish pointwise evaluation from state-propagating prediction with an exact disjoint future holdout, keep episode hypotheses and revisions task-local without changing PhysicsGuard thresholds/code/library defaults/installed skills, and use only official, user-provided or documented external-tool interfaces.
+
+#### Scenario: The episode proposes changing the audit tool itself
+- **WHEN** a diagnosis proposes changing PhysicsGuard thresholds, Guard code, reusable defaults or installed skills
+- **THEN** the route SHALL keep that proposal outside the diagnostic episode and retain task-local revisions instead
+
+#### Scenario: The external interface is unavailable
+- **WHEN** no official, user-provided or documented tool interface is available
+- **THEN** the route SHALL stop at the PhysicsGuard audit and name the missing interface
+
+#### Scenario: Pointwise or one-value evidence is offered as deep prediction
+- **WHEN** one value covers a time-varying parameter or a pointwise evaluation is presented as prediction
+- **THEN** the route SHALL retain the coverage gap and require state propagation plus an exact disjoint future holdout for a prediction claim
