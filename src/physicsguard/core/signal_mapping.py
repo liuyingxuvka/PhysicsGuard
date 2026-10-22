@@ -264,7 +264,7 @@ def _mapping_issue_codes(expected_unit: str, observed_unit: str, observed_value:
         issues.append("missing_unit")
     if expected_unit and observed_unit and expected_unit != observed_unit and observed_value.conversion_factor is None:
         issues.append("missing_conversion")
-    if observed_value.stale_when:
+    if _label(observed_value.mapping_status) == "stale":
         issues.append("stale_mapping")
     return _dedupe(issues)
 

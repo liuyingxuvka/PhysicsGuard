@@ -82,7 +82,7 @@ Diagrams explain the audit; they are not validation evidence. Claims come only f
    python -m physicsguard.cli intake review INTAKE.yaml
    ```
 
-   AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards must be labeled as lower-confidence evidence. Intake metadata records evidence only; it does not convert or mutate observed values.
+   AI may propose mappings, but uncertain mappings must be explicit. For new observed snapshots, prefer per-variable fields such as `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_note`, `mapped_at`, and `stale_when`; older metadata or Assumption Cards must be labeled as lower-confidence evidence. Intake metadata records evidence only; it does not convert or mutate observed values. `stale_when` records when a mapping needs reconfirmation; when a listed condition occurs, set `mapping_status` to `stale`.
 8. Prefer direct observed evaluation:
 
    ```powershell

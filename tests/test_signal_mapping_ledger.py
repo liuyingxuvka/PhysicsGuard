@@ -31,7 +31,7 @@ def _mapped_observation_file(tmp_path: Path) -> Path:
         {
             "external_signal": "simout.q_rad_per_s",
             "mapping_confidence": "low",
-            "mapping_status": "review_required",
+            "mapping_status": "stale",
             "review_required": True,
             "stale_when": ["source model was regenerated after this mapping"],
         }
@@ -173,3 +173,27 @@ def test_signal_mapping_ledger_review_ignores_a_retired_fingerprint(tmp_path: Pa
     review = physicsguard.review_signal_mapping_ledger(path)
     assert review.status == "fail"
     assert [finding.type for finding in review.findings] == ["missing_unit"]
+
+
+def test_stale_when_is_a_condition_until_mapping_status_is_stale(tmp_path: Path) -> None:
+    spec = load_hierarchical_audit_spec(OBSERVED / "pitch_feedback_level_0.yaml")
+    payload = yaml.safe_load((OBSERVED / "pitch_feedback_observed_clean.yaml").read_text(encoding="utf-8"))
+    payload["variables"]["controller_q_gain.x"].update({
+        "mapping_confidence": "high", "stale_when": ["controller retuned"],
+    })
+    path = tmp_path / "stale_condition.yaml"
+    path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+    observed = load_observed_values(path)
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+    row = next(item for item in report.signal_mapping_ledger if item.physics_variable == "controller_q_gain.x")
+    assert report.audit_pass is True
+    assert row.stale_when == ("controller retuned",)
+    assert row.issue_codes == ()
+    assert "signal_mapping_review" not in {item.followup_id for item in report.bug_family_followups}
+    for status in ("stale", "StAlE"):
+        payload["variables"]["controller_q_gain.x"]["mapping_status"] = status
+        path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+        report = HierarchicalAuditRunner(spec).evaluate_observed(load_observed_values(path))
+        row = next(item for item in report.signal_mapping_ledger if item.physics_variable == "controller_q_gain.x")
+        assert row.issue_codes == ("stale_mapping",)
+        assert "signal_mapping_review" in {item.followup_id for item in report.bug_family_followups}

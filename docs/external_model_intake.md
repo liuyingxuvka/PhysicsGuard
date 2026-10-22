@@ -17,7 +17,7 @@ python -m physicsguard.cli intake review templates/external_model_intake.yaml --
 - `conversion_note`: how unit handling was reviewed.
 - `mapping_confidence`: `high`, `medium`, `low`, or a review-oriented value.
 - `review_required`: explicit boolean review gate.
-- `stale_when`: conditions that make this mapping evidence stale.
+- `stale_when`: conditions that make this mapping evidence stale. `stale_when` records when a mapping needs reconfirmation; when a listed condition occurs, set `mapping_status` to `stale`.
 
 ## Claim Boundary
 

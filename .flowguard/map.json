@@ -269,7 +269,8 @@
       "responsibilities": [
         "Keep source files, manifests and mapping evidence traceable",
         "Report an observed value without a source signal or unit as a mapping gap",
-        "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
+        "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope",
+        "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale"
       ],
       "files": [
         "src/physicsguard/core/contract_diff.py",
@@ -309,7 +310,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:6f163c37d5a75b36e948c1197202505ca32ac9b9d729b3a5f9f115773e58d731"
+      "fingerprint": "sha256:11fb7e87b073c172126940e38bd9984353415e58049d668fff72e1d6660a0246"
     },
     {
       "id": "schema",
