@@ -17,9 +17,16 @@ Pick one route, then load only its file.
 
 ## Rules for every route
 
+One model tree: the audit file is one tree. The root block is the whole plant, child blocks are
+subsystems, finer blocks refine coarser components (`refines`). Every node has five abilities:
+structure (components, connections, children), counterexamples (failing checked residuals with
+block and sign), known-bad variants that must fire (`fault_variants`), binding to the real plant
+(signals mapped with units into snapshots), and binding to test data (contracts and validation plans).
+
 Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
 
 - If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
+- For audit YAML, observed snapshots and model growth, load `references/model-format.md`.
 - Keep non-pass states and unknowns visible.
 - AI narration, inventories and template previews are not evidence; only PhysicsGuard command output is.
 - Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.

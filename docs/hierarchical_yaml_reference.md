@@ -1,6 +1,7 @@
 # Hierarchical YAML Reference
 
 Hierarchical audit YAML wraps a normal PhysicsGuard `SystemSpec` with a `hierarchy` section.
+For a short model-writing guide, including assumptions, mapped snapshots and a paired runnable electrical example, see the skill's [model format](../skill/physicsguard/references/model-format.md) and its `templates/audit_model.yaml` / `templates/observed_snapshot.yaml`.
 
 ```yaml
 # PhysicsGuard hierarchical audit/model blueprint
@@ -166,12 +167,22 @@ Confidence is a heuristic for data sufficiency and residual evidence. It is not 
 ## CLI
 
 ```powershell
+python -m physicsguard.cli modules list
+python -m physicsguard.cli modules describe TankVolumeRateModule --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
 python -m physicsguard.cli hierarchy run examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml --pretty
 python -m physicsguard.cli hierarchy inspect examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml --pretty
 python -m physicsguard.cli hierarchy plan examples/hierarchical/fuel_cell_system/conflict_level_0_h2_power.yaml --pretty
 python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
 python -m physicsguard.cli hierarchy compare examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
 ```
+
+`modules list` prints every registered type with its first documentation sentence. `modules describe TYPE` returns JSON with variables, required/optional parameters, residual roles/diagnostic keys/descriptions and validity metadata. Required-parameter and external-variable synthetic examples are marked explicitly; they describe the interface, not physical defaults or a solved device.
+
+`hierarchy describe` returns the declared block tree, parents/children, `refines`, component relations, intra/interblock connections, refinement rules and fault variants without solving. `--mermaid` emits `flowchart TD` with block subgraphs, component nodes and labeled connection edges. Neither output validates the model physically.
+
+Compact hierarchy reports include `assumptions`: each card's `id`, `status` and `applied`. Cards remain under `system.assumptions`; only active cards apply, and mapping evidence or assumptions never silently convert observed values.
 
 `hierarchy run` emits the full solve-based hierarchical report. `hierarchy inspect` validates and summarizes the block tree without solving. `hierarchy plan` runs the solve-based audit and emits top blocks, recommended refinements, signal-mapping ledger rows when present, bug-family follow-ups when present, missing variables, missing parameters, and warnings. `hierarchy evaluate` substitutes observed external values without solving and rolls residuals up by block. `hierarchy compare` solves a low-fidelity reference, evaluates observed values, and returns both block diagnostics and variable deviations. `run`, `plan`, `evaluate` and `compare` print a compact summary by default; `--json` prints the full report.
 

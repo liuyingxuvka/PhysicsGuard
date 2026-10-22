@@ -231,3 +231,30 @@ When a file contains top-level `hierarchy` and `system`, `assumptions inspect` S
 #### Scenario: The heated-tank hierarchy is inspected
 - **WHEN** the heated-tank model is passed to `assumptions inspect`
 - **THEN** inspection SHALL exit `0` and list the explicit nameplate-efficiency variable assumption
+
+
+### Requirement: Installed model-writing guidance uses real relations
+The installed skill SHALL include `references/model-format.md` and paired audit/observed templates using a real registered physical relation. Guidance SHALL preserve SI units, explicit assumptions, mapping freshness, independent checked residuals and bounded derivation. Its model-tree explanation SHALL include structure, checked counterexamples, known-bad variants, real-signal binding and test-data binding.
+
+#### Scenario: The starter pair is evaluated
+- **WHEN** the electrical audit template is evaluated with its three measured voltage, current and power values
+- **THEN** the relation SHALL remain an independent check and the paired templates SHALL pass without inventing intermediate measurements
+
+### Requirement: Module and hierarchy descriptions are inspection evidence
+`modules list` SHALL list all registered types with their first documentation sentence. `modules describe TYPE` SHALL expose variables with units/bounds/scales/initial guesses, required/optional parameter names, residual names/roles/diagnostic keys/descriptions and validity metadata. Synthetic constructor or external-variable examples SHALL be labeled and SHALL NOT imply physical defaults, solving or device validity.
+
+#### Scenario: A required parameter is unavailable during description
+- **WHEN** a module needs synthetic parameters to expose its interface
+- **THEN** the description SHALL identify those examples and retain the distinction from actual audit inputs
+
+#### Scenario: A hierarchy is described without solving
+- **WHEN** `hierarchy describe AUDIT` is requested
+- **THEN** the output SHALL include block levels, parents/children, `refines`, component relations, intra/interblock connections, refinement rules and fault variants
+- **AND** `--mermaid` SHALL render declared block subgraphs, component nodes and labeled connections starting with `flowchart TD`, without claiming an audit pass
+
+### Requirement: Compact hierarchy summaries retain assumptions
+Compact hierarchy audit summaries SHALL include each assumption card's `id`, `status` and `applied` state without changing card application rules or observed values.
+
+#### Scenario: An unapplied card remains visible
+- **WHEN** an audit contains a proposed or rejected card
+- **THEN** its compact summary SHALL retain the card with its status and `applied: false`

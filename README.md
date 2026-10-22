@@ -102,6 +102,17 @@ The example represents a mapped controller feedback signal. The fault case has a
 
 `stale_when` records when a signal mapping needs reconfirmation; only explicit `mapping_status: stale` marks it stale.
 
+Discover relations and inspect a model before evaluating it:
+
+```powershell
+python -m physicsguard.cli modules list
+python -m physicsguard.cli modules describe TankVolumeRateModule --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
+```
+
+Module descriptions expose units, finite variable bounds/scales, parameter names, residuals and validity metadata. Marked synthetic examples are not physical defaults or audit evidence. Hierarchy descriptions show declared blocks, connections, refinements and fault variants without solving; Mermaid renders that structure. See the installed skill's [model format and templates](skill/physicsguard/references/model-format.md). Compact hierarchy summaries also show assumption-card ids, statuses and whether they were applied.
+
 ## Main CLI Paths
 
 Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
@@ -317,6 +328,17 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 `hierarchy run|plan|evaluate|compare` 和 `validation run` 默认输出紧凑摘要；加 `--json` 输出完整报告。
 
 `stale_when` 记录信号映射何时需要重新确认；只有显式 `mapping_status: stale` 才表示映射已经过期。
+
+评估前先查真实关系并查看模型结构：
+
+```powershell
+python -m physicsguard.cli modules list
+python -m physicsguard.cli modules describe TankVolumeRateModule --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
+```
+
+模块说明列出单位、变量的有限边界与尺度、参数名、残差及适用范围。标记为 synthetic 的示例不是物理默认值或审计证据。分层说明不求解，只展示声明的块、连接、细化和故障变体；Mermaid 图表达同一结构。格式及可配套使用的模板见技能中的[模型格式页](skill/physicsguard/references/model-format.md)。紧凑分层摘要还显示假设卡的 id、状态及是否应用。
 
 ## 主要 CLI 路线
 

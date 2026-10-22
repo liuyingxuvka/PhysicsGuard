@@ -849,6 +849,71 @@ def inspect_hierarchy(spec: HierarchicalAuditSpec) -> dict[str, Any]:
     }
 
 
+def describe_hierarchy(spec: HierarchicalAuditSpec, *, mermaid: bool = False) -> dict[str, Any] | str:
+    """Render the declared model tree and native module contracts without solving."""
+    from physicsguard.modules.registry import default_module_registry, describe_module_type
+    from physicsguard.core.assumptions import AssumptionManager
+
+    registry = default_module_registry()
+    index = BlockIndex(spec.hierarchy, spec.system)
+    declared = {component.id: component for component in spec.system.components}
+    assumptions = AssumptionManager(spec.system)
+    effective = assumptions.apply_parameter_assumptions(spec.system)
+    components = {component.id: component for component in effective.components}
+    connections = []
+    for connection in spec.system.connections:
+        source = index.component_block(connection.from_variable.split(".")[0])
+        target = index.component_block(connection.to_variable.split(".")[0])
+        connections.append({**connection.model_dump(), "from_block": source, "to_block": target,
+                            "scope": "within_block" if source == target else "between_blocks"})
+    if mermaid:
+        # Generated IDs keep user labels out of Mermaid's identifier grammar.
+        node_ids = {name: f"component_{i}" for i, name in enumerate(components)}
+        def label(value: Any) -> str:
+            return str(value).replace("&", "&amp;").replace('"', "&quot;").replace("\n", " ")
+        lines = ["flowchart TD"]
+        def block_lines(block: AuditBlockSpec, depth: int) -> None:
+            indent = "  " * depth
+            lines.append(f'{indent}subgraph block_{spec.hierarchy.blocks.index(block)}["{label(block.id)} (level {block.level})"]')
+            for name in block.components:
+                lines.append(f'{indent}  {node_ids[name]}["{label(name)}: {label(components[name].type)}"]')
+            for child in index.children(block.id):
+                block_lines(child, depth + 1)
+            lines.append(indent + "end")
+        for root in index.root_blocks():
+            block_lines(root, 1)
+        for name in index.unassigned_components():
+            lines.append(f'  {node_ids[name]}["{label(name)}: {label(components[name].type)} (unassigned)"]')
+        for connection in connections:
+            source, target = connection["from_variable"], connection["to_variable"]
+            text = f"{source} = {target}"
+            if connection["scale"] is not None:
+                text += f"; residual scale={connection['scale']}"
+            lines.append(f'  {node_ids[source.split(".")[0]]} -->|"{label(text)}"| {node_ids[target.split(".")[0]]}')
+        return "\n".join(lines)
+    blocks = []
+    for block in spec.hierarchy.blocks:
+        row = {key: getattr(block, key) for key in ("id", "name", "level", "parent_id", "refines")}
+        row["children"] = [child.id for child in index.children(block.id)]
+        row["components"] = [
+            {"id": name, "type": components[name].type, "parameters": declared[name].parameters,
+             "effective_parameters": components[name].parameters,
+             "native_description": describe_module_type(components[name].type, registry,
+                 parameters=components[name].parameters, component_id=name)}
+            for name in block.components
+        ]
+        row["connections"] = [connection for connection in connections if block.id in (connection["from_block"], connection["to_block"])]
+        blocks.append(row)
+    return {"audit_name": spec.audit_name, "system_name": spec.system.system_name, "blocks": blocks,
+            "unassigned_components": index.unassigned_components(), "connections": connections,
+            "boundaries": [boundary.model_dump() for boundary in spec.system.boundaries],
+            "assumptions": [card.model_dump() for card in spec.system.assumptions],
+            "parameter_assumption_applications": [card for card in assumptions.summary_dict()["cards"] if card["target_type"] == "parameter"],
+            "refinement_rules": [rule.model_dump() for rule in spec.hierarchy.refinement_rules],
+            "fault_variants": [variant.model_dump() for variant in spec.fault_variants],
+            "solver_attempted": False}
+
+
 def plan_from_report(report: HierarchicalAuditReport) -> dict[str, Any]:
     return {
         "top_blocks": [asdict(block) for block in report.top_blocks],

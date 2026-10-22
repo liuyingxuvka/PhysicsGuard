@@ -18,8 +18,8 @@
       "layer": "interface",
       "summary": "CLI and lazy public API",
       "responsibilities": [
-        "Dispatch commands without running unrelated owners",
-        "Print a compact hierarchy/validation summary with derived variable names and checked/unchecked counts, and the full report with --json",
+        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners",
+        "Print a compact hierarchy/validation summary with derived names, check counts and assumption dispositions, and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
         "Inspect assumption cards from either a single SystemSpec or the system inside a hierarchical audit",
@@ -76,7 +76,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:5f8082a4731713404a796829e111d3f7b25176a57beeaff88fbeb2ae76c09f50"
+      "fingerprint": "sha256:aece36a03630b35a87312d5de29158a5f921a7321854e92e44efb5e83388ddc2"
     },
     {
       "id": "routing",
@@ -111,7 +111,7 @@
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
         "Report an observed value without a source signal or unit as a mapping gap",
         "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale",
-        "Roll child failures into parent verdicts while preserving own scores; compare linked coarse checked relations and resolve refinement templates without execution"
+        "Roll child failures into parent verdicts while preserving own scores; compare linked coarse checked relations and resolve refinement templates without execution; render declared component contracts, ownership and connections without solving"
       ],
       "files": [
         "src/physicsguard/core/_residual_dependencies.py",
@@ -208,7 +208,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:c3a3213452333d832c3b992ac7fde3a0f8816084d6e42f97a031bd428ede5a33"
+      "fingerprint": "sha256:b8396cd6d15f011cc0fe28387bdb123ae63704da52c66c90d65d12b222693653"
     },
     {
       "id": "validation",
@@ -510,7 +510,8 @@
       "layer": "engine",
       "summary": "Physical residual modules and registry declarations",
       "responsibilities": [
-        "Define documented low-fidelity equations, SI units, assumptions and finite validity ranges"
+        "Define documented low-fidelity equations, SI units, assumptions and finite validity ranges",
+        "Describe registered native variables, parameter reads, residual text and applicability using explicitly marked synthetic examples without solving"
       ],
       "files": [
         "src/physicsguard/modules/*.py",
@@ -519,7 +520,9 @@
       ],
       "entrypoints": [],
       "state": [],
-      "side_effects": [],
+      "side_effects": [
+        "Temporarily chain and restore the current-thread Python profiler only during description construction to record copied parameter reads"
+      ],
       "depends_on": [
         "schema",
         "simulation"
@@ -560,11 +563,12 @@
         "tests/test_signal_mapping_ledger.py",
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
-        "tests/test_variable_registry.py"
+        "tests/test_variable_registry.py",
+        "tests/test_cli.py"
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:eb37c7f62f67246bd7bedbed6e67be9d51c143853a82d6c4e86aa4234d73cfe7"
+      "fingerprint": "sha256:837bb839b33c34096d8217dbbd08adc773d8fea4bb7656b5b63c0bf70147f124"
     },
     {
       "id": "maintenance",

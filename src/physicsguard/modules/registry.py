@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import Any
+from dataclasses import asdict
+import inspect
+import re
+import sys
 
 from physicsguard.modules.base import BaseModule
 
@@ -40,6 +44,178 @@ class ModuleRegistry:
 
     def registered_types(self) -> list[str]:
         return sorted(self._factories)
+
+    def type_summary(self, module_type: str) -> str:
+        """Return the registered class's own first docstring sentence."""
+        factory = self._factories[module_type]
+        candidates = list(getattr(factory, "__defaults__", ()) or ())
+        candidates += [cell.cell_contents for cell in (getattr(factory, "__closure__", ()) or ())]
+        for candidate in candidates:
+            if isinstance(candidate, type) and issubclass(candidate, BaseModule):
+                return (inspect.getdoc(candidate) or "").split(". ")[0].split("\n")[0].rstrip(".") + "."
+        return inspect.getdoc(factory) or "Registered module factory."
+
+
+class _DescriptionParameters(dict):
+    """Record native parameter reads, including helper-expanded variable prefixes."""
+
+    def __init__(self, values: dict[str, Any], reads: dict[str, Any]) -> None:
+        super().__init__(values)
+        self.reads = reads
+
+    def get(self, key: str, default: Any = None) -> Any:
+        self.reads.setdefault(key, default)
+        return super().get(key, default)
+
+    def __contains__(self, key: str) -> bool:
+        self.reads.setdefault(key, None)
+        return super().__contains__(key)
+
+    def __getitem__(self, key: str) -> Any:
+        self.reads.setdefault(key, None)
+        return super().__getitem__(key)
+
+
+def _description_placeholder(name: str, error: str) -> Any:
+    """Finite synthetic input shapes; these are examples, never physical defaults."""
+    if name.endswith("_variable") or name == "variable":
+        return "external." + name
+    if name.endswith("_variables") or name == "variables":
+        return ["external." + name]
+    if name == "expected":
+        return "increasing"
+    if name in {"lower_bounds", "upper_bounds"}:
+        return [-1.0] if name == "lower_bounds" else [1.0]
+    if "grid" in error or "2D" in error or "shape len(" in error:
+        return [[1.0, 1.0], [1.0, 1.0]]
+    if "list" in error or name.endswith("_points"):
+        return [0.0, 1.0] if name.startswith("SOC") else [0.0, 1e6]
+    if name.endswith(("lower_bound", "_lower")) or name in {"lower", "low_threshold", "falling_rate_limit"}:
+        return -1.0
+    if name.endswith(("upper_bound", "_upper")) or name in {"upper", "high_threshold"}:
+        return 1.0
+    if name == "T_full_open_K":
+        return 400.0
+    if name == "T_begin_open_K":
+        return 300.0
+    if name in {"emissivity", "effectiveness"}:
+        return 0.5
+    return 1.0
+
+
+def _description_instance(
+    registry: ModuleRegistry, module_type: str, values: dict[str, Any],
+    reads: dict[str, Any], component_id: str,
+) -> BaseModule:
+    # BaseModule copies parameters. Keep its copy observable only for this
+    # description call; ordinary module construction has no tracing or hooks.
+    previous = sys.getprofile()
+
+    def profile(frame: Any, event: str, arg: Any) -> None:
+        if previous is not None:
+            previous(frame, event, arg)
+        if event == "return" and frame.f_code is BaseModule.__init__.__code__:
+            instance = frame.f_locals["self"]
+            instance.parameters = _DescriptionParameters(instance.parameters, reads)
+
+    try:
+        sys.setprofile(profile)
+        return registry.create(module_type, component_id, _DescriptionParameters(values, reads))
+    finally:
+        sys.setprofile(previous)
+
+
+def describe_module_type(
+    module_type: str,
+    registry: ModuleRegistry | None = None,
+    *,
+    parameters: dict[str, Any] | None = None,
+    component_id: str = "example",
+) -> dict[str, Any]:
+    """Describe native declarations using explicitly identified synthetic inputs.
+
+    No solve is performed. Example residual values are intentionally omitted:
+    evaluating a description is neither a validity claim nor an audit PASS.
+    """
+    from physicsguard.core.registry import VariableRecord, VariableRegistry
+    from physicsguard.schema.variable import is_qualified_variable_name
+
+    registry = registry or default_module_registry()
+    values: dict[str, Any] = dict(parameters or {})
+    synthetic: dict[str, Any] = {}
+    reads: dict[str, Any] = {}
+    for _ in range(64):
+        try:
+            module = _description_instance(registry, module_type, values, reads, component_id)
+            break
+        except (ValueError, TypeError, KeyError) as exc:
+            error = str(exc)
+            if parameters is not None:
+                raise ValueError(f"cannot describe {module_type}: {error}") from exc
+            missing = [key for key in reads if key not in values]
+            def named_in_error(key: str) -> bool:
+                return re.search(r"(?<!\w)" + re.escape(key) + r"(?!\w)", error) is not None
+            mentioned = [key for key in missing if named_in_error(key)]
+            if not mentioned and "at least one referenced variable" in error:
+                mentioned = ["input_variables"]
+            if not mentioned:
+                mentioned = [key for key in values if named_in_error(key) and values[key] != _description_placeholder(key, error)]
+            if not mentioned:
+                raise ValueError(f"cannot describe {module_type}: {error}") from exc
+            for key in mentioned:
+                values[key] = _description_placeholder(key, error)
+                synthetic[key] = values[key]
+    else:
+        raise ValueError(f"cannot describe {module_type}: synthetic parameter retry limit")
+
+    variables = module.declare_variables()
+    native_registry = VariableRegistry()
+    for variable in variables:
+        native_registry.add_variable(variable)
+    external = []
+    for _ in range(64):
+        try:
+            residuals = module.residuals(native_registry.initial_vector(), native_registry)
+            break
+        except KeyError as exc:
+            cause: BaseException | None = exc
+            name = None
+            while cause is not None:
+                text = cause.args[0] if isinstance(cause, KeyError) and cause.args else None
+                if isinstance(text, str) and text.startswith("unknown variable: "):
+                    name = text.removeprefix("unknown variable: ")
+                cause = cause.__cause__
+            if name is None or not is_qualified_variable_name(name):
+                raise
+            if name in native_registry.names():
+                raise
+            native_registry.add_variable(VariableRecord(name, None, -1e6, 1e6, 1.0, 1.0))
+            external.append(name)
+    else:
+        raise ValueError(f"cannot describe {module_type}: external variable retry limit")
+    parameter_description = {
+        "required": sorted(synthetic),
+        "optional": {key: default for key, default in sorted(reads.items()) if key not in synthetic},
+        "synthetic_example": synthetic,
+        "note": "Required inputs for this native example; alternatives may exist (for example input/output lists). Synthetic values are not physical defaults.",
+    }
+    if parameters is not None:
+        parameter_description = {
+            "supplied": dict(parameters),
+            "native_reads_with_defaults": dict(sorted(reads.items())),
+            "note": "Actual configuration: reads do not classify supplied parameters as optional. Use modules describe TYPE for the native default-configuration required/optional catalog.",
+        }
+    return {
+        "module_type": module_type,
+        "summary": registry.type_summary(module_type),
+        "variables": [asdict(variable) for variable in variables],
+        "parameters": parameter_description,
+        "residuals": [{key: getattr(record, key) for key in ("name", "role", "diagnostic_key", "description")} for record in residuals],
+        "metadata": module.metadata(),
+        "description_context": {"solver_attempted": False, "synthetic_external_variables": external,
+                                "residual_source": "native residuals at declaration initial guesses with synthetic inputs where listed",
+                                "empty_residuals_reason": "native residuals() returns no constraints for this configuration" if not residuals else None},
+    }
 
 
 def default_module_registry() -> ModuleRegistry:

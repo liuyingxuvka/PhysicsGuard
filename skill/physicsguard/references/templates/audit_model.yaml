@@ -1,0 +1,27 @@
+# PhysicsGuard audit/model blueprint
+# Purpose: Check a measured DC electrical power relation in a two-level audit.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy evaluate audit_model.yaml observed_snapshot.yaml
+# Boundary: Low-fidelity SI-unit relation only; no AC phase or power-electronics dynamics.
+audit_name: measured_dc_power
+system:
+  system_name: measured_dc_power
+  components:
+    - id: power
+      type: ElectricalPowerModule
+      parameters:
+        residual_scale_W: 1.0
+  connections: []
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - id: plant
+      name: DC electrical system
+      level: 0
+      components: []
+    - id: electrical
+      name: Measured power relation
+      level: 1
+      parent_id: plant
+      components: [power]

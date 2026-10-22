@@ -12,6 +12,12 @@ from typing import Sequence
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="physicsguard")
     subparsers = parser.add_subparsers(dest="command", required=True)
+    modules_parser = subparsers.add_parser("modules", help="list and describe registered native module types")
+    module_commands = modules_parser.add_subparsers(dest="modules_command", required=True)
+    module_commands.add_parser("list", help="list every module type and its purpose")
+    module_describe = module_commands.add_parser("describe", help="describe a native module contract using marked synthetic inputs")
+    module_describe.add_argument("module_type")
+    module_describe.add_argument("--pretty", action="store_true")
     run_parser = subparsers.add_parser("run", help="run a PhysicsGuard YAML audit")
     run_parser.add_argument("system", type=Path, help="path to a YAML SystemSpec")
     run_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
@@ -49,6 +55,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="hierarchical coarse-to-fine audit commands",
     )
     hierarchy_subparsers = hierarchy_parser.add_subparsers(dest="hierarchy_command", required=True)
+    hierarchy_description = hierarchy_subparsers.add_parser("describe", help="print a readable declared tree without solving")
+    hierarchy_description.add_argument("audit", type=Path)
+    hierarchy_description.add_argument("--mermaid", action="store_true")
+    hierarchy_description.add_argument("--pretty", action="store_true")
 
     hierarchy_run = hierarchy_subparsers.add_parser("run", help="run a hierarchical audit")
     hierarchy_run.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
@@ -328,6 +338,7 @@ def _hierarchy_summary(report: dict) -> dict:
         "checked_residual_count": len(report.get("checked_residuals", [])),
         "unchecked_residual_count": len(report.get("unchecked_residuals", {})),
         "refinement_checks": report.get("refinement_checks", []),
+        "assumptions": [_pick(card, ("id", "status", "applied")) for card in report.get("assumptions", {}).get("cards", [])],
         "warnings": report.get("warnings", []),
     }
     if metadata.get("solver_attempted"):
@@ -435,6 +446,30 @@ def hierarchy_inspect(path: Path, pretty: bool = False) -> int:
 
     spec = load_hierarchical_audit_spec(path)
     _print_json(inspect_hierarchy(spec), pretty)
+    return 0
+
+
+def modules_command(module_type: str | None = None, pretty: bool = False) -> int:
+    from physicsguard.modules.registry import default_module_registry, describe_module_type
+
+    registry = default_module_registry()
+    if module_type is None:
+        for name in registry.registered_types():
+            print(f"{name}: {registry.type_summary(name)}")
+    else:
+        _print_json(describe_module_type(module_type, registry), pretty)
+    return 0
+
+
+def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False) -> int:
+    from physicsguard.core.hierarchy import describe_hierarchy
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+
+    description = describe_hierarchy(load_hierarchical_audit_spec(path), mermaid=mermaid)
+    if mermaid:
+        print(description)
+    else:
+        _print_json(description, pretty)
     return 0
 
 
@@ -716,6 +751,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
+        if args.command == "modules":
+            return modules_command(args.module_type if args.modules_command == "describe" else None,
+                                   getattr(args, "pretty", False))
         if args.command == "run":
             return solve(args.system, args.pretty)
         if args.command == "evaluate":
@@ -723,6 +761,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "compare":
             return compare(args.system, args.observed, args.pretty)
         if args.command == "hierarchy":
+            if args.hierarchy_command == "describe":
+                return hierarchy_describe(args.audit, args.mermaid, args.pretty)
             if args.hierarchy_command == "run":
                 return hierarchy_run(args.audit, args.pretty, args.json)
             if args.hierarchy_command == "inspect":
