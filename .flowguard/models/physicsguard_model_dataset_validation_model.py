@@ -528,7 +528,7 @@ IMPLEMENTED_BY = {
 }
 TESTED_BY = {
     "no_pass_without_contracts": [
-        "tests/test_model_dataset_validation.py:test_enabled_calibration_requires_bounded_parameters",
+        "tests/test_model_dataset_validation.py:test_nonpassing_required_contract_blocks_validation",
     ],
     "no_pass_without_depth_inputs": [
         "tests/test_validation_depth_receipts.py:test_uncertain_required_mapping_blocks_broad_validation",

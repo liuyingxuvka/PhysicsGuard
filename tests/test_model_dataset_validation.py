@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 
 import pytest
 import yaml
@@ -21,6 +22,24 @@ def test_clean_model_dataset_validation_passes() -> None:
     assert report.direct_validation["audit_pass"]
     assert report.confidence_updates
     assert ModelDatasetValidationReportSpec.model_validate(report.to_dict()).status == "pass"
+
+
+def test_nonpassing_required_contract_blocks_validation(tmp_path: Path) -> None:
+    pump = tmp_path / "pump_loop"
+    shutil.copytree(PUMP, pump)
+    plan_path = pump / "validation" / "clean_validation_plan.yaml"
+    plan = yaml.safe_load(plan_path.read_text(encoding="utf-8"))
+    plan["contracts"][0]["contract"] = "../contracts/added_field_contract.yaml"
+    plan_path.write_text(yaml.safe_dump(plan, sort_keys=False), encoding="utf-8")
+
+    report = validate_model_dataset(plan_path)
+
+    assert report.direct_validation["audit_pass"]
+    assert not report.ok
+    assert report.status == "fail"
+    finding = next(item for item in report.findings if item["type"] == "validation_contract_not_passed")
+    assert finding["severity"] == "error"
+    assert finding["details"]["status"] == "fail"
 
 
 def test_conservative_calibration_does_not_turn_direct_failure_into_pass() -> None:

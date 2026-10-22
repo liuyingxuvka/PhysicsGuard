@@ -261,6 +261,7 @@
       ],
       "tests": [
         "tests/test_cli.py",
+        "tests/test_diagnosability.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_task_local_revision.py"
