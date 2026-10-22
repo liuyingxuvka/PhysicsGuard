@@ -50,6 +50,7 @@ class AuditInput:
     proposed_assumption: bool = False
     rejected_assumption: bool = False
     assumption_as_free_variable: bool = False
+    unobserved_zero_product: bool = False
 
 
 @dataclass(frozen=True)
@@ -66,6 +67,7 @@ class Validated:
     proposed_assumption: bool = False
     rejected_assumption: bool = False
     assumption_as_free_variable: bool = False
+    unobserved_zero_product: bool = False
 
 
 @dataclass(frozen=True)
@@ -81,6 +83,7 @@ class RegistryReady:
     assumption_override: bool = False
     proposed_assumption: bool = False
     rejected_assumption: bool = False
+    unobserved_zero_product: bool = False
 
 
 @dataclass(frozen=True)
@@ -170,6 +173,7 @@ class State:
     failures: tuple[str, ...] = ()
     unobserved_skipped: tuple[str, ...] = ()
     unobserved_listed: tuple[str, ...] = ()
+    residuals_from_guess: tuple[str, ...] = ()
 
 
 class ValidateSystem:
@@ -203,6 +207,7 @@ class ValidateSystem:
                 input_obj.proposed_assumption,
                 input_obj.rejected_assumption,
                 input_obj.assumption_as_free_variable,
+                input_obj.unobserved_zero_product,
             ),
             new_state=replace(state, schema_valid=state.schema_valid + (input_obj.case_id,)),
             label="schema_valid",
@@ -261,6 +266,7 @@ class BuildRegistry:
                 input_obj.assumption_override,
                 input_obj.proposed_assumption,
                 input_obj.rejected_assumption,
+                input_obj.unobserved_zero_product,
             ),
             new_state=replace(
                 state,
@@ -937,6 +943,13 @@ def unobserved_variables_stay_listed(state: State, trace) -> InvariantResult:
     return InvariantResult.pass_()
 
 
+def no_residual_from_unobserved_guess(state: State, trace) -> InvariantResult:
+    del trace
+    if state.residuals_from_guess:
+        return InvariantResult.fail(f"residuals evaluated from unobserved initial guesses: {state.residuals_from_guess!r}")
+    return InvariantResult.pass_()
+
+
 INVARIANTS = (
     Invariant(
         name="no_solve_without_valid_registry",
@@ -999,6 +1012,11 @@ INVARIANTS = (
         predicate=assumption_overrides_are_warned,
     ),
     Invariant(
+        name="no_residual_from_unobserved_guess",
+        description="No residual is evaluated from an unobserved variable's initial guess.",
+        predicate=no_residual_from_unobserved_guess,
+    ),
+    Invariant(
         name="unobserved_variables_stay_listed",
         description="A partial snapshot skips residuals only while listing the unobserved variables.",
         predicate=unobserved_variables_stay_listed,
@@ -1025,6 +1043,7 @@ EXTERNAL_INPUTS = (
     AuditInput("hierarchy_evaluate_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_missing_observed", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
     AuditInput("hierarchy_evaluate_partial_snapshot", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
+    AuditInput("hierarchy_evaluate_zero_product", True, True, True, True, True, True, mode="hierarchy_evaluate", observed_values_complete=False, unobserved_zero_product=True),
     AuditInput("hierarchy_compare_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_compare", True),
     AuditInput("hierarchy_inspect", True, True, True, True, True, True, False, False, "hierarchy_inspect", True),
     AuditInput("assumption_parameter_fill", True, True, True, True, True, True, has_assumptions=True, parameter_assumption=True),
@@ -1090,6 +1109,11 @@ IMPLEMENTED_BY = {
     "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
 }
 TESTED_BY = {
+    "no_residual_from_unobserved_guess": [
+        "tests/test_hierarchy_runner.py:test_partial_snapshot_does_not_invent_a_zero_product_residual",
+        "tests/test_hierarchy_runner.py:test_partial_snapshot_skips_a_range_check_with_a_flat_local_region",
+        "tests/test_hierarchy_runner.py:test_unclassified_custom_residual_is_not_licensed_by_finite_probes",
+    ],
     "audit_pass_and_failure_are_disjoint": [
         "tests/test_diagnostics.py:test_report_distinguishes_optimization_success_from_audit_pass",
     ],
@@ -1199,6 +1223,26 @@ class _SkipsUnobservedSilently(AssembleResiduals):
             yield result
 
 
+class _EvaluatesFromInitialGuess(AssembleResiduals):
+    """Known bad: a zero product hides missing inputs and is evaluated from guesses."""
+
+    writes = AssembleResiduals.writes + ("residuals_from_guess",)
+
+    def apply(self, input_obj, state):
+        if input_obj.unobserved_zero_product:
+            yield FunctionResult(
+                output=ResidualsReady(input_obj.case_id, input_obj.mode, input_obj.observed_values_complete),
+                new_state=replace(
+                    state,
+                    residuals_normalized=state.residuals_normalized + (input_obj.case_id,),
+                    residuals_from_guess=state.residuals_from_guess + (input_obj.case_id,),
+                ),
+                label="unobserved_guesses_evaluated",
+            )
+            return
+        yield from super().apply(input_obj, state)
+
+
 def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
@@ -1206,6 +1250,7 @@ def broken_variants() -> dict[str, Explorer]:
         "evaluate_calls_solver": _EvaluateCallsSolver(),
         "failed_audit_also_passes": _FailedAuditAlsoPasses(),
         "partial_snapshot_hides_unobserved": _SkipsUnobservedSilently(),
+        "evaluates_from_initial_guess": _EvaluatesFromInitialGuess(),
     }
     return {
         name: _explorer(Workflow(
@@ -1310,6 +1355,36 @@ def _partial_snapshot(audit_file: str, unobserved: str) -> tuple[str, bool]:
     return label, report.audit_pass
 
 
+def _zero_product_snapshot() -> tuple[str, bool | None]:
+    """An electrical zero product supplies no independently evaluable residual."""
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    spec = HierarchicalAuditSpec.model_validate({
+        "audit_name": "zero_product",
+        "system": {"system_name": "power", "components": [{
+            "id": "power", "type": "ElectricalPowerModule",
+            "parameters": {"V_initial_guess": 0.0, "current_initial_guess": 0.0, "P_initial_guess": 0.0},
+        }]},
+        "hierarchy": {"blocks": [{"id": "power_block", "name": "power", "level": 0,
+            "components": ["power"], "required_variables": ["power.V_V", "power.current_A", "power.P_W"]}]},
+    })
+    observed = ObservedValuesSpec(variables={"power.P_W": {"value": 0.0, "unit": "W"}})
+    before = observed.model_dump(mode="json")
+    with _solver_counted() as calls:
+        try:
+            report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+        except ValueError as exc:
+            if "no residual can be evaluated without them" not in str(exc):
+                raise
+            assert not calls, "partial observations must not solve"
+            assert observed.model_dump(mode="json") == before
+            return "missing_observed_values_failed", None
+    assert observed.model_dump(mode="json") == before
+    return ("solver_attempted" if calls else "residual_evaluated_from_unobserved_guess"), report.audit_pass
+
+
 def _bad_schema() -> tuple[str, None]:
     from pydantic import ValidationError
 
@@ -1343,6 +1418,7 @@ REAL_CASES = {
     "hierarchy_evaluate_clean": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_clean.yaml"),
     "hierarchy_evaluate_bad_audit": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_fault.yaml"),
     "hierarchy_evaluate_missing_observed": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_clean.yaml", keep=1),
+    "hierarchy_evaluate_zero_product": _zero_product_snapshot,
     "hierarchy_evaluate_partial_snapshot": lambda: _partial_snapshot("examples/hierarchical/coolant_loop/level_1_components.yaml", "cool.Q_stack_heat_W"),
     "hierarchy_inspect": lambda: _hierarchy("inspect", f"{PITCH}/pitch_feedback_level_0.yaml"),
     "assumption_parameter_fill": lambda: _assumption("examples/assumptions/parameter_assumption.yaml"),
