@@ -67,3 +67,14 @@ A hierarchy mapping ledger SHALL preserve `stale_when` as reconfirmation conditi
 #### Scenario: The reconfirmation condition has occurred
 - **WHEN** the mapping status is `stale` or a case variant of it
 - **THEN** the row SHALL include `stale_mapping` and a mapping-review followup
+
+### Requirement: Reproducible heated-tank reference boundary
+The heated-tank reference SHALL regenerate its 121-row non-SI CSV and four measured snapshots deterministically, expose six hierarchy blocks under `tank`, and declare heater efficiency as an explicit nameplate variable assumption. Its coupled snapshots SHALL contain eleven measured signals and no hand-computed intermediate quantities.
+
+#### Scenario: The reference is reproduced
+- **WHEN** its generator and measurement mapper run on the committed inputs
+- **THEN** the CSV and snapshots SHALL match the committed bytes, including current halving at 600 seconds and inflow changing at 900 seconds
+
+#### Scenario: Coupled measurement inputs are insufficient
+- **WHEN** the current observed evaluator cannot evaluate residuals without missing connected inputs
+- **THEN** the example SHALL expose that limitation and SHALL NOT claim automatic intermediate propagation or fill it with initial guesses

@@ -221,3 +221,12 @@ Load `references/bug-playbooks.md` when choosing the next hypothesis. It covers 
 Load `references/protocol.md` when writing or reviewing a full AI debugging plan.
 
 Load `references/model-generation.md` when turning a PhysicsGuard hierarchy into a candidate MATLAB/Simulink or other target-model implementation plan.
+
+## Heated-Tank Starting Example
+
+The repository's [heated-tank reference](https://github.com/liuyingxuvka/PhysicsGuard/tree/main/examples/hierarchical/heated_tank)
+provides a reproducible non-SI CSV, coarse and six-block coupled models, an explicit
+nameplate-efficiency assumption and measured-only snapshots. Use `hierarchy inspect`
+to inspect its tree. Coupled measured-only evaluation may still report missing inputs;
+keep that gap visible rather than supplying initial guesses or hand-computed
+intermediate snapshots to obtain a pass.

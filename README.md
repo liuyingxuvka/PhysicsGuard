@@ -124,6 +124,8 @@ python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 
+The [heated-tank reference](examples/hierarchical/heated_tank/) includes a reproducible non-SI CSV, coarse and six-block coupled models, an explicit nameplate-efficiency assumption, and measured-only snapshots. Generate data and snapshots or inspect the hierarchy; coupled measured-only evaluation can still report missing inputs. Do not fill those inputs with initial guesses or hand-computed intermediate snapshots.
+
 ## Assumption Cards
 
 PhysicsGuard treats assumptions as first-class audit objects. Assumptions can be active, proposed, rejected, high-impact, or under review.
@@ -318,6 +320,8 @@ python -m physicsguard.cli dataset logical-check DATASET.yaml --pretty
 python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
+
+[加热水箱参考例子](examples/hierarchical/heated_tank/) 提供可重复生成的非 SI CSV、粗模型和六块耦合模型、明确的铭牌效率假设及仅含测量值的快照。可以生成数据、映射快照和检查层级；耦合模型的纯测量值评估仍可能报告缺少输入，不应使用初值或手算中间量快照补成通过。
 
 ## 假设卡片
 
