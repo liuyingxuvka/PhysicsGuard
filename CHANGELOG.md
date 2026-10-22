@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.15.17 - 2026-10-22
+
+- CLI exit codes now distinguish a passed check (0), a check that did not pass (1), and a command that could not run (2); comparisons follow the observed audit result.
+- Connections now express physical identity with a tight default residual scale and an optional positive finite tolerance, keeping reference solves from absorbing faults into loose connections.
+- Mapping review conditions in `stale_when` no longer mark a mapping stale by themselves; set `mapping_status: stale` when reconfirmation is needed.
+- Generated manifest source paths resolve relative to the output manifest, and assumption inspection accepts hierarchical audit files.
+- Added a reproducible heated-tank CSV, coarse and coupled hierarchy examples, explicit heater-efficiency assumption, and measured-only snapshots.
+- Restored the diagnostic route's coverage, prediction, task-local revision and documented-interface boundaries.
+- Strengthened regression models and CLI assertions, removed the tracked executor log, and cleaned redundant blank lines.
+
 ## v0.15.16 - 2026-10-21
 
 - Done: PG-01, PG-02, PG-03, PG-04, PG-05, PG-06, PG-07, PG-08, PG-09, PG-10, PG-11, PG-12, PG-13, PG-14, PG-15, PG-16, PG-17, PG-18, PG-19, PG-20, PG-21, PG-22, PG-23, PG-24, PG-25, PG-26, PG-27, PG-28, PG-29, PG-30, PG-31, PG-32, PG-33, PG-34, PG-35, PG-36, PG-37, PG-38, PG-39, PG-40, PG-41, PG-42, PG-43, PG-44, PG-45, PG-46, PG-47, PG-48, PG-49, PG-50, PG-51, PG-52, PG-53, PG-54, PG-55, PG-56, PG-57, PG-58, PG-59, PG-60, PG-61, PG-62, PG-63, PG-64, PG-65, PG-66, PG-67, PG-68, PG-69, PG-70, PG-71, PG-72, PG-73, PG-74, PG-75.
