@@ -109,6 +109,8 @@ python -m physicsguard.cli intake review templates/external_model_intake.yaml --
 
 Test-file and dataset checks:
 
+With `testfile manifest --out`, the source path is relative to the manifest directory; stdout-only manifests keep the supplied source path.
+
 ```powershell
 python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
 python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
@@ -297,6 +299,8 @@ python -m physicsguard.cli intake review templates/external_model_intake.yaml --
 ```
 
 测试文件和数据集检查：
+
+`testfile manifest --out` 把源文件路径写成相对清单目录的路径；只输出到屏幕时保留传入的源文件路径。
 
 ```powershell
 python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml

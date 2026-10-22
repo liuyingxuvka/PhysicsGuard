@@ -45,3 +45,14 @@ PhysicsGuard SHALL compute per-signal, per-parameter and temporal adequacy and r
 #### Scenario: A time-varying parameter is shallow
 - **WHEN** a time-varying parameter has fewer points than its floor
 - **THEN** the status SHALL be `partial` and `depth_summary.adequacy.parameters_below_floor` SHALL name the parameter
+
+### Requirement: Manifest paths resolve from the manifest
+When `testfile manifest` writes `--out`, `source_file.path` SHALL be relative to that manifest's directory, use forward slashes, and fall back to an absolute path when the source is on a different drive. Content hashes and sizes SHALL remain unchanged.
+
+#### Scenario: Output is in a sibling directory
+- **WHEN** the source is `data/run.csv` and the output is `val/manifest.yaml`
+- **THEN** the source path SHALL be `../data/run.csv` and resolve to the original data file
+
+#### Scenario: The manifest is printed without an output file
+- **WHEN** `--out` is not given
+- **THEN** `source_file.path` SHALL retain the supplied source path

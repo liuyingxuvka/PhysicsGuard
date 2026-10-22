@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PUMP = ROOT / "examples" / "testfile_contracts" / "pump_loop"
@@ -122,3 +124,32 @@ def test_cli_validation_run_prints_a_compact_summary() -> None:
     assert data["status"] == json.loads(full.stdout)["status"]
     assert data["depth_summary"] == json.loads(full.stdout)["depth_summary"]
     assert "depth" not in data and "critical_parameter_uncovered" in {item["type"] for item in data["findings"]}
+
+
+def test_manifest_out_resolves_source_relative_to_manifest(tmp_path: Path) -> None:
+    data_file = tmp_path / "data" / "run.csv"
+    data_file.parent.mkdir()
+    data_file.write_text("time_s,x\n0,1\n1,2\n", encoding="utf-8")
+    output = tmp_path / "val" / "manifest.yaml"
+    written = run_cli("testfile", "manifest", str(data_file), "--out", str(output))
+    printed = run_cli("testfile", "manifest", str(data_file))
+    assert written.returncode == printed.returncode == 0, written.stderr + printed.stderr
+    manifest = yaml.safe_load(output.read_text(encoding="utf-8"))
+    original = json.loads(printed.stdout)
+    assert manifest["source_file"]["path"] == "../data/run.csv"
+    assert (output.parent / manifest["source_file"]["path"]).resolve() == data_file.resolve()
+    assert original["source_file"]["path"] == str(data_file)
+    assert manifest["source_file"] == {**original["source_file"], "path": "../data/run.csv"}
+
+
+def test_manifest_out_falls_back_to_absolute_path_across_drives(tmp_path: Path, monkeypatch) -> None:
+    from physicsguard.cli import testfile_manifest_command
+
+    data_file = tmp_path / "run.csv"
+    data_file.write_text("time_s,x\n0,1\n", encoding="utf-8")
+    output = tmp_path / "val" / "manifest.yaml"
+    def different_drives(*args, **kwargs):
+        raise ValueError("path is on a different drive")
+    monkeypatch.setattr(os.path, "relpath", different_drives)
+    assert testfile_manifest_command(data_file, out=output) == 0
+    assert yaml.safe_load(output.read_text(encoding="utf-8"))["source_file"]["path"] == data_file.resolve().as_posix()

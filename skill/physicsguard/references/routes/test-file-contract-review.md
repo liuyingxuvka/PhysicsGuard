@@ -69,6 +69,8 @@ for those files. Do not require it for ordinary model-only PhysicsGuard work.
    return to the normal `ai-debugging` route.
 2. Generate or refresh the manifest:
 
+   `--out` stores the source path relative to the manifest directory (absolute across drives when necessary); stdout mode keeps the supplied path. Preserve the generated source hash and size.
+
    ```powershell
    python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
    ```

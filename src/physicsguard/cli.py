@@ -576,6 +576,13 @@ def testfile_manifest_command(
     )
     output = manifest_to_dict(manifest)
     if out is not None:
+        import os
+
+        try:
+            output["source_file"]["path"] = Path(os.path.relpath(data_file.resolve(), out.parent.resolve())).as_posix()
+        except ValueError:
+            # Different Windows drives have no relative path.
+            output["source_file"]["path"] = data_file.resolve().as_posix()
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(yaml.safe_dump(output, sort_keys=False), encoding="utf-8")
     else:

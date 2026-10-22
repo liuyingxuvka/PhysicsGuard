@@ -45,6 +45,8 @@ test data file
 
 Generate a manifest:
 
+With `--out`, `source_file.path` is relative to the output manifest directory and uses forward slashes. When a relative path is unavailable across drives, it is absolute. Printing without `--out` keeps the original supplied path; content hashes and sizes are unchanged.
+
 ```powershell
 python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
 ```

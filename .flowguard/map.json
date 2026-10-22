@@ -14,7 +14,8 @@
       "summary": "CLI and lazy public API",
       "responsibilities": [
         "Dispatch commands without running unrelated owners",
-        "Print a compact summary for hierarchy and validation commands and the full report with --json"
+        "Print a compact summary for hierarchy and validation commands and the full report with --json",
+        "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior"
       ],
       "files": [
         "src/physicsguard/__init__.py",
@@ -65,7 +66,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:ff4a4a977e0aecc924668fa1590c0acc30281d0a2a027a67158aea2943b0ee9d"
+      "fingerprint": "sha256:73932e21fcf4f1f6e6a7bfd879143b997885b4bb85a8698508fea8e6fe8e19a6"
     },
     {
       "id": "routing",
