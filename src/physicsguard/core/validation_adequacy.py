@@ -1403,8 +1403,6 @@ def _ratio(numerator: int, denominator: int) -> float:
     return float(numerator / denominator) if denominator else 0.0
 
 
-
-
 def _status(findings: list[dict[str, Any]]) -> str:
     if any(item["severity"] == "error" for item in findings):
         return "blocked"

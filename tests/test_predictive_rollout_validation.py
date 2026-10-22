@@ -17,8 +17,6 @@ ROOT = Path(__file__).resolve().parents[1]
 PUMP = ROOT / "examples" / "testfile_contracts" / "pump_loop"
 
 
-
-
 def _ref(identity_id: str, relative: str, case_ids=()):
     return {
         "identity_id": identity_id,

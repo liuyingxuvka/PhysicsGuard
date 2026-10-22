@@ -85,10 +85,6 @@ def test_cli_invalid_file_returns_nonzero() -> None:
     assert result.returncode != 0
 
 
-
-
-
-
 def test_cli_run_physical_coolant_returns_valid_json() -> None:
     result = subprocess.run(
         [

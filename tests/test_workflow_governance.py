@@ -16,12 +16,6 @@ from physicsguard.workflow import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-
-
-
-
-
-
 def test_model_understanding_preflight_template_passes() -> None:
     report = review_model_understanding_preflight(ROOT / "templates" / "model_understanding_preflight.yaml")
 

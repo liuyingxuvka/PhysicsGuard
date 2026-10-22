@@ -28,8 +28,6 @@ def _write(path: Path, data: dict) -> None:
     path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
 
 
-
-
 def _clean_plan(pump: Path) -> Path:
     return pump / "validation" / "clean_validation_plan.yaml"
 
@@ -57,10 +55,6 @@ def test_passing_depth_preserves_exact_pointwise_scope() -> None:
     assert receipt["envelopes"]["aggregate"]["violation_count"] == 0
     assert "commercial" in receipt["unsafe_claim_boundary"]
     assert ModelDatasetValidationReportSpec.model_validate(report.to_dict()).status == "pass"
-
-
-
-
 
 
 def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> None:

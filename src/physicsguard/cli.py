@@ -537,10 +537,6 @@ def assumptions_inspect(path: Path, pretty: bool = False) -> int:
     return 0
 
 
-
-
-
-
 def preflight_review(path: Path, pretty: bool = False) -> int:
     from physicsguard.workflow import review_model_understanding_preflight
 
@@ -648,8 +644,6 @@ def validation_run_command(path: Path, pretty: bool = False, full: bool = False)
     report = validate_model_dataset(path)
     _print_json(report.to_dict() if full else _validation_summary(report.to_dict()), pretty)
     return 0 if report.ok else 1
-
-
 
 
 def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:

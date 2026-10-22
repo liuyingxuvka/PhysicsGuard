@@ -9,9 +9,6 @@ from typing import Any
 import yaml
 
 
-
-
-
 @dataclass(frozen=True)
 class WorkflowFinding:
     severity: str

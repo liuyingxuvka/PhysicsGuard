@@ -308,8 +308,6 @@ def _normalized_path(base_dir: Path, value: str) -> str:
     return str(_resolve_path(base_dir, value).resolve()).casefold()
 
 
-
-
 def _same_content(left: Path, right: Path) -> bool:
     return left.is_file() and right.is_file() and left.read_bytes() == right.read_bytes()
 

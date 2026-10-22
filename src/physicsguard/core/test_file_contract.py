@@ -667,18 +667,12 @@ def _artifact_hash(artifact: ResolvedArtifact[Any]) -> str:
     return stable_json_hash(asdict(artifact.value))
 
 
-
-
-
-
 def _analysis_claim_gate(status: str) -> str:
     if status == "pass":
         return "open_for_scoped_analysis"
     if status == "partial":
         return "limited_claims_only"
     return "blocked_until_contract_errors_are_fixed"
-
-
 
 
 __all__ = [

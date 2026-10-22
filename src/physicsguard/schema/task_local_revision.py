@@ -61,7 +61,6 @@ class TaskModelIdentitySpec(BaseModel):
         return _non_empty(value, info.field_name)
 
 
-
 class HypothesisExpectationSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -255,7 +254,6 @@ class EvidenceIdentitySpec(BaseModel):
     @classmethod
     def _text_valid(cls, value: str, info) -> str:
         return _non_empty(value, info.field_name)
-
 
 
 class DiagnosticObservationSpec(BaseModel):

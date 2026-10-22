@@ -65,7 +65,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:b24b536d7c4c804771a0295e32e541af3c1c2e550a012013ffb21235cf113e06"
+      "fingerprint": "sha256:ff4a4a977e0aecc924668fa1590c0acc30281d0a2a027a67158aea2943b0ee9d"
     },
     {
       "id": "routing",
@@ -87,7 +87,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:6c286b3de73e82a5c54319f6fb4294c31a907031a8fb0846a6a7aefddf3af635"
+      "fingerprint": "sha256:1d416c9f04b4452b0a058bd5ae3585dfdf752bfcf75ad9e6d7b2ec64cc693af2"
     },
     {
       "id": "simulation",
@@ -233,7 +233,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:77e54afde5b3c7e714e31f1784f0b2cca074e56e69885c01a980c0cb8edfb4cc"
+      "fingerprint": "sha256:9276de545d1b8c49f5fefe7442516d7f38b417782f745b43b6f49b402b6c9705"
     },
     {
       "id": "task_revision",
@@ -308,7 +308,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:ac87a0113c68528f80541697ce8a5994eb13a27c5791d039407a4adcd9735f2f"
+      "fingerprint": "sha256:6f163c37d5a75b36e948c1197202505ca32ac9b9d729b3a5f9f115773e58d731"
     },
     {
       "id": "schema",
@@ -398,7 +398,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:4c55ff82f4157576085b2fc31f63e871e6089f3c8ce713eabe7380952023556d"
+      "fingerprint": "sha256:16e4887b0da8ad13a40159f6c73b457d63264bdcd3ceeaee49f98d28ed105378"
     },
     {
       "id": "loaders",
@@ -571,7 +571,8 @@
         "tests/test_install_physicsguard_skills.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_portable_model_headers.py",
-        "tests/test_task_local_revision.py"
+        "tests/test_task_local_revision.py",
+        "tests/test_source_style.py"
       ],
       "models": [],
       "status": "confirmed",
