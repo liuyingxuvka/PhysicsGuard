@@ -103,7 +103,11 @@ def test_cli_dataset_validation_commands() -> None:
         str(PUMP / "validation" / "clean_validation_plan.yaml"),
         "--pretty",
     )
+    assert logical.returncode == 0, logical.stderr
+    assert relation.returncode == 0, relation.stderr
+    assert validation.returncode == 0, validation.stderr
     assert json.loads(logical.stdout)["status"] == "pass"
+    assert json.loads(relation.stdout)["status"] == "pass"
     assert json.loads(validation.stdout)["status"] == "pass"
 
 
