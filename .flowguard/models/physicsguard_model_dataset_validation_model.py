@@ -609,12 +609,35 @@ class _FailedHoldoutPasses(GateValidationClaim):
             yield result
 
 
+class _FailedContractsContinue(CheckContracts):
+    """Known bad: failed contracts are ignored while all later gates still run."""
+
+    def apply(self, input_obj, state):
+        if not input_obj.contracts_passed:
+            for result in super().apply(replace(input_obj, contracts_passed=True), state):
+                yield replace(result, new_state=replace(result.new_state, contracts_ready=state.contracts_ready))
+            return
+        yield from super().apply(input_obj, state)
+
+
+class _DirectValidationSkipped(RunDirectValidation):
+    """Known bad: skip direct validation but allow calibration and the claim gate."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if isinstance(result.output, DirectValidationReady):
+                result = replace(result, new_state=replace(result.new_state, direct_validation_ran=state.direct_validation_ran))
+            yield result
+
+
 def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
     variants = {
         "hard_depth_gate_ignored": _HardDepthGateIgnored(),
         "failed_holdout_passes": _FailedHoldoutPasses(),
+        "failed_contracts_continue": _FailedContractsContinue(),
+        "direct_validation_skipped": _DirectValidationSkipped(),
     }
     return {
         name: _explorer(Workflow(

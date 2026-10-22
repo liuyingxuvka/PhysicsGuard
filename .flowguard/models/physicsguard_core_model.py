@@ -174,6 +174,9 @@ class State:
     unobserved_skipped: tuple[str, ...] = ()
     unobserved_listed: tuple[str, ...] = ()
     residuals_from_guess: tuple[str, ...] = ()
+    variable_assumptions_expected: tuple[str, ...] = ()
+    assumption_overrides_expected: tuple[str, ...] = ()
+    post_checks_in_solver: tuple[str, ...] = ()
 
 
 class ValidateSystem:
@@ -219,6 +222,8 @@ class BuildRegistry:
     reads = ("schema_valid",)
     writes = (
         "registry_valid",
+        "variable_assumptions_expected",
+        "assumption_overrides_expected",
         "assumptions_seen",
         "parameter_assumptions_applied",
         "assumption_overrides_warned",
@@ -271,6 +276,14 @@ class BuildRegistry:
             new_state=replace(
                 state,
                 registry_valid=state.registry_valid + (input_obj.case_id,),
+                variable_assumptions_expected=(
+                    state.variable_assumptions_expected + (input_obj.case_id,)
+                    if input_obj.variable_assumption else state.variable_assumptions_expected
+                ),
+                assumption_overrides_expected=(
+                    state.assumption_overrides_expected + (input_obj.case_id,)
+                    if input_obj.assumption_override else state.assumption_overrides_expected
+                ),
                 assumptions_seen=(
                     state.assumptions_seen + (input_obj.case_id,)
                     if input_obj.has_assumptions
@@ -862,6 +875,8 @@ def post_checks_never_block_valid_solver_selection(state: State, trace) -> Invar
         return InvariantResult.fail(
             f"post_check residuals recorded without normalized diagnostics: {bad!r}"
         )
+    if state.post_checks_in_solver:
+        return InvariantResult.fail(f"post_check residuals selected for the solver: {state.post_checks_in_solver!r}")
     return InvariantResult.pass_()
 
 
@@ -924,6 +939,10 @@ def variable_assumptions_are_fixed_residuals(state: State, trace) -> InvariantRe
     bad = tuple(sorted(set(state.variable_assumptions_fixed) - set(state.residuals_normalized)))
     if bad:
         return InvariantResult.fail(f"variable assumptions not represented as residuals: {bad!r}")
+    assembled = set(state.residuals_normalized) - set(state.failures)
+    missing = (set(state.variable_assumptions_expected) & assembled) - set(state.variable_assumptions_fixed)
+    if missing:
+        return InvariantResult.fail(f"variable assumptions missing fixed residuals: {sorted(missing)!r}")
     return InvariantResult.pass_()
 
 
@@ -932,6 +951,10 @@ def assumption_overrides_are_warned(state: State, trace) -> InvariantResult:
     bad = tuple(sorted(set(state.assumption_overrides_warned) - set(state.assumptions_seen)))
     if bad:
         return InvariantResult.fail(f"assumption overrides not tied to assumption cards: {bad!r}")
+    ready = set(state.registry_valid) - set(state.failures)
+    missing = (set(state.assumption_overrides_expected) & ready) - set(state.assumption_overrides_warned)
+    if missing:
+        return InvariantResult.fail(f"assumption overrides missing warnings: {sorted(missing)!r}")
     return InvariantResult.pass_()
 
 
@@ -1243,6 +1266,121 @@ class _EvaluatesFromInitialGuess(AssembleResiduals):
         yield from super().apply(input_obj, state)
 
 
+class _InvalidRegistryReachesSolver(BuildRegistry):
+    """Known bad: registry setup failure still attempts the bounded solver."""
+
+    writes = BuildRegistry.writes + ("solve_attempted",)
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if result.label == "registry_failed":
+                result = replace(result, new_state=replace(result.new_state, solve_attempted=state.solve_attempted + (input_obj.case_id,)))
+            yield result
+
+
+class _RawResidualReachesSolver(AssembleResiduals):
+    """Known bad: residual normalization failure still attempts the solver."""
+
+    writes = AssembleResiduals.writes + ("solve_attempted",)
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if result.label == "residual_normalization_failed":
+                result = replace(result, new_state=replace(result.new_state, solve_attempted=state.solve_attempted + (input_obj.case_id,)))
+            yield result
+
+
+class _DiagnosticsWithoutResult(GenerateDiagnostics):
+    """Known bad: emit diagnostics for a case with no solve, evaluation, or failure."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if input_obj.case_id == "clean":
+                result = replace(result, output=DiagnosticsReady("premature_diagnostics"),
+                                 new_state=replace(result.new_state, diagnostics_emitted=result.new_state.diagnostics_emitted + ("premature_diagnostics",)))
+            yield result
+
+
+class _PostChecksEnterSolver(AssembleResiduals):
+    """Known bad: the invalid post-check selection reaches the solver objective."""
+
+    writes = AssembleResiduals.writes + ("post_checks_in_solver",)
+
+    def apply(self, input_obj, state):
+        if input_obj.post_check_enters_solver:
+            for result in super().apply(replace(input_obj, post_check_enters_solver=False), state):
+                yield replace(result, new_state=replace(result.new_state, post_checks_in_solver=state.post_checks_in_solver + (input_obj.case_id,)))
+            return
+        yield from super().apply(input_obj, state)
+
+
+class _ComparisonSkipsReference(ExecuteMode):
+    """Known bad: compare reports an observation without a reference solve."""
+
+    def apply(self, input_obj, state):
+        if input_obj.mode == "compare":
+            for result in super().apply(replace(input_obj, mode="evaluate"), state):
+                yield replace(result, output=ComparisonFinished(input_obj.case_id, False, False, result.output.audit_pass),
+                              new_state=replace(result.new_state, comparisons=state.comparisons + (input_obj.case_id,)))
+            return
+        yield from super().apply(input_obj, state)
+
+
+class _HierarchySkipsSolve(ExecuteMode):
+    """Known bad: hierarchy run or plan emits its report without solving."""
+
+    def apply(self, input_obj, state):
+        if input_obj.mode in {"hierarchy_run", "hierarchy_plan"}:
+            yield FunctionResult(output=HierarchyFinished(input_obj.case_id, False, True),
+                                 new_state=replace(state, hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,)),
+                                 label="hierarchy_report_without_solve")
+            return
+        yield from super().apply(input_obj, state)
+
+
+class _InspectSolves(ExecuteMode):
+    """Known bad: structural inspect assembles residuals and solves a reference."""
+
+    writes = ExecuteMode.writes + ("residuals_normalized",)
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if input_obj.mode == "hierarchy_inspect":
+                result = replace(result, new_state=replace(result.new_state,
+                                 residuals_normalized=state.residuals_normalized + (input_obj.case_id,),
+                                 solve_attempted=state.solve_attempted + (input_obj.case_id,)))
+            yield result
+
+
+class _DiagnosticsDropAssumptions(GenerateDiagnostics):
+    """Known bad: diagnostics omit the current case's explicit assumption cards."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            yield replace(result, new_state=replace(result.new_state,
+                          assumptions_reported=tuple(case for case in result.new_state.assumptions_reported if case != input_obj.case_id)))
+
+
+class _VariableAssumptionNotFixed(AssembleResiduals):
+    """Known bad: variable assumptions become free inputs rather than fixed residuals."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if input_obj.variable_assumption:
+                result = replace(result, new_state=replace(result.new_state, variable_assumptions_fixed=state.variable_assumptions_fixed))
+            yield result
+
+
+class _OverrideNotWarned(BuildRegistry):
+    """Known bad: an explicit parameter override is applied without its warning."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if input_obj.assumption_override:
+                result = replace(result, new_state=replace(result.new_state, assumption_overrides_warned=state.assumption_overrides_warned))
+            yield result
+
+
 def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
@@ -1251,6 +1389,16 @@ def broken_variants() -> dict[str, Explorer]:
         "failed_audit_also_passes": _FailedAuditAlsoPasses(),
         "partial_snapshot_hides_unobserved": _SkipsUnobservedSilently(),
         "evaluates_from_initial_guess": _EvaluatesFromInitialGuess(),
+        "invalid_registry_reaches_solver": _InvalidRegistryReachesSolver(),
+        "raw_residual_reaches_solver": _RawResidualReachesSolver(),
+        "diagnostics_without_result": _DiagnosticsWithoutResult(),
+        "post_checks_enter_solver": _PostChecksEnterSolver(),
+        "comparison_skips_reference": _ComparisonSkipsReference(),
+        "hierarchy_skips_solve": _HierarchySkipsSolve(),
+        "inspect_solves": _InspectSolves(),
+        "diagnostics_drop_assumptions": _DiagnosticsDropAssumptions(),
+        "variable_assumption_not_fixed": _VariableAssumptionNotFixed(),
+        "override_not_warned": _OverrideNotWarned(),
     }
     return {
         name: _explorer(Workflow(
