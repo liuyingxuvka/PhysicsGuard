@@ -1,0 +1,86 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Measured heated-tank signals for CSV rows 30->31.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy evaluate heated_tank.yaml measured_k30.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: tank_step_30
+description: tank_run.csv rows 30->31
+variables:
+  lvl_prev.level_m:
+    value: 1.0
+    unit: m
+    source: tank_run.csv
+    external_signal: level_m@k
+    mapping_confidence: high
+  lvl_cur.level_m:
+    value: 1.0
+    unit: m
+    source: tank_run.csv
+    external_signal: level_m@k+1
+    mapping_confidence: high
+  vol.V_dot_out_m3_s:
+    value: 0.001
+    unit: m^3/s
+    source: tank_run.csv
+    external_signal: outflow_m3s@k
+    mapping_confidence: high
+  inflow_mass.V_dot_m3_s:
+    value: 0.001
+    unit: m^3/s
+    source: tank_run.csv
+    external_signal: inflow_Lps@k
+    mapping_confidence: high
+    conversion_factor: 0.001
+    conversion_note: L/s to m^3/s
+  heat.T_previous_K:
+    value: 296.73141999999996
+    unit: K
+    source: tank_run.csv
+    external_signal: T_tank_C@k
+    mapping_confidence: high
+    conversion_offset: 273.15
+    conversion_note: degC to K
+  heat.T_current_K:
+    value: 296.6531
+    unit: K
+    source: tank_run.csv
+    external_signal: T_tank_C@k+1
+    mapping_confidence: high
+    conversion_offset: 273.15
+    conversion_note: degC to K
+  through.T_in_K:
+    value: 288.15
+    unit: K
+    source: tank_run.csv
+    external_signal: T_in_C@k
+    mapping_confidence: high
+    conversion_offset: 273.15
+    conversion_note: degC to K
+  loss.T_ambient_K:
+    value: 293.15
+    unit: K
+    source: tank_run.csv
+    external_signal: T_amb_C@k
+    mapping_confidence: high
+    conversion_offset: 273.15
+    conversion_note: degC to K
+  heater_cmd.x:
+    value: 20000.0
+    unit: W
+    source: tank_run.csv
+    external_signal: P_heater_cmd_kW@k
+    mapping_confidence: high
+    conversion_factor: 1000.0
+    conversion_note: kW to W; measured command, not delivered heat
+  heater_el.V_V:
+    value: 400.0
+    unit: V
+    source: tank_run.csv
+    external_signal: U_heater_V@k
+    mapping_confidence: high
+  heater_el.current_A:
+    value: 50.0
+    unit: A
+    source: tank_run.csv
+    external_signal: I_heater_A@k
+    mapping_confidence: high

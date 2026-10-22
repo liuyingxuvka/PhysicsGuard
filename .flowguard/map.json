@@ -186,7 +186,8 @@
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_variable_registry.py",
-        "tests/test_wastewater_starter_pack.py"
+        "tests/test_wastewater_starter_pack.py",
+        "tests/test_heated_tank_example.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_interval_diagnosability_model.py",
@@ -581,9 +582,10 @@
     {
       "id": "example_tools",
       "layer": "",
-      "summary": "Explicit external-tool example helper scripts",
+      "summary": "Explicit external-tool and synthetic measured-example helpers",
       "responsibilities": [
-        "Keep optional example tooling outside the native simulation runtime"
+        "Keep optional example tooling outside the native simulation runtime",
+        "Generate the finite heated-tank CSV and map only measured signals with explicit unit conversions"
       ],
       "files": [
         "examples/**/*.py"
@@ -595,7 +597,7 @@
       "tests": [],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:76507e3f1b615f09145ed46072e89bcc16fca5633104f81c4f2eec5f092a8381"
+      "fingerprint": "sha256:5fb03c4b022e0af031dd7a9e62b26dc02c6c0d1755b21e4bfd4104191977c14d"
     }
   ],
   "flows": [

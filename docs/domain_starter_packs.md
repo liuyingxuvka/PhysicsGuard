@@ -263,3 +263,13 @@ Included templates:
 - `level_1_greenhouse_irrigation_fermentation_drying_cold_chain.yaml`: irrigation/crop-water, greenhouse heat, greenhouse CO2, fermentation, drying, and cold-chain blocks with local balances, ratio checks, and range post-checks.
 
 These templates intentionally do not implement crop-growth models, photosynthesis kinetics, microbial kinetics, drying-rate models, refrigeration maps, detailed food-process simulation, or greenhouse climate-control optimization. They check whether mapped snapshot signals close before asking for finer signals such as greenhouse heat boundary, CO2 balance basis, irrigation drainage boundary, fermentation mass/yield basis, dryer water/exhaust basis, or cold-chain heat-gain boundary.
+
+## Heated-Tank Reference Example
+
+`examples/hierarchical/heated_tank/` contains a synthetic non-SI CSV, a coarse
+volume/energy audit and a six-block coupled hierarchy with an explicit heater
+nameplate-efficiency assumption. `sim_tank.py` regenerates the CSV;
+`map_measured.py tank_run.csv OUTPUT_DIRECTORY` writes the four measured snapshots.
+The heater current halves at 600 s while its command stays unchanged; inflow changes
+at 900 s. This is a low-fidelity diagnostic reference. Measurements contain no
+hand-computed connected endpoints or intermediate heat flows.
