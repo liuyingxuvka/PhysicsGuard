@@ -56,3 +56,14 @@ When `testfile manifest` writes `--out`, `source_file.path` SHALL be relative to
 #### Scenario: The manifest is printed without an output file
 - **WHEN** `--out` is not given
 - **THEN** `source_file.path` SHALL retain the supplied source path
+
+### Requirement: Observed mapping staleness is explicit
+A hierarchy mapping ledger SHALL preserve `stale_when` as reconfirmation conditions. Those conditions alone SHALL NOT create `stale_mapping`. Only `mapping_status` equal to `stale`, case-insensitively, SHALL mark the mapping stale.
+
+#### Scenario: A clean mapping records a future review condition
+- **WHEN** a high-confidence clean pitch mapping records `stale_when: [controller retuned]` without stale status
+- **THEN** the condition SHALL remain in the ledger and SHALL NOT create a mapping issue or signal-mapping followup
+
+#### Scenario: The reconfirmation condition has occurred
+- **WHEN** the mapping status is `stale` or a case variant of it
+- **THEN** the row SHALL include `stale_mapping` and a mapping-review followup
