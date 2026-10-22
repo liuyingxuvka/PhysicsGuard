@@ -232,3 +232,7 @@ nameplate-efficiency assumption and measured-only snapshots. Use `hierarchy insp
 to inspect its tree. Coupled measured-only evaluation may still report missing inputs;
 keep that gap visible rather than supplying initial guesses or hand-computed
 intermediate snapshots to obtain a pass.
+
+Use `python -m physicsguard.cli assumptions inspect MODEL.yaml` for explicit cards
+in either a single-system model or the system wrapped by a hierarchical audit.
+Inspection preserves the card rules and does not solve the model.

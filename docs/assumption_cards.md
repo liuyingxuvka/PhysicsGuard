@@ -161,3 +161,11 @@ assumptions:
 - Human approval workflow: approve or reject AI-proposed assumptions.
 - Assumption budget: limit count or impact of assumptions per block.
 - Dependency tracking: detect assumptions derived from the same result they validate.
+
+## Inspecting A Hierarchical Audit
+
+`python -m physicsguard.cli assumptions inspect MODEL.yaml` accepts either a
+single-system file or a hierarchical audit with top-level `hierarchy` and `system`.
+For the latter it inspects the wrapped `system`; card rules and output format are
+the same and inspection does not solve. The heated-tank model lists its explicit
+heater nameplate-efficiency card through this command.

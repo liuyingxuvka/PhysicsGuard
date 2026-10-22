@@ -104,3 +104,14 @@ A connection SHALL have default residual scale `1e-6 * max(endpoint variable sca
 #### Scenario: A connection tolerance is invalid
 - **WHEN** its scale is zero, negative, infinite or NaN
 - **THEN** schema validation SHALL reject the model
+
+### Requirement: Assumption inspection accepts the model's hierarchy wrapper
+When a file contains top-level `hierarchy` and `system`, `assumptions inspect` SHALL use the native hierarchical loader and inspect its system. Other files SHALL use the existing single-system loader. Card semantics and output format SHALL remain unchanged and inspection SHALL NOT solve.
+
+#### Scenario: An existing system is wrapped in one block
+- **WHEN** the parameter-assumption example is wrapped in a one-block hierarchical audit
+- **THEN** inspection SHALL exit `0` and list the same card as the unwrapped system
+
+#### Scenario: The heated-tank hierarchy is inspected
+- **WHEN** the heated-tank model is passed to `assumptions inspect`
+- **THEN** inspection SHALL exit `0` and list the explicit nameplate-efficiency variable assumption

@@ -134,6 +134,8 @@ Connections mean the two endpoints are the same physical quantity. Their default
 
 PhysicsGuard treats assumptions as first-class audit objects. Assumptions can be active, proposed, rejected, high-impact, or under review.
 
+`assumptions inspect` accepts a single-system model or a hierarchical audit, inspecting the same cards from the wrapped system without solving.
+
 This matters because an AI agent can otherwise hide a missing signal or parameter behind a plausible sentence. In PhysicsGuard, a missing coolant flow, uncertain gain, unverified unit, or proposed map simplification must remain visible until it is supported, rejected, or scoped out.
 
 ## Visual Audit Communication
@@ -334,6 +336,8 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ## 假设卡片
 
 PhysicsGuard 把假设当成一等审计对象。假设可以是 active、proposed、rejected、high-impact 或 under review。
+
+`assumptions inspect` 同时接受单系统模型和分层审计文件，从其中的 system 检查同一套假设卡片，不进行求解。
 
 这很重要，因为 AI 容易用一句合理的话掩盖缺失信号或参数。在 PhysicsGuard 里，缺失 coolant flow、不确定 gain、未验证单位或 proposed map simplification 都必须保持可见，直到被支持、拒绝或明确排除。
 

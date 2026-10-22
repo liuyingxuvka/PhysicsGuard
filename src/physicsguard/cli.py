@@ -151,7 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
         "inspect",
         help="inspect assumption cards without solving",
     )
-    assumptions_inspect.add_argument("system", type=Path, help="path to a YAML SystemSpec")
+    assumptions_inspect.add_argument("system", type=Path, help="path to a YAML SystemSpec or hierarchical audit")
     assumptions_inspect.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     preflight_parser = subparsers.add_parser(
@@ -529,9 +529,16 @@ def task_model_diagnose_command(
 def assumptions_inspect(path: Path, pretty: bool = False) -> int:
     from physicsguard.core.diagnostics import DiagnosticReporter
     from physicsguard.core.residual import ResidualBuilder
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
     from physicsguard.io.yaml_loader import load_system_spec
 
-    system = load_system_spec(path)
+    data = load_yaml_mapping(path)
+    system = (
+        load_hierarchical_audit_spec(path).system
+        if "hierarchy" in data and "system" in data
+        else load_system_spec(path)
+    )
     builder = ResidualBuilder(system)
     _print_json(DiagnosticReporter().to_dict(builder.assumption_summary()), pretty)
     return 0

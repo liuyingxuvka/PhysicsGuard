@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples" / "assumptions"
@@ -66,3 +68,29 @@ assumptions:
     )
     result = run_cli("assumptions", "inspect", str(path), "--pretty")
     assert result.returncode != 0
+
+
+def test_assumptions_inspect_wrapped_system_preserves_the_same_card(tmp_path: Path) -> None:
+    source = EXAMPLES / "parameter_assumption.yaml"
+    system = yaml.safe_load(source.read_text(encoding="utf-8"))
+    wrapped = {"audit_name": "wrapped_assumptions", "system": system,
+               "hierarchy": {"blocks": [{"id": "conductor", "level": 0, "components": ["conductor"]}]}}
+    path = tmp_path / "wrapped.yaml"
+    path.write_text(yaml.safe_dump(wrapped), encoding="utf-8")
+    direct = run_cli("assumptions", "inspect", str(source))
+    hierarchical = run_cli("assumptions", "inspect", str(path))
+    assert direct.returncode == hierarchical.returncode == 0, direct.stderr + hierarchical.stderr
+    before, after = json.loads(direct.stdout), json.loads(hierarchical.stdout)
+    assert after["cards"] == before["cards"]
+    assert after["active_count"] == before["active_count"] == 1
+
+
+def test_assumptions_inspect_heated_tank_lists_nameplate_efficiency() -> None:
+    path = ROOT / "examples/hierarchical/heated_tank/heated_tank.yaml"
+    result = run_cli("assumptions", "inspect", str(path))
+    assert result.returncode == 0, result.stderr
+    data = json.loads(result.stdout)
+    card = next(item for item in data["cards"] if item["id"] == "heater_nameplate_efficiency")
+    assert card["target"] == "heater_eff.efficiency"
+    assert card["application"] == "boundary_residual"
+    assert data["active_count"] == 1

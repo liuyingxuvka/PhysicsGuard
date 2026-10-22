@@ -16,7 +16,8 @@
         "Dispatch commands without running unrelated owners",
         "Print a compact summary for hierarchy and validation commands and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
-        "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status"
+        "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
+        "Inspect assumption cards from either a single SystemSpec or the system inside a hierarchical audit"
       ],
       "files": [
         "src/physicsguard/__init__.py",
@@ -67,7 +68,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:165baf0cf4ad56c99e0bf85418cc2e7ee43cba1d1d3cb6ea2f170a04a76fced2"
+      "fingerprint": "sha256:72d028fd92ce5f2c3c00a68677fdaa8108882418e6d2a9f248aa3afd6cb34e21"
     },
     {
       "id": "routing",
