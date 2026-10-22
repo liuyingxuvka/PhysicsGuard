@@ -129,3 +129,12 @@ The coolant-loop examples under `examples/hierarchical/coolant_loop/` show a coa
 - Adapter layer: generate `SystemSpec` or `ObservedValuesSpec` from external tools.
 - Design feasibility mode: estimate required flow, UA, power, efficiency, or other coarse quantities.
 - Automatic refinement execution: not implemented; current reports only recommend next templates.
+
+## Command Exit Codes
+
+Exit codes are `0` for a passed check, `1` for a check that ran and did not pass,
+and `2` when the command could not run (including invalid input or missing required
+files/variables). Audit commands use `audit_pass`; comparison uses the observed
+`observed_audit_pass`, not reference-solver convergence. Successful structural
+inspection and manifest/contract inspection or diff commands return `0`.
+The JSON report and compact/full output formats do not change with this convention.

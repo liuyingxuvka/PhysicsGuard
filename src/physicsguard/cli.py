@@ -377,7 +377,7 @@ def solve(path: Path, pretty: bool = False) -> int:
     reporter = DiagnosticReporter()
     report = reporter.generate(system, builder, solver_result)
     _print_json(reporter.to_dict(report), pretty)
-    return 0
+    return 0 if report.audit_pass else 1
 
 
 def evaluate(system_path: Path, observed_path: Path, pretty: bool = False) -> int:
@@ -390,7 +390,7 @@ def evaluate(system_path: Path, observed_path: Path, pretty: bool = False) -> in
     observed = load_observed_values(observed_path)
     report = AuditEvaluator(system).evaluate_observed(observed)
     _print_json(DiagnosticReporter().to_dict(report), pretty)
-    return 0
+    return 0 if report.audit_pass else 1
 
 
 def compare(system_path: Path, observed_path: Path, pretty: bool = False) -> int:
@@ -403,7 +403,7 @@ def compare(system_path: Path, observed_path: Path, pretty: bool = False) -> int
     observed = load_observed_values(observed_path)
     report = AuditEvaluator(system).compare_to_reference(observed)
     _print_json(DiagnosticReporter().to_dict(report), pretty)
-    return 0
+    return 0 if report.observed_audit_pass else 1
 
 
 def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
@@ -414,7 +414,7 @@ def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
     runner = HierarchicalAuditRunner(spec)
     report = runner.to_dict(runner.run())
     _print_json(report if full else _hierarchy_summary(report), pretty)
-    return 0
+    return 0 if report["audit_pass"] else 1
 
 
 def hierarchy_inspect(path: Path, pretty: bool = False) -> int:
@@ -434,7 +434,7 @@ def hierarchy_plan(path: Path, pretty: bool = False, full: bool = False) -> int:
     runner = HierarchicalAuditRunner(spec)
     report = runner.run()
     _print_json(plan_from_report(report) if full else _hierarchy_summary(runner.to_dict(report)), pretty)
-    return 0
+    return 0 if report.audit_pass else 1
 
 
 def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, full: bool = False) -> int:
@@ -447,7 +447,7 @@ def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, fu
     runner = HierarchicalAuditRunner(spec)
     report = runner.to_dict(runner.evaluate_observed(observed, skip_unobserved=True))
     _print_json(report if full else _hierarchy_summary(report), pretty)
-    return 0
+    return 0 if report["audit_pass"] else 1
 
 
 def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, full: bool = False) -> int:
@@ -460,7 +460,7 @@ def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, ful
     runner = HierarchicalAuditRunner(spec)
     report = runner.to_dict(runner.compare_observed(observed))
     _print_json(report if full else _comparison_summary(report), pretty)
-    return 0
+    return 0 if report["observed_audit_pass"] else 1
 
 
 def task_model_plan_command(path: Path, pretty: bool = False) -> int:
@@ -744,7 +744,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return validation_run_command(args.plan, args.pretty, args.json)
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
-        return 1
+        return 2
     parser.error(f"unsupported command: {args.command}")
     return 2
 

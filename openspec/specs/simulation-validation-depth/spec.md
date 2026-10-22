@@ -78,3 +78,14 @@ The heated-tank reference SHALL regenerate its 121-row non-SI CSV and four measu
 #### Scenario: Coupled measurement inputs are insufficient
 - **WHEN** the current observed evaluator cannot evaluate residuals without missing connected inputs
 - **THEN** the example SHALL expose that limitation and SHALL NOT claim automatic intermediate propagation or fill it with initial guesses
+
+### Requirement: Command exit codes preserve the checked verdict
+Single-system and hierarchy audit commands SHALL exit `0` when `audit_pass` is true and `1` when it is false. Compare commands SHALL use `observed_audit_pass`; other checks SHALL retain their native `ok` or status policy. Any command that cannot run because of input, file, schema, missing-required-variable or usage errors SHALL exit `2`. Successful non-judgment inspection, manifest generation and diff commands SHALL exit `0`. These exit codes SHALL NOT change the report JSON.
+
+#### Scenario: The observed pitch feedback is faulty
+- **WHEN** hierarchy evaluation or comparison reports the observed audit as false
+- **THEN** the command SHALL exit `1` even if the reference solve converged
+
+#### Scenario: An audit file cannot be loaded
+- **WHEN** an audit file does not exist or fails YAML/schema validation
+- **THEN** the command SHALL exit `2` rather than returning a checked-failure verdict

@@ -51,9 +51,9 @@ def test_hierarchy_run_clean_example_returns_valid_json() -> None:
     }.issubset(data)
 
 
-def test_hierarchy_run_conflict_returns_code_0_and_audit_false() -> None:
+def test_hierarchy_run_conflict_fails_with_code_1_and_audit_false() -> None:
     result = run_cli("hierarchy", "run", str(FC / "conflict_level_0_h2_power.yaml"), "--pretty")
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert not data["audit_pass"]
     assert data["top_blocks"][0]["block_id"] == "fc_system"
@@ -72,7 +72,7 @@ def test_hierarchy_inspect_returns_block_tree_json() -> None:
 
 def test_hierarchy_plan_returns_recommendations_only() -> None:
     result = run_cli("hierarchy", "plan", str(FC / "conflict_level_0_h2_power.yaml"), "--pretty", "--json")
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert set(data) == {
         "top_blocks",
@@ -95,7 +95,7 @@ def test_hierarchy_evaluate_observed_fault_returns_block_rollup_without_solver()
         "--pretty",
         "--json",
     )
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert not data["audit_pass"]
     assert data["metadata"]["mode"] == "hierarchy_evaluate"
@@ -113,7 +113,7 @@ def test_hierarchy_compare_observed_fault_returns_deviations_and_hierarchy() -> 
         "--pretty",
         "--json",
     )
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert data["metadata"]["mode"] == "hierarchy_compare"
     assert data["reference_audit_pass"]
@@ -124,7 +124,7 @@ def test_hierarchy_compare_observed_fault_returns_deviations_and_hierarchy() -> 
 
 def test_hierarchy_invalid_file_returns_nonzero() -> None:
     result = run_cli("hierarchy", "run", str(FC / "missing.yaml"))
-    assert result.returncode != 0
+    assert result.returncode == 2
 
 
 def test_existing_run_command_still_works_after_hierarchy_cli_added() -> None:
@@ -156,7 +156,7 @@ def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
     del fault["variables"]["controller_q_gain.y"]
     (tmp_path / "nothing_left.yaml").write_text(yaml.safe_dump(fault), encoding="utf-8")
     result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(tmp_path / "nothing_left.yaml"))
-    assert result.returncode == 1
+    assert result.returncode == 2
     assert "no residual can be evaluated without them" in result.stderr
 
 
@@ -164,7 +164,7 @@ def test_hierarchy_evaluate_prints_a_compact_summary_without_input_echo() -> Non
     args = ("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(OBSERVED / "pitch_feedback_observed_fault.yaml"))
     summary = run_cli(*args)
     full = run_cli(*args, "--json")
-    assert summary.returncode == 0, summary.stderr
+    assert summary.returncode == full.returncode == 1, summary.stderr
     assert len(summary.stdout) < 4096 < len(full.stdout)
     data = json.loads(summary.stdout)
     assert data["output"] == "summary only; add --json for the full report"

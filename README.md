@@ -104,6 +104,8 @@ The example represents a mapped controller feedback signal. The fault case has a
 
 ## Main CLI Paths
 
+Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
+
 Project and model-understanding checks:
 
 ```powershell
@@ -300,6 +302,8 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 `stale_when` 记录信号映射何时需要重新确认；只有显式 `mapping_status: stale` 才表示映射已经过期。
 
 ## 主要 CLI 路线
+
+退出码：0 表示运行并通过，1 表示已检查但未通过，2 表示无法运行。
 
 项目和模型理解检查：
 

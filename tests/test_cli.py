@@ -17,7 +17,7 @@ def cli_env() -> dict[str, str]:
     return env
 
 
-def test_cli_dummy_system_returns_code_0() -> None:
+def test_cli_dummy_system_passes_with_code_0() -> None:
     result = subprocess.run(
         [
             sys.executable,
@@ -82,7 +82,7 @@ def test_cli_invalid_file_returns_nonzero() -> None:
         capture_output=True,
         check=False,
     )
-    assert result.returncode != 0
+    assert result.returncode == 2
 
 
 def test_cli_run_physical_coolant_returns_valid_json() -> None:
@@ -167,7 +167,7 @@ def test_cli_evaluate_conflict_observed_returns_audit_pass_false() -> None:
         capture_output=True,
         check=False,
     )
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert not data["audit_pass"]
     assert data["top_residuals"][0]["diagnostic_key"] == "coolant_heat_balance_mismatch"
@@ -190,7 +190,7 @@ def test_cli_compare_conflict_observed_includes_variable_deviations() -> None:
         capture_output=True,
         check=False,
     )
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert not data["observed_audit_pass"]
     assert data["top_variable_deviations"][0]["variable"] == "coolant.Q_dot_W"
@@ -212,4 +212,13 @@ def test_cli_invalid_observed_file_returns_nonzero() -> None:
         capture_output=True,
         check=False,
     )
-    assert result.returncode != 0
+    assert result.returncode == 2
+
+
+def test_cli_dummy_conflict_is_checked_and_not_passed() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "physicsguard.cli", "run", str(ROOT / "examples/dummy_conflict_system.yaml")],
+        cwd=ROOT, env=cli_env(), text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 1, result.stderr
+    assert json.loads(result.stdout)["audit_pass"] is False

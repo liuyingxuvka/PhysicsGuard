@@ -98,7 +98,7 @@ def test_signal_mapping_cli_output_is_top_level_json(tmp_path: Path) -> None:
         check=False,
     )
 
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert data["signal_mapping_ledger"]
     assert data["bug_family_followups"]

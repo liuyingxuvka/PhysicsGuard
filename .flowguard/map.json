@@ -15,7 +15,8 @@
       "responsibilities": [
         "Dispatch commands without running unrelated owners",
         "Print a compact summary for hierarchy and validation commands and the full report with --json",
-        "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior"
+        "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
+        "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status"
       ],
       "files": [
         "src/physicsguard/__init__.py",
@@ -66,7 +67,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:73932e21fcf4f1f6e6a7bfd879143b997885b4bb85a8698508fea8e6fe8e19a6"
+      "fingerprint": "sha256:165baf0cf4ad56c99e0bf85418cc2e7ee43cba1d1d3cb6ea2f170a04a76fced2"
     },
     {
       "id": "routing",

@@ -17,6 +17,8 @@ Pick one route, then load only its file.
 
 ## Rules for every route
 
+Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
+
 - If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
 - Keep non-pass states and unknowns visible.
 - AI narration, inventories and template previews are not evidence; only PhysicsGuard command output is.
