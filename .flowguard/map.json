@@ -1,7 +1,12 @@
 {
   "schema": "flowguard.map.v1",
   "project": "PhysicsGuard",
-  "layers": [],
+  "layers": [
+    "interface",
+    "workflows",
+    "engine",
+    "foundation"
+  ],
   "ignore": [
     ".agents/**",
     "openspec/**"
@@ -10,7 +15,7 @@
   "components": [
     {
       "id": "interface",
-      "layer": "",
+      "layer": "interface",
       "summary": "CLI and lazy public API",
       "responsibilities": [
         "Dispatch commands without running unrelated owners",
@@ -21,7 +26,8 @@
       ],
       "files": [
         "src/physicsguard/__init__.py",
-        "src/physicsguard/cli.py"
+        "src/physicsguard/cli.py",
+        "src/physicsguard/core/__init__.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -29,6 +35,7 @@
       "depends_on": [
         "evidence",
         "loaders",
+        "modules",
         "routing",
         "schema",
         "simulation",
@@ -62,17 +69,13 @@
         "tests/test_version_consistency.py",
         "tests/test_workflow_governance.py"
       ],
-      "models": [
-        ".flowguard/models/physicsguard_core_model.py",
-        ".flowguard/models/physicsguard_model_dataset_validation_model.py",
-        ".flowguard/models/physicsguard_test_file_contract_model.py"
-      ],
+      "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:72d028fd92ce5f2c3c00a68677fdaa8108882418e6d2a9f248aa3afd6cb34e21"
+      "fingerprint": "sha256:45fa8faccc6bf1e9a8d1cbba01b9902a58fa49fd0aed8bc5825d79c8d800a6fb"
     },
     {
       "id": "routing",
-      "layer": "",
+      "layer": "workflows",
       "summary": "Model-understanding preflight and external-model intake reviews",
       "responsibilities": [
         "Check preflight and intake records for missing fields and uncertain mappings without changing observed values"
@@ -94,34 +97,33 @@
     },
     {
       "id": "simulation",
-      "layer": "",
-      "summary": "Residual assembly, bounded solve, observed evaluation and hierarchy",
+      "layer": "engine",
+      "summary": "Residual assembly, bounded solve, observed evaluation, hierarchy and signal mapping",
       "responsibilities": [
         "Validate inputs and finite solver bounds before residual evaluation",
         "Separate numerical optimization success, observed audit and diagnostic limits",
         "Skip only the residuals that need unobserved variables and list those variables as missing",
-        "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance"
+        "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
+        "Report an observed value without a source signal or unit as a mapping gap",
+        "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale"
       ],
       "files": [
-        "src/physicsguard/core/__init__.py",
         "src/physicsguard/core/assumptions.py",
-        "src/physicsguard/core/diagnosability.py",
         "src/physicsguard/core/diagnostics.py",
         "src/physicsguard/core/evaluator.py",
         "src/physicsguard/core/hierarchy.py",
         "src/physicsguard/core/registry.py",
         "src/physicsguard/core/residual.py",
-        "src/physicsguard/core/solver.py"
+        "src/physicsguard/core/solver.py",
+        "src/physicsguard/core/signal_mapping.py"
       ],
       "entrypoints": [],
       "state": [],
       "side_effects": [],
       "depends_on": [
-        "evidence",
+        "loaders",
         "modules",
-        "schema",
-        "task_revision",
-        "validation"
+        "schema"
       ],
       "tests": [
         "tests/test_additional_physical_relations.py",
@@ -194,15 +196,14 @@
         "tests/test_heated_tank_example.py"
       ],
       "models": [
-        ".flowguard/models/physicsguard_interval_diagnosability_model.py",
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:2027a8a015d8611c654f7a3ea6428de6e5398d137f66ff0fb48026de5a663e11"
+      "fingerprint": "sha256:b306b0ed3f8de96283959c6fae86fc8448ff627ab31e3b2d911165878ea974d8"
     },
     {
       "id": "validation",
-      "layer": "",
+      "layer": "workflows",
       "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
       "responsibilities": [
         "Check the dataset files, contract mapping edges and time coverage behind a validation and report them as a compact depth summary",
@@ -242,13 +243,15 @@
     },
     {
       "id": "task_revision",
-      "layer": "",
-      "summary": "Task-local competing hypotheses and discriminating observations",
+      "layer": "workflows",
+      "summary": "Task-local hypotheses, interval residuals and diagnosability",
       "responsibilities": [
-        "Rank the most discriminating next observation and keep a model miss visible when every hypothesis is contradicted"
+        "Rank the most discriminating next observation and keep a model miss visible when every hypothesis is contradicted",
+        "Evaluate interval residuals and distinguish hypotheses with bounded diagnosability evidence"
       ],
       "files": [
-        "src/physicsguard/core/task_local_revision.py"
+        "src/physicsguard/core/task_local_revision.py",
+        "src/physicsguard/core/diagnosability.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -262,25 +265,23 @@
         "tests/test_signal_mapping_ledger.py",
         "tests/test_task_local_revision.py"
       ],
-      "models": [],
+      "models": [
+        ".flowguard/models/physicsguard_interval_diagnosability_model.py"
+      ],
       "status": "confirmed",
-      "fingerprint": "sha256:15a5c6c884d4f97a7107514293299221006f8cdbd1c3861fff70804e3760907c"
+      "fingerprint": "sha256:93507259f729437ef01f43ca33f7b83011a9ef46745096f7fc956c75ed9e6bef"
     },
     {
       "id": "evidence",
-      "layer": "",
-      "summary": "Test-file contracts, coverage, contract diff and signal mapping",
+      "layer": "workflows",
+      "summary": "Test-file contracts, manifests and contract differences",
       "responsibilities": [
         "Keep source files, manifests and mapping evidence traceable",
-        "Report an observed value without a source signal or unit as a mapping gap",
-        "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope",
-        "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale"
+        "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
       ],
       "files": [
         "src/physicsguard/core/contract_diff.py",
         "src/physicsguard/core/data_file_manifest.py",
-        "src/physicsguard/core/parameter_coverage.py",
-        "src/physicsguard/core/signal_mapping.py",
         "src/physicsguard/core/test_file_contract.py"
       ],
       "entrypoints": [],
@@ -309,25 +310,25 @@
         "tests/test_validation_depth_receipts.py"
       ],
       "models": [
-        ".flowguard/models/physicsguard_core_model.py",
-        ".flowguard/models/physicsguard_model_dataset_validation_model.py",
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:11fb7e87b073c172126940e38bd9984353415e58049d668fff72e1d6660a0246"
+      "fingerprint": "sha256:cd3c9fac0da93db779b7554950f3ba4711769471b9820c817df3186868831b4b"
     },
     {
       "id": "schema",
-      "layer": "",
-      "summary": "Validated schemas and explicit claim boundaries",
+      "layer": "foundation",
+      "summary": "Validated schemas, shared review records and pure contract coverage checks",
       "responsibilities": [
         "Validate structured inputs before domain operations",
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
-        "Validate optional connection residual scales as positive finite values"
+        "Validate optional connection residual scales as positive finite values",
+        "Provide shared contract-review records and pure manifest, catalog, role and mapping coverage checks"
       ],
       "files": [
         "src/physicsguard/schema/*.py",
-        "src/physicsguard/schema/test_file_contract.py"
+        "src/physicsguard/schema/test_file_contract.py",
+        "src/physicsguard/core/parameter_coverage.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -400,16 +401,14 @@
         "tests/test_yaml_loader.py"
       ],
       "models": [
-        ".flowguard/models/physicsguard_core_model.py",
-        ".flowguard/models/physicsguard_model_dataset_validation_model.py",
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:7b8485a88498a5a361804e1c8f377242d5df049a19a713afa1c8a46d1492a7e7"
+      "fingerprint": "sha256:0e8d6e51b42d294bf0b6ebe1152c3afd13fd388b62f5f38b2b79dd049c0b00e4"
     },
     {
       "id": "loaders",
-      "layer": "",
+      "layer": "foundation",
       "summary": "Native YAML/JSON and observation loaders",
       "responsibilities": [
         "Read native files without silently changing observations"
@@ -491,7 +490,7 @@
     },
     {
       "id": "modules",
-      "layer": "",
+      "layer": "engine",
       "summary": "Physical residual modules and registry declarations",
       "responsibilities": [
         "Define documented low-fidelity equations, SI units, assumptions and finite validity ranges"
@@ -546,15 +545,13 @@
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_variable_registry.py"
       ],
-      "models": [
-        ".flowguard/models/physicsguard_core_model.py"
-      ],
+      "models": [],
       "status": "confirmed",
       "fingerprint": "sha256:eb37c7f62f67246bd7bedbed6e67be9d51c143853a82d6c4e86aa4234d73cfe7"
     },
     {
       "id": "maintenance",
-      "layer": "",
+      "layer": "interface",
       "summary": "Skill installation, starter-pack generation and example headers",
       "responsibilities": [
         "Install the physicsguard skill by replacing its copy in --target and removing retired skill directories; --check and --dry-run change nothing",
@@ -587,7 +584,7 @@
     },
     {
       "id": "example_tools",
-      "layer": "",
+      "layer": "interface",
       "summary": "Explicit external-tool and synthetic measured-example helpers",
       "responsibilities": [
         "Keep optional example tooling outside the native simulation runtime",
@@ -627,9 +624,9 @@
   "accepted_debts": [
     {
       "code": "dependency_cycle",
-      "component": "evidence",
-      "contains": "evidence <-> modules <-> simulation <-> validation; imports:",
-      "reason": "Domain coupling that remains after the blueprint layer, evidence registry and receipts were removed: physical modules register in the simulation registry, hierarchy reports build the signal-mapping ledger, test-file contracts and dataset validation evaluate residuals through simulation, and core/__init__.py lazily exposes every core module. Splitting it is a separate refactor; keep the real import edges and domain tests. Other lint findings remain visible."
+      "component": "modules",
+      "contains": "modules <-> simulation; imports:",
+      "reason": "Physical modules use the engine variable registry and residual records, while the residual builder creates modules through the module registry. Both owners are in the engine layer; keep these real imports and domain tests."
     }
   ]
 }

@@ -1121,6 +1121,7 @@ import sys  # noqa: E402
 from flowguard.explorer import Explorer  # noqa: E402
 
 MODEL_ID = "core"
+PARENT = "system"
 ROOT = Path(__file__).resolve().parents[2]
 IMPLEMENTED_BY = {
     "ValidateSystem": "src/physicsguard/io/yaml_loader.py:load_system_spec",

@@ -722,6 +722,7 @@ import yaml  # noqa: E402
 from flowguard.explorer import Explorer  # noqa: E402
 
 MODEL_ID = "test_file_contract"
+PARENT = "system"
 ROOT = Path(__file__).resolve().parents[2]
 PUMP = ROOT / "examples" / "testfile_contracts" / "pump_loop"
 IMPLEMENTED_BY = {

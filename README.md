@@ -421,3 +421,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 
 For repository tests, install `.[test]`; this declares the current FlowGuard maintenance dependency. FlowGuard is optional for ordinary PhysicsGuard runtime use. The current repository map checks structure; selected native models and ordinary pytest verify behavior separately.
+
+Install FlowGuard only from its owner’s GitHub repository (`git+https://github.com/liuyingxuvka/FlowGuard.git@<tag>`); the `flowguard` package on PyPI is a different project.
+
+FlowGuard 只从主人的 GitHub 仓库安装（`git+https://github.com/liuyingxuvka/FlowGuard.git@<tag>`）；PyPI 上名为 `flowguard` 的包是另一个项目。

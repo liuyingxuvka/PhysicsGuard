@@ -233,6 +233,7 @@ import sys  # noqa: E402
 from flowguard.explorer import Explorer  # noqa: E402
 
 MODEL_ID = "interval_diagnosability"
+PARENT = "task_revision"
 ROOT = Path(__file__).resolve().parents[2]
 IMPLEMENTED_BY = {
     "EvaluateInterval": "src/physicsguard/core/diagnosability.py:evaluate_interval_residual",
