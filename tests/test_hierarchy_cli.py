@@ -149,8 +149,16 @@ def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
     assert data["audit_pass"]
-    assert data["missing_required_variables"] == ["cool.Q_stack_heat_W"]
-    assert any("2 residual(s) skipped" in warning for warning in data["warnings"])
+    assert data["missing_required_variables"] == []
+    assert data["derived_variables"] == ["cool.Q_stack_heat_W"]
+    assert data["checked_residual_count"] > 0
+    assert data["unchecked_residual_count"] == 0
+    full = run_cli("hierarchy", "evaluate", str(audit), str(tmp_path / "partial.yaml"), "--json")
+    assert full.returncode == 0, full.stderr
+    report = json.loads(full.stdout)
+    producing = report["derived_variables"]["cool.Q_stack_heat_W"]["residual_occurrence"]
+    assert producing not in report["metadata"]["checked_residual_occurrences"]
+    assert report["metadata"]["observed_variable_count"] == len(snapshot["variables"])
 
     fault = yaml.safe_load((OBSERVED / "pitch_feedback_observed_fault.yaml").read_text(encoding="utf-8"))
     del fault["variables"]["controller_q_gain.y"]

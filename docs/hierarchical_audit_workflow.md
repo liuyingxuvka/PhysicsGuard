@@ -96,7 +96,23 @@ Diagrams are not validation evidence. Report validity still comes from the hiera
 
 ## Observed-Value Hierarchy Mode
 
-`physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty` loads a `HierarchicalAuditSpec` plus an `ObservedValuesSpec`, substitutes observed values directly into the residual system, and rolls residuals up by block. It does not solve a reference model and does not adjust observed values. The report metadata includes `mode: hierarchy_evaluate` and `solver_attempted: false`.
+`physicsguard hierarchy evaluate AUDIT.yaml OBSERVED.yaml --pretty` loads a `HierarchicalAuditSpec` plus an `ObservedValuesSpec`, preserves the supplied observations, derives supported intermediate values, and rolls the remaining checked residuals up by block. It does not run `BoundedSolver.solve` or adjust observed values. The report metadata includes `mode: hierarchy_evaluate` and `solver_attempted: false`.
+
+Connections propagate a known value to an unknown endpoint within its bounds. They never overwrite a measured endpoint or an already derived value. When measured endpoints disagree, a connection that was not consumed by propagation remains a real mismatch check. With competing connections, declaration order determines the first derived value; the conflicting measurement is preserved. Propagating one measurement around a cycle does not create a new independent observation.
+
+Each supported native residual has its own structural value and control dependencies; an unrelated read in another residual does not make both relations unavailable. This keeps zero-product and flat-branch dependencies visible without numerical dependency probes or a module-wide read union. Unsupported custom or dynamic sources remain unresolved. They can be checked numerically when every registered value is actually known, but missing values cannot be licensed from an initial guess or an empty dependency claim. A genuine parameter-only post-check remains a parameter check.
+
+Derivation repeatedly considers `equation`, `connection`, `boundary` and `assumption` relations with exactly one unknown, in component declaration order. It searches the variable's finite bounds for an isolated scalar root. Detected multiple roots, flat-zero regions, undefined samples and unresolved sources are not accepted. This finite search is not a proof of global uniqueness for an arbitrary nonlinear function. `soft_check` and `post_check` relations never derive values. A relation consumed to produce a value is excluded from checked residuals, block scores and `top_residuals`; no remaining check means evaluation is refused with `no residual can be evaluated without them`.
+
+The full report separates:
+
+- `derived_variables`: each derived value and its producing residual or connection;
+- `checked_residuals`: the remaining relations evaluated with known inputs;
+- `unchecked_residuals`: the unavailable relations and their missing variables.
+
+Blocks also carry these names and gaps. The compact summary lists derived variable names plus `checked_residual_count` and `unchecked_residual_count`. `missing_required_variables` names values still unavailable after derivation. The library's default `skip_unobserved=False` rejects those remaining values after trying derivation; `hierarchy evaluate` uses `skip_unobserved=True` and reports the skipped relations. Neither policy permits an evaluation with no check. Residual-series validation likewise accepts a required variable that was observed or derived, while preserving missing-input, coverage and adequacy checks for the rest.
+
+Put measurement-to-internal relations before relations intended to check the result. In the heated-tank coupled reference, `heater_el` precedes `heater_cmd`, so measured voltage and current supply power and the command remains a check. In the coarse reference, `inflow_mass` precedes `through`, and `heat` comes after the heat-outflow relations, so thermal balance remains a check rather than supplying its own outflow. The step-30 measured snapshots pass; at step 70 the coarse model points to `thermal`, while the coupled model exposes the heater-command mismatch with thermal balance within threshold. These are bounded low-fidelity checks, not independent validation of every derived relation.
 
 Observed values can optionally record first-class mapping evidence: `external_signal`, `mapping_confidence`, `mapping_status`, `review_required`, `conversion_factor`, `conversion_offset`, `conversion_note`, `mapped_at`, and `stale_when`. These fields produce a top-level `signal_mapping_ledger` in hierarchy reports. The ledger is an evidence and review index only; PhysicsGuard does not convert or rewrite observed values from it. `stale_when` records when a mapping needs reconfirmation; when a listed condition occurs, set `mapping_status` to `stale`.
 
@@ -107,6 +123,8 @@ observed snapshot usually contains only the variables selected for one audit.
 When mapping evidence is weak or residuals point to a repeated failure pattern, hierarchy reports also include `bug_family_followups`. These records suggest same-family checks such as signal mapping, gain/sign direction, unit conversion, and conservation-balance siblings so the audit does not stop at the first suspicious variable.
 
 `physicsguard hierarchy compare AUDIT.yaml OBSERVED.yaml --pretty` solves the low-fidelity reference first, then evaluates observed values and includes `top_variable_deviations`. This is useful when the AI wants both residual-based suspicious blocks and a reference-vs-observed variable ranking.
+
+`hierarchy run` and `hierarchy compare` keep their existing reference-solve behavior; comparison still requires the complete registered observed snapshot. Intermediate derivation is the observed-evaluation path, not a change to either reference mode.
 
 This mode is meant for AI-guided external-model debugging: the AI or user maps external signals to PhysicsGuard variable names, and the report recommends the next small set of signals or parameters to inspect.
 

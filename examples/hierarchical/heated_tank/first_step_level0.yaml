@@ -23,24 +23,16 @@ system:
     parameters:
       dt_s: 10.0
       residual_scale_m3: 0.0005
-  - id: heat
-    type: ThermalMassStepModule
-    parameters:
-      C_J_K: 2093000.0
-      dt_s: 10.0
-      residual_scale_K: 0.005
-      Q_in_lower_bound: -1.0e6
-      Q_out_lower_bound: -1.0e6
-  - id: through
-    type: CoolantHeatBalanceModule
-    parameters:
-      cp_J_kgK: 4186.0
-      residual_scale_W: 200.0
   - id: inflow_mass
     type: VolumetricMassFlowConversionModule
     parameters:
       rho_kg_m3: 1000.0
       residual_scale_kg_s: 0.001
+  - id: through
+    type: CoolantHeatBalanceModule
+    parameters:
+      cp_J_kgK: 4186.0
+      residual_scale_W: 200.0
   - id: loss
     type: AmbientHeatLossModule
     parameters:
@@ -54,6 +46,14 @@ system:
       - loss.Q_loss_W
       output_variable: heat.Q_out_W
       residual_scale: 200.0
+  - id: heat
+    type: ThermalMassStepModule
+    parameters:
+      C_J_K: 2093000.0
+      dt_s: 10.0
+      residual_scale_K: 0.005
+      Q_in_lower_bound: -1.0e6
+      Q_out_lower_bound: -1.0e6
   connections:
   - from_variable: lvl_prev.volume_m3
     to_variable: vol.volume_previous_m3

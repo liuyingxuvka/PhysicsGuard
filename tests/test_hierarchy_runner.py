@@ -2,6 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+from physicsguard.schema.observation_spec import ObservedValuesSpec
+
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
@@ -120,19 +125,13 @@ def test_hierarchy_evaluate_skips_residuals_that_need_unobserved_variables(monke
     before = observed.model_dump(mode="json")
     report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
     assert observed.model_dump(mode="json") == before
-    skipped = {
-        "boundary:cool.Q_stack_heat_W": ["cool.Q_stack_heat_W"],
-        "cool.fc_coolant_heat_interface": ["cool.Q_stack_heat_W"],
-    }
     assert report.audit_pass
-    assert report.missing_required_variables == ["cool.Q_stack_heat_W"]
-    assert report.metadata["skipped_residuals"] == skipped
-    assert not {item.name for item in report.top_residuals} & set(skipped)
-    stack = next(block for block in report.top_blocks if block.block_id == "stack_heat_interface")
-    assert stack.missing_required_variables == ["cool.Q_stack_heat_W"]
-    assert stack.confidence < 1.0
-    with pytest.raises(ValueError, match="observed values missing required registered variables"):
-        HierarchicalAuditRunner(spec).evaluate_observed(observed)
+    assert report.missing_required_variables == []
+    assert "cool.Q_stack_heat_W" in report.derived_variables
+    producer = report.derived_variables["cool.Q_stack_heat_W"]["residual"]
+    assert producer not in report.checked_residuals
+    assert report.metadata["skipped_residuals"] == {}
+    assert HierarchicalAuditRunner(spec).evaluate_observed(observed).audit_pass
 
 
 def test_partial_snapshot_does_not_invent_a_zero_product_residual(monkeypatch) -> None:
@@ -166,8 +165,7 @@ def test_partial_snapshot_skips_a_range_check_with_a_flat_local_region() -> None
     spec = HierarchicalAuditSpec.model_validate({
         "audit_name": "flat_range",
         "system": {"system_name": "checks", "components": [
-            {"id": "unknown", "type": "DummyResidualModule", "parameters": {
-                "target": 0.0, "initial_guess": 0.0, "scale": 1.0, "lower_bound": -100.0, "upper_bound": 100.0}},
+            {"id": "unknown", "type": "LinearRelationModule", "parameters": _unseen_linear_parameters()},
             {"id": "known", "type": "DummyResidualModule", "parameters": {"target": 0.0}},
             {"id": "limit", "type": "RangeCheckModule", "parameters": {
                 "variable": "unknown.x", "lower_bound": -10.0, "upper_bound": 10.0}},
@@ -180,13 +178,14 @@ def test_partial_snapshot_skips_a_range_check_with_a_flat_local_region() -> None
     )
     assert report.metadata["skipped_residuals"]["limit.range_check"] == ["unknown.x"]
     assert {item.name for item in report.top_residuals} == {"known.dummy_target"}
-    assert report.missing_required_variables == ["unknown.x"]
+    assert report.missing_required_variables == ["unknown.x", "unknown.y"]
+    assert "unknown.x" not in report.derived_variables
     assert report.audit_pass
 
 
 def test_unclassified_custom_residual_is_not_licensed_by_finite_probes() -> None:
     from dataclasses import replace
-    from physicsguard.core.hierarchy import _fill_unobserved
+    from physicsguard.core.hierarchy import _derive_unobserved
     from physicsguard.modules.dummy import DummyResidualModule
     from physicsguard.modules.registry import ModuleRegistry
     from physicsguard.schema.system_spec import SystemSpec
@@ -201,6 +200,206 @@ def test_unclassified_custom_residual_is_not_licensed_by_finite_probes() -> None
         "system_name": "custom", "components": [{"id": "custom", "type": "UnclassifiedResidual", "parameters": {"target": 0.0}}],
     }), module_registry=modules)
     values: dict[str, float] = {}
-    _, skipped = _fill_unobserved(builder, builder.build_registry(), values, ["custom.x"])
+    known, missing, derived, checked, skipped, provenance = _derive_unobserved(builder, builder.build_registry(), values)
+    assert known == {} and missing == ["custom.x"] and not derived and not checked
     assert skipped == {"custom.dummy_target": ["custom.x"]}
+    assert provenance["unresolved_dependency_residuals"] == ["custom.dummy_target"]
     assert values == {}
+
+
+def _unseen_linear_parameters():
+    return {"a": 1., "b": 0., **{f"{axis}_{name}": value for axis in ("x", "y")
+            for name, value in (("lower_bound", -100.), ("upper_bound", 100.), ("initial_guess", 0.), ("scale", 1.))}}
+
+
+def _partial_spec(components, connections=()):
+    return HierarchicalAuditSpec.model_validate({
+        "audit_name": "partial", "system": {"system_name": "partial", "components": components,
+                                               "connections": list(connections)},
+        "hierarchy": {"blocks": [{"id": "plant", "level": 0,
+                                    "components": [item["id"] for item in components]}]},
+    })
+
+
+def test_partial_affinity_keeps_pressure_and_power_checks(monkeypatch) -> None:
+    spec = _partial_spec([{"id": "rot", "type": "RotatingMachineAffinityModule", "parameters": {
+        "nominal_speed_rad_s": 1., "nominal_m_dot_kg_s": 1.,
+        "nominal_delta_p_Pa": 1., "nominal_P_shaft_W": 1.,
+    }}])
+    observed = ObservedValuesSpec(variables={f"rot.{name}": {"value": 1.}
+                                            for name in ("speed_rad_s", "delta_p_Pa", "P_shaft_W")})
+    before = observed.model_dump(mode="json")
+    monkeypatch.setattr(BoundedSolver, "solve", lambda *a, **kw: pytest.fail("observed evaluation must not solve"))
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+    assert report.audit_pass
+    assert report.derived_variables["rot.m_dot_kg_s"]["value"] == pytest.approx(1.)
+    assert set(report.checked_residuals) == {"rot.affinity_pressure", "rot.affinity_power"}
+    assert report.metadata["residual_dependencies"]["rot.affinity_pressure"] == ["rot.delta_p_Pa", "rot.speed_rad_s"]
+    assert observed.model_dump(mode="json") == before
+
+
+def test_partial_mixer_mass_check_does_not_need_temperatures() -> None:
+    components = [{"id": name, "type": "DummyResidualModule", "parameters": {
+        "target": value, "initial_guess": value, "lower_bound": -1000., "upper_bound": 1000.,
+    }} for name, value in (("a", 1.), ("b", 1.), ("out", 2.), ("tout", 300.))]
+    components.extend([
+        {"id": "temperatures", "type": "LinearRelationModule", "parameters": _unseen_linear_parameters()},
+        {"id": "mix", "type": "MixerEnergyBalanceModule", "parameters": {
+            "inlet_m_dot_variables": ["a.x", "b.x"], "inlet_T_variables": ["temperatures.x", "temperatures.y"],
+            "outlet_m_dot_variable": "out.x", "outlet_T_variable": "tout.x",
+        }},
+    ])
+    observed = ObservedValuesSpec(variables={f"{name}.x": {"value": value}
+                                            for name, value in (("a", 1.), ("b", 1.), ("out", 2.), ("tout", 300.))})
+    report = HierarchicalAuditRunner(_partial_spec(components)).evaluate_observed(observed, skip_unobserved=True)
+    assert report.audit_pass
+    assert "mix.mixer_mass_balance" in report.checked_residuals
+    assert report.metadata["residual_dependencies"]["mix.mixer_mass_balance"] == ["a.x", "b.x", "out.x"]
+    assert report.unchecked_residuals["mix.mixer_energy_balance"] == ["temperatures.x", "temperatures.y"]
+
+
+def test_partial_map_axes_keep_loop_iterations_separate() -> None:
+    spec = _partial_spec([
+        {"id": "unknown", "type": "LinearRelationModule", "parameters": _unseen_linear_parameters()},
+        {"id": "known", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+        {"id": "axes", "type": "MapAxisBoundsCheckModule", "parameters": {
+            "variables": ["unknown.x", "known.x"], "lower_bounds": [-10., -10.], "upper_bounds": [10., 10.],
+        }},
+    ])
+    report = HierarchicalAuditRunner(spec).evaluate_observed(
+        ObservedValuesSpec(variables={"known.x": {"value": 0.}}), skip_unobserved=True,
+    )
+    assert report.audit_pass
+    assert report.unchecked_residuals["axes.map_axis_bounds:unknown.x"] == ["unknown.x"]
+    assert "axes.map_axis_bounds:known.x" in report.checked_residuals
+    assert report.metadata["residual_dependencies"]["axes.map_axis_bounds:known.x"] == ["known.x"]
+    assert not report.derived_variables
+
+
+@pytest.mark.parametrize(("module_type", "parameters", "residual_name"), [
+    ("ConservationSumModule", {"input_variables": ["unknown.x", "unknown.y"], "output_variables": ["known.x"]}, "balance.conservation_sum"),
+    ("SumModule", {"input_variables": ["unknown.x", "unknown.y"], "output_variable": "known.x"}, "balance.sum_relation"),
+])
+def test_partial_sum_tracks_external_reads_when_it_declares_no_variables(module_type, parameters, residual_name) -> None:
+    spec = _partial_spec([
+        {"id": "unknown", "type": "LinearRelationModule", "parameters": _unseen_linear_parameters()},
+        {"id": "known", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+        {"id": "balance", "type": module_type, "parameters": parameters},
+    ])
+    report = HierarchicalAuditRunner(spec).evaluate_observed(
+        ObservedValuesSpec(variables={"known.x": {"value": 0.}}), skip_unobserved=True,
+    )
+    assert report.audit_pass
+    assert not report.derived_variables
+    assert report.unchecked_residuals[residual_name] == ["unknown.x", "unknown.y"]
+    assert report.metadata["residual_dependencies"][residual_name] == ["known.x", "unknown.x", "unknown.y"]
+
+
+def test_partial_heat_zero_product_cannot_supply_a_check() -> None:
+    spec = _partial_spec([{"id": "heat", "type": "CoolantHeatBalanceModule", "parameters": {
+        "m_dot_initial_guess": 0., "T_in_initial_guess": 300., "T_out_initial_guess": 300.,
+        "Q_dot_initial_guess": 0.,
+    }}])
+    with pytest.raises(ValueError, match="no residual can be evaluated without them"):
+        HierarchicalAuditRunner(spec).evaluate_observed(
+            ObservedValuesSpec(variables={"heat.Q_dot_W": {"value": 0.}}), skip_unobserved=True,
+        )
+
+
+def test_run_and_complete_compare_do_not_capture_observed_dependencies(monkeypatch) -> None:
+    monkeypatch.setattr("physicsguard.core.residual.module_residual_dependencies",
+                        lambda *a, **kw: pytest.fail("ordinary solve/complete compare must not start provenance capture"))
+    assert run(FC / "level_0_system_balance.yaml").audit_pass
+    spec = load_hierarchical_audit_spec(OBSERVED / "pitch_feedback_level_0.yaml")
+    observed = load_observed_values(OBSERVED / "pitch_feedback_observed_clean.yaml")
+    assert HierarchicalAuditRunner(spec).compare_observed(observed).observed_audit_pass
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_conflicting_connection_endpoints_stay_observed(reverse) -> None:
+    edges = [{"from_variable": "a.x", "to_variable": "c.x", "scale": 1.},
+             {"from_variable": "c.x", "to_variable": "b.x", "scale": 1.}]
+    if reverse:
+        edges.reverse()
+    spec = _partial_spec([{"id": name, "type": "DummyResidualModule", "parameters": {"target": value}}
+                          for name, value in (("a", 1.), ("b", 3.), ("c", 1.))], edges)
+    observed = ObservedValuesSpec(variables={"a.x": {"value": 1.}, "b.x": {"value": 3.}})
+    before = observed.model_dump(mode="json")
+    runner = HierarchicalAuditRunner(spec)
+    report = runner.evaluate_observed(observed)
+    expected = 3. if reverse else 1.
+    assert report.derived_variables["c.x"]["value"] == expected
+    assert observed.model_dump(mode="json") == before
+    producer = report.derived_variables["c.x"]["residual"]
+    assert producer not in report.checked_residuals
+    checked_edge = "connection:a.x=c.x" if reverse else "connection:c.x=b.x"
+    assert checked_edge in report.checked_residuals
+    assert not report.audit_pass
+    assert runner.to_dict(report) == runner.to_dict(runner.evaluate_observed(observed))
+
+
+def test_repeated_connection_names_keep_distinct_producing_and_checked_occurrences() -> None:
+    edge = {"from_variable": "a.x", "to_variable": "b.x", "scale": 1.}
+    spec = _partial_spec([
+        {"id": "a", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+        {"id": "b", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+    ], [edge, {**edge, "scale": 2.}])
+    report = HierarchicalAuditRunner(spec).evaluate_observed(ObservedValuesSpec(variables={"b.x": {"value": 0.}}))
+    assert report.audit_pass
+    producer = report.derived_variables["a.x"]["residual_occurrence"]
+    assert producer == 2
+    assert report.metadata["derivation_residual_occurrences"] == [2]
+    assert report.metadata["checked_residual_occurrences"] == [0, 1, 3]
+    # The names deliberately coincide; only occurrence 2 produced a value.
+    assert report.derived_variables["a.x"]["residual"] in report.checked_residuals
+    assert set(report.metadata["derivation_residual_occurrences"]).isdisjoint(report.metadata["checked_residual_occurrences"])
+
+
+def test_fully_known_custom_failure_survives_a_same_name_derivation(monkeypatch) -> None:
+    from dataclasses import replace
+    from physicsguard.modules.dummy import DummyResidualModule
+    from physicsguard.modules.registry import ModuleRegistry
+
+    class SameName(DummyResidualModule):
+        def residuals(self, x, registry):
+            return [replace(record, name="a.dummy_target") for record in super().residuals(x, registry)]
+
+    modules = ModuleRegistry()
+    modules.register("DummyResidualModule", lambda identifier, parameters: DummyResidualModule(identifier, parameters))
+    modules.register("SameName", lambda identifier, parameters: SameName(identifier, parameters))
+    monkeypatch.setattr("physicsguard.core.hierarchy.ResidualBuilder", lambda system: ResidualBuilder(system, module_registry=modules))
+    spec = _partial_spec([
+        {"id": "a", "type": "DummyResidualModule", "parameters": {"target": 1.}},
+        {"id": "b", "type": "SameName", "parameters": {"target": 0.}},
+        {"id": "c", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+    ])
+    report = HierarchicalAuditRunner(spec).evaluate_observed(
+        ObservedValuesSpec(variables={"b.x": {"value": 5.}, "c.x": {"value": 0.}}),
+    )
+    assert not report.audit_pass
+    assert report.top_residuals[0].source == "b" and report.top_residuals[0].normalized_value == 5.
+    assert report.metadata["derivation_residual_occurrences"] == [0]
+    assert report.metadata["checked_residual_occurrences"] == [1, 2]
+    assert report.metadata["checked_without_dependency_claim"] == [1]
+    assert report.top_blocks[0].score == 5.
+
+
+def test_a_derivation_without_remaining_checks_cannot_pass() -> None:
+    spec = _partial_spec([{"id": "a", "type": "DummyResidualModule", "parameters": {"target": 1.}}])
+    with pytest.raises(ValueError, match="no residual can be evaluated without them"):
+        HierarchicalAuditRunner(spec).evaluate_observed(
+            ObservedValuesSpec(variables={"external.x": {"value": 1.}}), skip_unobserved=True,
+        )
+
+
+@pytest.mark.parametrize(("function", "expected"), [
+    (lambda x: x - .25, .25), (lambda x: x + 2., -2.),
+    (lambda x: (x - .3) * (x + .7), None), (lambda x: x * 0., None),
+    (lambda x: x * x + 1., None), (lambda x: 1. / x, None),
+])
+def test_bounded_derivation_rejects_ambiguous_or_undefined_roots(function, expected) -> None:
+    from physicsguard.core.hierarchy import _bounded_root
+    from physicsguard.core.registry import VariableRecord
+
+    root = _bounded_root(function, VariableRecord("a.x", None, -2., 2., 0., 1.))
+    assert root == pytest.approx(expected) if expected is not None else root is None

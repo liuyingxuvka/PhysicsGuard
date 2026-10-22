@@ -316,6 +316,9 @@ def _hierarchy_summary(report: dict) -> dict:
         ],
         "missing_required_variables": report.get("missing_required_variables", []),
         "missing_required_parameters": report.get("missing_required_parameters", []),
+        "derived_variables": list(report.get("derived_variables", {})),
+        "checked_residual_count": len(report.get("checked_residuals", [])),
+        "unchecked_residual_count": len(report.get("unchecked_residuals", {})),
         "warnings": report.get("warnings", []),
     }
     if metadata.get("solver_attempted"):

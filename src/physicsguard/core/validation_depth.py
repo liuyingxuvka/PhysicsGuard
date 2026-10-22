@@ -855,21 +855,6 @@ def _residual_series_receipt(
                 {"reason": point.invalid_reason, "timestamp": point.timestamp},
             )
             continue
-        missing = sorted(required_variables - set(point.variables))
-        if missing:
-            missing_points.append((point, "missing required variables"))
-            receipt = _unevaluated_point_receipt(point, "missing", "missing required variables")
-            receipt["missing_variables"] = missing
-            receipts.append(receipt)
-            _add_finding(
-                findings,
-                "error",
-                "residual_series_required_values_missing",
-                "series point omits variables required by the hierarchy boundary",
-                point.point_id,
-                {"missing_variables": missing, "timestamp": point.timestamp},
-            )
-            continue
         observed = ObservedValuesSpec(
             observation_name=point.point_id,
             variables={
@@ -892,7 +877,12 @@ def _residual_series_receipt(
             report = HierarchicalAuditRunner(active_spec).evaluate_observed(
                 observed,
                 top_n_residuals=1_000_000,
+                skip_unobserved=True,
             )
+            missing = sorted(required_variables - (set(observed.variables) | set(report.derived_variables)))
+            if not missing and report.metadata["unobserved_variables"]:
+                raise ValueError("observed values missing required registered variables: "
+                                 + ", ".join(report.metadata["unobserved_variables"]))
         except Exception as exc:
             invalid_points.append((point, str(exc)))
             receipts.append(_unevaluated_point_receipt(point, "invalid", str(exc)))
@@ -903,6 +893,20 @@ def _residual_series_receipt(
                 "series point could not be evaluated by the existing hierarchy relations",
                 point.point_id,
                 {"error": str(exc), "timestamp": point.timestamp},
+            )
+            continue
+        if missing:
+            missing_points.append((point, "missing required variables"))
+            receipt = _unevaluated_point_receipt(point, "missing", "missing required variables")
+            receipt["missing_variables"] = missing
+            receipts.append(receipt)
+            _add_finding(
+                findings,
+                "error",
+                "residual_series_required_values_missing",
+                "series point omits variables required by the hierarchy boundary",
+                point.point_id,
+                {"missing_variables": missing, "timestamp": point.timestamp},
             )
             continue
         status = "pass" if report.audit_pass else "fail"
@@ -949,6 +953,9 @@ def _residual_series_receipt(
         receipts.append(
             {
                 "point_id": point.point_id,
+                "derived_variables": report.derived_variables,
+                "checked_residuals": report.checked_residuals,
+                "unchecked_residuals": report.unchecked_residuals,
                 "timestamp": point.timestamp,
                 "scenario_id": point.scenario_id,
                 "case_id": point.case_id,

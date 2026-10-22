@@ -76,6 +76,9 @@ class BlockDiagnostic:
     unassigned_residual_count: int = 0
     recommended_refinements: list[RecommendedRefinement] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
+    derived_variables: list[str] = field(default_factory=list)
+    checked_residuals: list[str] = field(default_factory=list)
+    unchecked_residuals: dict[str, list[str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -98,6 +101,9 @@ class HierarchicalAuditReport:
     metadata: dict[str, Any]
     signal_mapping_ledger: list[SignalMappingRecord] = field(default_factory=list)
     bug_family_followups: list[BugFamilyFollowUp] = field(default_factory=list)
+    derived_variables: dict[str, dict[str, Any]] = field(default_factory=dict)
+    checked_residuals: list[str] = field(default_factory=list)
+    unchecked_residuals: dict[str, list[str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -453,31 +459,30 @@ class HierarchicalAuditRunner:
         simulations where PhysicsGuard should identify suspicious blocks without
         fitting the values away.
 
-        With ``skip_unobserved`` the snapshot may omit registered variables: every
-        residual that changes with an unobserved variable is skipped, the variables
-        are listed in ``missing_required_variables`` and the skipped residuals in the
-        warnings and ``metadata["skipped_residuals"]``.
+        Connections and finite one-unknown relations may derive intermediate
+        values without changing observations. Producing relations are not checks.
+        ``skip_unobserved`` permits only the variables still unresolved afterwards;
+        unknown provenance stays unchecked rather than licensed from an initial guess.
         """
 
         builder = ResidualBuilder(self.spec.system)
         registry = builder.build_registry()
         values, missing, unknown = _observed_values_for_registry(observed, registry)
+        derived = {}
+        skipped = {}
+        provenance = {}
+        if missing:
+            _known, missing, derived, records, skipped, provenance = _derive_unobserved(builder, registry, values)
+        else:
+            records = builder.diagnostic_residual_records(registry.dict_to_vector(values))
         if missing and not skip_unobserved:
             raise ValueError(
                 "observed values missing required registered variables: "
                 + ", ".join(missing)
             )
-        skipped: dict[str, list[str]] = {}
-        if missing:
-            values, skipped = _fill_unobserved(builder, registry, values, missing)
-        x = registry.dict_to_vector(values)
-        diagnostic_records = sorted(
-            (record for record in builder.diagnostic_residual_records(x) if record.name not in skipped),
-            key=lambda record: record.abs_normalized_value,
-            reverse=True,
-        )
-        solver_records = [record for record in builder.solver_residual_records(x) if record.name not in skipped]
-        if missing and not solver_records:
+        diagnostic_records = sorted(records, key=lambda record: record.abs_normalized_value, reverse=True)
+        solver_records = [record for record in diagnostic_records if record.participates_in_solver]
+        if not diagnostic_records:
             raise ValueError(
                 "observed values missing required registered variables: "
                 + ", ".join(missing)
@@ -514,6 +519,7 @@ class HierarchicalAuditRunner:
             assumptions=assumption_summary,
             warnings=_dedupe(warnings),
             metadata={
+                **provenance,
                 "mode": "hierarchy_evaluate",
                 "solver_attempted": False,
                 "optimization_success_semantics": "not_applicable_no_solver",
@@ -531,6 +537,8 @@ class HierarchicalAuditRunner:
             top_n_residuals=top_n_residuals,
             top_n_blocks=top_n_blocks,
             unobserved=missing,
+            derived_variables=derived,
+            unchecked_residuals=skipped,
         )
         return _attach_signal_mapping_context(report, self.spec, observed, registry)
 
@@ -544,11 +552,6 @@ class HierarchicalAuditRunner:
 
         builder = ResidualBuilder(self.spec.system)
         solver_result = BoundedSolver(builder, self.spec.system.solver).solve()
-        observed_report = self.evaluate_observed(
-            observed,
-            top_n_residuals=top_n_residuals,
-            top_n_blocks=top_n_blocks,
-        )
         registry = builder.build_registry()
         observed_values, missing, _unknown = _observed_values_for_registry(observed, registry)
         if missing:
@@ -556,6 +559,11 @@ class HierarchicalAuditRunner:
                 "observed values missing required registered variables: "
                 + ", ".join(missing)
             )
+        observed_report = self.evaluate_observed(
+            observed,
+            top_n_residuals=top_n_residuals,
+            top_n_blocks=top_n_blocks,
+        )
         deviations = _variable_deviations(
             registry,
             solver_result.variables,
@@ -611,15 +619,17 @@ class HierarchicalAuditRunner:
         top_n_residuals: int,
         top_n_blocks: int,
         unobserved: Iterable[str] = (),
+        derived_variables: dict[str, dict[str, Any]] | None = None,
+        unchecked_residuals: dict[str, list[str]] | None = None,
     ) -> HierarchicalAuditReport:
+        derived_variables = derived_variables or {}
+        unchecked_residuals = unchecked_residuals or {}
         all_diagnostics = [_diagnostic_from_record(record) for record in all_records]
         block_index = BlockIndex(self.spec.hierarchy, builder.system)
         assignments = [block_index.assignment_for_residual(record) for record in all_records]
-        diagnostics_by_name = {diagnostic.name: diagnostic for diagnostic in all_diagnostics}
         residuals_by_block: dict[str, list[ResidualDiagnostic]] = {block.id: [] for block in self.spec.hierarchy.blocks}
         unassigned: list[ResidualDiagnostic] = []
-        for assignment in assignments:
-            diagnostic = diagnostics_by_name[assignment.residual_name]
+        for assignment, diagnostic in zip(assignments, all_diagnostics):
             if assignment.block_id is None:
                 unassigned.append(diagnostic)
             else:
@@ -670,6 +680,14 @@ class HierarchicalAuditRunner:
                 missing_required_parameters=missing_parameters,
                 unassigned_residual_count=0,
                 metadata=dict(block.metadata),
+                derived_variables=[name for name in derived_variables if block_index.block_for_variable(name) == block.id],
+                checked_residuals=[item.name for item in block_residuals],
+                unchecked_residuals={name: sorted({variable for gap in metadata.get("unchecked_residual_occurrences", [])
+                                                        if gap["name"] == name and _unchecked_block(name, gap["source"], block_index) == block.id
+                                                        for variable in gap["missing_variables"]})
+                                     for name in unchecked_residuals
+                                     if any(gap["name"] == name and _unchecked_block(name, gap["source"], block_index) == block.id
+                                            for gap in metadata.get("unchecked_residual_occurrences", []))},
             )
             recommendations = planner.recommended_refinements(diagnostic, self.spec.hierarchy)
             block_diagnostics.append(
@@ -716,6 +734,9 @@ class HierarchicalAuditRunner:
             assumptions=assumptions,
             warnings=_dedupe(report_warnings),
             metadata=dict(metadata),
+            derived_variables=derived_variables,
+            checked_residuals=[record.name for record in all_records],
+            unchecked_residuals=unchecked_residuals,
         )
 
     def to_dict(self, report: Any) -> dict[str, Any]:
@@ -854,108 +875,166 @@ def _missing_parameters(block: AuditBlockSpec, component_parameters: dict[str, d
     return missing
 
 
-def _fill_unobserved(
-    builder: ResidualBuilder,
-    registry: VariableRegistry,
-    values: dict[str, float],
-    missing: list[str],
-) -> tuple[dict[str, float], dict[str, list[str]]]:
-    """Find missing-variable dependencies with bounded native numerical probes.
+def _unchecked_block(name, source, index):
+    if source in index._component_to_block:
+        return index.component_block(source)
+    endpoints = _parse_connection_residual_name(name)
+    if endpoints is not None:
+        return index._block_for_connection(*endpoints)
+    if name.startswith(("boundary:", "assumption:")):
+        return index.block_for_variable(name.split(":", 1)[1])
+    return None
 
-    Probe the initial guesses and a staggered nonzero joint context, varying each
-    missing variable through scale steps and its feasible endpoints. The joint
-    context exposes multiplicative dependencies hidden at simultaneous zeros;
-    endpoints expose flat local checks. Observed values never change. These finite
-    probes are not a structural independence proof for arbitrary custom functions:
-    unclassified custom-module residuals and failed probe scopes are skipped
-    conservatively rather than licensed from a missing variable's initial guess.
+
+def _bounded_root(function, variable) -> float | None:
+    """Find one isolated root in a finite sampled window, not a global proof.
+
+    Multiple detected brackets/zeros, flat-zero regions and undefined samples
+    are ambiguous. This bounded low-fidelity search never moves observed values.
     """
+    from scipy.optimize import brentq
 
-    filled = dict(values)
-    for name in missing:
-        filled[name] = registry.get_record(name).initial_guess
-    base_records = builder.diagnostic_residual_records(registry.dict_to_vector(filled))
-    needs: dict[str, set[str]] = {}
-    modules = builder.build_modules()
+    points = np.linspace(variable.lower_bound, variable.upper_bound, 21)
+    try:
+        values = [float(function(float(point))) for point in points]
+        if not all(math.isfinite(value) for value in values):
+            return None
+        zeros = [float(point) for point, value in zip(points, values) if value == 0.0]
+        brackets = [(float(points[i]), float(points[i + 1]))
+                    for i in range(len(points) - 1) if values[i] * values[i + 1] < 0.0]
+        if len(zeros) + len(brackets) != 1:
+            return None
+        root = zeros[0] if zeros else float(brentq(function, *brackets[0]))
+        if not variable.lower_bound <= root <= variable.upper_bound:
+            return None
+        return root if abs(function(root)) <= 1e-6 else None
+    except (ValueError, KeyError, ArithmeticError, IndexError):
+        return None
 
-    def refers_to(value: Any, name: str) -> bool:
-        if isinstance(value, str):
-            return value == name
-        if isinstance(value, dict):
-            return any(refers_to(item, name) for item in value.values())
-        if isinstance(value, (list, tuple)):
-            return any(refers_to(item, name) for item in value)
-        return False
 
-    def conservative_scope(name: str) -> None:
-        sources = {name.split(".", 1)[0]}
-        sources.update(module.component_id for module in modules if refers_to(module.parameters, name))
-        for record in base_records:
-            if record.source in sources or name in record.name or record.role == "assumption":
-                needs.setdefault(record.name, set()).add(name)
+def _propagate_connections(builder, registry, known, derived, used, connection_indices) -> None:
+    """Consume only the exact edge occurrence that produced a value."""
+    changed = True
+    while changed:
+        changed = False
+        for occurrence, connection in zip(connection_indices, builder.system.connections):
+            left, right = connection.from_variable, connection.to_variable
+            if (left in known) == (right in known):
+                continue
+            source, target = (left, right) if left in known else (right, left)
+            variable = registry.get_record(target)
+            value = known[source]
+            if not variable.lower_bound <= value <= variable.upper_bound:
+                continue
+            known[target] = value
+            derived[target] = {"value": value, "residual": f"connection:{left}={right}",
+                               "residual_occurrence": occurrence, "source": "connection", "dependencies": [source]}
+            used.add(occurrence)
+            changed = True
 
-    custom_sources = {
-        module.component_id for module in modules
-        if not type(module).__module__.startswith("physicsguard.modules.")
-    }
-    custom_records = [record for record in base_records if record.source in custom_sources]
-    if custom_sources and not custom_records:
-        custom_records = base_records
-    for record in custom_records:
-        needs.setdefault(record.name, set()).update(missing)
-    # Native range checks already identify their exact referenced variable.
-    for module in modules:
-        referenced = getattr(module, "variable", None)
-        if isinstance(referenced, str) and referenced in missing:
-            for record in base_records:
-                if record.source == module.component_id:
-                    needs.setdefault(record.name, set()).add(referenced)
 
-    joint = dict(filled)
-    for index, name in enumerate(missing):
-        record = registry.get_record(name)
-        fraction = (index + 1) / (len(missing) + 1)
-        value = (1 - fraction) * record.lower_bound + fraction * record.upper_bound
-        if value == 0 or value == record.initial_guess:
-            candidates = (
-                min(record.initial_guess + record.scale, record.upper_bound),
-                max(record.initial_guess - record.scale, record.lower_bound),
-                record.lower_bound, record.upper_bound,
-            )
-            value = next((candidate for candidate in candidates
-                          if candidate != 0 and candidate != record.initial_guess),
-                         next(candidate for candidate in candidates if candidate != record.initial_guess))
-        joint[name] = value
-    contexts = [filled, joint] if len(missing) > 1 else [filled]
-    for context in contexts:
-        try:
-            base = {record.name: record.value for record in
-                    builder.diagnostic_residual_records(registry.dict_to_vector(context))}
-        except (ValueError, ArithmeticError):
-            for name in missing:
-                conservative_scope(name)
+def _evaluate_record(builder, registry, prototype, location, vector) -> ResidualRecord:
+    owner, offset = location
+    if owner == "connection":
+        candidates = builder._connection_residuals(vector, registry)
+    elif owner == "boundary":
+        candidates = builder._boundary_residuals(vector, registry)
+    elif owner == "assumption":
+        candidates = builder.assumption_manager.assumption_residual_records(vector, registry, builder.system)
+    else:
+        candidates = owner.residuals(vector, registry)
+    record = candidates[offset]
+    identity = lambda item: (item.name, item.source, item.role, item.diagnostic_key)
+    if identity(record) != identity(prototype):
+        raise ValueError("residual occurrence changed during bounded derivation")
+    return record
+
+
+def _derive_unobserved(builder, registry, values):
+    """Resolve structural sources, then consume deterministic one-unknown rules."""
+    known = dict(values)
+    initial = {record.name: known.get(record.name, record.initial_guess)
+               for record in (registry.get_record(name) for name in registry.names())}
+    dependencies = []
+    zero_reads = []
+    locations = []
+    records = builder.diagnostic_residual_records(
+        registry.dict_to_vector(initial), _dependencies=dependencies, _zero_reads=zero_reads, _locations=locations,
+    )
+    connection_indices = [index for index, (owner, _) in enumerate(locations) if owner == "connection"]
+    derived: dict[str, dict[str, Any]] = {}
+    used: set[int] = set()
+    _propagate_connections(builder, registry, known, derived, used, connection_indices)
+    changed = True
+    while changed:
+        changed = False
+        for index, (record, needs) in enumerate(zip(records, dependencies)):
+            if needs is None or index in used or record.role not in {"equation", "connection", "boundary", "assumption"}:
+                continue
+            unknown = needs - known.keys()
+            if len(unknown) != 1:
+                continue
+            name = next(iter(unknown))
+            def function(value, prototype=record, location=locations[index], variable=name):
+                current = {**initial, **known, variable: value}
+                return _evaluate_record(builder, registry, prototype, location, registry.dict_to_vector(current)).normalized_value
+            root = _bounded_root(function, registry.get_record(name))
+            if root is None:
+                continue
+            known[name] = root
+            derived[name] = {"value": root, "residual": record.name, "residual_occurrence": index, "source": record.role,
+                             "dependencies": sorted(needs - {name})}
+            used.add(index)
+            changed = True
+            _propagate_connections(builder, registry, known, derived, used, connection_indices)
+    missing = sorted(set(registry.names()) - known.keys())
+    checked, checked_indices, unchecked, gaps = _checked_unconsumed(
+        builder, registry, records, dependencies, locations, initial, known, used, missing,
+    )
+    metadata = _dependency_metadata(records, dependencies, zero_reads, used, checked_indices, gaps)
+    return known, missing, derived, checked, unchecked, metadata
+
+
+def _checked_unconsumed(builder, registry, records, dependencies, locations, initial, known, used, missing):
+    """Evaluate only independent occurrences with concrete required values."""
+    vector = registry.dict_to_vector({**initial, **known})
+    checked = []
+    checked_indices = []
+    unchecked = {}
+    gaps = []
+    for index, (record, needs) in enumerate(zip(records, dependencies)):
+        if index in used:
             continue
-        for name in missing:
-            record = registry.get_record(name)
-            for value in dict.fromkeys((
-                record.initial_guess,
-                min(record.initial_guess + record.scale, record.upper_bound),
-                max(record.initial_guess - record.scale, record.lower_bound),
-                record.lower_bound, record.upper_bound,
-            )):
-                if value == context[name]:
-                    continue
-                try:
-                    probe = builder.diagnostic_residual_records(
-                        registry.dict_to_vector({**context, name: value})
-                    )
-                except (ValueError, ArithmeticError):
-                    conservative_scope(name)
-                    continue
-                for item in probe:
-                    if item.value != base.get(item.name):
-                        needs.setdefault(item.name, set()).add(name)
-    return filled, {residual: sorted(names) for residual, names in sorted(needs.items())}
+        if (needs is None and missing) or (needs is not None and needs - known.keys()):
+            absent = missing if needs is None else sorted(needs - known.keys())
+            unchecked[record.name] = sorted(set(unchecked.get(record.name, [])) | set(absent))
+            gaps.append({"occurrence": index, "name": record.name, "source": record.source,
+                         "missing_variables": absent, "reason": "unresolved provenance" if needs is None else "missing values"})
+        else:
+            # Complete concrete values may be checked natively without claiming
+            # structural provenance for arbitrary custom Python.
+            checked.append(_evaluate_record(builder, registry, record, locations[index], vector))
+            checked_indices.append(index)
+    return checked, checked_indices, unchecked, gaps
+
+
+def _dependency_metadata(records, dependencies, zero_reads, used, checked_indices, gaps):
+    """Keep occurrence identities even when public diagnostic names repeat."""
+    counts = {record.name: sum(item.name == record.name for item in records) for record in records}
+    metadata = {"residual_dependencies": {record.name: sorted(needs) if needs is not None and counts[record.name] == 1 else None
+                                           for record, needs in zip(records, dependencies)},
+                "residual_sources": {record.name: record.source for record in records if counts[record.name] == 1},
+                "residual_occurrences": [{"occurrence": index, "name": record.name, "source": record.source,
+                                           "dependencies": sorted(needs) if needs is not None else None}
+                                          for index, (record, needs) in enumerate(zip(records, dependencies))],
+                "unchecked_residual_occurrences": gaps,
+                "unresolved_dependency_residuals": [record.name for record, needs in zip(records, dependencies) if needs is None],
+                "zero_read_modules": sorted(set(zero_reads)),
+                "derivation_residuals": [records[index].name for index in sorted(used)],
+                "derivation_residual_occurrences": sorted(used), "checked_residual_occurrences": checked_indices,
+                "checked_without_dependency_claim": [index for index in checked_indices if dependencies[index] is None],
+                "derivation_scope": "finite bounded scalar root search; not global nonlinear uniqueness"}
+    return metadata
 
 
 def _observed_values_for_registry(

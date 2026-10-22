@@ -29,6 +29,11 @@ system:
     parameters:
       rho_kg_m3: 1000.0
       residual_scale_kg_s: 0.001
+  - id: heater_el
+    type: ElectricalPowerModule
+    parameters:
+      residual_scale_W: 200.0
+      P_upper_bound: 1.0e5
   - id: heater_cmd
     type: LinearRelationModule
     parameters:
@@ -45,11 +50,6 @@ system:
       y_upper_bound: 1.0e5
       y_initial_guess: 20000.0
       y_scale: 1000.0
-  - id: heater_el
-    type: ElectricalPowerModule
-    parameters:
-      residual_scale_W: 200.0
-      P_upper_bound: 1.0e5
   - id: heater_eff
     type: EfficiencyModule
     parameters:

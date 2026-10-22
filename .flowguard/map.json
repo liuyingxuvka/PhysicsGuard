@@ -19,7 +19,7 @@
       "summary": "CLI and lazy public API",
       "responsibilities": [
         "Dispatch commands without running unrelated owners",
-        "Print a compact summary for hierarchy and validation commands and the full report with --json",
+        "Print a compact hierarchy/validation summary with derived variable names and checked/unchecked counts, and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
         "Inspect assumption cards from either a single SystemSpec or the system inside a hierarchical audit"
@@ -71,7 +71,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:dae22b2667960baaae05039d44e4758e74274f05e78c3178a9007593d386b7c0"
+      "fingerprint": "sha256:ecd13f47af85fe61b1eeec90db0c3e48848c8fb40368313f7b19862d20cbe694"
     },
     {
       "id": "routing",
@@ -102,12 +102,13 @@
       "responsibilities": [
         "Validate inputs and finite solver bounds before residual evaluation",
         "Separate numerical optimization success, observed audit and diagnostic limits",
-        "Skip only the residuals that need unobserved variables and list those variables as missing",
+        "Derive intermediate values from connections and bounded one-unknown relations with finite structural value/control provenance; keep producing occurrences separate from independent checks and list unresolved inputs",
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
         "Report an observed value without a source signal or unit as a mapping gap",
         "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale"
       ],
       "files": [
+        "src/physicsguard/core/_residual_dependencies.py",
         "src/physicsguard/core/assumptions.py",
         "src/physicsguard/core/diagnostics.py",
         "src/physicsguard/core/evaluator.py",
@@ -119,7 +120,9 @@
       ],
       "entrypoints": [],
       "state": [],
-      "side_effects": [],
+      "side_effects": [
+        "Temporarily chain and restore the current-thread Python trace while collecting partial-snapshot native residual dependencies"
+      ],
       "depends_on": [
         "loaders",
         "modules",
@@ -199,7 +202,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:b306b0ed3f8de96283959c6fae86fc8448ff627ab31e3b2d911165878ea974d8"
+      "fingerprint": "sha256:5e7c910354efb3d50367b4a32a19ca2f8432b49f02c22bf6b38228630c1fdb93"
     },
     {
       "id": "validation",
@@ -207,7 +210,8 @@
       "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
       "responsibilities": [
         "Check the dataset files, contract mapping edges and time coverage behind a validation and report them as a compact depth summary",
-        "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings"
+        "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
+        "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates"
       ],
       "files": [
         "src/physicsguard/core/dataset_identity.py",
@@ -239,7 +243,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:9276de545d1b8c49f5fefe7442516d7f38b417782f745b43b6f49b402b6c9705"
+      "fingerprint": "sha256:600263f08b098e4b48aa0abc6de13025e593609c3d2fc108627c1640520062f5"
     },
     {
       "id": "task_revision",

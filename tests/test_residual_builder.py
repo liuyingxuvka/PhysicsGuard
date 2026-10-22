@@ -45,10 +45,54 @@ def test_one_dummy_module_residual_works() -> None:
     assert records[0].role == "equation"
 
 
+@pytest.mark.parametrize("raise_inside_native", [False, True])
+def test_dependency_capture_restores_existing_trace(raise_inside_native) -> None:
+    import sys
+    from physicsguard.core._residual_dependencies import module_residual_dependencies
+
+    builder = ResidualBuilder(one_dummy_system())
+    registry = builder.build_registry()
+    module = builder.build_modules()[0]
+    previous = sys.gettrace()
+    events = []
+    def existing_trace(frame, event, arg):
+        if frame.f_code is module.residuals.__func__.__code__:
+            events.append(event)
+        return existing_trace
+    try:
+        sys.settrace(existing_trace)
+        if raise_inside_native:
+            with pytest.raises(IndexError):
+                module_residual_dependencies(module, np.array([]), registry, ResidualRecord)
+        else:
+            records, dependencies, _ = module_residual_dependencies(module, registry.initial_vector(), registry, ResidualRecord)
+            assert dependencies == [frozenset({"a.x"})]
+            assert records[0].name == "a.dummy_target"
+        assert sys.gettrace() is existing_trace
+        assert "call" in events
+    finally:
+        sys.settrace(previous)
+
+
 def test_dummy_residual_zero_when_x_equals_target() -> None:
     builder = ResidualBuilder(one_dummy_system())
     records = builder.diagnostic_residual_records(np.array([5.0]))
     assert records[0].normalized_value == 0.0
+
+
+def test_parameter_only_native_check_is_reported_as_reading_no_registered_values() -> None:
+    builder = ResidualBuilder(system({"system_name": "parameter-only", "components": [
+        {"id": "map", "type": "MapMonotonicityCheckModule",
+         "parameters": {"values": [1.0, 2.0, 3.0], "expected": "increasing"}},
+    ]}))
+    dependencies, zero_reads = [], []
+    records = builder.diagnostic_residual_records(
+        builder.build_registry().initial_vector(), _dependencies=dependencies, _zero_reads=zero_reads,
+    )
+    assert [record.name for record in records] == ["map.map_monotonicity"]
+    assert dependencies == [frozenset()]
+    assert zero_reads == ["MapMonotonicityCheckModule"]
+    assert records[0].role == "post_check"
 
 
 def test_boundary_residual_works() -> None:

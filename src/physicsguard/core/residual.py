@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 import math
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 
 from physicsguard.core.assumptions import AssumptionCard, AssumptionManager, AssumptionSummary
+from physicsguard.core._residual_dependencies import Dependencies, module_residual_dependencies
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.modules.registry import ModuleRegistry, default_module_registry
 from physicsguard.schema.system_spec import SystemSpec, VariableOverrideSpec
@@ -110,15 +111,46 @@ class ResidualBuilder:
             if record.participates_in_solver
         ]
 
-    def diagnostic_residual_records(self, x: np.ndarray) -> list[ResidualRecord]:
+    def diagnostic_residual_records(
+        self,
+        x: np.ndarray,
+        *,
+        _dependencies: list[Dependencies] | None = None,
+        _zero_reads: list[str] | None = None,
+        _locations: list[tuple[Any, int]] | None = None,
+    ) -> list[ResidualRecord]:
         registry = self.build_registry()
         vector = self._validate_x(x, registry)
         records: list[ResidualRecord] = []
         for module in self.build_modules():
-            records.extend(module.residuals(vector, registry))
-        records.extend(self._connection_residuals(vector, registry))
-        records.extend(self._boundary_residuals(vector, registry))
-        records.extend(self.assumption_manager.assumption_residual_records(vector, registry, self.system))
+            if _dependencies is None:
+                current = module.residuals(vector, registry)
+            else:
+                current, dependencies, no_reads = module_residual_dependencies(module, vector, registry, ResidualRecord)
+                if no_reads and _zero_reads is not None:
+                    _zero_reads.append(module.module_type)
+                # A supported no-read native formula falls back to declared
+                # variables. Unknown custom provenance remains None, even for [].
+                declared = frozenset(record.name for record in module.declare_variables())
+                dependencies = [declared if no_reads and value == frozenset() else value for value in dependencies]
+                _dependencies.extend(dependencies)
+            records.extend(current)
+            if _locations is not None:
+                _locations.extend((module, index) for index in range(len(current)))
+        for kind, group in (
+            ("connection", self._connection_residuals(vector, registry)),
+            ("boundary", self._boundary_residuals(vector, registry)),
+            ("assumption", self.assumption_manager.assumption_residual_records(vector, registry, self.system)),
+        ):
+            records.extend(group)
+            if _locations is not None:
+                _locations.extend((kind, index) for index in range(len(group)))
+            if _dependencies is not None:
+                for record in group:
+                    if record.source == "connection":
+                        _dependencies.append(frozenset(record.name.removeprefix("connection:").split("=")))
+                    else:
+                        _dependencies.append(frozenset({record.name.split(":", 1)[1]}))
         normalized = np.array([record.normalized_value for record in records], dtype=float)
         if not np.all(np.isfinite(normalized)):
             raise ValueError("residual vector contains NaN or inf")

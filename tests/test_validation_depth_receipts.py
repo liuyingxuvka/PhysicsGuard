@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 
 import yaml
+import pytest
 
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.schema.model_dataset_validation import ModelDatasetValidationReportSpec
@@ -55,6 +56,40 @@ def test_passing_depth_preserves_exact_pointwise_scope() -> None:
     assert receipt["envelopes"]["aggregate"]["violation_count"] == 0
     assert "commercial" in receipt["unsafe_claim_boundary"]
     assert ModelDatasetValidationReportSpec.model_validate(report.to_dict()).status == "pass"
+
+
+@pytest.mark.parametrize("drop_temperatures", [False, True])
+def test_series_required_variables_are_checked_after_native_derivation(drop_temperatures) -> None:
+    from physicsguard.core.validation_depth import _residual_series_receipt
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+    from physicsguard.schema.validation_depth import ObservedSeriesSpec
+
+    example = ROOT / "examples/hierarchical/heated_tank"
+    spec = load_hierarchical_audit_spec(example / "first_step_level0.yaml")
+    blocks = [block.model_copy(update={"required_variables": ["heat.Q_out_W"]}) if block.id == "thermal" else block
+              for block in spec.hierarchy.blocks]
+    spec = spec.model_copy(update={"hierarchy": spec.hierarchy.model_copy(update={"blocks": blocks})})
+    variables = load_observed_values(example / "first_step_measured_k30.yaml").model_dump(mode="json")["variables"]
+    if drop_temperatures:
+        del variables["heat.T_previous_K"]
+        del variables["heat.T_current_K"]
+    series = ObservedSeriesSpec.model_validate({"series_id": "measured", "points": [
+        {"point_id": "p30", "timestamp": 300., "variables": variables},
+    ]})
+    before = series.model_dump(mode="json")
+    findings = []
+    receipt, _ = _residual_series_receipt(spec, series, findings)
+    assert series.model_dump(mode="json") == before
+    if drop_temperatures:
+        assert receipt["status"] == "blocked"
+        assert receipt["aggregate"]["missing_point_count"] == 1
+        assert any(item["type"] == "residual_series_required_values_missing" for item in findings)
+    else:
+        assert receipt["status"] == "pass"
+        assert receipt["aggregate"]["evaluated_point_count"] == 1
+        assert "heat.Q_out_W" in receipt["points"][0]["derived_variables"]
+        assert receipt["points"][0]["checked_residuals"]
 
 
 def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> None:

@@ -20,7 +20,7 @@ Reject or hand off when:
 2. Write or review the model-understanding preflight.
 3. Map the external signals into an observed snapshot; review the intake when mappings are uncertain.
 4. Run `python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml`.
-5. Read `top_blocks`, `recommended_refinements` and the mapping issues; request the next small set of signals and refine one block. Repeat.
+5. Read the derived values, checked/unchecked relations, `top_blocks`, `recommended_refinements` and mapping issues; request the next small set of signals and refine one block. Repeat.
 
 ## Required outputs
 
@@ -89,11 +89,11 @@ Diagrams explain the audit; they are not validation evidence. Claims come only f
    python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml
    ```
 
-   The snapshot may omit variables. Residuals that need an unobserved variable are skipped and named in `warnings`; the variables are listed in `missing_required_variables` and stay open. If no residual is left, the command stops with `observed values missing required registered variables`.
-   Missing-variable checks use bounded probes of supported native modules, not a proof of arbitrary custom-function independence; unclassified custom residuals remain skipped.
+   The snapshot may omit intermediate variables. Connections can propagate known quantities without overwriting measurements; conflicting measured endpoints remain checks. Supported `equation`, `connection`, `boundary` and `assumption` relations can derive one unknown within finite bounds. Ambiguous, flat, undefined or unsupported cases stay unknown; this bounded search does not prove arbitrary nonlinear uniqueness. `soft_check` and `post_check` never derive values.
+   Dependencies belong to each residual's supported value/control sources, including zero-product and flat-branch inputs. Do not substitute numerical probing or a whole-module read union. Unsupported custom dependencies cannot license missing inputs; a custom relation may still be checked when all registered values are actually known. Remaining gaps stay in `missing_required_variables` and `unchecked_residuals`. Producing relations never count as checks, scores or top residuals. With no remaining check, the command stops with `no residual can be evaluated without them`.
 
-9. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`.
-   `hierarchy run|plan|evaluate|compare` print a compact summary with these fields (only the mapping rows that need review); add `--json` only when you need every residual, the block assignments or the full mapping ledger.
+9. Inspect `audit_pass`, `derived_variables`, `checked_residuals`, `unchecked_residuals`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`. A derived value records which relation supplied it; it is not another measurement or an independent check of that relation.
+   `hierarchy run|plan|evaluate|compare` print a compact summary (only mapping rows that need review); observed evaluation includes derived names and checked/unchecked counts. Add `--json` for each value's derivation, all residual names and gaps, block assignments or the full mapping ledger. CLI evaluation skips and lists still-unresolved values after derivation; the strict library default rejects them. `run` and `compare` retain their reference-solve boundaries.
 10. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations (start from `references/templates/hypothesis_plan.yaml` and point `model.path` at the audited hierarchy YAML). Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and give each hypothesis at least one signal, residual, or timing expectation plus its weakening condition:
 
    ```powershell
@@ -139,6 +139,7 @@ python -m physicsguard.cli hierarchy compare AUDIT.yaml OBSERVED.yaml
 Base the final debugging claim on the latest `hierarchy evaluate` output:
 
 - Name the suspicious block from `top_blocks` and the residuals that support it; report `audit_pass` exactly as printed.
+- Base residual evidence on `checked_residuals`; list derived values and unchecked relations separately. Never count a producing relation as its own successful check.
 - List every open `recommended_refinements`, `bug_family_followups`, review-required mapping in `signal_mapping_ledger`, and `missing_required_variables` / `missing_required_parameters` entry as open.
 - Never claim high-fidelity or commercial-tool equivalence; pointwise consistency is not prediction.
 
@@ -229,9 +230,15 @@ Connections express physical identity: keep the tight default scale, or declare 
 The repository's [heated-tank reference](https://github.com/liuyingxuvka/PhysicsGuard/tree/main/examples/hierarchical/heated_tank)
 provides a reproducible non-SI CSV, coarse and six-block coupled models, an explicit
 nameplate-efficiency assumption and measured-only snapshots. Use `hierarchy inspect`
-to inspect its tree. Coupled measured-only evaluation may still report missing inputs;
-keep that gap visible rather than supplying initial guesses or hand-computed
-intermediate snapshots to obtain a pass.
+to inspect its tree, then `hierarchy evaluate` to propagate connections and derive
+supported intermediate values. Place measurement-to-internal components first:
+the coupled example puts `heater_el` before `heater_cmd`; the coarse example puts
+`inflow_mass` before `through` and the thermal balance last. This preserves the
+heater-command or thermal relation as a check rather than using it to produce its
+own input. Step 30 is clean; step 70 exposes the coarse thermal fault or the coupled
+heater-command mismatch. Inspect the actual report and keep any remaining gaps
+visible; do not supply initial guesses or hand-computed intermediate snapshots to
+obtain a pass. Observed values and conversion evidence remain unchanged.
 
 Use `python -m physicsguard.cli assumptions inspect MODEL.yaml` for explicit cards
 in either a single-system model or the system wrapped by a hierarchical audit.

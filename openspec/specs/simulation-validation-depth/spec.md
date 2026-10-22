@@ -75,9 +75,42 @@ The heated-tank reference SHALL regenerate its 121-row non-SI CSV and four measu
 - **WHEN** its generator and measurement mapper run on the committed inputs
 - **THEN** the CSV and snapshots SHALL match the committed bytes, including current halving at 600 seconds and inflow changing at 900 seconds
 
-#### Scenario: Coupled measurement inputs are insufficient
-- **WHEN** the current observed evaluator cannot evaluate residuals without missing connected inputs
-- **THEN** the example SHALL expose that limitation and SHALL NOT claim automatic intermediate propagation or fill it with initial guesses
+#### Scenario: Measured inputs determine intermediate values
+- **WHEN** the coarse or coupled reference receives its step-30 measured snapshot
+- **THEN** observed evaluation SHALL propagate connections and derive supported intermediate values without changing the snapshot or running the reference solver
+- **AND** it SHALL pass using remaining checked relations, while reporting producing relations separately in `derived_variables`
+
+#### Scenario: Measured faults remain checks
+- **WHEN** the references receive their step-70 measured snapshots with measurement-to-internal components declared first
+- **THEN** the coarse reference SHALL expose the thermal-balance failure and the coupled reference SHALL expose the heater-command mismatch
+- **AND** producing relations SHALL NOT be counted as checked residuals, block scores or top residuals
+
+### Requirement: Observed derivation preserves evidence boundaries
+Observed evaluation SHALL use supported per-residual structural value/control dependencies, not numerical dependency probes or a module-wide read union. Only `equation`, `connection`, `boundary` and `assumption` relations with one unknown MAY derive a finite bounded scalar root. Ambiguous, flat, undefined or unsupported cases SHALL remain unknown; finite sampling SHALL NOT be presented as global nonlinear uniqueness. Observed values and conversion evidence SHALL remain unchanged. Reference `run` and `compare` semantics SHALL remain unchanged.
+
+#### Scenario: Connected measurements disagree
+- **WHEN** a connection propagates to an unknown endpoint and another measured endpoint conflicts with that value
+- **THEN** propagation SHALL NOT overwrite either observation, and the unconsumed connection SHALL remain a mismatch check
+
+#### Scenario: Partial inputs leave unsupported dependencies
+- **WHEN** a residual has unresolved provenance and registered values remain unknown
+- **THEN** it SHALL remain unchecked rather than receive guessed inputs or an empty dependency claim
+- **AND** a custom residual MAY still receive its native numerical check once every registered value is actually known
+
+#### Scenario: No relation remains to check
+- **WHEN** every available relation was consumed by derivation or still lacks usable inputs
+- **THEN** evaluation SHALL refuse with `no residual can be evaluated without them` rather than report a pass
+
+#### Scenario: Reports distinguish derivation from checks
+- **WHEN** observed evaluation runs with intermediate derivation
+- **THEN** the full report and block diagnostics SHALL separate `derived_variables`, `checked_residuals` and `unchecked_residuals`
+- **AND** the compact summary SHALL list derived names and checked/unchecked counts, with missing required variables judged after derivation
+- **AND** strict library evaluation SHALL reject remaining missing values while CLI evaluation MAY skip and list them
+
+#### Scenario: A series requires an intermediate variable
+- **WHEN** a series point omits a required variable that native observed evaluation can derive
+- **THEN** that variable SHALL satisfy the point's required-variable check without altering the point
+- **AND** genuinely unresolved values and all other coverage, gap and adequacy requirements SHALL retain their existing checks
 
 ### Requirement: Command exit codes preserve the checked verdict
 Single-system and hierarchy audit commands SHALL exit `0` when `audit_pass` is true and `1` when it is false. Compare commands SHALL use `observed_audit_pass`; other checks SHALL retain their native `ok` or status policy. Any command that cannot run because of input, file, schema, missing-required-variable or usage errors SHALL exit `2`. Successful non-judgment inspection, manifest generation and diff commands SHALL exit `0`. These exit codes SHALL NOT change the report JSON.

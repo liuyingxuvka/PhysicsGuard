@@ -126,9 +126,11 @@ python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 
-The [heated-tank reference](examples/hierarchical/heated_tank/) includes a reproducible non-SI CSV, coarse and six-block coupled models, an explicit nameplate-efficiency assumption, and measured-only snapshots. Generate data and snapshots or inspect the hierarchy; coupled measured-only evaluation can still report missing inputs. Do not fill those inputs with initial guesses or hand-computed intermediate snapshots.
+The [heated-tank reference](examples/hierarchical/heated_tank/) includes a reproducible non-SI CSV, coarse and six-block coupled models, an explicit nameplate-efficiency assumption, and measured-only snapshots. `hierarchy evaluate` can propagate connected quantities and derive supported intermediate values from those measurements. It reports `derived_variables`, `checked_residuals` and `unchecked_residuals`; the compact summary shows derived names and checked/unchecked counts. Do not fill remaining gaps with initial guesses or hand-computed intermediate snapshots.
 
-Connections mean the two endpoints are the same physical quantity. Their default residual scale is `1e-6` times the larger endpoint scale; an explicit positive finite connection `scale` can declare a small measurement tolerance. Use a relation module when the quantities may physically differ.
+Connections mean the two endpoints are the same physical quantity. A known value can propagate to an unknown endpoint without overwriting measurements; conflicting measured endpoints remain a connection check. Their default residual scale is `1e-6` times the larger endpoint scale; an explicit positive finite connection `scale` can declare a small measurement tolerance. Use a relation module when the quantities may physically differ.
+
+Intermediate derivation uses each residual's supported structural value/control dependencies. Only `equation`, `connection`, `boundary` and `assumption` relations with one unknown can supply a finite, bounded scalar root. Ambiguous, flat, undefined or unsupported cases remain unknown; this is not a global nonlinear uniqueness proof. Relations used to derive values never count as checks, scores or top residuals, and an evaluation with no remaining check is refused. Component order determines which eligible relation supplies a value: put measurement-to-internal relations first. Strict library evaluation checks for remaining missing values after derivation; the CLI skips and lists them. Observed values and conversion evidence are unchanged; `hierarchy run` and `hierarchy compare` retain their existing reference-solve boundaries. See the [hierarchy workflow](docs/hierarchical_audit_workflow.md) for supported-source and ordering limits.
 
 ## Assumption Cards
 
@@ -329,9 +331,11 @@ python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 
-[加热水箱参考例子](examples/hierarchical/heated_tank/) 提供可重复生成的非 SI CSV、粗模型和六块耦合模型、明确的铭牌效率假设及仅含测量值的快照。可以生成数据、映射快照和检查层级；耦合模型的纯测量值评估仍可能报告缺少输入，不应使用初值或手算中间量快照补成通过。
+[加热水箱参考例子](examples/hierarchical/heated_tank/) 提供可重复生成的非 SI CSV、粗模型和六块耦合模型、明确的铭牌效率假设及仅含测量值的快照。`hierarchy evaluate` 可以传播相连的同一物理量，并从测量值推出受支持的中间量。报告区分 `derived_variables`、`checked_residuals` 和 `unchecked_residuals`，紧凑摘要给出推出的变量名和已检查、未检查数量。剩余缺口不能用初值或手算中间量快照补成通过。
 
-连接表示两端是同一个物理量，默认残差尺度为较大端点变量尺度的 `1e-6` 倍；可用正的有限连接 `scale` 声明较小的测量容差。两端可能真实不同，应使用显式关系模块。
+连接表示两端是同一个物理量，已知端可传播到未知端，但不会覆盖测量值；相互冲突的实测端点仍由连接残差检查。默认残差尺度为较大端点变量尺度的 `1e-6` 倍；可用正的有限连接 `scale` 声明较小的测量容差。两端可能真实不同，应使用显式关系模块。
+
+中间量推导使用每条残差受支持的结构值依赖和控制依赖。只有 `equation`、`connection`、`boundary`、`assumption` 关系在恰有一个未知量时才能提供有限边界内的标量根；歧义、平坦、无定义或不支持的情形仍保持未知，不构成一般非线性唯一根证明。用于推出的关系永不计入检查、分数或最大残差，没有剩余检查时拒绝评估。组件顺序决定先使用哪条合格关系，应把测量值到内部量的关系放在前面。严格库入口在推导后判断剩余缺值，CLI 则跳过并列出；观测值和转换证据不变，`hierarchy run`、`hierarchy compare` 保留原有参考求解边界。支持范围和排序限制见[分层审计工作流](docs/hierarchical_audit_workflow.md)。
 
 ## 假设卡片
 

@@ -17,8 +17,8 @@ Risk intent brief:
 - Add AssumptionGuard Lite without hidden assumptions: parameter assumptions are
   explicit fills or overrides before module construction; variable assumptions
   become fixed residuals, not free solver variables; every assumption is reported.
-- A partial snapshot in hierarchy evaluate skips only the residuals that need
-  unobserved variables and lists those variables; it never passes silently.
+- A partial snapshot derives explicitly licensed intermediate values or lists
+  unresolved variables; producing relation occurrences never count as checks.
 - Model only the framework lifecycle, not numerical optimizer details or physics.
 """
 
@@ -177,6 +177,9 @@ class State:
     variable_assumptions_expected: tuple[str, ...] = ()
     assumption_overrides_expected: tuple[str, ...] = ()
     post_checks_in_solver: tuple[str, ...] = ()
+    derivation_cases: tuple[str, ...] = ()
+    producing_relations: tuple[str, ...] = ()
+    checked_relations: tuple[str, ...] = ()
 
 
 class ValidateSystem:
@@ -327,7 +330,7 @@ class BuildRegistry:
 class AssembleResiduals:
     name = "AssembleResiduals"
     reads = ("registry_valid",)
-    writes = ("residuals_normalized", "variable_assumptions_fixed", "failures")
+    writes = ("residuals_normalized", "variable_assumptions_fixed", "failures", "derivation_cases", "producing_relations")
     accepted_input_type = RegistryReady
     input_description = "RegistryReady"
     output_description = "ResidualsReady or SetupFailed"
@@ -365,17 +368,20 @@ class AssembleResiduals:
         if (
             input_obj.mode == "hierarchy_evaluate"
             and not input_obj.observed_values_complete
-            and "partial" in input_obj.case_id
+            and ("partial" in input_obj.case_id or "derived" in input_obj.case_id)
         ):
+            derives = "unresolved" not in input_obj.case_id
             yield FunctionResult(
                 output=ResidualsReady(input_obj.case_id, input_obj.mode, input_obj.observed_values_complete),
                 new_state=replace(
                     state,
                     residuals_normalized=state.residuals_normalized + (input_obj.case_id,),
-                    unobserved_skipped=state.unobserved_skipped + (input_obj.case_id,),
+                    unobserved_skipped=state.unobserved_skipped + (() if derives else (input_obj.case_id,)),
                     unobserved_listed=state.unobserved_listed + (input_obj.case_id,),
+                    derivation_cases=state.derivation_cases + ((input_obj.case_id,) if derives else ()),
+                    producing_relations=state.producing_relations + ((f"{input_obj.case_id}:producing",) if derives else ()),
                 ),
-                label="unobserved_residuals_skipped",
+                label="unobserved_values_derived" if derives else "unobserved_residuals_skipped",
             )
             return
         if input_obj.mode in {
@@ -452,6 +458,7 @@ class ExecuteMode:
         "hierarchy_reports",
         "hierarchy_plans",
         "hierarchy_inspections",
+        "checked_relations",
     )
     accepted_input_type = ResidualsReady
     input_description = "ResidualsReady"
@@ -522,6 +529,7 @@ class ExecuteMode:
                     observed_evaluations=state.observed_evaluations + (input_obj.case_id,),
                     observed_without_solver=state.observed_without_solver + (input_obj.case_id,),
                     hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,),
+                    checked_relations=state.checked_relations + (f"{input_obj.case_id}:independent",),
                     audit_passes=(
                         state.audit_passes + (input_obj.case_id,)
                         if audit_pass
@@ -533,7 +541,8 @@ class ExecuteMode:
                         else state.audit_failures
                     ),
                 ),
-                label="hierarchy_observed_evaluated_without_solver",
+                label=("derived_relations_excluded_from_checks" if input_obj.case_id in state.derivation_cases
+                       else "hierarchy_observed_evaluated_without_solver"),
             )
             return
         if input_obj.mode == "compare":
@@ -960,7 +969,7 @@ def assumption_overrides_are_warned(state: State, trace) -> InvariantResult:
 
 def unobserved_variables_stay_listed(state: State, trace) -> InvariantResult:
     del trace
-    hidden = tuple(sorted(set(state.unobserved_skipped) - set(state.unobserved_listed)))
+    hidden = tuple(sorted((set(state.unobserved_skipped) | set(state.derivation_cases)) - set(state.unobserved_listed)))
     if hidden:
         return InvariantResult.fail(f"residuals skipped without listing the unobserved variables: {hidden!r}")
     return InvariantResult.pass_()
@@ -973,7 +982,19 @@ def no_residual_from_unobserved_guess(state: State, trace) -> InvariantResult:
     return InvariantResult.pass_()
 
 
+def derived_relations_are_not_checks(state: State, trace) -> InvariantResult:
+    del trace
+    overlap = set(state.producing_relations) & set(state.checked_relations)
+    if overlap:
+        return InvariantResult.fail(f"producing relations counted as checks: {sorted(overlap)!r}")
+    for case in set(state.derivation_cases) & set(state.hierarchy_reports):
+        if f"{case}:producing" not in state.producing_relations or f"{case}:independent" not in state.checked_relations:
+            return InvariantResult.fail(f"derived report omitted its producing or independent relation: {case}")
+    return InvariantResult.pass_()
+
+
 INVARIANTS = (
+    Invariant("derived_relations_are_not_checks", "A producing relation is never an independent check.", derived_relations_are_not_checks),
     Invariant(
         name="no_solve_without_valid_registry",
         description="The solver is reached only after variable registry validation.",
@@ -1041,7 +1062,7 @@ INVARIANTS = (
     ),
     Invariant(
         name="unobserved_variables_stay_listed",
-        description="A partial snapshot skips residuals only while listing the unobserved variables.",
+        description="A partial snapshot lists missing or explicitly derived variables without silent fills.",
         predicate=unobserved_variables_stay_listed,
     ),
 )
@@ -1065,6 +1086,8 @@ EXTERNAL_INPUTS = (
     AuditInput("hierarchy_evaluate_clean", True, True, True, True, True, True, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_missing_observed", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
+    AuditInput("hierarchy_evaluate_derived_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate", observed_values_complete=False),
+    AuditInput("hierarchy_evaluate_partial_unresolved", True, True, True, True, True, True, mode="hierarchy_evaluate", observed_values_complete=False),
     AuditInput("hierarchy_evaluate_partial_snapshot", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
     AuditInput("hierarchy_evaluate_zero_product", True, True, True, True, True, True, mode="hierarchy_evaluate", observed_values_complete=False, unobserved_zero_product=True),
     AuditInput("hierarchy_compare_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_compare", True),
@@ -1133,10 +1156,15 @@ IMPLEMENTED_BY = {
     "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
 }
 TESTED_BY = {
+    "derived_relations_are_not_checks": [
+        "tests/test_heated_tank_example.py:test_measured_tank_derivations_are_reported_without_solving",
+        "tests/test_hierarchy_runner.py:test_repeated_connection_names_keep_distinct_producing_and_checked_occurrences",
+    ],
     "no_residual_from_unobserved_guess": [
         "tests/test_hierarchy_runner.py:test_partial_snapshot_does_not_invent_a_zero_product_residual",
         "tests/test_hierarchy_runner.py:test_partial_snapshot_skips_a_range_check_with_a_flat_local_region",
         "tests/test_hierarchy_runner.py:test_unclassified_custom_residual_is_not_licensed_by_finite_probes",
+        "tests/test_hierarchy_runner.py:test_partial_sum_tracks_external_reads_when_it_declares_no_variables",
     ],
     "audit_pass_and_failure_are_disjoint": [
         "tests/test_diagnostics.py:test_report_distinguishes_optimization_success_from_audit_pass",
@@ -1191,6 +1219,8 @@ REQUIRED_LABELS = (
     "post_check_solver_selection_failed",
     "missing_observed_values_failed",
     "unobserved_residuals_skipped",
+    "unobserved_values_derived",
+    "derived_relations_excluded_from_checks",
 )
 ASSUMPTION_LABELS = {
     "parameter_fill": "parameter_assumption_filled",
@@ -1242,7 +1272,7 @@ class _SkipsUnobservedSilently(AssembleResiduals):
 
     def apply(self, input_obj, state):
         for result in super().apply(input_obj, state):
-            if result.label == "unobserved_residuals_skipped":
+            if result.label in {"unobserved_residuals_skipped", "unobserved_values_derived"}:
                 result = replace(result, new_state=replace(result.new_state, unobserved_listed=state.unobserved_listed))
             yield result
 
@@ -1382,10 +1412,23 @@ class _OverrideNotWarned(BuildRegistry):
             yield result
 
 
+class _CountsDerivationsAsChecks(ExecuteMode):
+    """Known bad: include the actual producing relation among checked evidence."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if input_obj.case_id in state.derivation_cases:
+                producing = tuple(item for item in state.producing_relations if item.startswith(input_obj.case_id + ":"))
+                result = replace(result, new_state=replace(result.new_state,
+                                 checked_relations=result.new_state.checked_relations + producing))
+            yield result
+
+
 def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
     variants = {
+        "counts_derivations_as_checks": _CountsDerivationsAsChecks(),
         "evaluate_calls_solver": _EvaluateCallsSolver(),
         "failed_audit_also_passes": _FailedAuditAlsoPasses(),
         "partial_snapshot_hides_unobserved": _SkipsUnobservedSilently(),
@@ -1499,9 +1542,51 @@ def _partial_snapshot(audit_file: str, unobserved: str) -> tuple[str, bool]:
     observed = ObservedValuesSpec(variables={name: {"value": value} for name, value in solved.items() if name != unobserved})
     with _solver_counted() as calls:
         report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
-    listed = unobserved in report.missing_required_variables and bool(report.metadata["skipped_residuals"])
+    listed = unobserved in report.missing_required_variables and bool(report.unchecked_residuals)
+    derived = report.derived_variables.get(unobserved)
+    if derived and derived["residual_occurrence"] not in report.metadata["checked_residual_occurrences"] and not calls:
+        return "unobserved_values_derived", report.audit_pass
     label = "unobserved_residuals_skipped" if listed and not calls else "unobserved_residuals_hidden"
     return label, report.audit_pass
+
+
+def _derived_tank_snapshot() -> tuple[str, bool]:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    example = ROOT / "examples/hierarchical/heated_tank"
+    spec = load_hierarchical_audit_spec(example / "first_step_level0.yaml")
+    observed = load_observed_values(example / "first_step_measured_k70.yaml")
+    before = observed.model_dump(mode="json")
+    with _solver_counted() as calls:
+        report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+    used = set(report.metadata["derivation_residual_occurrences"])
+    checked = set(report.metadata["checked_residual_occurrences"])
+    thermal = report.top_blocks[0].block_id == "thermal" and not report.audit_pass
+    valid = used and checked and not used & checked and report.derived_variables and thermal
+    valid = valid and not calls and observed.model_dump(mode="json") == before
+    return ("derived_relations_excluded_from_checks" if valid else "derived_relations_misreported"), report.audit_pass
+
+
+def _unresolved_partial_snapshot() -> tuple[str, bool]:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    parameters = {"a": 1., "b": 0., **{f"{axis}_{key}": value for axis in ("x", "y")
+                  for key, value in (("lower_bound", -100.), ("upper_bound", 100.), ("initial_guess", 0.), ("scale", 1.))}}
+    spec = HierarchicalAuditSpec.model_validate({
+        "audit_name": "partial", "system": {"system_name": "partial", "components": [
+            {"id": "unseen", "type": "LinearRelationModule", "parameters": parameters},
+            {"id": "known", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+        ]}, "hierarchy": {"blocks": [{"id": "plant", "level": 0, "components": ["unseen", "known"]}]},
+    })
+    observed = ObservedValuesSpec(variables={"known.x": {"value": 0.}})
+    with _solver_counted() as calls:
+        report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    listed = report.missing_required_variables == ["unseen.x", "unseen.y"] and bool(report.unchecked_residuals)
+    return ("unobserved_residuals_skipped" if listed and not calls else "unobserved_residuals_hidden"), report.audit_pass
 
 
 def _zero_product_snapshot() -> tuple[str, bool | None]:
@@ -1556,6 +1641,8 @@ def _assumption(relative: str) -> tuple[str, None]:
 
 PITCH = "examples/hierarchical/observed_debugging"
 REAL_CASES = {
+    "hierarchy_evaluate_derived_bad_audit": _derived_tank_snapshot,
+    "hierarchy_evaluate_partial_unresolved": _unresolved_partial_snapshot,
     "clean": lambda: _solve("examples/dummy_system.yaml"),
     "converged_bad_audit": lambda: _solve("examples/dummy_conflict_system.yaml"),
     "bad_schema": _bad_schema,
