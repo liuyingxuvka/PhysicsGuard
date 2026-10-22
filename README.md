@@ -128,6 +128,8 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 
 The [heated-tank reference](examples/hierarchical/heated_tank/) includes a reproducible non-SI CSV, coarse and six-block coupled models, an explicit nameplate-efficiency assumption, and measured-only snapshots. Generate data and snapshots or inspect the hierarchy; coupled measured-only evaluation can still report missing inputs. Do not fill those inputs with initial guesses or hand-computed intermediate snapshots.
 
+Connections mean the two endpoints are the same physical quantity. Their default residual scale is `1e-6` times the larger endpoint scale; an explicit positive finite connection `scale` can declare a small measurement tolerance. Use a relation module when the quantities may physically differ.
+
 ## Assumption Cards
 
 PhysicsGuard treats assumptions as first-class audit objects. Assumptions can be active, proposed, rejected, high-impact, or under review.
@@ -326,6 +328,8 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 
 [加热水箱参考例子](examples/hierarchical/heated_tank/) 提供可重复生成的非 SI CSV、粗模型和六块耦合模型、明确的铭牌效率假设及仅含测量值的快照。可以生成数据、映射快照和检查层级；耦合模型的纯测量值评估仍可能报告缺少输入，不应使用初值或手算中间量快照补成通过。
+
+连接表示两端是同一个物理量，默认残差尺度为较大端点变量尺度的 `1e-6` 倍；可用正的有限连接 `scale` 声明较小的测量容差。两端可能真实不同，应使用显式关系模块。
 
 ## 假设卡片
 

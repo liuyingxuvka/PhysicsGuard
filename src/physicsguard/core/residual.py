@@ -177,7 +177,11 @@ class ResidualBuilder:
                 to_record = registry.get_record(connection.to_variable)
             except KeyError as exc:
                 raise KeyError(f"connection references unknown variable: {exc}") from exc
-            scale = max(from_record.scale, to_record.scale, 1e-12)
+            scale = (
+                connection.scale
+                if connection.scale is not None
+                else 1e-6 * max(from_record.scale, to_record.scale)
+            )
             records.append(
                 ResidualRecord(
                     name=f"connection:{connection.from_variable}={connection.to_variable}",

@@ -64,12 +64,21 @@ class ConnectionSpec(BaseModel):
     from_variable: str
     to_variable: str
     description: Optional[str] = None
+    scale: Optional[float] = None
 
     @field_validator("from_variable", "to_variable")
     @classmethod
     def _endpoint_qualified(cls, value: str) -> str:
         if not is_qualified_variable_name(value):
             raise ValueError("connection endpoint must use component.variable format")
+        return value
+
+
+    @field_validator("scale")
+    @classmethod
+    def _scale_positive_finite(cls, value: Optional[float]) -> Optional[float]:
+        if value is not None and (not math.isfinite(value) or value <= 0):
+            raise ValueError("connection scale must be finite and positive")
         return value
 
 

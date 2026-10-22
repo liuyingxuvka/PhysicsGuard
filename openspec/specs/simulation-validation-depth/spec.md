@@ -89,3 +89,18 @@ Single-system and hierarchy audit commands SHALL exit `0` when `audit_pass` is t
 #### Scenario: An audit file cannot be loaded
 - **WHEN** an audit file does not exist or fails YAML/schema validation
 - **THEN** the command SHALL exit `2` rather than returning a checked-failure verdict
+
+### Requirement: Connections preserve physical identity
+A connection SHALL have default residual scale `1e-6 * max(endpoint variable scales)` without changing either variable scale. An explicit connection scale SHALL be positive and finite and SHALL replace the default. Physically different quantities SHALL require an explicit relation rather than a relaxed identity.
+
+#### Scenario: A pinned heated-tank energy fault is solved
+- **WHEN** step 70 measurements are pinned as boundaries in the coarse reference model
+- **THEN** the audit SHALL fail with the thermal block worst instead of hiding the mismatch in a loose temperature connection
+
+#### Scenario: The pinned reference is clean
+- **WHEN** step 30 measurements are pinned in the same coarse reference model
+- **THEN** the audit SHALL pass
+
+#### Scenario: A connection tolerance is invalid
+- **WHEN** its scale is zero, negative, infinite or NaN
+- **THEN** schema validation SHALL reject the model

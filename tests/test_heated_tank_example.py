@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
 import yaml
 
 
@@ -51,3 +52,24 @@ def test_mapper_reproduces_only_measured_snapshots(tmp_path: Path) -> None:
             assert all(item["unit"] and item["external_signal"] and item["mapping_confidence"] for item in variables.values())
             assert not any("derived" in item["external_signal"] for item in variables.values())
             assert "heater_eff.efficiency" not in variables
+
+
+@pytest.mark.parametrize(("step", "expected_pass"), [(30, True), (70, False)])
+def test_coarse_tank_pinned_measurements_preserve_the_energy_fault(tmp_path: Path, step: int, expected_pass: bool) -> None:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+
+    data = yaml.safe_load((EXAMPLE / "first_step_level0.yaml").read_text(encoding="utf-8"))
+    observed = yaml.safe_load((EXAMPLE / f"first_step_measured_k{step}.yaml").read_text(encoding="utf-8"))
+    data["system"]["boundaries"] = [
+        {"variable": name, "value": item["value"], "scale": max(abs(item["value"]) * 1e-6, 1e-12),
+         "description": item["external_signal"]}
+        for name, item in observed["variables"].items()
+    ]
+    path = tmp_path / f"pinned_k{step}.yaml"
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+    report = HierarchicalAuditRunner(load_hierarchical_audit_spec(path)).run()
+    assert report.audit_pass is expected_pass
+    if not expected_pass:
+        assert report.top_blocks[0].block_id == "thermal"
+        assert report.max_abs_normalized_residual > 1.0

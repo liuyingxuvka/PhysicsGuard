@@ -98,7 +98,8 @@
       "responsibilities": [
         "Validate inputs and finite solver bounds before residual evaluation",
         "Separate numerical optimization success, observed audit and diagnostic limits",
-        "Skip only the residuals that need unobserved variables and list those variables as missing"
+        "Skip only the residuals that need unobserved variables and list those variables as missing",
+        "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance"
       ],
       "files": [
         "src/physicsguard/core/__init__.py",
@@ -196,7 +197,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:dde9e874776e99ce230db9ceec841de1a44fec60ced828a1d41b669280894a28"
+      "fingerprint": "sha256:2027a8a015d8611c654f7a3ea6428de6e5398d137f66ff0fb48026de5a663e11"
     },
     {
       "id": "validation",
@@ -320,7 +321,8 @@
       "summary": "Validated schemas and explicit claim boundaries",
       "responsibilities": [
         "Validate structured inputs before domain operations",
-        "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority"
+        "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
+        "Validate optional connection residual scales as positive finite values"
       ],
       "files": [
         "src/physicsguard/schema/*.py",
@@ -402,7 +404,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:16e4887b0da8ad13a40159f6c73b457d63264bdcd3ceeaee49f98d28ed105378"
+      "fingerprint": "sha256:7b8485a88498a5a361804e1c8f377242d5df049a19a713afa1c8a46d1492a7e7"
     },
     {
       "id": "loaders",

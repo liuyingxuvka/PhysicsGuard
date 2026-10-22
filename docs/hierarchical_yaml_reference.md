@@ -187,3 +187,21 @@ variables:
 metadata:
   mapping_note: external signals were mapped by AI or user review
 ```
+
+## Connections Are Identities
+
+A `system.connections` entry states that `from_variable` and `to_variable` are
+the same physical quantity. Its residual scale defaults to `1e-6` times the
+larger endpoint variable scale; it does not change either variable's own scale.
+An optional positive finite `scale` overrides the default, for example when two
+sensors measure the same point with a stated small tolerance:
+
+```yaml
+connections:
+  - from_variable: sensor_a.value
+    to_variable: sensor_b.value
+    scale: 0.001
+```
+
+If the endpoints can physically differ, model that difference with an explicit
+relation module rather than relaxing an identity connection.

@@ -222,6 +222,8 @@ Load `references/protocol.md` when writing or reviewing a full AI debugging plan
 
 Load `references/model-generation.md` when turning a PhysicsGuard hierarchy into a candidate MATLAB/Simulink or other target-model implementation plan.
 
+Connections express physical identity: keep the tight default scale, or declare a positive finite connection `scale` for a stated small tolerance. If endpoints can physically differ, use an explicit relation module instead.
+
 ## Heated-Tank Starting Example
 
 The repository's [heated-tank reference](https://github.com/liuyingxuvka/PhysicsGuard/tree/main/examples/hierarchical/heated_tank)

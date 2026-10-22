@@ -78,7 +78,8 @@ def test_boundary_residual_works() -> None:
     assert boundary.role == "boundary"
 
 
-def test_connection_residual_works() -> None:
+@pytest.mark.parametrize(("scale", "expected_scale"), [(None, 1e-6), (0.25, 0.25)])
+def test_connection_residual_works(scale: float | None, expected_scale: float) -> None:
     spec = system(
         {
             "system_name": "two",
@@ -86,7 +87,7 @@ def test_connection_residual_works() -> None:
                 {"id": "a", "type": "DummyResidualModule", "parameters": {"target": 0.0}},
                 {"id": "b", "type": "DummyResidualModule", "parameters": {"target": 0.0}},
             ],
-            "connections": [{"from_variable": "a.x", "to_variable": "b.x"}],
+            "connections": [{"from_variable": "a.x", "to_variable": "b.x", "scale": scale}],
         }
     )
     builder = ResidualBuilder(spec)
@@ -94,6 +95,8 @@ def test_connection_residual_works() -> None:
     connection = [record for record in records if record.source == "connection"][0]
     assert connection.value == 2.0
     assert connection.role == "connection"
+    assert connection.scale == pytest.approx(expected_scale)
+    assert connection.normalized_value == pytest.approx(2.0 / expected_scale)
 
 
 def test_missing_connection_variable_fails() -> None:
@@ -528,3 +531,11 @@ def test_range_check_rejects_post_check_solver_participation() -> None:
     )
     with pytest.raises(ValueError, match="post_check residuals cannot enter the solver"):
         ResidualBuilder(spec).build_modules()
+
+
+@pytest.mark.parametrize("scale", [0.0, -1.0, float("inf"), float("-inf"), float("nan")])
+def test_connection_scale_rejects_nonpositive_or_nonfinite(scale: float) -> None:
+    with pytest.raises(ValueError, match="connection scale must be finite and positive"):
+        system({"system_name": "invalid_connection_scale", "components": [
+            {"id": "a", "type": "DummyResidualModule", "parameters": {"target": 0.0}},
+        ], "connections": [{"from_variable": "a.x", "to_variable": "a.x", "scale": scale}]})
