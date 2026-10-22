@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import math
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -265,6 +265,57 @@ class HierarchySpec(BaseModel):
         return self
 
 
+class VariantChangeSpec(BaseModel):
+    """One finite edit to a supplied measurement, never an implicit assumption."""
+
+    model_config = ConfigDict(extra="forbid")
+    variable: str
+    scale: float | None = None
+    offset: float | None = None
+    set: float | None = None
+    flip_sign: bool | None = None
+
+    @model_validator(mode="after")
+    def _one_operation(self) -> "VariantChangeSpec":
+        if not is_qualified_variable_name(self.variable):
+            raise ValueError("variant variable must use component.variable format")
+        selected = {name for name in ("scale", "offset", "set", "flip_sign") if getattr(self, name) is not None}
+        if len(selected) != 1:
+            raise ValueError("variant change requires exactly one operation")
+        operation = next(iter(selected))
+        value = getattr(self, operation)
+        if value is None or (operation == "flip_sign" and value is not True):
+            raise ValueError("variant operation needs a value; flip_sign must be true")
+        if operation != "flip_sign" and not math.isfinite(value):
+            raise ValueError("variant changes must be finite")
+        return self
+
+
+class FaultVariantSpec(BaseModel):
+    """A bounded alternate device and its changed/rederived measurements."""
+
+    model_config = ConfigDict(extra="forbid")
+    id: str
+    kind: Literal["fault", "benign"]
+    description: str = ""
+    parameters: dict[str, float] = Field(default_factory=dict)
+    changes: list[VariantChangeSpec] = Field(default_factory=list)
+    rederive: list[str] = Field(default_factory=list)
+    expect_blocks: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _valid_edits(self) -> "FaultVariantSpec":
+        ensure_non_empty(self.id, "fault variant id")
+        for name, value in self.parameters.items():
+            if not is_qualified_variable_name(name) or not math.isfinite(value):
+                raise ValueError("variant parameters require component.parameter and finite values")
+        if any(not is_qualified_variable_name(name) for name in self.rederive):
+            raise ValueError("rederive requires qualified variable names")
+        for block in self.expect_blocks:
+            ensure_non_empty(block, "expected block")
+        return self
+
+
 class HierarchicalAuditSpec(BaseModel):
     """Top-level spec for a hierarchical PhysicsGuard audit."""
 
@@ -274,6 +325,7 @@ class HierarchicalAuditSpec(BaseModel):
     description: Optional[str] = None
     system: SystemSpec
     hierarchy: HierarchySpec
+    fault_variants: list[FaultVariantSpec] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("audit_name")
@@ -284,6 +336,9 @@ class HierarchicalAuditSpec(BaseModel):
     @model_validator(mode="after")
     def _metadata_json_serializable(self) -> "HierarchicalAuditSpec":
         _ensure_json_serializable(self.metadata, "metadata")
+        names = [variant.id for variant in self.fault_variants]
+        if len(names) != len(set(names)):
+            raise ValueError("fault variant ids must be unique")
         return self
 
 
@@ -301,4 +356,6 @@ __all__ = [
     "HierarchicalAuditSpec",
     "HierarchySpec",
     "RefinementRuleSpec",
+    "FaultVariantSpec",
+    "VariantChangeSpec",
 ]

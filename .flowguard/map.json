@@ -23,7 +23,8 @@
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
         "Inspect assumption cards from either a single SystemSpec or the system inside a hierarchical audit",
-        "Expose local/subtree verdicts, refinement consistency and per-template status in hierarchy summaries; pass the audit directory for file resolution"
+        "Expose local/subtree verdicts, refinement consistency and per-template status in hierarchy summaries; pass the audit directory for file resolution",
+        "Run task-model variants with optional pairs and observed matching; export native diagnosability YAML on explicit request"
       ],
       "files": [
         "src/physicsguard/__init__.py",
@@ -32,7 +33,9 @@
       ],
       "entrypoints": [],
       "state": [],
-      "side_effects": [],
+      "side_effects": [
+        "Write the explicitly requested --write-diagnose YAML file from validated model-derived fault intervals"
+      ],
       "depends_on": [
         "evidence",
         "loaders",
@@ -51,6 +54,7 @@
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
         "tests/test_evaluator.py",
+        "tests/test_fault_variants.py",
         "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
         "tests/test_hierarchy_refinement.py",
@@ -72,7 +76,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:7f048964b7003bd3bc4f2ca38d1ead50ff2feed8b95e280b167dd85f691e08fd"
+      "fingerprint": "sha256:5f8082a4731713404a796829e111d3f7b25176a57beeaff88fbeb2ae76c09f50"
     },
     {
       "id": "routing",
@@ -253,7 +257,8 @@
       "summary": "Task-local hypotheses, interval residuals and diagnosability",
       "responsibilities": [
         "Rank the most discriminating next observation and keep a model miss visible when every hypothesis is contradicted",
-        "Evaluate interval residuals and distinguish hypotheses with bounded diagnosability evidence"
+        "Evaluate interval residuals and distinguish hypotheses with bounded diagnosability evidence",
+        "Generate alternate-device measurement variants, rederive requested signals and audit them with the nominal model; compare own checked signatures and scaled unmeasured signals while reporting unavailable generation honestly"
       ],
       "files": [
         "src/physicsguard/core/task_local_revision.py",
@@ -263,20 +268,23 @@
       "state": [],
       "side_effects": [],
       "depends_on": [
-        "schema"
+        "schema",
+        "simulation"
       ],
       "tests": [
         "tests/test_cli.py",
         "tests/test_diagnosability.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_signal_mapping_ledger.py",
-        "tests/test_task_local_revision.py"
+        "tests/test_task_local_revision.py",
+        "tests/test_fault_variants.py"
       ],
       "models": [
-        ".flowguard/models/physicsguard_interval_diagnosability_model.py"
+        ".flowguard/models/physicsguard_interval_diagnosability_model.py",
+        ".flowguard/models/physicsguard_fault_variants_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:93507259f729437ef01f43ca33f7b83011a9ef46745096f7fc956c75ed9e6bef"
+      "fingerprint": "sha256:e75485474596650d8aa28a0b0fa1f27a60f28d7fbac60f833154ab92a4ef15a4"
     },
     {
       "id": "evidence",
@@ -331,7 +339,8 @@
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
         "Validate optional connection residual scales as positive finite values",
         "Provide shared contract-review records and pure manifest, catalog, role and mapping coverage checks",
-        "Validate refines against direct parent component ownership and reject the retired expected_residual_keys field"
+        "Validate refines against direct parent component ownership and reject the retired expected_residual_keys field",
+        "Validate declared fault variants, one finite measurement edit per change, unique ids and rederived variable references"
       ],
       "files": [
         "src/physicsguard/schema/*.py",
@@ -412,7 +421,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:597ca63e23a3958d833501900cfcdd2920f01bd63bf04e28da0aa981247e9a59"
+      "fingerprint": "sha256:670cf493c46b58cb4ba8189b6aee6eb0c0b9239f82991f104535f6ab01e95a42"
     },
     {
       "id": "loaders",

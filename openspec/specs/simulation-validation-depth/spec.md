@@ -146,6 +146,55 @@ Each recommendation SHALL preserve its template ids and give a `template_status`
 - **WHEN** a recommendation contains both a resolvable id and a missing id
 - **THEN** each id SHALL retain its own status and the missing id SHALL produce its warning
 
+### Requirement: Declared device variants preserve nominal evidence
+An audit MAY declare `fault_variants` with unique ids, fault or benign kinds, parameter overrides, measurement changes, `rederive` and expected blocks. Each measurement-change entry SHALL use exactly one of scale, offset, set or sign flip. Variant evaluation SHALL copy the nominal data, apply changes, remove the named rederived measurements, derive under the variant device parameters, and audit the result under the nominal model. It SHALL NOT mutate the original specification or observations, optimize their values, or claim time-forward prediction.
+
+#### Scenario: A device parameter changes a measured outcome
+- **WHEN** a variant changes a parameter and names an outcome in `rederive`
+- **THEN** that outcome SHALL be derived under the changed device before nominal-model evaluation
+- **AND** unavailable derivation SHALL remain explicit rather than become a guessed observation
+
+#### Scenario: A valid device case cannot generate its requested measurement
+- **WHEN** an otherwise valid edit cannot produce a required rederived measurement
+- **THEN** its row SHALL report `not_evaluable` with a reason, null signature and audit verdict, and false detection, neutrality and success flags
+- **AND** other cases SHALL remain visible, the aggregate command SHALL exit `1`, and the unavailable case SHALL NOT enter signature groups or observed matches
+- **AND** incomplete fault evaluation SHALL NOT produce a complete diagnosis request; schema or unknown-id errors SHALL retain input-error exit `2`
+- **AND** explicit diagnosis export SHALL preserve those rows with exit `1` and `diagnose_export.status: not_written` plus reasons in full and compact output, without creating a partial file; fewer than two declared fault hypotheses SHALL remain input error `2`
+
+#### Scenario: A change has multiple operations
+- **WHEN** one change entry declares more than one of scale, offset, set or sign flip
+- **THEN** schema validation SHALL reject the input
+
+### Requirement: Fault signatures use direct checked evidence
+Variant signatures SHALL use blocks with their own checked failures and the sign of each block's largest checked residual under existing role and threshold rules. They SHALL NOT discard a block merely because it has children, prune direct parent/child failures into an antichain, or treat inherited-only, unchecked or producing relations as physical fault evidence.
+
+#### Scenario: A non-leaf thermal block fails directly
+- **WHEN** `thermal` has children and its own checked relation fails
+- **THEN** the signature SHALL retain `thermal`
+- **AND** if both parent and child have direct checked failures, both SHALL remain represented
+
+#### Scenario: A parent fails only through inheritance
+- **WHEN** a parent's own checks pass and only a child fails
+- **THEN** the signature SHALL include the child's direct failure without adding the inherited-only parent
+
+### Requirement: Detection and discrimination remain separate
+Variant reports SHALL distinguish fault detection, benign neutrality and expected-block checks. Identical fault signatures SHALL remain in indistinguishable groups. A group's next signal SHALL be currently unmeasured and selected by device-value separation normalized by variable scale. Observed comparisons SHALL report matching variants by signature equality without claiming the true cause.
+
+#### Scenario: Two faults have the same checked signature
+- **WHEN** distinct device variants produce the same direct block-and-sign signature
+- **THEN** they SHALL remain indistinguishable and the report SHALL identify an available next signal or an explicit absence
+- **AND** identical signatures alone SHALL NOT justify a feature-pair exclusion
+
+#### Scenario: The command writes diagnosis input
+- **WHEN** `task-model variants` receives `--write-diagnose`
+- **THEN** it SHALL write native diagnosability input with fault-signature intervals using device values plus or minus variable scale times audit threshold
+- **AND** `task-model diagnose` SHALL retain its separate discrimination verdict
+
+#### Scenario: Optional composed faults and observations are requested
+- **WHEN** `--pairs` or `--observed` is supplied
+- **THEN** the report SHALL evaluate the requested fault pairs or compare the observed signature while preserving the original inputs
+- **AND** any physical-masking claim SHALL rely on actual composed-device evidence rather than inherited hierarchy failure or expected example labels
+
 ### Requirement: Command exit codes preserve the checked verdict
 Single-system and hierarchy audit commands SHALL exit `0` when `audit_pass` is true and `1` when it is false. Compare commands SHALL use `observed_audit_pass`; other checks SHALL retain their native `ok` or status policy. Any command that cannot run because of input, file, schema, missing-required-variable or usage errors SHALL exit `2`. Successful non-judgment inspection, manifest generation and diff commands SHALL exit `0`. These exit codes SHALL NOT change the report JSON.
 

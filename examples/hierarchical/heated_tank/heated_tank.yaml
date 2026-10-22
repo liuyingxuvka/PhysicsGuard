@@ -182,3 +182,38 @@ hierarchy:
     - orifice opening
     rationale: Volume does not close; check flow meters and level sensor.
     priority: 10
+fault_variants:
+- id: heater_half
+  kind: fault
+  description: One of two heater elements fails.
+  changes:
+  - variable: heater_el.current_A
+    scale: 0.5
+  rederive: [heat.T_current_K]
+  expect_blocks: [heater]
+- id: extra_wall_loss
+  kind: fault
+  description: An alternate device has larger wall heat loss.
+  parameters: {loss.UA_W_K: 400.0}
+  rederive: [heat.T_current_K]
+  expect_blocks: [thermal]
+- id: inlet_temp_offset
+  kind: fault
+  description: The inlet temperature sensor has a positive offset.
+  changes:
+  - variable: through.T_in_K
+    offset: 2.4
+  expect_blocks: [thermal]
+- id: outflow_unit_x1000
+  kind: fault
+  description: The measured volumetric outflow has a unit scale error.
+  changes:
+  - variable: vol.V_dot_out_m3_s
+    scale: 1000.0
+  expect_blocks: [hydraulics]
+- id: outflow_rounding
+  kind: benign
+  description: A one-millilitre-per-second outflow rounding offset stays within tolerance.
+  changes:
+  - variable: vol.V_dot_out_m3_s
+    offset: 1.0e-6

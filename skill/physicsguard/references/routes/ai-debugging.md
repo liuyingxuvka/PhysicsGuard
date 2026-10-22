@@ -94,6 +94,15 @@ Diagrams explain the audit; they are not validation evidence. Claims come only f
 
 9. Inspect `audit_pass`, `derived_variables`, `checked_residuals`, `unchecked_residuals`, `top_blocks`, `top_residuals`, `recommended_refinements`, `signal_mapping_ledger`, `bug_family_followups`, `missing_required_variables`, and `missing_required_parameters`. A derived value records which relation supplied it; it is not another measurement or an independent check of that relation.
    `hierarchy run|plan|evaluate|compare` print a compact summary (only mapping rows that need review); observed evaluation includes derived names and checked/unchecked counts. Add `--json` for each value's derivation, all residual names and gaps, block assignments or the full mapping ledger. CLI evaluation skips and lists still-unresolved values after derivation; the strict library default rejects them. `run` and `compare` retain their reference-solve boundaries.
+   When the audit declares `fault_variants`, use model-derived device signatures before inventing fault intervals:
+
+   ```powershell
+   python -m physicsguard.cli task-model variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --write-diagnose DIAGNOSE.yaml --json
+   python -m physicsguard.cli task-model diagnose DIAGNOSE.yaml
+   ```
+
+   Each variant can override `component.parameter` values and change nominal measurements; each change entry permits exactly one of `scale`, `offset`, `set` or `flip_sign`. Values listed in `rederive` are removed and derived under that variant device, then its data is checked by the nominal model. Keep the original model and observed snapshot unchanged. This is another-device evaluation, not time-forward prediction.
+   Read each row's `status`, `detected`, `neutral`, `expect_blocks_met`, the `indistinguishable` groups and their `next_signal`, and any `matching_variants`. Signatures use directly checked own failures and their largest checked residual's sign. Keep a direct `thermal` failure even when that block has children; do not count an ancestor whose own checks pass. Unchecked or producing relations are not fault evidence. Identical fault signatures stay indistinguishable; the next signal must be unmeasured and ranked by scale-normalized device-value difference. A matching signature does not prove the physical cause. Variant command exit 0 means its detection/expected-block/benign checks pass; 1 means a check failed or a valid case is `not_evaluable`; 2 means invalid input. An unavailable case keeps its reason, null signature and false check flags, and cannot become a match or distinguishability result. Discrimination may still need another signal.
 10. For a non-trivial diagnosis, create a task-local competing-hypothesis plan before requesting new observations (start from `references/templates/hypothesis_plan.yaml` and point `model.path` at the audited hierarchy YAML). Keep at least two live hypotheses unless the current evidence makes only one physically meaningful, and give each hypothesis at least one signal, residual, or timing expectation plus its weakening condition:
 
    ```powershell

@@ -141,6 +141,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="path to a DiagnosabilityRequestSpec YAML",
     )
     task_model_diagnose.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    task_model_variants = task_model_subparsers.add_parser("variants", help="generate model-derived fault signatures")
+    task_model_variants.add_argument("audit", type=Path)
+    task_model_variants.add_argument("nominal", type=Path)
+    task_model_variants.add_argument("--pairs", action="store_true")
+    task_model_variants.add_argument("--observed", type=Path)
+    task_model_variants.add_argument("--write-diagnose", type=Path)
+    task_model_variants.add_argument("--json", action="store_true", help="include generated values and diagnosis input")
+    task_model_variants.add_argument("--pretty", action="store_true")
 
     assumptions_parser = subparsers.add_parser(
         "assumptions",
@@ -530,6 +538,36 @@ def task_model_diagnose_command(
     return 1 if output["status"] == "indistinguishable" else 0
 
 
+def task_model_variants_command(audit, nominal, pairs=False, observed=None, write_diagnose=None, full=False, pretty=False) -> int:
+    from physicsguard.core.diagnosability import evaluate_fault_variants
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    output = evaluate_fault_variants(load_hierarchical_audit_spec(audit), load_observed_values(nominal),
+        pairs=pairs, observed=load_observed_values(observed) if observed is not None else None, base_dir=audit.parent)
+    if write_diagnose is not None:
+        import yaml
+        if output["diagnose_request"] is None:
+            faults = [row for row in output["variants"] if row["kind"] == "fault"]
+            unavailable = [row for row in faults if row["status"] == "not_evaluable"]
+            if len(faults) < 2 or not unavailable:
+                raise ValueError("diagnosis export requires at least two fault signatures with shared registered signals")
+            output["diagnose_export"] = {"status": "not_written", "reason": "fault_variant_not_evaluable",
+                                         "variants": [{"id": row["id"], "reason": row["reason"]} for row in unavailable]}
+            output["ok"] = False
+        else:
+            write_diagnose.write_text(yaml.safe_dump(output["diagnose_request"], sort_keys=False), encoding="utf-8")
+    if full:
+        _print_json(output, pretty)
+    else:
+        summary = {key: value for key, value in output.items() if key != "diagnose_request"}
+        for key in ("variants", "pairs"):
+            summary[key] = [{name: value for name, value in row.items() if name not in {"generated_values", "device_values"}}
+                            for row in output[key]]
+        _print_json(summary, pretty)
+    return 0 if output["ok"] else 1
+
+
 def assumptions_inspect(path: Path, pretty: bool = False) -> int:
     from physicsguard.core.diagnostics import DiagnosticReporter
     from physicsguard.core.residual import ResidualBuilder
@@ -696,6 +734,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.hierarchy_command == "compare":
                 return hierarchy_compare(args.audit, args.observed, args.pretty, args.json)
         if args.command == "task-model":
+            if args.task_model_command == "variants":
+                return task_model_variants_command(args.audit, args.nominal, args.pairs, args.observed,
+                                                   args.write_diagnose, args.json, args.pretty)
             if args.task_model_command == "plan":
                 return task_model_plan_command(args.plan, args.pretty)
             if args.task_model_command == "observe":

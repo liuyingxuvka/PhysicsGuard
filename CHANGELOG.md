@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added model-derived alternate-device fault signatures, next-signal suggestions and diagnosis export, with unavailable cases reported explicitly.
 - Removed the unused block field `expected_residual_keys`; delete it from existing hierarchy YAML because schema validation now rejects it as an extra field.
 
 ## v0.15.17 - 2026-10-22
