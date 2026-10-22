@@ -32,3 +32,15 @@ def test_route_table_names_every_route_file_and_the_description_is_short() -> No
     front = yaml.safe_load(text.split("---")[1])
     assert front["name"] == "physicsguard"
     assert len(front["description"]) <= 300
+
+
+def test_ai_debugging_keeps_four_hard_boundaries() -> None:
+    text = (SKILL_ROOT / "physicsguard" / "references" / "routes" / "ai-debugging.md").read_text(encoding="utf-8")
+    boundaries = text.split("## Hard Boundaries", 1)[1].split("\n## ", 1)[0]
+    for rule in (
+        "Do not count one value as adequate coverage for a time-varying parameter",
+        "Do not describe pointwise evaluation as simulation or prediction",
+        "Do not learn by modifying PhysicsGuard itself during a diagnostic episode",
+        "For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces",
+    ):
+        assert boundaries.count(rule) == 1, rule

@@ -190,6 +190,16 @@ Keep the header as comments only. Do not add provenance metadata solely for this
 - Do not generalize from a hand-picked subset. Report every adequacy warning
   (missing critical signals/parameters, temporal gaps, shallow per-signal
   histories, mass/template exclusions) and narrow the claim to the covered scope.
+- Do not count one value as adequate coverage for a time-varying parameter,
+  even when the overall series and other signals are deep.
+- Do not describe pointwise evaluation as simulation or prediction. Prediction
+  requires state propagation and an exact, disjoint future-holdout rollout.
+- Do not learn by modifying PhysicsGuard itself during a diagnostic episode.
+  Hypotheses, predictions, observations, mismatches, and candidate revisions
+  are task-local artifacts. Core thresholds, Guard code, reusable library
+  defaults, and installed skills remain unchanged.
+- For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces; otherwise stop at the PhysicsGuard audit and explain what interface is missing.
+
 
 ## When To Create A New PhysicsGuard Relation
 
