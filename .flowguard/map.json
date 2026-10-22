@@ -22,7 +22,8 @@
         "Print a compact hierarchy/validation summary with derived variable names and checked/unchecked counts, and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
-        "Inspect assumption cards from either a single SystemSpec or the system inside a hierarchical audit"
+        "Inspect assumption cards from either a single SystemSpec or the system inside a hierarchical audit",
+        "Expose local/subtree verdicts, refinement consistency and per-template status in hierarchy summaries; pass the audit directory for file resolution"
       ],
       "files": [
         "src/physicsguard/__init__.py",
@@ -71,7 +72,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:ecd13f47af85fe61b1eeec90db0c3e48848c8fb40368313f7b19862d20cbe694"
+      "fingerprint": "sha256:7f048964b7003bd3bc4f2ca38d1ead50ff2feed8b95e280b167dd85f691e08fd"
     },
     {
       "id": "routing",
@@ -105,7 +106,8 @@
         "Derive intermediate values from connections and bounded one-unknown relations with finite structural value/control provenance; keep producing occurrences separate from independent checks and list unresolved inputs",
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
         "Report an observed value without a source signal or unit as a mapping gap",
-        "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale"
+        "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale",
+        "Roll child failures into parent verdicts while preserving own scores; compare linked coarse checked relations and resolve refinement templates without execution"
       ],
       "files": [
         "src/physicsguard/core/_residual_dependencies.py",
@@ -202,7 +204,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:5e7c910354efb3d50367b4a32a19ca2f8432b49f02c22bf6b38228630c1fdb93"
+      "fingerprint": "sha256:c3a3213452333d832c3b992ac7fde3a0f8816084d6e42f97a031bd428ede5a33"
     },
     {
       "id": "validation",
@@ -328,7 +330,8 @@
         "Validate structured inputs before domain operations",
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
         "Validate optional connection residual scales as positive finite values",
-        "Provide shared contract-review records and pure manifest, catalog, role and mapping coverage checks"
+        "Provide shared contract-review records and pure manifest, catalog, role and mapping coverage checks",
+        "Validate refines against direct parent component ownership and reject the retired expected_residual_keys field"
       ],
       "files": [
         "src/physicsguard/schema/*.py",
@@ -409,7 +412,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:0e8d6e51b42d294bf0b6ebe1152c3afd13fd388b62f5f38b2b79dd049c0b00e4"
+      "fingerprint": "sha256:597ca63e23a3958d833501900cfcdd2920f01bd63bf04e28da0aa981247e9a59"
     },
     {
       "id": "loaders",

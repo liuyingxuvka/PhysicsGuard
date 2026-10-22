@@ -112,6 +112,40 @@ Observed evaluation SHALL use supported per-residual structural value/control de
 - **THEN** that variable SHALL satisfy the point's required-variable check without altering the point
 - **AND** genuinely unresolved values and all other coverage, gap and adequacy requirements SHALL retain their existing checks
 
+### Requirement: Block trees preserve local and subtree verdicts
+Each block's `audit_pass` SHALL include its own verdict and every descendant's verdict. `own_audit_pass` SHALL retain the former local meaning, and `subtree_score` SHALL be the maximum own score across that subtree. The own `score` algorithm, `top_blocks` ordering and overall report `audit_pass` SHALL remain unchanged.
+
+#### Scenario: A detailed block fails
+- **WHEN** a child fails while its parent's own checks pass
+- **THEN** the parent SHALL report `audit_pass: false` and `own_audit_pass: true`
+- **AND** the failing detail SHALL retain its own score and ranking
+
+### Requirement: Refinement links compare actual coarse checks
+A child's `refines` SHALL name only components owned directly by its parent. The report SHALL expose `refinement_checks` with `parent`, `coarse_components`, `child_blocks`, `coarse_pass`, `children_pass` and `consistent`, plus `reason` when comparison is unavailable. It SHALL use the coarse components' own checked residuals and existing scoring-role filters rather than an inherited subtree verdict.
+
+#### Scenario: A link names a component outside the parent's ownership
+- **WHEN** `refines` names a sibling's component or another component absent from the parent's own list
+- **THEN** schema validation SHALL reject the link and name the invalid component
+
+#### Scenario: Detail passes but the coarse relation fails
+- **WHEN** all refining children pass and a checked coarse relation fails
+- **THEN** consistency SHALL be false and the report SHALL warn `refinement_inconsistent: <parent>`
+
+#### Scenario: The fault is visible only in the detail
+- **WHEN** the checked coarse relations pass and a refining child fails
+- **THEN** consistency SHALL remain true without changing the child's failed verdict
+
+#### Scenario: There is no coarse check to compare
+- **WHEN** every coarse relation was used for derivation, or usable coarse checked evidence is absent
+- **THEN** `coarse_pass` and `consistent` SHALL be null with an explicit reason rather than a claim of agreement
+
+### Requirement: Template availability does not execute refinement
+Each recommendation SHALL preserve its template ids and give a `template_status` mapping for every id. A same-file block id SHALL resolve as `block`; a file found from the audit directory or its parent, with or without `.yaml`, SHALL resolve as `file`. Missing ids SHALL resolve as `missing` with `refinement_template_missing: <id>`. Lookup SHALL NOT execute templates or imply that a found file passed an audit. Hierarchy inspection SHALL include each block's `refines` links.
+
+#### Scenario: One recommendation names multiple templates
+- **WHEN** a recommendation contains both a resolvable id and a missing id
+- **THEN** each id SHALL retain its own status and the missing id SHALL produce its warning
+
 ### Requirement: Command exit codes preserve the checked verdict
 Single-system and hierarchy audit commands SHALL exit `0` when `audit_pass` is true and `1` when it is false. Compare commands SHALL use `observed_audit_pass`; other checks SHALL retain their native `ok` or status policy. Any command that cannot run because of input, file, schema, missing-required-variable or usage errors SHALL exit `2`. Successful non-judgment inspection, manifest generation and diff commands SHALL exit `0`. These exit codes SHALL NOT change the report JSON.
 

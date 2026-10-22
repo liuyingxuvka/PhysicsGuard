@@ -88,3 +88,16 @@ def test_role_trigger_works() -> None:
 def test_priority_ordering_works() -> None:
     recs = RefinementPlanner().recommended_refinements(block(), hierarchy())
     assert [rec.rule_id for rec in recs] == ["high_priority", "low_priority"]
+
+
+def test_template_resolution_retains_every_id_and_never_executes_the_file(tmp_path) -> None:
+    directory = tmp_path / "coolant_loop"
+    directory.mkdir()
+    (directory / "detail.yaml").write_text("not an audit: deliberately invalid, do not execute\n")
+    spec = hierarchy()
+    spec.refinement_rules[0].next_template_ids = ["b", "coolant_loop/detail", "detail.yaml", "radiator_missing"]
+    recommendations = RefinementPlanner(directory).recommended_refinements(block(), spec)
+    rec = next(item for item in recommendations if item.rule_id == "low_priority")
+    assert rec.next_template_ids == spec.refinement_rules[0].next_template_ids
+    assert rec.template_status == {"b": "block", "coolant_loop/detail": "file", "detail.yaml": "file", "radiator_missing": "missing"}
+    assert RefinementPlanner().recommended_refinements(block(), spec)[1].template_status["b"] == "block"

@@ -33,7 +33,7 @@ class AuditBlockSpec(BaseModel):
     optional_variables: list[str] = Field(default_factory=list)
     required_parameters: list[str] = Field(default_factory=list)
     optional_parameters: list[str] = Field(default_factory=list)
-    expected_residual_keys: list[str] = Field(default_factory=list)
+    refines: list[str] = Field(default_factory=list)
     refinement_template_ids: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -61,7 +61,7 @@ class AuditBlockSpec(BaseModel):
             raise ValueError("block level must be nonnegative")
         return value
 
-    @field_validator("components", "tags", "expected_residual_keys", "refinement_template_ids")
+    @field_validator("components", "tags", "refines", "refinement_template_ids")
     @classmethod
     def _non_empty_string_list(cls, values: list[str], info) -> list[str]:
         normalized: list[str] = []
@@ -235,6 +235,11 @@ class HierarchySpec(BaseModel):
                 parent = blocks_by_id[block.parent_id]
                 if block.level <= parent.level:
                     raise ValueError("child block level must be greater than parent level")
+            if block.refines:
+                parent_components = set(blocks_by_id[block.parent_id].components) if block.parent_id else set()
+                missing = sorted(set(block.refines) - parent_components)
+                if missing:
+                    raise ValueError(f"block '{block.id}' refines components not owned by its parent: {', '.join(missing)}")
         for block in self.blocks:
             visited: set[str] = set()
             current = block

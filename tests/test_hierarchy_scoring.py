@@ -7,6 +7,55 @@ from physicsguard.core.hierarchy import BlockScorer, ConfidenceScorer
 from physicsguard.schema.hierarchy_spec import AuditBlockSpec, BlockScoringSpec, ConfidenceScoringSpec
 
 
+@pytest.mark.parametrize(("coarse", "fine", "consistent"), [(2., 0., False), (0., 2., True), (None, 0., None)])
+def test_refinement_consistency_uses_own_checked_coarse_relations(coarse, fine, consistent) -> None:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "refinement", "system": {"system_name": "refinement", "components": [
+        {"id": name, "type": "DummyResidualModule", "parameters": {"target": 0.}} for name in ("coarse", "fine")
+    ]}, "hierarchy": {"blocks": [
+        {"id": "parent", "components": ["coarse"]},
+        {"id": "child", "parent_id": "parent", "level": 1, "components": ["fine"], "refines": ["coarse"]},
+    ]}})
+    values = {"fine.x": {"value": fine}}
+    if coarse is not None:
+        values["coarse.x"] = {"value": coarse}
+    report = HierarchicalAuditRunner(spec).evaluate_observed(ObservedValuesSpec(variables=values))
+    check = report.refinement_checks[0]
+    assert check["parent"] == "parent" and check["coarse_components"] == ["coarse"]
+    assert check["child_blocks"] == ["child"]
+    assert check["consistent"] is consistent
+    assert check["coarse_pass"] is (None if coarse is None else coarse <= 1)
+    assert check["children_pass"] is (fine <= 1)
+    assert ("refinement_inconsistent: parent" in report.warnings) is (consistent is False)
+    blocks = {block.block_id: block for block in report.top_blocks}
+    assert blocks["parent"].own_audit_pass is (coarse is None or coarse <= 1)
+    assert blocks["parent"].audit_pass is (fine <= 1 and (coarse is None or coarse <= 1))
+    assert blocks["parent"].score == (coarse or 0.)
+    assert blocks["parent"].subtree_score == max(coarse or 0., fine)
+    if coarse is None:
+        assert check["reason"] == "all coarse residuals were used for derivation"
+
+
+def test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores() -> None:
+    from pathlib import Path
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    example = Path(__file__).resolve().parents[1] / "examples/hierarchical/heated_tank"
+    report = HierarchicalAuditRunner(load_hierarchical_audit_spec(example / "heated_tank.yaml")).evaluate_observed(
+        load_observed_values(example / "measured_k70.yaml"))
+    blocks = {block.block_id: block for block in report.top_blocks}
+    assert report.top_blocks[0].block_id == "heater" and report.audit_pass is False
+    assert all(blocks[name].audit_pass is False for name in ("heater", "thermal", "tank"))
+    assert blocks["thermal"].own_audit_pass is blocks["tank"].own_audit_pass is True
+    assert blocks["hydraulics"].audit_pass is True
+    assert blocks["tank"].score == 0 and blocks["tank"].subtree_score == blocks["heater"].score == 25
+
+
 def residual(name: str, value: float, role: str = "equation", key: str = "k") -> ResidualDiagnostic:
     return ResidualDiagnostic(
         name=name,

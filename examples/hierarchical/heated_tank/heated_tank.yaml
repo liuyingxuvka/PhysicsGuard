@@ -161,7 +161,7 @@ hierarchy:
     - thermal_mass_temperature_step_mismatch
     score_threshold: 1.0
     next_template_ids:
-    - tank_level1_heater
+    - heater
     next_required_variables:
     - heater current
     - heater voltage

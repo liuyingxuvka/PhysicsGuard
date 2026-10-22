@@ -132,6 +132,8 @@ Connections mean the two endpoints are the same physical quantity. A known value
 
 Intermediate derivation uses each residual's supported structural value/control dependencies. Only `equation`, `connection`, `boundary` and `assumption` relations with one unknown can supply a finite, bounded scalar root. Ambiguous, flat, undefined or unsupported cases remain unknown; this is not a global nonlinear uniqueness proof. Relations used to derive values never count as checks, scores or top residuals, and an evaluation with no remaining check is refused. Component order determines which eligible relation supplies a value: put measurement-to-internal relations first. Strict library evaluation checks for remaining missing values after derivation; the CLI skips and lists them. Observed values and conversion evidence are unchanged; `hierarchy run` and `hierarchy compare` retain their existing reference-solve boundaries. See the [hierarchy workflow](docs/hierarchical_audit_workflow.md) for supported-source and ordering limits.
 
+Parent blocks include failing descendants in `audit_pass`, while `own_audit_pass` and `score` retain their local meaning and `subtree_score` reports the subtree maximum. `refines` links a detail block to its parent's coarse components; refinement reports compare their checked relations and resolve each template id as `block`, `file` or `missing` without executing it.
+
 ## Assumption Cards
 
 PhysicsGuard treats assumptions as first-class audit objects. Assumptions can be active, proposed, rejected, high-impact, or under review.
@@ -336,6 +338,8 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 连接表示两端是同一个物理量，已知端可传播到未知端，但不会覆盖测量值；相互冲突的实测端点仍由连接残差检查。默认残差尺度为较大端点变量尺度的 `1e-6` 倍；可用正的有限连接 `scale` 声明较小的测量容差。两端可能真实不同，应使用显式关系模块。
 
 中间量推导使用每条残差受支持的结构值依赖和控制依赖。只有 `equation`、`connection`、`boundary`、`assumption` 关系在恰有一个未知量时才能提供有限边界内的标量根；歧义、平坦、无定义或不支持的情形仍保持未知，不构成一般非线性唯一根证明。用于推出的关系永不计入检查、分数或最大残差，没有剩余检查时拒绝评估。组件顺序决定先使用哪条合格关系，应把测量值到内部量的关系放在前面。严格库入口在推导后判断剩余缺值，CLI 则跳过并列出；观测值和转换证据不变，`hierarchy run`、`hierarchy compare` 保留原有参考求解边界。支持范围和排序限制见[分层审计工作流](docs/hierarchical_audit_workflow.md)。
+
+父块的 `audit_pass` 包含后代失败；`own_audit_pass` 和 `score` 保留本块含义，`subtree_score` 给出子树最大分数。`refines` 将细块关联到父块自己的粗组件，报告用已检查关系比较粗细一致性，并逐个将模板引用解析为 `block`、`file` 或 `missing`，不会执行模板。
 
 ## 假设卡片
 

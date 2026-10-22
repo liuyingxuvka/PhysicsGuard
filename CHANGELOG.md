@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Removed the unused block field `expected_residual_keys`; delete it from existing hierarchy YAML because schema validation now rejects it as an extra field.
+
 ## v0.15.17 - 2026-10-22
 
 - CLI exit codes now distinguish a passed check (0), a check that did not pass (1), and a command that could not run (2); comparisons follow the observed audit result.

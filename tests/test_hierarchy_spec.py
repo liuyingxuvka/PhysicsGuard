@@ -33,6 +33,27 @@ def test_valid_hierarchical_audit_spec_passes() -> None:
     assert spec.hierarchy.blocks[1].parent_id == "root"
 
 
+def test_refines_requires_a_parent_owned_component_and_inspect_exposes_it() -> None:
+    from physicsguard.core.hierarchy import inspect_hierarchy
+
+    data = audit_data()
+    data["system"]["components"].append({"id": "coarse", "type": "DummyResidualModule", "parameters": {"target": 0.}})
+    data["hierarchy"]["blocks"][0]["components"] = ["coarse"]
+    data["hierarchy"]["blocks"][1]["refines"] = ["coarse"]
+    spec = HierarchicalAuditSpec.model_validate(data)
+    assert inspect_hierarchy(spec)["blocks"][1]["refines"] == ["coarse"]
+    data["hierarchy"]["blocks"][1]["refines"] = ["a"]
+    with pytest.raises(ValidationError, match="child.*not owned by its parent: a"):
+        HierarchicalAuditSpec.model_validate(data)
+
+
+def test_retired_expected_residual_keys_is_not_silently_accepted() -> None:
+    data = hierarchy_data()
+    data["blocks"][0]["expected_residual_keys"] = ["old_unused_key"]
+    with pytest.raises(ValidationError, match="expected_residual_keys.*|Extra inputs are not permitted"):
+        HierarchySpec.model_validate(data)
+
+
 def test_duplicate_block_id_fails() -> None:
     data = hierarchy_data()
     data["blocks"].append({"id": "child", "level": 0})

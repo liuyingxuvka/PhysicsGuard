@@ -294,7 +294,7 @@ def _hierarchy_summary(report: dict) -> dict:
         "audit_pass": report.get("audit_pass"),
         "max_abs_normalized_residual": report.get("max_abs_normalized_residual"),
         "top_blocks": [
-            _pick(block, ("block_id", "level", "score", "confidence", "audit_pass", "missing_required_variables", "missing_required_parameters"))
+            _pick(block, ("block_id", "level", "score", "subtree_score", "confidence", "audit_pass", "own_audit_pass", "missing_required_variables", "missing_required_parameters"))
             for block in report.get("top_blocks", [])[:5]
         ],
         "top_residuals": [
@@ -302,7 +302,7 @@ def _hierarchy_summary(report: dict) -> dict:
             for residual in report.get("top_residuals", [])[:5]
         ],
         "recommended_refinements": [
-            _pick(item, ("block_id", "rule_id", "next_template_ids", "next_required_variables", "next_required_parameters"))
+            _pick(item, ("block_id", "rule_id", "next_template_ids", "template_status", "next_required_variables", "next_required_parameters"))
             for item in report.get("recommended_refinements", [])[:5]
         ],
         "signal_mapping_ledger": [
@@ -319,6 +319,7 @@ def _hierarchy_summary(report: dict) -> dict:
         "derived_variables": list(report.get("derived_variables", {})),
         "checked_residual_count": len(report.get("checked_residuals", [])),
         "unchecked_residual_count": len(report.get("unchecked_residuals", {})),
+        "refinement_checks": report.get("refinement_checks", []),
         "warnings": report.get("warnings", []),
     }
     if metadata.get("solver_attempted"):
@@ -414,7 +415,7 @@ def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 
     spec = load_hierarchical_audit_spec(path)
-    runner = HierarchicalAuditRunner(spec)
+    runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
     report = runner.to_dict(runner.run())
     _print_json(report if full else _hierarchy_summary(report), pretty)
     return 0 if report["audit_pass"] else 1
@@ -434,7 +435,7 @@ def hierarchy_plan(path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 
     spec = load_hierarchical_audit_spec(path)
-    runner = HierarchicalAuditRunner(spec)
+    runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
     report = runner.run()
     _print_json(plan_from_report(report) if full else _hierarchy_summary(runner.to_dict(report)), pretty)
     return 0 if report.audit_pass else 1
@@ -447,7 +448,7 @@ def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, fu
 
     spec = load_hierarchical_audit_spec(path)
     observed = load_observed_values(observed_path)
-    runner = HierarchicalAuditRunner(spec)
+    runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
     report = runner.to_dict(runner.evaluate_observed(observed, skip_unobserved=True))
     _print_json(report if full else _hierarchy_summary(report), pretty)
     return 0 if report["audit_pass"] else 1
@@ -460,7 +461,7 @@ def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, ful
 
     spec = load_hierarchical_audit_spec(path)
     observed = load_observed_values(observed_path)
-    runner = HierarchicalAuditRunner(spec)
+    runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
     report = runner.to_dict(runner.compare_observed(observed))
     _print_json(report if full else _comparison_summary(report), pretty)
     return 0 if report["observed_audit_pass"] else 1

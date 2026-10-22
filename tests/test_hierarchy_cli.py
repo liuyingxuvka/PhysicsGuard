@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,7 +83,9 @@ def test_hierarchy_plan_returns_recommendations_only() -> None:
         "missing_required_variables",
         "missing_required_parameters",
         "warnings",
+        "refinement_checks",
     }
+    assert data["refinement_checks"] == []
     assert data["recommended_refinements"][0]["next_template_ids"]
 
 
@@ -181,3 +184,29 @@ def test_hierarchy_evaluate_prints_a_compact_summary_without_input_echo() -> Non
     assert {item["followup_id"] for item in data["bug_family_followups"]} == {"linear_gain_sign_family"}
     assert "metadata" not in data and "block_assignments" not in data
     assert "hierarchy" not in json.loads(full.stdout)["metadata"]
+
+
+@pytest.mark.parametrize("fault", [False, True])
+def test_pitch_parent_verdict_and_own_score_are_distinct(fault) -> None:
+    snapshot = "pitch_feedback_observed_fault.yaml" if fault else "pitch_feedback_observed_clean.yaml"
+    result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(OBSERVED / snapshot))
+    assert result.returncode == int(fault), result.stderr
+    data = json.loads(result.stdout)
+    parent = next(block for block in data["top_blocks"] if block["block_id"] == "f14_flight_control")
+    assert parent["audit_pass"] is (not fault)
+    assert parent["own_audit_pass"] is True and parent["score"] == 0
+    if fault:
+        assert parent["subtree_score"] == data["top_blocks"][0]["score"] > 1
+
+
+def test_cli_resolves_real_coolant_templates_and_reports_missing_files() -> None:
+    directory = ROOT / "examples/hierarchical/coolant_loop"
+    result = run_cli("hierarchy", "run", str(directory / "conflict_level_0_heat_rejection.yaml"))
+    assert result.returncode == 1, result.stderr
+    data = json.loads(result.stdout)
+    assert any(rec["template_status"].get("coolant_loop/level_1_components") == "file" for rec in data["recommended_refinements"])
+    result = run_cli("hierarchy", "run", str(directory / "conflict_level_1_radiator.yaml"))
+    assert result.returncode == 1, result.stderr
+    data = json.loads(result.stdout)
+    assert any(rec["template_status"].get("coolant_loop/radiator_detail") == "missing" for rec in data["recommended_refinements"])
+    assert "refinement_template_missing: coolant_loop/radiator_detail" in data["warnings"]

@@ -16,8 +16,8 @@ Hierarchical audit adds a block structure over the existing residual system. Lev
 - `level`: coarse-to-fine level, starting at 0.
 - `parent_id`: optional parent block.
 - `components`: component ids from the wrapped `SystemSpec`.
+- `refines`: optional coarse component ids owned directly by this block's parent.
 - `required_variables` and `required_parameters`: data needed for confident diagnosis.
-- `expected_residual_keys`: residuals expected to inform this block.
 - `refinement_template_ids`: known deeper templates that can inspect this block.
 
 `BlockIndex` validates the hierarchy, maps components to blocks, and assigns residual diagnostics to blocks. Component residuals go to the owning block. Connection residuals between child blocks under the same parent roll up to that parent when possible. Boundary residuals use the owning component in the boundary variable.
@@ -32,6 +32,8 @@ Each block receives:
 - recommended refinements triggered by block score and residual keys.
 
 Unassigned residuals are reported explicitly. This keeps the report machine-readable and helps improve the block hierarchy over time.
+
+A block's `own_audit_pass` preserves the local verdict from its own assigned residuals. Its `audit_pass` also includes every descendant: a failing child makes its ancestors fail. `subtree_score` is the maximum of the block's own `score` and all descendant scores. The existing score algorithm and `top_blocks` ordering still use each block's own `score`, so a failing detailed block remains visible rather than being displaced by copies of its score on every ancestor. The report's overall `audit_pass` retains its existing meaning.
 
 ## Block Score
 
@@ -61,6 +63,12 @@ Use confidence to decide whether a suspicious block has enough data or whether m
 - optional minimum confidence.
 
 Rules return `RecommendedRefinement` objects with template ids, required variables, required parameters, rationale, priority, trigger score, and trigger diagnostic keys. The first version never executes these templates automatically.
+
+A child can declare `refines: [coarse_component_id]` to link its detailed audit to a coarse relation owned directly by its parent. The schema rejects ids belonging only to a sibling or another descendant, and names the invalid component. This link does not move component ownership or change scores.
+
+The report's `refinement_checks` contains one row for each refined parent: `parent`, `coarse_components`, `child_blocks`, `coarse_pass`, `children_pass` and `consistent`, plus `reason` when comparison is unavailable. It compares the coarse components' own checked residuals with the refining child results, preserving the configured scoring-role filters and default post-check exclusion. When all children pass but a checked coarse relation fails, `consistent` is false and the report warns `refinement_inconsistent: <parent>`; inspect the coarse relation or its parameters. A passing coarse relation with a failing detail is consistent: the finer check found a fault that the coarse check could not see. If every coarse relation was used to derive values, or no usable scored coarse check exists, `coarse_pass` and `consistent` are null with a reason rather than a claim of agreement.
+
+Each recommendation retains all `next_template_ids` and adds a `template_status` mapping from each id to `block`, `file` or `missing`. A same-file block id resolves as `block`; otherwise the CLI checks the audit file's directory and its parent for the id, with or without `.yaml`. A found file resolves as `file`; a missing id adds `refinement_template_missing: <id>`. Library callers can supply the audit directory through `base_dir`. Resolution reports availability only: it neither validates a found template's result nor executes it. `hierarchy inspect` also shows each block's `refines` links.
 
 ## Recommended Workflow
 

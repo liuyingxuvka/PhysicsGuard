@@ -180,6 +180,8 @@ class State:
     derivation_cases: tuple[str, ...] = ()
     producing_relations: tuple[str, ...] = ()
     checked_relations: tuple[str, ...] = ()
+    child_failures: tuple[str, ...] = ()
+    parent_failures: tuple[str, ...] = ()
 
 
 class ValidateSystem:
@@ -459,6 +461,8 @@ class ExecuteMode:
         "hierarchy_plans",
         "hierarchy_inspections",
         "checked_relations",
+        "child_failures",
+        "parent_failures",
     )
     accepted_input_type = ResidualsReady
     input_description = "ResidualsReady"
@@ -530,6 +534,8 @@ class ExecuteMode:
                     observed_without_solver=state.observed_without_solver + (input_obj.case_id,),
                     hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,),
                     checked_relations=state.checked_relations + (f"{input_obj.case_id}:independent",),
+                    child_failures=state.child_failures + ((input_obj.case_id,) if "child_bad_audit" in input_obj.case_id else ()),
+                    parent_failures=state.parent_failures + ((input_obj.case_id,) if "child_bad_audit" in input_obj.case_id else ()),
                     audit_passes=(
                         state.audit_passes + (input_obj.case_id,)
                         if audit_pass
@@ -541,7 +547,8 @@ class ExecuteMode:
                         else state.audit_failures
                     ),
                 ),
-                label=("derived_relations_excluded_from_checks" if input_obj.case_id in state.derivation_cases
+                label=("child_failure_propagated" if "child_bad_audit" in input_obj.case_id else
+                       "derived_relations_excluded_from_checks" if input_obj.case_id in state.derivation_cases
                        else "hierarchy_observed_evaluated_without_solver"),
             )
             return
@@ -993,7 +1000,14 @@ def derived_relations_are_not_checks(state: State, trace) -> InvariantResult:
     return InvariantResult.pass_()
 
 
+def parent_fails_with_child(state: State, trace) -> InvariantResult:
+    del trace
+    missing = set(state.child_failures) - set(state.parent_failures)
+    return InvariantResult.fail(f"failed child omitted from parent verdict: {sorted(missing)}") if missing else InvariantResult.pass_()
+
+
 INVARIANTS = (
+    Invariant("parent_fails_with_child", "A failed child makes every containing parent fail.", parent_fails_with_child),
     Invariant("derived_relations_are_not_checks", "A producing relation is never an independent check.", derived_relations_are_not_checks),
     Invariant(
         name="no_solve_without_valid_registry",
@@ -1087,6 +1101,7 @@ EXTERNAL_INPUTS = (
     AuditInput("hierarchy_evaluate_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_missing_observed", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
     AuditInput("hierarchy_evaluate_derived_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate", observed_values_complete=False),
+    AuditInput("hierarchy_evaluate_derived_child_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate", observed_values_complete=False),
     AuditInput("hierarchy_evaluate_partial_unresolved", True, True, True, True, True, True, mode="hierarchy_evaluate", observed_values_complete=False),
     AuditInput("hierarchy_evaluate_partial_snapshot", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
     AuditInput("hierarchy_evaluate_zero_product", True, True, True, True, True, True, mode="hierarchy_evaluate", observed_values_complete=False, unobserved_zero_product=True),
@@ -1156,6 +1171,10 @@ IMPLEMENTED_BY = {
     "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
 }
 TESTED_BY = {
+    "parent_fails_with_child": [
+        "tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores",
+        "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement",
+    ],
     "derived_relations_are_not_checks": [
         "tests/test_heated_tank_example.py:test_measured_tank_derivations_are_reported_without_solving",
         "tests/test_hierarchy_runner.py:test_repeated_connection_names_keep_distinct_producing_and_checked_occurrences",
@@ -1221,6 +1240,7 @@ REQUIRED_LABELS = (
     "unobserved_residuals_skipped",
     "unobserved_values_derived",
     "derived_relations_excluded_from_checks",
+    "child_failure_propagated",
 )
 ASSUMPTION_LABELS = {
     "parameter_fill": "parameter_assumption_filled",
@@ -1412,6 +1432,17 @@ class _OverrideNotWarned(BuildRegistry):
             yield result
 
 
+class _ParentIgnoresChildren(ExecuteMode):
+    """Known bad: retain child failure while reporting only the parent's own check."""
+
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if input_obj.case_id in result.new_state.child_failures:
+                result = replace(result, new_state=replace(result.new_state,
+                                 parent_failures=tuple(case for case in result.new_state.parent_failures if case != input_obj.case_id)))
+            yield result
+
+
 class _CountsDerivationsAsChecks(ExecuteMode):
     """Known bad: include the actual producing relation among checked evidence."""
 
@@ -1428,6 +1459,7 @@ def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
     variants = {
+        "parent_ignores_children": _ParentIgnoresChildren(),
         "counts_derivations_as_checks": _CountsDerivationsAsChecks(),
         "evaluate_calls_solver": _EvaluateCallsSolver(),
         "failed_audit_also_passes": _FailedAuditAlsoPasses(),
@@ -1589,6 +1621,22 @@ def _unresolved_partial_snapshot() -> tuple[str, bool]:
     return ("unobserved_residuals_skipped" if listed and not calls else "unobserved_residuals_hidden"), report.audit_pass
 
 
+def _child_failure_snapshot() -> tuple[str, bool]:
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    example = ROOT / "examples/hierarchical/heated_tank"
+    observed = load_observed_values(example / "measured_k70.yaml")
+    with _solver_counted() as calls:
+        report = HierarchicalAuditRunner(load_hierarchical_audit_spec(example / "heated_tank.yaml")).evaluate_observed(observed)
+    blocks = {block.block_id: block for block in report.top_blocks}
+    valid = not calls and not report.audit_pass and report.top_blocks[0].block_id == "heater"
+    valid = valid and all(not blocks[name].audit_pass for name in ("heater", "thermal", "tank"))
+    valid = valid and blocks["thermal"].own_audit_pass and blocks["tank"].own_audit_pass and blocks["hydraulics"].audit_pass
+    return "child_failure_propagated" if valid else "child_failure_hidden", report.audit_pass
+
+
 def _zero_product_snapshot() -> tuple[str, bool | None]:
     """An electrical zero product supplies no independently evaluable residual."""
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
@@ -1641,6 +1689,7 @@ def _assumption(relative: str) -> tuple[str, None]:
 
 PITCH = "examples/hierarchical/observed_debugging"
 REAL_CASES = {
+    "hierarchy_evaluate_derived_child_bad_audit": _child_failure_snapshot,
     "hierarchy_evaluate_derived_bad_audit": _derived_tank_snapshot,
     "hierarchy_evaluate_partial_unresolved": _unresolved_partial_snapshot,
     "clean": lambda: _solve("examples/dummy_system.yaml"),

@@ -67,6 +67,8 @@ def test_hierarchy_evaluate_observed_clean_does_not_solve_and_passes() -> None:
     assert report.metadata["mode"] == "hierarchy_evaluate"
     assert report.metadata["solver_attempted"] is False
     assert report.top_residuals[0].diagnostic_key == "linear_relation_mismatch"
+    parent = next(block for block in report.top_blocks if block.block_id == "f14_flight_control")
+    assert parent.audit_pass is parent.own_audit_pass is True
 
 
 def test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement() -> None:
@@ -78,6 +80,9 @@ def test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refin
     assert report.top_blocks[0].score > 10
     assert report.recommended_refinements[0].rule_id == "inspect_pitch_rate_feedback_mapping_or_gain"
     assert report.recommended_refinements[0].next_required_parameters == ["actual feedback gain parameter"]
+    parent = next(block for block in report.top_blocks if block.block_id == "f14_flight_control")
+    assert parent.audit_pass is False and parent.own_audit_pass is True
+    assert parent.score == 0 and parent.subtree_score == report.top_blocks[0].score
 
 
 def test_hierarchy_compare_observed_fault_includes_variable_deviations() -> None:

@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field, replace
 import json
 import math
+from pathlib import Path
 from typing import Any, Iterable, Optional
 
 import numpy as np
@@ -55,6 +56,7 @@ class RecommendedRefinement:
     priority: int
     trigger_score: float
     trigger_diagnostic_keys: list[str]
+    template_status: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -79,6 +81,14 @@ class BlockDiagnostic:
     derived_variables: list[str] = field(default_factory=list)
     checked_residuals: list[str] = field(default_factory=list)
     unchecked_residuals: dict[str, list[str]] = field(default_factory=dict)
+    own_audit_pass: bool | None = None
+    subtree_score: float | None = None
+
+    def __post_init__(self) -> None:
+        if self.own_audit_pass is None:
+            object.__setattr__(self, "own_audit_pass", self.audit_pass)
+        if self.subtree_score is None:
+            object.__setattr__(self, "subtree_score", self.score)
 
 
 @dataclass(frozen=True)
@@ -104,6 +114,7 @@ class HierarchicalAuditReport:
     derived_variables: dict[str, dict[str, Any]] = field(default_factory=dict)
     checked_residuals: list[str] = field(default_factory=list)
     unchecked_residuals: dict[str, list[str]] = field(default_factory=dict)
+    refinement_checks: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -336,6 +347,19 @@ class ConfidenceScorer:
 class RefinementPlanner:
     """Apply refinement rules to suspicious block diagnostics."""
 
+    def __init__(self, base_dir: Path | None = None) -> None:
+        self.base_dir = Path(base_dir) if base_dir is not None else None
+
+    def _template_status(self, template_id: str, hierarchy: HierarchySpec) -> str:
+        if any(block.id == template_id for block in hierarchy.blocks):
+            return "block"
+        if self.base_dir is not None:
+            for root in (self.base_dir, self.base_dir.parent):
+                for candidate in (root / template_id, root / (template_id + ".yaml")):
+                    if candidate.is_file():
+                        return "file"
+        return "missing"
+
     def recommended_refinements(
         self,
         block_diagnostic: BlockDiagnostic,
@@ -356,6 +380,7 @@ class RefinementPlanner:
                     priority=rule.priority,
                     trigger_score=block_diagnostic.score,
                     trigger_diagnostic_keys=_trigger_keys(rule, block_diagnostic),
+                    template_status={name: self._template_status(name, hierarchy_spec) for name in rule.next_template_ids},
                 )
             )
         return sorted(matches, key=lambda item: (-item.priority, -item.trigger_score, item.rule_id))
@@ -403,8 +428,9 @@ def _trigger_keys(rule: RefinementRuleSpec, block: BlockDiagnostic) -> list[str]
 class HierarchicalAuditRunner:
     """Run hierarchical audit diagnostics on solved or observed audit values."""
 
-    def __init__(self, spec: HierarchicalAuditSpec) -> None:
+    def __init__(self, spec: HierarchicalAuditSpec, base_dir: Path | None = None) -> None:
         self.spec = spec
+        self.base_dir = base_dir
 
     def run(self, top_n_residuals: int = 20, top_n_blocks: int = 10) -> HierarchicalAuditReport:
         builder = ResidualBuilder(self.spec.system)
@@ -637,7 +663,7 @@ class HierarchicalAuditRunner:
 
         scorer = BlockScorer()
         confidence_scorer = ConfidenceScorer()
-        planner = RefinementPlanner()
+        planner = RefinementPlanner(self.base_dir)
         block_diagnostics: list[BlockDiagnostic] = []
         registry = builder.build_registry()
         component_parameters = {component.id: component.parameters for component in builder.system.components}
@@ -701,6 +727,9 @@ class HierarchicalAuditRunner:
                 )
             )
 
+        block_diagnostics = _include_descendants(block_diagnostics)
+        refinement_checks = _refinement_checks(self.spec.hierarchy, block_diagnostics, all_records,
+                                               self.spec.system.solver.audit_threshold, metadata)
         top_blocks = sorted(block_diagnostics, key=lambda item: (-item.score, item.level, item.block_id))[:top_n_blocks]
         recommendations = planner.overall_plan(top_blocks)
         missing_required_variables = sorted(
@@ -708,6 +737,10 @@ class HierarchicalAuditRunner:
         )
         missing_required_parameters = sorted({item for block in block_diagnostics for item in block.missing_required_parameters})
         report_warnings = list(warnings)
+        report_warnings.extend(f"refinement_inconsistent: {item['parent']}" for item in refinement_checks if item["consistent"] is False)
+        report_warnings.extend(f"refinement_template_missing: {name}" for block in block_diagnostics
+                               for rec in block.recommended_refinements for name, status in rec.template_status.items()
+                               if status == "missing")
         if unassigned:
             report_warnings.append(f"{len(unassigned)} residuals were not assigned to hierarchy blocks")
         unassigned_components = block_index.unassigned_components()
@@ -737,6 +770,7 @@ class HierarchicalAuditRunner:
             derived_variables=derived_variables,
             checked_residuals=[record.name for record in all_records],
             unchecked_residuals=unchecked_residuals,
+            refinement_checks=refinement_checks,
         )
 
     def to_dict(self, report: Any) -> dict[str, Any]:
@@ -744,6 +778,41 @@ class HierarchicalAuditRunner:
 
     def to_json(self, report: HierarchicalAuditReport, pretty: bool = False) -> str:
         return json.dumps(self.to_dict(report), indent=2 if pretty else None, sort_keys=True)
+
+
+def _include_descendants(blocks: list[BlockDiagnostic]) -> list[BlockDiagnostic]:
+    by_id = {block.block_id: block for block in blocks}
+    for block in sorted(blocks, key=lambda item: item.level, reverse=True):
+        children = [item for item in by_id.values() if item.parent_id == block.block_id]
+        by_id[block.block_id] = replace(
+            block, audit_pass=block.own_audit_pass and all(child.audit_pass for child in children),
+            subtree_score=max([block.score, *(child.subtree_score for child in children)]),
+        )
+    return [by_id[block.block_id] for block in blocks]
+
+
+def _refinement_checks(hierarchy, blocks, records, threshold, metadata):
+    diagnostics = {block.block_id: block for block in blocks}
+    checks = []
+    for parent in hierarchy.blocks:
+        children = [block for block in hierarchy.blocks if block.parent_id == parent.id and block.refines]
+        if not children:
+            continue
+        coarse = sorted({component for child in children for component in child.refines})
+        own_records = [record for record in records if record.source in coarse]
+        scored = BlockScorer().filter_scored(own_records, hierarchy.scoring)
+        children_pass = all(diagnostics[child.id].audit_pass for child in children)
+        coarse_pass = all(record.abs_normalized_value <= threshold for record in scored) if scored else None
+        consistent = (coarse_pass or not children_pass) if coarse_pass is not None else None
+        row = {"parent": parent.id, "coarse_components": coarse, "child_blocks": [child.id for child in children],
+               "coarse_pass": coarse_pass, "children_pass": children_pass, "consistent": consistent}
+        if consistent is None:
+            occurrences = [item["occurrence"] for item in metadata.get("residual_occurrences", []) if item["source"] in coarse]
+            used = set(metadata.get("derivation_residual_occurrences", []))
+            row["reason"] = ("all coarse residuals were used for derivation" if occurrences and all(i in used for i in occurrences)
+                             else "no checked coarse residual in the configured scoring roles")
+        checks.append(row)
+    return checks
 
 
 def inspect_hierarchy(spec: HierarchicalAuditSpec) -> dict[str, Any]:
@@ -760,6 +829,7 @@ def inspect_hierarchy(spec: HierarchicalAuditSpec) -> dict[str, Any]:
                 "parent_id": block.parent_id,
                 "children": children[block.id],
                 "components": list(block.components),
+                "refines": list(block.refines),
                 "tags": list(block.tags),
                 "required_variables": list(block.required_variables),
                 "optional_variables": list(block.optional_variables),
@@ -788,6 +858,7 @@ def plan_from_report(report: HierarchicalAuditReport) -> dict[str, Any]:
         "missing_required_variables": report.missing_required_variables,
         "missing_required_parameters": report.missing_required_parameters,
         "warnings": report.warnings,
+        "refinement_checks": report.refinement_checks,
     }
 
 

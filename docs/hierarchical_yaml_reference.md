@@ -31,7 +31,6 @@ hierarchy:
       level: 0
       components: [power_balance]
       required_variables: [fuel.P_chemical_W, stack.P_stack_W]
-      expected_residual_keys: [aggregate_power_balance_mismatch]
       refinement_template_ids:
         - fuel_cell_system/level_1_major_subsystems
   refinement_rules:
@@ -76,6 +75,7 @@ Validation:
 - cycles are rejected;
 - levels must be nonnegative;
 - components are expected to be uniquely owned by one block;
+- a child's `refines` ids must belong to its parent's own `components` list;
 - refinement rules with `block_id` must reference an existing block.
 
 ## AuditBlockSpec
@@ -87,16 +87,32 @@ Common fields:
 - `level`: nonnegative integer.
 - `parent_id`: optional parent block id.
 - `components`: component ids from the wrapped `SystemSpec`.
+- `refines`: coarse component ids owned directly by the parent, not by siblings or other descendants.
 - `tags`: optional normalized labels.
 - `required_variables`: variables needed for confidence.
 - `optional_variables`: useful extra variables.
 - `required_parameters`: parameters needed for confidence.
 - `optional_parameters`: useful extra parameters.
-- `expected_residual_keys`: diagnostic keys expected for this block.
 - `refinement_template_ids`: deeper templates that may inspect this block.
 - `metadata`: optional JSON object.
 
 Variable references should normally use `component.variable` format.
+
+For example, with both components declared in `system`, a detail block can link to its parent's coarse balance:
+
+```yaml
+blocks:
+  - id: system
+    level: 0
+    components: [coarse_balance]
+  - id: detail
+    level: 1
+    parent_id: system
+    components: [detail_balance]
+    refines: [coarse_balance]
+```
+
+`hierarchy inspect` includes `refines`. In audit reports, `own_audit_pass` is the block's local verdict, while `audit_pass` includes all descendants. `subtree_score` is the maximum own score in that subtree. `score`, its calculation and `top_blocks` ordering remain local and unchanged; the overall audit verdict is unchanged.
 
 ## RefinementRuleSpec
 
@@ -115,6 +131,10 @@ Fields:
 - `priority`: larger priority sorts earlier when score ties are similar.
 
 A rule applies when block id, score, confidence, diagnostic-key, and role filters match. The rule recommends next templates only; it does not execute them.
+
+Each recommendation's `template_status` maps every `next_template_ids` entry to `block`, `file` or `missing`. Same-file block ids take precedence. Relative file ids are checked from the audit file's directory and its parent, as written or with `.yaml` appended. The CLI supplies that directory; library callers can set `base_dir`. Missing ids add `refinement_template_missing: <id>`. A `file` status means a file was found, not that it was run or passed.
+
+`refinement_checks` compares each linked parent's coarse components' own checked residuals with its refining children, using the existing scoring-role filters. Rows contain `parent`, `coarse_components`, `child_blocks`, `coarse_pass`, `children_pass` and `consistent`, plus `reason` when comparison is unavailable. Passing children with a failed coarse check produce `consistent: false` and `refinement_inconsistent: <parent>`. A passing coarse check with a failing child is consistent. When all coarse relations were consumed by derivation, or there is no usable scored coarse check, `coarse_pass` and `consistent` are null and the reason remains explicit.
 
 ## BlockScoringSpec
 
