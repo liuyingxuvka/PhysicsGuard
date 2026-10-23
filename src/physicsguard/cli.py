@@ -72,14 +72,6 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_inspect.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
     hierarchy_inspect.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
-    hierarchy_plan = hierarchy_subparsers.add_parser(
-        "plan",
-        help="run a hierarchical audit and print only refinement planning data",
-    )
-    hierarchy_plan.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
-    hierarchy_plan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    hierarchy_plan.add_argument("--json", action="store_true", help="print the full report instead of the summary")
-
     hierarchy_evaluate = hierarchy_subparsers.add_parser(
         "evaluate",
         help="evaluate observed values with hierarchical block roll-up and no solve",
@@ -446,17 +438,6 @@ def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False) 
     return 0
 
 
-def hierarchy_plan(path: Path, pretty: bool = False, full: bool = False) -> int:
-    from physicsguard.core.hierarchy import HierarchicalAuditRunner, plan_from_report
-    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
-
-    spec = load_hierarchical_audit_spec(path)
-    runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
-    report = runner.run()
-    _print_json(plan_from_report(report) if full else _hierarchy_summary(runner.to_dict(report)), pretty)
-    return 0 if report.audit_pass else 1
-
-
 def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
@@ -725,8 +706,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return hierarchy_run(args.audit, args.pretty, args.json)
             if args.hierarchy_command == "inspect":
                 return hierarchy_inspect(args.audit, args.pretty)
-            if args.hierarchy_command == "plan":
-                return hierarchy_plan(args.audit, args.pretty, args.json)
             if args.hierarchy_command == "evaluate":
                 return hierarchy_evaluate(args.audit, args.observed, args.pretty, args.json)
             if args.hierarchy_command == "compare":

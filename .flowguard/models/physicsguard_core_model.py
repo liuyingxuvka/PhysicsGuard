@@ -125,7 +125,6 @@ class HierarchyFinished:
     case_id: str
     optimization_success: bool
     audit_pass: bool
-    plan_only: bool = False
     observed_only: bool = False
     compare_mode: bool = False
 
@@ -157,7 +156,6 @@ class State:
     observed_without_solver: tuple[str, ...] = ()
     comparisons: tuple[str, ...] = ()
     hierarchy_reports: tuple[str, ...] = ()
-    hierarchy_plans: tuple[str, ...] = ()
     hierarchy_inspections: tuple[str, ...] = ()
     assumptions_seen: tuple[str, ...] = ()
     assumptions_reported: tuple[str, ...] = ()
@@ -458,7 +456,6 @@ class ExecuteMode:
         "observed_without_solver",
         "comparisons",
         "hierarchy_reports",
-        "hierarchy_plans",
         "hierarchy_inspections",
         "checked_relations",
         "child_failures",
@@ -620,24 +617,18 @@ class ExecuteMode:
                 label="hierarchy_compare_solved_and_evaluated",
             )
             return
-        if input_obj.mode in {"hierarchy_run", "hierarchy_plan"}:
+        if input_obj.mode in {"hierarchy_run"}:
             audit_pass = "bad_audit" not in input_obj.case_id
             yield FunctionResult(
                 output=HierarchyFinished(
                     input_obj.case_id,
                     optimization_success="no_converge" not in input_obj.case_id,
                     audit_pass=audit_pass,
-                    plan_only=input_obj.mode == "hierarchy_plan",
                 ),
                 new_state=replace(
                     state,
                     solve_attempted=state.solve_attempted + (input_obj.case_id,),
                     hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,),
-                    hierarchy_plans=(
-                        state.hierarchy_plans + (input_obj.case_id,)
-                        if input_obj.mode == "hierarchy_plan"
-                        else state.hierarchy_plans
-                    ),
                     optimization_successes=(
                         state.optimization_successes + (input_obj.case_id,)
                         if "no_converge" not in input_obj.case_id
@@ -654,11 +645,7 @@ class ExecuteMode:
                         else state.audit_failures
                     ),
                 ),
-                label=(
-                    "hierarchy_plan_solved_and_recommended"
-                    if input_obj.mode == "hierarchy_plan"
-                    else "hierarchy_run_solved_and_reported"
-                ),
+                label="hierarchy_run_solved_and_reported",
             )
             return
         if input_obj.mode != "solve":
@@ -708,7 +695,6 @@ class GenerateDiagnostics:
         "observed_evaluations",
         "comparisons",
         "hierarchy_reports",
-        "hierarchy_plans",
         "hierarchy_inspections",
         "parameter_assumptions_applied",
         "variable_assumptions_fixed",
@@ -788,9 +774,6 @@ class GenerateDiagnostics:
                     if input_obj.observed_only
                     else "diagnostics_after_hierarchy_compare"
                     if input_obj.compare_mode
-                    else
-                    "diagnostics_after_hierarchy_plan"
-                    if input_obj.plan_only
                     else "diagnostics_after_hierarchy_run"
                 ),
             )
@@ -919,7 +902,7 @@ def comparison_requires_reference_and_observed(state: State, trace) -> Invariant
     return InvariantResult.pass_()
 
 
-def hierarchy_run_and_plan_require_solve(state: State, trace) -> InvariantResult:
+def hierarchy_run_requires_solve(state: State, trace) -> InvariantResult:
     del trace
     hierarchy_reports_that_must_solve = set(state.hierarchy_reports) - set(
         state.observed_without_solver
@@ -927,9 +910,6 @@ def hierarchy_run_and_plan_require_solve(state: State, trace) -> InvariantResult
     bad = tuple(sorted(hierarchy_reports_that_must_solve - set(state.solve_attempted)))
     if bad:
         return InvariantResult.fail(f"hierarchy report missing solve attempt: {bad!r}")
-    bad_plans = tuple(sorted(set(state.hierarchy_plans) - set(state.hierarchy_reports)))
-    if bad_plans:
-        return InvariantResult.fail(f"hierarchy plan missing hierarchy report: {bad_plans!r}")
     return InvariantResult.pass_()
 
 
@@ -1045,9 +1025,9 @@ INVARIANTS = (
         predicate=comparison_requires_reference_and_observed,
     ),
     Invariant(
-        name="hierarchy_run_and_plan_require_solve",
-        description="Hierarchy run and plan modes solve before reporting block diagnostics.",
-        predicate=hierarchy_run_and_plan_require_solve,
+        name="hierarchy_run_requires_solve",
+        description="Hierarchy run solves before reporting block diagnostics.",
+        predicate=hierarchy_run_requires_solve,
     ),
     Invariant(
         name="hierarchy_inspect_does_not_solve",
@@ -1096,7 +1076,6 @@ EXTERNAL_INPUTS = (
     AuditInput("compare_bad_audit", True, True, True, True, True, False, False, False, "compare", True),
     AuditInput("hierarchy_clean", True, True, True, True, True, True, False, False, "hierarchy_run", True),
     AuditInput("hierarchy_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_run", True),
-    AuditInput("hierarchy_plan_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_plan", True),
     AuditInput("hierarchy_evaluate_clean", True, True, True, True, True, True, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_evaluate", True),
     AuditInput("hierarchy_evaluate_missing_observed", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
@@ -1216,12 +1195,10 @@ REQUIRED_LABELS = (
     "diagnostics_after_comparison",
     "hierarchy_index_ready",
     "hierarchy_run_solved_and_reported",
-    "hierarchy_plan_solved_and_recommended",
     "hierarchy_observed_evaluated_without_solver",
     "hierarchy_compare_solved_and_evaluated",
     "hierarchy_inspected_without_solver",
     "diagnostics_after_hierarchy_run",
-    "diagnostics_after_hierarchy_plan",
     "diagnostics_after_hierarchy_evaluate",
     "diagnostics_after_hierarchy_compare",
     "diagnostics_after_hierarchy_inspect",
@@ -1378,10 +1355,10 @@ class _ComparisonSkipsReference(ExecuteMode):
 
 
 class _HierarchySkipsSolve(ExecuteMode):
-    """Known bad: hierarchy run or plan emits its report without solving."""
+    """Known bad: hierarchy run emits its report without solving."""
 
     def apply(self, input_obj, state):
-        if input_obj.mode in {"hierarchy_run", "hierarchy_plan"}:
+        if input_obj.mode in {"hierarchy_run"}:
             yield FunctionResult(output=HierarchyFinished(input_obj.case_id, False, True),
                                  new_state=replace(state, hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,)),
                                  label="hierarchy_report_without_solve")

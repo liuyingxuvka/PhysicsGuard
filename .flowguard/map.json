@@ -18,7 +18,7 @@
       "layer": "interface",
       "summary": "CLI and lazy public API",
       "responsibilities": [
-        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent.",
+        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. Hierarchy plan is retired; run --json exposes the full diagnostic report.",
         "Print a compact hierarchy/validation summary with derived names, check counts and assumption dispositions, and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
@@ -75,7 +75,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:f8878d9d2729adfad955ab0d66f2c58ad2a3b5ef0b5191c9eb6b3045fb75026f"
+      "fingerprint": "sha256:c864397594e12506fd475ab05d0e5024cf793ce17ac05f3e97f02f6387369877"
     },
     {
       "id": "routing",
@@ -104,7 +104,7 @@
       "layer": "engine",
       "summary": "Residual assembly, bounded solve, observed evaluation, hierarchy and signal mapping",
       "responsibilities": [
-        "Validate inputs and finite solver bounds before residual evaluation",
+        "Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API.",
         "Separate numerical optimization success, observed audit and diagnostic limits",
         "Derive intermediate values from connections and bounded one-unknown relations with finite structural value/control provenance; keep producing occurrences separate from independent checks and list unresolved inputs; preserve per-result sources through finite native tuple/dict returns, lexical helpers and fixed numeric parameter tables",
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
@@ -208,7 +208,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:f37c928c1b16871a4ba150acc20fd79dcab914904bc2ed24ed8c50e2b6a86949"
+      "fingerprint": "sha256:3eb07484a0c3e872b302ab0eba0729f8606b29bd9ad9d206c83ba453690b7610"
     },
     {
       "id": "validation",
@@ -418,7 +418,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:803b66fd0420983a5a88eadae046b46c3b0c41db950e81efca569d3abb41dc03"
+      "fingerprint": "sha256:1a387d20734ff788cbbeb50872746ba26f8cc284e176699420c0703609c5ef8e"
     },
     {
       "id": "loaders",

@@ -914,19 +914,6 @@ def describe_hierarchy(spec: HierarchicalAuditSpec, *, mermaid: bool = False) ->
             "solver_attempted": False}
 
 
-def plan_from_report(report: HierarchicalAuditReport) -> dict[str, Any]:
-    return {
-        "top_blocks": [asdict(block) for block in report.top_blocks],
-        "recommended_refinements": [asdict(item) for item in report.recommended_refinements],
-        "signal_mapping_ledger": [asdict(item) for item in report.signal_mapping_ledger],
-        "bug_family_followups": [asdict(item) for item in report.bug_family_followups],
-        "missing_required_variables": report.missing_required_variables,
-        "missing_required_parameters": report.missing_required_parameters,
-        "warnings": report.warnings,
-        "refinement_checks": report.refinement_checks,
-    }
-
-
 def _attach_signal_mapping_context(
     report: HierarchicalAuditReport,
     spec: HierarchicalAuditSpec,
@@ -1265,5 +1252,4 @@ __all__ = [
     "RefinementPlanner",
     "ResidualBlockAssignment",
     "inspect_hierarchy",
-    "plan_from_report",
 ]

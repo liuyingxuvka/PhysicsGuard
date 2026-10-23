@@ -173,7 +173,7 @@ python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/
 python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
 python -m physicsguard.cli hierarchy run examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml --pretty
 python -m physicsguard.cli hierarchy inspect examples/hierarchical/fuel_cell_system/level_0_system_balance.yaml --pretty
-python -m physicsguard.cli hierarchy plan examples/hierarchical/fuel_cell_system/conflict_level_0_h2_power.yaml --pretty
+python -m physicsguard.cli hierarchy run examples/hierarchical/fuel_cell_system/conflict_level_0_h2_power.yaml --pretty
 python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
 python -m physicsguard.cli hierarchy compare examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
 ```
@@ -184,7 +184,7 @@ python -m physicsguard.cli hierarchy compare examples/hierarchical/observed_debu
 
 Compact hierarchy reports include `assumptions`: each card's `id`, `status` and `applied`. Cards remain under `system.assumptions`; only active cards apply, and mapping evidence or assumptions never silently convert observed values.
 
-`hierarchy run` emits the full solve-based hierarchical report. `hierarchy inspect` validates and summarizes the block tree without solving. `hierarchy plan` runs the solve-based audit and emits top blocks, recommended refinements, signal-mapping ledger rows when present, bug-family follow-ups when present, missing variables, missing parameters, and warnings. `hierarchy evaluate` substitutes observed external values without solving and rolls residuals up by block. `hierarchy compare` solves a low-fidelity reference, evaluates observed values, and returns both block diagnostics and variable deviations. `run`, `plan`, `evaluate` and `compare` print a compact summary by default; `--json` prints the full report.
+`hierarchy run` emits the full solve-based hierarchical report. `hierarchy inspect` validates and summarizes the block tree without solving. `hierarchy run` runs the solve-based audit and emits top blocks, recommended refinements, signal-mapping ledger rows when present, bug-family follow-ups when present, missing variables, missing parameters, and warnings. `hierarchy evaluate` substitutes observed external values without solving and rolls residuals up by block. `hierarchy compare` solves a low-fidelity reference, evaluates observed values, and returns both block diagnostics and variable deviations. `run`, `plan`, `evaluate` and `compare` print a compact summary by default; `--json` prints the full report.
 
 Observed snapshots may include per-variable mapping evidence:
 

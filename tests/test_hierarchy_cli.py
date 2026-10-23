@@ -71,24 +71,6 @@ def test_hierarchy_inspect_returns_block_tree_json() -> None:
     assert data["missing_components"] == []
 
 
-def test_hierarchy_plan_returns_recommendations_only() -> None:
-    result = run_cli("hierarchy", "plan", str(FC / "conflict_level_0_h2_power.yaml"), "--pretty", "--json")
-    assert result.returncode == 1, result.stderr
-    data = json.loads(result.stdout)
-    assert set(data) == {
-        "top_blocks",
-        "recommended_refinements",
-        "signal_mapping_ledger",
-        "bug_family_followups",
-        "missing_required_variables",
-        "missing_required_parameters",
-        "warnings",
-        "refinement_checks",
-    }
-    assert data["refinement_checks"] == []
-    assert data["recommended_refinements"][0]["next_template_ids"]
-
-
 def test_hierarchy_evaluate_observed_fault_returns_block_rollup_without_solver() -> None:
     result = run_cli(
         "hierarchy",
@@ -210,3 +192,7 @@ def test_cli_resolves_real_coolant_templates_and_reports_missing_files() -> None
     data = json.loads(result.stdout)
     assert any(rec["template_status"].get("coolant_loop/radiator_detail") == "missing" for rec in data["recommended_refinements"])
     assert "refinement_template_missing: coolant_loop/radiator_detail" in data["warnings"]
+
+
+def test_removed_hierarchy_plan_exits_two():
+    assert run_cli('hierarchy','plan','x.yaml').returncode == 2

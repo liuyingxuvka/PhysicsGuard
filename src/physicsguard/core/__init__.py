@@ -24,7 +24,6 @@ __all__ = [
     "evaluate_hypothesis_observation",
     "freeze_hypothesis_plan",
     "rank_observation_candidates",
-    "review_signal_mapping_ledger",
 ]
 
 
@@ -65,10 +64,6 @@ def __getattr__(name: str):
             "check_test_file_contract": check_test_file_contract,
             "inspect_test_file_contract": inspect_test_file_contract,
         }[name]
-    if name == "review_signal_mapping_ledger":
-        from physicsguard.core.signal_mapping import review_signal_mapping_ledger
-
-        return review_signal_mapping_ledger
     if name == "validate_model_dataset":
         from physicsguard.core.model_dataset_validation import validate_model_dataset
 
