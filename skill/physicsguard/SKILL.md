@@ -22,6 +22,7 @@ subsystems, finer blocks refine coarser components (`refines`). Every node has f
 structure (components, connections, children), counterexamples (failing checked residuals with
 block and sign), known-bad variants that must fire (`fault_variants`), binding to the real plant
 (signals mapped with units into snapshots), and binding to test data (contracts and validation plans).
+Read it with `python -m physicsguard.cli hierarchy describe audit.yaml` (`--mermaid` for a diagram).
 
 Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
 
