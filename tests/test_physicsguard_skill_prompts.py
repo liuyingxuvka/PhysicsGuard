@@ -58,3 +58,24 @@ def test_ai_debugging_keeps_four_hard_boundaries() -> None:
         "For GT-SUITE, Modelica, Amesim, FMI, or other external tools, use only official, user-provided, or documented interfaces",
     ):
         assert boundaries.count(rule) == 1, rule
+
+
+def test_debugging_route_is_short_and_names_only_real_commands():
+    import argparse
+    from physicsguard.cli import build_parser
+    skill=SKILL_ROOT/'physicsguard'
+    text=(skill/'references/routes/ai-debugging.md').read_text()
+    assert len(text.splitlines())<=130
+    assert text.count('Do not learn by modifying PhysicsGuard itself')==1
+    assert not (skill/'references/protocol.md').exists()
+    assert '## Minimum workflow' not in text and '## Workflow A' not in text
+    commands=re.findall(r'python -m physicsguard\.cli ([a-z][a-z-]*)(?: ([a-z][a-z-]*))?',text)
+    assert commands
+    def choices(parser):
+        return next((action.choices for action in parser._actions if isinstance(action,argparse._SubParsersAction)),{})
+    root=choices(build_parser())
+    for command,subcommand in commands:
+        assert command in root,command
+        nested=choices(root[command])
+        if nested:
+            assert subcommand in nested,(command,subcommand)

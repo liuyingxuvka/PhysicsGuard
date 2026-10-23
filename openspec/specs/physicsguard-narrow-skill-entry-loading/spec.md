@@ -12,7 +12,7 @@ PhysicsGuard SHALL ship exactly one consumer skill, `physicsguard`, whose SKILL.
 - **THEN** it SHALL choose the `ai-debugging` route in the table and load only `references/routes/ai-debugging.md`
 
 ### Requirement: Each route is one file
-Each former PhysicsGuard skill SHALL be one file `references/routes/<route>.md` that holds its entry boundary, minimum workflow, required outputs, claim boundary and detailed workflow.
+Each former PhysicsGuard skill SHALL be one file `references/routes/<route>.md` that holds its entry boundary, ordered workflow, required outputs and claim boundary.
 
 #### Scenario: A route hands off
 - **WHEN** a route's entry boundary names another route
@@ -46,3 +46,9 @@ The selected AI-debugging route SHALL reject one-value coverage of a time-varyin
 #### Scenario: Pointwise or one-value evidence is offered as deep prediction
 - **WHEN** one value covers a time-varying parameter or a pointwise evaluation is presented as prediction
 - **THEN** the route SHALL retain the coverage gap and require state propagation plus an exact disjoint future holdout for a prediction claim
+
+### Requirement: one compact debugging workflow
+The AI debugging route SHALL contain one ordered workflow of about eight steps,
+retain every hard boundary and YAML header rule, and remain at most 130 lines.
+There SHALL be no second protocol file to load. Every documented CLI command
+SHALL exist in the current parser.
