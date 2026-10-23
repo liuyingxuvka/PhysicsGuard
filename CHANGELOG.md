@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.15.21 - 2026-10-23
+
+- Document the command for reading and drawing the audit model tree in the skill overview.
+
 ## v0.15.20 - 2026-10-23
 
 - Omitted parameter strata no longer impose implicit early/middle/late requirements. Declared strata, sample coverage and native parameter-contribution checks remain active.
