@@ -129,7 +129,6 @@
         "Temporarily chain and restore the current-thread Python trace while collecting partial-snapshot native residual dependencies"
       ],
       "depends_on": [
-        "loaders",
         "modules",
         "schema"
       ],
