@@ -1276,3 +1276,24 @@ def test_conflicting_manifest_point_counts_fail_closed_on_larger_denominator() -
     }
     assert result.receipt["universe"]["available_point_count"] == 1000
     assert result.receipt["universe"]["eligible_point_count"] == 1000
+
+
+def test_unwritten_floors_are_optional_and_timing_comes_from_manifest():
+    from physicsguard.core.validation_adequacy import _resolve_manifest_floors, _requested_floor_findings
+    plan,audit,manifest,roles,series,bindings=_inputs()
+    optional=ValidationAdequacyPlanSpec()
+    effective,authored,count=_resolve_manifest_floors(optional,manifest,bindings)
+    assert not authored and count==3
+    assert effective.minimum_selected_points==3
+    assert effective.minimum_time_span==pytest.approx(.2)
+    assert effective.maximum_time_gap==pytest.approx(.1)
+    assert not effective.required_peak_tags and not effective.family_quotas
+    assert not _requested_floor_findings([dict(type='signal_coverage_ratio_not_met')],authored)
+    assert _requested_floor_findings([dict(type='signal_coverage_ratio_not_met')],{'minimum_signal_coverage_ratio'})
+    assert _requested_floor_findings([dict(type='manifest_point_count_mismatch')],authored)
+
+
+def test_bad_sampling_enum_names_its_allowed_values():
+    with pytest.raises(ValidationError) as error:
+        ValidationAdequacyPlanSpec(sampling_mode='sometimes')
+    assert all(name in str(error.value) for name in ['full','stratified','event_aware','adaptive','project_declared'])

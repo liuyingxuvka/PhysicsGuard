@@ -27,7 +27,11 @@ time:
   sampling_mode: time_series
   continuity: continuous
   gap_count: 0
-  metadata: {}
+  metadata:
+    maximum_gap_s: 10.0
+    start_time_s: 0.0
+    end_time_s: 1200.0
+    penultimate_time_s: 1190.0
 fields:
 - name: time_s
   data_type: float
@@ -111,8 +115,8 @@ fields:
   metadata: {}
 extractor:
   script: physicsguard.core.data_file_manifest.generate_delimited_manifest
-  script_hash: ec6a56d7521c292b34b37c72aaeb934e1a981d0b4851fa31ceb15c67528e89c4
-  generated_at: '2026-10-23T05:25:11.432222+00:00'
+  script_hash: f044f0d365e77f51c7ec31b1a8adf8dc5f87dd9350c99c47785b3d8a140c9f16
+  generated_at: '2026-10-23T05:47:33.561707+00:00'
   version: '1'
   metadata: {}
 field_signature_hash: 74fdeef5533f7a5bd90455a1ceaacbb04299d784f185a290a8ce91808b9e45f0

@@ -284,3 +284,29 @@ def test_adequacy_floors_are_warnings_not_failures() -> None:
     assert report.status == "partial"
     assert {severities[code] for code in adequacy_codes} == {"warning"}
     assert report.depth_summary["adequacy"]["parameters_below_floor"] == ["pump_signal_map.a"]
+
+
+def test_failures_are_grouped_by_contiguous_points_and_worst_block():
+    from physicsguard.core.validation_depth import _failing_intervals, _series_top_blocks
+    def point(index, status='fail', block='heater'):
+        return dict(point_id=f'p{index}', status=status, top_block=block, top_residual='r:heat',
+                    max_abs_normalized_residual=float(index+1), timestamp=index*10., scenario_id='default')
+    points=[point(0),point(1),point(2,'pass'),point(3),point(4,block='thermal'),point(5,'missing'),point(6)]
+    intervals=_failing_intervals(points)
+    assert [(i['start_point'],i['end_point'],i['points'],i['top_block']) for i in intervals] == [
+        ('p0','p1',2,'heater'),('p3','p3',1,'heater'),('p4','p4',1,'thermal'),('p6','p6',1,'heater')]
+    assert intervals[0]['max_abs']==2 and intervals[0]['_point_ids']==['p0','p1']
+    assert _series_top_blocks(points)[0]['block_id']=='heater'
+    assert _series_top_blocks(points)[0]['failing_points']==4
+
+
+def test_omitted_adequacy_uses_manifest_facts_without_an_extra_plan_warning(tmp_path):
+    pump=_copy_pump(tmp_path)
+    path=_clean_plan(pump)
+    plan=_load(path)
+    plan['depth'].pop('adequacy')
+    _write(path,plan)
+    report=validate_model_dataset(path)
+    assert report.status=='pass'
+    assert report.depth_summary['adequacy']['available_point_count']==3
+    assert 'validation_adequacy_plan_missing' not in {f['type'] for f in report.findings}

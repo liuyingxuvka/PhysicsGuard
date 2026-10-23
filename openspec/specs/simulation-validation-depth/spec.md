@@ -268,3 +268,10 @@ Validation SHALL derive mappings from each test-file contract's fields, includin
 unit compatibility, target registry, confidence and evidence. No old sidecar
 mapping format SHALL be loaded. Data freshness, unresolved mappings, overstated
 scope, overlapping holdout content and pointwise prediction remain hard gates.
+
+### Requirement: failing intervals and optional adequacy floors
+The series result and compact summary SHALL group consecutive failed points
+by worst block and retain per-point data only in full JSON. Missing additional
+adequacy floors SHALL remain inactive; default point count, time span and
+maximum gap SHALL come from the manifest and declared adjacent-row contract.
+Explicit floors remain advisory and all native hard gates remain unchanged.

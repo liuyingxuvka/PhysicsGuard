@@ -49,14 +49,7 @@ def evaluate_validation_adequacy(
             receipt=_not_applicable_receipt(series, residual_receipt),
             findings=[],
         )
-    if depth.adequacy is None:
-        finding = _finding(
-            "warning",
-            "validation_adequacy_plan_missing",
-            "every non-snapshot claim requires a target-owned adequacy plan",
-        )
-        receipt = _blocked_empty_receipt(series, residual_receipt, [finding["type"]])
-        return ValidationAdequacyEvaluation(receipt=receipt, findings=[finding])
+    adequacy = depth.adequacy or ValidationAdequacyPlanSpec()
 
     load_findings: list[dict[str, Any]] = []
     manifest = _load_or_find(
@@ -83,7 +76,7 @@ def evaluate_validation_adequacy(
     mapping_edges, _ = load_contract_field_mappings(plan, base_dir, load_findings)
 
     result = evaluate_validation_adequacy_artifacts(
-        adequacy=depth.adequacy,
+        adequacy=adequacy,
         claim_scope=depth.time_scope.claim_scope,
         dataset_identity_ids={item.identity_id for item in depth.dataset.files},
         manifest=manifest,
@@ -98,6 +91,62 @@ def evaluate_validation_adequacy(
         receipt=result.receipt,
         findings=[*load_findings, *result.findings],
     )
+
+
+def _resolve_manifest_floors(adequacy, manifest, mappings):
+    """Resolve count/time facts from the manifest and keep other absent floors inactive."""
+    authored = {key for key in adequacy.model_fields_set
+                if not (isinstance(getattr(adequacy,key), list) and not getattr(adequacy,key))}
+    next_row = any(edge.metadata.get('row_offset') == 1 for edge in mappings)
+    raw_count = max(manifest.shape.row_count or 0, manifest.shape.sample_count or 0)
+    count = max(0, raw_count - int(next_row))
+    meta = manifest.time.metadata
+    gap = meta.get('maximum_gap_s')
+    if gap is None and manifest.time.nominal_sample_rate_hz:
+        gap = 1 / manifest.time.nominal_sample_rate_hz
+    span = manifest.time.duration_s
+    if next_row and meta.get('penultimate_time_s') is not None:
+        span = meta['penultimate_time_s'] - meta['start_time_s']
+    elif next_row and span is not None and gap is not None:
+        span = max(0., span-gap)
+    defaults = dict(minimum_selected_points=count, minimum_distinct_timestamps=count,
+                    minimum_selected_ratio=0., minimum_time_span=max(span or 0.,1e-12),
+                    maximum_time_gap=gap or 1e300, require_start_middle_end=False,
+                    minimum_signal_coverage_ratio=0., minimum_per_signal_valid_points=0,
+                    minimum_per_signal_valid_ratio=0., minimum_per_parameter_valid_points=0,
+                    minimum_per_parameter_valid_ratio=0., minimum_parameter_coverage_ratio=0.,
+                    maximum_exclusion_ratio=1., reject_repeated_exclusion_reasons=False)
+    defaults = {k:v for k,v in defaults.items() if k not in authored}
+    policies = []
+    for policy in adequacy.parameter_temporal_policies:
+        if policy.temporal_behavior == 'time_varying':
+            inferred = dict(minimum_valid_points=count, minimum_valid_ratio=1.,
+                            minimum_distinct_timestamps=count, minimum_time_span=max(span or 0.,1e-12),
+                            maximum_time_gap=gap or 1e300)
+            policy = policy.model_copy(update={k:v for k,v in inferred.items() if getattr(policy,k) is None})
+        policies.append(policy)
+    if 'maximum_exclusion_ratio' in authored or 'maximum_repeated_exclusion_reason_count' in authored:
+        defaults.pop('reject_repeated_exclusion_reasons', None)
+    defaults['parameter_temporal_policies'] = policies
+    return adequacy.model_copy(update=defaults), authored, count
+
+
+def _requested_floor_findings(findings, authored):
+    parameter_keys = {'critical_parameters','parameter_temporal_policies','minimum_parameter_coverage_ratio',
+                      'minimum_per_parameter_valid_points','minimum_per_parameter_valid_ratio','family_quotas'}
+    signal_keys = {'critical_signals','minimum_per_signal_valid_points','minimum_per_signal_valid_ratio','family_quotas'}
+    gates = {
+        'signal_coverage_ratio_not_met': {'minimum_signal_coverage_ratio'},
+        'parameter_coverage_ratio_not_met': {'minimum_parameter_coverage_ratio'},
+        'critical_signal_insufficient_time_coverage': signal_keys,
+        'parameter_temporal_classification_missing': parameter_keys,
+        'critical_parameter_uncovered': parameter_keys,
+        'subsystem_critical_coverage_missing': {'family_quotas'},
+        'exclusion_ratio_exceeded': {'maximum_exclusion_ratio'},
+        'templated_exclusion_reason': {'maximum_exclusion_ratio','reject_repeated_exclusion_reasons'},
+        'repeated_exclusion_reason': {'reject_repeated_exclusion_reasons','maximum_repeated_exclusion_reason_count','maximum_exclusion_ratio'},
+    }
+    return [item for item in findings if item['type'] not in gates or gates[item['type']] & authored]
 
 
 def evaluate_validation_adequacy_artifacts(
@@ -115,10 +164,13 @@ def evaluate_validation_adequacy_artifacts(
 ) -> ValidationAdequacyEvaluation:
     """Pure evaluator used by the runtime integration and shallow-negative tests."""
 
+    mapping_edges = list(mapping_edges)
+    adequacy, authored_floors, usable_points = _resolve_manifest_floors(adequacy, manifest, mapping_edges)
     findings: list[dict[str, Any]] = []
     points = list(series.points) if series is not None else []
     valid_points = [item for item in points if item.valid]
     available_points = _authoritative_manifest_point_count(manifest, findings)
+    available_points = min(available_points, usable_points)
     eligible_points = available_points
     selection_floor = _coverage_floor(
         available_count=eligible_points,
@@ -826,6 +878,20 @@ def evaluate_validation_adequacy_artifacts(
         findings.append(_finding("error", "adaptive_sampling_not_converged", "adaptive sampling lacks convergence evidence"))
 
     # Adequacy floors are advisory: every shortfall is reported as a warning.
+    findings = _requested_floor_findings(findings, authored_floors)
+    signal_requested = bool(authored_floors & {'critical_signals','minimum_per_signal_valid_points','minimum_per_signal_valid_ratio','family_quotas'})
+    parameter_requested = bool(authored_floors & {'critical_parameters','parameter_temporal_policies','minimum_parameter_coverage_ratio','minimum_per_parameter_valid_points','minimum_per_parameter_valid_ratio','family_quotas'})
+    if not signal_requested:
+        for row in per_signal:
+            row['status'] = 'not_applicable'
+    if not parameter_requested:
+        per_parameter = []
+        subsystem_families = []
+        missing_parameter_classifications = []
+        missing_critical_parameters = []
+        required_parameters = set()
+    if 'family_quotas' not in authored_floors:
+        subsystem_families = []
     findings = [{**item, "severity": "warning"} for item in findings]
     status = _status(findings)
     universe_payload = {

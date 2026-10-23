@@ -130,7 +130,8 @@ def contract_field_mappings(resolved):
         for phase, target in field_targets(field).items():
             edges.append(MappingEdgeSpec(id=f'{name}:{phase}', source_id=f'field:{name}', relation='maps_to',
                 target_type='physics_variable', target=target, confidence=max(0., confidence_value(field.confidence)),
-                unit_evidence=field.unit if field.evidence else None, review_required=field.review_required))
+                unit_evidence=field.unit if field.evidence else None, review_required=field.review_required,
+                metadata={"row_offset": int(phase == "next_row")}))
     return edges
 
 

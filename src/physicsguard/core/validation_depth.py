@@ -174,6 +174,7 @@ def summarize_validation_depth(payload: dict[str, Any]) -> dict[str, Any]:
         "point_count": payload.get("time", {}).get("point_count"),
         "valid_point_count": payload.get("time", {}).get("valid_point_count"),
         "series_audit_pass": residual.get("audit_pass"),
+        "failing_intervals": residual.get("failing_intervals", []),
         "series_max_abs_normalized_residual": aggregate.get("max_abs_normalized_residual"),
         "invalid_point_count": aggregate.get("invalid_point_count", 0),
         "envelope_violation_count": payload.get("envelopes", {}).get("aggregate", {}).get("violation_count", 0),
@@ -187,10 +188,10 @@ def summarize_validation_depth(payload: dict[str, Any]) -> dict[str, Any]:
             "maximum_observed_gap": temporal.get("maximum_observed_gap"),
             "missing_strata": temporal.get("missing_strata", []),
             "signals_below_floor": [
-                row.get("signal_id") for row in adequacy.get("per_signal", []) if row.get("status") != "pass"
+                row.get("signal_id") for row in adequacy.get("per_signal", []) if row.get("status") not in {"pass", "not_applicable"}
             ],
             "parameters_below_floor": [
-                row.get("parameter_id") for row in adequacy.get("per_parameter", []) if row.get("status") != "pass"
+                row.get("parameter_id") for row in adequacy.get("per_parameter", []) if row.get("status") not in {"pass", "not_applicable"}
             ],
         },
         "predictive_status": payload.get("predictive", {}).get("status"),
@@ -813,6 +814,39 @@ def _split_receipt(
     }
 
 
+def _failing_intervals(points):
+    intervals, current = [], None
+    for point in points:
+        if point['status'] != 'fail':
+            current = None
+            continue
+        if current is None or current['top_block'] != point.get('top_block') or current['_scenario'] != point.get('scenario_id'):
+            current = dict(start_point=point['point_id'], end_point=point['point_id'],
+                           start_time=point.get('timestamp'), end_time=point.get('timestamp'), points=0,
+                           top_block=point.get('top_block'), top_residual=point.get('top_residual'), max_abs=0.,
+                           _scenario=point.get('scenario_id'), _point_ids=[])
+            intervals.append(current)
+        current['end_point'], current['end_time'] = point['point_id'], point.get('timestamp')
+        current['points'] += 1
+        current['_point_ids'].append(point['point_id'])
+        if point['max_abs_normalized_residual'] >= current['max_abs']:
+            current['max_abs'] = point['max_abs_normalized_residual']
+            current['top_residual'] = point.get('top_residual')
+    return intervals
+
+
+def _series_top_blocks(points):
+    groups = {}
+    for point in points:
+        if point['status'] != 'fail' or not point.get('top_block'):
+            continue
+        key = point['top_block']
+        row = groups.setdefault(key, dict(block_id=key, failing_points=0, max_abs_normalized_residual=0.))
+        row['failing_points'] += 1
+        row['max_abs_normalized_residual'] = max(row['max_abs_normalized_residual'], point['max_abs_normalized_residual'])
+    return sorted(groups.values(), key=lambda row:(-row['failing_points'], -row['max_abs_normalized_residual'], row['block_id']))
+
+
 def _residual_series_receipt(
     audit_spec: HierarchicalAuditSpec,
     series: ObservedSeriesSpec | None,
@@ -950,8 +984,14 @@ def _residual_series_receipt(
                 }
             point_parameter_effects.append(effect_row)
             contribution_effects[parameter_id].append(effect_row)
+        # A leaf with its own checked failure is more specific than its rolled-up parent.
+        failed_blocks = [b for b in report.top_blocks if not b.own_audit_pass and b.checked_residuals]
+        worst_block = max(failed_blocks, key=lambda b:(b.max_abs_normalized_residual, b.level), default=None)
+        worst_residual = report.top_residuals[0].name if report.top_residuals else None
         receipts.append(
             {
+                "top_block": worst_block.block_id if worst_block else None,
+                "top_residual": worst_residual,
                 "point_id": point.point_id,
                 "derived_variables": report.derived_variables,
                 "checked_residuals": report.checked_residuals,
@@ -970,15 +1010,14 @@ def _residual_series_receipt(
                 "parameter_contribution_effects": point_parameter_effects,
             }
         )
-        if not report.audit_pass:
-            _add_finding(
-                findings,
-                "warning",
-                "residual_series_point_failed",
-                "one bounded point failed the low-fidelity residual audit",
-                point.point_id,
-                {"timestamp": point.timestamp, "max_abs_normalized_residual": max_value},
-            )
+    raw_intervals = _failing_intervals(receipts)
+    intervals = []
+    for interval in raw_intervals:
+        public = {k:v for k,v in interval.items() if not k.startswith('_')}
+        intervals.append(public)
+        _add_finding(findings, 'warning', 'residual_series_interval_failed',
+                     'a consecutive interval failed the low-fidelity residual audit', interval['top_block'],
+                     {**public, 'point_ids':interval['_point_ids']})
 
     evaluated = [item for item in receipts if item["status"] in {"pass", "fail"}]
     passing = [item for item in evaluated if item["audit_pass"]]
@@ -1012,13 +1051,16 @@ def _residual_series_receipt(
         "missing_intervals": _intervals(missing_points),
         "aggregate": aggregate,
         "parameter_contributions": parameter_contributions,
+        "failing_intervals": intervals,
+        "top_blocks": _series_top_blocks(receipts),
     }
     series_direct = {
         "audit_pass": audit_pass,
         "max_abs_normalized_residual": aggregate["max_abs_normalized_residual"],
         "residual_norm": math.sqrt(sum(value * value for value in norms)) if norms else None,
         "top_residuals": _worst_top_residuals(receipts),
-        "top_blocks": [],
+        "top_blocks": _series_top_blocks(receipts),
+        "failing_intervals": intervals,
         "warnings": sorted(set(warnings)),
         "scope": "pointwise_observed_series",
         "point_count": len(points),

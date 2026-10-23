@@ -215,7 +215,7 @@
       "layer": "workflows",
       "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
       "responsibilities": [
-        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary",
+        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors.",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
         "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates"
       ],
@@ -247,7 +247,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:a9f160e64b74e65b16ce372decdc4ae485082422474c9f8250b0013f93d017fd"
+      "fingerprint": "sha256:c393c66a1c008c060cd8d05925623bb64890413bc94aa614903973e0803799fc"
     },
     {
       "id": "task_revision",
@@ -289,7 +289,7 @@
       "layer": "workflows",
       "summary": "Test-file contracts, manifests and contract differences",
       "responsibilities": [
-        "Read one executable test-file contract, retain data/extractor content hashes, and generate SI snapshots and adjacent-row series with conversion and mapping evidence.",
+        "Read one executable test-file contract, retain data/extractor content hashes, and generate SI snapshots and adjacent-row series with conversion and mapping evidence. Manifest timing metadata supplies factual span, gap and usable adjacent-row point defaults.",
         "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
       ],
       "files": [
@@ -325,14 +325,14 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:079d910fb43d5654483ebcc58dd1345b1822dfb3ccf6a8b1eacc7a274e0748a5"
+      "fingerprint": "sha256:9cbbcf34cacc92f393bf053361ae69cf3c4c13a0dce8610bbcbd1bbb503275e4"
     },
     {
       "id": "schema",
       "layer": "foundation",
       "summary": "Validated schemas, shared review records and pure contract coverage checks",
       "responsibilities": [
-        "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion.",
+        "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion. Accept minimal adequacy plans with optional additional floors while retaining explicit temporal classifications and native hard gates.",
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
         "Validate optional connection residual scales as positive finite values",
         "Provide shared contract-review records and pure manifest, field declarations, role and mapping coverage checks",
@@ -418,7 +418,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:33c1cf1d2bc30141f7f6e3ce41fe451e3112fd216b5417df2738526541e7b6d3"
+      "fingerprint": "sha256:803b66fd0420983a5a88eadae046b46c3b0c41db950e81efca569d3abb41dc03"
     },
     {
       "id": "loaders",

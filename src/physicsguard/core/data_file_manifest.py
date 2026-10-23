@@ -93,11 +93,13 @@ def generate_delimited_manifest(
         _field_summary(field_name, [row.get(field_name, "") for row in rows], field_units.get(field_name))
         for field_name in fields
     ]
-    time_basis = _time_basis(
-        resolved_time_column,
-        [row.get(resolved_time_column, "") for row in rows] if resolved_time_column else [],
-        len(rows),
-    )
+    time_values = [row.get(resolved_time_column, "") for row in rows] if resolved_time_column else []
+    time_unit = field_units.get(resolved_time_column, "s")
+    if time_unit != "s":
+        from physicsguard.core.units import unit_conversion
+        factor, offset = unit_conversion(time_unit, "s")
+        time_values = [str(float(value) * factor + offset) if value not in {None, ""} else value for value in time_values]
+    time_basis = _time_basis(resolved_time_column, time_values, len(rows))
     source_file = SourceFileSpec(
         path=str(file_path),
         content_hash=sha256_file(file_path),
@@ -239,6 +241,9 @@ def _time_basis(time_column: str | None, values: list[str | None], row_count: in
         sampling_mode="time_series",
         continuity=continuity,
         gap_count=gap_count,
+        metadata={"maximum_gap_s": max((b[1]-a[1] for a,b in zip(parsed,parsed[1:])), default=0.),
+                  "start_time_s": start_s, "end_time_s": end_s,
+                  "penultimate_time_s": parsed[-2][1] if len(parsed)>1 else start_s},
     )
 
 

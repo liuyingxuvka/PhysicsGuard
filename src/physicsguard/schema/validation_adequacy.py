@@ -158,7 +158,7 @@ class ParameterTemporalPolicySpec(BaseModel):
             ):
                 raise ValueError("static parameters must not declare time-series coverage requirements")
             return self
-        missing = [name for name, value in temporal_fields.items() if value is None]
+        missing = [name for name, value in temporal_fields.items() if name == "availability_source_id" and value is None]
         if missing:
             raise ValueError(
                 "time-varying parameters require explicit target-owned coverage fields: "
@@ -170,7 +170,7 @@ class ParameterTemporalPolicySpec(BaseModel):
             raise ValueError(
                 "time-varying parameter minimum_distinct_timestamps cannot be lower than three"
             )
-        if len(self.required_strata) < 3:
+        if self.required_strata and len(self.required_strata) < 3:
             raise ValueError("time-varying parameters require at least three target-declared strata")
         stratum_ids = [item.stratum_id for item in self.required_strata]
         if len(stratum_ids) != len(set(stratum_ids)):
@@ -272,14 +272,14 @@ class ValidationAdequacyPlanSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     sampling_mode: SamplingMode = "full"
-    threshold_source: str
-    selection_policy_id: str
-    selection_rationale: str
+    threshold_source: str = "current contract manifest"
+    selection_policy_id: str = "full_manifest_rows"
+    selection_rationale: str = "Evaluate every usable source row from the manifest."
     minimum_selected_points: int = 3
     minimum_selected_ratio: float = 0.1
     minimum_distinct_timestamps: int = 3
     minimum_time_span: float = 1.0e-12
-    maximum_time_gap: float
+    maximum_time_gap: float = 1.0e300
     require_start_middle_end: bool = True
     minimum_signal_coverage_ratio: float = 0.8
     minimum_per_signal_valid_points: int = 3
@@ -384,15 +384,15 @@ class ValidationAdequacyPlanSpec(BaseModel):
         for policy in self.parameter_temporal_policies:
             if policy.temporal_behavior != "time_varying":
                 continue
-            if int(policy.minimum_valid_points or 0) < self.minimum_per_parameter_valid_points:
+            if policy.minimum_valid_points is not None and "minimum_per_parameter_valid_points" in self.model_fields_set and int(policy.minimum_valid_points or 0) < self.minimum_per_parameter_valid_points:
                 raise ValueError("per-parameter valid-point floor cannot lower the plan floor")
-            if float(policy.minimum_valid_ratio or 0.0) < self.minimum_per_parameter_valid_ratio:
+            if policy.minimum_valid_ratio is not None and "minimum_per_parameter_valid_ratio" in self.model_fields_set and float(policy.minimum_valid_ratio or 0.0) < self.minimum_per_parameter_valid_ratio:
                 raise ValueError("per-parameter valid-ratio floor cannot lower the plan floor")
-            if int(policy.minimum_distinct_timestamps or 0) < self.minimum_distinct_timestamps:
+            if policy.minimum_distinct_timestamps is not None and "minimum_distinct_timestamps" in self.model_fields_set and int(policy.minimum_distinct_timestamps or 0) < self.minimum_distinct_timestamps:
                 raise ValueError("per-parameter distinct-time floor cannot lower the plan floor")
-            if float(policy.minimum_time_span or 0.0) < self.minimum_time_span:
+            if policy.minimum_time_span is not None and "minimum_time_span" in self.model_fields_set and float(policy.minimum_time_span or 0.0) < self.minimum_time_span:
                 raise ValueError("per-parameter time-span floor cannot lower the plan floor")
-            if float(policy.maximum_time_gap or math.inf) > self.maximum_time_gap:
+            if policy.maximum_time_gap is not None and "maximum_time_gap" in self.model_fields_set and float(policy.maximum_time_gap or math.inf) > self.maximum_time_gap:
                 raise ValueError("per-parameter maximum-gap floor cannot weaken the plan floor")
         if self.sampling_mode == "adaptive":
             if (

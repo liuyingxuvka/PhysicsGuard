@@ -378,3 +378,8 @@ nameplate-efficiency assumption. `sim_tank.py` regenerates the CSV;
 The heater current halves at 600 s while its command stays unchanged; inflow changes
 at 900 s. This is a low-fidelity diagnostic reference. Measurements contain no
 hand-computed connected endpoints or intermediate heat flows.
+
+For the full heated-tank time series, run `testfile series tank_run_contract.yaml
+--out tank_series.yaml`, then `validation run validation_plan.yaml` from the
+example directory. The compact report identifies the heater failure interval
+starting at 600 seconds, without listing sixty repeated point failures.

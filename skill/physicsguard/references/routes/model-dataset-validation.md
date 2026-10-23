@@ -132,3 +132,19 @@ Units are converted before evaluation, with factor/offset and field@row retained
 Missing files, uncertain mappings, scope overreach, overlapping holdouts and
 pointwise predictive claims remain hard gates. Ignored fields stay outside the
 validated claim; adequacy floors must reflect their declared exclusion.
+
+## Failing intervals and optional floors
+The summary groups consecutive failed points until a passing/unevaluated point,
+a scenario boundary, or a different worst block. `failing_intervals` names the
+start/end point and time, count, worst block/residual and maximum absolute
+normalized residual. Full JSON retains every evaluated point and interval
+finding details retain the point IDs; the summary does not repeat point rows.
+
+Start with the installed `references/templates/model_validation_plan.yaml`.
+`depth.adequacy: {}` uses the manifest's usable point count, time span and maximum
+gap. Adjacent-row contracts have N-1 usable single-step points from N raw rows.
+Only declared additional signal/parameter floors, tag requirements, strata and
+family quotas are enforced; their shortfalls remain warnings. Explicit parameter
+classification/contribution evidence and all native hard gates remain required
+when that parameter scope is requested. Manifest metadata records the actual
+maximum gap; refresh older manifests to obtain those facts.
