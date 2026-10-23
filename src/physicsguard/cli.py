@@ -668,16 +668,12 @@ def testfile_contract_check_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
-
 def testfile_diff_command(old_contract: Path, new_contract: Path, pretty: bool = False) -> int:
     from physicsguard.core.contract_diff import diff_test_file_contracts
 
     report = diff_test_file_contracts(old_contract, new_contract)
     _print_json(report.to_dict(), pretty)
     return 0
-
-
-
 
 
 def validation_run_command(path: Path, pretty: bool = False, full: bool = False) -> int:

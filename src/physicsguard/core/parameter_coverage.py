@@ -116,7 +116,6 @@ def _next_actions(findings: list[ContractFinding]) -> list[str]:
     return result
 
 
-
 def _metadata_is_stale(metadata: Mapping[str, Any]) -> bool:
     status = str(metadata.get("status", "")).lower()
     return bool(metadata.get("stale") is True or metadata.get("is_stale") is True or status == "stale")

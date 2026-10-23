@@ -40,13 +40,16 @@ def test_coupled_hierarchy_inspection_contains_six_blocks() -> None:
     assert {block["id"] for block in data["blocks"]} == {"tank", "hydraulics", "thermal", "heater", "throughflow", "envelope"}
 
 
-def test_mapper_reproduces_only_measured_snapshots(tmp_path: Path) -> None:
-    result = subprocess.run([sys.executable, str(EXAMPLE / "map_measured.py"), str(EXAMPLE / "tank_run.csv"), str(tmp_path)], capture_output=True, text=True)
-    assert result.returncode == 0, result.stderr
+def test_contract_reproduces_only_measured_snapshots(tmp_path: Path) -> None:
     for step in (30, 70):
-        for prefix, count in (("first_step_measured", 9), ("measured", 11)):
+        for prefix, count, contract in (("first_step_measured", 9, "first_step_contract.yaml"),
+                                         ("measured", 11, "tank_run_contract.yaml")):
             name = f"{prefix}_k{step}.yaml"
-            assert (tmp_path / name).read_bytes() == (EXAMPLE / name).read_bytes()
+            result = subprocess.run([sys.executable, "-m", "physicsguard.cli", "testfile", "snapshot",
+                                     str(EXAMPLE / contract), "--row", str(step), "--out", str(tmp_path / name)],
+                                    capture_output=True, text=True)
+            assert result.returncode == 0, result.stderr
+            assert yaml.safe_load((tmp_path / name).read_text()) == yaml.safe_load((EXAMPLE / name).read_text())
             variables = yaml.safe_load((tmp_path / name).read_text())["variables"]
             assert len(variables) == count
             assert all(item["unit"] and item["external_signal"] and item["mapping_confidence"] for item in variables.values())

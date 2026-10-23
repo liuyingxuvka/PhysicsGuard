@@ -73,8 +73,6 @@ MappingEvidenceType = Literal[
 ]
 
 
-
-
 class RoleAssignmentSpec(BaseModel):
     """Role and disposition assigned to one source field."""
 
@@ -202,7 +200,6 @@ class MappingEdgeSpec(BaseModel):
     def _metadata_json_serializable(self) -> "MappingEdgeSpec":
         _ensure_json_serializable(self.metadata, "mapping edge metadata")
         return self
-
 
 
 class CoveragePolicySpec(BaseModel):
