@@ -4,7 +4,7 @@ from __future__ import annotations
 import importlib
 from typing import Any
 
-__version__ = "0.15.19"
+__version__ = "0.15.20"
 
 __all__ = [
     "BOUND_HIT_TOLERANCE",

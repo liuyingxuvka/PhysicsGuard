@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15.20 - 2026-10-23
+
+- Omitted parameter strata no longer impose implicit early/middle/late requirements. Declared strata, sample coverage and native parameter-contribution checks remain active.
+- Remove duplicate blocks from the deep and shallow pump validation plans while preserving their effective declarations.
+- Correct the documented predictive producer field to `producer_id`; the legacy input alias remains accepted.
+
 ## v0.15.19 - 2026-10-23
 
 ### Changed
