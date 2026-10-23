@@ -498,6 +498,9 @@ def evaluate_validation_adequacy_artifacts(
                 parameter_available_points,
                 int(coverage_floor["effective_minimum_count"]),
             )
+            # Strata are optional; count, gap and native-contribution guards
+            # remain independent of whether the caller requests stratification.
+            strata_requested = bool(policy.required_strata)
             universal_strata = _row_strata_counts(
                 parameter_available_points,
                 selected_rows,
@@ -508,7 +511,7 @@ def evaluate_validation_adequacy_artifacts(
                     ("middle", 1 / 3, 2 / 3, 1),
                     ("late", 2 / 3, 1.0, 1),
                 ),
-            )
+            ) if strata_requested else []
             covered_universal_strata = [
                 row["stratum_id"]
                 for row in universal_strata
@@ -516,7 +519,7 @@ def evaluate_validation_adequacy_artifacts(
             ]
             missing_universal_strata = sorted(
                 {"early", "middle", "late"} - set(covered_universal_strata)
-            )
+            ) if strata_requested else []
             required_strata_results = _row_strata_counts(
                 parameter_available_points,
                 selected_rows,

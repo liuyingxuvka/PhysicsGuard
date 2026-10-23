@@ -1297,3 +1297,61 @@ def test_bad_sampling_enum_names_its_allowed_values():
     with pytest.raises(ValidationError) as error:
         ValidationAdequacyPlanSpec(sampling_mode='sometimes')
     assert all(name in str(error.value) for name in ['full','stratified','event_aware','adaptive','project_declared'])
+
+
+@pytest.mark.parametrize("explicit_strata", [False, True])
+def test_parameter_strata_are_checked_only_when_declared(tmp_path, explicit_strata):
+    import csv
+
+    from physicsguard.core.data_file_manifest import generate_delimited_manifest
+
+    plan, audit, _, roles, _, bindings, payload = _representative_parameter_case()
+    source = tmp_path / "synthetic_parameter.csv"
+    with source.open("w", newline="") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(["time_s", "cmd_speed_rad_s", "flow_readback_kg_s", "valve_open"])
+        for row in range(1000):
+            writer.writerow([row, 10, 10 * (1.8 + row / 2000), 1])
+    manifest = generate_delimited_manifest(source, time_column="time_s")
+    series = ObservedSeriesSpec.model_validate({"series_id": "partial_strata", "points": [
+        {"point_id": f"point_{row}", "timestamp": row, "source_identity_id": "probe_csv",
+         "source_row_index": row, "scenario_id": "speed_ramp", "case_id": "speed_ramp_case_01",
+         "mode_id": "valve_open", "variables": {
+             "pump_signal_map.x": {"value": 10, "unit": "rad/s"},
+             "pump_signal_map.y": {"value": 10 * (1.8 + row / 2000), "unit": "kg/s"},
+             "pump_signal_map.a": {"value": 1.8 + row / 2000, "unit": "1"}}}
+        for row in range(0, 621, 20)]})
+    payload.update(minimum_selected_points=32, minimum_selected_ratio=.032,
+                   minimum_distinct_timestamps=32, minimum_time_span=620, maximum_time_gap=20,
+                   require_start_middle_end=False, minimum_per_parameter_valid_points=32,
+                   minimum_per_parameter_valid_ratio=.032, minimum_per_signal_valid_points=32,
+                   minimum_per_signal_valid_ratio=1., maximum_exclusion_ratio=1.,
+                   reject_repeated_exclusion_reasons=False)
+    policy = payload["parameter_temporal_policies"][0]
+    policy.update(minimum_valid_points=32, minimum_valid_ratio=.032,
+                  minimum_distinct_timestamps=32, minimum_time_span=620, maximum_time_gap=20)
+    policy.pop("required_strata")
+    if explicit_strata:
+        policy["required_strata"] = [
+            {"stratum_id": name, "start_fraction": start, "end_fraction": end,
+             "minimum_valid_points": 1}
+            for name, start, end in (("early", 0, 1 / 3), ("middle", 1 / 3, 2 / 3), ("late", 2 / 3, 1))]
+    adequacy = ValidationAdequacyPlanSpec.model_validate(payload)
+    findings = []
+    residual, _ = _residual_series_result(
+        audit, series, findings, parameter_policies=adequacy.parameter_temporal_policies)
+    assert residual["status"] == "pass"
+    assert residual["parameter_contributions"][0]["status"] == "pass"
+    result = evaluate_validation_adequacy_artifacts(
+        adequacy=adequacy, claim_scope="time_window", dataset_identity_ids={"probe_csv"},
+        manifest=manifest, role_matrix=roles, plan=plan, audit_spec=audit, series=series,
+        residual_result=residual, mapping_edges=bindings)
+    parameter = result.result["per_parameter"][0]
+    if explicit_strata:
+        assert result.result["status"] == "partial"
+        assert parameter["missing_universal_strata"] == ["late"]
+        assert parameter["required_strata_results"][-1]["status"] == "blocked"
+    else:
+        assert result.result["status"] == parameter["status"] == "pass"
+        assert parameter["required_strata_results"] == parameter["missing_universal_strata"] == []
+        assert not result.findings

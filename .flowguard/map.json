@@ -75,7 +75,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:0f7e94ce2e14c14635d868afdef45e130243f46542072b89ccf1eb1b7de8f5ca"
+      "fingerprint": "sha256:e0bb03dd0dae51e73068222277b4604f91b2087757ccea9a9ef26e65428c38be"
     },
     {
       "id": "routing",
@@ -218,7 +218,7 @@
       "layer": "workflows",
       "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
       "responsibilities": [
-        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas. Batch fitting and series checks skip unit hints they do not expose.",
+        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas. Batch fitting and series checks skip unit hints they do not expose. Apply parameter-stratum checks only when the policy declares strata; preserve count, gap and native-contribution guards.",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
         "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates"
       ],
@@ -250,7 +250,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:4e1f1d9b49cc3cd595f37cc0a300de531e4c6201d616152770a3f6aa9e8feaa9"
+      "fingerprint": "sha256:e290d3629a4636120f17517b4caf0b98102c8eb9150cc3970b0a4c568d24168e"
     },
     {
       "id": "task_revision",
