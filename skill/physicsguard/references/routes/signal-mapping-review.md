@@ -80,3 +80,17 @@ confidence alone does not make a pointwise relation stateful or predictive.
 Intake metadata does not convert or mutate observed values.
 Test-file contract mapping edges likewise record evidence only; they must not
 invent conversions or silently relabel observed values.
+
+## Check against the audit model
+`python -m physicsguard.cli preflight review PREFLIGHT.yaml --audit AUDIT.yaml`
+checks each declared block ID (`preflight_block_unknown` on an unknown block).
+`python -m physicsguard.cli intake review INTAKE.yaml --audit AUDIT.yaml`
+checks registered variables and conversion from the source unit using the
+documented unit table (`intake_variable_unknown`, `intake_unit_not_convertible`).
+Omitting `--audit` preserves the structural review.
+
+A failed observed audit may add `unit_conversion_family` with a named variable
+and a tested factor/offset. The bounded probe checks native residuals in the
+worst failing block and rederives affected intermediates; it never changes the
+observations or proves that a unit error is the real cause. Verify the source
+and record any actual correction in the test-file contract.

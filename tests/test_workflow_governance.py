@@ -100,3 +100,34 @@ def test_cli_preflight_review_outputs_json() -> None:
 
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)["artifact_kind"] == "model_understanding_preflight"
+
+
+def test_preflight_audit_names_unknown_blocks_without_changing_unbound_behavior(tmp_path):
+    data=yaml.safe_load((ROOT/'templates/model_understanding_preflight.yaml').read_text())
+    data['physicsguard_understanding']['subsystem_blocks']=[{'id':'not_in_the_model'}]
+    path=tmp_path/'preflight.yaml';path.write_text(yaml.safe_dump(data))
+    assert review_model_understanding_preflight(path).ok
+    audit=ROOT/'examples/hierarchical/heated_tank/heated_tank.yaml'
+    result=review_model_understanding_preflight(path,audit=audit)
+    assert not result.ok and result.status=='fail'
+    assert 'preflight_block_unknown' in {f.type for f in result.findings}
+    run=subprocess.run([sys.executable,'-m','physicsguard.cli','preflight','review',str(path),'--audit',str(audit)],capture_output=True,text=True)
+    assert run.returncode==1 and 'preflight_block_unknown' in run.stdout
+
+
+def test_intake_audit_checks_registered_variable_and_convertible_unit(tmp_path):
+    data=yaml.safe_load((ROOT/'templates/external_model_intake.yaml').read_text())
+    signal=data['external_model_snapshot']['signals'][0]
+    audit=ROOT/'examples/hierarchical/heated_tank/heated_tank.yaml'
+    path=tmp_path/'intake.yaml'
+    for variable,unit,expected in [('not_a_variable.x','K','intake_variable_unknown'),
+                                    ('heat.T_previous_K','degC',None),
+                                    ('heat.T_previous_K','unknown_temperature','intake_unit_not_convertible')]:
+        signal.update(physicsguard_variable=variable,unit_from_source=unit)
+        path.write_text(yaml.safe_dump(data))
+        report=review_external_model_intake(path,audit=audit)
+        codes={f.type for f in report.findings}
+        if expected:
+            assert not report.ok and expected in codes
+        else:
+            assert report.ok and not any(c.startswith('intake_') for c in codes)

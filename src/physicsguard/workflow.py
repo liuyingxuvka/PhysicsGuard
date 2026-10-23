@@ -52,7 +52,7 @@ class WorkflowReview:
         }
 
 
-def review_model_understanding_preflight(path: Path) -> WorkflowReview:
+def review_model_understanding_preflight(path: Path, audit: Path | None = None) -> WorkflowReview:
     data = _load_yaml(path)
     missing: list[str] = []
     findings: list[WorkflowFinding] = []
@@ -93,11 +93,19 @@ def review_model_understanding_preflight(path: Path) -> WorkflowReview:
             )
         )
 
-    status = "partial" if missing or findings else "pass"
+    if audit is not None:
+        blocks, _units = _audit_context(audit)
+        for index, block in enumerate(root.get('subsystem_blocks', []) if isinstance(root.get('subsystem_blocks'), list) else []):
+            block_id = block.get('id') if isinstance(block, dict) else None
+            if not isinstance(block_id, str) or block_id not in blocks:
+                findings.append(WorkflowFinding('error', 'preflight_block_unknown',
+                    f'Block {block_id!r} is not in the audit model.', f'subsystem_blocks[{index}].id'))
+    has_error = any(f.severity == 'error' for f in findings)
+    status = "fail" if has_error else "partial" if missing or findings else "pass"
     return WorkflowReview(
         artifact_kind="model_understanding_preflight",
         status=status,
-        ok=not missing,
+        ok=not missing and not has_error,
         findings=tuple(findings),
         missing_inputs=tuple(missing),
         next_actions=tuple(_preflight_next_actions(missing, findings)),
@@ -110,7 +118,7 @@ def review_model_understanding_preflight(path: Path) -> WorkflowReview:
     )
 
 
-def review_external_model_intake(path: Path) -> WorkflowReview:
+def review_external_model_intake(path: Path, audit: Path | None = None) -> WorkflowReview:
     data = _load_yaml(path)
     missing: list[str] = []
     findings: list[WorkflowFinding] = []
@@ -155,6 +163,27 @@ def review_external_model_intake(path: Path) -> WorkflowReview:
         if isinstance(stale_when, list) and stale_when:
             stale_count += 1
 
+    if audit is not None:
+        from physicsguard.core.units import unit_conversion
+        _blocks, units = _audit_context(audit)
+        for index, signal in enumerate(signals):
+            if not isinstance(signal, dict):
+                continue
+            variable = signal.get('physicsguard_variable')
+            if not isinstance(variable, str) or variable not in units:
+                findings.append(WorkflowFinding('error', 'intake_variable_unknown',
+                    f'Variable {variable!r} is not in the audit registry.', f'signals[{index}].physicsguard_variable'))
+                continue
+            source_unit = signal.get('unit_from_source')
+            try:
+                if not isinstance(source_unit, str):
+                    raise ValueError('missing unit')
+                unit_conversion(source_unit, units[variable])
+            except ValueError:
+                findings.append(WorkflowFinding('error', 'intake_unit_not_convertible',
+                    f'{source_unit!r} cannot be converted to registered unit {units[variable]!r} for {variable}.',
+                    f'signals[{index}].unit_from_source'))
+    has_error = any(f.severity == 'error' for f in findings)
     if review_required:
         findings.append(
             WorkflowFinding(
@@ -165,11 +194,11 @@ def review_external_model_intake(path: Path) -> WorkflowReview:
                 review_required,
             )
         )
-    status = "partial" if missing or findings else "pass"
+    status = "fail" if has_error else "partial" if missing or findings else "pass"
     return WorkflowReview(
         artifact_kind="external_model_intake",
         status=status,
-        ok=not missing,
+        ok=not missing and not has_error,
         findings=tuple(findings),
         missing_inputs=tuple(missing),
         next_actions=(
@@ -256,3 +285,11 @@ __all__ = [
     "review_external_model_intake",
     "review_model_understanding_preflight",
 ]
+
+
+def _audit_context(path):
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.core.residual import ResidualBuilder
+    spec = load_hierarchical_audit_spec(path)
+    registry = ResidualBuilder(spec.system).build_registry()
+    return {b.id for b in spec.hierarchy.blocks}, {name:registry.get_record(name).unit for name in registry.names()}

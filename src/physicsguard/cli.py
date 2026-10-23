@@ -174,6 +174,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="review a PhysicsGuard model-understanding preflight YAML",
     )
     preflight_review.add_argument("preflight", type=Path, help="path to preflight YAML")
+    preflight_review.add_argument("--audit", type=Path, help="check declared blocks against this audit model")
     preflight_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     intake_parser = subparsers.add_parser(
@@ -186,6 +187,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="review a PhysicsGuard external-model intake YAML",
     )
     intake_review.add_argument("intake", type=Path, help="path to intake YAML")
+    intake_review.add_argument("--audit", type=Path, help="check variable names and units against this audit model")
     intake_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     testfile_parser = subparsers.add_parser(
@@ -575,18 +577,18 @@ def assumptions_inspect(path: Path, pretty: bool = False) -> int:
     return 0
 
 
-def preflight_review(path: Path, pretty: bool = False) -> int:
+def preflight_review(path: Path, pretty: bool = False, audit: Path | None = None) -> int:
     from physicsguard.workflow import review_model_understanding_preflight
 
-    report = review_model_understanding_preflight(path)
+    report = review_model_understanding_preflight(path, audit=audit)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
 
-def intake_review(path: Path, pretty: bool = False) -> int:
+def intake_review(path: Path, pretty: bool = False, audit: Path | None = None) -> int:
     from physicsguard.workflow import review_external_model_intake
 
-    report = review_external_model_intake(path)
+    report = review_external_model_intake(path, audit=audit)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
@@ -737,10 +739,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return assumptions_inspect(args.system, args.pretty)
         if args.command == "preflight":
             if args.preflight_command == "review":
-                return preflight_review(args.preflight, args.pretty)
+                return preflight_review(args.preflight, args.pretty, args.audit)
         if args.command == "intake":
             if args.intake_command == "review":
-                return intake_review(args.intake, args.pretty)
+                return intake_review(args.intake, args.pretty, args.audit)
         if args.command == "testfile":
             if args.testfile_command == "manifest":
                 return testfile_manifest_command(

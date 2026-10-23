@@ -566,7 +566,7 @@ class HierarchicalAuditRunner:
             derived_variables=derived,
             unchecked_residuals=skipped,
         )
-        return _attach_signal_mapping_context(report, self.spec, observed, registry)
+        return _attach_signal_mapping_context(report, self.spec, observed, registry, builder)
 
     def compare_observed(
         self,
@@ -919,6 +919,7 @@ def _attach_signal_mapping_context(
     spec: HierarchicalAuditSpec,
     observed: ObservedValuesSpec,
     registry: VariableRegistry,
+    builder: ResidualBuilder,
 ) -> HierarchicalAuditReport:
     block_index = BlockIndex(spec.hierarchy, spec.system)
     ledger = build_signal_mapping_ledger(spec.system, observed, registry, block_lookup=block_index)
@@ -928,6 +929,9 @@ def _attach_signal_mapping_context(
         mapping_records=ledger,
         audit_threshold=spec.system.solver.audit_threshold,
     )
+    factor_hints = _unit_factor_followups(report, observed, builder, registry, spec.system.solver.audit_threshold)
+    if factor_hints:
+        followups = tuple(item for item in followups if item.followup_id != 'unit_conversion_family') + factor_hints
     ledger_warnings = list(mapping_warnings(ledger))
     metadata = {
         **report.metadata,
@@ -1253,3 +1257,65 @@ __all__ = [
     "ResidualBlockAssignment",
     "inspect_hierarchy",
 ]
+
+
+def _unit_factor_followups(report, observed, builder, registry, threshold):
+    """Bounded hypotheses only: re-evaluate native checked relations, never edit data."""
+    if report.audit_pass:
+        return ()
+    blocks = [block for block in report.top_blocks if not block.own_audit_pass and block.checked_residuals]
+    if not blocks:
+        return ()
+    block = max(blocks, key=lambda row:(row.max_abs_normalized_residual,row.level))
+    checked = set(block.checked_residuals)
+    derived = report.derived_variables
+    registered = set(registry.names())
+    measured = {name:item.value for name,item in observed.variables.items() if name in registered}
+    full = {**measured, **{name:item['value'] for name,item in derived.items()}}
+    dependencies = report.metadata.get('residual_dependencies')
+    if dependencies is None:
+        if set(full) != set(registry.names()):
+            return ()
+        needs = []
+        records = builder.diagnostic_residual_records(registry.dict_to_vector(full), _dependencies=needs)
+        dependencies = {record.name: refs for record,refs in zip(records,needs)
+                        if sum(item.name == record.name for item in records) == 1}
+    active = {name for name in checked if dependencies.get(name) is not None}
+    failed = {row.name for row in block.top_residuals if row.abs_normalized_value > threshold} & active
+    if not failed:
+        return ()
+
+    def ancestors(name, seen=frozenset()):
+        if name in measured:
+            return {name}
+        if name in seen or name not in derived:
+            return set()
+        return set().union(*(ancestors(ref,seen|{name}) for ref in derived[name].get('dependencies',[])))
+
+    candidates = sorted(set().union(*(ancestors(ref) for name in failed for ref in dependencies[name])))[:20]
+    transformations = [(factor,0.) for factor in (1e-3,1e3,1e-6,1e6,3600.,1/3600,60.,1/60,1e-5,1e5,30/math.pi,math.pi/30)]
+    transformations += [(1.,273.15),(1.,-273.15)]
+    for variable in candidates:
+        affected = {name for name in derived if variable in ancestors(name)}
+        seed = {**measured, **{name:item['value'] for name,item in derived.items() if name not in affected}}
+        for factor,offset in transformations:
+            value = measured[variable]*factor+offset
+            if not math.isfinite(value) or value == measured[variable]:
+                continue
+            trial = {**seed, variable:value}
+            try:
+                if affected:
+                    _known,_missing,_derived,records,_skipped,_provenance = _derive_unobserved(builder,registry,trial)
+                else:
+                    records = builder.diagnostic_residual_records(registry.dict_to_vector(trial))
+            except Exception:
+                # A counterfactual outside a relation's domain is not evidence for a hint.
+                continue
+            current = {record.name:record for record in records if record.name in checked}
+            if checked <= current.keys() and all(current[name].abs_normalized_value <= threshold for name in checked):
+                change = f'multiply by {factor:g}' if offset == 0 else f'add {offset:g}'
+                return (BugFamilyFollowUp(followup_id='unit_conversion_family',family='unit_conversion',severity='warning',
+                    trigger=f'Trying {variable}: {change} makes every checked residual in {block.block_id} pass.',
+                    affected_blocks=(block.block_id,),affected_variables=(variable,),evidence_residuals=tuple(sorted(failed)),
+                    recommended_action=f'Check the source unit and conversion for {variable}; hypothesis: {change} (factor={factor:g}, offset={offset:g}). This is a hint; observed values were not changed.'),)
+    return ()

@@ -18,7 +18,7 @@
       "layer": "interface",
       "summary": "CLI and lazy public API",
       "responsibilities": [
-        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. Hierarchy plan is retired; run --json exposes the full diagnostic report.",
+        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. Hierarchy plan is retired; run --json exposes the full diagnostic report. Preflight and intake reviews optionally accept --audit.",
         "Print a compact hierarchy/validation summary with derived names, check counts and assumption dispositions, and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
@@ -75,14 +75,14 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:c864397594e12506fd475ab05d0e5024cf793ce17ac05f3e97f02f6387369877"
+      "fingerprint": "sha256:f334ec391757112e6caebd7094cf7a892aa12440b38ea42b32522a389cccaaa3"
     },
     {
       "id": "routing",
       "layer": "workflows",
       "summary": "Model-understanding preflight and external-model intake reviews",
       "responsibilities": [
-        "Check preflight and intake records for missing fields and uncertain mappings without changing observed values"
+        "Check preflight and intake records for missing fields and uncertain mappings without changing observed values With an explicit audit, verify preflight block IDs and intake registry variables/convertible units."
       ],
       "files": [
         "src/physicsguard/workflow.py"
@@ -90,21 +90,25 @@
       "entrypoints": [],
       "state": [],
       "side_effects": [],
-      "depends_on": [],
+      "depends_on": [
+        "loaders",
+        "schema",
+        "simulation"
+      ],
       "tests": [
         "tests/test_skill_templates.py",
         "tests/test_workflow_governance.py"
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:1d416c9f04b4452b0a058bd5ae3585dfdf752bfcf75ad9e6d7b2ec64cc693af2"
+      "fingerprint": "sha256:3fab24955f2e0e66308bb5129fd12aa20e667f2f9288eaaceb6ed8f21a4ac05f"
     },
     {
       "id": "simulation",
       "layer": "engine",
       "summary": "Residual assembly, bounded solve, observed evaluation, hierarchy and signal mapping",
       "responsibilities": [
-        "Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API.",
+        "Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API. For failed observed audits, probe at most 20 observed dependency ancestors for bounded unit factors/offsets, rederive affected native values, and emit hints without editing observations.",
         "Separate numerical optimization success, observed audit and diagnostic limits",
         "Derive intermediate values from connections and bounded one-unknown relations with finite structural value/control provenance; keep producing occurrences separate from independent checks and list unresolved inputs; preserve per-result sources through finite native tuple/dict returns, lexical helpers and fixed numeric parameter tables",
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
@@ -207,7 +211,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:3eb07484a0c3e872b302ab0eba0729f8606b29bd9ad9d206c83ba453690b7610"
+      "fingerprint": "sha256:a60be67a445c076a06247df8909985d7bb40d0001b96223199f68f8891a4e993"
     },
     {
       "id": "validation",

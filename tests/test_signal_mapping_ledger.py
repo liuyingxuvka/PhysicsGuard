@@ -162,3 +162,19 @@ def test_stale_when_is_a_condition_until_mapping_status_is_stale(tmp_path: Path)
         row = next(item for item in report.signal_mapping_ledger if item.physics_variable == "controller_q_gain.x")
         assert row.issue_codes == ("stale_mapping",)
         assert "signal_mapping_review" in {item.followup_id for item in report.bug_family_followups}
+
+
+def test_a_thousandfold_flow_factor_slip_is_named_without_changing_observations():
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+    tank=ROOT/'examples/hierarchical/heated_tank'
+    data=yaml.safe_load((tank/'measured_k30.yaml').read_text())
+    variable='inflow_mass.V_dot_m3_s'
+    data['variables'][variable]['value']*=1000
+    observed=ObservedValuesSpec.model_validate(data)
+    before=observed.model_dump()
+    report=HierarchicalAuditRunner(load_hierarchical_audit_spec(tank/'heated_tank.yaml')).evaluate_observed(observed)
+    followup=next(f for f in report.bug_family_followups if f.followup_id=='unit_conversion_family')
+    assert followup.affected_variables==(variable,)
+    assert '0.001' in followup.recommended_action
+    assert not report.audit_pass
+    assert observed.model_dump()==before
