@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Native interval, diagnosis, predictive rollout and validation adequacy outputs use result names and no output version field. Input validation remains in place; generated outputs are no longer passed back through output-only schemas.
+- Rename the optional predictive producer identifier to `producer_id`. The older `producer_receipt_id` input remains accepted as an alias; outputs use the new name.
+
 ## v0.15.18 - 2026-10-23
 
 - `hierarchy evaluate` derives supported intermediate values from measured signals, preserves observations, and separates producing relations from independent checks and unresolved inputs.

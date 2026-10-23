@@ -531,11 +531,11 @@ TESTED_BY = {
         "tests/test_model_dataset_validation.py:test_nonpassing_required_contract_blocks_validation",
     ],
     "no_pass_without_depth_inputs": [
-        "tests/test_validation_depth_receipts.py:test_uncertain_required_mapping_blocks_broad_validation",
-        "tests/test_validation_depth_receipts.py:test_adequacy_floors_are_warnings_not_failures",
+        "tests/test_validation_depth.py:test_uncertain_required_mapping_blocks_broad_validation",
+        "tests/test_validation_depth.py:test_adequacy_floors_are_warnings_not_failures",
     ],
     "no_pass_without_holdout_and_feedback": [
-        "tests/test_validation_depth_receipts.py:test_identical_content_under_different_holdout_label_is_overlap",
+        "tests/test_validation_depth.py:test_identical_content_under_different_holdout_label_is_overlap",
     ],
 }
 EXPECTED_STATUS = {"ValidationPassed": "pass", "ValidationPartial": "partial", "ValidationBlocked": "fail"}
@@ -673,7 +673,7 @@ def _rollout(semantics: str):
         plan["depth"]["model_semantics"] = semantics
         plan["depth"]["predictive_rollout"] = {
             "rollout_id": "conformance_rollout",
-            "producer_receipt_id": "conformance-producer",
+            "producer_id": "conformance-producer",
             "model_identity": ref("pump_model", "model/pump_loop_hierarchy.yaml"),
             "training": [ref("training_series", "observed/clean_observed_series.yaml", ["baseline_case", "speed_ramp_case_01", "speed_ramp_case_02"])],
             "prediction_series": ref("prediction", "observed/predicted_future_series.yaml"),

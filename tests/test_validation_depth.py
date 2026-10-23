@@ -35,32 +35,32 @@ def _clean_plan(pump: Path) -> Path:
 
 def test_passing_depth_preserves_exact_pointwise_scope() -> None:
     report = validate_model_dataset(_clean_plan(PUMP))
-    receipt = report.depth
+    result = report.depth
 
     assert report.ok
-    assert receipt["artifact_kind"] == "physicsguard_validation_depth"
-    assert receipt["status"] == "pass"
-    assert receipt["dataset"]["status"] == "current"
-    assert {item["identity_id"] for item in receipt["dataset"]["files"]} == {
+    assert result["artifact_kind"] == "physicsguard_validation_depth"
+    assert result["status"] == "pass"
+    assert result["dataset"]["status"] == "current"
+    assert {item["identity_id"] for item in result["dataset"]["files"]} == {
         "clean_csv",
         "clean_observed_series",
     }
-    assert receipt["mapping"]["status"] == "pass"
-    assert receipt["time"]["declared_scope"] == "scenario_set"
-    assert receipt["time"]["observed_scope"] == "scenario_set"
-    assert receipt["time"]["point_count"] == 3
-    assert receipt["scenarios"]["perturbation_count"] == 1
-    assert receipt["split"]["status"] == "not_applicable"
-    assert len(receipt["residual_series"]["points"]) == 3
-    assert receipt["residual_series"]["aggregate"]["evaluated_point_count"] == 3
-    assert receipt["envelopes"]["aggregate"]["violation_count"] == 0
-    assert "commercial" in receipt["unsafe_claim_boundary"]
+    assert result["mapping"]["status"] == "pass"
+    assert result["time"]["declared_scope"] == "scenario_set"
+    assert result["time"]["observed_scope"] == "scenario_set"
+    assert result["time"]["point_count"] == 3
+    assert result["scenarios"]["perturbation_count"] == 1
+    assert result["split"]["status"] == "not_applicable"
+    assert len(result["residual_series"]["points"]) == 3
+    assert result["residual_series"]["aggregate"]["evaluated_point_count"] == 3
+    assert result["envelopes"]["aggregate"]["violation_count"] == 0
+    assert "commercial" in result["unsafe_claim_boundary"]
     assert ModelDatasetValidationReportSpec.model_validate(report.to_dict()).status == "pass"
 
 
 @pytest.mark.parametrize("drop_temperatures", [False, True])
 def test_series_required_variables_are_checked_after_native_derivation(drop_temperatures) -> None:
-    from physicsguard.core.validation_depth import _residual_series_receipt
+    from physicsguard.core.validation_depth import _residual_series_result
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
     from physicsguard.schema.validation_depth import ObservedSeriesSpec
@@ -79,17 +79,17 @@ def test_series_required_variables_are_checked_after_native_derivation(drop_temp
     ]})
     before = series.model_dump(mode="json")
     findings = []
-    receipt, _ = _residual_series_receipt(spec, series, findings)
+    result, _ = _residual_series_result(spec, series, findings)
     assert series.model_dump(mode="json") == before
     if drop_temperatures:
-        assert receipt["status"] == "blocked"
-        assert receipt["aggregate"]["missing_point_count"] == 1
+        assert result["status"] == "blocked"
+        assert result["aggregate"]["missing_point_count"] == 1
         assert any(item["type"] == "residual_series_required_values_missing" for item in findings)
     else:
-        assert receipt["status"] == "pass"
-        assert receipt["aggregate"]["evaluated_point_count"] == 1
-        assert "heat.Q_out_W" in receipt["points"][0]["derived_variables"]
-        assert receipt["points"][0]["checked_residuals"]
+        assert result["status"] == "pass"
+        assert result["aggregate"]["evaluated_point_count"] == 1
+        assert "heat.Q_out_W" in result["points"][0]["derived_variables"]
+        assert result["points"][0]["checked_residuals"]
 
 
 def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> None:
@@ -192,14 +192,14 @@ def test_short_hard_envelope_violation_cannot_hide_behind_series_aggregate(tmp_p
     _write(plan_path, plan)
 
     report = validate_model_dataset(plan_path)
-    receipt = report.depth
+    result = report.depth
 
     assert report.status == "fail"
-    assert receipt["envelopes"]["status"] == "blocked"
-    assert receipt["envelopes"]["aggregate"]["hard_violation_count"] == 1
-    assert receipt["envelopes"]["violations"][0]["point_id"] == "speed_ramp_t1"
-    assert receipt["residual_series"]["audit_pass"] is False
-    assert receipt["envelopes"]["violation_intervals"]
+    assert result["envelopes"]["status"] == "blocked"
+    assert result["envelopes"]["aggregate"]["hard_violation_count"] == 1
+    assert result["envelopes"]["violations"][0]["point_id"] == "speed_ramp_t1"
+    assert result["residual_series"]["audit_pass"] is False
+    assert result["envelopes"]["violation_intervals"]
     assert any(item["type"] == "physical_envelope_interval_violation" for item in report.findings)
 
 

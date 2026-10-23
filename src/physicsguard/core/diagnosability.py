@@ -43,8 +43,7 @@ def evaluate_interval_residual(
         status = "indeterminate"
         reason = "observed_interval_crosses_acceptance_boundary"
     return {
-        "artifact_kind": "physicsguard_interval_residual_receipt",
-        "receipt_version": "1.0",
+        "artifact_kind": "physicsguard_interval_residual_result",
         "residual_id": residual.residual_id,
         "status": status,
         "reason_code": reason,
@@ -144,8 +143,7 @@ def evaluate_diagnosability(
     else:
         status = "indistinguishable"
     return {
-        "artifact_kind": "physicsguard_diagnosability_receipt",
-        "receipt_version": "1.0",
+        "artifact_kind": "physicsguard_diagnosability_result",
         "diagnosis_id": request.diagnosis_id,
         "status": status,
         "viable_hypothesis_ids": viable,

@@ -6,7 +6,7 @@ import json
 import math
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.variable import ensure_non_empty
 
@@ -74,7 +74,7 @@ class PredictiveRolloutPlanSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     rollout_id: str
-    producer_receipt_id: str | None = None
+    producer_id: str | None = Field(default=None, validation_alias=AliasChoices("producer_id", "producer_receipt_id"))
     model_identity: RolloutArtifactIdentitySpec
     training: list[RolloutArtifactIdentitySpec]
     prediction_series: RolloutArtifactIdentitySpec
@@ -94,7 +94,7 @@ class PredictiveRolloutPlanSpec(BaseModel):
     def _text_valid(cls, value: str, info) -> str:
         return ensure_non_empty(value, info.field_name)
 
-    @field_validator("producer_receipt_id")
+    @field_validator("producer_id")
     @classmethod
     def _optional_text_valid(cls, value: str | None, info) -> str | None:
         return None if value is None else ensure_non_empty(value, info.field_name)
@@ -142,58 +142,9 @@ class PredictiveRolloutPlanSpec(BaseModel):
         return self
 
 
-class PredictiveIdentityReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    identity_id: str
-    path: str
-    status: Literal["current", "missing"]
-    case_ids: list[str] = Field(default_factory=list)
-
-
-class PredictiveMetricsReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    aligned_step_count: int
-    worst_step_normalized_error: float | None = None
-    accumulated_normalized_error: float | None = None
-    lag_steps: int | None = None
-    phase_error: float | None = None
-    drift: float | None = None
-    error_growth: float | None = None
-    stability_pass: bool
-    threshold_results: dict[str, bool] = Field(default_factory=dict)
-
-
-class PredictiveRolloutReceiptSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    artifact_kind: Literal["physicsguard_predictive_rollout_receipt"]
-    receipt_version: Literal["1.0"] = "1.0"
-    status: PredictiveStatus
-    model_semantics: ModelSemantics
-    rollout_id: str | None = None
-    producer_receipt_id: str | None = None
-    model_identity: PredictiveIdentityReceiptSpec | None = None
-    training: list[PredictiveIdentityReceiptSpec] = Field(default_factory=list)
-    prediction_series: PredictiveIdentityReceiptSpec | None = None
-    future_holdout_series: PredictiveIdentityReceiptSpec | None = None
-    overlapping_paths: list[str] = Field(default_factory=list)
-    overlapping_contents: list[str] = Field(default_factory=list)
-    overlapping_case_ids: list[str] = Field(default_factory=list)
-    alignment_gaps: list[str] = Field(default_factory=list)
-    metrics: PredictiveMetricsReceiptSpec
-    finding_codes: list[str] = Field(default_factory=list)
-    covered_horizon: dict[str, Any] = Field(default_factory=dict)
-    claim_boundary: str
-
-
 __all__ = [
     "ModelSemantics",
-    "PredictiveIdentityReceiptSpec",
-    "PredictiveMetricsReceiptSpec",
     "PredictiveRolloutPlanSpec",
-    "PredictiveRolloutReceiptSpec",
     "PredictiveStatus",
     "PredictiveThresholdsSpec",
     "RolloutArtifactIdentitySpec",

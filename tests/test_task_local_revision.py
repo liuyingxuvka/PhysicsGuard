@@ -110,8 +110,8 @@ def _observation(**overrides) -> DiagnosticObservationSpec:
     return DiagnosticObservationSpec.model_validate(data)
 
 
-def test_removed_receipt_fields_are_rejected(tmp_path: Path) -> None:
-    for key in ("native_depth_receipt", "blueprint", "coverage", "predecessor"):
+def test_removed_result_fields_are_rejected(tmp_path: Path) -> None:
+    for key in ("native_depth_result", "blueprint", "coverage", "predecessor"):
         data = _plan_data(_write_model(tmp_path))
         data[key] = None
         with pytest.raises(ValidationError):

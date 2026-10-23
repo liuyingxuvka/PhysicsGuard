@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.validation_adequacy import evaluate_validation_adequacy_artifacts
 from physicsguard.core.test_file_contract import contract_role_matrix, contract_field_mappings, resolve_test_file_contract
-from physicsguard.core.validation_depth import _residual_series_receipt
+from physicsguard.core.validation_depth import _residual_series_result
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_series
 from physicsguard.io.test_file_contract_loader import (
@@ -208,19 +208,19 @@ def _representative_parameter_case(sample_count: int = 32):
     )
 
 
-def test_current_fixture_has_target_owned_deep_adequacy_receipt() -> None:
+def test_current_fixture_has_target_owned_deep_adequacy_result() -> None:
     report = validate_model_dataset(PUMP / "validation" / "clean_validation_plan.yaml")
-    receipt = report.depth["adequacy"]
+    result = report.depth["adequacy"]
     assert report.ok
-    assert receipt["status"] == "pass"
-    assert receipt["universe"]["available_point_count"] == 3
-    assert receipt["universe"]["selected_point_count"] == 3
-    assert receipt["universe"]["validated_point_count"] == 3
-    assert receipt["temporal"]["covered_strata"] == ["end", "middle", "start"]
-    assert receipt["missing_critical_parameters"] == []
-    assert receipt["universe"]["available_parameter_ids"] == ["pump_signal_map.a"]
-    assert receipt["universe"]["validated_parameter_ids"] == ["pump_signal_map.a"]
-    parameter = receipt["per_parameter"][0]
+    assert result["status"] == "pass"
+    assert result["universe"]["available_point_count"] == 3
+    assert result["universe"]["selected_point_count"] == 3
+    assert result["universe"]["validated_point_count"] == 3
+    assert result["temporal"]["covered_strata"] == ["end", "middle", "start"]
+    assert result["missing_critical_parameters"] == []
+    assert result["universe"]["available_parameter_ids"] == ["pump_signal_map.a"]
+    assert result["universe"]["validated_parameter_ids"] == ["pump_signal_map.a"]
+    parameter = result["per_parameter"][0]
     assert parameter["parameter_id"] == "pump_signal_map.a"
     assert parameter["temporal_behavior"] == "static"
     assert parameter["availability_source_id"] is None
@@ -281,7 +281,7 @@ def test_sensitive_time_varying_parameter_with_effectless_native_replay_is_block
         }
     )
     findings: list[dict[str, object]] = []
-    residual, _ = _residual_series_receipt(
+    residual, _ = _residual_series_result(
         audit,
         zero_relation,
         findings,
@@ -301,11 +301,11 @@ def test_sensitive_time_varying_parameter_with_effectless_native_replay_is_block
         plan=plan,
         audit_spec=audit,
         series=zero_relation,
-        residual_receipt=residual,
+        residual_result=residual,
         mapping_edges=bindings,
     )
-    assert result.receipt["per_parameter"][0]["contribution_status"] == "blocked"
-    assert result.receipt["status"] == "partial"
+    assert result.result["per_parameter"][0]["contribution_status"] == "blocked"
+    assert result.result["status"] == "partial"
     assert "time_varying_parameter_model_contribution_missing" in {
         item["type"] for item in result.findings
     }
@@ -370,7 +370,7 @@ def test_verified_non_sensitive_parameter_requires_native_ceiling_and_bounded_di
         }
     )
     findings: list[dict[str, object]] = []
-    residual, _ = _residual_series_receipt(
+    residual, _ = _residual_series_result(
         audit,
         zero_relation,
         findings,
@@ -389,14 +389,14 @@ def test_verified_non_sensitive_parameter_requires_native_ceiling_and_bounded_di
         plan=bounded_plan,
         audit_spec=audit,
         series=zero_relation,
-        residual_receipt=residual,
+        residual_result=residual,
         mapping_edges=bindings,
     )
-    parameter = result.receipt["per_parameter"][0]
+    parameter = result.result["per_parameter"][0]
     assert parameter["contribution_status"] == "verified_non_sensitive"
     assert parameter["non_sensitive_reason"] == policy.non_sensitive_reason
     assert parameter["non_sensitive_claim_boundary"] == policy.non_sensitive_claim_boundary
-    assert result.receipt["status"] == "pass"
+    assert result.result["status"] == "pass"
 
 
 def test_three_distributed_points_from_1000_still_fail_dynamic_floor() -> None:
@@ -447,15 +447,15 @@ def test_three_distributed_points_from_1000_still_fail_dynamic_floor() -> None:
         plan=plan,
         audit_spec=audit,
         series=sampled,
-        residual_receipt=_residual(sampled.points),
+        residual_result=_residual(sampled.points),
         mapping_edges=bindings,
     )
-    floor = result.receipt["universe"]["selection_floor"]
-    parameter = result.receipt["per_parameter"][0]
+    floor = result.result["universe"]["selection_floor"]
+    parameter = result.result["per_parameter"][0]
     assert floor["universal_minimum_count"] == 32
     assert floor["effective_minimum_count"] == 32
     assert parameter["coverage_floor"]["effective_minimum_count"] == 32
-    assert result.receipt["status"] == "partial"
+    assert result.result["status"] == "partial"
     assert "selected_point_floor_not_met" in {item["type"] for item in result.findings}
 
 
@@ -470,12 +470,12 @@ def test_dynamic_representative_parameter_can_pass_without_full_1000_rows() -> N
         plan=plan,
         audit_spec=audit,
         series=series,
-        residual_receipt=_residual(series.points),
+        residual_result=_residual(series.points),
         mapping_edges=bindings,
     )
-    parameter = result.receipt["per_parameter"][0]
-    assert result.receipt["status"] == "pass"
-    assert result.receipt["universe"]["selected_point_count"] == 32
+    parameter = result.result["per_parameter"][0]
+    assert result.result["status"] == "pass"
+    assert result.result["universe"]["selected_point_count"] == 32
     assert parameter["available_point_count"] == 1000
     assert parameter["validated_point_count"] == 32
     assert parameter["coverage_floor"]["effective_minimum_count"] == 32
@@ -489,7 +489,7 @@ def test_parameter_floor_uses_strictest_universal_project_and_convergence_term()
         {
             "minimum_valid_points": 35,
             "minimum_valid_ratio": 0.035,
-            "convergence_evidence_id": "parameter_convergence_receipt_v1",
+            "convergence_evidence_id": "parameter_convergence_result_v1",
             "convergence_minimum_valid_points": 40,
             "convergence_minimum_valid_ratio": 0.04,
         }
@@ -503,15 +503,15 @@ def test_parameter_floor_uses_strictest_universal_project_and_convergence_term()
         plan=plan,
         audit_spec=audit,
         series=series,
-        residual_receipt=_residual(series.points),
+        residual_result=_residual(series.points),
         mapping_edges=bindings,
     )
-    floor = result.receipt["per_parameter"][0]["coverage_floor"]
+    floor = result.result["per_parameter"][0]["coverage_floor"]
     assert floor["universal_minimum_count"] == 32
     assert floor["project_minimum_count"] == 35
     assert floor["convergence_minimum_count"] == 40
     assert floor["effective_minimum_count"] == 40
-    assert result.receipt["per_parameter"][0]["status"] == "blocked"
+    assert result.result["per_parameter"][0]["status"] == "blocked"
 
 
 def test_disconnected_parameter_evidence_cannot_pass_deep_coverage() -> None:
@@ -525,13 +525,13 @@ def test_disconnected_parameter_evidence_cannot_pass_deep_coverage() -> None:
         plan=plan,
         audit_spec=audit,
         series=series,
-        residual_receipt=_residual(
+        residual_result=_residual(
             series.points,
             blocked_parameters={"pump_signal_map.a"},
         ),
         mapping_edges=bindings,
     )
-    parameter = result.receipt["per_parameter"][0]
+    parameter = result.result["per_parameter"][0]
     assert parameter["validated_point_count"] == 32
     assert parameter["contribution_status"] == "blocked"
     assert parameter["status"] == "blocked"
@@ -567,11 +567,11 @@ def test_1000_point_endpoints_are_blocked() -> None:
         plan=plan,
         audit_spec=audit,
         series=shallow,
-        residual_receipt=_residual(shallow.points),
+        residual_result=_residual(shallow.points),
         mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
-    assert result.receipt["status"] == "partial"
+    assert result.result["status"] == "partial"
     assert "selected_point_floor_not_met" in codes
     assert "temporal_strata_missing" in codes
 
@@ -592,7 +592,7 @@ def test_duplicate_timestamp_and_missing_transient_are_blocked() -> None:
         plan=plan,
         audit_spec=audit,
         series=shallow,
-        residual_receipt=_residual(shallow.points),
+        residual_result=_residual(shallow.points),
         mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
@@ -635,7 +635,7 @@ def test_long_signal_history_requires_gap_tags_modes_and_source_lineage() -> Non
         plan=plan,
         audit_spec=audit,
         series=shallow,
-        residual_receipt=_residual(shallow.points),
+        residual_result=_residual(shallow.points),
         mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
@@ -658,7 +658,7 @@ def test_all_declared_sampling_modes_execute_the_native_adequacy_gate() -> None:
             payload.update(
                 {
                     "adaptive_converged": True,
-                    "adaptive_evidence_id": "fixture_convergence_receipt_v1",
+                    "adaptive_evidence_id": "fixture_convergence_result_v1",
                     "adaptive_minimum_selected_points": 3,
                     "adaptive_minimum_selected_ratio": 1.0,
                 }
@@ -673,11 +673,11 @@ def test_all_declared_sampling_modes_execute_the_native_adequacy_gate() -> None:
             plan=plan,
             audit_spec=audit,
             series=series,
-            residual_receipt=_residual(series.points),
+            residual_result=_residual(series.points),
             mapping_edges=bindings,
         )
-        assert result.receipt["status"] == "pass", mode
-        assert result.receipt["sampling_mode"] == mode
+        assert result.result["status"] == "pass", mode
+        assert result.result["sampling_mode"] == mode
 
 
 def test_omitted_sampling_mode_defaults_to_full_sequence_validation() -> None:
@@ -742,15 +742,15 @@ def test_time_varying_parameter_cannot_use_one_point_from_long_series() -> None:
         plan=plan,
         audit_spec=audit,
         series=sparse_parameter_series,
-        residual_receipt=_residual(sparse_parameter_series.points),
+        residual_result=_residual(sparse_parameter_series.points),
         mapping_edges=bindings,
     )
     parameter = next(
         item
-        for item in result.receipt["per_parameter"]
+        for item in result.result["per_parameter"]
         if item["parameter_id"] == "pump_signal_map.a"
     )
-    assert result.receipt["universe"]["available_point_count"] == 1000
+    assert result.result["universe"]["available_point_count"] == 1000
     assert parameter["valid_point_count"] == 1
     assert parameter["status"] == "blocked"
     codes = {item["type"] for item in result.findings}
@@ -813,10 +813,10 @@ def test_1000_point_parameter_endpoints_do_not_count_as_deep_history() -> None:
         plan=plan,
         audit_spec=audit,
         series=sparse,
-        residual_receipt=_residual(sparse.points),
+        residual_result=_residual(sparse.points),
         mapping_edges=bindings,
     )
-    parameter = result.receipt["per_parameter"][0]
+    parameter = result.result["per_parameter"][0]
     assert parameter["available_point_count"] == 1000
     assert parameter["unique_selected_row_count"] == 2
     assert parameter["missing_universal_strata"] == ["middle"]
@@ -882,10 +882,10 @@ def test_same_early_stage_points_cannot_impersonate_early_middle_late() -> None:
         plan=plan,
         audit_spec=audit,
         series=sampled,
-        residual_receipt=_residual(sampled.points),
+        residual_result=_residual(sampled.points),
         mapping_edges=bindings,
     )
-    parameter = result.receipt["per_parameter"][0]
+    parameter = result.result["per_parameter"][0]
     assert parameter["validated_point_count"] == 3
     assert parameter["missing_universal_strata"] == ["late", "middle"]
     assert {row["stratum_id"] for row in parameter["required_strata_results"] if row["status"] == "blocked"} == {
@@ -1013,14 +1013,14 @@ def test_one_shallow_parameter_is_not_hidden_by_other_deep_parameters() -> None:
         plan=parameter_plan,
         audit_spec=parameter_audit,
         series=sampled,
-        residual_receipt=_residual(sampled.points),
+        residual_result=_residual(sampled.points),
         mapping_edges=[*signal_bindings, *parameter_bindings],
     )
-    by_id = {row["parameter_id"]: row for row in result.receipt["per_parameter"]}
-    assert result.receipt["universe"]["parameter_selection_ratio"] == 1.0
+    by_id = {row["parameter_id"]: row for row in result.result["per_parameter"]}
+    assert result.result["universe"]["parameter_selection_ratio"] == 1.0
     assert all(by_id[parameter_id]["status"] == "pass" for parameter_id in parameter_ids[:-1])
     assert by_id[parameter_ids[-1]]["status"] == "blocked"
-    assert parameter_ids[-1] in result.receipt["missing_critical_parameters"]
+    assert parameter_ids[-1] in result.result["missing_critical_parameters"]
 
 
 def test_10000_parameter_universe_with_only_two_bound_is_blocked() -> None:
@@ -1066,10 +1066,10 @@ def test_10000_parameter_universe_with_only_two_bound_is_blocked() -> None:
         plan=plan,
         audit_spec=parameter_audit,
         series=series,
-        residual_receipt=_residual(series.points),
+        residual_result=_residual(series.points),
         mapping_edges=[*signal_bindings, *parameter_bindings],
     )
-    universe = result.receipt["universe"]
+    universe = result.result["universe"]
     assert len(universe["available_parameter_ids"]) == 10_000
     assert universe["selected_parameter_ids"] == selected
     assert universe["parameter_selection_ratio"] == pytest.approx(2 / 10_000)
@@ -1090,13 +1090,13 @@ def test_parameter_universe_requires_static_or_time_varying_classification() -> 
         plan=plan,
         audit_spec=audit,
         series=series,
-        residual_receipt=_residual(series.points),
+        residual_result=_residual(series.points),
         mapping_edges=bindings,
     )
-    assert result.receipt["universe"]["available_parameter_ids"] == [
+    assert result.result["universe"]["available_parameter_ids"] == [
         "pump_signal_map.a"
     ]
-    assert result.receipt["missing_parameter_temporal_classifications"] == [
+    assert result.result["missing_parameter_temporal_classifications"] == [
         "pump_signal_map.a"
     ]
     assert "parameter_temporal_classification_missing" in {
@@ -1189,10 +1189,10 @@ def test_10000_signals_with_only_two_selected_are_blocked() -> None:
         plan=shallow_plan,
         audit_spec=shallow_audit,
         series=series,
-        residual_receipt=_residual(series.points),
+        residual_result=_residual(series.points),
     )
-    assert result.receipt["universe"]["available_signal_ids"][0].startswith("field:sig_")
-    assert result.receipt["universe"]["signal_selection_ratio"] == pytest.approx(2 / count)
+    assert result.result["universe"]["available_signal_ids"][0].startswith("field:sig_")
+    assert result.result["universe"]["signal_selection_ratio"] == pytest.approx(2 / count)
     assert "signal_coverage_ratio_not_met" in {item["type"] for item in result.findings}
 
 
@@ -1232,7 +1232,7 @@ def test_repeated_template_exclusions_are_blocked() -> None:
         plan=plan,
         audit_spec=audit,
         series=series,
-        residual_receipt=_residual(series.points),
+        residual_result=_residual(series.points),
         mapping_edges=bindings,
     )
     codes = {item["type"] for item in result.findings}
@@ -1267,15 +1267,15 @@ def test_conflicting_manifest_point_counts_fail_closed_on_larger_denominator() -
         plan=plan,
         audit_spec=audit,
         series=series,
-        residual_receipt=_residual(series.points),
+        residual_result=_residual(series.points),
         mapping_edges=bindings,
     )
 
     assert "manifest_point_count_mismatch" in {
         item["type"] for item in result.findings
     }
-    assert result.receipt["universe"]["available_point_count"] == 1000
-    assert result.receipt["universe"]["eligible_point_count"] == 1000
+    assert result.result["universe"]["available_point_count"] == 1000
+    assert result.result["universe"]["eligible_point_count"] == 1000
 
 
 def test_unwritten_floors_are_optional_and_timing_comes_from_manifest():

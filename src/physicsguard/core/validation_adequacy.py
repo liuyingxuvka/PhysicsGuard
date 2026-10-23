@@ -22,14 +22,13 @@ from physicsguard.schema.validation_adequacy import (
     ANTI_DEGENERACY_FLOOR_ALGORITHM,
     FamilyQuotaPlanSpec,
     ValidationAdequacyPlanSpec,
-    ValidationAdequacyReceiptSpec,
 )
 from physicsguard.schema.validation_depth import ObservedSeriesSpec, ValidationDepthPlanSpec
 
 
 @dataclass(frozen=True)
 class ValidationAdequacyEvaluation:
-    receipt: dict[str, Any]
+    result: dict[str, Any]
     findings: list[dict[str, Any]]
 
 
@@ -40,13 +39,13 @@ def evaluate_validation_adequacy(
     base_dir: Path,
     audit_spec: HierarchicalAuditSpec,
     series: ObservedSeriesSpec | None,
-    residual_receipt: dict[str, Any],
+    residual_result: dict[str, Any],
 ) -> ValidationAdequacyEvaluation:
     """Load exact target artifacts and evaluate quantitative adequacy."""
 
     if depth.time_scope.claim_scope == "snapshot" and depth.adequacy is None:
         return ValidationAdequacyEvaluation(
-            receipt=_not_applicable_receipt(series, residual_receipt),
+            result=_not_applicable_result(series, residual_result),
             findings=[],
         )
     adequacy = depth.adequacy or ValidationAdequacyPlanSpec()
@@ -65,13 +64,13 @@ def evaluate_validation_adequacy(
         load_findings,
     )
     if manifest is None or role_matrix is None:
-        receipt = _blocked_empty_receipt(
+        result = _blocked_empty_result(
             series,
-            residual_receipt,
+            residual_result,
             [item["type"] for item in load_findings],
             depth.adequacy,
         )
-        return ValidationAdequacyEvaluation(receipt=receipt, findings=load_findings)
+        return ValidationAdequacyEvaluation(result=result, findings=load_findings)
 
     mapping_edges, _ = load_contract_field_mappings(plan, base_dir, load_findings)
 
@@ -84,11 +83,11 @@ def evaluate_validation_adequacy(
         plan=plan,
         audit_spec=audit_spec,
         series=series,
-        residual_receipt=residual_receipt,
+        residual_result=residual_result,
         mapping_edges=mapping_edges,
     )
     return ValidationAdequacyEvaluation(
-        receipt=result.receipt,
+        result=result.result,
         findings=[*load_findings, *result.findings],
     )
 
@@ -159,7 +158,7 @@ def evaluate_validation_adequacy_artifacts(
     plan: ModelValidationPlanSpec,
     audit_spec: HierarchicalAuditSpec,
     series: ObservedSeriesSpec | None,
-    residual_receipt: dict[str, Any],
+    residual_result: dict[str, Any],
     mapping_edges: Iterable[MappingEdgeSpec] = (),
 ) -> ValidationAdequacyEvaluation:
     """Pure evaluator used by the runtime integration and shallow-negative tests."""
@@ -182,7 +181,7 @@ def evaluate_validation_adequacy_artifacts(
     )
     residual_status_by_point = {
         str(item.get("point_id")): str(item.get("status"))
-        for item in residual_receipt.get("points", [])
+        for item in residual_result.get("points", [])
         if item.get("point_id") is not None
     }
     role_by_source = {item.source_id: item for item in role_matrix.roles}
@@ -272,7 +271,7 @@ def evaluate_validation_adequacy_artifacts(
     covered_parameters = sorted(set(available_parameter_ids) & covered_model_targets)
     contribution_by_parameter = {
         str(item.get("parameter_id")): item
-        for item in residual_receipt.get("parameter_contributions", [])
+        for item in residual_result.get("parameter_contributions", [])
         if item.get("parameter_id") is not None
     }
 
@@ -753,7 +752,7 @@ def evaluate_validation_adequacy_artifacts(
             )
         )
 
-    temporal = _temporal_receipt(
+    temporal = _temporal_result(
         adequacy,
         claim_scope,
         dataset_identity_ids,
@@ -767,7 +766,7 @@ def evaluate_validation_adequacy_artifacts(
         for point in valid_points
         if point.source_identity_id is not None and point.source_row_index is not None
     }
-    residual_points = residual_receipt.get("points", [])
+    residual_points = residual_result.get("points", [])
     evaluated_points = sum(1 for item in residual_points if item.get("status") in {"pass", "fail"})
     validated_points = sum(1 for item in residual_points if item.get("status") == "pass")
     point_ratio = _ratio(len(selected_rows), eligible_points)
@@ -838,7 +837,7 @@ def evaluate_validation_adequacy_artifacts(
     validated_signal_ids &= set(selected_signal_ids)
 
     families = [
-        _family_receipt(quota, per_signal_pass, set(validated_parameter_ids), covered_model_targets, findings)
+        _family_result(quota, per_signal_pass, set(validated_parameter_ids), covered_model_targets, findings)
         for quota in adequacy.family_quotas
     ]
     subsystem_families = []
@@ -918,9 +917,8 @@ def evaluate_validation_adequacy_artifacts(
         "exclusion_ratio": exclusion_ratio,
         "selection_floor": selection_floor,
     }
-    receipt = {
-        "artifact_kind": "physicsguard_validation_adequacy_receipt",
-        "receipt_version": "1.0",
+    result = {
+        "artifact_kind": "physicsguard_validation_adequacy_result",
         "status": status,
         "sampling_mode": adequacy.sampling_mode,
         "threshold_source": adequacy.threshold_source,
@@ -948,11 +946,10 @@ def evaluate_validation_adequacy_artifacts(
             "resolved anti-degeneracy floors, native parameter-contribution counterfactuals, families, and declared thresholds"
         ),
     }
-    validated = ValidationAdequacyReceiptSpec.model_validate(receipt).model_dump(mode="json")
-    return ValidationAdequacyEvaluation(receipt=validated, findings=findings)
+    return ValidationAdequacyEvaluation(result=_complete_adequacy_result(result), findings=findings)
 
 
-def _temporal_receipt(
+def _temporal_result(
     adequacy: ValidationAdequacyPlanSpec,
     claim_scope: str,
     dataset_identity_ids: set[str],
@@ -1064,7 +1061,7 @@ def _temporal_receipt(
     }
 
 
-def _family_receipt(
+def _family_result(
     quota: FamilyQuotaPlanSpec,
     per_signal_pass: dict[str, bool],
     covered_parameters: set[str],
@@ -1092,28 +1089,28 @@ def _family_receipt(
     }
 
 
-def _not_applicable_receipt(series, residual_receipt) -> dict[str, Any]:
+def _not_applicable_result(series, residual_result) -> dict[str, Any]:
     selected = len(series.points) if series is not None else 0
-    evaluated = sum(1 for item in residual_receipt.get("points", []) if item.get("status") in {"pass", "fail"})
+    evaluated = sum(1 for item in residual_result.get("points", []) if item.get("status") in {"pass", "fail"})
     payload = _empty_universe(selected, evaluated)
-    return ValidationAdequacyReceiptSpec.model_validate(
+    return _complete_adequacy_result(
         {
-            "artifact_kind": "physicsguard_validation_adequacy_receipt",
+            "artifact_kind": "physicsguard_validation_adequacy_result",
             "status": "not_applicable",
             "universe": payload,
             "temporal": _empty_temporal("not_applicable"),
             "claim_boundary": "snapshot-only evidence; no broad temporal, signal-family, or predictive adequacy claim",
         }
-    ).model_dump(mode="json")
+    )
 
 
-def _blocked_empty_receipt(series, residual_receipt, codes, adequacy=None) -> dict[str, Any]:
+def _blocked_empty_result(series, residual_result, codes, adequacy=None) -> dict[str, Any]:
     selected = len(series.points) if series is not None else 0
-    evaluated = sum(1 for item in residual_receipt.get("points", []) if item.get("status") in {"pass", "fail"})
+    evaluated = sum(1 for item in residual_result.get("points", []) if item.get("status") in {"pass", "fail"})
     payload = _empty_universe(selected, evaluated)
-    return ValidationAdequacyReceiptSpec.model_validate(
+    return _complete_adequacy_result(
         {
-            "artifact_kind": "physicsguard_validation_adequacy_receipt",
+            "artifact_kind": "physicsguard_validation_adequacy_result",
             "status": "blocked",
             "sampling_mode": adequacy.sampling_mode if adequacy else None,
             "threshold_source": adequacy.threshold_source if adequacy else None,
@@ -1122,7 +1119,7 @@ def _blocked_empty_receipt(series, residual_receipt, codes, adequacy=None) -> di
             "finding_codes": sorted(set(codes)),
             "claim_boundary": "adequacy could not be established from current target-owned artifacts",
         }
-    ).model_dump(mode="json")
+    )
 
 
 def _empty_universe(selected: int, evaluated: int) -> dict[str, Any]:
@@ -1489,3 +1486,7 @@ __all__ = [
     "evaluate_validation_adequacy",
     "evaluate_validation_adequacy_artifacts",
 ]
+
+
+def _complete_adequacy_result(payload):
+    return {**{'sampling_mode': None, 'threshold_source': None, 'selection_policy_id': None, 'selection_rationale': None, 'per_signal': [], 'per_parameter': [], 'signal_time_matrix': [], 'families': [], 'subsystem_families': [], 'missing_critical_signals': [], 'missing_critical_parameters': [], 'missing_parameter_temporal_classifications': [], 'critical_point_ids': [], 'critical_signal_ids': [], 'critical_parameter_ids': [], 'repeated_exclusion_reasons': {}, 'templated_exclusion_reasons': [], 'finding_codes': []}, **payload}

@@ -11,7 +11,6 @@ from physicsguard.io.observation_loader import load_observed_series
 from physicsguard.schema.predictive_rollout import (
     ModelSemantics,
     PredictiveRolloutPlanSpec,
-    PredictiveRolloutReceiptSpec,
     RolloutArtifactIdentitySpec,
 )
 from physicsguard.schema.validation_depth import ObservedSeriesSpec
@@ -19,7 +18,7 @@ from physicsguard.schema.validation_depth import ObservedSeriesSpec
 
 @dataclass(frozen=True)
 class PredictiveRolloutEvaluation:
-    receipt: dict[str, Any]
+    result: dict[str, Any]
     findings: list[dict[str, Any]]
 
 
@@ -34,7 +33,7 @@ def evaluate_predictive_rollout(
     if rollout is None:
         status = "not_authorized" if model_semantics == "pointwise" else "not_declared"
         return PredictiveRolloutEvaluation(
-            receipt=_empty_receipt(model_semantics, status),
+            result=_empty_result(model_semantics, status),
             findings=[],
         )
     if model_semantics != "stateful_dynamic":
@@ -44,15 +43,15 @@ def evaluate_predictive_rollout(
             "pointwise residual evidence cannot authorize trajectory prediction",
         )
         return PredictiveRolloutEvaluation(
-            receipt=_empty_receipt(model_semantics, "blocked", [finding["type"]]),
+            result=_empty_result(model_semantics, "blocked", [finding["type"]]),
             findings=[finding],
         )
 
     findings: list[dict[str, Any]] = []
-    model_identity = _identity_receipt(rollout.model_identity, base_dir)
-    training = [_identity_receipt(item, base_dir) for item in rollout.training]
-    prediction_identity = _identity_receipt(rollout.prediction_series, base_dir)
-    holdout_identity = _identity_receipt(rollout.future_holdout_series, base_dir)
+    model_identity = _identity_result(rollout.model_identity, base_dir)
+    training = [_identity_result(item, base_dir) for item in rollout.training]
+    prediction_identity = _identity_result(rollout.prediction_series, base_dir)
+    holdout_identity = _identity_result(rollout.future_holdout_series, base_dir)
     identities = [model_identity, *training, prediction_identity, holdout_identity]
     if any(item["status"] != "current" for item in identities):
         findings.append(_finding("error", "predictive_artifact_missing", "one or more predictive artifacts are missing"))
@@ -91,13 +90,12 @@ def evaluate_predictive_rollout(
     )
     findings.extend(metric_findings)
     status = "blocked" if any(item["severity"] == "error" for item in findings) else "pass"
-    receipt = {
-        "artifact_kind": "physicsguard_predictive_rollout_receipt",
-        "receipt_version": "1.0",
+    result = {
+        "artifact_kind": "physicsguard_predictive_rollout_result",
         "status": status,
         "model_semantics": model_semantics,
         "rollout_id": rollout.rollout_id,
-        "producer_receipt_id": rollout.producer_receipt_id,
+        "producer_id": rollout.producer_id,
         "model_identity": model_identity,
         "training": training,
         "prediction_series": prediction_identity,
@@ -119,12 +117,11 @@ def evaluate_predictive_rollout(
         },
         "claim_boundary": (
             "prediction is authorized only for the exact model, "
-            + ("producer receipt, " if rollout.producer_receipt_id else "")
-            + "initial state, step, future holdout, targets, horizon, scales, and thresholds in this receipt"
+            + ("producer identity, " if rollout.producer_id else "")
+            + "initial state, step, future holdout, targets, horizon, scales, and thresholds in this result"
         ),
     }
-    validated = PredictiveRolloutReceiptSpec.model_validate(receipt).model_dump(mode="json")
-    return PredictiveRolloutEvaluation(receipt=validated, findings=findings)
+    return PredictiveRolloutEvaluation(result=_complete_predictive_result(result), findings=findings)
 
 
 def evaluate_predictive_rollout_artifacts(
@@ -250,7 +247,7 @@ def _step_alignment_gaps(times: list[float], step_size: float) -> list[str]:
     return []
 
 
-def _identity_receipt(reference: RolloutArtifactIdentitySpec, base_dir: Path) -> dict[str, Any]:
+def _identity_result(reference: RolloutArtifactIdentitySpec, base_dir: Path) -> dict[str, Any]:
     path = _resolve_path(base_dir, reference.path)
     return {
         "identity_id": reference.identity_id,
@@ -268,17 +265,17 @@ def _load_series(reference, base_dir, findings, code):
         return None
 
 
-def _empty_receipt(model_semantics: ModelSemantics, status: str, codes=None) -> dict[str, Any]:
-    return PredictiveRolloutReceiptSpec.model_validate(
+def _empty_result(model_semantics: ModelSemantics, status: str, codes=None) -> dict[str, Any]:
+    return _complete_predictive_result(
         {
-            "artifact_kind": "physicsguard_predictive_rollout_receipt",
+            "artifact_kind": "physicsguard_predictive_rollout_result",
             "status": status,
             "model_semantics": model_semantics,
             "metrics": _empty_metrics(),
             "finding_codes": codes or [],
-            "claim_boundary": "no predictive trajectory is authorized by this receipt",
+            "claim_boundary": "no predictive trajectory is authorized by this result",
         }
-    ).model_dump(mode="json")
+    )
 
 
 def _empty_metrics() -> dict[str, Any]:
@@ -317,3 +314,7 @@ __all__ = [
     "evaluate_predictive_rollout",
     "evaluate_predictive_rollout_artifacts",
 ]
+
+
+def _complete_predictive_result(payload):
+    return {**{'rollout_id': None, 'producer_id': None, 'model_identity': None, 'training': [], 'prediction_series': None, 'future_holdout_series': None, 'overlapping_paths': [], 'overlapping_contents': [], 'overlapping_case_ids': [], 'alignment_gaps': [], 'finding_codes': [], 'covered_horizon': {}}, **payload}

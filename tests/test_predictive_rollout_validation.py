@@ -29,7 +29,7 @@ def _plan() -> PredictiveRolloutPlanSpec:
     return PredictiveRolloutPlanSpec.model_validate(
         {
             "rollout_id": "pump_loop_future_rollout_v1",
-            "producer_receipt_id": "fixture-stateful-producer-receipt-v1",
+            "producer_id": "fixture-stateful-producer-result-v1",
             "model_identity": _ref("pump_model", "model/pump_loop_hierarchy.yaml"),
             "training": [
                 _ref(
@@ -66,9 +66,9 @@ def _plan() -> PredictiveRolloutPlanSpec:
 
 def test_passing_future_holdout_rollout_has_all_metrics() -> None:
     result = evaluate_predictive_rollout("stateful_dynamic", _plan(), base_dir=PUMP)
-    assert result.receipt["status"] == "pass"
-    assert "producer receipt" in result.receipt["claim_boundary"]
-    assert result.receipt["metrics"] == {
+    assert result.result["status"] == "pass"
+    assert "producer identity" in result.result["claim_boundary"]
+    assert result.result["metrics"] == {
         "aligned_step_count": 3,
         "worst_step_normalized_error": 0.0,
         "accumulated_normalized_error": 0.0,
@@ -91,18 +91,18 @@ def test_passing_future_holdout_rollout_has_all_metrics() -> None:
 
 def test_pointwise_prediction_is_forbidden() -> None:
     result = evaluate_predictive_rollout("pointwise", _plan(), base_dir=PUMP)
-    assert result.receipt["status"] == "blocked"
-    assert "pointwise_prediction_forbidden" in result.receipt["finding_codes"]
+    assert result.result["status"] == "blocked"
+    assert "pointwise_prediction_forbidden" in result.result["finding_codes"]
 
 
 def test_training_future_identity_overlap_is_blocked() -> None:
     plan = _plan()
     overlap = plan.model_copy(update={"future_holdout_series": plan.training[0]})
     result = evaluate_predictive_rollout("stateful_dynamic", overlap, base_dir=PUMP)
-    assert result.receipt["status"] == "blocked"
-    assert result.receipt["overlapping_paths"]
-    assert result.receipt["overlapping_contents"] == ["training_series"]
-    assert result.receipt["overlapping_case_ids"]
+    assert result.result["status"] == "blocked"
+    assert result.result["overlapping_paths"]
+    assert result.result["overlapping_contents"] == ["training_series"]
+    assert result.result["overlapping_case_ids"]
 
 
 def test_timestamp_alignment_failure_is_blocked() -> None:
@@ -163,26 +163,42 @@ def test_same_stat_training_rewrite_is_rejected_as_content_overlap(tmp_path: Pat
         "training": [plan.training[0].model_copy(update={"path": str(training)})],
     })
     separate = evaluate_predictive_rollout("stateful_dynamic", plan, base_dir=PUMP)
-    assert separate.receipt["status"] == "pass"
-    assert separate.receipt["overlapping_contents"] == []
-    assert "predictive_training_future_overlap" not in separate.receipt["finding_codes"]
+    assert separate.result["status"] == "pass"
+    assert separate.result["overlapping_contents"] == []
+    assert "predictive_training_future_overlap" not in separate.result["finding_codes"]
 
     training.write_bytes(content)
     os.utime(training, ns=(stat.st_atime_ns, stat.st_mtime_ns))
     assert (training.stat().st_size, training.stat().st_mtime_ns) == (stat.st_size, stat.st_mtime_ns)
     overlap = evaluate_predictive_rollout("stateful_dynamic", plan, base_dir=PUMP)
-    assert overlap.receipt["overlapping_paths"] == []
-    assert overlap.receipt["overlapping_case_ids"] == []
-    assert overlap.receipt["overlapping_contents"] == ["training_series"]
-    assert "predictive_training_future_overlap" in overlap.receipt["finding_codes"]
-    assert overlap.receipt["status"] == "blocked"
+    assert overlap.result["overlapping_paths"] == []
+    assert overlap.result["overlapping_case_ids"] == []
+    assert overlap.result["overlapping_contents"] == ["training_series"]
+    assert "predictive_training_future_overlap" in overlap.result["finding_codes"]
+    assert overlap.result["status"] == "blocked"
 
 
-def test_rollout_plan_without_producer_receipt_id_still_passes() -> None:
+def test_rollout_plan_without_producer_id_still_passes() -> None:
     payload = _plan().model_dump(mode="json")
-    del payload["producer_receipt_id"]
+    del payload["producer_id"]
     plan = PredictiveRolloutPlanSpec.model_validate(payload)
     result = evaluate_predictive_rollout("stateful_dynamic", plan, base_dir=PUMP)
-    assert result.receipt["status"] == "pass"
-    assert result.receipt["producer_receipt_id"] is None
-    assert "producer receipt" not in result.receipt["claim_boundary"]
+    assert result.result["status"] == "pass"
+    assert result.result["producer_id"] is None
+    assert "producer identity" not in result.result["claim_boundary"]
+
+
+def test_legacy_producer_identifier_is_read_but_serializes_with_the_new_name():
+    payload = _plan().model_dump(mode='json')
+    identity = payload.pop('producer_id')
+    payload['producer_receipt_id'] = identity
+    plan = PredictiveRolloutPlanSpec.model_validate(payload)
+    assert plan.producer_id == identity
+    assert plan.model_dump(mode='json')['producer_id'] == identity
+    assert 'producer_receipt_id' not in plan.model_dump(mode='json')
+
+
+def test_native_results_have_no_output_version_or_receipt_shape():
+    result = evaluate_predictive_rollout('stateful_dynamic',_plan(),base_dir=PUMP).result
+    assert result['artifact_kind'] == 'physicsguard_predictive_rollout_result'
+    assert 'receipt_version' not in result

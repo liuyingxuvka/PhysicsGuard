@@ -69,7 +69,7 @@
         "tests/test_test_file_contract_core.py",
         "tests/test_test_file_contract_schema.py",
         "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth_receipts.py",
+        "tests/test_validation_depth.py",
         "tests/test_version_consistency.py",
         "tests/test_workflow_governance.py"
       ],
@@ -214,7 +214,7 @@
       "layer": "workflows",
       "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
       "responsibilities": [
-        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors.",
+        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas.",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
         "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates"
       ],
@@ -240,13 +240,13 @@
         "tests/test_signal_mapping_ledger.py",
         "tests/test_test_file_contract_cli.py",
         "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth_receipts.py"
+        "tests/test_validation_depth.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:c393c66a1c008c060cd8d05925623bb64890413bc94aa614903973e0803799fc"
+      "fingerprint": "sha256:b41b92c2b8b0499ea5b026643d667f66237c1f09f60783dca20128926cfe39b7"
     },
     {
       "id": "task_revision",
@@ -281,7 +281,7 @@
         ".flowguard/models/physicsguard_fault_variants_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:e75485474596650d8aa28a0b0fa1f27a60f28d7fbac60f833154ab92a4ef15a4"
+      "fingerprint": "sha256:3cbb2b47a27b39ca42d36284c2e224dc695d113ac7b1adca251de714bcbf9b4c"
     },
     {
       "id": "evidence",
@@ -318,7 +318,7 @@
         "tests/test_test_file_contract_core.py",
         "tests/test_test_file_contract_schema.py",
         "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth_receipts.py"
+        "tests/test_validation_depth.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_test_file_contract_model.py"
@@ -331,7 +331,7 @@
       "layer": "foundation",
       "summary": "Validated schemas, shared review records and pure contract coverage checks",
       "responsibilities": [
-        "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion. Accept minimal adequacy plans with optional additional floors while retaining explicit temporal classifications and native hard gates.",
+        "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion. Accept minimal adequacy plans with optional additional floors while retaining explicit temporal classifications and native hard gates. Validate inputs only; producer_id accepts the old identifier as an input alias.",
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
         "Validate optional connection residual scales as positive finite values",
         "Provide shared contract-review records and pure manifest, field declarations, role and mapping coverage checks",
@@ -409,7 +409,7 @@
         "tests/test_test_file_contract_schema.py",
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth_receipts.py",
+        "tests/test_validation_depth.py",
         "tests/test_variable_registry.py",
         "tests/test_yaml_loader.py"
       ],
@@ -417,7 +417,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:1a387d20734ff788cbbeb50872746ba26f8cc284e176699420c0703609c5ef8e"
+      "fingerprint": "sha256:f50b6fcef8d90eb633a924f5af70db2361d4975b1cdf87e513931458f715699e"
     },
     {
       "id": "loaders",

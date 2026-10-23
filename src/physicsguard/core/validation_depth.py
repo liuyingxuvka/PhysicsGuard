@@ -66,11 +66,11 @@ def evaluate_validation_depth(
     depth = plan.depth
     findings: list[dict[str, Any]] = []
 
-    dataset_receipt = _dataset_identity_receipt(depth.dataset, base_dir, findings)
-    series_identity = _identity_receipt(depth.observed_series, base_dir)
-    dataset_receipt["files"].append(series_identity)
+    dataset_result = _dataset_identity_result(depth.dataset, base_dir, findings)
+    series_identity = _identity_result(depth.observed_series, base_dir)
+    dataset_result["files"].append(series_identity)
     if series_identity["status"] != "current":
-        dataset_receipt["status"] = "missing" if series_identity["status"] == "missing" else "stale"
+        dataset_result["status"] = "missing" if series_identity["status"] == "missing" else "stale"
         _add_finding(
             findings,
             "error",
@@ -81,11 +81,11 @@ def evaluate_validation_depth(
         )
 
     series = _load_series(depth.observed_series, base_dir, findings)
-    mapping_receipt = _mapping_review_receipt(plan, base_dir, findings)
-    time_receipt = _time_receipt(depth.time_scope, series, findings)
-    scenario_receipt = _scenario_receipt(depth, series, findings)
-    split_receipt = _split_receipt(plan, base_dir, depth.split, findings)
-    residual_receipt, series_direct = _residual_series_receipt(
+    mapping_result = _mapping_review_result(plan, base_dir, findings)
+    time_result = _time_result(depth.time_scope, series, findings)
+    scenario_result = _scenario_result(depth, series, findings)
+    split_result = _split_result(plan, base_dir, depth.split, findings)
+    residual_result, series_direct = _residual_series_result(
         audit_spec,
         series,
         findings,
@@ -95,14 +95,14 @@ def evaluate_validation_depth(
             else ()
         ),
     )
-    envelope_receipt, envelope_findings = _envelope_receipt(plan, series, findings)
+    envelope_result, envelope_findings = _envelope_result(plan, series, findings)
     adequacy_evaluation = evaluate_validation_adequacy(
         plan,
         depth,
         base_dir=base_dir,
         audit_spec=audit_spec,
         series=series,
-        residual_receipt=residual_receipt,
+        residual_result=residual_result,
     )
     findings.extend(adequacy_evaluation.findings)
     predictive_evaluation = evaluate_predictive_rollout(
@@ -114,10 +114,10 @@ def evaluate_validation_depth(
 
     # A hard envelope violation is part of the physical audit result even when
     # the residual average is small.
-    if envelope_receipt["status"] == "blocked":
-        residual_receipt["audit_pass"] = False
-        if residual_receipt["status"] == "pass":
-            residual_receipt["status"] = "blocked"
+    if envelope_result["status"] == "blocked":
+        residual_result["audit_pass"] = False
+        if residual_result["status"] == "pass":
+            residual_result["status"] = "blocked"
         if series_direct is not None:
             series_direct["audit_pass"] = False
             series_direct.setdefault("warnings", []).append(
@@ -131,17 +131,17 @@ def evaluate_validation_depth(
         "status": status,
         "ok": status == "pass",
         "claim_scope": depth.time_scope.claim_scope,
-        "covered_scope": time_receipt["observed_scope"],
+        "covered_scope": time_result["observed_scope"],
         "model_semantics": depth.model_semantics,
-        "dataset": dataset_receipt,
-        "mapping": mapping_receipt,
-        "time": time_receipt,
-        "scenarios": scenario_receipt,
-        "split": split_receipt,
-        "residual_series": residual_receipt,
-        "envelopes": envelope_receipt,
-        "adequacy": adequacy_evaluation.receipt,
-        "predictive": predictive_evaluation.receipt,
+        "dataset": dataset_result,
+        "mapping": mapping_result,
+        "time": time_result,
+        "scenarios": scenario_result,
+        "split": split_result,
+        "residual_series": residual_result,
+        "envelopes": envelope_result,
+        "adequacy": adequacy_evaluation.result,
+        "predictive": predictive_evaluation.result,
         "assumptions": list(depth.assumptions),
         "findings": findings,
         "safe_claim": _safe_depth_claim(status, depth.time_scope.claim_scope),
@@ -222,7 +222,7 @@ def _legacy_snapshot_depth(
         "top_residuals": list(direct.get("top_residuals", [])),
     }
     split_findings: list[dict[str, Any]] = []
-    split = _split_receipt(plan, base_dir, None, split_findings, legacy=True)
+    split = _split_result(plan, base_dir, None, split_findings, legacy=True)
     findings = [
         {
             "severity": "warning",
@@ -307,8 +307,7 @@ def _legacy_snapshot_depth(
             },
         },
         "adequacy": {
-            "artifact_kind": "physicsguard_validation_adequacy_receipt",
-            "receipt_version": "1.0",
+            "artifact_kind": "physicsguard_validation_adequacy_result",
             "status": "not_applicable",
             "sampling_mode": None,
             "threshold_source": None,
@@ -377,7 +376,7 @@ def _legacy_snapshot_depth(
             "finding_codes": ["validation_depth_not_declared"],
             "claim_boundary": "scalar snapshot only; quantitative adequacy not applicable",
         },
-        "predictive": evaluate_predictive_rollout("pointwise", None, base_dir=base_dir).receipt,
+        "predictive": evaluate_predictive_rollout("pointwise", None, base_dir=base_dir).result,
         "assumptions": ["scalar snapshot input; no validation-depth plan was declared"],
         "findings": findings,
         "safe_claim": "one low-fidelity scalar snapshot was evaluated; no time-series or scenario claim is supported",
@@ -385,16 +384,16 @@ def _legacy_snapshot_depth(
     }
     # Split overlap is a real calibration defect even for a scalar snapshot and
     # is therefore promoted. The generic depth-not-declared warning remains
-    # receipt-local for the explicit scalar-snapshot route.
+    # result-local for the explicit scalar-snapshot route.
     promoted = [item for item in split_findings if item["severity"] == "error"]
     return ValidationDepthEvaluation(payload, promoted, [], None)
 
 
-def _dataset_identity_receipt(dataset, base_dir: Path, findings: list[dict[str, Any]]) -> dict[str, Any]:
-    files = [_identity_receipt(item, base_dir) for item in dataset.files]
-    field_schema = _identity_receipt(dataset.field_schema, base_dir)
-    parameter_roles = _identity_receipt(dataset.parameter_roles, base_dir)
-    testbench = _identity_receipt(dataset.testbench, base_dir)
+def _dataset_identity_result(dataset, base_dir: Path, findings: list[dict[str, Any]]) -> dict[str, Any]:
+    files = [_identity_result(item, base_dir) for item in dataset.files]
+    field_schema = _identity_result(dataset.field_schema, base_dir)
+    parameter_roles = _identity_result(dataset.parameter_roles, base_dir)
+    testbench = _identity_result(dataset.testbench, base_dir)
     identities = [*files, field_schema, parameter_roles, testbench]
     for identity in identities:
         if identity["status"] != "current":
@@ -449,7 +448,7 @@ def _dataset_identity_receipt(dataset, base_dir: Path, findings: list[dict[str, 
     }
 
 
-def _mapping_review_receipt(
+def _mapping_review_result(
     plan: ModelValidationPlanSpec,
     base_dir: Path,
     findings: list[dict[str, Any]],
@@ -460,7 +459,7 @@ def _mapping_review_receipt(
     edges, edge_files = load_contract_field_mappings(plan, base_dir, load_findings)
     findings.extend(load_findings)
 
-    signal_receipts: list[dict[str, Any]] = []
+    signal_results: list[dict[str, Any]] = []
     unresolved: list[str] = []
     for role in _required_mapping_roles(plan):
         candidates = [item for item in edges if item.target == role.target]
@@ -468,7 +467,7 @@ def _mapping_review_receipt(
             candidates = [item for item in candidates if item.source_id == role.source_id]
         candidate = max(candidates, key=lambda item: item.confidence or -1.0, default=None)
         if candidate is None:
-            signal_receipts.append(
+            signal_results.append(
                 {
                     "target": role.target,
                     "source_id": role.source_id,
@@ -497,7 +496,7 @@ def _mapping_review_receipt(
             issues.append("confidence_below_threshold")
         if candidate.review_required:
             issues.append("human_review_required")
-        signal_receipts.append(
+        signal_results.append(
             {
                 "target": role.target,
                 "source_id": candidate.source_id,
@@ -527,12 +526,12 @@ def _mapping_review_receipt(
         "status": status,
         "mapping_edge_files": edge_files,
         "minimum_confidence": mapping.minimum_confidence,
-        "signals": signal_receipts,
+        "signals": signal_results,
         "unresolved_targets": sorted(set(unresolved)),
     }
 
 
-def _time_receipt(scope, series: ObservedSeriesSpec | None, findings: list[dict[str, Any]]) -> dict[str, Any]:
+def _time_result(scope, series: ObservedSeriesSpec | None, findings: list[dict[str, Any]]) -> dict[str, Any]:
     points = list(series.points) if series is not None else []
     valid = [point for point in points if point.valid]
     timestamps = [point.timestamp for point in valid if point.timestamp is not None]
@@ -631,7 +630,7 @@ def _time_receipt(scope, series: ObservedSeriesSpec | None, findings: list[dict[
     }
 
 
-def _scenario_receipt(depth, series: ObservedSeriesSpec | None, findings: list[dict[str, Any]]) -> dict[str, Any]:
+def _scenario_result(depth, series: ObservedSeriesSpec | None, findings: list[dict[str, Any]]) -> dict[str, Any]:
     declared = [item.scenario_id for item in depth.scenarios]
     observed = sorted({item.scenario_id for item in (series.points if series is not None else []) if item.valid})
     missing = sorted(set(declared) - set(observed))
@@ -701,7 +700,7 @@ def _scenario_receipt(depth, series: ObservedSeriesSpec | None, findings: list[d
     }
 
 
-def _split_receipt(
+def _split_result(
     plan: ModelValidationPlanSpec,
     base_dir: Path,
     split: CalibrationSplitPlanSpec | None,
@@ -743,8 +742,8 @@ def _split_receipt(
         train_refs = split.training
         holdout_refs = split.holdout
 
-    training = [_identity_receipt(item, base_dir) for item in train_refs]
-    holdout = [_identity_receipt(item, base_dir) for item in holdout_refs]
+    training = [_identity_result(item, base_dir) for item in train_refs]
+    holdout = [_identity_result(item, base_dir) for item in holdout_refs]
     stale = [item for item in [*training, *holdout] if item["status"] != "current"]
     for item in stale:
         _add_finding(
@@ -847,7 +846,7 @@ def _series_top_blocks(points):
     return sorted(groups.values(), key=lambda row:(-row['failing_points'], -row['max_abs_normalized_residual'], row['block_id']))
 
 
-def _residual_series_receipt(
+def _residual_series_result(
     audit_spec: HierarchicalAuditSpec,
     series: ObservedSeriesSpec | None,
     findings: list[dict[str, Any]],
@@ -869,7 +868,7 @@ def _residual_series_receipt(
         for block in audit_spec.hierarchy.blocks
         for variable in block.required_variables
     }
-    receipts: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
     invalid_points: list[tuple[ObservedSeriesPointSpec, str]] = []
     missing_points: list[tuple[ObservedSeriesPointSpec, str]] = []
     max_values: list[float] = []
@@ -879,7 +878,7 @@ def _residual_series_receipt(
     for point in points:
         if not point.valid:
             invalid_points.append((point, point.invalid_reason or "invalid point"))
-            receipts.append(_unevaluated_point_receipt(point, "invalid", point.invalid_reason or "invalid point"))
+            results.append(_unevaluated_point_result(point, "invalid", point.invalid_reason or "invalid point"))
             _add_finding(
                 findings,
                 "error",
@@ -919,7 +918,7 @@ def _residual_series_receipt(
                                  + ", ".join(report.metadata["unobserved_variables"]))
         except Exception as exc:
             invalid_points.append((point, str(exc)))
-            receipts.append(_unevaluated_point_receipt(point, "invalid", str(exc)))
+            results.append(_unevaluated_point_result(point, "invalid", str(exc)))
             _add_finding(
                 findings,
                 "error",
@@ -931,9 +930,9 @@ def _residual_series_receipt(
             continue
         if missing:
             missing_points.append((point, "missing required variables"))
-            receipt = _unevaluated_point_receipt(point, "missing", "missing required variables")
-            receipt["missing_variables"] = missing
-            receipts.append(receipt)
+            result = _unevaluated_point_result(point, "missing", "missing required variables")
+            result["missing_variables"] = missing
+            results.append(result)
             _add_finding(
                 findings,
                 "error",
@@ -988,7 +987,7 @@ def _residual_series_receipt(
         failed_blocks = [b for b in report.top_blocks if not b.own_audit_pass and b.checked_residuals]
         worst_block = max(failed_blocks, key=lambda b:(b.max_abs_normalized_residual, b.level), default=None)
         worst_residual = report.top_residuals[0].name if report.top_residuals else None
-        receipts.append(
+        results.append(
             {
                 "top_block": worst_block.block_id if worst_block else None,
                 "top_residual": worst_residual,
@@ -1010,7 +1009,7 @@ def _residual_series_receipt(
                 "parameter_contribution_effects": point_parameter_effects,
             }
         )
-    raw_intervals = _failing_intervals(receipts)
+    raw_intervals = _failing_intervals(results)
     intervals = []
     for interval in raw_intervals:
         public = {k:v for k,v in interval.items() if not k.startswith('_')}
@@ -1019,7 +1018,7 @@ def _residual_series_receipt(
                      'a consecutive interval failed the low-fidelity residual audit', interval['top_block'],
                      {**public, 'point_ids':interval['_point_ids']})
 
-    evaluated = [item for item in receipts if item["status"] in {"pass", "fail"}]
+    evaluated = [item for item in results if item["status"] in {"pass", "fail"}]
     passing = [item for item in evaluated if item["audit_pass"]]
     failing = [item for item in evaluated if not item["audit_pass"]]
     has_blocker = bool(invalid_points or missing_points or not evaluated)
@@ -1037,40 +1036,40 @@ def _residual_series_receipt(
         "p95_abs_normalized_residual": _percentile(max_values, 0.95),
         "mean_residual_norm": statistics.fmean(norms) if norms else None,
     }
-    parameter_contributions = _parameter_contribution_receipts(
+    parameter_contributions = _parameter_contribution_results(
         time_varying_policies,
         model_parameters,
         points,
         contribution_effects,
     )
-    receipt = {
+    result = {
         "status": status,
         "audit_pass": audit_pass,
-        "points": receipts,
+        "points": results,
         "invalid_intervals": _intervals(invalid_points),
         "missing_intervals": _intervals(missing_points),
         "aggregate": aggregate,
         "parameter_contributions": parameter_contributions,
         "failing_intervals": intervals,
-        "top_blocks": _series_top_blocks(receipts),
+        "top_blocks": _series_top_blocks(results),
     }
     series_direct = {
         "audit_pass": audit_pass,
         "max_abs_normalized_residual": aggregate["max_abs_normalized_residual"],
         "residual_norm": math.sqrt(sum(value * value for value in norms)) if norms else None,
-        "top_residuals": _worst_top_residuals(receipts),
-        "top_blocks": _series_top_blocks(receipts),
+        "top_residuals": _worst_top_residuals(results),
+        "top_blocks": _series_top_blocks(results),
         "failing_intervals": intervals,
         "warnings": sorted(set(warnings)),
         "scope": "pointwise_observed_series",
         "point_count": len(points),
-        "invalid_intervals": receipt["invalid_intervals"],
-        "missing_intervals": receipt["missing_intervals"],
+        "invalid_intervals": result["invalid_intervals"],
+        "missing_intervals": result["missing_intervals"],
     }
-    return receipt, series_direct
+    return result, series_direct
 
 
-def _envelope_receipt(
+def _envelope_result(
     plan: ModelValidationPlanSpec,
     series: ObservedSeriesSpec | None,
     findings: list[dict[str, Any]],
@@ -1222,13 +1221,13 @@ def _residual_effect(left, right) -> tuple[float, list[str]]:
     return max(deltas.values(), default=0.0), affected
 
 
-def _parameter_contribution_receipts(
+def _parameter_contribution_results(
     policies: dict[str, ParameterTemporalPolicySpec],
     model_parameters: dict[str, float],
     points: list[ObservedSeriesPointSpec],
     effects: dict[str, list[dict[str, Any]]],
 ) -> list[dict[str, Any]]:
-    receipts: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
     for parameter_id, policy in sorted(policies.items()):
         observed_points = [
             point for point in points if point.valid and parameter_id in point.variables
@@ -1273,7 +1272,7 @@ def _parameter_contribution_receipts(
                 <= float(policy.maximum_non_sensitive_contribution_effect or 0.0)
             )
             status = "verified_non_sensitive" if passed else "blocked"
-        receipts.append(
+        results.append(
             {
                 "parameter_id": parameter_id,
                 "expectation": policy.contribution_expectation,
@@ -1291,10 +1290,10 @@ def _parameter_contribution_receipts(
                 "non_sensitive_claim_boundary": policy.non_sensitive_claim_boundary,
             }
         )
-    return receipts
+    return results
 
 
-def _identity_receipt(reference: ValidationIdentityReferenceSpec, base_dir: Path) -> dict[str, Any]:
+def _identity_result(reference: ValidationIdentityReferenceSpec, base_dir: Path) -> dict[str, Any]:
     path = _resolve_path(base_dir, reference.path)
     return {
         "identity_id": reference.identity_id,
@@ -1373,7 +1372,7 @@ def _add_finding(
     )
 
 
-def _unevaluated_point_receipt(
+def _unevaluated_point_result(
     point: ObservedSeriesPointSpec,
     status: str,
     warning: str,
@@ -1422,10 +1421,10 @@ def _violation_intervals(violations: list[dict[str, Any]]) -> list[dict[str, Any
     ]
 
 
-def _worst_top_residuals(receipts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _worst_top_residuals(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
     evaluated = [
         item
-        for item in receipts
+        for item in results
         if item["max_abs_normalized_residual"] is not None and item["top_residuals"]
     ]
     if not evaluated:
