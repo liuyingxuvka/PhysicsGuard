@@ -12,7 +12,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.15.17` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.18` | Python 3.11+ | `physicsguard` | MIT |
 
 English comes first. A Chinese mirror follows below.
 
@@ -247,7 +247,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.15.17` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.18` | Python 3.11+ | `physicsguard` | MIT |
 
 ## 它是什么
 

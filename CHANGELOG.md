@@ -1,9 +1,16 @@
 # Changelog
 
-## Unreleased
+## v0.15.18 - 2026-10-23
 
-- Added model-derived alternate-device fault signatures, next-signal suggestions and diagnosis export, with unavailable cases reported explicitly.
-- Removed the unused block field `expected_residual_keys`; delete it from existing hierarchy YAML because schema validation now rejects it as an extra field.
+- `hierarchy evaluate` derives supported intermediate values from measured signals, preserves observations, and separates producing relations from independent checks and unresolved inputs.
+- Fully measured balances and fixed-parameter maps remain checked when an unrelated channel is missing; native helper and per-result dependencies keep those failures visible.
+- Parent verdicts include child failures while preserving local scores; `refines` links coarse and detailed components and reports their checked consistency.
+- Added `fault_variants` and `task-model variants` for alternate-device data, fault signatures, next-signal suggestions and diagnosis export, with unavailable cases and physically masked combinations reported explicitly.
+- Added `modules list`, `modules describe` and `hierarchy describe`, including units, parameters, residual descriptions, model ownership and optional Mermaid diagrams.
+- The installed skill includes a compact model-format page and paired model/measurement templates.
+- Added connected `tree.yaml` models and measured-only reference snapshots for the coolant-loop, fuel-cell and building-HVAC starter packs; existing level and conflict files remain available.
+- Removed the unused block field `expected_residual_keys`; existing YAML carrying it must remove it before schema validation.
+- Repository maintenance requires FlowGuard v0.70.7 or newer; ordinary runtime use remains independent of FlowGuard.
 
 ## v0.15.17 - 2026-10-22
 
