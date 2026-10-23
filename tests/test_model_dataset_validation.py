@@ -91,3 +91,12 @@ def test_calibration_parameter_must_exist_in_model(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="calibration parameters not found"):
         validate_model_dataset(plan)
+
+
+def test_internal_dataset_evaluations_do_not_compute_unused_unit_hints(monkeypatch):
+    import physicsguard.core.hierarchy as hierarchy
+    def unused_hint(*args, **kwargs):
+        raise AssertionError('unit hints must not run inside repeated fit or series evaluations')
+    monkeypatch.setattr(hierarchy,'_unit_factor_followups',unused_hint)
+    report=validate_model_dataset(PUMP/'validation/clean_validation_plan.yaml')
+    assert report.status=='pass'

@@ -477,6 +477,7 @@ class HierarchicalAuditRunner:
         top_n_blocks: int = 10,
         *,
         skip_unobserved: bool = False,
+        _unit_factor_hints: bool = True,
     ) -> HierarchicalAuditReport:
         """Evaluate external observed values directly and roll residuals up by block.
 
@@ -566,7 +567,7 @@ class HierarchicalAuditRunner:
             derived_variables=derived,
             unchecked_residuals=skipped,
         )
-        return _attach_signal_mapping_context(report, self.spec, observed, registry, builder)
+        return _attach_signal_mapping_context(report, self.spec, observed, registry, builder, _unit_factor_hints)
 
     def compare_observed(
         self,
@@ -920,6 +921,7 @@ def _attach_signal_mapping_context(
     observed: ObservedValuesSpec,
     registry: VariableRegistry,
     builder: ResidualBuilder,
+    probe_unit_factors: bool,
 ) -> HierarchicalAuditReport:
     block_index = BlockIndex(spec.hierarchy, spec.system)
     ledger = build_signal_mapping_ledger(spec.system, observed, registry, block_lookup=block_index)
@@ -929,7 +931,8 @@ def _attach_signal_mapping_context(
         mapping_records=ledger,
         audit_threshold=spec.system.solver.audit_threshold,
     )
-    factor_hints = _unit_factor_followups(report, observed, builder, registry, spec.system.solver.audit_threshold)
+    factor_hints = (_unit_factor_followups(report, observed, builder, registry, spec.system.solver.audit_threshold)
+                    if probe_unit_factors else ())
     if factor_hints:
         followups = tuple(item for item in followups if item.followup_id != 'unit_conversion_family') + factor_hints
     ledger_warnings = list(mapping_warnings(ledger))

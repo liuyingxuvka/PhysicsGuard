@@ -223,7 +223,7 @@ def _contract_findings(plan: ModelValidationPlanSpec, base_dir: Path) -> list[Co
 
 
 def _evaluate(spec: HierarchicalAuditSpec, observed: ObservedValuesSpec) -> dict[str, Any]:
-    report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, _unit_factor_hints=False)
     return {
         "audit_pass": report.audit_pass,
         "max_abs_normalized_residual": report.max_abs_normalized_residual,

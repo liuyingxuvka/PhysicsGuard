@@ -211,14 +211,14 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:a60be67a445c076a06247df8909985d7bb40d0001b96223199f68f8891a4e993"
+      "fingerprint": "sha256:b34517c2d5f09796e978bdcb6f5bd268145a2b1c54c8ccc496a4218eef851e2e"
     },
     {
       "id": "validation",
       "layer": "workflows",
       "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
       "responsibilities": [
-        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas.",
+        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas. Batch fitting and series checks skip unit hints they do not expose.",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
         "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates"
       ],
@@ -250,14 +250,14 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:b41b92c2b8b0499ea5b026643d667f66237c1f09f60783dca20128926cfe39b7"
+      "fingerprint": "sha256:4e1f1d9b49cc3cd595f37cc0a300de531e4c6201d616152770a3f6aa9e8feaa9"
     },
     {
       "id": "task_revision",
       "layer": "workflows",
       "summary": "Task-local hypotheses, interval residuals and diagnosability",
       "responsibilities": [
-        "Rank the most discriminating next observation and keep a model miss visible when every hypothesis is contradicted",
+        "Rank the most discriminating next observation and keep a model miss visible when every hypothesis is contradicted Alternate-device signature batches skip unused unit hints without changing signatures or verdicts.",
         "Evaluate interval residuals and distinguish hypotheses with bounded diagnosability evidence",
         "Generate alternate-device measurement variants, rederive requested signals and audit them with the nominal model; compare own checked signatures and scaled unmeasured signals while reporting unavailable generation honestly"
       ],
@@ -285,7 +285,7 @@
         ".flowguard/models/physicsguard_fault_variants_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:3cbb2b47a27b39ca42d36284c2e224dc695d113ac7b1adca251de714bcbf9b4c"
+      "fingerprint": "sha256:c8639fa85c6f72754bee91a6a773b19a25a2e39e2ac1cfdf1588964d0d38cecf"
     },
     {
       "id": "evidence",

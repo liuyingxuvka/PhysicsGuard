@@ -911,6 +911,7 @@ def _residual_series_result(
                 observed,
                 top_n_residuals=1_000_000,
                 skip_unobserved=True,
+                _unit_factor_hints=False,
             )
             missing = sorted(required_variables - (set(observed.variables) | set(report.derived_variables)))
             if not missing and report.metadata["unobserved_variables"]:
@@ -959,7 +960,7 @@ def _residual_series_result(
                         audit_spec,
                         counterfactual_overrides,
                     )
-                ).evaluate_observed(observed, top_n_residuals=1_000_000)
+                ).evaluate_observed(observed, top_n_residuals=1_000_000, _unit_factor_hints=False)
                 effect, affected = _residual_effect(report, counterfactual)
                 effect_row = {
                     "parameter_id": parameter_id,
