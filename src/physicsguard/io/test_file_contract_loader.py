@@ -9,20 +9,9 @@ import yaml
 from pydantic import BaseModel, ValidationError
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
-from physicsguard.schema.dataset_identity import LogicalDatasetRecordSpec, TestFileRelationIndexSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
-from physicsguard.schema.parameter_coverage import (
-    CoveragePolicySpec,
-    ParameterCatalogSpec,
-    ParameterMappingEdgesSpec,
-    ParameterRoleMatrixSpec,
-)
 from physicsguard.schema.test_file_contract import (
-    ExtractorProfileSpec,
-    ModelBindingSpec,
-    TestBenchProfileSpec,
     TestFileContractSpec,
-    TestFileProjectIndexSpec,
 )
 
 
@@ -57,68 +46,18 @@ def load_data_file_manifest(path: str | Path) -> DataFileManifestSpec:
     return load_spec(path, DataFileManifestSpec)
 
 
-def load_logical_dataset_record(path: str | Path) -> LogicalDatasetRecordSpec:
-    return load_spec(path, LogicalDatasetRecordSpec)
-
-
-def load_test_file_relation_index(path: str | Path) -> TestFileRelationIndexSpec:
-    return load_spec(path, TestFileRelationIndexSpec)
-
-
 def load_model_validation_plan(path: str | Path) -> ModelValidationPlanSpec:
     return load_spec(path, ModelValidationPlanSpec)
-
-
-def load_testbench_profile(path: str | Path) -> TestBenchProfileSpec:
-    return load_spec(path, TestBenchProfileSpec)
-
-
-def load_extractor_profile(path: str | Path) -> ExtractorProfileSpec:
-    return load_spec(path, ExtractorProfileSpec)
-
-
-def load_model_binding(path: str | Path) -> ModelBindingSpec:
-    return load_spec(path, ModelBindingSpec)
-
-
-def load_parameter_catalog(path: str | Path) -> ParameterCatalogSpec:
-    return load_spec(path, ParameterCatalogSpec)
-
-
-def load_parameter_role_matrix(path: str | Path) -> ParameterRoleMatrixSpec:
-    return load_spec(path, ParameterRoleMatrixSpec)
-
-
-def load_parameter_mapping_edges(path: str | Path) -> ParameterMappingEdgesSpec:
-    return load_spec(path, ParameterMappingEdgesSpec)
-
-
-def load_coverage_policy(path: str | Path) -> CoveragePolicySpec:
-    return load_spec(path, CoveragePolicySpec)
 
 
 def load_test_file_contract(path: str | Path) -> TestFileContractSpec:
     return load_spec(path, TestFileContractSpec)
 
 
-def load_test_file_project_index(path: str | Path) -> TestFileProjectIndexSpec:
-    return load_spec(path, TestFileProjectIndexSpec)
-
-
 __all__ = [
-    "load_coverage_policy",
     "load_data_file_manifest",
-    "load_extractor_profile",
-    "load_logical_dataset_record",
-    "load_model_binding",
     "load_model_validation_plan",
-    "load_parameter_catalog",
-    "load_parameter_mapping_edges",
-    "load_parameter_role_matrix",
     "load_spec",
     "load_test_file_contract",
-    "load_test_file_project_index",
-    "load_test_file_relation_index",
-    "load_testbench_profile",
     "load_yaml_mapping",
 ]

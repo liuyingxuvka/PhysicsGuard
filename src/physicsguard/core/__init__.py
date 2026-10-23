@@ -14,11 +14,7 @@ __all__ = [
     "VariableRecord",
     "VariableDeviationDiagnostic",
     "VariableRegistry",
-    "check_parameter_coverage",
-    "check_logical_dataset_record",
     "check_test_file_contract",
-    "check_test_file_parameter_coverage",
-    "check_test_file_project_index",
     "diff_test_file_contracts",
     "field_signature_hash",
     "generate_delimited_manifest",
@@ -53,46 +49,26 @@ def __getattr__(name: str):
         from physicsguard.core.contract_diff import diff_test_file_contracts
 
         return diff_test_file_contracts
-    if name in {"ContractReview", "check_parameter_coverage"}:
-        from physicsguard.core.parameter_coverage import ContractReview, check_parameter_coverage
-
-        return {
-            "ContractReview": ContractReview,
-            "check_parameter_coverage": check_parameter_coverage,
-        }[name]
+    if name == "ContractReview":
+        from physicsguard.core.parameter_coverage import ContractReview
+        return ContractReview
     if name in {
         "check_test_file_contract",
-        "check_test_file_parameter_coverage",
-        "check_test_file_project_index",
         "inspect_test_file_contract",
     }:
         from physicsguard.core.test_file_contract import (
             check_test_file_contract,
-            check_test_file_parameter_coverage,
-            check_test_file_project_index,
             inspect_test_file_contract,
         )
 
         return {
             "check_test_file_contract": check_test_file_contract,
-            "check_test_file_parameter_coverage": check_test_file_parameter_coverage,
-            "check_test_file_project_index": check_test_file_project_index,
             "inspect_test_file_contract": inspect_test_file_contract,
         }[name]
     if name == "review_signal_mapping_ledger":
         from physicsguard.core.signal_mapping import review_signal_mapping_ledger
 
         return review_signal_mapping_ledger
-    if name in {"check_logical_dataset_record", "check_test_file_relation_index"}:
-        from physicsguard.core.dataset_identity import (
-            check_logical_dataset_record,
-            check_test_file_relation_index,
-        )
-
-        return {
-            "check_logical_dataset_record": check_logical_dataset_record,
-            "check_test_file_relation_index": check_test_file_relation_index,
-        }[name]
     if name == "validate_model_dataset":
         from physicsguard.core.model_dataset_validation import validate_model_dataset
 

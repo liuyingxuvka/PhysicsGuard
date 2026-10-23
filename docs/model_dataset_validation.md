@@ -45,7 +45,7 @@ actions.
 The optional `depth` section is required for broad validation-readiness claims.
 It names the data files, field schema, parameter roles, testbench
 profile/version, and observed series by path; the required signals are checked
-against the mapping edges of the referenced test-file contracts. It also
+against the field declarations of the referenced single-file contracts. It also
 declares time scope, scenario/case ids, perturbations, assumptions, and—when
 calibration is enabled—disjoint training and holdout files.
 
@@ -69,7 +69,7 @@ scenarios that were checked.
 Every non-snapshot depth plan should include an `adequacy` policy whose
 thresholds come from a named project, testbench, engineering, or review source.
 PhysicsGuard derives the available point, signal, and parameter universe from
-the manifest, role matrix, hierarchy, and contract mapping edges, so a plan
+the manifest, contract field roles, hierarchy, and contract fields, so a plan
 cannot establish coverage merely by declaring its own selected count.
 
 The adequacy computations check temporal spread (distinct timestamps, span,
@@ -103,3 +103,15 @@ accumulated normalized error, lag/phase error, drift, error growth, and
 stability. PhysicsGuard validates the supplied stateful trajectory; it does not
 pretend a pointwise residual formula is a simulator or reconstruct hidden
 commercial-model dynamics.
+
+## Single-file data mapping
+`testfile manifest` → `testfile contract-check` → `testfile snapshot|series`
+reads one contract's `fields`. Use `references/templates/test_file_contract.yaml`
+in the installed skill. A validation plan's `depth.dataset.parameter_roles` and
+`testbench` references point to that same contract; `metadata.testbench_version`
+records the version named by the validation plan. Generated series use the
+contract ID as `source_identity_id`; use that identity for its dataset file.
+Units are converted before evaluation, with factor/offset and field@row retained.
+Missing files, uncertain mappings, scope overreach, overlapping holdouts and
+pointwise predictive claims remain hard gates. Ignored fields stay outside the
+validated claim; adequacy floors must reflect their declared exclusion.

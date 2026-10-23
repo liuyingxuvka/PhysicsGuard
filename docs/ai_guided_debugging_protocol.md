@@ -18,7 +18,6 @@ contract gate before broad analysis:
 
 ```powershell
 python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
-python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
 ```
 
 Every file field must be cataloged, classified, disposed, and evidence-mapped.

@@ -11,10 +11,9 @@ from typing import Any, Iterable
 from physicsguard.io.test_file_contract_loader import (
     load_spec,
     load_data_file_manifest,
-    load_parameter_role_matrix,
 )
 from physicsguard.core.parameter_coverage import _metadata_is_stale
-from physicsguard.core.test_file_contract import resolve_test_file_contract
+from physicsguard.core.test_file_contract import resolve_test_file_contract, contract_field_mappings, contract_role_matrix
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
@@ -67,7 +66,7 @@ def evaluate_validation_adequacy(
         load_findings,
     )
     role_matrix = _load_or_find(
-        load_parameter_role_matrix,
+        contract_role_matrix,
         _resolve_path(base_dir, depth.dataset.parameter_roles.path),
         "validation_role_matrix_unreadable",
         load_findings,
@@ -81,7 +80,7 @@ def evaluate_validation_adequacy(
         )
         return ValidationAdequacyEvaluation(receipt=receipt, findings=load_findings)
 
-    mapping_edges, _ = load_contract_mapping_edges(plan, base_dir, load_findings)
+    mapping_edges, _ = load_contract_field_mappings(plan, base_dir, load_findings)
 
     result = evaluate_validation_adequacy_artifacts(
         adequacy=depth.adequacy,
@@ -1111,12 +1110,12 @@ def _empty_temporal(status: str) -> dict[str, Any]:
     }
 
 
-def load_contract_mapping_edges(
+def load_contract_field_mappings(
     plan: ModelValidationPlanSpec,
     base_dir: Path,
     findings: list[dict[str, Any]],
 ) -> tuple[list[MappingEdgeSpec], list[str]]:
-    """Mapping edges of every test-file contract that the validation plan references."""
+    """Mappings derived from fields in each single-file contract."""
 
     edges: list[MappingEdgeSpec] = []
     files: list[str] = []
@@ -1135,9 +1134,8 @@ def load_contract_mapping_edges(
                 )
             )
             continue
-        if resolved.mapping_edges is not None:
-            edges.extend(resolved.mapping_edges.value.edges)
-            files.append(str(resolved.mapping_edges.path or contract_path))
+        edges.extend(contract_field_mappings(resolved))
+        files.append(str(contract_path))
     return edges, files
 
 

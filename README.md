@@ -70,7 +70,7 @@ The important design choice is modesty. PhysicsGuard does not try to recreate a 
 | Understand a simulation failure | Level 0 physical map with symptom, subsystem, expected relation, key signals, SI units, assumptions, and first residuals | Low-fidelity understanding, not solver reconstruction |
 | Localize a likely bug | Hierarchy report with suspicious blocks, top residuals, assumption cards, and recommended refinements | Ranking is diagnostic evidence, not proof of the only fault |
 | Decide what to export next | Targeted signal, parameter, unit, bound, map, or topology request | Missing data stays explicit |
-| Validate mapped data files | Test-file manifests, contracts, coverage checks, and model binding rows | File coverage is not physical correctness |
+| Validate mapped data files | One test-file contract, generated manifest, unit-aware snapshots and series | File coverage is not physical correctness |
 | Compare model and dataset | Logical checks, relation checks, validation reports, and optional bounded calibration | Calibration is conservative and bounded |
 | Build a candidate model | Interfaces, units, assumptions, block relations, examples, and validation order | Candidate models are new artifacts, not recovered commercial models |
 
@@ -138,11 +138,10 @@ Test-file and dataset checks:
 With `testfile manifest --out`, the source path is relative to the manifest directory; stdout-only manifests keep the supplied source path.
 
 ```powershell
-python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
+python -m physicsguard.cli testfile manifest DATA.csv --profile CONTRACT.yaml --out MANIFEST.yaml
 python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
-python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
-python -m physicsguard.cli dataset logical-check DATASET.yaml --pretty
-python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
+python -m physicsguard.cli testfile snapshot CONTRACT.yaml --row 70 --out measured.yaml
+python -m physicsguard.cli testfile series CONTRACT.yaml --rows 0:120 --out series.yaml
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 
@@ -365,11 +364,10 @@ python -m physicsguard.cli task-model diagnose DIAGNOSE.yaml
 `testfile manifest --out` 把源文件路径写成相对清单目录的路径；只输出到屏幕时保留传入的源文件路径。
 
 ```powershell
-python -m physicsguard.cli testfile manifest DATA.csv --profile PROFILE.yaml --out MANIFEST.yaml
+python -m physicsguard.cli testfile manifest DATA.csv --profile CONTRACT.yaml --out MANIFEST.yaml
 python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
-python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
-python -m physicsguard.cli dataset logical-check DATASET.yaml --pretty
-python -m physicsguard.cli dataset relation-check RELATIONS.yaml --pretty
+python -m physicsguard.cli testfile snapshot CONTRACT.yaml --row 70 --out measured.yaml
+python -m physicsguard.cli testfile series CONTRACT.yaml --rows 0:120 --out series.yaml
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 

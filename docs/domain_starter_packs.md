@@ -374,7 +374,7 @@ These templates intentionally do not implement crop-growth models, photosynthesi
 `examples/hierarchical/heated_tank/` contains a synthetic non-SI CSV, a coarse
 volume/energy audit and a six-block coupled hierarchy with an explicit heater
 nameplate-efficiency assumption. `sim_tank.py` regenerates the CSV;
-`map_measured.py tank_run.csv OUTPUT_DIRECTORY` writes the four measured snapshots.
+`python -m physicsguard.cli testfile snapshot tank_run_contract.yaml --row 70 --out measured_k70.yaml` writes the mapped SI snapshot; use `first_step_contract.yaml` for the coarse model.
 The heater current halves at 600 s while its command stays unchanged; inflow changes
 at 900 s. This is a low-fidelity diagnostic reference. Measurements contain no
 hand-computed connected endpoints or intermediate heat flows.

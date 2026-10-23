@@ -103,6 +103,11 @@ def generate_delimited_manifest(
         content_hash=sha256_file(file_path),
         size_bytes=file_path.stat().st_size,
     )
+    script = getattr(profile, 'script', None)
+    if script and Path(script).is_file():
+        extractor_script, extractor_hash = str(Path(script).resolve()), sha256_file(script)
+    else:
+        extractor_script, extractor_hash = "physicsguard.core.data_file_manifest.generate_delimited_manifest", _self_script_hash()
     manifest = DataFileManifestSpec(
         manifest_id=manifest_id or file_path.stem,
         source_file=source_file,
@@ -120,8 +125,8 @@ def generate_delimited_manifest(
         time=time_basis,
         fields=field_summaries,
         extractor=ExtractorEvidenceSpec(
-            script="physicsguard.core.data_file_manifest.generate_delimited_manifest",
-            script_hash=_self_script_hash(),
+            script=extractor_script,
+            script_hash=extractor_hash,
             generated_at=datetime.now(timezone.utc).isoformat(),
             version="1",
         ),

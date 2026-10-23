@@ -67,50 +67,12 @@ def test_cli_testfile_contract_check_fails_added_field() -> None:
     assert json.loads(result.stdout)["summary"]["analysis_claim_gate"] == "blocked_until_contract_errors_are_fixed"
 
 
-def test_cli_coverage_project_and_diff_commands() -> None:
-    coverage = run_cli("coverage", "check", str(PUMP / "contracts" / "clean_contract.yaml"), "--pretty")
-    project = run_cli("testfile", "project-check", str(PUMP / "project_index.yaml"), "--pretty")
-    diff = run_cli(
-        "testfile",
-        "diff",
-        str(PUMP / "contracts" / "clean_contract.yaml"),
-        str(PUMP / "contracts" / "renamed_field_contract.yaml"),
-        "--pretty",
-    )
-
-    assert coverage.returncode == 0, coverage.stderr
-    assert project.returncode == 0, project.stderr
-    assert diff.returncode == 0, diff.stderr
-    assert json.loads(coverage.stdout)["status"] == "pass"
-    assert json.loads(project.stdout)["status"] == "pass"
-    assert json.loads(diff.stdout)["status"] == "changed"
-
-
-def test_cli_dataset_validation_commands() -> None:
-    logical = run_cli(
-        "dataset",
-        "logical-check",
-        str(PUMP / "datasets" / "clean_logical_dataset.yaml"),
-        "--pretty",
-    )
-    relation = run_cli(
-        "dataset",
-        "relation-check",
-        str(PUMP / "relation_index.yaml"),
-        "--pretty",
-    )
-    validation = run_cli(
-        "validation",
-        "run",
-        str(PUMP / "validation" / "clean_validation_plan.yaml"),
-        "--pretty",
-    )
-    assert logical.returncode == 0, logical.stderr
-    assert relation.returncode == 0, relation.stderr
-    assert validation.returncode == 0, validation.stderr
-    assert json.loads(logical.stdout)["status"] == "pass"
-    assert json.loads(relation.stdout)["status"] == "pass"
-    assert json.loads(validation.stdout)["status"] == "pass"
+def test_removed_commands_exit_two_and_diff_remains():
+    for args in [('coverage','check','x.yaml'),('dataset','logical-check','x.yaml'),
+                 ('dataset','relation-check','x.yaml'),('testfile','project-check','x.yaml')]:
+        assert run_cli(*args).returncode == 2
+    result=run_cli('testfile','diff',str(PUMP/'contracts/clean_contract.yaml'),str(PUMP/'contracts/renamed_field_contract.yaml'))
+    assert result.returncode == 0 and json.loads(result.stdout)['status']=='changed'
 
 
 def test_cli_validation_run_prints_a_compact_summary() -> None:

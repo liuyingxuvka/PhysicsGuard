@@ -16,9 +16,9 @@ from typing import Any, Iterable
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.predictive_rollout import evaluate_predictive_rollout
 from physicsguard.core.parameter_coverage import _metadata_is_stale
-from physicsguard.core.validation_adequacy import evaluate_validation_adequacy, load_contract_mapping_edges
+from physicsguard.core.validation_adequacy import evaluate_validation_adequacy, load_contract_field_mappings
 from physicsguard.io.observation_loader import load_observed_series
-from physicsguard.io.test_file_contract_loader import load_testbench_profile
+from physicsguard.io.test_file_contract_loader import load_test_file_contract
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
 from physicsguard.schema.observation_spec import ObservedValuesSpec
@@ -409,8 +409,8 @@ def _dataset_identity_receipt(dataset, base_dir: Path, findings: list[dict[str, 
     observed_version = None
     if testbench["status"] != "missing":
         try:
-            profile = load_testbench_profile(_resolve_path(base_dir, dataset.testbench.path))
-            observed_version = profile.bench_version
+            contract = load_test_file_contract(_resolve_path(base_dir, dataset.testbench.path))
+            observed_version = contract.metadata.get("testbench_version")
         except Exception as exc:
             _add_finding(
                 findings,
@@ -456,7 +456,7 @@ def _mapping_review_receipt(
     assert plan.depth is not None
     mapping = plan.depth.mapping_review
     load_findings: list[dict[str, Any]] = []
-    edges, edge_files = load_contract_mapping_edges(plan, base_dir, load_findings)
+    edges, edge_files = load_contract_field_mappings(plan, base_dir, load_findings)
     findings.extend(load_findings)
 
     signal_receipts: list[dict[str, Any]] = []

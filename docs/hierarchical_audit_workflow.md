@@ -75,7 +75,7 @@ Each recommendation retains all `next_template_ids` and adds a `template_status`
 1. Complete or review the model-understanding preflight before writing the first hierarchy.
 2. Run a Level 0 whole-system hierarchical audit. For external model results, prefer `hierarchy evaluate` so observed values are not moved by a solver.
 3. If the source is a concrete testbench data file, run the file's
-   `TestFileContract` and parameter coverage checks before treating all file
+   the single-file `TestFileContract` check before treating all file
    columns as audit evidence.
 4. Review the external-model intake and signal mappings before treating residuals as fault-localization evidence.
 5. Inspect `audit_pass`, `top_blocks`, `top_residuals`, `signal_mapping_ledger`, `bug_family_followups`, and `recommended_refinements`.

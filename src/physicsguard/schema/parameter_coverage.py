@@ -73,48 +73,6 @@ MappingEvidenceType = Literal[
 ]
 
 
-class ParameterCatalogEntrySpec(BaseModel):
-    """Stable identity for one source field in a test data file."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    source_id: str
-    field_name: str
-    canonical_id: Optional[str] = None
-    unit: Optional[str] = None
-    required: bool = True
-    description: Optional[str] = None
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @field_validator("source_id", "field_name")
-    @classmethod
-    def _required_strings(cls, value: str, info) -> str:
-        return ensure_non_empty(value, info.field_name)
-
-    @model_validator(mode="after")
-    def _metadata_json_serializable(self) -> "ParameterCatalogEntrySpec":
-        _ensure_json_serializable(self.metadata, "catalog entry metadata")
-        return self
-
-
-class ParameterCatalogSpec(BaseModel):
-    """All source fields known for one resolved test file contract."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    parameters: list[ParameterCatalogEntrySpec]
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @model_validator(mode="after")
-    def _unique_catalog_entries(self) -> "ParameterCatalogSpec":
-        source_ids = [item.source_id for item in self.parameters]
-        field_names = [item.field_name for item in self.parameters]
-        if len(source_ids) != len(set(source_ids)):
-            raise ValueError("parameter catalog source_id values must be unique")
-        if len(field_names) != len(set(field_names)):
-            raise ValueError("parameter catalog field_name values must be unique")
-        _ensure_json_serializable(self.metadata, "parameter catalog metadata")
-        return self
 
 
 class RoleAssignmentSpec(BaseModel):
@@ -246,22 +204,6 @@ class MappingEdgeSpec(BaseModel):
         return self
 
 
-class ParameterMappingEdgesSpec(BaseModel):
-    """Mapping edge set for a test file contract."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    edges: list[MappingEdgeSpec] = Field(default_factory=list)
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @model_validator(mode="after")
-    def _unique_edges(self) -> "ParameterMappingEdgesSpec":
-        ids = [item.id for item in self.edges]
-        if len(ids) != len(set(ids)):
-            raise ValueError("mapping edge ids must be unique")
-        _ensure_json_serializable(self.metadata, "mapping edge set metadata")
-        return self
-
 
 class CoveragePolicySpec(BaseModel):
     """Policy knobs for fail-closed coverage checking."""
@@ -306,9 +248,6 @@ __all__ = [
     "MappingEvidenceSpec",
     "MappingEvidenceType",
     "MappingTargetType",
-    "ParameterCatalogEntrySpec",
-    "ParameterCatalogSpec",
-    "ParameterMappingEdgesSpec",
     "ParameterRoleMatrixSpec",
     "RoleAssignmentSpec",
     "UsePolicy",

@@ -94,10 +94,10 @@ def test_series_required_variables_are_checked_after_native_derivation(drop_temp
 
 def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> None:
     pump = _copy_pump(tmp_path)
-    edges_path = pump / "coverage" / "pump_loop_mapping_edges.yaml"
+    edges_path = pump / "contracts" / "clean_contract.yaml"
     edges = _load(edges_path)
-    edge = next(item for item in edges["edges"] if item["target"] == "pump_signal_map.y")
-    edge.pop("unit_evidence")
+    edge = edges["fields"]["flow_readback_kg_s"]
+    edge.pop("evidence")
     edge["confidence"] = 0.4
     edge["review_required"] = True
     _write(edges_path, edges)

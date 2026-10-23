@@ -30,7 +30,6 @@ If the external evidence is a concrete testbench data file, use a
 
 ```powershell
 python -m physicsguard.cli testfile contract-check CONTRACT.yaml --pretty
-python -m physicsguard.cli coverage check CONTRACT.yaml --pretty
 ```
 
 The contract accounts for every file field and records mapping evidence. Intake

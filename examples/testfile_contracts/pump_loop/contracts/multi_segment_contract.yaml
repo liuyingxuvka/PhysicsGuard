@@ -4,23 +4,45 @@
 # Use with: python -m physicsguard.cli testfile contract-check examples/testfile_contracts/pump_loop/contracts/multi_segment_contract.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 contract_id: pump_loop_multi_segment_contract
-file_id: pump_loop_multi_segment_2026_06_10
+data_file: ../data/clean.csv
 manifest: ../data/clean_manifest.yaml
-testbench_profile: ../profiles/pump_loop_testbench_profile.yaml
-extractor_profile: ../profiles/pump_loop_extractor_profile.yaml
-model_binding: ../bindings/pump_loop_model_binding.yaml
-parameter_catalog: ../catalogs/pump_loop_parameter_catalog.yaml
-role_matrix: ../coverage/pump_loop_role_matrix.yaml
-mapping_edges: ../coverage/pump_loop_mapping_edges.yaml
-coverage_policy: ../coverage/pump_loop_coverage_policy.yaml
-segments:
-  - segment_id: startup
-    row_range: [0, 1]
-    mode: ramp
-    audit_participation: true
-  - segment_id: steady
-    row_range: [1, 2]
-    mode: steady
-    audit_participation: true
+model: ../model/pump_loop_hierarchy.yaml
+model_hash: 4e35960c7363a6038ba0b54aed71a43506c3695b96844bfe3ecb51c8f47c607e
+time_column: time_s
+fields:
+  time_s:
+    role: ignored
+    unit: s
+    reason: Series timestamp
+  cmd_speed_rad_s:
+    role: command
+    unit: rad/s
+    target: pump_signal_map.x
+    confidence: 0.9
+    evidence: Fixture author declares commanded speed mapping
+  flow_readback_kg_s:
+    role: measured
+    unit: kg/s
+    target: pump_signal_map.y
+    confidence: 0.9
+    evidence: Fixture author declares flow readback mapping
+  valve_open:
+    role: ignored
+    unit: '1'
+    reason: Mode flag has no variable in this generic relation
 metadata:
+  testbench_version: v1
   fixture: multi_segment
+segments:
+- segment_id: startup
+  row_range:
+  - 0
+  - 1
+  mode: ramp
+  audit_participation: true
+- segment_id: steady
+  row_range:
+  - 1
+  - 2
+  mode: steady
+  audit_participation: true

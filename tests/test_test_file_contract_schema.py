@@ -24,12 +24,13 @@ def test_generated_manifest_schema_records_file_shape_and_extractor() -> None:
     assert manifest.field_signature_hash
 
 
-def test_test_file_contract_schema_allows_referenced_artifacts() -> None:
+def test_test_file_contract_schema_has_inline_fields() -> None:
     contract = load_test_file_contract(PUMP / "contracts" / "clean_contract.yaml")
 
     assert contract.contract_id == "pump_loop_clean_contract"
     assert contract.manifest == "../data/clean_manifest.yaml"
-    assert contract.mapping_edges == "../coverage/pump_loop_mapping_edges.yaml"
+    assert contract.fields["cmd_speed_rad_s"].target == "pump_signal_map.x"
+    assert contract.data_file == "../data/clean.csv"
 
 
 def test_mapping_evidence_schema_records_source_and_confidence() -> None:
@@ -42,3 +43,11 @@ def test_mapping_evidence_schema_records_source_and_confidence() -> None:
 
     assert evidence.evidence_type == "human_provided"
     assert evidence.confidence == 0.9
+
+
+def test_old_multi_file_contract_has_a_clear_migration_error(tmp_path):
+    import pytest
+    path=tmp_path/'old.yaml'
+    path.write_text('contract_id: old\nmodel_binding: old_binding.yaml\n')
+    with pytest.raises(ValueError,match='before 0.15.19.*references/templates/test_file_contract.yaml'):
+        load_test_file_contract(path)

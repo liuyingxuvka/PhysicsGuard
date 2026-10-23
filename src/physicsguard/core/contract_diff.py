@@ -73,8 +73,8 @@ def diff_test_file_contracts(old_contract: str | Path, new_contract: str | Path)
                 "new": new.manifest.value.extractor.script_hash,
             }
         )
-    old_binding = old.model_binding.value.binding_id if old.model_binding is not None else None
-    new_binding = new.model_binding.value.binding_id if new.model_binding is not None else None
+    old_binding = old.contract.model
+    new_binding = new.contract.model
     if old_binding != new_binding:
         changes.append(
             {

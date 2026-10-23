@@ -7,14 +7,13 @@ from pydantic import ValidationError
 
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.validation_adequacy import evaluate_validation_adequacy_artifacts
+from physicsguard.core.test_file_contract import contract_role_matrix, contract_field_mappings, resolve_test_file_contract
 from physicsguard.core.validation_depth import _residual_series_receipt
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_series
 from physicsguard.io.test_file_contract_loader import (
     load_data_file_manifest,
     load_model_validation_plan,
-    load_parameter_mapping_edges,
-    load_parameter_role_matrix,
 )
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec, ValidationVariableRoleSpec
@@ -31,9 +30,9 @@ def _inputs():
     plan = load_model_validation_plan(PUMP / "validation" / "clean_validation_plan.yaml")
     audit = load_hierarchical_audit_spec(PUMP / "model" / "pump_loop_hierarchy.yaml")
     manifest = load_data_file_manifest(PUMP / "data" / "clean_manifest.yaml")
-    roles = load_parameter_role_matrix(PUMP / "coverage" / "pump_loop_role_matrix.yaml")
+    roles = contract_role_matrix(PUMP / "contracts" / "clean_contract.yaml")
     series = load_observed_series(PUMP / "observed" / "clean_observed_series.yaml")
-    bindings = load_parameter_mapping_edges(PUMP / "coverage" / "pump_loop_mapping_edges.yaml").edges
+    bindings = contract_field_mappings(resolve_test_file_contract(PUMP / "contracts" / "clean_contract.yaml"))
     return plan, audit, manifest, roles, series, bindings
 
 
@@ -256,7 +255,7 @@ def test_sensitive_time_varying_parameter_with_effectless_native_replay_is_block
     )
     audit = load_hierarchical_audit_spec(PUMP / "model" / "pump_loop_hierarchy.yaml")
     manifest = load_data_file_manifest(PUMP / "data" / "clean_manifest.yaml")
-    roles = load_parameter_role_matrix(PUMP / "coverage" / "pump_loop_role_matrix.yaml")
+    roles = contract_role_matrix(PUMP / "contracts" / "clean_contract.yaml")
     series = load_observed_series(
         PUMP / "observed" / "deep_time_varying_parameter_series.yaml"
     )
@@ -318,7 +317,7 @@ def test_verified_non_sensitive_parameter_requires_native_ceiling_and_bounded_di
     )
     audit = load_hierarchical_audit_spec(PUMP / "model" / "pump_loop_hierarchy.yaml")
     manifest = load_data_file_manifest(PUMP / "data" / "clean_manifest.yaml")
-    roles = load_parameter_role_matrix(PUMP / "coverage" / "pump_loop_role_matrix.yaml")
+    roles = contract_role_matrix(PUMP / "contracts" / "clean_contract.yaml")
     series = load_observed_series(
         PUMP / "observed" / "deep_time_varying_parameter_series.yaml"
     )

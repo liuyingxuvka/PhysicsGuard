@@ -10,9 +10,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.parameter_coverage import (
     CoveragePolicySpec,
-    ParameterCatalogSpec,
-    ParameterMappingEdgesSpec,
-    ParameterRoleMatrixSpec,
 )
 from physicsguard.schema.variable import ensure_non_empty
 
@@ -100,46 +97,6 @@ class ExtractorProfileSpec(BaseModel):
         return self
 
 
-class ModelBindingSpec(BaseModel):
-    """Binding from a test-file contract to PhysicsGuard model artifacts."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    binding_id: str
-    hierarchy_file: Optional[str] = None
-    hierarchy_hash: Optional[str] = None
-    physicsguard_version: Optional[str] = None
-    expected_variables: list[str] = Field(default_factory=list)
-    expected_parameters: list[str] = Field(default_factory=list)
-    compatible_testbench_profiles: list[str] = Field(default_factory=list)
-    compatible_manifest_signatures: list[str] = Field(default_factory=list)
-    stale_when: list[str] = Field(default_factory=list)
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @field_validator("binding_id")
-    @classmethod
-    def _binding_id_not_empty(cls, value: str) -> str:
-        return ensure_non_empty(value, "binding_id")
-
-    @field_validator(
-        "expected_variables",
-        "expected_parameters",
-        "compatible_testbench_profiles",
-        "compatible_manifest_signatures",
-        "stale_when",
-    )
-    @classmethod
-    def _list_items_not_empty(cls, values: list[str], info) -> list[str]:
-        for value in values:
-            ensure_non_empty(value, info.field_name)
-        return values
-
-    @model_validator(mode="after")
-    def _metadata_json_serializable(self) -> "ModelBindingSpec":
-        _ensure_json_serializable(self.metadata, "model binding metadata")
-        return self
-
-
 class DatasetSegmentSpec(BaseModel):
     """Optional segment within a single test file."""
 
@@ -195,91 +152,74 @@ class KnownDefectSpec(BaseModel):
         return self
 
 
-class TestFileContractSpec(BaseModel):
-    """Resolved or resolvable contract for one concrete test data file."""
+class ConversionSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    factor: float = 1.0
+    offset: float = 0.0
 
+
+class ContractCoverageSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    min_confidence: float = Field(default=0.6, ge=0, le=1)
 
+
+class FieldSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    role: str | None = None
+    unit: str | None = None
+    target: str | None = None
+    targets: dict[str, str] = Field(default_factory=dict)
+    confidence: float | str | None = None
+    evidence: str | None = None
+    reason: str | None = None
+    conversion: ConversionSpec | None = None
+    planned_child_model: dict[str, Any] | None = None
+    review_required: bool = False
+
+    @model_validator(mode="after")
+    def _targets_valid(self):
+        if self.target is not None and self.targets:
+            raise ValueError("use target or targets, not both")
+        if set(self.targets) - {"row", "next_row"}:
+            raise ValueError("targets keys must be row or next_row")
+        return self
+
+
+class TestFileContractSpec(BaseModel):
+    """One executable file: identity, field roles, mapping evidence and units."""
+    model_config = ConfigDict(extra="forbid")
     contract_id: str
-    file_id: str
-    logical_dataset: Optional[str] = None
-    manifest: DataFileManifestSpec | str
-    manifest_hash: Optional[str] = None
-    testbench_profile: Optional[TestBenchProfileSpec | str] = None
-    extractor_profile: Optional[ExtractorProfileSpec | str] = None
-    model_binding: Optional[ModelBindingSpec | str] = None
-    parameter_catalog: Optional[ParameterCatalogSpec | str] = None
-    role_matrix: Optional[ParameterRoleMatrixSpec | str] = None
-    mapping_edges: Optional[ParameterMappingEdgesSpec | str] = None
-    coverage_policy: Optional[CoveragePolicySpec | str] = None
+    data_file: str
+    manifest: str
+    model: str
+    model_hash: str | None = None
+    extractor: ExtractorProfileSpec | None = None
+    time_column: str | None = None
+    fields: dict[str, FieldSpec]
+    coverage: ContractCoverageSpec = Field(default_factory=ContractCoverageSpec)
     segments: list[DatasetSegmentSpec] = Field(default_factory=list)
     known_defects: list[KnownDefectSpec] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
-    @field_validator("contract_id", "file_id")
+    @model_validator(mode="before")
     @classmethod
-    def _ids_not_empty(cls, value: str, info) -> str:
+    def _reject_legacy(cls, value):
+        old = {"testbench_profile", "model_binding", "parameter_catalog", "role_matrix", "mapping_edges", "coverage_policy", "logical_dataset", "extractor_profile"}
+        if isinstance(value, dict) and old & value.keys():
+            raise ValueError("This is a multi-file contract from before 0.15.19; rewrite it as one file using references/templates/test_file_contract.yaml")
+        return value
+
+    @field_validator("contract_id", "data_file", "manifest", "model")
+    @classmethod
+    def _required(cls, value, info):
         return ensure_non_empty(value, info.field_name)
 
-    @field_validator("logical_dataset", "manifest_hash")
-    @classmethod
-    def _optional_strings_not_empty(cls, value: Optional[str], info) -> Optional[str]:
-        return ensure_non_empty(value, info.field_name) if value is not None else value
-
     @model_validator(mode="after")
-    def _contract_valid(self) -> "TestFileContractSpec":
-        segment_ids = [segment.segment_id for segment in self.segments]
-        if len(segment_ids) != len(set(segment_ids)):
-            raise ValueError("dataset segment ids must be unique")
-        defect_ids = [defect.id for defect in self.known_defects]
-        if len(defect_ids) != len(set(defect_ids)):
-            raise ValueError("known defect ids must be unique")
-        _ensure_json_serializable(self.metadata, "test file contract metadata")
-        return self
-
-
-class TestFileReferenceSpec(BaseModel):
-    """Project index reference to one test file contract."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    contract: str
-    file_id: Optional[str] = None
-    logical_dataset_id: Optional[str] = None
-    testbench_profile_id: Optional[str] = None
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @field_validator("contract")
-    @classmethod
-    def _contract_not_empty(cls, value: str) -> str:
-        return ensure_non_empty(value, "contract")
-
-    @model_validator(mode="after")
-    def _metadata_json_serializable(self) -> "TestFileReferenceSpec":
-        _ensure_json_serializable(self.metadata, "test file reference metadata")
-        return self
-
-
-class TestFileProjectIndexSpec(BaseModel):
-    """Project-level list of file-specific test contracts."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    project_id: str
-    test_files: list[TestFileReferenceSpec]
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @field_validator("project_id")
-    @classmethod
-    def _project_id_not_empty(cls, value: str) -> str:
-        return ensure_non_empty(value, "project_id")
-
-    @model_validator(mode="after")
-    def _index_valid(self) -> "TestFileProjectIndexSpec":
-        contracts = [item.contract for item in self.test_files]
-        if len(contracts) != len(set(contracts)):
-            raise ValueError("project index contract references must be unique")
-        _ensure_json_serializable(self.metadata, "project index metadata")
+    def _unique_rows(self):
+        for rows, key in [(self.segments, "segment_id"), (self.known_defects, "id")]:
+            ids = [getattr(row, key) for row in rows]
+            if len(ids) != len(set(ids)):
+                raise ValueError(f"duplicate {key}")
         return self
 
 
@@ -291,17 +231,3 @@ def _ensure_json_serializable(value: Any, field_name: str) -> None:
         json.dumps(value)
     except TypeError as exc:
         raise ValueError(f"{field_name} must be JSON-serializable") from exc
-
-
-__all__ = [
-    "DatasetSegmentSpec",
-    "ExtractorProfileSpec",
-    "FieldAliasSpec",
-    "KnownDefectSpec",
-    "ModelBindingSpec",
-    "TestBenchProfileSpec",
-    "TestFileContract",
-    "TestFileContractSpec",
-    "TestFileProjectIndexSpec",
-    "TestFileReferenceSpec",
-]

@@ -51,11 +51,11 @@ partial, stale, or review-required contracts.
    ```
 
    A broad validation claim also needs `depth`: name the data files, field
-   schema, parameter roles, testbench profile/version, and observed series by
+   schema, parameter roles, contract metadata/version, and observed series by
    path, then declare `time_scope`, scenario/case ids, perturbations, and
    assumptions. When calibration is enabled, declare disjoint `training` and
-   `holdout` files under `depth.split`. Every required signal needs a mapping
-   edge with unit evidence, enough confidence, and no review flag in the
+   `holdout` files under `depth.split`. Every required signal needs a field
+   mapping with unit evidence, enough confidence, and no review flag in the
    referenced contracts.
 
    Set `depth.model_semantics` explicitly. `pointwise` means independent
@@ -110,7 +110,7 @@ pointwise relation into a simulator.
   case id. Renaming identical content does not create a valid holdout.
 - The plan's selected rows and signals do not define the coverage universe.
   PhysicsGuard derives it from current manifests, role matrices, hierarchy,
-  and contract mapping edges; exclusions need explicit, non-template reasons.
+  and contract fields; exclusions need explicit, non-template reasons.
 
 ## Safe Claim Boundary
 
@@ -120,3 +120,15 @@ perturbations, model, assumptions, residual series, and physical envelopes. It
 is not high-fidelity
 proof, dynamic interpolation, universal model understanding, or
 commercial-model equivalence.
+
+## Single-file data mapping
+`testfile manifest` → `testfile contract-check` → `testfile snapshot|series`
+reads one contract's `fields`. Use `references/templates/test_file_contract.yaml`
+in the installed skill. A validation plan's `depth.dataset.parameter_roles` and
+`testbench` references point to that same contract; `metadata.testbench_version`
+records the version named by the validation plan. Generated series use the
+contract ID as `source_identity_id`; use that identity for its dataset file.
+Units are converted before evaluation, with factor/offset and field@row retained.
+Missing files, uncertain mappings, scope overreach, overlapping holdouts and
+pointwise predictive claims remain hard gates. Ignored fields stay outside the
+validated claim; adequacy floors must reflect their declared exclusion.

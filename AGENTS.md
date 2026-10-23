@@ -20,8 +20,8 @@
 - Never imply equivalence with commercial solver internals.
 - Do not let observed evaluation modify observed values.
 - Do not confuse reference solve with observed audit.
-- CSV and commercial-tool adapters remain future work.
-- Observed values are assumed to be SI unless unit conversion is explicitly implemented later.
+- Commercial-tool adapters remain future work; CSV/TSV test data is read only through a test-file contract (`testfile snapshot|series`).
+- Observed values used by an audit are SI; non-SI test data is converted only by `testfile snapshot|series`, and every converted value records its factor and offset.
 - Every physical, component and engineering module must document assumptions, limitations, SI units, residual equations, validity range, and diagnostic keys.
 - Prefer simple first-principles algebraic residuals.
 - Do not add empirical correlations unless the source and validity range are documented.
@@ -33,7 +33,7 @@
 - Map-based modules must document axis units, output units, and extrapolation behavior.
 - Prefer low-fidelity explicit residuals over complex empirical correlations.
 - Prefer simple first-principles algebraic residuals and single-step audit relations over hidden stateful solvers.
-- Do not add hidden unit conversion tables; conversion audit modules must use explicit user-provided factors and offsets.
+- The only unit table is the documented one in `src/physicsguard/core/units.py`; otherwise conversions use explicit user-provided factors and offsets; never convert silently inside an evaluation.
 - Every new engineering component module must include tests and at least one example.
 - Hierarchical audit should support coarse-to-fine debugging with machine-readable reports.
 - Hierarchical observed evaluation should substitute external values directly and must not move or solve observed values.

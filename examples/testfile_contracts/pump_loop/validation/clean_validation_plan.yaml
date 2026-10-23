@@ -7,32 +7,32 @@ validation_id: pump_loop_clean_validation
 audit_file: ../model/pump_loop_hierarchy.yaml
 observed_file: ../observed/clean_observed.yaml
 contracts:
-  - contract: ../contracts/clean_contract.yaml
-    required_status: pass
+- contract: ../contracts/clean_contract.yaml
+  required_status: pass
 variable_roles:
-  - source_id: field:cmd_speed_rad_s
-    target: pump_signal_map.x
-    validation_role: model_input
-    use_policy: preferred
-    mapping_confidence: 0.9
-    measurement_confidence: 0.8
-  - source_id: field:flow_readback_kg_s
-    target: pump_signal_map.y
-    validation_role: validation_output
-    use_policy: holdout_only
-    mapping_confidence: 0.9
-    measurement_confidence: 0.8
+- source_id: field:cmd_speed_rad_s
+  target: pump_signal_map.x
+  validation_role: model_input
+  use_policy: preferred
+  mapping_confidence: 0.9
+  measurement_confidence: 0.8
+- source_id: field:flow_readback_kg_s
+  target: pump_signal_map.y
+  validation_role: validation_output
+  use_policy: holdout_only
+  mapping_confidence: 0.9
+  measurement_confidence: 0.8
 physical_envelopes:
-  - target: pump_signal_map.x
-    lower: 0.0
-    upper: 100.0
-    unit: rad/s
-    severity: warning
-  - target: pump_signal_map.y
-    lower: 0.0
-    upper: 300.0
-    unit: kg/s
-    severity: warning
+- target: pump_signal_map.x
+  lower: 0.0
+  upper: 100.0
+  unit: rad/s
+  severity: warning
+- target: pump_signal_map.y
+  lower: 0.0
+  upper: 300.0
+  unit: kg/s
+  severity: warning
 redundant_sensor_checks: []
 calibration:
   enabled: false
@@ -42,21 +42,21 @@ depth:
   dataset:
     dataset_id: pump_loop_clean_dataset
     files:
-      - identity_id: clean_csv
-        path: ../data/clean.csv
-        case_ids:
-          - baseline_case
-          - speed_ramp_case_01
-          - speed_ramp_case_02
+    - identity_id: clean_csv
+      path: ../data/clean.csv
+      case_ids:
+      - baseline_case
+      - speed_ramp_case_01
+      - speed_ramp_case_02
     field_schema:
       identity_id: clean_manifest_schema
       path: ../data/clean_manifest.yaml
     parameter_roles:
       identity_id: pump_loop_parameter_roles
-      path: ../coverage/pump_loop_role_matrix.yaml
+      path: ../contracts/clean_contract.yaml
     testbench:
       identity_id: pump_loop_testbench_profile
-      path: ../profiles/pump_loop_testbench_profile.yaml
+      path: ../contracts/clean_contract.yaml
     testbench_version: v1
   mapping_review:
     minimum_confidence: 0.75
@@ -64,9 +64,9 @@ depth:
     identity_id: clean_observed_series
     path: ../observed/clean_observed_series.yaml
     case_ids:
-      - baseline_case
-      - speed_ramp_case_01
-      - speed_ramp_case_02
+    - baseline_case
+    - speed_ramp_case_01
+    - speed_ramp_case_02
   time_scope:
     claim_scope: scenario_set
     start_time: 0.0
@@ -75,9 +75,12 @@ depth:
     expected_point_count: 3
   adequacy:
     sampling_mode: full
-    threshold_source: pump_loop_fixture_full_manifest_policy_v1
+    threshold_source: pump_loop_single_file_roles_v2
     selection_policy_id: pump_loop_fixture_full_manifest_selection_v1
-    selection_rationale: Every row in the bounded three-row fixture is evaluated; no representative subsampling is used.
+    selection_rationale: Every row in the bounded three-row fixture is evaluated;
+      no representative subsampling is used. The unitless valve mode flag is explicitly
+      ignored because this generic audit has no variable for it; the command and flow
+      remain fully covered.
     minimum_selected_points: 3
     minimum_selected_ratio: 1.0
     minimum_distinct_timestamps: 3
@@ -90,56 +93,59 @@ depth:
     minimum_per_parameter_valid_points: 3
     minimum_per_parameter_valid_ratio: 1.0
     minimum_parameter_coverage_ratio: 1.0
-    maximum_exclusion_ratio: 0.0
+    maximum_exclusion_ratio: 0.3333333333333333
     critical_signals:
+    - pump_signal_map.x
+    - pump_signal_map.y
+    critical_parameters:
+    - pump_signal_map.a
+    parameter_temporal_policies:
+    - parameter_id: pump_signal_map.a
+      temporal_behavior: static
+      classification_source: pump_loop hierarchy plus registered fixture parameter
+        fact
+    required_event_tags:
+    - baseline
+    - speed_ramp
+    required_peak_tags:
+    - speed_peak
+    required_boundary_tags:
+    - window_start
+    - window_end
+    required_mode_ids:
+    - valve_open
+    family_quotas:
+    - family_id: pump_loop_core
+      member_kind: mixed
+      member_ids:
       - pump_signal_map.x
       - pump_signal_map.y
-    critical_parameters:
       - pump_signal_map.a
-    parameter_temporal_policies:
-      - parameter_id: pump_signal_map.a
-        temporal_behavior: static
-        classification_source: pump_loop hierarchy plus registered fixture parameter fact
-    required_event_tags:
-      - baseline
-      - speed_ramp
-    required_peak_tags:
-      - speed_peak
-    required_boundary_tags:
-      - window_start
-      - window_end
-    required_mode_ids:
-      - valve_open
-    family_quotas:
-      - family_id: pump_loop_core
-        member_kind: mixed
-        member_ids:
-          - pump_signal_map.x
-          - pump_signal_map.y
-          - pump_signal_map.a
-        minimum_covered_count: 3
-        minimum_covered_ratio: 1.0
+      minimum_covered_count: 3
+      minimum_covered_ratio: 1.0
   scenarios:
-    - scenario_id: baseline
-      case_ids:
-        - baseline_case
-      description: Exact baseline point from the clean fixture dataset.
-    - scenario_id: speed_ramp
-      case_ids:
-        - speed_ramp_case_01
-        - speed_ramp_case_02
-      baseline_scenario_id: baseline
-      perturbations:
-        - target: pump_signal_map.x
-          change: profile
-          value:
-            start: 10.5
-            end: 11.0
-          unit: rad/s
-          reason: Declared commanded-speed ramp present in the bounded fixture rows.
-      description: Two exact rows with a declared commanded-speed perturbation.
+  - scenario_id: baseline
+    case_ids:
+    - baseline_case
+    description: Exact baseline point from the clean fixture dataset.
+  - scenario_id: speed_ramp
+    case_ids:
+    - speed_ramp_case_01
+    - speed_ramp_case_02
+    baseline_scenario_id: baseline
+    perturbations:
+    - target: pump_signal_map.x
+      change: profile
+      value:
+        start: 10.5
+        end: 11.0
+      unit: rad/s
+      reason: Declared commanded-speed ramp present in the bounded fixture rows.
+    description: Two exact rows with a declared commanded-speed perturbation.
   assumptions:
-    - The fixture relation y = 2*x is intentionally low fidelity and used only for contract coverage.
-    - Each series point is evaluated independently; no dynamics are inferred between timestamps.
+  - The fixture relation y = 2*x is intentionally low fidelity and used only for contract
+    coverage.
+  - Each series point is evaluated independently; no dynamics are inferred between
+    timestamps.
 metadata:
   fixture: clean

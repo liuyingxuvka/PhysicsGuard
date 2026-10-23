@@ -12,7 +12,7 @@ Bound every model-dataset validation claim to the files, mappings, time and scen
 - **THEN** the status SHALL be `fail` with the finding `observed_series_missing`
 
 ### Requirement: Current mapping gate
-Validation MUST read the mapping edges of the referenced test-file contracts and require unit evidence, confidence at or above `depth.mapping_review.minimum_confidence`, and no review flag for every required signal.
+Validation MUST read the field declarations of the referenced single-file contracts and require unit evidence, confidence at or above `depth.mapping_review.minimum_confidence`, and no review flag for every required signal.
 
 #### Scenario: A required signal is uncertain
 - **WHEN** a required signal mapping lacks unit evidence or enough confidence
@@ -262,3 +262,9 @@ Compact hierarchy audit summaries SHALL include each assumption card's `id`, `st
 #### Scenario: An unapplied card remains visible
 - **WHEN** an audit contains a proposed or rejected card
 - **THEN** its compact summary SHALL retain the card with its status and `applied: false`
+
+### Requirement: current single-file mapping gate
+Validation SHALL derive mappings from each test-file contract's fields, including
+unit compatibility, target registry, confidence and evidence. No old sidecar
+mapping format SHALL be loaded. Data freshness, unresolved mappings, overstated
+scope, overlapping holdout content and pointwise prediction remain hard gates.

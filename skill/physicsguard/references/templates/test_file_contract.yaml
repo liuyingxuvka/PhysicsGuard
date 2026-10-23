@@ -1,0 +1,75 @@
+# PhysicsGuard executable test-file contract
+# Purpose: Map measured tank signals into SI observations, without solving.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli testfile contract-check tank_run_contract.yaml
+# Boundary: Low-fidelity SI audit only; no commercial-tool equivalence.
+contract_id: tank_run
+data_file: tank_run.csv
+manifest: tank_run_manifest.yaml
+model: heated_tank.yaml
+time_column: time_s
+fields:
+  time_s:
+    unit: s
+    role: ignored
+    reason: Series clock
+  level_m:
+    unit: m
+    role: measured
+    targets:
+      row: lvl_prev.level_m
+      next_row: lvl_cur.level_m
+    confidence: high
+    evidence: Tank level sensor
+  inflow_Lps:
+    unit: L/s
+    role: measured
+    target: inflow_mass.V_dot_m3_s
+    confidence: high
+    evidence: Inflow measurement
+  outflow_m3s:
+    unit: m^3/s
+    role: measured
+    target: vol.V_dot_out_m3_s
+    confidence: high
+    evidence: Outflow measurement
+  T_in_C:
+    unit: degC
+    role: measured
+    target: through.T_in_K
+    confidence: high
+    evidence: Inlet temperature sensor
+  T_tank_C:
+    unit: degC
+    role: measured
+    targets:
+      row: heat.T_previous_K
+      next_row: heat.T_current_K
+    confidence: high
+    evidence: Tank temperature sensor
+  T_amb_C:
+    unit: degC
+    role: measured
+    target: loss.T_ambient_K
+    confidence: high
+    evidence: Ambient temperature sensor
+  P_heater_cmd_kW:
+    unit: kW
+    role: command
+    target: heater_cmd.x
+    confidence: high
+    evidence: Recorded command, not delivered heat
+  I_heater_A:
+    unit: A
+    role: measured
+    target: heater_el.current_A
+    confidence: high
+    evidence: Heater ammeter
+  U_heater_V:
+    unit: V
+    role: measured
+    target: heater_el.V_V
+    confidence: high
+    evidence: Heater voltmeter
+metadata:
+  testbench_version: v1

@@ -18,7 +18,7 @@
       "layer": "interface",
       "summary": "CLI and lazy public API",
       "responsibilities": [
-        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners",
+        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent.",
         "Print a compact hierarchy/validation summary with derived names, check counts and assumption dispositions, and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
@@ -50,7 +50,6 @@
         "tests/test_assumption_cli.py",
         "tests/test_assumption_diagnostics.py",
         "tests/test_cli.py",
-        "tests/test_dataset_identity.py",
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
         "tests/test_evaluator.py",
@@ -76,7 +75,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:577ff4b90efaf0c453d0635b0e7b4133f76cc45335e18459afe913627c24a886"
+      "fingerprint": "sha256:23b229a7f06f497b4347e953b1e4a2d6d8668458ae89e459bfabe6bf562f017c"
     },
     {
       "id": "routing",
@@ -216,12 +215,11 @@
       "layer": "workflows",
       "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
       "responsibilities": [
-        "Check the dataset files, contract mapping edges and time coverage behind a validation and report them as a compact depth summary",
+        "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
         "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates"
       ],
       "files": [
-        "src/physicsguard/core/dataset_identity.py",
         "src/physicsguard/core/model_dataset_validation.py",
         "src/physicsguard/core/predictive_rollout.py",
         "src/physicsguard/core/validation_adequacy.py",
@@ -238,7 +236,6 @@
       ],
       "tests": [
         "tests/test_cli.py",
-        "tests/test_dataset_identity.py",
         "tests/test_model_dataset_validation.py",
         "tests/test_predictive_rollout_validation.py",
         "tests/test_signal_mapping_ledger.py",
@@ -250,7 +247,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:600263f08b098e4b48aa0abc6de13025e593609c3d2fc108627c1640520062f5"
+      "fingerprint": "sha256:a9f160e64b74e65b16ce372decdc4ae485082422474c9f8250b0013f93d017fd"
     },
     {
       "id": "task_revision",
@@ -292,7 +289,7 @@
       "layer": "workflows",
       "summary": "Test-file contracts, manifests and contract differences",
       "responsibilities": [
-        "Keep source files, manifests and mapping evidence traceable",
+        "Read one executable test-file contract, retain data/extractor content hashes, and generate SI snapshots and adjacent-row series with conversion and mapping evidence.",
         "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
       ],
       "files": [
@@ -310,7 +307,6 @@
       ],
       "tests": [
         "tests/test_cli.py",
-        "tests/test_dataset_identity.py",
         "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
         "tests/test_hierarchy_refinement.py",
@@ -329,24 +325,25 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:cd3c9fac0da93db779b7554950f3ba4711769471b9820c817df3186868831b4b"
+      "fingerprint": "sha256:079d910fb43d5654483ebcc58dd1345b1822dfb3ccf6a8b1eacc7a274e0748a5"
     },
     {
       "id": "schema",
       "layer": "foundation",
       "summary": "Validated schemas, shared review records and pure contract coverage checks",
       "responsibilities": [
-        "Validate structured inputs before domain operations",
+        "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion.",
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
         "Validate optional connection residual scales as positive finite values",
-        "Provide shared contract-review records and pure manifest, catalog, role and mapping coverage checks",
+        "Provide shared contract-review records and pure manifest, field declarations, role and mapping coverage checks",
         "Validate refines against direct parent component ownership and reject the retired expected_residual_keys field",
         "Validate declared fault variants, one finite measurement edit per change, unique ids and rederived variable references"
       ],
       "files": [
         "src/physicsguard/schema/*.py",
         "src/physicsguard/schema/test_file_contract.py",
-        "src/physicsguard/core/parameter_coverage.py"
+        "src/physicsguard/core/parameter_coverage.py",
+        "src/physicsguard/core/units.py"
       ],
       "entrypoints": [],
       "state": [],
@@ -375,7 +372,6 @@
         "tests/test_component_thermal_management.py",
         "tests/test_control_pid_helpers.py",
         "tests/test_control_signal_modules.py",
-        "tests/test_dataset_identity.py",
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
         "tests/test_domain_judgment_module_behaviors.py",
@@ -422,14 +418,14 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:670cf493c46b58cb4ba8189b6aee6eb0c0b9239f82991f104535f6ab01e95a42"
+      "fingerprint": "sha256:20fbb404f188d034c0ce17a1db9c7bf001c7b0ef23b475454c03b339e986ae9d"
     },
     {
       "id": "loaders",
       "layer": "foundation",
       "summary": "Native YAML/JSON and observation loaders",
       "responsibilities": [
-        "Read native files without silently changing observations"
+        "Read native files without silently changing observations Read the single-file contract format; reject old multi-file keys with a migration instruction."
       ],
       "files": [
         "src/physicsguard/io/*.py",
@@ -504,7 +500,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:c5568e9119334a4f8ffa7c3c23dbe4bbb1d8b2804b72dd2eded9adcbfaece10e"
+      "fingerprint": "sha256:3c9f351aaf26d0e55b382d195fa83da29884290c85b475a86244851ba463c678"
     },
     {
       "id": "modules",
@@ -622,7 +618,7 @@
       "tests": [],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:5fb03c4b022e0af031dd7a9e62b26dc02c6c0d1755b21e4bfd4104191977c14d"
+      "fingerprint": "sha256:641da1daaaa70b66f981a15185b5ef631cab113ae67cab3efda177521be9c36c"
     }
   ],
   "flows": [

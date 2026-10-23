@@ -700,9 +700,9 @@ def _rollout(semantics: str):
 
 
 def _uncertain_mapping(pump: Path, plan: dict) -> None:
-    edges_path = pump / "coverage" / "pump_loop_mapping_edges.yaml"
+    edges_path = pump / "contracts" / "clean_contract.yaml"
     edges = _load(edges_path)
-    edge = next(item for item in edges["edges"] if item["target"] == "pump_signal_map.y")
+    edge = edges["fields"]["flow_readback_kg_s"]
     edge["confidence"] = 0.4
     _write(edges_path, edges)
 

@@ -227,12 +227,15 @@ def build_parser() -> argparse.ArgumentParser:
     testfile_contract_check.add_argument("contract", type=Path, help="path to TestFileContract YAML")
     testfile_contract_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
-    testfile_project_check = testfile_subparsers.add_parser(
-        "project-check",
-        help="check all test-file contracts referenced by a project index",
-    )
-    testfile_project_check.add_argument("index", type=Path, help="path to TestFileProjectIndex YAML")
-    testfile_project_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
+    for kind in ('snapshot', 'series'):
+        command = testfile_subparsers.add_parser(kind, help='convert declared CSV/TSV fields into SI observations')
+        command.add_argument('contract', type=Path)
+        command.add_argument('--out', type=Path)
+        command.add_argument('--pretty', action='store_true')
+        if kind == 'snapshot':
+            command.add_argument('--row', type=int, required=True, help='zero-based source row')
+        else:
+            command.add_argument('--rows', help='zero-based A:B, end exclusive; default all usable rows')
 
     testfile_diff = testfile_subparsers.add_parser(
         "diff",
@@ -241,36 +244,6 @@ def build_parser() -> argparse.ArgumentParser:
     testfile_diff.add_argument("old_contract", type=Path, help="old TestFileContract YAML")
     testfile_diff.add_argument("new_contract", type=Path, help="new TestFileContract YAML")
     testfile_diff.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
-    coverage_parser = subparsers.add_parser(
-        "coverage",
-        help="parameter coverage contract commands",
-    )
-    coverage_subparsers = coverage_parser.add_subparsers(dest="coverage_command", required=True)
-    coverage_check_parser = coverage_subparsers.add_parser(
-        "check",
-        help="check parameter coverage for a test-file contract",
-    )
-    coverage_check_parser.add_argument("contract", type=Path, help="path to TestFileContract YAML")
-    coverage_check_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
-    dataset_parser = subparsers.add_parser(
-        "dataset",
-        help="logical test dataset identity commands",
-    )
-    dataset_subparsers = dataset_parser.add_subparsers(dest="dataset_command", required=True)
-    dataset_logical_check = dataset_subparsers.add_parser(
-        "logical-check",
-        help="check a logical dataset record",
-    )
-    dataset_logical_check.add_argument("record", type=Path, help="path to LogicalDatasetRecord YAML")
-    dataset_logical_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    dataset_relation_check = dataset_subparsers.add_parser(
-        "relation-check",
-        help="check a test-file relation index",
-    )
-    dataset_relation_check.add_argument("index", type=Path, help="path to TestFileRelationIndex YAML")
-    dataset_relation_check.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     validation_parser = subparsers.add_parser(
         "validation",
@@ -667,6 +640,12 @@ def testfile_manifest_command(
         except ValueError:
             # Different Windows drives have no relative path.
             output["source_file"]["path"] = data_file.resolve().as_posix()
+        script = Path(output['extractor']['script'])
+        if script.is_file():
+            try:
+                output['extractor']['script'] = Path(os.path.relpath(script.resolve(), out.parent.resolve())).as_posix()
+            except ValueError:
+                output['extractor']['script'] = script.resolve().as_posix()
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(yaml.safe_dump(output, sort_keys=False), encoding="utf-8")
     else:
@@ -689,13 +668,6 @@ def testfile_contract_check_command(path: Path, pretty: bool = False) -> int:
     return 0 if report.ok else 1
 
 
-def testfile_project_check_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.test_file_contract import check_test_file_project_index
-
-    report = check_test_file_project_index(path)
-    _print_json(report.to_dict(), pretty)
-    return 0 if report.ok else 1
-
 
 def testfile_diff_command(old_contract: Path, new_contract: Path, pretty: bool = False) -> int:
     from physicsguard.core.contract_diff import diff_test_file_contracts
@@ -705,28 +677,7 @@ def testfile_diff_command(old_contract: Path, new_contract: Path, pretty: bool =
     return 0
 
 
-def coverage_check_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.test_file_contract import check_test_file_parameter_coverage
 
-    report = check_test_file_parameter_coverage(path)
-    _print_json(report.to_dict(), pretty)
-    return 0 if report.ok else 1
-
-
-def dataset_logical_check_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.dataset_identity import check_logical_dataset_record
-
-    report = check_logical_dataset_record(path)
-    _print_json(report.to_dict(), pretty)
-    return 0 if report.ok else 1
-
-
-def dataset_relation_check_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.dataset_identity import check_test_file_relation_index
-
-    report = check_test_file_relation_index(path)
-    _print_json(report.to_dict(), pretty)
-    return 0 if report.ok else 1
 
 
 def validation_run_command(path: Path, pretty: bool = False, full: bool = False) -> int:
@@ -737,14 +688,25 @@ def validation_run_command(path: Path, pretty: bool = False, full: bool = False)
     return 0 if report.ok else 1
 
 
-def _load_manifest_profile(path: Path) -> TestBenchProfileSpec | ExtractorProfileSpec:
-    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
-    from physicsguard.schema.test_file_contract import ExtractorProfileSpec, TestBenchProfileSpec
-
+def _load_manifest_profile(path):
+    from physicsguard.io.test_file_contract_loader import load_yaml_mapping, load_test_file_contract
+    from physicsguard.schema.test_file_contract import TestBenchProfileSpec, ExtractorProfileSpec
     data = load_yaml_mapping(path)
-    if "script" in data:
-        return ExtractorProfileSpec.model_validate(data)
-    return TestBenchProfileSpec.model_validate(data)
+    if 'fields' in data and 'data_file' in data:
+        contract = load_test_file_contract(path)
+        common = dict(time_column=contract.time_column, field_units={name:f.unit for name,f in contract.fields.items() if f.unit})
+        if contract.extractor:
+            profile = contract.extractor.model_copy(update=common)
+        else:
+            return TestBenchProfileSpec(profile_id=contract.contract_id, **common)
+    elif 'script' in data:
+        profile = ExtractorProfileSpec.model_validate(data)
+    else:
+        return TestBenchProfileSpec.model_validate(data)
+    script = path.resolve().parent / profile.script
+    if script.is_file():
+        profile = profile.model_copy(update={'script': str(script.resolve())})
+    return profile
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -819,18 +781,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return testfile_inspect_command(args.contract, args.pretty)
             if args.testfile_command == "contract-check":
                 return testfile_contract_check_command(args.contract, args.pretty)
-            if args.testfile_command == "project-check":
-                return testfile_project_check_command(args.index, args.pretty)
+            if args.testfile_command in {'snapshot', 'series'}:
+                from physicsguard.core.test_file_contract import testfile_snapshot, testfile_series
+                import yaml
+                output = (testfile_snapshot(args.contract, args.row) if args.testfile_command == 'snapshot'
+                          else testfile_series(args.contract, args.rows))
+                if args.out:
+                    args.out.parent.mkdir(parents=True, exist_ok=True)
+                    args.out.write_text(yaml.safe_dump(output, sort_keys=False), encoding='utf-8')
+                else:
+                    _print_json(output, args.pretty)
+                return 0
             if args.testfile_command == "diff":
                 return testfile_diff_command(args.old_contract, args.new_contract, args.pretty)
-        if args.command == "coverage":
-            if args.coverage_command == "check":
-                return coverage_check_command(args.contract, args.pretty)
-        if args.command == "dataset":
-            if args.dataset_command == "logical-check":
-                return dataset_logical_check_command(args.record, args.pretty)
-            if args.dataset_command == "relation-check":
-                return dataset_relation_check_command(args.index, args.pretty)
         if args.command == "validation":
             if args.validation_command == "run":
                 return validation_run_command(args.plan, args.pretty, args.json)

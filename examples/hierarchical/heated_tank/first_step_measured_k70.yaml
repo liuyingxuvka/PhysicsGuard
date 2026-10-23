@@ -3,72 +3,86 @@
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy evaluate first_step_level0.yaml first_step_measured_k70.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
-observation_name: tank_step_70
-description: tank_run.csv rows 70->71
+observation_name: tank_run_first_step_step_70
 variables:
   lvl_prev.level_m:
     value: 1.0
     unit: m
     source: tank_run.csv
-    external_signal: level_m@k
+    external_signal: level_m@70
+    conversion_factor: 1.0
+    conversion_offset: 0.0
     mapping_confidence: high
+    description: Tank level sensor
   lvl_cur.level_m:
     value: 1.0
     unit: m
     source: tank_run.csv
-    external_signal: level_m@k+1
+    external_signal: level_m@71
+    conversion_factor: 1.0
+    conversion_offset: 0.0
     mapping_confidence: high
-  vol.V_dot_out_m3_s:
-    value: 0.001
-    unit: m^3/s
-    source: tank_run.csv
-    external_signal: outflow_m3s@k
-    mapping_confidence: high
+    description: Tank level sensor
   inflow_mass.V_dot_m3_s:
     value: 0.001
     unit: m^3/s
     source: tank_run.csv
-    external_signal: inflow_Lps@k
-    mapping_confidence: high
+    external_signal: inflow_Lps@70
     conversion_factor: 0.001
-    conversion_note: L/s to m^3/s
-  heat.T_previous_K:
-    value: 294.13613
-    unit: K
-    source: tank_run.csv
-    external_signal: T_tank_C@k
+    conversion_offset: 0.0
     mapping_confidence: high
-    conversion_offset: 273.15
-    conversion_note: degC to K
-  heat.T_current_K:
-    value: 294.06313
-    unit: K
+    description: Inflow measurement
+  vol.V_dot_out_m3_s:
+    value: 0.001
+    unit: m^3/s
     source: tank_run.csv
-    external_signal: T_tank_C@k+1
+    external_signal: outflow_m3s@70
+    conversion_factor: 1.0
+    conversion_offset: 0.0
     mapping_confidence: high
-    conversion_offset: 273.15
-    conversion_note: degC to K
-  heat.Q_in_W:
-    value: 20000.0
-    unit: W
-    source: tank_run.csv
-    external_signal: P_heater_cmd_kW@k
-    mapping_confidence: low
-    conversion_factor: 1000.0
-    conversion_note: kW to W; command, may not be delivered heat
+    description: Outflow measurement
   through.T_in_K:
     value: 288.15
     unit: K
     source: tank_run.csv
-    external_signal: T_in_C@k
-    mapping_confidence: high
+    external_signal: T_in_C@70
+    conversion_factor: 1.0
     conversion_offset: 273.15
-    conversion_note: degC to K
+    mapping_confidence: high
+    description: Inlet temperature sensor
+  heat.T_previous_K:
+    value: 294.13613
+    unit: K
+    source: tank_run.csv
+    external_signal: T_tank_C@70
+    conversion_factor: 1.0
+    conversion_offset: 273.15
+    mapping_confidence: high
+    description: Tank temperature sensor
+  heat.T_current_K:
+    value: 294.06313
+    unit: K
+    source: tank_run.csv
+    external_signal: T_tank_C@71
+    conversion_factor: 1.0
+    conversion_offset: 273.15
+    mapping_confidence: high
+    description: Tank temperature sensor
   loss.T_ambient_K:
     value: 293.15
     unit: K
     source: tank_run.csv
-    external_signal: T_amb_C@k
-    mapping_confidence: high
+    external_signal: T_amb_C@70
+    conversion_factor: 1.0
     conversion_offset: 273.15
-    conversion_note: degC to K
+    mapping_confidence: high
+    description: Ambient temperature sensor
+  heat.Q_in_W:
+    value: 20000.0
+    unit: W
+    source: tank_run.csv
+    external_signal: P_heater_cmd_kW@70
+    conversion_factor: 1000.0
+    conversion_offset: 0.0
+    mapping_confidence: low
+    description: Command used as delivered heat only in the coarse audit hypothesis
