@@ -1,11 +1,21 @@
 # Changelog
 
-## [Unreleased]
+## v0.15.19 - 2026-10-23
 
 ### Changed
 
 - Native interval, diagnosis, predictive rollout and validation adequacy outputs use result names and no output version field. Input validation remains in place; generated outputs are no longer passed back through output-only schemas.
 - Rename the optional predictive producer identifier to `producer_id`. The older `producer_receipt_id` input remains accepted as an alias; outputs use the new name.
+
+- Use one executable test-file contract: each field declares its role, unit, targets, confidence and evidence. Known unit pairs convert only during ingestion, with factor/offset, source and field@row retained.
+- Add `testfile snapshot CONTRACT --row N` and `testfile series CONTRACT [--rows A:B]`; adjacent-row targets support single-step relations without a custom mapping script.
+- Older multi-file contracts are no longer read. Rewrite them using the installed `references/templates/test_file_contract.yaml`, refresh the manifest with `testfile manifest`, then run `testfile contract-check`. Data and extractor content hashes remain authoritative.
+- Remove `hierarchy plan`, `coverage check`, `dataset logical-check`, `dataset relation-check` and `testfile project-check`. Use `hierarchy run --json` for the full diagnostic and refinement report.
+- Group consecutive failed series points into intervals with start/end time, worst block/residual and maximum normalized residual. Full JSON retains per-point details; summaries no longer repeat every failed point.
+- Make additional adequacy floors optional. Omitted plans use manifest-derived point/time/gap facts; declared floors remain advisory. An adjacent-row contract has N-1 usable steps from N raw rows. Native mapping, scope, holdout and predictive gates remain in place.
+- Let preflight and intake reviews accept `--audit` to check real block IDs, registered variables and unit compatibility.
+- Add bounded unit-factor/offset hints for failed observed audits. Hints name the variable and tested conversion without changing observations or verdicts; internal batches skip hints they do not display.
+- Ship an installed minimal validation-plan template and one short ordered debugging workflow; remove the duplicated protocol page.
 
 ## v0.15.18 - 2026-10-23
 
