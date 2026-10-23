@@ -1,0 +1,150 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Thirteen testbench-measurable channels selected from the actual native hierarchy-run solution. Values are synthetic references; signal names...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: coolant_loop_nominal_observed
+description: Thirteen testbench-measurable channels selected from the actual native
+  hierarchy-run solution. Values are synthetic references; signal names describe proposed
+  bench mappings.
+variables:
+  heat_source.x:
+    value: 10000.0
+    unit: W
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Independent heat-input calorimeter at the coarse thermal boundary.
+    external_signal: stack_thermal_input_calorimeter_W
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  heat_rejected.x:
+    value: 10000.0
+    unit: W
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Independent aggregate rejection measurement, e.g. air-side calorimetry;
+      cross-checked against the coolant-side radiator channel.
+    external_signal: loop_total_rejection_calorimeter_W
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  cool.m_dot_coolant_kg_s:
+    value: 1.0
+    unit: kg/s
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Main-loop flowmeter upstream of the split.
+    external_signal: main_coolant_flow_kg_s
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  cool.T_coolant_in_K:
+    value: 310.0
+    unit: K
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Stack inlet temperature sensor.
+    external_signal: stack_inlet_RTD_K
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  cool.T_coolant_out_K:
+    value: 320.0
+    unit: K
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Stack outlet temperature sensor.
+    external_signal: stack_outlet_RTD_K
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  pump.p_in_Pa:
+    value: 100000.0
+    unit: Pa
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Pump inlet pressure transducer.
+    external_signal: pump_inlet_pressure_Pa
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  pump.p_out_Pa:
+    value: 200000.0
+    unit: Pa
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Pump outlet pressure transducer.
+    external_signal: pump_outlet_pressure_Pa
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  pump.P_shaft_W:
+    value: 125.0
+    unit: W
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Shaft torque-speed transducer power channel.
+    external_signal: pump_torque_speed_power_W
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  rad.T_coolant_out_K:
+    value: 300.0
+    unit: K
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Radiator branch outlet temperature sensor.
+    external_signal: radiator_outlet_RTD_K
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  rad.T_air_in_K:
+    value: 290.0
+    unit: K
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Radiator inlet air temperature sensor.
+    external_signal: radiator_air_inlet_RTD_K
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  rad.Q_rejected_W:
+    value: 10000.0
+    unit: W
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Independent coolant-side radiator calorimetry, distinct from the
+      coarse aggregate rejection channel.
+    external_signal: radiator_coolant_calorimeter_W
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  mass.T_previous_K:
+    value: 310.0
+    unit: K
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Previous-step mixed-return temperature sample.
+    external_signal: mixed_return_RTD_K_at_k
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+  mass.T_current_K:
+    value: 310.0
+    unit: K
+    source: Native hierarchy run of tree.yaml; synthetic reference projection, not
+      real measurements.
+    description: Current-step mixed-return temperature sample.
+    external_signal: mixed_return_RTD_K_at_k_plus_1
+    mapping_confidence: high
+    mapping_status: synthetic_reference_projection
+    review_required: true
+metadata:
+  provenance: Generated by one actual native hierarchy run; original BoundedSolver.solve
+    return values captured transparently without changing its inputs or result.
+  measurement_boundary: No real bench dataset is asserted. Synthetic reference values
+    are projected onto distinct calorimetry, flow, temperature, pressure and torque-speed
+    channels.
+  omitted: Connection aliases, branch flows, component heat aliases, pump efficiency
+    and valve split are derived or fixed by explicit assumption cards.

@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import yaml
+
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+from physicsguard.io.observation_loader import load_observed_values
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,5 +54,8 @@ def test_building_hvac_level_1_template_passes() -> None:
 def test_building_hvac_templates_use_mapped_signals_not_dummy_placeholders() -> None:
     for path in HVAC.glob("*.yaml"):
         text = path.read_text(encoding="utf-8")
+        if "variables" in yaml.safe_load(text):
+            assert load_observed_values(path).variables
+            continue
         assert "MappedSignalModule" in text
         assert "DummyResidualModule" not in text

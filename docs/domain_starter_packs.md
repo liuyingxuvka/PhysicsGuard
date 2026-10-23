@@ -4,6 +4,111 @@ PhysicsGuard domain coverage should grow through low-fidelity audit starter pack
 
 Starter packs are not solver replacements. They should help an AI agent locate suspicious signal mappings, missing terms, unit mistakes, broken balances, and unreasonable accounting before any detailed model is proposed.
 
+## Start With A Connected Tree
+
+For these three packs, read `tree.yaml` first and use its paired
+`nominal_observed.yaml`. Each tree keeps the coarse root balance and its finer
+subsystems in one file at one declared operating point. Connections bind shared
+physical quantities; `refines` links a child to coarse components owned directly
+by its parent. The older `level_*` and `conflict_*` files remain available as
+separate examples and regression inputs; do not combine their independently
+chosen operating points into a connected system.
+
+| Pack | Start here | Paired snapshot |
+| --- | --- | --- |
+| Coolant loop | `examples/hierarchical/coolant_loop/tree.yaml` | `examples/hierarchical/coolant_loop/nominal_observed.yaml` |
+| Fuel-cell system | `examples/hierarchical/fuel_cell_system/tree.yaml` | `examples/hierarchical/fuel_cell_system/nominal_observed.yaml` |
+| Building HVAC | `examples/hierarchical/building_hvac/tree.yaml` | `examples/hierarchical/building_hvac/nominal_observed.yaml` |
+
+Use these four entrypoints (replace `coolant_loop` with either other pack):
+
+```sh
+python -m physicsguard.cli hierarchy describe examples/hierarchical/coolant_loop/tree.yaml
+python -m physicsguard.cli hierarchy run examples/hierarchical/coolant_loop/tree.yaml
+python -m physicsguard.cli hierarchy evaluate examples/hierarchical/coolant_loop/tree.yaml examples/hierarchical/coolant_loop/nominal_observed.yaml
+python -m physicsguard.cli task-model variants examples/hierarchical/coolant_loop/tree.yaml examples/hierarchical/coolant_loop/nominal_observed.yaml
+```
+
+`describe` inspects the declared topology without solving. `run` solves a
+low-fidelity reference; its generated working point is synthetic, not a measured
+plant record. The paired snapshots retain a declared bench-like measurement
+subset with SI units and mapping evidence, not the full solved vector. `evaluate`
+uses those supplied values without moving them; derived intermediates remain
+separate from independent checked residuals. These snapshots demonstrate a
+bounded workflow, not empirical validation or commercial-solver equivalence.
+
+Read each tree's `fault_variants`: named faults preserve the old conflict cases'
+intended diagnostic direction, while a benign variant checks that a small allowed
+perturbation stays neutral. Detection must come from actual own checked residuals
+in the expected blocks, not from a filename, inherited failure or a producing
+relation. A passing nominal audit alone does not establish fault discrimination.
+
+### Coolant loop: one thermal and flow boundary
+
+The connected coolant tree uses a synthetic 10 kW duty and 1 kg/s total coolant
+flow, with a 310 K stack inlet and 320 K outlet. A half-flow radiator branch and
+hot bypass recombine at a three-way mixer; flow, temperatures and thermal duties
+are shared across the coarse balance and the stack, pump, radiator, inventory and
+valve blocks. The stack, radiator and inventory children refine the root's own
+`thermal_balance`. Constant fluid properties, prescribed pump efficiency and
+valve split, and omission of pump heating are explicit assumptions. This is not a
+hydraulic-network or heat-exchanger-map simulation. The paired snapshot selects
+13 of the reference solution's 27 variables: separate input/rejected heat meters,
+main flow, coolant/air temperatures, pump pressures and shaft power, and inventory
+temperatures. Coarse heat-rejection and radiator-duty faults retain the two old
+conflict directions; `small_shaft_power_shift` adds 1 W to the shaft-power reading
+as a benign measurement perturbation. These are synthetic meter projections,
+with proposed mappings that still need review for any real plant.
+
+### Fuel-cell system: reaction energy, air and cooling
+
+The fuel-cell tree connects root `fc_system` to the stack, cathode air path, anode
+hydrogen path, coolant loop, high-voltage bus and controls. The air and cooling
+branches each expose four Level 2 blocks. Explicit `refines` links target only
+coarse components owned by the immediate parent; auxiliary blocks are not
+artificially marked as refinements. Shared energy, electrical, molar-flow and
+coolant quantities are joined by identity connections.
+
+The synthetic reference uses 50 kW of reacted-hydrogen equivalent energy,
+23 kW net electrical output, 5 kW auxiliary consumption and 22 kW stack heat.
+An explicit 1.25 V LHV-equivalent assumption defines the reaction-energy basis;
+the larger hydrogen inlet feed at stoichiometry 1.5 is not all reacted fuel.
+The boundary declares dry-air cathode accounting, prescribed humidification,
+a simple exhaust-valve density and auxiliary dissipation outside the coolant
+thermal balance. It does not model membrane transport, detailed electrochemistry
+or gas pressure dynamics. The old self-canceling water-flow proxy is not copied
+into this connected tree; the old files remain unchanged.
+
+The paired snapshot selects 35 of 74 reference variables: reacted-energy and
+power meters, stack voltage/current, air and hydrogen feed rates, compressor
+pressure/temperature/shaft measurements, intercooler and humidity readings,
+valve setting, and coolant temperatures, flow, pressures and heat meters.
+Unmeasured reaction rates, repeated ports, efficiency states and intermediates
+are omitted. The two faults are `hydrogen_power_underread` (the reacted-energy
+channel) and `cathode_air_underfeed` (air feed); `net_power_rounding` adds a benign
+1 W net-power perturbation. Keep any remaining `missing_required_variables` and
+`unchecked_residuals` visible: nominal `audit_pass` does not mean every relation
+was evaluable or that proposed meter mappings have been verified on a real plant.
+
+### Building HVAC: shared plant and campus metering
+
+The HVAC tree joins the coarse plant balance to zone loads, the chilled-water
+loop, chiller/condenser, air handler, plant electrical and district-interface
+blocks. Its synthetic point accounts for 25 kW of zone load, 1 kW of distribution
+heat gain, 26 kW of evaporator cooling, 8 kW of chiller input and 34 kW of condenser
+rejection. The district interface meters that same campus chilled-water link;
+it is not a second cooling source. The paired snapshot retains heat-flow and
+electrical meters (15 of 32 reference variables), including an independent
+air-side fan-heat meter, while omitting duplicate coarse aliases, COP and district
+bookkeeping aliases.
+Direct child `refines` links target the root's zone, chiller and electrical
+balances. Fan heat and the scope of steady positive-power accounting are explicit;
+no building dynamics or chiller-performance map is recovered. The
+`unmet_cooling_load` fault reduces measured coil cooling from 25 kW to 22 kW.
+The benign `fan_auxiliary_plus_50W` changes fan power, feeder power and independently
+metered fan heat together by 50 W so both electrical and heat accounting stay
+closed; it is not an isolated faulty meter reading.
+
 ## Cross-Domain Pattern
 
 Each starter pack should include:

@@ -107,7 +107,7 @@
       "responsibilities": [
         "Validate inputs and finite solver bounds before residual evaluation",
         "Separate numerical optimization success, observed audit and diagnostic limits",
-        "Derive intermediate values from connections and bounded one-unknown relations with finite structural value/control provenance; keep producing occurrences separate from independent checks and list unresolved inputs",
+        "Derive intermediate values from connections and bounded one-unknown relations with finite structural value/control provenance; keep producing occurrences separate from independent checks and list unresolved inputs; preserve per-result sources through finite native tuple/dict returns, lexical helpers and fixed numeric parameter tables",
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
         "Report an observed value without a source signal or unit as a mapping gap",
         "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale",
@@ -202,13 +202,14 @@
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_variable_registry.py",
         "tests/test_wastewater_starter_pack.py",
-        "tests/test_heated_tank_example.py"
+        "tests/test_heated_tank_example.py",
+        "tests/test_starter_pack_trees.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:b8396cd6d15f011cc0fe28387bdb123ae63704da52c66c90d65d12b222693653"
+      "fingerprint": "sha256:f37c928c1b16871a4ba150acc20fd79dcab914904bc2ed24ed8c50e2b6a86949"
     },
     {
       "id": "validation",

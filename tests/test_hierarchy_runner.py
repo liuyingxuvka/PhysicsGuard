@@ -22,6 +22,90 @@ PID = ROOT / "examples" / "hierarchical" / "pid_actuator_loop"
 OBSERVED = ROOT / "examples" / "hierarchical" / "observed_debugging"
 
 
+@pytest.mark.parametrize("module_type, parameters, residual", [
+    ("AggregateThermalBalanceModule", {"heat_in_variables": ["supply.value"], "heat_out_variables": ["load.value"], "residual_scale_W": 1}, "balance.aggregate_thermal_balance"),
+    ("AggregatePowerBalanceModule", {"source_power_variables": ["supply.value"], "load_power_variables": ["load.value"], "residual_scale_W": 1}, "balance.aggregate_power_balance"),
+    ("MassBalanceRateModule", {"input_variables": ["supply.value"], "output_variables": ["load.value"], "residual_scale_kg_s": 1}, "balance.mass_balance_rate"),
+    ("HVBusPowerBalanceModule", {"source_power_variables": ["supply.value"], "load_power_variables": ["load.value"], "residual_scale_W": 1}, "balance.hv_bus_power_balance"),
+])
+def test_partial_aggregate_checks_are_independent_of_an_unrelated_missing_signal(module_type, parameters, residual) -> None:
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "partial_balance", "system": {"system_name": "partial_balance",
+        "components": [{"id": name, "type": "MappedSignalModule"} for name in ("supply", "load", "unrelated")]
+                      + [{"id": "balance", "type": module_type, "parameters": parameters},
+                         {"id": "independent", "type": "DummyResidualModule", "parameters": {"target": 0}}]},
+        "hierarchy": {"blocks": [{"id": "plant", "components": ["supply", "load", "unrelated", "balance", "independent"]}]}})
+    observed = ObservedValuesSpec.model_validate({"variables": {"supply.value": {"value": 10}, "load.value": {"value": 20}, "independent.x": {"value": 0}}})
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    assert report.audit_pass is False
+    assert residual in report.checked_residuals
+    assert residual not in report.unchecked_residuals
+    assert report.missing_required_variables == ["unrelated.value"]
+    assert next(row for row in report.top_residuals if row.name == residual).normalized_value == -10
+    dependencies = report.metadata["residual_dependencies"][residual]
+    assert set(dependencies) == {"supply.value", "load.value"}
+
+
+@pytest.mark.parametrize("module_type, parameters, values, residual", [
+    ("LookupTable1DModule", {"x_points": [0, 1], "y_points": [0, 1]}, {"map.x": .5, "map.y": 4}, "map.lookup_table_1d"),
+    ("LookupTable2DModule", {"x_points": [0, 1], "y_points": [0, 1], "z_values": [[0, 1], [1, 2]]}, {"map.x": .5, "map.y": .5, "map.z": 4}, "map.lookup_table_2d"),
+])
+def test_partial_fixed_map_checks_do_not_depend_on_an_unrelated_missing_signal(module_type, parameters, values, residual) -> None:
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "partial_map", "system": {"system_name": "partial_map",
+        "components": [{"id": "map", "type": module_type, "parameters": parameters},
+                       {"id": "unrelated", "type": "MappedSignalModule"},
+                       {"id": "independent", "type": "DummyResidualModule", "parameters": {"target": 0}}]},
+        "hierarchy": {"blocks": [{"id": "plant", "components": ["map", "unrelated", "independent"]}]}})
+    observed = ObservedValuesSpec.model_validate({"variables": {name: {"value": value} for name, value in {**values, "independent.x": 0}.items()}})
+    before = observed.model_dump()
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    assert report.audit_pass is False
+    assert residual in report.checked_residuals
+    assert set(report.metadata["residual_dependencies"][residual]) == set(values)
+    assert report.missing_required_variables == ["unrelated.value"]
+    assert observed.model_dump() == before
+
+
+def test_partial_stack_tuple_outputs_do_not_hide_a_measured_faraday_failure(monkeypatch) -> None:
+    monkeypatch.setattr(BoundedSolver, "solve", lambda *args, **kwargs: pytest.fail("observed audit must not solve"))
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "partial_stack", "system": {"system_name": "partial_stack",
+        "components": [{"id": "stack", "type": "FuelCellStackBalanceModule", "parameters": {"n_cells": 400}},
+                       {"id": "unrelated", "type": "MappedSignalModule"},
+                       {"id": "independent", "type": "DummyResidualModule", "parameters": {"target": 0}}]},
+        "hierarchy": {"blocks": [{"id": "plant", "components": ["stack", "unrelated", "independent"]}]}})
+    observed = ObservedValuesSpec.model_validate({"variables": {"stack.current_A": {"value": 100}, "stack.V_stack_V": {"value": 280},
+        "stack.n_dot_H2_consumed_mol_s": {"value": 1}, "independent.x": {"value": 0}}})
+    before = observed.model_dump()
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    assert report.audit_pass is False
+    assert report.derived_variables["stack.V_cell_V"]["value"] == pytest.approx(.7)
+    assert "stack.fuel_cell_h2_consumption" in report.checked_residuals
+    assert report.metadata["residual_dependencies"]["stack.fuel_cell_h2_consumption"] == ["stack.current_A", "stack.n_dot_H2_consumed_mol_s"]
+    assert "unrelated.value" in report.missing_required_variables
+    assert observed.model_dump() == before
+
+
+@pytest.mark.parametrize("fault, expected", [("temperature", "comp.compressor_temperature_rise"), ("power", "comp.compressor_power")])
+def test_partial_compressor_literal_fields_derive_ratio_and_check_real_errors(fault, expected) -> None:
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "partial_compressor", "system": {"system_name": "partial_compressor",
+        "components": [{"id": "comp", "type": "CompressorSimpleModule", "parameters": {"cp_J_kgK": 1000, "gamma": 1.4}},
+                       {"id": "unrelated", "type": "MappedSignalModule"},
+                       {"id": "independent", "type": "DummyResidualModule", "parameters": {"target": 0}}]},
+        "hierarchy": {"blocks": [{"id": "plant", "components": ["comp", "unrelated", "independent"]}]}})
+    values = {"comp.p_in_Pa": 100000, "comp.p_out_Pa": 200000, "comp.T_in_K": 300,
+              "comp.T_out_K": 300 if fault == "temperature" else 393.86299465906484,
+              "comp.P_shaft_W": 0 if fault == "power" else 9386.299465906484,
+              "comp.m_dot_kg_s": .1, "comp.efficiency": .7, "independent.x": 0}
+    observed = ObservedValuesSpec.model_validate({"variables": {name: {"value": value} for name, value in values.items()}})
+    before = observed.model_dump()
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    assert report.audit_pass is False
+    assert report.derived_variables["comp.pressure_ratio"]["value"] == pytest.approx(2.)
+    assert expected in report.checked_residuals
+    assert "unrelated.value" in report.missing_required_variables
+    assert report.metadata["residual_dependencies"]["comp.compressor_pressure_ratio"] == ["comp.p_in_Pa", "comp.p_out_Pa", "comp.pressure_ratio"]
+    assert observed.model_dump() == before
+
+
 def run(path: Path):
     spec = load_hierarchical_audit_spec(path)
     return HierarchicalAuditRunner(spec).run(top_n_residuals=20, top_n_blocks=10)

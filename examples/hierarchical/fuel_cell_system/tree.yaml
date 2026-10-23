@@ -1,0 +1,597 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Synthetic connected L0/L1/L2 reaction-energy, electrical, dry-air, hydrogen and coolant audit. No high-fidelity electrochemistry, gas pressure...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/fuel_cell_system/tree.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: fuel_cell_connected_tree
+description: Synthetic connected L0/L1/L2 reaction-energy, electrical, dry-air, hydrogen
+  and coolant audit. No high-fidelity electrochemistry, gas pressure dynamics or coolant
+  pump heating.
+system:
+  system_name: fuel_cell_connected_tree
+  components:
+  - id: h2_power
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: W
+      lower_bound: 0
+      upper_bound: 1000000.0
+      initial_guess: 50000
+      scale: 1000
+  - id: net_power
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: W
+      lower_bound: 0
+      upper_bound: 1000000.0
+      initial_guess: 23000
+      scale: 1000
+  - id: aux_power
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: W
+      lower_bound: 0
+      upper_bound: 1000000.0
+      initial_guess: 5000
+      scale: 1000
+  - id: efficiency
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: '1'
+      lower_bound: 0
+      upper_bound: 1.5
+      initial_guess: 0.46
+      scale: 0.1
+  - id: stack
+    type: FuelCellStackBalanceModule
+    parameters:
+      n_cells: 400.0
+  - id: cathode
+    type: FuelCellCathodeAirSupplyModule
+    parameters:
+      n_cells: 400.0
+  - id: anode
+    type: FuelCellAnodeHydrogenSupplyModule
+    parameters:
+      n_cells: 400.0
+  - id: hv_bus
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables:
+      - stack.P_stack_W
+      consumption_power_variables:
+      - net_power.x
+      - aux_power.x
+      residual_scale_W: 1000.0
+  - id: ctrl
+    type: ControlErrorModule
+    parameters: {}
+  - id: comp
+    type: CompressorSimpleModule
+    parameters:
+      cp_J_kgK: 1000.0
+      gamma: 1.4
+  - id: ic
+    type: IntercoolerSimpleModule
+    parameters:
+      cp_gas_J_kgK: 1000.0
+      UA_W_K: 20.0
+  - id: hum
+    type: HumidifierEffectivenessModule
+    parameters:
+      effectiveness: 0.5
+  - id: valve
+    type: ThrottleValveSimpleModule
+    parameters:
+      CdA_max_m2: 0.0001
+      rho_kg_m3: 2.0
+  - id: stack_heat
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 100000.0
+      initial_guess: 22000.0
+      scale: 1000.0
+      description: Coarse thermal duty port; declares a quantity and adds no physical
+        residual.
+  - id: heat_rejected
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 100000.0
+      initial_guess: 22000.0
+      scale: 1000.0
+      description: Coarse thermal duty port; declares a quantity and adds no physical
+        residual.
+  - id: cool
+    type: FuelCellCoolantInterfaceModule
+    parameters:
+      cp_coolant_J_kgK: 1000.0
+      Q_stack_heat_initial_guess: 22000.0
+      m_dot_coolant_initial_guess: 2.2
+      T_coolant_in_initial_guess: 310.0
+      T_coolant_out_initial_guess: 320.0
+  - id: pump
+    type: PumpSimpleModule
+    parameters:
+      rho_kg_m3: 1000.0
+      P_shaft_initial_guess: 275.0
+      m_dot_initial_guess: 2.2
+  - id: rad
+    type: RadiatorSimpleModule
+    parameters:
+      cp_coolant_J_kgK: 1000.0
+      UA_W_K: 733.3333333333334
+      Q_rejected_initial_guess: 22000.0
+      m_dot_coolant_initial_guess: 1.1
+      T_coolant_in_initial_guess: 320.0
+      T_coolant_out_initial_guess: 300.0
+      T_air_in_initial_guess: 290.0
+  - id: mass
+    type: ThermalMassStepModule
+    parameters:
+      C_J_K: 1000.0
+      dt_s: 1.0
+      T_previous_initial_guess: 310.0
+      T_current_initial_guess: 310.0
+      Q_in_initial_guess: 22000.0
+      Q_out_initial_guess: 22000.0
+  - id: mix
+    type: ThreeWayValveMixingModule
+    parameters:
+      m_dot_in_1_initial_guess: 1.1
+      m_dot_in_2_initial_guess: 1.1
+      T_in_1_initial_guess: 300.0
+      T_in_2_initial_guess: 320.0
+      T_out_initial_guess: 310.0
+      split_fraction_initial_guess: 0.5
+  - id: power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - h2_power.x
+      load_power_variables:
+      - net_power.x
+      - heat_rejected.x
+      loss_power_variables:
+      - aux_power.x
+      residual_scale_W: 1000.0
+  - id: thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - stack_heat.x
+      heat_out_variables:
+      - heat_rejected.x
+      residual_scale_W: 1000.0
+  - id: overall_efficiency
+    type: AggregateEfficiencyModule
+    parameters:
+      useful_output_power_variable: net_power.x
+      input_power_variable: h2_power.x
+      efficiency_variable: efficiency.x
+      residual_scale: 0.01
+  connections:
+  - from_variable: stack_heat.x
+    to_variable: cool.Q_stack_heat_W
+    description: L0 heat entering the loop is the L1 stack thermal duty.
+  - from_variable: heat_rejected.x
+    to_variable: rad.Q_rejected_W
+    description: L0 total rejected duty equals L1 radiator duty; independent calorimetry
+      can check both ports.
+  - from_variable: stack_heat.x
+    to_variable: mass.Q_in_W
+    description: Stack thermal duty enters the lumped loop inventory.
+  - from_variable: heat_rejected.x
+    to_variable: mass.Q_out_W
+    description: Radiator duty leaves the lumped loop inventory.
+  - from_variable: pump.m_dot_kg_s
+    to_variable: cool.m_dot_coolant_kg_s
+    description: Pump and stack carry the complete loop flow.
+  - from_variable: cool.m_dot_coolant_kg_s
+    to_variable: mix.m_dot_out_kg_s
+    description: Mixer outlet returns the complete flow to the stack.
+  - from_variable: rad.m_dot_coolant_kg_s
+    to_variable: mix.m_dot_in_1_kg_s
+    description: Radiator branch returns to mixer inlet 1.
+  - from_variable: cool.T_coolant_out_K
+    to_variable: rad.T_coolant_in_K
+    description: Stack outlet supplies the radiator branch.
+  - from_variable: cool.T_coolant_out_K
+    to_variable: mix.T_in_2_K
+    description: Hot bypass takes the stack outlet temperature.
+  - from_variable: rad.T_coolant_out_K
+    to_variable: mix.T_in_1_K
+    description: Cold radiator outlet supplies mixer inlet 1.
+  - from_variable: mix.T_out_K
+    to_variable: cool.T_coolant_in_K
+    description: Mixed coolant returns to stack inlet.
+  - from_variable: mass.T_current_K
+    to_variable: mix.T_out_K
+    description: Lumped inventory temperature is represented by the mixed return temperature.
+  - from_variable: stack_heat.x
+    to_variable: stack.Q_heat_W
+    description: Stack heat measured by the common coolant calorimetry boundary.
+  - from_variable: stack.current_A
+    to_variable: cathode.current_A
+    description: Same stack circuit current.
+  - from_variable: stack.current_A
+    to_variable: anode.current_A
+    description: Same stack circuit current.
+  - from_variable: stack.n_dot_O2_consumed_mol_s
+    to_variable: cathode.n_dot_O2_consumed_mol_s
+    description: Same modeled reacted oxygen flow.
+  - from_variable: stack.n_dot_H2_consumed_mol_s
+    to_variable: anode.n_dot_H2_consumed_mol_s
+    description: Same modeled reacted hydrogen flow.
+  - from_variable: cathode.m_dot_air_feed_kg_s
+    to_variable: comp.m_dot_kg_s
+    description: Common dry-air feed through the compressor.
+  - from_variable: comp.m_dot_kg_s
+    to_variable: ic.m_dot_gas_kg_s
+    description: No air leak between compressor and intercooler.
+  - from_variable: ic.m_dot_gas_kg_s
+    to_variable: hum.m_dot_dry_air_kg_s
+    description: Same dry-air basis at humidifier inlet.
+  - from_variable: hum.m_dot_dry_air_kg_s
+    to_variable: valve.m_dot_kg_s
+    description: Declared dry-air approximation; vapor mass is excluded from this
+      pressure-flow check.
+  - from_variable: comp.T_out_K
+    to_variable: ic.T_gas_in_K
+    description: Compressor discharge is intercooler inlet.
+  - from_variable: comp.p_out_Pa
+    to_variable: valve.p_upstream_Pa
+    description: Pressure-drop-free intermediate air path in this bounded example.
+  - from_variable: cathode.oxygen_stoichiometry
+    to_variable: ctrl.measurement
+    description: Controller reads the commanded oxygen stoichiometry signal.
+  boundaries:
+  - variable: cool.m_dot_coolant_kg_s
+    value: 2.2
+    scale: 1.0e-06
+  - variable: cool.T_coolant_in_K
+    value: 310.0
+    scale: 1.0e-06
+  - variable: cool.T_coolant_out_K
+    value: 320.0
+    scale: 1.0e-06
+  - variable: rad.T_air_in_K
+    value: 290.0
+    scale: 1.0e-06
+  - variable: pump.p_in_Pa
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: pump.p_out_Pa
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: mass.T_previous_K
+    value: 310.0
+    scale: 1.0e-06
+  - variable: stack.current_A
+    value: 100.0
+    scale: 1.0e-06
+  - variable: stack.V_cell_V
+    value: 0.7
+    scale: 1.0e-06
+  - variable: aux_power.x
+    value: 5000.0
+    scale: 1.0e-06
+  - variable: comp.p_in_Pa
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: comp.p_out_Pa
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: comp.T_in_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: ic.T_coolant_or_ambient_K
+    value: 300.0
+    scale: 1.0e-06
+  - variable: hum.humidity_ratio_in_kg_kg
+    value: 0.01
+    scale: 1.0e-06
+  - variable: valve.p_downstream_Pa
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: ctrl.setpoint
+    value: 2.0
+    scale: 1.0e-06
+  assumptions:
+  - id: common_reference_fluid
+    target_type: context
+    target: coolant_properties
+    value: constant cp=1000 J/(kg K), rho=1000 kg/m^3 for the same single-phase reference
+      coolant
+    reason: One explicit synthetic fluid is used throughout the connected operating
+      point.
+    source: Declared starter-pack reference-fluid specification; not a material-property
+      measurement.
+    impact: medium
+    review_required: true
+  - id: thermal_boundary
+    target_type: context
+    target: coolant_heat_boundary
+    value: stack heat enters; radiator rejects; no other coolant heat loss or net
+      pump heating
+    reason: The coarse balance covers the stack-to-radiator thermal boundary; pump
+      shaft power is checked separately and pump heating is neglected in this low-fidelity
+      boundary.
+    source: Declared low-fidelity starter-pack boundary.
+    impact: medium
+    review_required: true
+  - id: radiator_reference_ua
+    target_type: context
+    target: radiator_ua
+    value: UA=22000/30 W/K against inlet air at 290 K
+    reason: A prescribed lumped UA relation closes this example, without a heat-exchanger
+      map.
+    source: Synthetic nominal radiator specification; not a fitted correlation.
+    impact: medium
+    review_required: true
+  - id: mass_reference
+    target_type: context
+    target: loop_inventory
+    value: C=1000 J/K, dt=1 s; mixed-return temperature represents the lumped inventory
+    reason: Single-step inventory check at a steady reference point; not spatial temperature
+      dynamics.
+    source: Synthetic inventory specification.
+    impact: medium
+    review_required: true
+  - id: pump_reference_efficiency
+    target_type: variable
+    target: pump.efficiency
+    value: 0.8
+    unit: '1'
+    reason: Use prescribed reference pump efficiency rather than treating an unmeasured
+      efficiency as a measured signal.
+    source: Synthetic pump nameplate specification.
+    impact: medium
+    review_required: true
+  - id: mixer_reference_split
+    target_type: variable
+    target: mix.split_fraction
+    value: 0.5
+    unit: '1'
+    reason: The reference three-way valve command gives equal radiator and hot-bypass
+      branch flows.
+    source: Synthetic valve command specification.
+    impact: medium
+    review_required: true
+  - id: lhv_equivalent_basis
+    target_type: parameter
+    target: stack.E_thermoneutral_V
+    value: 1.25
+    unit: V
+    reason: Use an explicitly declared LHV-equivalent reaction-energy basis for this
+      synthetic point, rather than the default liquid-water HHV voltage.
+    source: Declared synthetic reference specification, not fitted test data.
+    impact: medium
+    review_required: true
+  - id: compressor_reference_efficiency
+    target_type: variable
+    target: comp.efficiency
+    value: 0.7
+    unit: '1'
+    reason: Prescribed compressor nameplate efficiency, not a measured free state.
+    source: Declared synthetic reference specification, not fitted test data.
+    impact: medium
+    review_required: true
+  - id: oxygen_reference_command
+    target_type: variable
+    target: cathode.oxygen_stoichiometry
+    value: 2.0
+    unit: '1'
+    reason: Prescribed air stoichiometry command.
+    source: Declared synthetic reference specification, not fitted test data.
+    impact: medium
+    review_required: true
+  - id: hydrogen_reference_command
+    target_type: variable
+    target: anode.hydrogen_stoichiometry
+    value: 1.5
+    unit: '1'
+    reason: Prescribed hydrogen feed/consumption ratio; root energy meter is reacted
+      consumption, not total inlet feed.
+    source: Declared synthetic reference specification, not fitted test data.
+    impact: medium
+    review_required: true
+  - id: humidifier_target
+    target_type: variable
+    target: hum.humidity_ratio_target_kg_kg
+    value: 0.03
+    unit: kg/kg
+    reason: Prescribed humidifier target; no membrane transport or water recovery
+      model.
+    source: Declared synthetic reference specification, not fitted test data.
+    impact: medium
+    review_required: true
+  - id: fuel_cell_scope
+    target_type: context
+    target: fc_system
+    value: Dry-air cathode, fixed gas density 2 kg/m3 at exhaust valve, pressure-drop-free
+      intermediate duct; auxiliary dissipation is outside the coolant thermal boundary.
+      Reacted hydrogen equivalent input is 50 kW, not the larger stoichiometric inlet
+      feed chemical power.
+    reason: Keep the same explicit low-fidelity accounting boundary across all levels.
+      The former water-proxy sum of the same flow on both sides is omitted because
+      it was tautological, not a physical check.
+    source: Declared starter-pack boundary.
+    impact: high
+    review_required: true
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+    max_iterations: 300
+hierarchy:
+  blocks:
+  - id: fc_system
+    name: Fuel-cell system balances
+    level: 0
+    components:
+    - h2_power
+    - net_power
+    - aux_power
+    - efficiency
+    - stack_heat
+    - heat_rejected
+    - power_balance
+    - thermal_balance
+    - overall_efficiency
+  - id: stack
+    level: 1
+    parent_id: fc_system
+    components:
+    - stack
+    refines:
+    - power_balance
+  - id: cathode_air_path
+    level: 1
+    parent_id: fc_system
+    components:
+    - cathode
+    refines:
+    - power_balance
+  - id: anode_hydrogen_path
+    level: 1
+    parent_id: fc_system
+    components:
+    - anode
+    refines:
+    - power_balance
+  - id: coolant_loop
+    level: 1
+    parent_id: fc_system
+    components:
+    - cool
+    refines:
+    - thermal_balance
+  - id: hv_system
+    level: 1
+    parent_id: fc_system
+    components:
+    - hv_bus
+    refines:
+    - power_balance
+  - id: controls
+    level: 1
+    parent_id: fc_system
+    components:
+    - ctrl
+    refines: []
+  - id: compressor
+    level: 2
+    parent_id: cathode_air_path
+    components:
+    - comp
+    refines:
+    - cathode
+  - id: intercooler
+    level: 2
+    parent_id: cathode_air_path
+    components:
+    - ic
+    refines:
+    - cathode
+  - id: humidifier
+    level: 2
+    parent_id: cathode_air_path
+    components:
+    - hum
+    refines:
+    - cathode
+  - id: exhaust_valve
+    level: 2
+    parent_id: cathode_air_path
+    components:
+    - valve
+    refines:
+    - cathode
+  - id: coolant_pump
+    level: 2
+    parent_id: coolant_loop
+    components:
+    - pump
+    refines: []
+  - id: radiator
+    level: 2
+    parent_id: coolant_loop
+    components:
+    - rad
+    refines:
+    - cool
+  - id: thermal_mass
+    level: 2
+    parent_id: coolant_loop
+    components:
+    - mass
+    refines:
+    - cool
+  - id: bypass_or_valve
+    level: 2
+    parent_id: coolant_loop
+    components:
+    - mix
+    refines: []
+  refinement_rules:
+  - id: refine_fc_system
+    block_id: fc_system
+    score_threshold: 1.0
+    next_template_ids:
+    - stack
+    - cathode_air_path
+    - anode_hydrogen_path
+    - coolant_loop
+    - hv_system
+    rationale: Compare balances with the same connected subsystem point.
+  - id: refine_cathode_air_path
+    block_id: cathode_air_path
+    score_threshold: 1.0
+    next_template_ids:
+    - compressor
+    - intercooler
+    - humidifier
+    - exhaust_valve
+    rationale: Inspect the connected air path rather than unrelated standalone operating
+      points.
+fault_variants:
+- id: hydrogen_power_underread
+  kind: fault
+  description: 'Preserve conflict_level_0_h2_power mechanism: reacted fuel energy
+    channel underreads by20percent at the unified reference point.'
+  changes:
+  - variable: h2_power.x
+    scale: 0.8
+  expect_blocks:
+  - fc_system
+- id: cathode_air_underfeed
+  kind: fault
+  description: 'Preserve conflict_level_1_cathode_air_path mechanism: air molar feed
+    reports roughly one tenth of the stoichiometric requirement.'
+  changes:
+  - variable: cathode.n_dot_air_feed_mol_s
+    scale: 0.1
+  expect_blocks:
+  - cathode_air_path
+- id: net_power_rounding
+  kind: benign
+  description: A1W net electrical meter rounding remains below the declared1kW balance
+    scale.
+  changes:
+  - variable: net_power.x
+    offset: 1.0
+metadata:
+  reference_boundary: Synthetic reference solution; not real bench validation. Reaction-energy
+    basis and nameplate properties are explicit assumptions.
+  legacy_fault_sources:
+  - conflict_level_0_h2_power.yaml
+  - conflict_level_1_cathode_air_path.yaml

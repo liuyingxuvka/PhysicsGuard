@@ -1,0 +1,305 @@
+# PhysicsGuard hierarchical audit/model blueprint
+# Purpose: Connected 10 kW single-phase coolant loop with equal radiator and hot-bypass branches; synthetic low-fidelity reference, SI units.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/coolant_loop/tree.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: coolant_loop_tree
+description: Connected 10 kW single-phase coolant loop with equal radiator and hot-bypass
+  branches; synthetic low-fidelity reference, SI units.
+system:
+  system_name: coolant_loop_tree
+  components:
+  - id: heat_source
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 100000.0
+      initial_guess: 10000.0
+      scale: 1000.0
+      description: Coarse thermal duty port; declares a quantity and adds no physical
+        residual.
+  - id: heat_rejected
+    type: MappedSignalModule
+    parameters:
+      local_name: x
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 100000.0
+      initial_guess: 10000.0
+      scale: 1000.0
+      description: Coarse thermal duty port; declares a quantity and adds no physical
+        residual.
+  - id: cool
+    type: FuelCellCoolantInterfaceModule
+    parameters:
+      cp_coolant_J_kgK: 1000.0
+      Q_stack_heat_initial_guess: 10000.0
+      m_dot_coolant_initial_guess: 1.0
+      T_coolant_in_initial_guess: 310.0
+      T_coolant_out_initial_guess: 320.0
+  - id: pump
+    type: PumpSimpleModule
+    parameters:
+      rho_kg_m3: 1000.0
+      P_shaft_initial_guess: 125.0
+  - id: rad
+    type: RadiatorSimpleModule
+    parameters:
+      cp_coolant_J_kgK: 1000.0
+      UA_W_K: 333.3333333333333
+      Q_rejected_initial_guess: 10000.0
+      m_dot_coolant_initial_guess: 0.5
+      T_coolant_in_initial_guess: 320.0
+      T_coolant_out_initial_guess: 300.0
+      T_air_in_initial_guess: 290.0
+  - id: mass
+    type: ThermalMassStepModule
+    parameters:
+      C_J_K: 1000.0
+      dt_s: 1.0
+      T_previous_initial_guess: 310.0
+      T_current_initial_guess: 310.0
+      Q_in_initial_guess: 10000.0
+      Q_out_initial_guess: 10000.0
+  - id: valve
+    type: ThreeWayValveMixingModule
+    parameters:
+      m_dot_in_1_initial_guess: 0.5
+      m_dot_in_2_initial_guess: 0.5
+      T_in_1_initial_guess: 300.0
+      T_in_2_initial_guess: 320.0
+      T_out_initial_guess: 310.0
+      split_fraction_initial_guess: 0.5
+  - id: thermal_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - heat_source.x
+      heat_out_variables:
+      - heat_rejected.x
+      residual_scale_W: 1000.0
+  connections:
+  - from_variable: heat_source.x
+    to_variable: cool.Q_stack_heat_W
+    description: L0 heat entering the loop is the L1 stack thermal duty.
+  - from_variable: heat_rejected.x
+    to_variable: rad.Q_rejected_W
+    description: L0 total rejected duty equals L1 radiator duty; independent calorimetry
+      can check both ports.
+  - from_variable: heat_source.x
+    to_variable: mass.Q_in_W
+    description: Stack thermal duty enters the lumped loop inventory.
+  - from_variable: heat_rejected.x
+    to_variable: mass.Q_out_W
+    description: Radiator duty leaves the lumped loop inventory.
+  - from_variable: pump.m_dot_kg_s
+    to_variable: cool.m_dot_coolant_kg_s
+    description: Pump and stack carry the complete loop flow.
+  - from_variable: cool.m_dot_coolant_kg_s
+    to_variable: valve.m_dot_out_kg_s
+    description: Mixer outlet returns the complete flow to the stack.
+  - from_variable: rad.m_dot_coolant_kg_s
+    to_variable: valve.m_dot_in_1_kg_s
+    description: Radiator branch returns to mixer inlet 1.
+  - from_variable: cool.T_coolant_out_K
+    to_variable: rad.T_coolant_in_K
+    description: Stack outlet supplies the radiator branch.
+  - from_variable: cool.T_coolant_out_K
+    to_variable: valve.T_in_2_K
+    description: Hot bypass takes the stack outlet temperature.
+  - from_variable: rad.T_coolant_out_K
+    to_variable: valve.T_in_1_K
+    description: Cold radiator outlet supplies mixer inlet 1.
+  - from_variable: valve.T_out_K
+    to_variable: cool.T_coolant_in_K
+    description: Mixed coolant returns to stack inlet.
+  - from_variable: mass.T_current_K
+    to_variable: valve.T_out_K
+    description: Lumped inventory temperature is represented by the mixed return temperature.
+  boundaries:
+  - variable: heat_source.x
+    value: 10000.0
+    scale: 1.0e-06
+  - variable: heat_rejected.x
+    value: 10000.0
+    scale: 1.0e-06
+  - variable: cool.m_dot_coolant_kg_s
+    value: 1.0
+    scale: 1.0e-06
+  - variable: cool.T_coolant_in_K
+    value: 310.0
+    scale: 1.0e-06
+  - variable: cool.T_coolant_out_K
+    value: 320.0
+    scale: 1.0e-06
+  - variable: rad.T_air_in_K
+    value: 290.0
+    scale: 1.0e-06
+  - variable: pump.p_in_Pa
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: pump.p_out_Pa
+    value: 200000.0
+    scale: 1.0e-06
+  - variable: mass.T_previous_K
+    value: 310.0
+    scale: 1.0e-06
+  assumptions:
+  - id: common_reference_fluid
+    target_type: context
+    target: coolant_properties
+    value: constant cp=1000 J/(kg K), rho=1000 kg/m^3 for the same single-phase reference
+      coolant
+    reason: One explicit synthetic fluid is used throughout the connected operating
+      point.
+    source: Declared starter-pack reference-fluid specification; not a material-property
+      measurement.
+    impact: medium
+    review_required: true
+  - id: thermal_boundary
+    target_type: context
+    target: coolant_heat_boundary
+    value: stack heat enters; radiator rejects; no other coolant heat loss or net
+      pump heating
+    reason: The coarse balance covers the stack-to-radiator thermal boundary; pump
+      shaft power is checked separately and pump heating is neglected in this low-fidelity
+      boundary.
+    source: Declared low-fidelity starter-pack boundary.
+    impact: medium
+    review_required: true
+  - id: radiator_reference_ua
+    target_type: context
+    target: radiator_ua
+    value: UA=1000/3 W/K against inlet air at 290 K
+    reason: A prescribed lumped UA relation closes this example, without a heat-exchanger
+      map.
+    source: Synthetic nominal radiator specification; not a fitted correlation.
+    impact: medium
+    review_required: true
+  - id: mass_reference
+    target_type: context
+    target: loop_inventory
+    value: C=1000 J/K, dt=1 s; mixed-return temperature represents the lumped inventory
+    reason: Single-step inventory check at a steady reference point; not spatial temperature
+      dynamics.
+    source: Synthetic inventory specification.
+    impact: medium
+    review_required: true
+  - id: pump_reference_efficiency
+    target_type: variable
+    target: pump.efficiency
+    value: 0.8
+    unit: '1'
+    reason: Use prescribed reference pump efficiency rather than treating an unmeasured
+      efficiency as a measured signal.
+    source: Synthetic pump nameplate specification.
+    impact: medium
+    review_required: true
+  - id: mixer_reference_split
+    target_type: variable
+    target: valve.split_fraction
+    value: 0.5
+    unit: '1'
+    reason: The reference three-way valve command gives equal radiator and hot-bypass
+      branch flows.
+    source: Synthetic valve command specification.
+    impact: medium
+    review_required: true
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+    max_iterations: 200
+hierarchy:
+  blocks:
+  - id: coolant_loop
+    name: Coolant loop heat balance
+    level: 0
+    components:
+    - heat_source
+    - heat_rejected
+    - thermal_balance
+    refinement_template_ids:
+    - stack_heat_interface
+    - radiator
+    - thermal_mass
+  - id: stack_heat_interface
+    level: 1
+    parent_id: coolant_loop
+    components:
+    - cool
+    refines:
+    - thermal_balance
+  - id: pump
+    level: 1
+    parent_id: coolant_loop
+    components:
+    - pump
+  - id: radiator
+    level: 1
+    parent_id: coolant_loop
+    components:
+    - rad
+    refines:
+    - thermal_balance
+  - id: thermal_mass
+    level: 1
+    parent_id: coolant_loop
+    components:
+    - mass
+    refines:
+    - thermal_balance
+  - id: bypass_or_valve
+    level: 1
+    parent_id: coolant_loop
+    components:
+    - valve
+  refinement_rules:
+  - id: refine_coolant_loop
+    block_id: coolant_loop
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - stack_heat_interface
+    - radiator
+    - thermal_mass
+    rationale: Inspect heat input, radiator rejection and single-step inventory in
+      the same connected model.
+    priority: 10
+fault_variants:
+- id: heat_rejection
+  kind: fault
+  description: 'Reproduce conflict_level_0_heat_rejection: independent loop-level
+    heat rejection channel reports 5 kW against 10 kW input; detailed radiator measurements
+    remain nominal.'
+  changes:
+  - variable: heat_rejected.x
+    scale: 0.5
+  expect_blocks:
+  - coolant_loop
+- id: radiator
+  kind: fault
+  description: 'Reproduce conflict_level_1_radiator: the radiator duty channel reports
+    20 kW while its measured coolant/UA relations support 10 kW at this common reference
+    point.'
+  changes:
+  - variable: rad.Q_rejected_W
+    scale: 2.0
+  expect_blocks:
+  - radiator
+- id: small_shaft_power_shift
+  kind: benign
+  description: A 1 W shaft-power sensor perturbation stays within the original 1 kW
+    pump residual scale without changing any fixed operating-point measurement.
+  changes:
+  - variable: pump.P_shaft_W
+    offset: 1.0
+metadata:
+  reference_boundary: Synthetic starter-pack operating point, not testbench validation.
+  legacy_fault_sources:
+  - conflict_level_0_heat_rejection.yaml
+  - conflict_level_1_radiator.yaml
+  topology: Stack -> split into radiator and hot bypass -> three-way mixer -> pump
+    -> stack. Pump temperature rise is excluded explicitly.

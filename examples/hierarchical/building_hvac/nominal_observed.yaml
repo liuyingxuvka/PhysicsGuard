@@ -1,0 +1,203 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Physically measurable meter-channel subset selected unchanged from the actual hierarchy run reference solution; synthetic values and proposed bench...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: building_hvac_synthetic_nominal
+description: Physically measurable meter-channel subset selected unchanged from the
+  actual hierarchy run reference solution; synthetic values and proposed bench mappings,
+  not real test data.
+variables:
+  zone_envelope_gain.value:
+    value: 12000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Envelope surface heat-flux metering integrated over the test zone.
+    external_signal: bench/zone/envelope_heat_flux_integral_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  zone_internal_gain.value:
+    value: 8000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Metered internal heat-load bank at the zone boundary.
+    external_signal: bench/zone/internal_load_bank_power_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  zone_ventilation_gain.value:
+    value: 5000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Ventilation thermal meter at the zone boundary.
+    external_signal: bench/ahu/ventilation_thermal_meter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  zone_cooling_coil_load.value:
+    value: 25000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Coil heat meter from measured water mass flow and temperature difference.
+    external_signal: bench/ahu/coil_thermal_meter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  chilled_water_distribution_gain.value:
+    value: 1000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Differential thermal metering across the campus distribution link.
+    external_signal: bench/chilled_water/distribution_heat_gain_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  chiller_evaporator_cooling.value:
+    value: 26000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Evaporator heat meter from measured water mass flow and temperature
+      difference.
+    external_signal: bench/chiller/evaporator_thermal_meter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  chiller_electric_power.value:
+    value: 8000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Chiller electrical submeter.
+    external_signal: bench/chiller/electrical_submeter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  condenser_heat_rejection.value:
+    value: 34000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Condenser-side water heat meter.
+    external_signal: bench/chiller/condenser_thermal_meter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  cooling_tower_rejection.value:
+    value: 34000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Cooling-tower water-side heat meter.
+    external_signal: bench/tower/thermal_meter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  fan_heat_to_air.value:
+    value: 2000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Air-side fan heat meter from measured airflow and temperature rise
+      across the fan, distinct from its electrical meter.
+    external_signal: bench/ahu/fan_airside_thermal_meter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  supply_fan_power.value:
+    value: 2000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Supply-fan electrical submeter.
+    external_signal: bench/ahu/fan_electrical_submeter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  chilled_water_pump_power.value:
+    value: 1000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Chilled-water pump electrical submeter.
+    external_signal: bench/chilled_water/pump_electrical_submeter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  condenser_pump_tower_power.value:
+    value: 800.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Combined condenser-pump and tower auxiliary electrical meter.
+    external_signal: bench/condenser/pump_tower_electrical_submeter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  controls_power.value:
+    value: 200.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Controls electrical submeter.
+    external_signal: bench/controls/electrical_submeter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+  grid_power.value:
+    value: 12000.0
+    unit: W
+    source: synthetic hierarchy run reference solution
+    description: Total incoming HVAC feeder meter.
+    external_signal: bench/plant/incoming_electrical_meter_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI watts; no conversion applied.
+    stale_when:
+    - Meter boundary, channel name or positive heat-flow convention changes.
+metadata:
+  value_origin: Untouched original BoundedSolver.solve variables captured during native
+    cli.main hierarchy run tree.yaml --json.
+  source_audit: tree.yaml
+  measurement_scope: Coarse aliases, COP and duplicate campus meter bookkeeping aliases
+    are omitted and propagated or derived. Thermal power channels represent ordinary
+    instrument-side flow/temperature calorimetry or integrated heat-flux metering;
+    the audit does not infer them from nominal cooling balances.
+  mapping_boundary: Proposed channel names for a bench equipped with the stated meters.
+    Mapping requires review against real instrumentation before auditing real data.
+  reference_solution_unique: false

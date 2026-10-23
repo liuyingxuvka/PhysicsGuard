@@ -1,0 +1,532 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Measurable channel subset copied unchanged from the untouched result of the actual hierarchy run. Unmeasured reaction rates, repeated ports,...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: fuel_cell_synthetic_nominal
+description: Measurable channel subset copied unchanged from the untouched result
+  of the actual hierarchy run. Unmeasured reaction rates, repeated ports, efficiency
+  states and model intermediates are omitted; assumptions remain explicit. Synthetic
+  fixture, not experimental validation.
+variables:
+  h2_power.x:
+    value: 50000.0
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Reacted hydrogen consumption meter (inlet minus recovered unused
+      hydrogen) converted using the explicitly declared LHV-equivalent basis; not
+      total inlet feed energy.
+    external_signal: bench/fuel_cell/h2_power/x
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  net_power.x:
+    value: 23000.0
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/net_power/x
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  aux_power.x:
+    value: 5000.0
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/aux_power/x
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  stack.current_A:
+    value: 100.0
+    unit: A
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/stack/current_A
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  stack.V_cell_V:
+    value: 0.7
+    unit: V
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/stack/V_cell_V
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  stack.V_stack_V:
+    value: 279.99999999999966
+    unit: V
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/stack/V_stack_V
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  stack.P_stack_W:
+    value: 28000.0
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/stack/P_stack_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  cathode.n_dot_air_feed_mol_s:
+    value: 0.9870733006535909
+    unit: mol/s
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Dry-air volumetric/molar flow meter with documented reference-state
+      conversion.
+    external_signal: bench/fuel_cell/cathode/n_dot_air_feed_mol_s
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  cathode.m_dot_air_feed_kg_s:
+    value: 0.028590775568092128
+    unit: kg/s
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Dry-air mass flow meter; may share upstream calibration and is not
+      a statistically independent experiment.
+    external_signal: bench/fuel_cell/cathode/m_dot_air_feed_kg_s
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  anode.n_dot_H2_feed_mol_s:
+    value: 0.3109280896985314
+    unit: mol/s
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Hydrogen inlet flow meter on the documented reference molar basis.
+    external_signal: bench/fuel_cell/anode/n_dot_H2_feed_mol_s
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  anode.m_dot_H2_feed_kg_s:
+    value: 0.0006267937174614768
+    unit: kg/s
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Hydrogen inlet mass flow metering on the same feed boundary.
+    external_signal: bench/fuel_cell/anode/m_dot_H2_feed_kg_s
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  comp.p_in_Pa:
+    value: 100000.0
+    unit: Pa
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/comp/p_in_Pa
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  comp.p_out_Pa:
+    value: 200000.0
+    unit: Pa
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/comp/p_out_Pa
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  comp.T_in_K:
+    value: 300.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/comp/T_in_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  comp.T_out_K:
+    value: 393.86299465906484
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/comp/T_out_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  comp.P_shaft_W:
+    value: 2683.6158144462765
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Shaft torque and angular-speed metering product at the compressor.
+    external_signal: bench/fuel_cell/comp/P_shaft_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  ic.T_gas_out_K:
+    value: 328.2033594840455
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/ic/T_gas_out_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  ic.T_coolant_or_ambient_K:
+    value: 300.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/ic/T_coolant_or_ambient_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  hum.humidity_ratio_in_kg_kg:
+    value: 0.01
+    unit: kg/kg
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/hum/humidity_ratio_in_kg_kg
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  hum.humidity_ratio_out_kg_kg:
+    value: 0.02
+    unit: kg/kg
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/hum/humidity_ratio_out_kg_kg
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  valve.p_downstream_Pa:
+    value: 100000.0
+    unit: Pa
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/valve/p_downstream_Pa
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  valve.opening:
+    value: 0.4520598543291923
+    unit: '1'
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Exhaust-valve position encoder normalized to its calibrated opening
+      range.
+    external_signal: bench/fuel_cell/valve/opening
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  stack_heat.x:
+    value: 22000.0
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Independent stack coolant calorimetry from actual flow and inlet/outlet
+      temperatures at the declared thermal boundary.
+    external_signal: bench/fuel_cell/stack_heat/x
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  heat_rejected.x:
+    value: 22000.0
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Whole-loop radiator calorimetry channel on the same declared boundary.
+    external_signal: bench/fuel_cell/heat_rejected/x
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  cool.m_dot_coolant_kg_s:
+    value: 2.2
+    unit: kg/s
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/cool/m_dot_coolant_kg_s
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  cool.T_coolant_in_K:
+    value: 310.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/cool/T_coolant_in_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  cool.T_coolant_out_K:
+    value: 320.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/cool/T_coolant_out_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  pump.p_in_Pa:
+    value: 100000.0
+    unit: Pa
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/pump/p_in_Pa
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  pump.p_out_Pa:
+    value: 200000.0
+    unit: Pa
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/pump/p_out_Pa
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  pump.P_shaft_W:
+    value: 274.99999999999835
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Shaft torque and angular-speed metering product at the coolant pump.
+    external_signal: bench/fuel_cell/pump/P_shaft_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  rad.T_coolant_out_K:
+    value: 300.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/rad/T_coolant_out_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  rad.T_air_in_K:
+    value: 290.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/rad/T_air_in_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  rad.Q_rejected_W:
+    value: 22000.0
+    unit: W
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/rad/Q_rejected_W
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  mass.T_previous_K:
+    value: 310.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/mass/T_previous_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.
+  mass.T_current_K:
+    value: 310.0
+    unit: K
+    source: synthetic native hierarchy reference solution, not real bench data
+    description: Proposed bench pressure, temperature, electrical, flow, humidity
+      or thermal-meter channel; its actual meter boundary must be verified.
+    external_signal: bench/fuel_cell/mass/T_current_K
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    conversion_note: Already SI. Any meter-derived thermal/power/humidity conversion
+      must be documented at the declared boundary.
+    stale_when:
+    - Meter boundary, calibration, fuel energy basis, control setting or channel convention
+      changes.

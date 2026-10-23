@@ -9,15 +9,21 @@ unresolved call, source location or observed-container selection stays unknown.
 from __future__ import annotations
 
 import ast
+import dis
 from dataclasses import dataclass, field
 from pathlib import Path
 import sys
-from types import FrameType
+from types import FrameType, FunctionType
 from typing import Any
+
+import numpy as np
 
 
 Dependencies = frozenset[str] | None
+LiteralSources = tuple[Dependencies, ...] | dict[str, Dependencies]
 _EMPTY: Dependencies = frozenset()
+_UNKNOWN = object()
+_NUMPY_SCALARS = {"interp": np.interp, "searchsorted": np.searchsorted}
 _NATIVE = Path(__file__).resolve().parents[1] / "modules"
 _PURE = frozenset({"abs", "all", "any", "bool", "enumerate", "float", "int", "len", "list", "max", "min", "range", "round", "str", "sum", "super", "tuple", "zip"})
 
@@ -26,6 +32,12 @@ def _merge(*parts: Dependencies) -> Dependencies:
     if any(part is None for part in parts):
         return None
     return frozenset().union(*parts)
+
+
+def _influenced(sources: LiteralSources, controls: Dependencies) -> LiteralSources:
+    if isinstance(sources, tuple):
+        return tuple(_merge(source, controls) for source in sources)
+    return {key: _merge(source, controls) for key, source in sources.items()}
 
 
 def _key(node: ast.AST) -> tuple[int, int, int, int]:
@@ -48,6 +60,9 @@ class _Frame:
     site: ast.AST | None
     locals: dict[str, Dependencies] = field(default_factory=dict)
     calls: dict[tuple[int, int, int, int], Dependencies] = field(default_factory=dict)
+    local_sources: dict[str, LiteralSources] = field(default_factory=dict)
+    call_sources: dict[tuple[int, int, int, int], LiteralSources] = field(default_factory=dict)
+    returned_sources: LiteralSources | None = None
     pending: ast.AST | None = None
     tests: dict[int, Dependencies] = field(default_factory=dict)
     inherited: Dependencies = _EMPTY
@@ -57,7 +72,7 @@ class _Frame:
 
 
 class _Capture:
-    def __init__(self, registry: Any, record_type: type) -> None:
+    def __init__(self, registry: Any, record_type: type, module: Any, vector: Any) -> None:
         self.registry = registry
         self.record_type = record_type
         self.frames: dict[int, _Frame] = {}
@@ -66,6 +81,52 @@ class _Capture:
         self.reads: set[str] = set()
         self.previous = sys.gettrace()
         self.previous_locals: dict[int, Any] = {}
+        # Strong references to ordinary numeric constructor fields, not to raw
+        # registry vectors. Identity proves a helper received this fixed table.
+        self.fixed_tables: dict[int, Any] = {}
+        for value in vars(module).values():
+            if self._numeric_table(value) and value is not vector:
+                if type(value) is not np.ndarray or not np.shares_memory(value, vector):
+                    self.fixed_tables[id(value)] = value
+
+    @staticmethod
+    def _numeric_table(value: Any) -> bool:
+        if type(value) is np.ndarray:
+            return value.ndim in (1, 2) and value.dtype.kind in "iuf" and bool(np.isfinite(value).all())
+        if type(value) not in (list, tuple) or not value:
+            return False
+        return all(type(item) in (int, float) and np.isfinite(item) or
+                   type(item) in (list, tuple) and bool(item) and
+                   all(type(number) in (int, float) and np.isfinite(number) for number in item)
+                   for item in value)
+
+    def _fixed_table(self, node: ast.AST, state: _Frame) -> bool:
+        if isinstance(node, ast.Subscript):
+            # Do not execute an index to infer provenance; carry selectors while
+            # retaining the proven fixed origin of a row/column selection.
+            return self._fixed_table(node.value, state) and self._deps(node.slice, state) is not None
+        value = self._parameter_value(node, state)
+        return id(value) in self.fixed_tables and self.fixed_tables[id(value)] is value
+
+    def _numpy_scalar_call(self, node: ast.Call, state: _Frame) -> bool:
+        if not isinstance(node.func, ast.Attribute) or not isinstance(node.func.value, ast.Name):
+            return False
+        alias = node.func.value.id
+        namespace = state.frame.f_locals if alias in state.frame.f_locals else state.frame.f_globals
+        if namespace.get(alias) is not np:
+            return False
+        if node.func.attr not in _NUMPY_SCALARS or getattr(np, node.func.attr) is not _NUMPY_SCALARS[node.func.attr]:
+            return False
+        count = 3 if node.func.attr == "interp" else 2 if node.func.attr == "searchsorted" else 0
+        if len(node.args) != count or any(keyword.arg is None for keyword in node.keywords):
+            return False
+        tables = (1, 2) if count == 3 else (0,)
+        if not count or not all(self._fixed_table(node.args[index], state) for index in tables):
+            return False
+        scalars = [arg for index, arg in enumerate(node.args) if index not in tables]
+        scalars.extend(keyword.value for keyword in node.keywords)
+        return all(type(self._parameter_value(arg, state)) in (int, float, str, type(None), np.float64, np.float32, np.int64, np.int32)
+                   for arg in scalars)
 
     def _tree(self, filename: str) -> ast.Module | None:
         path = Path(filename)
@@ -140,7 +201,21 @@ class _Capture:
         if state.frame.f_code.co_flags & (4 | 8) or any(isinstance(arg, ast.Starred) for arg in site.args):
             state.unsupported = True  # no binding claim for variadic/dynamic arguments
         if state.frame.f_code.co_freevars and state.frame.f_code is not self.record_type.__init__.__code__:
-            state.unsupported = True  # arbitrary helper closure bindings are not inferred
+            # Only a direct invocation of this native frame's own lexical helper
+            # has a proven closure binding. Escaped/external closures stay unknown.
+            helper = caller.frame.f_locals.get(site.func.id) if isinstance(site.func, ast.Name) else None
+            lexical = (isinstance(caller.node, ast.FunctionDef)
+                       and any(node is state.node for node in caller.node.body)
+                       and isinstance(helper, FunctionType)
+                       and helper.__code__ is state.frame.f_code
+                       and all(name in caller.locals for name in state.frame.f_code.co_freevars))
+            if not lexical:
+                state.unsupported = True
+            else:
+                for name in state.frame.f_code.co_freevars:
+                    state.locals[name] = caller.locals[name]
+                    if name in caller.local_sources:
+                        state.local_sources[name] = caller.local_sources[name]
         self._inline_targets(caller, site)
         params = list(state.frame.f_code.co_varnames[:state.frame.f_code.co_argcount])
         if state.frame.f_code is self.record_type.__init__.__code__:
@@ -151,11 +226,17 @@ class _Capture:
             state.unsupported = True  # implicit method identity is not bound by a bare alias
         for name, value in zip(params, site.args):
             state.locals[name] = self._deps(value, caller)
+            sources = self._literal_sources(value, caller)
+            if sources is not None:
+                state.local_sources[name] = sources
         for keyword in site.keywords:
             if keyword.arg is None:
                 state.unsupported = True
             else:
                 state.locals[keyword.arg] = self._deps(keyword.value, caller)
+                sources = self._literal_sources(keyword.value, caller)
+                if sources is not None:
+                    state.local_sources[keyword.arg] = sources
         for name in state.frame.f_locals:
             state.locals.setdefault(name, _EMPTY)
 
@@ -168,6 +249,7 @@ class _Capture:
                     dependencies = self._deps(generator.iter, caller)
                     for name in _names(generator.target):
                         caller.locals[name] = _EMPTY if dependencies == _EMPTY else None
+                        caller.local_sources.pop(name, None)
 
     def _statement(self, state: _Frame) -> ast.AST | None:
         if not isinstance(state.node, ast.FunctionDef):
@@ -185,14 +267,23 @@ class _Capture:
         controls = self._controls(state, node)
         if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign)):
             dependencies = _merge(self._deps(node.value, state), controls)
+            sources = self._literal_sources(node.value, state)
             targets = node.targets if isinstance(node, ast.Assign) else [node.target]
             for target in targets:
+                if isinstance(target, (ast.Tuple, ast.List)) and isinstance(sources, tuple) and len(target.elts) == len(sources) and all(isinstance(part, ast.Name) for part in target.elts):
+                    for part, source in zip(target.elts, sources):
+                        state.locals[part.id] = _merge(source, controls)
+                        state.local_sources.pop(part.id, None)
+                    continue
                 if not _names(target):
                     state.unsupported = True
                 for name in _names(target):
                     if isinstance(node, ast.AugAssign):
                         dependencies = _merge(dependencies, state.locals.get(name))
                     state.locals[name] = dependencies
+                    state.local_sources.pop(name, None)
+                    if isinstance(target, ast.Name) and sources is not None and not isinstance(node, ast.AugAssign):
+                        state.local_sources[name] = _influenced(sources, controls)
         elif isinstance(node, ast.If):
             self._branch(state, node, controls)
         elif isinstance(node, ast.For):
@@ -201,6 +292,7 @@ class _Capture:
                 dependencies = None  # no per-element claim for observed containers
             for name in _names(node.target):
                 state.locals[name] = _merge(dependencies, controls)
+                state.local_sources.pop(name, None)
 
     def _branch(self, state: _Frame, node: ast.If, controls: Dependencies) -> None:
         influence = _merge(self._deps(node.test, state), controls)
@@ -213,6 +305,8 @@ class _Capture:
             for target in targets:
                 for name in _names(target):
                     state.locals[name] = _merge(state.locals.get(name, _EMPTY), influence)
+                    if name in state.local_sources:
+                        state.local_sources[name] = _influenced(state.local_sources[name], influence)
         if any(isinstance(n, (ast.Raise, ast.Return)) for n in ast.walk(node)):
             state.gates = _merge(state.gates, influence)
 
@@ -230,6 +324,9 @@ class _Capture:
         if isinstance(node, (ast.ListComp, ast.GeneratorExp)):
             return state.calls.get(_key(node))
         if isinstance(node, ast.Call):
+            if self._numpy_scalar_call(node, state):
+                return _merge(*(self._deps(arg, state) for arg in node.args),
+                              *(self._deps(kw.value, state) for kw in node.keywords))
             if _key(node) in state.calls:
                 return state.calls[_key(node)]
             name = ast.unparse(node.func)
@@ -238,15 +335,60 @@ class _Capture:
                               *(self._deps(kw.value, state) for kw in node.keywords))
             return None
         if isinstance(node, ast.Subscript):
+            sources = self._literal_sources(node.value, state)
+            if isinstance(sources, dict) and isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str):
+                return sources.get(node.slice.value)
+            if self._fixed_table(node.value, state):
+                return _merge(self._deps(node.value, state), self._deps(node.slice, state))
             base = self._deps(node.value, state)
             if base:
                 return None  # deliberately unsupported observed-container selection
             return _merge(base, self._deps(node.slice, state))
-        if isinstance(node, (ast.BinOp, ast.UnaryOp, ast.Compare, ast.BoolOp, ast.IfExp,
+        if isinstance(node, ast.IfExp):
+            controls = self._deps(node.test, state)
+            condition = self._parameter_value(node.test, state) if controls == _EMPTY else _UNKNOWN
+            if condition is not _UNKNOWN and type(condition) in (bool, int, float, str, list, tuple, dict, type(None)):
+                return _merge(controls, self._deps(node.body if condition else node.orelse, state))
+            # Preserve the existing conservative, finite source union for observed
+            # guards; an unexecuted/unresolved helper still keeps this unknown.
+            return _merge(controls, self._deps(node.body, state), self._deps(node.orelse, state))
+        if isinstance(node, (ast.BinOp, ast.UnaryOp, ast.Compare, ast.BoolOp,
                              ast.List, ast.Tuple, ast.Set, ast.Dict, ast.JoinedStr, ast.FormattedValue, ast.Slice)):
             return _merge(*(self._deps(child, state) for child in ast.iter_child_nodes(node)
                             if isinstance(child, ast.expr)))
         return None
+
+    def _literal_sources(self, node: ast.AST, state: _Frame) -> LiteralSources | None:
+        """Finite native literal fields only; never index arbitrary observed containers."""
+        if isinstance(node, ast.Name):
+            return state.local_sources.get(node.id)
+        if isinstance(node, ast.Call):
+            return state.call_sources.get(_key(node))
+        if isinstance(node, ast.Tuple):
+            return tuple(self._deps(element, state) for element in node.elts)
+        if isinstance(node, ast.Dict) and all(isinstance(key, ast.Constant) and isinstance(key.value, str) for key in node.keys):
+            return {key.value: self._deps(value, state) for key, value in zip(node.keys, node.values)}
+        return None
+
+    def _parameter_value(self, node: ast.AST, state: _Frame) -> Any:
+        """Read a constant/parameter selector without evaluating Python code."""
+        if isinstance(node, ast.Constant):
+            return node.value
+        if isinstance(node, ast.Name):
+            return state.frame.f_locals.get(node.id, _UNKNOWN)
+        if isinstance(node, ast.Attribute):
+            base = self._parameter_value(node.value, state)
+            try:
+                return vars(base).get(node.attr, _UNKNOWN)
+            except TypeError:
+                pass
+        if (isinstance(node, ast.Compare) and len(node.ops) == len(node.comparators) == 1
+                and isinstance(node.ops[0], (ast.Is, ast.IsNot))
+                and isinstance(node.comparators[0], ast.Constant) and node.comparators[0].value is None):
+            value = self._parameter_value(node.left, state)
+            if value is not _UNKNOWN:
+                return (value is None) if isinstance(node.ops[0], ast.Is) else (value is not None)
+        return _UNKNOWN
 
     def _enter(self, frame: FrameType) -> _Frame:
         previous = self.frames.get(id(frame))
@@ -293,8 +435,17 @@ class _Capture:
             return None
         self._flush(state)
         if isinstance(state.node, (ast.ListComp, ast.GeneratorExp)):
+            if isinstance(state.node, ast.GeneratorExp) and dis.opname[frame.f_code.co_code[frame.f_lasti]].startswith("RETURN_"):
+                # An exhausted parameter-indexed generator executes no element.
+                # Empty sum is structurally constant; nonempty yields have already
+                # accumulated their actual sources in this invocation's aggregate.
+                return _merge(state.aggregate, state.inherited)
             return _merge(state.aggregate, state.inherited, self._deps(state.node.elt, state))
         if isinstance(state.pending, ast.Return):
+            sources = self._literal_sources(state.pending.value, state)
+            controls = self._controls(state, state.pending)
+            if sources is not None:
+                state.returned_sources = _influenced(sources, controls)
             return _merge(self._deps(state.pending.value, state), self._controls(state, state.pending))
         return None
 
@@ -317,10 +468,14 @@ class _Capture:
                     for node in ast.walk(statement):
                         if isinstance(node, (ast.Call, ast.ListComp, ast.GeneratorExp)):
                             state.calls.pop(_key(node), None)
+                            state.call_sources.pop(_key(node), None)
         elif event == "return":
             dependencies = self._returned(state, value)
             if state.caller is not None and state.site is not None:
                 state.caller.calls[_key(state.site)] = dependencies
+                state.caller.call_sources.pop(_key(state.site), None)
+                if state.returned_sources is not None:
+                    state.caller.call_sources[_key(state.site)] = state.returned_sources
                 state.caller.aggregate = _merge(state.caller.aggregate, dependencies)
                 self._inline_comprehension(state.caller, state.site)
             if frame.f_code.co_name != "<genexpr>":
@@ -340,7 +495,7 @@ def module_residual_dependencies(module: Any, vector: Any, registry: Any, record
     if not filename.is_relative_to(_NATIVE):
         records = module.residuals(vector, registry)
         return records, [None for record in records], False
-    capture = _Capture(registry, record_type)
+    capture = _Capture(registry, record_type, module, vector)
     try:
         sys.settrace(capture.trace)
         records = module.residuals(vector, registry)

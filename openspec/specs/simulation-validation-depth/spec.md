@@ -97,6 +97,10 @@ Observed evaluation SHALL use supported per-residual structural value/control de
 - **THEN** it SHALL remain unchecked rather than receive guessed inputs or an empty dependency claim
 - **AND** a custom residual MAY still receive its native numerical check once every registered value is actually known
 
+#### Scenario: An unrelated channel is missing
+- **WHEN** an aggregate balance or fixed-parameter map has all of its own measured inputs and a failing residual, while an unrelated channel remains unknown
+- **THEN** observed evaluation SHALL check that residual and report the failure, without requiring the unrelated channel or changing either observation
+
 #### Scenario: No relation remains to check
 - **WHEN** every available relation was consumed by derivation or still lacks usable inputs
 - **THEN** evaluation SHALL refuse with `no residual can be evaluated without them` rather than report a pass
