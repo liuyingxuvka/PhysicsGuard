@@ -20,7 +20,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest>=8.0",
-    "flowguard @ git+https://github.com/liuyingxuvka/FlowGuard.git@v0.70.7",
+    "flowguard @ git+https://github.com/liuyingxuvka/FlowGuard.git@v0.70.11",
 ]
 
 [project.scripts]

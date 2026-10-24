@@ -33,8 +33,14 @@ def test_valid_hierarchical_audit_spec_passes() -> None:
     assert spec.hierarchy.blocks[1].parent_id == "root"
 
 
-def test_refines_requires_a_parent_owned_component_and_inspect_exposes_it() -> None:
+def test_refines_requires_a_parent_owned_component_and_inspect_exposes_it(monkeypatch) -> None:
     from physicsguard.core.hierarchy import inspect_hierarchy
+    from physicsguard.core.solver import BoundedSolver
+
+    def no_solve(*args, **kwargs):
+        pytest.fail("inspect must not solve")
+
+    monkeypatch.setattr(BoundedSolver, "solve", no_solve)
 
     data = audit_data()
     data["system"]["components"].append({"id": "coarse", "type": "DummyResidualModule", "parameters": {"target": 0.}})

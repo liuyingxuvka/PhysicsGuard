@@ -527,6 +527,10 @@ IMPLEMENTED_BY = {
     "GateValidationClaim": "src/physicsguard/core/model_dataset_validation.py:_status",
 }
 TESTED_BY = {
+    "no_pass_without_direct_validation": [
+        "tests/test_model_dataset_validation.py:test_clean_model_dataset_validation_passes",
+        "tests/test_model_dataset_validation.py:test_conservative_calibration_does_not_turn_direct_failure_into_pass",
+    ],
     "no_pass_without_contracts": [
         "tests/test_model_dataset_validation.py:test_nonpassing_required_contract_blocks_validation",
     ],

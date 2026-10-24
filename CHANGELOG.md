@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Maintenance checks of PhysicsGuard's own model tree now run on FlowGuard 0.70.11.
+
 ## v0.15.21 - 2026-10-23
 
 - Document the command for reading and drawing the audit model tree in the skill overview.

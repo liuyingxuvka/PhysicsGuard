@@ -1150,6 +1150,35 @@ IMPLEMENTED_BY = {
     "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
 }
 TESTED_BY = {
+    "no_solve_without_valid_registry": [
+        "tests/test_residual_builder.py:test_duplicate_fully_qualified_variables_fail",
+        "tests/test_solver.py:test_bounds_are_respected",
+    ],
+    "no_solve_without_normalized_residuals": [
+        "tests/test_residual_builder.py:test_residual_vector_returns_normalized_values",
+    ],
+    "diagnostics_after_solver_or_failure": [
+        "tests/test_diagnostics.py:test_warnings_generated_for_solver_failure",
+        "tests/test_solver.py:test_solver_result_includes_diagnostics_ready_fields",
+    ],
+    "post_checks_never_block_valid_solver_selection": [
+        "tests/test_solver.py:test_range_check_post_check_does_not_pull_solution",
+        "tests/test_residual_builder.py:test_post_check_residuals_are_not_in_solver_vector",
+    ],
+    "comparison_requires_reference_and_observed": [
+        "tests/test_evaluator.py:test_compare_to_reference_returns_reference_and_observed_variables",
+    ],
+    "hierarchy_run_requires_solve": [
+        "tests/test_hierarchy_runner.py:test_clean_hierarchical_example_audit_pass_true",
+        "tests/test_hierarchy_runner.py:test_conflict_hierarchical_example_identifies_top_block_and_refinement",
+    ],
+    "hierarchy_inspect_does_not_solve": [
+        "tests/test_hierarchy_spec.py:test_refines_requires_a_parent_owned_component_and_inspect_exposes_it",
+    ],
+    "assumptions_are_reported_in_diagnostics": [
+        "tests/test_assumption_diagnostics.py:test_normal_diagnostic_json_includes_assumptions_section",
+        "tests/test_assumption_diagnostics.py:test_proposed_assumption_warning_appears_and_not_applied",
+    ],
     "parent_fails_with_child": [
         "tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores",
         "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement",
