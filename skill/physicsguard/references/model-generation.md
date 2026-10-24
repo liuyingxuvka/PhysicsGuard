@@ -11,7 +11,7 @@ PhysicsGuard is the low-fidelity source of truth for interfaces, units, assumpti
 1. Define the system to model and the minimum useful fidelity.
 2. Split the system into blocks with explicit inputs, outputs, parameters, and units.
 3. Build the coarsest PhysicsGuard hierarchy first.
-4. Validate the hierarchy with clean examples, conflict examples, or observed data.
+4. Validate the hierarchy with its `fault_variants` (`hierarchy variants`) and observed data.
 5. Refine only blocks whose required fidelity requires more detail.
 6. For each block, generate the candidate implementation after the PhysicsGuard block passes.
 7. Run the candidate model and export or capture the same signals.

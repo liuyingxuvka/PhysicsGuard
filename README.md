@@ -223,7 +223,7 @@ Each relation is low fidelity by design. The value is not that it replaces the s
 
 ```text
 src/physicsguard/       Core package
-examples/               Low-fidelity relation and conflict examples
+examples/               Audit trees, starter packs and per-module relation examples; module `conflict_*.yaml` files are contradictory-boundary fixtures for module tests, not the audit tree's known-bad form
 docs/                   Developer guides (module spec, assumption cards, starter packs)
 skill/                  agent skill material
 scripts/                Validation and release checks
@@ -451,7 +451,7 @@ PhysicsGuard 包含这些低保真审计关系：
 
 ```text
 src/physicsguard/       核心包
-examples/               低保真关系和 conflict 示例
+examples/               审计树、起步包和逐个模块的关系例子；模块目录里的 `conflict_*.yaml` 是模块测试用的矛盾边界夹具，不是审计树的已知坏写法
 docs/                   开发指南（模块规格、假设卡、领域起步包）
 skill/                  agent skill material
 scripts/                验证和发布检查

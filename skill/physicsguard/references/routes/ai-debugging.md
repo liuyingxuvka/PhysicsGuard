@@ -78,11 +78,11 @@ model, not a recovered commercial model. Read `references/model-generation.md` b
 ## Required Header For New PhysicsGuard YAML
 Use a specific one-layer comment header on audits, hierarchies, snapshots and candidate audits:
 ```yaml
-# PhysicsGuard audit/model audit
+# PhysicsGuard hierarchical audit model
 # Purpose: Low-fidelity residual audit for <short model purpose>.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml
-# Boundary: Low-fidelity SI-unit residual audit or audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 ```
 Do not add provenance metadata solely for this header.
 

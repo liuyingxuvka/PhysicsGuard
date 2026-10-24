@@ -9,7 +9,7 @@ description: One connected coarse-to-fine audit tree. Gross catchment plus sewer
   sewer 0. Detention 60=50+5+5 has its own scoped balance and does not add 5 to the
   gross-network storage.
 system:
-  system_name: stormwater_sewer_drainage_level_1_catchment_conveyance_storage_pump
+  system_name: stormwater_sewer_drainage
   components:
   - id: coarse_total_network_inflow_mass_flow
     type: MappedSignalModule

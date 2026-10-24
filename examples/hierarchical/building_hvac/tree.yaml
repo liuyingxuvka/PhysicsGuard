@@ -679,9 +679,6 @@ fault_variants:
     offset: 30.0
 metadata:
   domain: building_hvac
-  source_levels:
-  - level_0_building_plant_balance.yaml
-  - level_1_hvac_plant_loop.yaml
   reference_point_note: Reference solve uses declared SI operating conditions and
     consistent initial guesses. Fan and total grid power are free to vary together,
     so the reference point is not claimed unique.

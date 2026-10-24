@@ -1083,7 +1083,7 @@ hierarchy:
     refines: &id004
     - unit_aeration_power_balance
   refinement_rules:
-  - id: refine_wastewater_level_0_balance
+  - id: refine_wastewater_balance
     block_id: wastewater_plant
     trigger_diagnostic_keys:
     - aggregate_mass_balance_mismatch

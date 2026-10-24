@@ -9,7 +9,7 @@ description: 'Flat partition: no coarse level. One connected audit tree. Nominal
   plus instrument 0.25 and leak 0.625. The former standalone coarse 4.5/0.5 split
   was a different operating point; it is not an identity link.'
 system:
-  system_name: industrial_utilities_level_1_steam_air_refrigeration_cooling_water
+  system_name: industrial_utilities
   components:
   - id: boiler_steam_generation_mass_flow
     type: MappedSignalModule

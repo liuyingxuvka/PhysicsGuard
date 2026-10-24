@@ -267,9 +267,8 @@ hierarchy:
 fault_variants:
 - id: heat_rejection
   kind: fault
-  description: 'Reproduce conflict_level_0_heat_rejection: independent loop-level
-    heat rejection channel reports 5 kW against 10 kW input; detailed radiator measurements
-    remain nominal.'
+  description: The independent loop-level heat rejection channel reports 5 kW against
+    10 kW input; detailed radiator measurements remain nominal.
   changes:
   - variable: heat_rejected.x
     scale: 0.5
@@ -278,9 +277,8 @@ fault_variants:
   - thermal_mass
 - id: radiator
   kind: fault
-  description: 'Reproduce conflict_level_1_radiator: the radiator duty channel reports
-    20 kW while its measured coolant/UA relations support 10 kW at this common reference
-    point.'
+  description: The radiator duty channel reports 20 kW while its measured coolant/UA
+    relations support 10 kW at this common reference point.
   changes:
   - variable: rad.Q_rejected_W
     scale: 2.0
@@ -298,8 +296,5 @@ fault_variants:
     offset: 4.73
 metadata:
   reference_boundary: Synthetic starter-pack operating point, not testbench validation.
-  legacy_fault_sources:
-  - conflict_level_0_heat_rejection.yaml
-  - conflict_level_1_radiator.yaml
   topology: Stack -> split into radiator and hot bypass -> three-way mixer -> pump
     -> stack. Pump temperature rise is excluded explicitly.

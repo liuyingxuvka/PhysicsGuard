@@ -191,7 +191,7 @@ Promote a repeated template relation into a module only when:
 - SI units and residual scale are clear;
 - bounds and initial guesses are finite;
 - assumptions and validity range are documented;
-- clean and conflict examples are available;
+- module examples include a clean case and a contradictory-boundary `conflict_*.yaml` fixture for its tests (an audit tree's known-bad cases are its `fault_variants`);
 - focused tests cover zero residual, nonzero residual, validation errors, metadata, and YAML usage.
 
 Do not add detailed models, hidden unit conversion tables, empirical correlations, or commercial-tool-equivalent behavior as part of a starter pack.

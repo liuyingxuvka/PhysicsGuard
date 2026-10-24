@@ -566,8 +566,8 @@ hierarchy:
 fault_variants:
 - id: hydrogen_power_underread
   kind: fault
-  description: 'Preserve conflict_level_0_h2_power mechanism: reacted fuel energy
-    channel underreads by20percent at the unified reference point.'
+  description: The reacted fuel energy channel underreads by 20 percent at the unified
+    reference point.
   changes:
   - variable: h2_power.x
     scale: 0.8
@@ -575,8 +575,8 @@ fault_variants:
   - fc_system
 - id: cathode_air_underfeed
   kind: fault
-  description: 'Preserve conflict_level_1_cathode_air_path mechanism: air molar feed
-    reports roughly one tenth of the stoichiometric requirement.'
+  description: The air molar feed reports roughly one tenth of the stoichiometric
+    requirement.
   changes:
   - variable: cathode.n_dot_air_feed_mol_s
     scale: 0.1
@@ -593,6 +593,3 @@ fault_variants:
 metadata:
   reference_boundary: Synthetic reference solution; not real bench validation. Reaction-energy
     basis and nameplate properties are explicit assumptions.
-  legacy_fault_sources:
-  - conflict_level_0_h2_power.yaml
-  - conflict_level_1_cathode_air_path.yaml

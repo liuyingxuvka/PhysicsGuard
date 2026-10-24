@@ -7,7 +7,7 @@ audit_name: heated_tank
 description: Measured heated-tank command, electrical power, volume and energy audits
   in one six-block hierarchy.
 system:
-  system_name: heated_tank_level_1_heater
+  system_name: heated_tank
   components:
   # Explicit fixed nameplate signal, matching the assumption below; not a measurement.
   - id: heater_nameplate
