@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from physicsguard.schema.observation_spec import ObservedValueSpec, SourceModelSpec
 from physicsguard.schema.parameter_coverage import MappingConfidence
 from physicsguard.schema.predictive_rollout import ModelSemantics, PredictiveRolloutPlanSpec
-from physicsguard.schema.validation_adequacy import ValidationAdequacyPlanSpec
+from physicsguard.schema.validation_adequacy import ValidationAdequacyPlanSpec, unique_non_empty_texts
 from physicsguard.schema.variable import ensure_non_empty, is_qualified_variable_name
 
 
@@ -274,10 +274,7 @@ class ObservedSeriesPointSpec(BaseModel):
     @field_validator("event_tags", "peak_tags", "boundary_tags")
     @classmethod
     def _tags_valid(cls, values: list[str], info) -> list[str]:
-        normalized = [ensure_non_empty(value, info.field_name) for value in values]
-        if len(normalized) != len(set(normalized)):
-            raise ValueError(f"{info.field_name} must be unique")
-        return normalized
+        return unique_non_empty_texts(values, info.field_name)
 
     @model_validator(mode="after")
     def _point_valid(self) -> "ObservedSeriesPointSpec":

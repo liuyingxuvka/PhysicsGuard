@@ -213,11 +213,18 @@ def unevaluable_remains_explicit(state, trace):
     return InvariantResult.pass_()
 
 
-INVARIANTS = tuple(Invariant(fn.__name__, fn.__doc__ or fn.__name__.replace("_", " "), fn) for fn in (
-    clean_input_accepted, each_defect_rejected, every_defect_reported, benign_features_neutral,
-    masked_pairs_accepted, undetected_pairs_rejected, outside_pairs_rejected,
-    pairwise_evidence_complete, model_miss_is_explicit, unevaluable_remains_explicit,
-))
+INVARIANTS = (
+    Invariant("clean_input_accepted", clean_input_accepted.__doc__ or "clean input accepted", clean_input_accepted),
+    Invariant("each_defect_rejected", each_defect_rejected.__doc__ or "each defect rejected", each_defect_rejected),
+    Invariant("every_defect_reported", every_defect_reported.__doc__ or "every defect reported", every_defect_reported),
+    Invariant("benign_features_neutral", benign_features_neutral.__doc__ or "benign features neutral", benign_features_neutral),
+    Invariant("masked_pairs_accepted", masked_pairs_accepted.__doc__ or "masked pairs accepted", masked_pairs_accepted),
+    Invariant("undetected_pairs_rejected", undetected_pairs_rejected.__doc__ or "undetected pairs rejected", undetected_pairs_rejected),
+    Invariant("outside_pairs_rejected", outside_pairs_rejected.__doc__ or "outside pairs rejected", outside_pairs_rejected),
+    Invariant("pairwise_evidence_complete", pairwise_evidence_complete.__doc__ or "pairwise evidence complete", pairwise_evidence_complete),
+    Invariant("model_miss_is_explicit", model_miss_is_explicit.__doc__ or "model miss is explicit", model_miss_is_explicit),
+    Invariant("unevaluable_remains_explicit", unevaluable_remains_explicit.__doc__ or "unevaluable remains explicit", unevaluable_remains_explicit),
+)
 
 
 def _explorer(block):

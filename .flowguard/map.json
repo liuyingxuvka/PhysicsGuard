@@ -51,26 +51,13 @@
       ],
       "tests": [
         "tests/test_assumption_cli.py",
-        "tests/test_assumption_diagnostics.py",
         "tests/test_cli.py",
         "tests/test_diagnosability.py",
-        "tests/test_diagnostics.py",
         "tests/test_fault_variants.py",
-        "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
-        "tests/test_hierarchy_refinement.py",
-        "tests/test_hierarchy_runner.py",
-        "tests/test_hierarchy_scoring.py",
-        "tests/test_model_dataset_validation.py",
         "tests/test_physicsguard_skill_prompts.py",
-        "tests/test_predictive_rollout_validation.py",
         "tests/test_signal_mapping_ledger.py",
-        "tests/test_solver.py",
         "tests/test_test_file_contract_cli.py",
-        "tests/test_test_file_contract_core.py",
-        "tests/test_test_file_contract_schema.py",
-        "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth.py",
         "tests/test_version_consistency.py",
         "tests/test_workflow_governance.py"
       ],
@@ -114,7 +101,6 @@
       "tests": [
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
-        "tests/test_assumption_cli.py",
         "tests/test_assumption_diagnostics.py",
         "tests/test_assumption_manager.py",
         "tests/test_assumption_residuals.py",
@@ -135,7 +121,6 @@
         "tests/test_component_thermal_management.py",
         "tests/test_control_pid_helpers.py",
         "tests/test_control_signal_modules.py",
-        "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
         "tests/test_domain_judgment_module_behaviors.py",
         "tests/test_electrochemical_extra_helpers.py",
@@ -144,7 +129,6 @@
         "tests/test_heated_tank_example.py",
         "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
-        "tests/test_hierarchy_loader.py",
         "tests/test_hierarchy_refinement.py",
         "tests/test_hierarchy_runner.py",
         "tests/test_hierarchy_scoring.py",
@@ -202,11 +186,8 @@
         "simulation"
       ],
       "tests": [
-        "tests/test_cli.py",
         "tests/test_model_dataset_validation.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_signal_mapping_ledger.py",
-        "tests/test_test_file_contract_cli.py",
         "tests/test_validation_adequacy.py",
         "tests/test_validation_depth.py"
       ],
@@ -214,7 +195,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:90f8ed1dfb60a457584f9be56b53383da46f34a6642a41d26fba95fcf76faf15"
+      "fingerprint": "sha256:686ab35ea41849c99f2e0a7bfe654eed3060ca2ceea2bafc0e7cbcd9dc1c4af7"
     },
     {
       "id": "schema",
@@ -285,28 +266,23 @@
         "tests/test_physical_foundation_thermal.py",
         "tests/test_physical_gas.py",
         "tests/test_physical_thermal.py",
-        "tests/test_physicsguard_skill_prompts.py",
         "tests/test_predictive_rollout_validation.py",
         "tests/test_residual_builder.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_solver.py",
-        "tests/test_starter_pack_trees.py",
         "tests/test_system_spec.py",
         "tests/test_tank_helpers.py",
-        "tests/test_test_file_contract_cli.py",
         "tests/test_test_file_contract_core.py",
         "tests/test_test_file_contract_schema.py",
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth.py",
-        "tests/test_variable_registry.py",
-        "tests/test_yaml_loader.py"
+        "tests/test_validation_depth.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:25b17c9b04051a0f65ff9ce61a29d601c2a1b39fc797046e439d67f278f36232"
+      "fingerprint": "sha256:bacd81d1e9df09c0b7fbc310d9af5645dbee29c8cc6629fb6364b7ebd7e63444"
     },
     {
       "id": "loaders",
@@ -329,7 +305,6 @@
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
         "tests/test_assumption_diagnostics.py",
-        "tests/test_assumption_spec.py",
         "tests/test_component_battery_hv.py",
         "tests/test_component_control.py",
         "tests/test_component_control_sensor_actuator.py",
@@ -351,12 +326,10 @@
         "tests/test_heat_exchanger_helpers.py",
         "tests/test_hierarchy_loader.py",
         "tests/test_hierarchy_runner.py",
-        "tests/test_hierarchy_spec.py",
         "tests/test_humidity_helpers.py",
         "tests/test_lookup_modules.py",
         "tests/test_mechanical_helpers.py",
         "tests/test_observation_loader.py",
-        "tests/test_observation_spec.py",
         "tests/test_physical_electrochemical.py",
         "tests/test_physical_foundation_electrical.py",
         "tests/test_physical_foundation_electrochemical.py",
@@ -367,7 +340,6 @@
         "tests/test_predictive_rollout_validation.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_starter_pack_trees.py",
-        "tests/test_system_spec.py",
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_validation_adequacy.py",
@@ -405,8 +377,6 @@
       "tests": [
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
-        "tests/test_assumption_manager.py",
-        "tests/test_assumption_residuals.py",
         "tests/test_cli.py",
         "tests/test_component_battery_hv.py",
         "tests/test_component_control.py",
@@ -436,19 +406,17 @@
         "tests/test_physical_foundation_electrochemical.py",
         "tests/test_physical_gas.py",
         "tests/test_residual_builder.py",
-        "tests/test_signal_mapping_ledger.py",
         "tests/test_tank_helpers.py",
-        "tests/test_thermodynamic_conversion_helpers.py",
-        "tests/test_variable_registry.py"
+        "tests/test_thermodynamic_conversion_helpers.py"
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:837bb839b33c34096d8217dbbd08adc773d8fea4bb7656b5b63c0bf70147f124"
+      "fingerprint": "sha256:48647c7878c83ab06e3c82d60e667932af656b917519c90ee10dcedd7394a0d7"
     },
     {
       "id": "maintenance",
       "layer": "interface",
-      "summary": "Skill installation, starter-pack generation and example headers",
+      "summary": "Skill installation, test-file manifest extraction and portable example headers",
       "responsibilities": [
         "Install the physicsguard skill by replacing its copy in --target and removing retired skill directories; --check and --dry-run change nothing",
         "Publish the exact final version commit through the repository release workflow",
@@ -474,7 +442,6 @@
       ],
       "tests": [
         "tests/test_install_physicsguard_skills.py",
-        "tests/test_physicsguard_skill_prompts.py",
         "tests/test_portable_model_headers.py",
         "tests/test_source_style.py"
       ],
@@ -528,11 +495,8 @@
         "simulation"
       ],
       "tests": [
-        "tests/test_cli.py",
         "tests/test_diagnosability.py",
-        "tests/test_fault_variants.py",
-        "tests/test_physicsguard_skill_prompts.py",
-        "tests/test_signal_mapping_ledger.py"
+        "tests/test_fault_variants.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_fault_variants_model.py"
@@ -587,26 +551,14 @@
         "simulation"
       ],
       "tests": [
-        "tests/test_cli.py",
-        "tests/test_hierarchy_block_index.py",
-        "tests/test_hierarchy_cli.py",
-        "tests/test_hierarchy_refinement.py",
-        "tests/test_hierarchy_runner.py",
-        "tests/test_hierarchy_scoring.py",
-        "tests/test_model_dataset_validation.py",
-        "tests/test_predictive_rollout_validation.py",
-        "tests/test_signal_mapping_ledger.py",
-        "tests/test_test_file_contract_cli.py",
         "tests/test_test_file_contract_core.py",
-        "tests/test_test_file_contract_schema.py",
-        "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth.py"
+        "tests/test_validation_adequacy.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:27012885f9a0a90cfa5f413912a26ad6d9455aa49d29e4b072a27f4423b8b4a7"
+      "fingerprint": "sha256:0e93babef7b379c27e00c47cda5bf1d9fa6ce3244e03ba9b79667a3f0bc80b09"
     }
   ],
   "flows": [
@@ -669,6 +621,42 @@
       "component": "modules",
       "contains": "modules <-> simulation; imports:",
       "reason": "Physical modules use the engine variable registry and residual records, while the residual builder creates modules through the module registry. Both owners are in the engine layer; keep these real imports and domain tests."
+    },
+    {
+      "code": "large_component",
+      "component": "modules",
+      "contains": "LOC in 39 files",
+      "reason": "An equation library of 39 self-contained relation files, each with its own unit tests; the size comes from the number of physical relations, not from mixed responsibilities."
+    },
+    {
+      "code": "large_component",
+      "component": "validation",
+      "contains": "LOC in 4 files",
+      "reason": "Model-vs-dataset validation is one claim gate (contracts, holdout, depth, adequacy) over two engines; splitting by size would separate gates that must agree on the same findings."
+    },
+    {
+      "code": "large_component",
+      "component": "simulation",
+      "contains": "LOC in 9 files",
+      "reason": "The one evaluation engine (registry, residuals, solver, hierarchy runner, diagnostics, tree view); it is just over the limit and every file has one job."
+    },
+    {
+      "code": "large_file",
+      "component": "simulation",
+      "contains": "src/physicsguard/core/hierarchy.py",
+      "reason": "HierarchicalAuditRunner, block scoring, refinement planning and observed derivation share the block index and residual records of one evaluation; rendering already moved to tree_view.py."
+    },
+    {
+      "code": "large_file",
+      "component": "validation",
+      "contains": "src/physicsguard/core/validation_adequacy.py",
+      "reason": "One adequacy computation (per-signal, per-parameter and temporal coverage) over the same contract mappings; its sections share the finding format and floors."
+    },
+    {
+      "code": "large_file",
+      "component": "validation",
+      "contains": "src/physicsguard/core/validation_depth.py",
+      "reason": "One depth computation (holdout, series, rollout, convergence) over the same validation plan; its sections share the depth payload."
     }
   ]
 }

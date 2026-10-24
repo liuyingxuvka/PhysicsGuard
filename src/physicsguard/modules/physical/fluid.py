@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
@@ -11,6 +10,15 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
 from physicsguard.schema.variable import is_qualified_variable_name
+from physicsguard.modules.physical._common import (
+    finite_float,
+    metadata,
+    nonnegative_float,
+    owned_record,
+    positive_float,
+    required_variable_list,
+    required_variable_name,
+)
 
 
 class IncompressiblePressureDropModule(BaseModule):
@@ -21,12 +29,12 @@ class IncompressiblePressureDropModule(BaseModule):
         self.K = _required_nonnegative(parameters, "K")
         self.rho_kg_m3 = _required_positive(parameters, "rho_kg_m3")
         self.area_m2 = _required_positive(parameters, "area_m2")
-        self.residual_scale_Pa = _positive_float(
+        self.residual_scale_Pa = positive_float(
             parameters.get("residual_scale_Pa", 1000.0),
             "residual_scale_Pa",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_in_Pa",
@@ -40,7 +48,7 @@ class IncompressiblePressureDropModule(BaseModule):
                 120000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_out_Pa",
@@ -54,7 +62,7 @@ class IncompressiblePressureDropModule(BaseModule):
                 100000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "m_dot_kg_s",
@@ -95,7 +103,7 @@ class IncompressiblePressureDropModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "fluid",
             [
@@ -116,12 +124,12 @@ class IncompressibleOrificeModule(BaseModule):
         super().__init__(component_id, "IncompressibleOrificeModule", parameters)
         self.CdA_m2 = _required_positive(parameters, "CdA_m2")
         self.rho_kg_m3 = _required_positive(parameters, "rho_kg_m3")
-        self.residual_scale_kg2_s2 = _positive_float(
+        self.residual_scale_kg2_s2 = positive_float(
             parameters.get("residual_scale_kg2_s2", 1e-4),
             "residual_scale_kg2_s2",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_upstream_Pa",
@@ -135,7 +143,7 @@ class IncompressibleOrificeModule(BaseModule):
                 120000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_downstream_Pa",
@@ -149,7 +157,7 @@ class IncompressibleOrificeModule(BaseModule):
                 100000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "m_dot_kg_s",
@@ -190,7 +198,7 @@ class IncompressibleOrificeModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "fluid",
             [
@@ -210,8 +218,8 @@ class MassBalanceRateModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "MassBalanceRateModule", parameters)
-        self.input_variables = _required_variable_list(parameters, "input_variables")
-        self.output_variables = _required_variable_list(parameters, "output_variables")
+        self.input_variables = required_variable_list(parameters, "input_variables")
+        self.output_variables = required_variable_list(parameters, "output_variables")
         if not self.input_variables and not self.output_variables:
             raise ValueError(
                 f"{component_id}: MassBalanceRateModule requires at least one flow variable"
@@ -221,11 +229,11 @@ class MassBalanceRateModule(BaseModule):
             if not isinstance(dm_dt_variable, str) or not is_qualified_variable_name(dm_dt_variable):
                 raise ValueError("dm_dt_variable must use component.variable format")
         self.dm_dt_variable = dm_dt_variable
-        self.target_dm_dt_kg_s = _finite_float(
+        self.target_dm_dt_kg_s = finite_float(
             parameters.get("target_dm_dt_kg_s", 0.0),
             "target_dm_dt_kg_s",
         )
-        self.residual_scale_kg_s = _positive_float(
+        self.residual_scale_kg_s = positive_float(
             parameters.get("residual_scale_kg_s", 0.01),
             "residual_scale_kg_s",
         )
@@ -259,7 +267,7 @@ class MassBalanceRateModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "fluid",
             [
@@ -276,22 +284,22 @@ class MixerEnergyBalanceModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "MixerEnergyBalanceModule", parameters)
-        self.inlet_m_dot_variables = _required_variable_list(
+        self.inlet_m_dot_variables = required_variable_list(
             parameters,
             "inlet_m_dot_variables",
         )
-        self.inlet_T_variables = _required_variable_list(parameters, "inlet_T_variables")
+        self.inlet_T_variables = required_variable_list(parameters, "inlet_T_variables")
         if len(self.inlet_m_dot_variables) != len(self.inlet_T_variables):
             raise ValueError("inlet_m_dot_variables and inlet_T_variables must have same length")
         if not self.inlet_m_dot_variables:
             raise ValueError(f"{component_id}: MixerEnergyBalanceModule requires inlets")
-        self.outlet_m_dot_variable = _required_variable_name(parameters, "outlet_m_dot_variable")
-        self.outlet_T_variable = _required_variable_name(parameters, "outlet_T_variable")
-        self.mass_residual_scale_kg_s = _positive_float(
+        self.outlet_m_dot_variable = required_variable_name(parameters, "outlet_m_dot_variable")
+        self.outlet_T_variable = required_variable_name(parameters, "outlet_T_variable")
+        self.mass_residual_scale_kg_s = positive_float(
             parameters.get("mass_residual_scale_kg_s", 0.01),
             "mass_residual_scale_kg_s",
         )
-        self.energy_residual_scale_kgK_s = _positive_float(
+        self.energy_residual_scale_kgK_s = positive_float(
             parameters.get("energy_residual_scale_kgK_s", 1.0),
             "energy_residual_scale_kgK_s",
         )
@@ -343,7 +351,7 @@ class MixerEnergyBalanceModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "fluid",
             [
@@ -363,15 +371,15 @@ class PumpHydraulicPowerModule(BaseModule):
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "PumpHydraulicPowerModule", parameters)
         self.rho_kg_m3 = _required_positive(parameters, "rho_kg_m3")
-        self.efficiency = _positive_float(parameters.get("efficiency", 1.0), "efficiency")
+        self.efficiency = positive_float(parameters.get("efficiency", 1.0), "efficiency")
         if self.efficiency > 1:
             raise ValueError("efficiency must be <= 1")
-        self.residual_scale_W = _positive_float(
+        self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_out_Pa",
@@ -385,7 +393,7 @@ class PumpHydraulicPowerModule(BaseModule):
                 200000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_in_Pa",
@@ -399,7 +407,7 @@ class PumpHydraulicPowerModule(BaseModule):
                 100000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "m_dot_kg_s",
@@ -413,7 +421,7 @@ class PumpHydraulicPowerModule(BaseModule):
                 0.1,
                 1.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "P_shaft_W",
@@ -451,7 +459,7 @@ class PumpHydraulicPowerModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "fluid",
             [
@@ -465,66 +473,16 @@ class PumpHydraulicPowerModule(BaseModule):
         )
 
 
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed
-
-
-def _nonnegative_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed < 0:
-        raise ValueError(f"{name} must be nonnegative")
-    return parsed
-
-
 def _required_positive(parameters: dict[str, Any], name: str) -> float:
     if name not in parameters:
         raise ValueError(f"{name} is required")
-    return _positive_float(parameters[name], name)
+    return positive_float(parameters[name], name)
 
 
 def _required_nonnegative(parameters: dict[str, Any], name: str) -> float:
     if name not in parameters:
         raise ValueError(f"{name} is required")
-    return _nonnegative_float(parameters[name], name)
-
-
-def _owned_record(
-    component_id: str,
-    parameters: dict[str, Any],
-    local_name: str,
-    unit: str,
-    lower_key: str,
-    upper_key: str,
-    initial_key: str,
-    scale_key: str,
-    lower_default: float,
-    upper_default: float,
-    initial_default: float,
-    scale_default: float,
-) -> VariableRecord:
-    return VariableRecord(
-        name=f"{component_id}.{local_name}",
-        unit=unit,
-        lower_bound=_finite_float(parameters.get(lower_key, lower_default), lower_key),
-        upper_bound=_finite_float(parameters.get(upper_key, upper_default), upper_key),
-        initial_guess=_finite_float(parameters.get(initial_key, initial_default), initial_key),
-        scale=_positive_float(parameters.get(scale_key, scale_default), scale_key),
-        source_component=component_id,
-        local_name=local_name,
-    )
+    return nonnegative_float(parameters[name], name)
 
 
 def _owned_value(
@@ -536,32 +494,3 @@ def _owned_value(
     return float(x[registry.get_index(f"{component_id}.{local_name}")])
 
 
-def _required_variable_name(parameters: dict[str, Any], name: str) -> str:
-    value = parameters.get(name)
-    if not isinstance(value, str) or not is_qualified_variable_name(value):
-        raise ValueError(f"{name} must use component.variable format")
-    return value
-
-
-def _required_variable_list(parameters: dict[str, Any], name: str) -> list[str]:
-    if name not in parameters:
-        raise ValueError(f"{name} is required")
-    value = parameters[name]
-    if not isinstance(value, list):
-        raise ValueError(f"{name} must be a list")
-    variables: list[str] = []
-    for item in value:
-        if not isinstance(item, str) or not is_qualified_variable_name(item):
-            raise ValueError(f"{name} entries must use component.variable format")
-        variables.append(item)
-    return variables
-
-
-def _metadata(module: BaseModule, domain: str, validity: list[str]) -> dict[str, Any]:
-    return {
-        "component_id": module.component_id,
-        "module_type": module.module_type,
-        "purpose": "low_fidelity_physical_audit",
-        "domain": domain,
-        "validity": validity,
-    }

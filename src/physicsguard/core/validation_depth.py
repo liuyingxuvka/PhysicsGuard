@@ -15,9 +15,10 @@ from typing import Any, Iterable
 
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.predictive_rollout import evaluate_predictive_rollout
-from physicsguard.core.parameter_coverage import _metadata_is_stale, confidence_value
+from physicsguard.core.parameter_coverage import metadata_is_stale, confidence_value
 from physicsguard.core.validation_adequacy import (
     evaluate_validation_adequacy, load_contract_field_mappings, resolve_validation_roles, unique_input_findings, contract_input_error_path, _identity_result, _same_content,
+    findings_status,
 )
 from physicsguard.core.test_file_contract import testfile_series
 from physicsguard.io.observation_loader import load_observed_series
@@ -137,7 +138,7 @@ def evaluate_validation_depth(
             )
 
     findings = unique_input_findings(findings, base_dir)
-    status = _depth_status(findings)
+    status = findings_status(findings)
     payload = {
         "artifact_kind": DEPTH_KIND,
         "validation_id": plan.validation_id,
@@ -542,7 +543,7 @@ def _mapping_review_result(
             )
             continue
         issues: list[str] = []
-        if _metadata_is_stale(candidate.metadata):
+        if metadata_is_stale(candidate.metadata):
             issues.append("mapping_stale")
         if not candidate.unit_evidence:
             issues.append("unit_evidence_missing")
@@ -1375,14 +1376,6 @@ def _required_mapping_roles(plan: ModelValidationPlanSpec):
         "check_only",
     }
     return [role for role in plan.variable_roles if role.validation_role in required_roles]
-
-
-def _depth_status(findings: list[dict[str, Any]]) -> str:
-    if any(item["severity"] == "error" for item in findings):
-        return "blocked"
-    if any(item["severity"] == "warning" for item in findings):
-        return "partial"
-    return "pass"
 
 
 def _safe_depth_claim(status: str, scope: str) -> str:

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
@@ -10,6 +9,12 @@ import numpy as np
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
+from physicsguard.modules.physical._common import (
+    metadata,
+    owned_record,
+    positive_float,
+    value,
+)
 
 
 class CoolantHeatBalanceModule(BaseModule):
@@ -17,13 +22,15 @@ class CoolantHeatBalanceModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "CoolantHeatBalanceModule", parameters)
-        self.cp_J_kgK = _positive_float(parameters.get("cp_J_kgK", 4180.0), "cp_J_kgK")
-        self.residual_scale_W = _positive_float(
+        self.cp_J_kgK = positive_float(parameters.get("cp_J_kgK", 4180.0), "cp_J_kgK")
+        self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
         )
         self.records = [
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "m_dot_kg_s",
                 "kg/s",
                 "m_dot_lower_bound",
@@ -35,7 +42,9 @@ class CoolantHeatBalanceModule(BaseModule):
                 0.1,
                 1.0,
             ),
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "T_in_K",
                 "K",
                 "T_lower_bound",
@@ -47,7 +56,9 @@ class CoolantHeatBalanceModule(BaseModule):
                 300.0,
                 10.0,
             ),
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "T_out_K",
                 "K",
                 "T_lower_bound",
@@ -59,7 +70,9 @@ class CoolantHeatBalanceModule(BaseModule):
                 310.0,
                 10.0,
             ),
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "Q_dot_W",
                 "W",
                 "Q_dot_lower_bound",
@@ -109,33 +122,6 @@ class CoolantHeatBalanceModule(BaseModule):
             ],
         }
 
-    def _record(
-        self,
-        local_name: str,
-        unit: str,
-        lower_key: str,
-        upper_key: str,
-        initial_key: str,
-        scale_key: str,
-        lower_default: float,
-        upper_default: float,
-        initial_default: float,
-        scale_default: float,
-    ) -> VariableRecord:
-        return VariableRecord(
-            name=f"{self.component_id}.{local_name}",
-            unit=unit,
-            lower_bound=_finite_float(self.parameters.get(lower_key, lower_default), lower_key),
-            upper_bound=_finite_float(self.parameters.get(upper_key, upper_default), upper_key),
-            initial_guess=_finite_float(
-                self.parameters.get(initial_key, initial_default),
-                initial_key,
-            ),
-            scale=_positive_float(self.parameters.get(scale_key, scale_default), scale_key),
-            source_component=self.component_id,
-            local_name=local_name,
-        )
-
     def _value(self, x: np.ndarray, registry: VariableRegistry, local_name: str) -> float:
         return float(x[registry.get_index(f"{self.component_id}.{local_name}")])
 
@@ -146,12 +132,12 @@ class ThermalConductorModule(BaseModule):
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "ThermalConductorModule", parameters)
         self.G_W_K = _required_positive(parameters, "G_W_K")
-        self.residual_scale_W = _positive_float(
+        self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "T_a_K",
@@ -165,7 +151,7 @@ class ThermalConductorModule(BaseModule):
                 320.0,
                 10.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "T_b_K",
@@ -179,7 +165,7 @@ class ThermalConductorModule(BaseModule):
                 300.0,
                 10.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "Q_dot_W",
@@ -199,9 +185,9 @@ class ThermalConductorModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        t_a = _value(x, registry, self.component_id, "T_a_K")
-        t_b = _value(x, registry, self.component_id, "T_b_K")
-        q_dot = _value(x, registry, self.component_id, "Q_dot_W")
+        t_a = value(x, registry, self.component_id, "T_a_K")
+        t_b = value(x, registry, self.component_id, "T_b_K")
+        q_dot = value(x, registry, self.component_id, "Q_dot_W")
         return [
             ResidualRecord(
                 name=f"{self.component_id}.thermal_conductor",
@@ -215,7 +201,7 @@ class ThermalConductorModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "thermal",
             [
@@ -235,12 +221,12 @@ class ConvectiveHeatTransferModule(BaseModule):
         super().__init__(component_id, "ConvectiveHeatTransferModule", parameters)
         self.h_W_m2K = _required_positive(parameters, "h_W_m2K")
         self.area_m2 = _required_positive(parameters, "area_m2")
-        self.residual_scale_W = _positive_float(
+        self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "T_surface_K",
@@ -254,7 +240,7 @@ class ConvectiveHeatTransferModule(BaseModule):
                 330.0,
                 10.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "T_fluid_K",
@@ -268,7 +254,7 @@ class ConvectiveHeatTransferModule(BaseModule):
                 300.0,
                 10.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "Q_dot_W",
@@ -288,9 +274,9 @@ class ConvectiveHeatTransferModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        t_surface = _value(x, registry, self.component_id, "T_surface_K")
-        t_fluid = _value(x, registry, self.component_id, "T_fluid_K")
-        q_dot = _value(x, registry, self.component_id, "Q_dot_W")
+        t_surface = value(x, registry, self.component_id, "T_surface_K")
+        t_fluid = value(x, registry, self.component_id, "T_fluid_K")
+        q_dot = value(x, registry, self.component_id, "Q_dot_W")
         expected_q = self.h_W_m2K * self.area_m2 * (t_surface - t_fluid)
         return [
             ResidualRecord(
@@ -305,7 +291,7 @@ class ConvectiveHeatTransferModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "thermal",
             [
@@ -324,12 +310,12 @@ class ThermalCapacitanceRateModule(BaseModule):
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "ThermalCapacitanceRateModule", parameters)
         self.C_J_K = _required_positive(parameters, "C_J_K")
-        self.residual_scale_W = _positive_float(
+        self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "Q_net_W",
@@ -343,7 +329,7 @@ class ThermalCapacitanceRateModule(BaseModule):
                 1000.0,
                 1000.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "dT_dt_K_s",
@@ -363,8 +349,8 @@ class ThermalCapacitanceRateModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        q_net = _value(x, registry, self.component_id, "Q_net_W")
-        dT_dt = _value(x, registry, self.component_id, "dT_dt_K_s")
+        q_net = value(x, registry, self.component_id, "Q_net_W")
+        dT_dt = value(x, registry, self.component_id, "dT_dt_K_s")
         return [
             ResidualRecord(
                 name=f"{self.component_id}.thermal_capacitance_rate",
@@ -378,7 +364,7 @@ class ThermalCapacitanceRateModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "thermal",
             [
@@ -390,69 +376,9 @@ class ThermalCapacitanceRateModule(BaseModule):
         )
 
 
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed
-
-
 def _required_positive(parameters: dict[str, Any], name: str) -> float:
     if name not in parameters:
         raise ValueError(f"{name} is required")
-    return _positive_float(parameters[name], name)
+    return positive_float(parameters[name], name)
 
 
-def _owned_record(
-    component_id: str,
-    parameters: dict[str, Any],
-    local_name: str,
-    unit: str,
-    lower_key: str,
-    upper_key: str,
-    initial_key: str,
-    scale_key: str,
-    lower_default: float,
-    upper_default: float,
-    initial_default: float,
-    scale_default: float,
-) -> VariableRecord:
-    return VariableRecord(
-        name=f"{component_id}.{local_name}",
-        unit=unit,
-        lower_bound=_finite_float(parameters.get(lower_key, lower_default), lower_key),
-        upper_bound=_finite_float(parameters.get(upper_key, upper_default), upper_key),
-        initial_guess=_finite_float(parameters.get(initial_key, initial_default), initial_key),
-        scale=_positive_float(parameters.get(scale_key, scale_default), scale_key),
-        source_component=component_id,
-        local_name=local_name,
-    )
-
-
-def _value(
-    x: np.ndarray,
-    registry: VariableRegistry,
-    component_id: str,
-    local_name: str,
-) -> float:
-    return float(x[registry.get_index(f"{component_id}.{local_name}")])
-
-
-def _metadata(module: BaseModule, domain: str, validity: list[str]) -> dict[str, Any]:
-    return {
-        "component_id": module.component_id,
-        "module_type": module.module_type,
-        "purpose": "low_fidelity_physical_audit",
-        "domain": domain,
-        "validity": validity,
-    }

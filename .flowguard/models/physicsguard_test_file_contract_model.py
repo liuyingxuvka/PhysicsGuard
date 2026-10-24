@@ -15,7 +15,6 @@ from flowguard.conformance import projected_state_matches, projected_output_matc
 from flowguard.explorer import Explorer
 
 MODEL_ID = 'test_file_contract'
-PARENT = 'system'
 COMPONENTS = ['data_binding', 'schema']
 ROOT = Path(__file__).resolve().parents[2]
 PUMP = ROOT / 'examples/testfile_contracts/pump_loop'
@@ -113,12 +112,12 @@ def gate(field, message):
     return check
 
 
-INVARIANTS = tuple(Invariant(name, description, gate(field, description)) for name,field,description in (
-    ('no_testfile_claim_without_manifest','fresh','Test data needs a fresh manifest and extractor hash.'),
-    ('no_testfile_claim_without_field_roles_and_mappings','roles','Every field needs a declared role and target or explicit disposition.'),
-    ('no_testfile_claim_without_mapping_evidence_or_known_targets','mappings','Mapped fields need evidence, convertible units and known targets.'),
-    ('no_testfile_claim_without_contract_pass','passed','A test-file claim needs a native contract pass.'),
-))
+INVARIANTS = (
+    Invariant('no_testfile_claim_without_manifest', 'Test data needs a fresh manifest and extractor hash.', gate('fresh', 'Test data needs a fresh manifest and extractor hash.')),
+    Invariant('no_testfile_claim_without_field_roles_and_mappings', 'Every field needs a declared role and target or explicit disposition.', gate('roles', 'Every field needs a declared role and target or explicit disposition.')),
+    Invariant('no_testfile_claim_without_mapping_evidence_or_known_targets', 'Mapped fields need evidence, convertible units and known targets.', gate('mappings', 'Mapped fields need evidence, convertible units and known targets.')),
+    Invariant('no_testfile_claim_without_contract_pass', 'A test-file claim needs a native contract pass.', gate('passed', 'A test-file claim needs a native contract pass.')),
+)
 
 
 def explorer(step):

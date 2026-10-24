@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
@@ -10,6 +9,13 @@ import numpy as np
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
+from physicsguard.modules.physical._common import (
+    finite_float,
+    metadata,
+    owned_record,
+    positive_float,
+    value,
+)
 
 
 class PressureRatioModule(BaseModule):
@@ -17,16 +23,16 @@ class PressureRatioModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "PressureRatioModule", parameters)
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 0.1),
             "residual_scale",
         )
-        self.denominator_min_abs = _positive_float(
+        self.denominator_min_abs = positive_float(
             parameters.get("denominator_min_abs", 1e-12),
             "denominator_min_abs",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_in_Pa",
@@ -40,7 +46,7 @@ class PressureRatioModule(BaseModule):
                 100000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "p_out_Pa",
@@ -54,7 +60,7 @@ class PressureRatioModule(BaseModule):
                 200000.0,
                 1e5,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "pressure_ratio",
@@ -74,11 +80,11 @@ class PressureRatioModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        p_in = _value(x, registry, self.component_id, "p_in_Pa")
+        p_in = value(x, registry, self.component_id, "p_in_Pa")
         if abs(p_in) < self.denominator_min_abs:
             raise ValueError(f"{self.component_id}: p_in_Pa is below denominator_min_abs")
-        p_out = _value(x, registry, self.component_id, "p_out_Pa")
-        ratio = _value(x, registry, self.component_id, "pressure_ratio")
+        p_out = value(x, registry, self.component_id, "p_out_Pa")
+        ratio = value(x, registry, self.component_id, "pressure_ratio")
         return [
             ResidualRecord(
                 name=f"{self.component_id}.pressure_ratio",
@@ -92,7 +98,7 @@ class PressureRatioModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(self, "fluid", ["algebraic ratio", "p_in must not be near zero"])
+        return metadata(self, "fluid", ["algebraic ratio", "p_in must not be near zero"])
 
 
 class EfficiencyModule(BaseModule):
@@ -100,24 +106,24 @@ class EfficiencyModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "EfficiencyModule", parameters)
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 0.01),
             "residual_scale",
         )
-        self.denominator_min_abs = _positive_float(
+        self.denominator_min_abs = positive_float(
             parameters.get("denominator_min_abs", 1e-12),
             "denominator_min_abs",
         )
-        efficiency_lower = _finite_float(
+        efficiency_lower = finite_float(
             parameters.get("efficiency_lower_bound", 0.0),
             "efficiency_lower_bound",
         )
-        efficiency_upper = _finite_float(
+        efficiency_upper = finite_float(
             parameters.get("efficiency_upper_bound", 1.5),
             "efficiency_upper_bound",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "input_power_W",
@@ -131,7 +137,7 @@ class EfficiencyModule(BaseModule):
                 1000.0,
                 1000.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "useful_output_power_W",
@@ -145,7 +151,7 @@ class EfficiencyModule(BaseModule):
                 500.0,
                 1000.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "efficiency",
@@ -165,11 +171,11 @@ class EfficiencyModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        input_power = _value(x, registry, self.component_id, "input_power_W")
+        input_power = value(x, registry, self.component_id, "input_power_W")
         if abs(input_power) < self.denominator_min_abs:
             raise ValueError(f"{self.component_id}: input_power_W is below denominator_min_abs")
-        useful_output = _value(x, registry, self.component_id, "useful_output_power_W")
-        efficiency = _value(x, registry, self.component_id, "efficiency")
+        useful_output = value(x, registry, self.component_id, "useful_output_power_W")
+        efficiency = value(x, registry, self.component_id, "efficiency")
         return [
             ResidualRecord(
                 name=f"{self.component_id}.efficiency",
@@ -183,7 +189,7 @@ class EfficiencyModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(
+        return metadata(
             self,
             "physical",
             [
@@ -199,12 +205,12 @@ class TorqueSpeedPowerModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "TorqueSpeedPowerModule", parameters)
-        self.residual_scale_W = _positive_float(
+        self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "torque_Nm",
@@ -218,7 +224,7 @@ class TorqueSpeedPowerModule(BaseModule):
                 100.0,
                 100.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "omega_rad_s",
@@ -232,7 +238,7 @@ class TorqueSpeedPowerModule(BaseModule):
                 100.0,
                 100.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "P_W",
@@ -252,9 +258,9 @@ class TorqueSpeedPowerModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        torque = _value(x, registry, self.component_id, "torque_Nm")
-        omega = _value(x, registry, self.component_id, "omega_rad_s")
-        power = _value(x, registry, self.component_id, "P_W")
+        torque = value(x, registry, self.component_id, "torque_Nm")
+        omega = value(x, registry, self.component_id, "omega_rad_s")
+        power = value(x, registry, self.component_id, "P_W")
         return [
             ResidualRecord(
                 name=f"{self.component_id}.torque_speed_power",
@@ -268,7 +274,7 @@ class TorqueSpeedPowerModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(self, "mechanical", ["algebraic rotational power relation", "no drivetrain dynamics"])
+        return metadata(self, "mechanical", ["algebraic rotational power relation", "no drivetrain dynamics"])
 
 
 class CellVoltageStackVoltageModule(BaseModule):
@@ -277,12 +283,12 @@ class CellVoltageStackVoltageModule(BaseModule):
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "CellVoltageStackVoltageModule", parameters)
         self.n_cells = _required_positive(parameters, "n_cells")
-        self.residual_scale_V = _positive_float(
+        self.residual_scale_V = positive_float(
             parameters.get("residual_scale_V", 1.0),
             "residual_scale_V",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "V_cell_V",
@@ -296,7 +302,7 @@ class CellVoltageStackVoltageModule(BaseModule):
                 0.7,
                 1.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "V_stack_V",
@@ -316,8 +322,8 @@ class CellVoltageStackVoltageModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        cell_voltage = _value(x, registry, self.component_id, "V_cell_V")
-        stack_voltage = _value(x, registry, self.component_id, "V_stack_V")
+        cell_voltage = value(x, registry, self.component_id, "V_cell_V")
+        stack_voltage = value(x, registry, self.component_id, "V_stack_V")
         return [
             ResidualRecord(
                 name=f"{self.component_id}.cell_stack_voltage",
@@ -331,7 +337,7 @@ class CellVoltageStackVoltageModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(self, "electrochemical", ["lumped stack voltage relation", "no cell voltage model"])
+        return metadata(self, "electrochemical", ["lumped stack voltage relation", "no cell voltage model"])
 
 
 class CurrentDensityModule(BaseModule):
@@ -340,12 +346,12 @@ class CurrentDensityModule(BaseModule):
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "CurrentDensityModule", parameters)
         self.active_area_m2 = _required_positive(parameters, "active_area_m2")
-        self.residual_scale_A_m2 = _positive_float(
+        self.residual_scale_A_m2 = positive_float(
             parameters.get("residual_scale_A_m2", 100.0),
             "residual_scale_A_m2",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "current_A",
@@ -359,7 +365,7 @@ class CurrentDensityModule(BaseModule):
                 100.0,
                 100.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "current_density_A_m2",
@@ -379,8 +385,8 @@ class CurrentDensityModule(BaseModule):
         return list(self.records)
 
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
-        current = _value(x, registry, self.component_id, "current_A")
-        density = _value(x, registry, self.component_id, "current_density_A_m2")
+        current = value(x, registry, self.component_id, "current_A")
+        density = value(x, registry, self.component_id, "current_density_A_m2")
         return [
             ResidualRecord(
                 name=f"{self.component_id}.current_density",
@@ -394,72 +400,12 @@ class CurrentDensityModule(BaseModule):
         ]
 
     def metadata(self) -> dict[str, Any]:
-        return _metadata(self, "electrochemical", ["algebraic current density relation", "constant active area"])
-
-
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed
+        return metadata(self, "electrochemical", ["algebraic current density relation", "constant active area"])
 
 
 def _required_positive(parameters: dict[str, Any], name: str) -> float:
     if name not in parameters:
         raise ValueError(f"{name} is required")
-    return _positive_float(parameters[name], name)
+    return positive_float(parameters[name], name)
 
 
-def _owned_record(
-    component_id: str,
-    parameters: dict[str, Any],
-    local_name: str,
-    unit: str | None,
-    lower_key: str,
-    upper_key: str,
-    initial_key: str,
-    scale_key: str,
-    lower_default: float,
-    upper_default: float,
-    initial_default: float,
-    scale_default: float,
-) -> VariableRecord:
-    return VariableRecord(
-        name=f"{component_id}.{local_name}",
-        unit=unit,
-        lower_bound=_finite_float(parameters.get(lower_key, lower_default), lower_key),
-        upper_bound=_finite_float(parameters.get(upper_key, upper_default), upper_key),
-        initial_guess=_finite_float(parameters.get(initial_key, initial_default), initial_key),
-        scale=_positive_float(parameters.get(scale_key, scale_default), scale_key),
-        source_component=component_id,
-        local_name=local_name,
-    )
-
-
-def _value(
-    x: np.ndarray,
-    registry: VariableRegistry,
-    component_id: str,
-    local_name: str,
-) -> float:
-    return float(x[registry.get_index(f"{component_id}.{local_name}")])
-
-
-def _metadata(module: BaseModule, domain: str, validity: list[str]) -> dict[str, Any]:
-    return {
-        "component_id": module.component_id,
-        "module_type": module.module_type,
-        "purpose": "low_fidelity_physical_audit",
-        "domain": domain,
-        "validity": validity,
-    }

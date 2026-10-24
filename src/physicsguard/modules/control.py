@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any, Optional
 
 import numpy as np
@@ -10,7 +9,14 @@ import numpy as np
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
-from physicsguard.schema.variable import is_qualified_variable_name
+from physicsguard.modules.components._common import finite_list
+from physicsguard.modules.physical._common import (
+    finite_float,
+    positive_float,
+    required,
+    required_positive,
+    required_variable_name,
+)
 
 
 EQUATION_OR_CHECK_ROLES = {"equation", "soft_check", "post_check"}
@@ -21,7 +27,7 @@ class ControlErrorModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "ControlErrorModule", parameters)
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -62,11 +68,11 @@ class PIDAlgebraicModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "PIDAlgebraicModule", parameters)
-        self.Kp = _finite_float(parameters.get("Kp", 0.0), "Kp")
-        self.Ki = _finite_float(parameters.get("Ki", 0.0), "Ki")
-        self.Kd = _finite_float(parameters.get("Kd", 0.0), "Kd")
-        self.bias = _finite_float(parameters.get("bias", 0.0), "bias")
-        self.residual_scale = _positive_float(
+        self.Kp = finite_float(parameters.get("Kp", 0.0), "Kp")
+        self.Ki = finite_float(parameters.get("Ki", 0.0), "Ki")
+        self.Kd = finite_float(parameters.get("Kd", 0.0), "Kd")
+        self.bias = finite_float(parameters.get("bias", 0.0), "bias")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -123,9 +129,9 @@ class DiscreteIntegratorModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "DiscreteIntegratorModule", parameters)
-        self.dt_s = _required_positive(parameters, "dt_s")
-        self.gain = _finite_float(parameters.get("gain", 1.0), "gain")
-        self.residual_scale = _positive_float(
+        self.dt_s = required_positive(parameters, "dt_s")
+        self.gain = finite_float(parameters.get("gain", 1.0), "gain")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -171,14 +177,14 @@ class HysteresisStateCheckModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "HysteresisStateCheckModule", parameters)
-        self.low_threshold = _finite_float(_required(parameters, "low_threshold"), "low_threshold")
-        self.high_threshold = _finite_float(_required(parameters, "high_threshold"), "high_threshold")
+        self.low_threshold = finite_float(required(parameters, "low_threshold"), "low_threshold")
+        self.high_threshold = finite_float(required(parameters, "high_threshold"), "high_threshold")
         if self.low_threshold >= self.high_threshold:
             raise ValueError("low_threshold must be less than high_threshold")
-        self.state_on_value = _finite_float(parameters.get("state_on_value", 1.0), "state_on_value")
-        self.state_off_value = _finite_float(parameters.get("state_off_value", 0.0), "state_off_value")
-        self.state_tolerance = _positive_float(parameters.get("state_tolerance", 0.25), "state_tolerance")
-        self.residual_scale = _positive_float(
+        self.state_on_value = finite_float(parameters.get("state_on_value", 1.0), "state_on_value")
+        self.state_off_value = finite_float(parameters.get("state_off_value", 0.0), "state_off_value")
+        self.state_tolerance = positive_float(parameters.get("state_tolerance", 0.25), "state_tolerance")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -232,7 +238,7 @@ class BooleanSwitchModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "BooleanSwitchModule", parameters)
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -290,11 +296,11 @@ class ThresholdStateCheckModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "ThresholdStateCheckModule", parameters)
-        self.threshold = _finite_float(_required(parameters, "threshold"), "threshold")
-        self.on_value = _finite_float(parameters.get("on_value", 1.0), "on_value")
-        self.off_value = _finite_float(parameters.get("off_value", 0.0), "off_value")
-        self.state_tolerance = _positive_float(parameters.get("state_tolerance", 0.25), "state_tolerance")
-        self.residual_scale = _positive_float(
+        self.threshold = finite_float(required(parameters, "threshold"), "threshold")
+        self.on_value = finite_float(parameters.get("on_value", 1.0), "on_value")
+        self.off_value = finite_float(parameters.get("off_value", 0.0), "off_value")
+        self.state_tolerance = positive_float(parameters.get("state_tolerance", 0.25), "state_tolerance")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -346,12 +352,12 @@ class SaturationModule(BaseModule):
         super().__init__(component_id, "SaturationModule", parameters)
         if "lower" not in parameters or "upper" not in parameters:
             raise ValueError("lower and upper are required")
-        self.lower = _finite_float(parameters["lower"], "lower")
-        self.upper = _finite_float(parameters["upper"], "upper")
+        self.lower = finite_float(parameters["lower"], "lower")
+        self.upper = finite_float(parameters["upper"], "upper")
         if self.lower >= self.upper:
             raise ValueError("lower must be less than upper")
         self.role = _role(parameters.get("role_override", "equation"))
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -392,20 +398,20 @@ class RateLimiterModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "RateLimiterModule", parameters)
-        self.dt_s = _required_positive(parameters, "dt_s")
-        self.rising_rate_limit = _finite_float(
-            _required(parameters, "rising_rate_limit"),
+        self.dt_s = required_positive(parameters, "dt_s")
+        self.rising_rate_limit = finite_float(
+            required(parameters, "rising_rate_limit"),
             "rising_rate_limit",
         )
         if self.rising_rate_limit < 0:
             raise ValueError("rising_rate_limit must be >= 0")
-        self.falling_rate_limit = _finite_float(
-            _required(parameters, "falling_rate_limit"),
+        self.falling_rate_limit = finite_float(
+            required(parameters, "falling_rate_limit"),
             "falling_rate_limit",
         )
         if self.falling_rate_limit > 0:
             raise ValueError("falling_rate_limit must be <= 0")
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -459,9 +465,9 @@ class FirstOrderLagModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "FirstOrderLagModule", parameters)
-        self.tau_s = _required_positive(parameters, "tau_s")
-        self.dt_s = _required_positive(parameters, "dt_s")
-        self.residual_scale = _positive_float(
+        self.tau_s = required_positive(parameters, "tau_s")
+        self.dt_s = required_positive(parameters, "dt_s")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -509,8 +515,8 @@ class LookupTable1DModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "LookupTable1DModule", parameters)
-        self.x_points = _finite_float_list(parameters, "x_points")
-        self.y_points = _finite_float_list(parameters, "y_points")
+        self.x_points = finite_list(parameters, "x_points")
+        self.y_points = finite_list(parameters, "y_points")
         if len(self.x_points) != len(self.y_points):
             raise ValueError("x_points and y_points must have the same length")
         if len(self.x_points) < 2:
@@ -521,7 +527,7 @@ class LookupTable1DModule(BaseModule):
         if self.extrapolation not in {"error", "hold", "linear"}:
             raise ValueError("extrapolation must be 'error', 'hold', or 'linear'")
         self.role = _role(parameters.get("role_override", "equation"))
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -582,12 +588,12 @@ class MapBoundsCheckModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "MapBoundsCheckModule", parameters)
-        self.variable = _required_variable_name(parameters, "variable")
-        self.lower = _finite_float(_required(parameters, "lower"), "lower")
-        self.upper = _finite_float(_required(parameters, "upper"), "upper")
+        self.variable = required_variable_name(parameters, "variable")
+        self.lower = finite_float(required(parameters, "lower"), "lower")
+        self.upper = finite_float(required(parameters, "upper"), "upper")
         if self.lower >= self.upper:
             raise ValueError("lower must be less than upper")
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -630,40 +636,6 @@ class MapBoundsCheckModule(BaseModule):
         )
 
 
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _finite_float_list(parameters: dict[str, Any], name: str) -> list[float]:
-    value = parameters.get(name)
-    if not isinstance(value, list):
-        raise ValueError(f"{name} must be a list")
-    return [_finite_float(item, name) for item in value]
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed
-
-
-def _required(parameters: dict[str, Any], name: str) -> Any:
-    if name not in parameters:
-        raise ValueError(f"{name} is required")
-    return parameters[name]
-
-
-def _required_positive(parameters: dict[str, Any], name: str) -> float:
-    return _positive_float(_required(parameters, name), name)
-
-
 def _role(value: Any) -> str:
     if value not in EQUATION_OR_CHECK_ROLES:
         raise ValueError("role_override must be 'equation', 'soft_check', or 'post_check'")
@@ -681,13 +653,13 @@ def _owned_record(
     return VariableRecord(
         name=f"{component_id}.{local_name}",
         unit=unit,
-        lower_bound=_finite_float(parameters.get(f"{prefix}_lower_bound", -1e9), f"{prefix}_lower_bound"),
-        upper_bound=_finite_float(parameters.get(f"{prefix}_upper_bound", 1e9), f"{prefix}_upper_bound"),
-        initial_guess=_finite_float(
+        lower_bound=finite_float(parameters.get(f"{prefix}_lower_bound", -1e9), f"{prefix}_lower_bound"),
+        upper_bound=finite_float(parameters.get(f"{prefix}_upper_bound", 1e9), f"{prefix}_upper_bound"),
+        initial_guess=finite_float(
             parameters.get(f"{prefix}_initial_guess", initial_default),
             f"{prefix}_initial_guess",
         ),
-        scale=_positive_float(parameters.get(f"{prefix}_scale", 1.0), f"{prefix}_scale"),
+        scale=positive_float(parameters.get(f"{prefix}_scale", 1.0), f"{prefix}_scale"),
         source_component=component_id,
         local_name=local_name,
     )
@@ -707,13 +679,13 @@ def _custom_owned_record(
     return VariableRecord(
         name=f"{component_id}.{local_name}",
         unit=unit,
-        lower_bound=_finite_float(parameters.get(f"{prefix}_lower_bound", lower_default), f"{prefix}_lower_bound"),
-        upper_bound=_finite_float(parameters.get(f"{prefix}_upper_bound", upper_default), f"{prefix}_upper_bound"),
-        initial_guess=_finite_float(
+        lower_bound=finite_float(parameters.get(f"{prefix}_lower_bound", lower_default), f"{prefix}_lower_bound"),
+        upper_bound=finite_float(parameters.get(f"{prefix}_upper_bound", upper_default), f"{prefix}_upper_bound"),
+        initial_guess=finite_float(
             parameters.get(f"{prefix}_initial_guess", initial_default),
             f"{prefix}_initial_guess",
         ),
-        scale=_positive_float(parameters.get(f"{prefix}_scale", scale_default), f"{prefix}_scale"),
+        scale=positive_float(parameters.get(f"{prefix}_scale", scale_default), f"{prefix}_scale"),
         source_component=component_id,
         local_name=local_name,
     )
@@ -740,13 +712,6 @@ def _owned_value(
     local_name: str,
 ) -> float:
     return float(x[registry.get_index(f"{component_id}.{local_name}")])
-
-
-def _required_variable_name(parameters: dict[str, Any], name: str) -> str:
-    value = parameters.get(name)
-    if not isinstance(value, str) or not is_qualified_variable_name(value):
-        raise ValueError(f"{name} must use component.variable format")
-    return value
 
 
 def _metadata(module: BaseModule, validity: list[str]) -> dict[str, Any]:

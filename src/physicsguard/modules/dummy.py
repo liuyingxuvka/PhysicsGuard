@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any, Optional
 
 import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
+from physicsguard.modules.physical._common import finite_float
 from physicsguard.modules.base import BaseModule
 
 
@@ -37,13 +37,7 @@ class DummyResidualModule(BaseModule):
 
     @staticmethod
     def _finite_float(value: Any, name: str) -> float:
-        try:
-            parsed = float(value)
-        except (TypeError, ValueError) as exc:
-            raise ValueError(f"{name} must be a finite number") from exc
-        if not math.isfinite(parsed):
-            raise ValueError(f"{name} must be finite")
-        return parsed
+        return finite_float(value, name)
 
     @property
     def variable_name(self) -> str:

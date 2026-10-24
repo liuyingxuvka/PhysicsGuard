@@ -10,6 +10,21 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from physicsguard.schema.variable import ensure_non_empty
 
 
+def unit_ratio_or_none(value: Optional[float], field_name: str) -> Optional[float]:
+    """An optional ratio must be finite and in (0, 1]."""
+    if value is not None and (not math.isfinite(value) or not 0 < value <= 1):
+        raise ValueError(f"{field_name} must be in (0, 1]")
+    return value
+
+
+def unique_non_empty_texts(values: list[str], field_name: str) -> list[str]:
+    """Each text must be non-empty and the list must have no repeats."""
+    normalized = [ensure_non_empty(value, field_name) for value in values]
+    if len(normalized) != len(set(normalized)):
+        raise ValueError(f"{field_name} must be unique")
+    return normalized
+
+
 SamplingMode = Literal["full", "stratified", "event_aware", "adaptive", "project_declared"]
 AdequacyStatus = Literal["pass", "partial", "blocked", "not_applicable"]
 FamilyMemberKind = Literal["signal", "parameter", "mixed"]
@@ -109,9 +124,7 @@ class ParameterTemporalPolicySpec(BaseModel):
     @field_validator("minimum_valid_ratio", "convergence_minimum_valid_ratio")
     @classmethod
     def _temporal_ratio_valid(cls, value: Optional[float], info) -> Optional[float]:
-        if value is not None and (not math.isfinite(value) or not 0 < value <= 1):
-            raise ValueError(f"{info.field_name} must be in (0, 1]")
-        return value
+        return unit_ratio_or_none(value, info.field_name)
 
     @field_validator(
         "minimum_normalized_contribution_effect",
@@ -318,10 +331,7 @@ class ValidationAdequacyPlanSpec(BaseModel):
     )
     @classmethod
     def _unique_text_lists(cls, values: list[str], info) -> list[str]:
-        normalized = [ensure_non_empty(value, info.field_name) for value in values]
-        if len(normalized) != len(set(normalized)):
-            raise ValueError(f"{info.field_name} must be unique")
-        return normalized
+        return unique_non_empty_texts(values, info.field_name)
 
     @field_validator(
         "minimum_selected_points",
@@ -353,9 +363,7 @@ class ValidationAdequacyPlanSpec(BaseModel):
     )
     @classmethod
     def _positive_ratios(cls, value: Optional[float], info) -> Optional[float]:
-        if value is not None and (not math.isfinite(value) or not 0 < value <= 1):
-            raise ValueError(f"{info.field_name} must be in (0, 1]")
-        return value
+        return unit_ratio_or_none(value, info.field_name)
 
     @field_validator("maximum_exclusion_ratio")
     @classmethod

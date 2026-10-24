@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any, Optional
 
 import numpy as np
@@ -11,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
 from physicsguard.schema.variable import is_qualified_variable_name
+from physicsguard.modules.physical._common import finite_float, positive_float
 
 
 class AggregatePowerBalanceModule(BaseModule):
@@ -22,7 +22,7 @@ class AggregatePowerBalanceModule(BaseModule):
         self.loads = _variable_list(parameters, "load_power_variables", required=False)
         self.losses = _variable_list(parameters, "loss_power_variables", required=False)
         self.storage = _variable_list(parameters, "storage_power_variables", required=False)
-        self.scale = _positive_float(parameters.get("residual_scale_W", 1000.0), "residual_scale_W")
+        self.scale = positive_float(parameters.get("residual_scale_W", 1000.0), "residual_scale_W")
 
     def declare_variables(self) -> list[VariableRecord]:
         return []
@@ -48,8 +48,8 @@ class AggregateThermalBalanceModule(BaseModule):
         self.heat_in = _variable_list(parameters, "heat_in_variables", required=False)
         self.heat_out = _variable_list(parameters, "heat_out_variables", required=False)
         self.storage_variable = _optional_variable(parameters.get("heat_storage_rate_variable"), "heat_storage_rate_variable")
-        self.target_storage = _finite_float(parameters.get("target_storage_rate_W", 0.0), "target_storage_rate_W")
-        self.scale = _positive_float(parameters.get("residual_scale_W", 1000.0), "residual_scale_W")
+        self.target_storage = finite_float(parameters.get("target_storage_rate_W", 0.0), "target_storage_rate_W")
+        self.scale = positive_float(parameters.get("residual_scale_W", 1000.0), "residual_scale_W")
 
     def declare_variables(self) -> list[VariableRecord]:
         return []
@@ -71,8 +71,8 @@ class AggregateMassBalanceModule(BaseModule):
         self.mass_in = _variable_list(parameters, "mass_in_variables", required=False)
         self.mass_out = _variable_list(parameters, "mass_out_variables", required=False)
         self.storage_variable = _optional_variable(parameters.get("mass_storage_rate_variable"), "mass_storage_rate_variable")
-        self.target_storage = _finite_float(parameters.get("target_storage_rate_kg_s", 0.0), "target_storage_rate_kg_s")
-        self.scale = _positive_float(parameters.get("residual_scale_kg_s", 0.01), "residual_scale_kg_s")
+        self.target_storage = finite_float(parameters.get("target_storage_rate_kg_s", 0.0), "target_storage_rate_kg_s")
+        self.scale = positive_float(parameters.get("residual_scale_kg_s", 0.01), "residual_scale_kg_s")
 
     def declare_variables(self) -> list[VariableRecord]:
         return []
@@ -96,8 +96,8 @@ class AggregateSpeciesBalanceModule(BaseModule):
         self.consumption = _variable_list(parameters, "species_consumption_variables", required=False)
         self.production = _variable_list(parameters, "species_production_variables", required=False)
         self.storage_variable = _optional_variable(parameters.get("storage_rate_variable"), "storage_rate_variable")
-        self.target_storage = _finite_float(parameters.get("target_storage_rate_mol_s", 0.0), "target_storage_rate_mol_s")
-        self.scale = _positive_float(parameters.get("residual_scale_mol_s", 1e-3), "residual_scale_mol_s")
+        self.target_storage = finite_float(parameters.get("target_storage_rate_mol_s", 0.0), "target_storage_rate_mol_s")
+        self.scale = positive_float(parameters.get("residual_scale_mol_s", 1e-3), "residual_scale_mol_s")
         self.species_name: Optional[str] = parameters.get("species_name")
 
     def declare_variables(self) -> list[VariableRecord]:
@@ -129,7 +129,7 @@ class AggregateElectricalBusBalanceModule(BaseModule):
         self.consumption = _variable_list(parameters, "consumption_power_variables", required=False)
         self.storage = _variable_list(parameters, "storage_power_variables", required=False)
         self.losses = _variable_list(parameters, "loss_power_variables", required=False)
-        self.scale = _positive_float(parameters.get("residual_scale_W", 1000.0), "residual_scale_W")
+        self.scale = positive_float(parameters.get("residual_scale_W", 1000.0), "residual_scale_W")
 
     def declare_variables(self) -> list[VariableRecord]:
         return []
@@ -155,8 +155,8 @@ class AggregateEfficiencyModule(BaseModule):
         self.useful_output = _required_variable(parameters, "useful_output_power_variable")
         self.input_power = _required_variable(parameters, "input_power_variable")
         self.efficiency = _required_variable(parameters, "efficiency_variable")
-        self.denominator_min_abs = _positive_float(parameters.get("denominator_min_abs", 1e-9), "denominator_min_abs")
-        self.scale = _positive_float(parameters.get("residual_scale", 0.01), "residual_scale")
+        self.denominator_min_abs = positive_float(parameters.get("denominator_min_abs", 1e-9), "denominator_min_abs")
+        self.scale = positive_float(parameters.get("residual_scale", 0.01), "residual_scale")
 
     def declare_variables(self) -> list[VariableRecord]:
         return []
@@ -242,23 +242,6 @@ def _sum_variables(
     component_id: str,
 ) -> float:
     return sum(_variable_value(x, registry, variable, component_id) for variable in variables)
-
-
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed
 
 
 def _metadata(module: BaseModule, validity: list[str]) -> dict[str, Any]:

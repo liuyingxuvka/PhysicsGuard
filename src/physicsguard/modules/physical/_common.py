@@ -9,6 +9,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.modules.base import BaseModule
+from physicsguard.schema.variable import is_qualified_variable_name
 
 
 def finite_float(value: Any, name: str) -> float:
@@ -92,3 +93,24 @@ def metadata(module: BaseModule, domain: str, validity: list[str]) -> dict[str, 
         "domain": domain,
         "validity": validity,
     }
+
+
+def required_variable_name(parameters: dict[str, Any], name: str) -> str:
+    value = parameters.get(name)
+    if not isinstance(value, str) or not is_qualified_variable_name(value):
+        raise ValueError(f"{name} must use component.variable format")
+    return value
+
+
+def required_variable_list(parameters: dict[str, Any], name: str) -> list[str]:
+    if name not in parameters:
+        raise ValueError(f"{name} is required")
+    value = parameters[name]
+    if not isinstance(value, list):
+        raise ValueError(f"{name} must be a list")
+    variables: list[str] = []
+    for item in value:
+        if not isinstance(item, str) or not is_qualified_variable_name(item):
+            raise ValueError(f"{name} entries must use component.variable format")
+        variables.append(item)
+    return variables

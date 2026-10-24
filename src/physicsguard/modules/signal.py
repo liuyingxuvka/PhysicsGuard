@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any, Optional
 
 import numpy as np
@@ -10,7 +9,13 @@ import numpy as np
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
-from physicsguard.schema.variable import is_qualified_variable_name
+from physicsguard.modules.physical._common import (
+    finite_float,
+    owned_record,
+    positive_float,
+    required_variable_list,
+    required_variable_name,
+)
 
 
 class GainBiasModule(BaseModule):
@@ -18,9 +23,9 @@ class GainBiasModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "GainBiasModule", parameters)
-        self.gain = _finite_float(parameters.get("gain", 1.0), "gain")
-        self.bias = _finite_float(parameters.get("bias", 0.0), "bias")
-        self.residual_scale = _positive_float(
+        self.gain = finite_float(parameters.get("gain", 1.0), "gain")
+        self.bias = finite_float(parameters.get("bias", 0.0), "bias")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -57,7 +62,7 @@ class SumModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "SumModule", parameters)
-        self.input_variables = _required_variable_list(parameters, "input_variables")
+        self.input_variables = required_variable_list(parameters, "input_variables")
         if not self.input_variables:
             raise ValueError(f"{component_id}: input_variables cannot be empty")
         weights = parameters.get("weights")
@@ -68,10 +73,10 @@ class SumModule(BaseModule):
                 raise ValueError("weights must be a list")
             if len(weights) != len(self.input_variables):
                 raise ValueError("weights length must match input_variables")
-            self.weights = [_finite_float(weight, "weights") for weight in weights]
-        self.output_variable = _required_variable_name(parameters, "output_variable")
-        self.bias = _finite_float(parameters.get("bias", 0.0), "bias")
-        self.residual_scale = _positive_float(
+            self.weights = [finite_float(weight, "weights") for weight in weights]
+        self.output_variable = required_variable_name(parameters, "output_variable")
+        self.bias = finite_float(parameters.get("bias", 0.0), "bias")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -109,10 +114,10 @@ class ProductModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "ProductModule", parameters)
-        self.x1_variable = _required_variable_name(parameters, "x1_variable")
-        self.x2_variable = _required_variable_name(parameters, "x2_variable")
-        self.output_variable = _required_variable_name(parameters, "output_variable")
-        self.residual_scale = _positive_float(
+        self.x1_variable = required_variable_name(parameters, "x1_variable")
+        self.x2_variable = required_variable_name(parameters, "x2_variable")
+        self.output_variable = required_variable_name(parameters, "output_variable")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -148,14 +153,14 @@ class RatioModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "RatioModule", parameters)
-        self.numerator_variable = _required_variable_name(parameters, "numerator_variable")
-        self.denominator_variable = _required_variable_name(parameters, "denominator_variable")
-        self.output_variable = _required_variable_name(parameters, "output_variable")
-        self.residual_scale = _positive_float(
+        self.numerator_variable = required_variable_name(parameters, "numerator_variable")
+        self.denominator_variable = required_variable_name(parameters, "denominator_variable")
+        self.output_variable = required_variable_name(parameters, "output_variable")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
-        self.denominator_min_abs = _positive_float(
+        self.denominator_min_abs = positive_float(
             parameters.get("denominator_min_abs", 1e-12),
             "denominator_min_abs",
         )
@@ -197,11 +202,11 @@ class UnitScaleModule(BaseModule):
         super().__init__(component_id, "UnitScaleModule", parameters)
         if "factor" not in parameters:
             raise ValueError("factor is required")
-        self.factor = _finite_float(parameters["factor"], "factor")
-        self.offset = _finite_float(parameters.get("offset", 0.0), "offset")
+        self.factor = finite_float(parameters["factor"], "factor")
+        self.offset = finite_float(parameters.get("offset", 0.0), "offset")
         self.source_unit: Optional[str] = parameters.get("source_unit")
         self.target_unit: Optional[str] = parameters.get("target_unit")
-        self.residual_scale = _positive_float(
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -241,9 +246,9 @@ class SensorScaleOffsetModule(BaseModule):
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "SensorScaleOffsetModule", parameters)
-        self.scale_factor = _finite_float(parameters.get("scale_factor", 1.0), "scale_factor")
-        self.offset = _finite_float(parameters.get("offset", 0.0), "offset")
-        self.residual_scale = _positive_float(
+        self.scale_factor = finite_float(parameters.get("scale_factor", 1.0), "scale_factor")
+        self.offset = finite_float(parameters.get("offset", 0.0), "offset")
+        self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
         )
@@ -289,10 +294,10 @@ class MappedSignalModule(BaseModule):
         super().__init__(component_id, "MappedSignalModule", parameters)
         self.local_name = _local_name(parameters.get("local_name", "value"), "local_name")
         self.unit: Optional[str] = parameters.get("unit")
-        self.lower_bound = _finite_float(parameters.get("lower_bound", -1.0e9), "lower_bound")
-        self.upper_bound = _finite_float(parameters.get("upper_bound", 1.0e9), "upper_bound")
-        self.initial_guess = _finite_float(parameters.get("initial_guess", 0.0), "initial_guess")
-        self.scale = _positive_float(parameters.get("scale", 1.0), "scale")
+        self.lower_bound = finite_float(parameters.get("lower_bound", -1.0e9), "lower_bound")
+        self.upper_bound = finite_float(parameters.get("upper_bound", 1.0e9), "upper_bound")
+        self.initial_guess = finite_float(parameters.get("initial_guess", 0.0), "initial_guess")
+        self.scale = positive_float(parameters.get("scale", 1.0), "scale")
         if self.lower_bound >= self.upper_bound:
             raise ValueError(f"{component_id}: lower_bound must be less than upper_bound")
         if not self.lower_bound <= self.initial_guess <= self.upper_bound:
@@ -336,49 +341,6 @@ class MappedSignalModule(BaseModule):
         return data
 
 
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed
-
-
-def _owned_record(
-    component_id: str,
-    parameters: dict[str, Any],
-    local_name: str,
-    unit: Optional[str],
-    lower_key: str,
-    upper_key: str,
-    initial_key: str,
-    scale_key: str,
-    lower_default: float,
-    upper_default: float,
-    initial_default: float,
-    scale_default: float,
-) -> VariableRecord:
-    return VariableRecord(
-        name=f"{component_id}.{local_name}",
-        unit=unit,
-        lower_bound=_finite_float(parameters.get(lower_key, lower_default), lower_key),
-        upper_bound=_finite_float(parameters.get(upper_key, upper_default), upper_key),
-        initial_guess=_finite_float(parameters.get(initial_key, initial_default), initial_key),
-        scale=_positive_float(parameters.get(scale_key, scale_default), scale_key),
-        source_component=component_id,
-        local_name=local_name,
-    )
-
-
 def _xy_records(
     component_id: str,
     parameters: dict[str, Any],
@@ -388,7 +350,7 @@ def _xy_records(
     y_prefix: str = "y",
 ) -> list[VariableRecord]:
     return [
-        _owned_record(
+        owned_record(
             component_id,
             parameters,
             x_name,
@@ -402,7 +364,7 @@ def _xy_records(
             0.0,
             1.0,
         ),
-        _owned_record(
+        owned_record(
             component_id,
             parameters,
             y_name,
@@ -426,27 +388,6 @@ def _owned_value(
     local_name: str,
 ) -> float:
     return float(x[registry.get_index(f"{component_id}.{local_name}")])
-
-
-def _required_variable_name(parameters: dict[str, Any], name: str) -> str:
-    value = parameters.get(name)
-    if not isinstance(value, str) or not is_qualified_variable_name(value):
-        raise ValueError(f"{name} must use component.variable format")
-    return value
-
-
-def _required_variable_list(parameters: dict[str, Any], name: str) -> list[str]:
-    if name not in parameters:
-        raise ValueError(f"{name} is required")
-    value = parameters[name]
-    if not isinstance(value, list):
-        raise ValueError(f"{name} must be a list")
-    variables: list[str] = []
-    for item in value:
-        if not isinstance(item, str) or not is_qualified_variable_name(item):
-            raise ValueError(f"{name} entries must use component.variable format")
-        variables.append(item)
-    return variables
 
 
 def _local_name(value: Any, name: str) -> str:

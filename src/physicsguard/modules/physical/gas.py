@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
@@ -11,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
 from physicsguard.modules.physical.constants import UNIVERSAL_GAS_CONSTANT
+from physicsguard.modules.physical._common import owned_record, positive_float
 
 
 class IdealGasStateModule(BaseModule):
@@ -20,13 +20,15 @@ class IdealGasStateModule(BaseModule):
         super().__init__(component_id, "IdealGasStateModule", parameters)
         if "volume_m3" not in parameters:
             raise ValueError(f"{component_id}: volume_m3 is required")
-        self.volume_m3 = _positive_float(parameters["volume_m3"], "volume_m3")
-        self.residual_scale_J = _positive_float(
+        self.volume_m3 = positive_float(parameters["volume_m3"], "volume_m3")
+        self.residual_scale_J = positive_float(
             parameters.get("residual_scale_J", 100.0),
             "residual_scale_J",
         )
         self.records = [
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "p_Pa",
                 "Pa",
                 "p_lower_bound",
@@ -38,7 +40,9 @@ class IdealGasStateModule(BaseModule):
                 101325.0,
                 1e5,
             ),
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "T_K",
                 "K",
                 "T_lower_bound",
@@ -50,7 +54,9 @@ class IdealGasStateModule(BaseModule):
                 300.0,
                 100.0,
             ),
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "n_mol",
                 "mol",
                 "n_lower_bound",
@@ -97,49 +103,7 @@ class IdealGasStateModule(BaseModule):
             ],
         }
 
-    def _record(
-        self,
-        local_name: str,
-        unit: str,
-        lower_key: str,
-        upper_key: str,
-        initial_key: str,
-        scale_key: str,
-        lower_default: float,
-        upper_default: float,
-        initial_default: float,
-        scale_default: float,
-    ) -> VariableRecord:
-        return VariableRecord(
-            name=f"{self.component_id}.{local_name}",
-            unit=unit,
-            lower_bound=_finite_float(self.parameters.get(lower_key, lower_default), lower_key),
-            upper_bound=_finite_float(self.parameters.get(upper_key, upper_default), upper_key),
-            initial_guess=_finite_float(
-                self.parameters.get(initial_key, initial_default),
-                initial_key,
-            ),
-            scale=_positive_float(self.parameters.get(scale_key, scale_default), scale_key),
-            source_component=self.component_id,
-            local_name=local_name,
-        )
-
     def _value(self, x: np.ndarray, registry: VariableRegistry, local_name: str) -> float:
         return float(x[registry.get_index(f"{self.component_id}.{local_name}")])
 
 
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed

@@ -13,7 +13,7 @@ from physicsguard.io.test_file_contract_loader import (
     load_data_file_manifest,
     load_test_file_contract,
 )
-from physicsguard.core.parameter_coverage import _metadata_is_stale, field_targets
+from physicsguard.core.parameter_coverage import metadata_is_stale, field_targets
 from physicsguard.core.test_file_contract import resolve_test_file_contract, contract_field_mappings, contract_role_matrix
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
@@ -271,7 +271,7 @@ def evaluate_validation_adequacy_artifacts(
     edge_list = [
         item
         for item in mapping_edges
-        if not item.review_required and not _metadata_is_stale(item.metadata)
+        if not item.review_required and not metadata_is_stale(item.metadata)
     ]
     selected_signal_ids = {
         item.source_id for item in plan.variable_roles if item.source_id in available_signal_ids
@@ -554,7 +554,7 @@ def evaluate_validation_adequacy_artifacts(
                 convergence_minimum_ratio=policy.convergence_minimum_valid_ratio,
                 full_sequence_required=adequacy.sampling_mode == "full",
             )
-            maximum_observed_row_gap = _max_int_gap(sorted(validated_rows))
+            maximum_observed_row_gap = _max_gap(sorted(validated_rows))
             universal_maximum_row_gap = _universal_maximum_row_gap(
                 parameter_available_points,
                 int(coverage_floor["effective_minimum_count"]),
@@ -956,7 +956,7 @@ def evaluate_validation_adequacy_artifacts(
     if 'family_quotas' not in authored_floors:
         subsystem_families = []
     findings = [{**item, "severity": "warning"} for item in findings]
-    status = _status(findings)
+    status = findings_status(findings)
     universe_payload = {
         "available_point_count": available_points,
         "eligible_point_count": eligible_points,
@@ -1425,13 +1425,7 @@ def _row_strata_counts(
     return result
 
 
-def _max_gap(values: list[float]) -> float | None:
-    if len(values) < 2:
-        return None
-    return max(right - left for left, right in zip(values, values[1:]))
-
-
-def _max_int_gap(values: list[int]) -> int | None:
+def _max_gap(values: list[float] | list[int]) -> float | int | None:
     if len(values) < 2:
         return None
     return max(right - left for left, right in zip(values, values[1:]))
@@ -1528,7 +1522,7 @@ def _ratio(numerator: int, denominator: int) -> float:
     return float(numerator / denominator) if denominator else 0.0
 
 
-def _status(findings: list[dict[str, Any]]) -> str:
+def findings_status(findings: list[dict[str, Any]]) -> str:
     if any(item["severity"] == "error" for item in findings):
         return "blocked"
     if any(item["severity"] == "warning" for item in findings):

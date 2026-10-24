@@ -5,7 +5,7 @@ import csv
 import math
 
 from physicsguard.core.data_file_manifest import sha256_file, field_signature_hash
-from physicsguard.core.parameter_coverage import (ContractFinding, ContractReview, _status, _next_actions,
+from physicsguard.core.parameter_coverage import (ContractFinding, ContractReview, contract_status, contract_next_actions,
                                                 check_field_mappings, confidence_value, field_targets)
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.units import unit_conversion
@@ -104,14 +104,14 @@ def check_test_file_contract(path):
     for defect in contract.known_defects:
         findings.append(ContractFinding('warning', 'known_file_defect', defect.description, source_id=defect.id,
                                         details={'impact': defect.impact, 'safe_claim': defect.safe_claim}))
-    status = _status(findings)
+    status = contract_status(findings)
     gate = {'pass':'open_for_scoped_analysis', 'partial':'limited_claims_only', 'fail':'blocked_until_contract_errors_are_fixed'}[status]
     return ContractReview('test_file_contract', status, status == 'pass', findings,
         dict(contract_id=contract.contract_id, file_id=contract.contract_id, manifest_field_count=len(resolved.manifest.value.fields),
              row_count=resolved.manifest.value.shape.row_count, field_count=len(contract.fields),
              error_count=sum(f.severity == 'error' for f in findings), warning_count=sum(f.severity == 'warning' for f in findings),
              analysis_claim_gate=gate, semantics='Identified, classified and mapped data permits scoped analysis, not proof of physical correctness.'),
-        _next_actions(findings))
+        contract_next_actions(findings))
 
 
 def inspect_test_file_contract(path):

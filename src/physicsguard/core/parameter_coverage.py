@@ -92,7 +92,7 @@ def check_field_mappings(contract, manifest, target_units):
     return findings
 
 
-def _status(findings: list[ContractFinding]) -> str:
+def contract_status(findings: list[ContractFinding]) -> str:
     if any(finding.severity == "error" for finding in findings):
         return "fail"
     if any(finding.severity == "warning" for finding in findings):
@@ -100,7 +100,7 @@ def _status(findings: list[ContractFinding]) -> str:
     return "pass"
 
 
-def _next_actions(findings: list[ContractFinding]) -> list[str]:
+def contract_next_actions(findings: list[ContractFinding]) -> list[str]:
     actions: list[str] = []
     for finding in findings:
         if finding.severity == "error":
@@ -114,6 +114,6 @@ def _next_actions(findings: list[ContractFinding]) -> list[str]:
     return result
 
 
-def _metadata_is_stale(metadata: Mapping[str, Any]) -> bool:
+def metadata_is_stale(metadata: Mapping[str, Any]) -> bool:
     status = str(metadata.get("status", "")).lower()
     return bool(metadata.get("stale") is True or metadata.get("is_stale") is True or status == "stale")

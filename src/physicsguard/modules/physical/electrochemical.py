@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
@@ -11,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
 from physicsguard.modules.physical.constants import FARADAY_CONSTANT
+from physicsguard.modules.physical._common import owned_record, positive_float
 
 
 class ElectrochemicalFaradayRateModule(BaseModule):
@@ -22,23 +22,25 @@ class ElectrochemicalFaradayRateModule(BaseModule):
             raise ValueError(f"{component_id}: n_cells is required")
         if "electrons_per_mole" not in parameters:
             raise ValueError(f"{component_id}: electrons_per_mole is required")
-        self.n_cells = _positive_float(parameters["n_cells"], "n_cells")
-        self.electrons_per_mole = _positive_float(
+        self.n_cells = positive_float(parameters["n_cells"], "n_cells")
+        self.electrons_per_mole = positive_float(
             parameters["electrons_per_mole"],
             "electrons_per_mole",
         )
-        self.faradaic_efficiency = _positive_float(
+        self.faradaic_efficiency = positive_float(
             parameters.get("faradaic_efficiency", 1.0),
             "faradaic_efficiency",
         )
         if self.faradaic_efficiency > 1:
             raise ValueError("faradaic_efficiency must be <= 1")
-        self.residual_scale_mol_s = _positive_float(
+        self.residual_scale_mol_s = positive_float(
             parameters.get("residual_scale_mol_s", 1e-3),
             "residual_scale_mol_s",
         )
         self.records = [
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "current_A",
                 "A",
                 "current_lower_bound",
@@ -50,7 +52,9 @@ class ElectrochemicalFaradayRateModule(BaseModule):
                 100.0,
                 100.0,
             ),
-            self._record(
+            owned_record(
+                self.component_id,
+                self.parameters,
                 "n_dot_mol_s",
                 "mol/s",
                 "n_dot_lower_bound",
@@ -105,33 +109,6 @@ class ElectrochemicalFaradayRateModule(BaseModule):
             ],
         }
 
-    def _record(
-        self,
-        local_name: str,
-        unit: str,
-        lower_key: str,
-        upper_key: str,
-        initial_key: str,
-        scale_key: str,
-        lower_default: float,
-        upper_default: float,
-        initial_default: float,
-        scale_default: float,
-    ) -> VariableRecord:
-        return VariableRecord(
-            name=f"{self.component_id}.{local_name}",
-            unit=unit,
-            lower_bound=_finite_float(self.parameters.get(lower_key, lower_default), lower_key),
-            upper_bound=_finite_float(self.parameters.get(upper_key, upper_default), upper_key),
-            initial_guess=_finite_float(
-                self.parameters.get(initial_key, initial_default),
-                initial_key,
-            ),
-            scale=_positive_float(self.parameters.get(scale_key, scale_default), scale_key),
-            source_component=self.component_id,
-            local_name=local_name,
-        )
-
     def _value(self, x: np.ndarray, registry: VariableRegistry, local_name: str) -> float:
         return float(x[registry.get_index(f"{self.component_id}.{local_name}")])
 
@@ -142,12 +119,12 @@ class StoichiometryModule(BaseModule):
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "StoichiometryModule", parameters)
         self.stoichiometry = _required_positive(parameters, "stoichiometry")
-        self.residual_scale_mol_s = _positive_float(
+        self.residual_scale_mol_s = positive_float(
             parameters.get("residual_scale_mol_s", 1e-3),
             "residual_scale_mol_s",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "n_dot_feed_mol_s",
@@ -161,7 +138,7 @@ class StoichiometryModule(BaseModule):
                 1e-2,
                 1e-3,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "n_dot_consumed_mol_s",
@@ -214,12 +191,12 @@ class ElectrochemicalStackPowerModule(BaseModule):
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "ElectrochemicalStackPowerModule", parameters)
         self.n_cells = _required_positive(parameters, "n_cells")
-        self.residual_scale_W = _positive_float(
+        self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
         )
         self.records = [
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "V_cell_V",
@@ -233,7 +210,7 @@ class ElectrochemicalStackPowerModule(BaseModule):
                 0.7,
                 1.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "current_A",
@@ -247,7 +224,7 @@ class ElectrochemicalStackPowerModule(BaseModule):
                 100.0,
                 100.0,
             ),
-            _owned_record(
+            owned_record(
                 component_id,
                 parameters,
                 "P_stack_W",
@@ -295,53 +272,10 @@ class ElectrochemicalStackPowerModule(BaseModule):
         )
 
 
-def _finite_float(value: Any, name: str) -> float:
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(parsed):
-        raise ValueError(f"{name} must be finite")
-    return parsed
-
-
-def _positive_float(value: Any, name: str) -> float:
-    parsed = _finite_float(value, name)
-    if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
-    return parsed
-
-
 def _required_positive(parameters: dict[str, Any], name: str) -> float:
     if name not in parameters:
         raise ValueError(f"{name} is required")
-    return _positive_float(parameters[name], name)
-
-
-def _owned_record(
-    component_id: str,
-    parameters: dict[str, Any],
-    local_name: str,
-    unit: str,
-    lower_key: str,
-    upper_key: str,
-    initial_key: str,
-    scale_key: str,
-    lower_default: float,
-    upper_default: float,
-    initial_default: float,
-    scale_default: float,
-) -> VariableRecord:
-    return VariableRecord(
-        name=f"{component_id}.{local_name}",
-        unit=unit,
-        lower_bound=_finite_float(parameters.get(lower_key, lower_default), lower_key),
-        upper_bound=_finite_float(parameters.get(upper_key, upper_default), upper_key),
-        initial_guess=_finite_float(parameters.get(initial_key, initial_default), initial_key),
-        scale=_positive_float(parameters.get(scale_key, scale_default), scale_key),
-        source_component=component_id,
-        local_name=local_name,
-    )
+    return positive_float(parameters[name], name)
 
 
 def _owned_value(
