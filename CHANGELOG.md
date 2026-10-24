@@ -1,14 +1,11 @@
 # Changelog
 
-## Unreleased
+## v0.15.23 - 2026-10-24 - Analysis on the audit tree
 
-- Maintenance checks of PhysicsGuard's own model tree run on FlowGuard 0.70.12.
-- hierarchy run, evaluate, compare and variants now print the audit tree with each block's verdict (failing residuals, unchecked blocks, refinement checks, next signals, fault-variant signatures and model miss); --json still prints the full report. hierarchy describe names benign variants and shows which block each assumption card applies to; its per-block count is now "declared needs missing".
-- The skill starts from the model: describe the existing audit tree (or build a coarse one) before choosing a route, and read verdicts on the same tree.
-- Domain starter packs no longer copy child components into a fake coarse level; each pack has a benign measurement change of meaningful size and at least two separable faults.
-- The heated-tank reference shows a planned refinement (envelope_wall_detail): a target that is reported with the signals it needs and never executed.
-- The header sample in the debugging route matches the generated audit header; docs no longer present module conflict fixtures as the audit tree's known-bad form, and starter packs no longer name deleted level or conflict files.
-- Preflight review's next action for a clean review is now create_or_select_coarse_physicsguard_audit.
+- Command output: hierarchy run, evaluate, compare and variants now print the audit tree with each block's verdict (failing residuals, unchecked blocks, refinement checks, next signals, fault-variant signatures and model miss); --json still prints the full report. hierarchy describe names benign variants and shows which block each assumption card applies to; its per-block count is now "declared needs missing". Preflight review's next action for a clean review is now create_or_select_coarse_physicsguard_audit.
+- Skill: it starts from the model: describe the existing audit tree (or build a coarse one) before choosing a route, and read verdicts on the same tree. The header sample in the debugging route matches the generated audit header, and the docs no longer present module conflict fixtures as the audit tree's known-bad form.
+- Examples: domain starter packs no longer copy child components into a fake coarse level and no longer name deleted level or conflict files; each pack has a benign measurement change of meaningful size and at least two separable faults. The heated-tank reference shows a planned refinement (envelope_wall_detail): a target that is reported with the signals it needs and never executed.
+- Maintenance: checks of PhysicsGuard's own model tree run on FlowGuard 0.70.12.
 
 ## v0.15.22 - 2026-10-24 - One model tree for physics audits
 
