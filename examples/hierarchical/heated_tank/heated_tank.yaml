@@ -262,6 +262,21 @@ hierarchy:
     - heater efficiency
     rationale: Energy does not close; split heater, throughflow and loss.
     priority: 10
+  - id: refine_envelope
+    block_id: envelope
+    trigger_diagnostic_keys:
+    - ambient_heat_loss_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - envelope_wall_detail
+    next_required_variables:
+    - wall surface temperature
+    - air temperature near the wall
+    next_required_parameters:
+    - wall area
+    - wall U-value
+    rationale: Ambient loss does not close; split the wall conduction from the surface-to-air transfer.
+    priority: 5
 fault_variants:
 - id: heater_half
   kind: fault

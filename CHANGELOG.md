@@ -6,6 +6,7 @@
 - hierarchy run, evaluate, compare and variants now print the audit tree with each block's verdict (failing residuals, unchecked blocks, refinement checks, next signals, fault-variant signatures and model miss); --json still prints the full report. hierarchy describe names benign variants and shows which block each assumption card applies to; its per-block count is now "declared needs missing".
 - The skill starts from the model: describe the existing audit tree (or build a coarse one) before choosing a route, and read verdicts on the same tree.
 - Domain starter packs no longer copy child components into a fake coarse level; each pack has a benign measurement change of meaningful size and at least two separable faults.
+- The heated-tank reference shows a planned refinement (envelope_wall_detail): a target that is reported with the signals it needs and never executed.
 
 ## v0.15.22 - 2026-10-24 - One model tree for physics audits
 

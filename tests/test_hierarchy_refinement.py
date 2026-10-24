@@ -202,4 +202,8 @@ def test_shipped_refinement_pointers_resolve() -> None:
         planner = RefinementPlanner(audit.parent)
         for rule in spec.hierarchy.refinement_rules:
             for template_id in rule.next_template_ids:
-                assert planner._template_status(template_id, spec.hierarchy) in {"block", "file"}, (audit, rule.id, template_id)
+                status = planner._template_status(template_id, spec.hierarchy)
+                assert status in {"block", "file", "planned"}, (audit, rule.id, template_id)
+                if status == "planned":
+                    # A shipped target must say what to measure first.
+                    assert rule.next_required_variables, (audit, rule.id, template_id)
