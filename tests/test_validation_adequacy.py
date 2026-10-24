@@ -1240,12 +1240,15 @@ def test_repeated_template_exclusions_are_blocked() -> None:
     assert "templated_exclusion_reason" in codes
 
 
-def test_empty_roles_rejected_for_non_snapshot_plan() -> None:
+def test_non_snapshot_roles_can_come_from_the_contract() -> None:
+    from physicsguard.core.validation_adequacy import resolve_validation_roles
+
     plan = load_model_validation_plan(PUMP / "validation" / "clean_validation_plan.yaml")
     data = plan.model_dump(mode="python")
     data["variable_roles"] = []
-    with pytest.raises(ValidationError, match="non-empty variable_roles"):
-        ModelValidationPlanSpec.model_validate(data)
+    deferred = ModelValidationPlanSpec.model_validate(data)
+    assert deferred.variable_roles == []
+    assert resolve_validation_roles(deferred, PUMP / "validation").variable_roles
 
 
 def test_conflicting_manifest_point_counts_fail_closed_on_larger_denominator() -> None:

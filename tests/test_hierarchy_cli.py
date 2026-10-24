@@ -37,7 +37,8 @@ def test_hierarchy_run_clean_example_returns_valid_json() -> None:
     data = json.loads(result.stdout)
     assert data["audit_pass"]
     assert data["optimization_success"]
-    assert data["top_blocks"][0]["block_id"] == "fc_system"
+    root = next(block for block in data["top_blocks"] if block["block_id"] == "fc_system")
+    assert root["audit_pass"] and root["own_audit_pass"]
     assert {
         "audit_name",
         "system_name",
@@ -67,7 +68,8 @@ def test_hierarchy_run_conflict_fails_with_code_1_and_audit_false(tmp_path) -> N
     assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert not data["audit_pass"]
-    assert data["top_blocks"][0]["block_id"] == "fc_system"
+    root = next(block for block in data["top_blocks"] if block["block_id"] == "fc_system")
+    assert not root["audit_pass"] and not data["top_blocks"][0]["audit_pass"]
     assert data["recommended_refinements"]
 
 
