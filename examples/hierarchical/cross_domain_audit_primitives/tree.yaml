@@ -1,0 +1,365 @@
+# PhysicsGuard hierarchical audit model
+# Purpose: One coarse-to-fine cross domain audit primitives audit; supplied quantities connect coarse balances to their finer relations.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/cross_domain_audit_primitives/tree.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: cross_domain_audit_primitives
+description: One coarse-to-fine cross domain audit primitives audit; supplied quantities
+  connect coarse balances to their finer relations.
+hierarchy:
+  blocks:
+  - id: cross_domain_audit_primitives
+    name: Cross-domain audit primitives
+    level: 0
+    tags:
+    - cross_domain
+    - unit_conversion
+    - sensor
+    - loss
+    - time_alignment
+    components:
+    - coarse_temperature_c_to_k
+    - coarse_pressure_sensor_scale
+    - coarse_metered_source_power
+    - coarse_metered_load_power
+    - coarse_unmetered_loss_power
+    - coarse_sample_delay
+    - coarse_boundary_loss_power_balance
+    - coarse_sample_delay_range
+    required_variables:
+    - coarse_temperature_c_to_k.x
+    - coarse_temperature_c_to_k.y
+    - coarse_pressure_sensor_scale.true_value
+  - id: explicit_unit_conversion
+    name: Explicit unit conversion
+    level: 1
+    parent_id: cross_domain_audit_primitives
+    components:
+    - temperature_c_to_k
+    tags:
+    - unit_conversion
+    refines:
+    - coarse_temperature_c_to_k
+  - id: sensor_calibration
+    name: Sensor calibration
+    level: 1
+    parent_id: cross_domain_audit_primitives
+    components:
+    - pressure_sensor_scale
+    tags:
+    - sensor
+    refines:
+    - coarse_pressure_sensor_scale
+  - id: boundary_loss_accounting
+    name: Boundary loss accounting
+    level: 1
+    parent_id: cross_domain_audit_primitives
+    components:
+    - metered_source_power
+    - metered_load_power
+    - unmetered_loss_power
+    - boundary_loss_power_balance
+    tags:
+    - boundary_loss
+    refines:
+    - coarse_boundary_loss_power_balance
+  - id: time_alignment
+    name: Time alignment
+    level: 1
+    parent_id: cross_domain_audit_primitives
+    components:
+    - sample_delay
+    - sample_delay_range
+    tags:
+    - time_alignment
+    refines:
+    - coarse_sample_delay_range
+  refinement_rules:
+  - id: refine_cross_domain_audit_primitives_level_0
+    block_id: cross_domain_audit_primitives
+    trigger_diagnostic_keys:
+    - unit_scale_mismatch
+    - sensor_scale_offset_mismatch
+    - aggregate_power_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - explicit_unit_conversion
+    - sensor_calibration
+    - boundary_loss_accounting
+    - time_alignment
+    next_required_variables:
+    - unit.source_value
+    - unit.target_value
+    - sensor.true_value
+    - sensor.measured_value
+    - boundary.source_power_W
+    - timing.sample_delay_s
+    next_required_parameters:
+    - explicit_unit_factor_offset
+    - sensor_calibration_basis
+    - meter_grouping
+    - sample_alignment_basis
+    rationale: Primitive audit residual is high; refine unit, sensor, boundary, and
+      timing checks before adding domain-specific physics.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  assumptions:
+  - This template demonstrates reusable low-fidelity audit primitives, not a domain
+    model.
+  - Unit conversion uses explicit caller-provided factor and offset; no hidden unit
+    table is applied.
+  - Sensor, boundary-loss, and timing checks are algebraic sanity checks for mapped
+    signals.
+  domain: cross_domain_audit_primitives
+  template_level: 1
+system:
+  boundaries:
+  - scale: 1.0e-06
+    value: 25.0
+    variable: temperature_c_to_k.x
+  - scale: 1.0e-06
+    value: 298.15
+    variable: temperature_c_to_k.y
+  - scale: 1.0e-06
+    value: 200000.0
+    variable: pressure_sensor_scale.true_value
+  - scale: 1.0e-06
+    value: 200000.0
+    variable: pressure_sensor_scale.measured_value
+  - scale: 1.0e-06
+    value: 100000.0
+    variable: metered_source_power.value
+  - scale: 1.0e-06
+    value: 80000.0
+    variable: metered_load_power.value
+  - scale: 1.0e-06
+    value: 20000.0
+    variable: unmetered_loss_power.value
+  - scale: 1.0e-06
+    value: 0.2
+    variable: sample_delay.value
+  components:
+  - id: coarse_temperature_c_to_k
+    type: UnitScaleModule
+    parameters:
+      factor: 1.0
+      offset: 273.15
+      source_unit: degC
+      target_unit: K
+      x_initial_guess: 25.0
+      y_initial_guess: 298.15
+      x_scale: 10.0
+      y_scale: 10.0
+      residual_scale: 0.01
+  - id: coarse_pressure_sensor_scale
+    type: SensorScaleOffsetModule
+    parameters:
+      scale_factor: 1.0
+      offset: 0.0
+      true_initial_guess: 200000.0
+      measured_initial_guess: 200000.0
+      true_scale: 100000.0
+      measured_scale: 100000.0
+      residual_scale: 100.0
+  - id: coarse_metered_source_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100000.0
+      scale: 10000.0
+      external_signal: mapped_metered_source_power
+      mapping_confidence: template
+  - id: coarse_metered_load_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 80000.0
+      scale: 8000.0
+      external_signal: mapped_metered_load_power
+      mapping_confidence: template
+  - id: coarse_unmetered_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 20000.0
+      scale: 2000.0
+      external_signal: mapped_unmetered_loss_power
+      mapping_confidence: template
+  - id: coarse_sample_delay
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 0.2
+      scale: 1.0
+      external_signal: mapped_sample_delay
+      mapping_confidence: template
+  - id: coarse_boundary_loss_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - coarse_metered_source_power.value
+      load_power_variables:
+      - coarse_metered_load_power.value
+      - coarse_unmetered_loss_power.value
+      residual_scale_W: 100.0
+  - id: coarse_sample_delay_range
+    type: RangeCheckModule
+    parameters:
+      variable: coarse_sample_delay.value
+      lower_bound: 0.0
+      upper_bound: 1.0
+      residual_scale: 0.1
+      role: post_check
+  - id: temperature_c_to_k
+    parameters:
+      factor: 1.0
+      offset: 273.15
+      residual_scale: 0.01
+      source_unit: degC
+      target_unit: K
+      x_initial_guess: 25.0
+      x_scale: 10.0
+      y_initial_guess: 298.15
+      y_scale: 10.0
+    type: UnitScaleModule
+  - id: pressure_sensor_scale
+    parameters:
+      measured_initial_guess: 200000.0
+      measured_scale: 100000.0
+      offset: 0.0
+      residual_scale: 100.0
+      scale_factor: 1.0
+      true_initial_guess: 200000.0
+      true_scale: 100000.0
+    type: SensorScaleOffsetModule
+  - id: metered_source_power
+    parameters:
+      external_signal: mapped_metered_source_power
+      initial_guess: 100000.0
+      local_name: value
+      lower_bound: 0.0
+      mapping_confidence: template
+      scale: 10000.0
+      unit: W
+      upper_bound: 1000000000000.0
+    type: MappedSignalModule
+  - id: metered_load_power
+    parameters:
+      external_signal: mapped_metered_load_power
+      initial_guess: 80000.0
+      local_name: value
+      lower_bound: 0.0
+      mapping_confidence: template
+      scale: 8000.0
+      unit: W
+      upper_bound: 1000000000000.0
+    type: MappedSignalModule
+  - id: unmetered_loss_power
+    parameters:
+      external_signal: mapped_unmetered_loss_power
+      initial_guess: 20000.0
+      local_name: value
+      lower_bound: 0.0
+      mapping_confidence: template
+      scale: 2000.0
+      unit: W
+      upper_bound: 1000000000000.0
+    type: MappedSignalModule
+  - id: sample_delay
+    parameters:
+      external_signal: mapped_sample_delay
+      initial_guess: 0.2
+      local_name: value
+      lower_bound: 0.0
+      mapping_confidence: template
+      scale: 1.0
+      unit: s
+      upper_bound: 1000000000000.0
+    type: MappedSignalModule
+  - id: boundary_loss_power_balance
+    parameters:
+      load_power_variables:
+      - metered_load_power.value
+      - unmetered_loss_power.value
+      residual_scale_W: 100.0
+      source_power_variables:
+      - metered_source_power.value
+    type: AggregatePowerBalanceModule
+  - id: sample_delay_range
+    parameters:
+      lower_bound: 0.0
+      residual_scale: 0.1
+      role: post_check
+      upper_bound: 1.0
+      variable: sample_delay.value
+    type: RangeCheckModule
+  solver:
+    audit_threshold: 1.0
+    tolerance: 1.0e-08
+  system_name: cross_domain_audit_primitives
+  connections:
+  - from_variable: coarse_temperature_c_to_k.x
+    to_variable: temperature_c_to_k.x
+    description: Same supplied degC quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_temperature_c_to_k.y
+    to_variable: temperature_c_to_k.y
+    description: Same supplied K quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_pressure_sensor_scale.true_value
+    to_variable: pressure_sensor_scale.true_value
+    description: Same supplied declared-unit quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_pressure_sensor_scale.measured_value
+    to_variable: pressure_sensor_scale.measured_value
+    description: Same supplied declared-unit quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_metered_source_power.value
+    to_variable: metered_source_power.value
+    description: Same supplied W quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_metered_load_power.value
+    to_variable: metered_load_power.value
+    description: Same supplied W quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_unmetered_loss_power.value
+    to_variable: unmetered_loss_power.value
+    description: Same supplied W quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_sample_delay.value
+    to_variable: sample_delay.value
+    description: Same supplied s quantity; no additional observation.
+    scale: 1.0e-06
+fault_variants:
+- id: bad_temperature_offset
+  kind: fault
+  description: Original physical supplied-signal conflict; coarse aliases propagate
+    through connections.
+  changes:
+  - variable: temperature_c_to_k.y
+    set: 25.0
+  expect_blocks:
+  - cross_domain_audit_primitives
+  - explicit_unit_conversion
+- id: within_original_tolerance
+  kind: benign
+  description: Nonzero supplied-signal perturbation below unchanged declared normalizations;
+    native neutrality remains to check.
+  changes:
+  - variable: sample_delay.value
+    offset: 1.0e-09

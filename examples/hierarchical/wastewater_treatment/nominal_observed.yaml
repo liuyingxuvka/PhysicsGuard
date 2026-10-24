@@ -1,0 +1,400 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Original independent global-budget and separately scoped unit measurements, each retaining its own channel identity. This is not a reconciled...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: wastewater_treatment_nominal
+description: Original independent global-budget and separately scoped unit measurements, each retaining
+  its own channel identity. This is not a reconciled whole-plant dataset; unit aliases and unmeasured
+  model quantities are omitted.
+variables:
+  global_influent_flow.value:
+    value: 1.2
+    unit: kg/s
+    external_signal: mapped_influent_mass_flow
+    source: "tree.yaml#system.boundaries[0]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_effluent_flow.value:
+    value: 1.0
+    unit: kg/s
+    external_signal: mapped_effluent_mass_flow
+    source: "tree.yaml#system.boundaries[1]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_waste_sludge_flow.value:
+    value: 0.18
+    unit: kg/s
+    external_signal: mapped_waste_sludge_mass_flow
+    source: "tree.yaml#system.boundaries[2]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_gas_vent_flow.value:
+    value: 0.02
+    unit: kg/s
+    external_signal: mapped_gas_vent_mass_flow
+    source: "tree.yaml#system.boundaries[3]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_cod_in.value:
+    value: 0.06
+    unit: kg/s
+    external_signal: mapped_influent_cod_load
+    source: "tree.yaml#system.boundaries[4]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_cod_effluent.value:
+    value: 0.01
+    unit: kg/s
+    external_signal: mapped_effluent_cod_load
+    source: "tree.yaml#system.boundaries[5]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_cod_to_sludge.value:
+    value: 0.02
+    unit: kg/s
+    external_signal: mapped_cod_to_waste_sludge
+    source: "tree.yaml#system.boundaries[6]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_cod_oxidized.value:
+    value: 0.03
+    unit: kg/s
+    external_signal: mapped_cod_oxidized_or_biogas_equivalent
+    source: "tree.yaml#system.boundaries[7]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_tn_in.value:
+    value: 0.004
+    unit: kg/s
+    external_signal: mapped_influent_total_nitrogen_load
+    source: "tree.yaml#system.boundaries[8]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_tn_effluent.value:
+    value: 0.001
+    unit: kg/s
+    external_signal: mapped_effluent_total_nitrogen_load
+    source: "tree.yaml#system.boundaries[9]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_tn_to_sludge.value:
+    value: 0.001
+    unit: kg/s
+    external_signal: mapped_nitrogen_to_sludge
+    source: "tree.yaml#system.boundaries[10]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_tn_denitrified.value:
+    value: 0.002
+    unit: kg/s
+    external_signal: mapped_denitrified_nitrogen_equivalent
+    source: "tree.yaml#system.boundaries[11]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_oxygen_transferred.value:
+    value: 0.045
+    unit: kg/s
+    external_signal: mapped_aeration_oxygen_transfer
+    source: "tree.yaml#system.boundaries[12]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_oxygen_for_carbon.value:
+    value: 0.03
+    unit: kg/s
+    external_signal: mapped_oxygen_for_carbon_oxidation
+    source: "tree.yaml#system.boundaries[13]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_oxygen_for_nitrification.value:
+    value: 0.01
+    unit: kg/s
+    external_signal: mapped_oxygen_for_nitrification
+    source: "tree.yaml#system.boundaries[14]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_oxygen_excess.value:
+    value: 0.005
+    unit: kg/s
+    external_signal: mapped_residual_or_unaccounted_oxygen
+    source: "tree.yaml#system.boundaries[15]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_grid_power.value:
+    value: 15000.0
+    unit: W
+    external_signal: mapped_plant_grid_power
+    source: "tree.yaml#system.boundaries[16]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_aeration_power.value:
+    value: 10000.0
+    unit: W
+    external_signal: mapped_aeration_power
+    source: "tree.yaml#system.boundaries[17]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_pumping_power.value:
+    value: 3000.0
+    unit: W
+    external_signal: mapped_pumping_power
+    source: "tree.yaml#system.boundaries[18]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_mixing_power.value:
+    value: 1000.0
+    unit: W
+    external_signal: mapped_mixing_power
+    source: "tree.yaml#system.boundaries[19]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  global_other_loss_power.value:
+    value: 1000.0
+    unit: W
+    external_signal: mapped_other_or_unaccounted_power
+    source: "tree.yaml#system.boundaries[20]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  aeration_oxygen_transfer.value:
+    value: 0.05
+    unit: kg/s
+    external_signal: mapped_aeration_oxygen_transfer
+    source: "tree.yaml#system.boundaries[21]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  oxygen_for_bod.value:
+    value: 0.032
+    unit: kg/s
+    external_signal: mapped_oxygen_for_bod
+    source: "tree.yaml#system.boundaries[22]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  oxygen_for_nitrification.value:
+    value: 0.012
+    unit: kg/s
+    external_signal: mapped_oxygen_for_nitrification
+    source: "tree.yaml#system.boundaries[23]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  oxygen_residual_or_storage.value:
+    value: 0.006
+    unit: kg/s
+    external_signal: mapped_do_storage_or_unaccounted_o2
+    source: "tree.yaml#system.boundaries[24]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  reactor_cod_in.value:
+    value: 0.06
+    unit: kg/s
+    external_signal: mapped_reactor_cod_in
+    source: "tree.yaml#system.boundaries[25]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  reactor_cod_effluent.value:
+    value: 0.012
+    unit: kg/s
+    external_signal: mapped_reactor_cod_out
+    source: "tree.yaml#system.boundaries[26]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  reactor_cod_to_biomass.value:
+    value: 0.018
+    unit: kg/s
+    external_signal: mapped_cod_to_biomass
+    source: "tree.yaml#system.boundaries[27]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  reactor_cod_oxidized.value:
+    value: 0.03
+    unit: kg/s
+    external_signal: mapped_cod_oxidized
+    source: "tree.yaml#system.boundaries[28]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  clarifier_tss_in.value:
+    value: 0.04
+    unit: kg/s
+    external_signal: mapped_clarifier_tss_in
+    source: "tree.yaml#system.boundaries[29]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  clarifier_tss_effluent.value:
+    value: 0.004
+    unit: kg/s
+    external_signal: mapped_effluent_tss
+    source: "tree.yaml#system.boundaries[30]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  clarifier_tss_return.value:
+    value: 0.03
+    unit: kg/s
+    external_signal: mapped_return_sludge_tss
+    source: "tree.yaml#system.boundaries[31]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  clarifier_tss_waste.value:
+    value: 0.006
+    unit: kg/s
+    external_signal: mapped_waste_sludge_tss
+    source: "tree.yaml#system.boundaries[32]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  underflow_flow.value:
+    value: 0.42
+    unit: kg/s
+    external_signal: mapped_clarifier_underflow_mass_flow
+    source: "tree.yaml#system.boundaries[33]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  return_sludge_flow.value:
+    value: 0.35
+    unit: kg/s
+    external_signal: mapped_return_activated_sludge_flow
+    source: "tree.yaml#system.boundaries[34]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  waste_sludge_flow.value:
+    value: 0.07
+    unit: kg/s
+    external_signal: mapped_waste_activated_sludge_flow
+    source: "tree.yaml#system.boundaries[35]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  aeration_blower_power.value:
+    value: 12000.0
+    unit: W
+    external_signal: mapped_blower_power
+    source: "tree.yaml#system.boundaries[36]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  air_to_water_power.value:
+    value: 2500.0
+    unit: W
+    external_signal: mapped_oxygen_transfer_useful_power_equivalent
+    source: "tree.yaml#system.boundaries[37]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  aeration_losses.value:
+    value: 9500.0
+    unit: W
+    external_signal: mapped_aeration_loss_or_unaccounted_power
+    source: "tree.yaml#system.boundaries[38]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.

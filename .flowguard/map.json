@@ -18,7 +18,7 @@
       "layer": "interface",
       "summary": "CLI and lazy public API",
       "responsibilities": [
-        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. Hierarchy plan is retired; run --json exposes the full diagnostic report. Preflight and intake reviews optionally accept --audit.",
+        "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. run --json exposes the full diagnostic report. Preflight reviews optionally accept --audit; mapping review is part of hierarchy evaluate. Describe a declared tree as text, full JSON or Mermaid and count observed mappings per block without solving or evaluating; expose mapping-summary counts in observed summaries",
         "Print a compact hierarchy/validation summary with derived names, check counts and assumption dispositions, and the full report with --json",
         "Write manifest source paths relative to the output manifest directory while preserving stdout-only path behavior",
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
@@ -31,17 +31,20 @@
         "src/physicsguard/cli.py",
         "src/physicsguard/core/__init__.py"
       ],
-      "entrypoints": [],
+      "entrypoints": [
+        "src/physicsguard/cli.py:main",
+        "src/physicsguard/cli.py:build_parser"
+      ],
       "state": [],
       "side_effects": [
         "Write explicitly requested native manifest, SI snapshot or series output files"
       ],
       "depends_on": [
+        "data_binding",
         "diagnosis",
-        "evidence",
         "loaders",
         "modules",
-        "routing",
+        "preflight",
         "schema",
         "simulation",
         "validation"
@@ -73,33 +76,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:cc035d4b8a2f7b237306600723f7af49796c6a85ed18ad68106893b15cb5cc16"
-    },
-    {
-      "id": "routing",
-      "layer": "workflows",
-      "summary": "Model-understanding preflight and external-model intake reviews",
-      "responsibilities": [
-        "Check preflight and intake records for missing fields and uncertain mappings without changing observed values With an explicit audit, verify preflight block IDs and intake registry variables/convertible units."
-      ],
-      "files": [
-        "src/physicsguard/workflow.py"
-      ],
-      "entrypoints": [],
-      "state": [],
-      "side_effects": [],
-      "depends_on": [
-        "loaders",
-        "schema",
-        "simulation"
-      ],
-      "tests": [
-        "tests/test_skill_templates.py",
-        "tests/test_workflow_governance.py"
-      ],
-      "models": [],
-      "status": "confirmed",
-      "fingerprint": "sha256:3fab24955f2e0e66308bb5129fd12aa20e667f2f9288eaaceb6ed8f21a4ac05f"
+      "fingerprint": "sha256:3ec86788e35a0d08cc6d202f723724198ead6162818f8a295e50a5113c8fac5b"
     },
     {
       "id": "simulation",
@@ -112,7 +89,7 @@
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
         "Report an observed value without a source signal or unit as a mapping gap",
         "Record stale_when as review conditions; mark mapping stale only from explicit mapping_status stale",
-        "Roll child failures into parent verdicts while preserving own scores; compare linked coarse checked relations and resolve refinement templates without execution; render declared component contracts, ownership and connections without solving"
+        "Roll child failures into parent verdicts while preserving own scores; compare linked coarse checked relations and report unbuilt refinement targets as planned and resolve built templates without execution; render declared component contracts, ownership and connections without solving"
       ],
       "files": [
         "src/physicsguard/core/_residual_dependencies.py",
@@ -136,12 +113,10 @@
       "tests": [
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
-        "tests/test_agriculture_food_bioprocess_starter_pack.py",
         "tests/test_assumption_cli.py",
         "tests/test_assumption_diagnostics.py",
         "tests/test_assumption_manager.py",
         "tests/test_assumption_residuals.py",
-        "tests/test_building_hvac_starter_pack.py",
         "tests/test_cli.py",
         "tests/test_component_battery_hv.py",
         "tests/test_component_control.py",
@@ -159,15 +134,13 @@
         "tests/test_component_thermal_management.py",
         "tests/test_control_pid_helpers.py",
         "tests/test_control_signal_modules.py",
-        "tests/test_data_center_electronics_cooling_starter_pack.py",
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
-        "tests/test_distribution_power_der_starter_pack.py",
         "tests/test_domain_judgment_module_behaviors.py",
         "tests/test_electrochemical_extra_helpers.py",
-        "tests/test_expanded_domain_starter_packs.py",
         "tests/test_gas_rotating_helpers.py",
         "tests/test_heat_exchanger_helpers.py",
+        "tests/test_heated_tank_example.py",
         "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
         "tests/test_hierarchy_loader.py",
@@ -176,10 +149,8 @@
         "tests/test_hierarchy_scoring.py",
         "tests/test_hierarchy_spec.py",
         "tests/test_humidity_helpers.py",
-        "tests/test_industrial_utilities_starter_pack.py",
         "tests/test_lookup_modules.py",
         "tests/test_mechanical_helpers.py",
-        "tests/test_mobility_extensions_starter_pack.py",
         "tests/test_module_semantics_batch_brake_charger.py",
         "tests/test_module_semantics_batch_dcdc_inverter.py",
         "tests/test_module_semantics_batch_mechanically_draftable_01.py",
@@ -190,24 +161,19 @@
         "tests/test_physical_foundation_thermal.py",
         "tests/test_physical_gas.py",
         "tests/test_physical_thermal.py",
-        "tests/test_process_industry_starter_pack.py",
-        "tests/test_renewable_microgrid_starter_pack.py",
         "tests/test_residual_builder.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_solver.py",
-        "tests/test_stormwater_sewer_drainage_starter_pack.py",
+        "tests/test_starter_pack_trees.py",
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
-        "tests/test_variable_registry.py",
-        "tests/test_wastewater_starter_pack.py",
-        "tests/test_heated_tank_example.py",
-        "tests/test_starter_pack_trees.py"
+        "tests/test_variable_registry.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:8e645f46d6e9ed08fd1d01331266d68dca9c11eebe03e8626fb0792d54728807"
+      "fingerprint": "sha256:e3ba3aaefba5c58a9af50608e7542483a006d31187d0be381c04a872827d855b"
     },
     {
       "id": "validation",
@@ -216,7 +182,8 @@
       "responsibilities": [
         "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas. Batch fitting and series checks skip unit hints they do not expose. Apply parameter-stratum checks only when the policy declares strata; preserve count, gap and native-contribution guards.",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
-        "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates"
+        "Accept block-required series variables after native observed-or-derived evaluation while preserving point completeness and contract gates",
+        "Resolve default variable roles and in-memory series from contracts; preserve hard claim gates while reporting unavailable inputs once and marking dependent checks not_run"
       ],
       "files": [
         "src/physicsguard/core/model_dataset_validation.py",
@@ -228,7 +195,7 @@
       "state": [],
       "side_effects": [],
       "depends_on": [
-        "evidence",
+        "data_binding",
         "loaders",
         "schema",
         "simulation"
@@ -246,61 +213,18 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:e290d3629a4636120f17517b4caf0b98102c8eb9150cc3970b0a4c568d24168e"
-    },
-    {
-      "id": "evidence",
-      "layer": "workflows",
-      "summary": "Test-file contracts, manifests and contract differences",
-      "responsibilities": [
-        "Read one executable test-file contract, retain data/extractor content hashes, and generate SI snapshots and adjacent-row series with conversion and mapping evidence. Manifest timing metadata supplies factual span, gap and usable adjacent-row point defaults.",
-        "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
-      ],
-      "files": [
-        "src/physicsguard/core/contract_diff.py",
-        "src/physicsguard/core/data_file_manifest.py",
-        "src/physicsguard/core/test_file_contract.py"
-      ],
-      "entrypoints": [],
-      "state": [],
-      "side_effects": [],
-      "depends_on": [
-        "loaders",
-        "schema",
-        "simulation"
-      ],
-      "tests": [
-        "tests/test_cli.py",
-        "tests/test_hierarchy_block_index.py",
-        "tests/test_hierarchy_cli.py",
-        "tests/test_hierarchy_refinement.py",
-        "tests/test_hierarchy_runner.py",
-        "tests/test_hierarchy_scoring.py",
-        "tests/test_model_dataset_validation.py",
-        "tests/test_predictive_rollout_validation.py",
-        "tests/test_signal_mapping_ledger.py",
-        "tests/test_test_file_contract_cli.py",
-        "tests/test_test_file_contract_core.py",
-        "tests/test_test_file_contract_schema.py",
-        "tests/test_validation_adequacy.py",
-        "tests/test_validation_depth.py"
-      ],
-      "models": [
-        ".flowguard/models/physicsguard_test_file_contract_model.py"
-      ],
-      "status": "confirmed",
-      "fingerprint": "sha256:9cbbcf34cacc92f393bf053361ae69cf3c4c13a0dce8610bbcbd1bbb503275e4"
+      "fingerprint": "sha256:90f8ed1dfb60a457584f9be56b53383da46f34a6642a41d26fba95fcf76faf15"
     },
     {
       "id": "schema",
       "layer": "foundation",
       "summary": "Validated schemas, shared review records and pure contract coverage checks",
       "responsibilities": [
-        "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion. Accept minimal adequacy plans with optional additional floors while retaining explicit temporal classifications and native hard gates. Validate inputs only; producer_id accepts the old identifier as an input alias.",
+        "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion. Accept minimal adequacy plans with optional additional floors while retaining explicit temporal classifications and native hard gates. Validate inputs only; producer_id is the only predictive producer identifier; mapping confidence uses named review levels.",
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
         "Validate optional connection residual scales as positive finite values",
         "Provide shared contract-review records and pure manifest, field declarations, role and mapping coverage checks",
-        "Validate refines against direct parent component ownership and reject the retired expected_residual_keys field",
+        "Validate refines against direct parent component ownership and reject the retired expected_residual_keys and refinement_template_ids fields; next templates belong only to refinement rules",
         "Validate declared fault variants, one finite measurement edit per change, unique ids and rederived variable references"
       ],
       "files": [
@@ -365,6 +289,7 @@
         "tests/test_residual_builder.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_solver.py",
+        "tests/test_starter_pack_trees.py",
         "tests/test_system_spec.py",
         "tests/test_tank_helpers.py",
         "tests/test_test_file_contract_cli.py",
@@ -380,7 +305,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:fa6b3ecc9b18fa3f3dd2649a1b8cb55caaf84a95b9af0f94de8d180d2aa8624b"
+      "fingerprint": "sha256:25b17c9b04051a0f65ff9ce61a29d601c2a1b39fc797046e439d67f278f36232"
     },
     {
       "id": "loaders",
@@ -402,10 +327,8 @@
       "tests": [
         "tests/test_additional_physical_relations.py",
         "tests/test_aggregate_modules.py",
-        "tests/test_agriculture_food_bioprocess_starter_pack.py",
         "tests/test_assumption_diagnostics.py",
         "tests/test_assumption_spec.py",
-        "tests/test_building_hvac_starter_pack.py",
         "tests/test_component_battery_hv.py",
         "tests/test_component_control.py",
         "tests/test_component_control_sensor_actuator.py",
@@ -422,20 +345,15 @@
         "tests/test_component_thermal_management.py",
         "tests/test_control_pid_helpers.py",
         "tests/test_control_signal_modules.py",
-        "tests/test_data_center_electronics_cooling_starter_pack.py",
-        "tests/test_distribution_power_der_starter_pack.py",
         "tests/test_electrochemical_extra_helpers.py",
-        "tests/test_expanded_domain_starter_packs.py",
         "tests/test_gas_rotating_helpers.py",
         "tests/test_heat_exchanger_helpers.py",
         "tests/test_hierarchy_loader.py",
         "tests/test_hierarchy_runner.py",
         "tests/test_hierarchy_spec.py",
         "tests/test_humidity_helpers.py",
-        "tests/test_industrial_utilities_starter_pack.py",
         "tests/test_lookup_modules.py",
         "tests/test_mechanical_helpers.py",
-        "tests/test_mobility_extensions_starter_pack.py",
         "tests/test_observation_loader.py",
         "tests/test_observation_spec.py",
         "tests/test_physical_electrochemical.py",
@@ -446,15 +364,12 @@
         "tests/test_physical_gas.py",
         "tests/test_physical_thermal.py",
         "tests/test_predictive_rollout_validation.py",
-        "tests/test_process_industry_starter_pack.py",
-        "tests/test_renewable_microgrid_starter_pack.py",
         "tests/test_signal_mapping_ledger.py",
-        "tests/test_stormwater_sewer_drainage_starter_pack.py",
+        "tests/test_starter_pack_trees.py",
         "tests/test_system_spec.py",
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_validation_adequacy.py",
-        "tests/test_wastewater_starter_pack.py",
         "tests/test_yaml_loader.py"
       ],
       "models": [
@@ -469,7 +384,8 @@
       "summary": "Physical residual modules and registry declarations",
       "responsibilities": [
         "Define documented low-fidelity equations, SI units, assumptions and finite validity ranges",
-        "Describe registered native variables, parameter reads, residual text and applicability using explicitly marked synthetic examples without solving"
+        "Describe registered native variables, parameter reads, residual text and applicability using explicitly marked synthetic examples without solving",
+        "Keep the equation library under concrete per-relation unit tests; these relations have no separate lifecycle workflow model"
       ],
       "files": [
         "src/physicsguard/modules/*.py",
@@ -490,6 +406,7 @@
         "tests/test_aggregate_modules.py",
         "tests/test_assumption_manager.py",
         "tests/test_assumption_residuals.py",
+        "tests/test_cli.py",
         "tests/test_component_battery_hv.py",
         "tests/test_component_control.py",
         "tests/test_component_control_sensor_actuator.py",
@@ -521,8 +438,7 @@
         "tests/test_signal_mapping_ledger.py",
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
-        "tests/test_variable_registry.py",
-        "tests/test_cli.py"
+        "tests/test_variable_registry.py"
       ],
       "models": [],
       "status": "confirmed",
@@ -540,14 +456,18 @@
       "files": [
         "scripts/*.py"
       ],
-      "entrypoints": [],
+      "entrypoints": [
+        "scripts/extract_test_file_manifest.py:main",
+        "scripts/install_physicsguard_skills.py:main",
+        "scripts/portable_model_headers.py:main"
+      ],
       "state": [],
       "side_effects": [
         "Write staged consumer files and replace installed members transactionally",
         "Create the final version tag and stable GitHub Release via .github/workflows/publish-release.yml"
       ],
       "depends_on": [
-        "evidence",
+        "data_binding",
         "loaders",
         "schema"
       ],
@@ -559,12 +479,12 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:26290753268c8e7e64bfaf6622b10e0b9a9372d06c50385b07e8472f3163e240"
+      "fingerprint": "sha256:bcb57fe78dd8ba9e0b671513fbf27e99514eb90d60e315e3e16f287868c9ca4b"
     },
     {
       "id": "example_tools",
       "layer": "interface",
-      "summary": "Explicit external-tool and synthetic measured-example helpers",
+      "summary": "Synthetic heated-tank external simulator with an explicit import-safe entrypoint",
       "responsibilities": [
         "Keep optional example tooling outside the native simulation runtime",
         "Generate the finite heated-tank CSV and map only measured signals with explicit unit conversions"
@@ -572,14 +492,20 @@
       "files": [
         "examples/**/*.py"
       ],
-      "entrypoints": [],
+      "entrypoints": [
+        "examples/hierarchical/heated_tank/sim_tank.py:main"
+      ],
       "state": [],
-      "side_effects": [],
+      "side_effects": [
+        "Write the requested finite heated-tank CSV only when main is called"
+      ],
       "depends_on": [],
-      "tests": [],
+      "tests": [
+        "tests/test_heated_tank_example.py"
+      ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:641da1daaaa70b66f981a15185b5ef631cab113ae67cab3efda177521be9c36c"
+      "fingerprint": "sha256:dadbfb6206f043b9456351f1544b4f89c322399b75d1ba8fafd94d2476df8946"
     },
     {
       "id": "diagnosis",
@@ -603,33 +529,137 @@
       "tests": [
         "tests/test_cli.py",
         "tests/test_diagnosability.py",
+        "tests/test_fault_variants.py",
         "tests/test_physicsguard_skill_prompts.py",
-        "tests/test_signal_mapping_ledger.py",
-        "tests/test_fault_variants.py"
+        "tests/test_signal_mapping_ledger.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_fault_variants_model.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:cbf39834987fc6d9ed9966cb9a9855f593dc0f0b4b2e212d125807e0533e36a4"
+    },
+    {
+      "id": "preflight",
+      "layer": "workflows",
+      "summary": "Model-understanding preflight reviews",
+      "responsibilities": [
+        "Check model-understanding preflight records and, with an audit, validate declared block ids without evaluating observed signals"
+      ],
+      "files": [
+        "src/physicsguard/workflow.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "loaders",
+        "simulation"
+      ],
+      "tests": [
+        "tests/test_skill_templates.py",
+        "tests/test_workflow_governance.py"
+      ],
+      "models": [],
+      "status": "confirmed",
+      "fingerprint": "sha256:bdf8302b85f9a1e955d799b822e8278298825ea23f298840643a2dc579009693"
+    },
+    {
+      "id": "data_binding",
+      "layer": "workflows",
+      "summary": "Test-file contracts, manifests and contract differences",
+      "responsibilities": [
+        "Read one executable test-file contract, retain data/extractor content hashes, and generate SI snapshots and adjacent-row series with conversion and mapping evidence. Manifest timing metadata supplies factual span, gap and usable adjacent-row point defaults.",
+        "Keep required skips visible as blocked or explicitly allowed partial work, never as passed claim scope"
+      ],
+      "files": [
+        "src/physicsguard/core/contract_diff.py",
+        "src/physicsguard/core/data_file_manifest.py",
+        "src/physicsguard/core/test_file_contract.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "loaders",
+        "schema",
+        "simulation"
+      ],
+      "tests": [
+        "tests/test_cli.py",
+        "tests/test_hierarchy_block_index.py",
+        "tests/test_hierarchy_cli.py",
+        "tests/test_hierarchy_refinement.py",
+        "tests/test_hierarchy_runner.py",
+        "tests/test_hierarchy_scoring.py",
+        "tests/test_model_dataset_validation.py",
+        "tests/test_predictive_rollout_validation.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_test_file_contract_cli.py",
+        "tests/test_test_file_contract_core.py",
+        "tests/test_test_file_contract_schema.py",
+        "tests/test_validation_adequacy.py",
+        "tests/test_validation_depth.py"
+      ],
+      "models": [
+        ".flowguard/models/physicsguard_test_file_contract_model.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:27012885f9a0a90cfa5f413912a26ad6d9455aa49d29e4b072a27f4423b8b4a7"
     }
   ],
   "flows": [
     {
       "id": "observed_audit",
+      "summary": "Load an audit and evaluate immutable observed values without solving them.",
       "steps": [
-        "interface",
-        "loaders",
-        "simulation"
-      ]
+        "interface:main",
+        "loaders:load_hierarchical_audit_spec",
+        "simulation:HierarchicalAuditRunner.evaluate_observed"
+      ],
+      "model": ".flowguard/models/physicsguard_core_model.py"
     },
     {
       "id": "dataset_validation",
+      "summary": "Validate a contracted dataset with holdout, depth, adequacy and explicit non-run states.",
       "steps": [
-        "interface",
-        "validation",
-        "evidence"
-      ]
+        "interface:main",
+        "validation:validate_model_dataset",
+        "data_binding:resolve_test_file_contract"
+      ],
+      "model": ".flowguard/models/physicsguard_model_dataset_validation_model.py"
+    },
+    {
+      "id": "diagnosis",
+      "summary": "Audit counterfactual device variants and report physical masking, separation and model misses.",
+      "steps": [
+        "interface:main",
+        "diagnosis:evaluate_fault_variants",
+        "simulation:HierarchicalAuditRunner.evaluate_observed"
+      ],
+      "model": ".flowguard/models/physicsguard_fault_variants_model.py"
+    },
+    {
+      "id": "data_binding",
+      "summary": "Check one data contract, materialize SI snapshots or series and expose their mapping ledger.",
+      "steps": [
+        "interface:main",
+        "data_binding:check_test_file_contract",
+        "data_binding:testfile_snapshot",
+        "data_binding:testfile_series",
+        "simulation:build_signal_mapping_ledger"
+      ],
+      "model": ".flowguard/models/physicsguard_test_file_contract_model.py"
+    },
+    {
+      "id": "growth",
+      "summary": "Report coarse/detail consistency and planned refinements without executing templates.",
+      "steps": [
+        "interface:main",
+        "simulation:HierarchicalAuditRunner.evaluate_observed",
+        "simulation:_refinement_checks"
+      ],
+      "model": ".flowguard/models/physicsguard_core_model.py"
     }
   ],
   "accepted_debts": [

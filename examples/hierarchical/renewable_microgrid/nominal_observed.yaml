@@ -1,0 +1,109 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Original fine supplied nominal boundary values only; root aggregates and aliases remain derived.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: renewable_microgrid_nominal
+description: Original fine supplied nominal boundary values only; root aggregates
+  and aliases remain derived.
+variables:
+  pv_irradiance.value:
+    value: 800.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: W/m2
+    external_signal: mapped_plane_of_array_irradiance
+  pv_area.value:
+    value: 250.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: m2
+    external_signal: mapped_pv_array_area
+  pv_solar_input.value:
+    value: 200000.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: W
+    external_signal: mapped_pv_solar_input_power
+  pv_dc_power.value:
+    value: 40000.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: W
+    external_signal: mapped_pv_dc_power
+  pv_efficiency.value:
+    value: 0.2
+    source: "tree.yaml#system.boundaries[4]"
+    external_signal: mapped_pv_snapshot_efficiency
+    unit: "1"
+  pv_ac_power.value:
+    value: 38000.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: W
+    external_signal: mapped_pv_ac_power
+  pv_inverter_loss.value:
+    value: 2000.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: W
+    external_signal: mapped_pv_inverter_loss
+  wind_available_power.value:
+    value: 27000.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: W
+    external_signal: mapped_wind_available_power
+  wind_ac_power.value:
+    value: 25000.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: W
+    external_signal: mapped_wind_ac_power
+  wind_loss_or_curtailment.value:
+    value: 2000.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: W
+    external_signal: mapped_wind_loss_or_curtailment
+  battery_charge_power.value:
+    value: 3000.0
+    source: "tree.yaml#system.boundaries[10]"
+    unit: W
+    external_signal: mapped_battery_charge_power
+  battery_loss_power.value:
+    value: 300.0
+    source: "tree.yaml#system.boundaries[11]"
+    unit: W
+    external_signal: mapped_battery_charge_loss_power
+  battery_storage_power.value:
+    value: 2700.0
+    source: "tree.yaml#system.boundaries[12]"
+    unit: W
+    external_signal: mapped_battery_energy_storage_rate
+  battery_energy_current.value:
+    value: 180000000.0
+    source: "tree.yaml#system.boundaries[13]"
+    unit: J
+    external_signal: mapped_battery_energy_current
+  battery_capacity.value:
+    value: 360000000.0
+    source: "tree.yaml#system.boundaries[14]"
+    unit: J
+    external_signal: mapped_battery_energy_capacity
+  battery_soc.value:
+    value: 0.5
+    source: "tree.yaml#system.boundaries[15]"
+    external_signal: mapped_battery_soc
+    unit: "1"
+  grid_import_power.value:
+    value: 2000.0
+    source: "tree.yaml#system.boundaries[16]"
+    unit: W
+    external_signal: mapped_grid_import_power
+  grid_export_power.value:
+    value: 1000.0
+    source: "tree.yaml#system.boundaries[17]"
+    unit: W
+    external_signal: mapped_grid_export_power
+  site_load_power.value:
+    value: 60000.0
+    source: "tree.yaml#system.boundaries[18]"
+    unit: W
+    external_signal: mapped_site_load_power
+  renewable_curtailment_power.value:
+    value: 1000.0
+    source: "tree.yaml#system.boundaries[19]"
+    unit: W
+    external_signal: mapped_renewable_curtailment

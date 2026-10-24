@@ -2,7 +2,7 @@
 # Purpose: Measurable channel subset copied unchanged from the untouched result of the actual hierarchy run. Unmeasured reaction rates, repeated ports,...
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 observation_name: fuel_cell_synthetic_nominal
 description: Measurable channel subset copied unchanged from the untouched result
   of the actual hierarchy run. Unmeasured reaction rates, repeated ports, efficiency

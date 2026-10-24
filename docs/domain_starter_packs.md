@@ -6,13 +6,13 @@ Starter packs are not solver replacements. They should help an AI agent locate s
 
 ## Start With A Connected Tree
 
-For these three packs, read `tree.yaml` first and use its paired
-`nominal_observed.yaml`. Each tree keeps the coarse root balance and its finer
-subsystems in one file at one declared operating point. Connections bind shared
-physical quantities; `refines` links a child to coarse components owned directly
-by its parent. The older `level_*` and `conflict_*` files remain available as
-separate examples and regression inputs; do not combine their independently
-chosen operating points into a connected system.
+A starter pack uses one `tree.yaml` and one paired `nominal_observed.yaml`, plus
+only necessary data files. The root owns its coarse balances; finer blocks live
+in the same file and `refines` points only to coarse components owned by the
+immediate parent. Connections share the same physical quantities. Rules name
+real blocks in that tree, faults and benign perturbations are `fault_variants`,
+and every supplied snapshot signal keeps its SI unit, external name and source.
+Every starter pack below uses this form; no separate level or conflict copies remain.
 
 | Pack | Start here | Paired snapshot |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ with proposed mappings that still need review for any real plant.
 
 The fuel-cell tree connects root `fc_system` to the stack, cathode air path, anode
 hydrogen path, coolant loop, high-voltage bus and controls. The air and cooling
-branches each expose four Level 2 blocks. Explicit `refines` links target only
+branches each expose four Level 2 blocks. Explicit `refines` links name only
 coarse components owned by the immediate parent; auxiliary blocks are not
 artificially marked as refinements. Shared energy, electrical, molar-flow and
 coolant quantities are joined by identity connections.
@@ -77,7 +77,7 @@ The boundary declares dry-air cathode accounting, prescribed humidification,
 a simple exhaust-valve density and auxiliary dissipation outside the coolant
 thermal balance. It does not model membrane transport, detailed electrochemistry
 or gas pressure dynamics. The old self-canceling water-flow proxy is not copied
-into this connected tree; the old files remain unchanged.
+into this connected tree; the separate legacy files are removed.
 
 The paired snapshot selects 35 of 74 reference variables: reacted-energy and
 power meters, stack voltage/current, air and hydrogen feed rates, compressor
@@ -101,7 +101,7 @@ it is not a second cooling source. The paired snapshot retains heat-flow and
 electrical meters (15 of 32 reference variables), including an independent
 air-side fan-heat meter, while omitting duplicate coarse aliases, COP and district
 bookkeeping aliases.
-Direct child `refines` links target the root's zone, chiller and electrical
+Direct child `refines` links name the root's zone, chiller and electrical
 balances. Fan heat and the scope of steady positive-power accounting are explicit;
 no building dynamics or chiller-performance map is recovered. The
 `unmet_cooling_load` fault reduces measured coil cooling from 25 kW to 22 kW.
@@ -113,10 +113,10 @@ closed; it is not an isolated faulty meter reading.
 
 Each starter pack should include:
 
-- Level 0 system balance template: mass, species, power, heat, inventory, or cost-of-flow checks.
-- Level 1 subsystem templates: major blocks with local balances and clear refinement recommendations.
+- Coarse root balances in `tree.yaml`: mass, species, power, heat, inventory, or cost-of-flow checks.
+- Finer subsystem blocks in the same tree, with local balances, parent-owned `refines` links and real block recommendations.
 - Mapped signal declarations for external values using `MappedSignalModule`.
-- Clean and conflict examples when possible.
+- A measured-signal nominal subset and declared fault/benign variants rather than copied conflict files.
 - Required next signals and parameters for refinement.
 - Assumptions, limitations, SI units, and diagnostic keys in metadata or module docs.
 
@@ -156,11 +156,7 @@ The first starter pack is under:
 examples/hierarchical/wastewater_treatment/
 ```
 
-Included templates:
-
-- `level_0_plant_balance.yaml`: whole-plant water, COD, nitrogen, oxygen, and electrical power balances.
-- `conflict_level_0_cod_loss.yaml`: same Level 0 template with an intentionally missing COD sink.
-- `level_1_biological_clarifier.yaml`: activated-sludge oxygen/COD accounting, clarifier TSS balance, sludge recycle split, and aeration power balance.
+`tree.yaml` holds blocks `wastewater_plant`, `biological_reactor`, `secondary_clarifier`, `sludge_recycle`, `aeration_energy`. Fault variants: `global_cod_loss`, `reactor_cod_loss`; benign variants: `unit_flow_rounding`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement ASM1, ASM2d, or ASM3 kinetics. They expose an ASM-style audit boundary by asking for consistent COD, nitrogen, oxygen, sludge, and flow mappings. If the Level 0 or Level 1 balances fail, the recommended refinement is to request more mapped signals before adding any biochemical kinetics.
 
@@ -192,27 +188,21 @@ Do not add detailed models, hidden unit conversion tables, empirical correlation
 
 ## Expanded Coverage Packs
 
-The expanded packs are intentionally generated from a small maintainer script:
-
-```text
-scripts/generate_expanded_starter_packs.py
-```
-
-Each generated pack includes a clean Level 0 template, one conflict Level 0 template, and a Level 1 subsystem split. These are starter packs, not detailed component libraries. They should be used to test signal mapping, units, accounting boundaries, and first-pass physical plausibility before adding domain-specific modules.
+Starter trees are maintained directly; the one-time generator and copied level/conflict files are removed. Each pack has one connected tree, a nominal snapshot and declared fault/benign variants. These are starter packs, not detailed component libraries. They should be used to test signal mapping, units, accounting boundaries, and first-pass physical plausibility before adding domain-specific modules.
 
 | Pack | Path | Included templates | First useful checks |
 | --- | --- | --- | --- |
-| Cross-domain audit primitives | `examples/hierarchical/cross_domain_audit_primitives/` | `level_0_cross_domain_primitives.yaml`, `conflict_level_0_bad_temperature_offset.yaml`, `level_1_units_sensors_boundary_time.yaml` | unit conversion, sensor scale/offset, boundary loss, sample delay |
-| Oil/gas pipeline and storage | `examples/hierarchical/oil_gas_pipeline_storage/` | `level_0_oil_gas_balance.yaml`, `conflict_level_0_unmetered_pipeline_leak.yaml`, `level_1_pipeline_compression_storage.yaml` | pipeline mass closure, compression power, tank inventory |
-| Water supply network | `examples/hierarchical/water_supply_network/` | `level_0_water_supply_balance.yaml`, `conflict_level_0_unmetered_leakage.yaml`, `level_1_source_pump_distribution_storage.yaml` | source flow, pump power, leakage, reservoir storage |
-| Manufacturing thermal process | `examples/hierarchical/manufacturing_thermal_process/` | `level_0_manufacturing_thermal_balance.yaml`, `conflict_level_0_missing_exhaust_loss.yaml`, `level_1_furnace_line_material_balance.yaml` | furnace heat, line power, material flow, exhaust loss |
-| Mining and metallurgy | `examples/hierarchical/mining_metallurgy/` | `level_0_mining_metallurgy_balance.yaml`, `conflict_level_0_missing_tailings.yaml`, `level_1_ore_mill_slurry_balance.yaml` | ore split, milling power, slurry water, tailings accounting |
-| Combustion boiler and furnace | `examples/hierarchical/combustion_boiler_furnace/` | `level_0_combustion_boiler_balance.yaml`, `conflict_level_0_missing_stack_loss.yaml`, `level_1_fuel_air_heat_draft_balance.yaml` | fuel/air/flue mass, useful heat, stack loss, draft fan power |
-| Geothermal underground wells | `examples/hierarchical/geothermal_underground_wells/` | `level_0_geothermal_well_balance.yaml`, `conflict_level_0_missing_brine_loss.yaml`, `level_1_production_reinjection_heat_balance.yaml` | brine production/reinjection, heat extraction, pump power |
-| Cold-chain logistics | `examples/hierarchical/cold_chain_logistics/` | `level_0_cold_chain_logistics_balance.yaml`, `conflict_level_0_missing_door_gain.yaml`, `level_1_warehouse_truck_fleet_balance.yaml` | warehouse/truck heat loads, refrigeration power, fleet charging |
-| Robotics and mechatronics | `examples/hierarchical/robotics_mechatronics/` | `level_0_robotics_mechatronics_balance.yaml`, `conflict_level_0_missing_drive_loss.yaml`, `level_1_power_joint_thermal_actuator_balance.yaml` | DC bus accounting, joint losses, drive heat, actuator supply |
-| Aerospace and satellite thermal | `examples/hierarchical/aerospace_satellite_thermal/` | `level_0_satellite_power_thermal_balance.yaml`, `conflict_level_0_missing_radiator_heat.yaml`, `level_1_satellite_power_thermal_storage_balance.yaml` | spacecraft power, battery SOC, radiator heat, propellant mass |
-| Medical and bioprocess equipment | `examples/hierarchical/medical_bioprocess_equipment/` | `level_0_medical_bioprocess_equipment_balance.yaml`, `conflict_level_0_missing_ventilator_leak.yaml`, `level_1_ventilator_dialysis_sterilizer_incubator.yaml` | ventilator flow, dialysis mass, sterilizer heat, incubator thermal load |
+| Cross-domain audit primitives | `examples/hierarchical/cross_domain_audit_primitives/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | unit conversion, sensor scale/offset, boundary loss, sample delay |
+| Oil/gas pipeline and storage | `examples/hierarchical/oil_gas_pipeline_storage/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | pipeline mass closure, compression power, tank inventory |
+| Water supply network | `examples/hierarchical/water_supply_network/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | source flow, pump power, leakage, reservoir storage |
+| Manufacturing thermal process | `examples/hierarchical/manufacturing_thermal_process/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | furnace heat, line power, material flow, exhaust loss |
+| Mining and metallurgy | `examples/hierarchical/mining_metallurgy/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | ore split, milling power, slurry water, tailings accounting |
+| Combustion boiler and furnace | `examples/hierarchical/combustion_boiler_furnace/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | fuel/air/flue mass, useful heat, stack loss, draft fan power |
+| Geothermal underground wells | `examples/hierarchical/geothermal_underground_wells/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | brine production/reinjection, heat extraction, pump power |
+| Cold-chain logistics | `examples/hierarchical/cold_chain_logistics/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | warehouse/truck heat loads, refrigeration power, fleet charging |
+| Robotics and mechatronics | `examples/hierarchical/robotics_mechatronics/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | DC bus accounting, joint losses, drive heat, actuator supply |
+| Aerospace and satellite thermal | `examples/hierarchical/aerospace_satellite_thermal/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | spacecraft power, battery SOC, radiator heat, propellant mass |
+| Medical and bioprocess equipment | `examples/hierarchical/medical_bioprocess_equipment/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | ventilator flow, dialysis mass, sterilizer heat, incubator thermal load |
 
 ## Flagship Level 2 Entrypoints
 
@@ -233,11 +223,7 @@ The second starter pack is under:
 examples/hierarchical/renewable_microgrid/
 ```
 
-Included templates:
-
-- `level_0_microgrid_balance.yaml`: coarse PV, wind, grid import, load, battery charging, export, and curtailment accounting.
-- `conflict_level_0_unserved_load.yaml`: same Level 0 template with an intentionally unserved load term.
-- `level_1_renewable_storage_dispatch.yaml`: PV irradiance-area envelope, PV efficiency and inverter balance, wind available-power balance, battery charging/SOC relation, and microgrid dispatch balance.
+`tree.yaml` holds blocks `renewable_microgrid`, `pv_system`, `wind_system`, `battery_storage`, `grid_interconnect`, `load_dispatch`. Fault variants: `unserved_load`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement a full PV performance model, wind turbine aerodynamics, AC power-flow, or dispatch optimization. They check whether mapped signals close at a snapshot before asking for finer signals such as module temperature, inverter DC voltage/current, battery energy previous/current, or import/export metering conventions.
 
@@ -249,11 +235,7 @@ The third starter pack is under:
 examples/hierarchical/building_hvac/
 ```
 
-Included templates:
-
-- `level_0_building_plant_balance.yaml`: coarse cooling-load, chiller heat-rejection, COP, and HVAC electrical power accounting.
-- `conflict_level_0_unmet_cooling_load.yaml`: same Level 0 template with an intentionally unmet zone cooling load.
-- `level_1_hvac_plant_loop.yaml`: zone load, chilled-water loop, chiller/condenser, air-handler, plant electrical, and district chilled-water interface balances.
+`tree.yaml` holds blocks `building_hvac`, `zone_loads`, `chilled_water_loop`, `chiller_condenser`, `air_handler`, `plant_electrical`, `district_energy_interface`. Fault variants: `unmet_cooling_load`; benign variants: `fan_auxiliary_plus_50W`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement EnergyPlus-style building simulation, chiller or cooling-tower performance maps, detailed air-loop psychrometrics, hydronic network hydraulics, or district-energy network simulation. They check whether mapped snapshot signals close before asking for finer signals such as zone air states, chilled-water temperatures, condenser-water temperatures, COP basis, auxiliary power grouping, or district metering conventions.
 
@@ -265,11 +247,7 @@ The fourth starter pack is under:
 examples/hierarchical/distribution_power_der/
 ```
 
-Included templates:
-
-- `level_0_feeder_balance.yaml`: coarse feeder active-power, reactive-power, load power-factor, and voltage-range checks.
-- `conflict_level_0_missing_line_loss.yaml`: same Level 0 template with an intentionally under-reported active line-loss term.
-- `level_1_feeder_der_power_quality.yaml`: substation transformer, two feeder sections, DER interface, aggregate P/Q balance, power-factor, and voltage-range checks.
+`tree.yaml` holds blocks `distribution_power_der`, `substation_transformer`, `feeder_section_a`, `feeder_section_b`, `der_interface`, `power_quality_voltage`. Fault variants: `missing_line_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement AC load flow, phase-unbalanced distribution simulation, impedance-based voltage drop, protection coordination, or detailed inverter controls. They check whether mapped snapshot signals close before asking for finer signals such as per-section power flow, per-phase P/Q/S, voltage bases, section current, line impedance, inverter reactive-power convention, or DER import/export metering basis.
 
@@ -281,11 +259,7 @@ The fifth starter pack is under:
 examples/hierarchical/process_industry/
 ```
 
-Included templates:
-
-- `level_0_unit_operations_balance.yaml`: coarse plant mass, species conversion, heat-duty, and utility-power accounting.
-- `conflict_level_0_missing_cooling_duty.yaml`: same Level 0 template with an intentionally under-reported cooling duty.
-- `level_1_reactor_separator_utility.yaml`: reactor conversion, separator split, heat-exchange utility, and pump/compressor/valve sanity checks.
+`tree.yaml` holds blocks `process_industry`, `reactor_conversion`, `separator_split`, `heat_exchange_utility`, `rotating_equipment`. Fault variants: `missing_cooling_duty`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement reaction kinetics, detailed separator phase equilibrium, process property packages, heat-exchanger rating, pump/compressor maps, valve characteristics, or full process-flow simulation. They check whether mapped snapshot signals close before asking for finer signals such as stream compositions, conversion basis, split basis, heat-duty sign convention, temperature states, pressure states, and utility-meter grouping.
 
@@ -297,11 +271,7 @@ The sixth starter pack is under:
 examples/hierarchical/stormwater_sewer_drainage/
 ```
 
-Included templates:
-
-- `level_0_network_balance.yaml`: coarse rainfall-runoff, sanitary base flow, upstream inflow, treatment outflow, overflow, infiltration, storage accumulation, pollutant-load, and pump-power accounting.
-- `conflict_level_0_unreported_overflow.yaml`: same Level 0 template with an intentionally unreported controlled-overflow term.
-- `level_1_catchment_conveyance_storage_pump.yaml`: catchment runoff and inlet capture, sewer conveyance and overflow, detention storage, pump-station power/range checks, and pollutant-load accounting.
+`tree.yaml` holds blocks `stormwater_sewer_drainage`, `catchment_runoff`, `sewer_conveyance`, `detention_storage`, `pump_station`, `pollutant_load`. Fault variants: `unreported_overflow`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement a SWMM replacement, rainfall-runoff response model, Saint-Venant hydraulic routing, pump curves, detention routing, sediment transport, or water-quality kinetics. They check whether mapped snapshot signals close before asking for finer signals such as runoff partition, inlet capture, overflow boundary, storage sign convention, pump meter grouping, wet-well level basis, or pollutant load basis.
 
@@ -313,11 +283,7 @@ The seventh starter pack is under:
 examples/hierarchical/industrial_utilities/
 ```
 
-Included templates:
-
-- `level_0_utility_hub_balance.yaml`: coarse steam-header, condensate return, compressed-air, refrigeration/chilled-water, cooling-water, and utility-electrical accounting.
-- `conflict_level_0_missing_air_leak.yaml`: same Level 0 template with an intentionally missing compressed-air leak term.
-- `level_1_steam_air_refrigeration_cooling_water.yaml`: steam/condensate, compressed air, refrigeration/chilled-water, cooling-water, and utility-power blocks with local balances and range post-checks.
+`tree.yaml` holds blocks `industrial_utilities`, `steam_condensate`, `compressed_air`, `refrigeration_chilled_water`, `cooling_water`, `utility_power`. Fault variants: `missing_air_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement plant-wide utility optimization, boiler maps, compressor maps, chiller maps, cooling-tower performance, steam-network hydraulics, or compressed-air network hydraulics. They check whether mapped snapshot signals close before asking for finer signals such as steam metering boundary, condensate return basis, air leak boundary, chiller power grouping, cooling-water heat-rejection boundary, or makeup/blowdown basis.
 
@@ -329,11 +295,7 @@ The eighth implemented starter pack is under:
 examples/hierarchical/data_center_electronics_cooling/
 ```
 
-Included templates:
-
-- `level_0_data_center_cooling_balance.yaml`: coarse IT power-to-heat, facility power, PUE, room cooling heat balance, cooling COP, and supply-air temperature accounting.
-- `conflict_level_0_underreported_cooling_capacity.yaml`: same Level 0 template with intentionally underreported cooling capacity.
-- `level_1_it_room_cooling_power_chain.yaml`: IT/rack heat, facility power chain, room air cooling, coolant loop, and cooling-plant efficiency blocks with local balances and range post-checks.
+`tree.yaml` holds blocks `data_center_electronics_cooling`, `it_load_rack_heat`, `facility_power_chain`, `room_air_cooling`, `coolant_loop`, `cooling_plant_efficiency`. Fault variants: `underreported_cooling_capacity`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement CFD, airflow-network simulation, chip/package thermal models, UPS/PDU equipment models, chiller/CDU/economizer maps, or detailed cooling-control optimization. They check whether mapped snapshot signals close before asking for finer signals such as IT power meter boundary, PUE meter grouping, room heat-gain boundary, cooling power grouping, coolant heat boundary, or temperature basis.
 
@@ -345,11 +307,7 @@ The ninth implemented starter pack is under:
 examples/hierarchical/mobility_extensions/
 ```
 
-Included templates:
-
-- `level_0_mobility_energy_balance.yaml`: coarse charging infrastructure, rail traction, marine propulsion, aviation power, and off-road hydraulic power accounting.
-- `conflict_level_0_missing_charger_loss.yaml`: same Level 0 template with an intentionally omitted charger-loss term.
-- `level_1_charging_rail_marine_aviation_offroad.yaml`: charging, rail traction, marine propulsion, aviation power, and off-road hydraulics blocks with local balances, ratio checks, and range post-checks.
+`tree.yaml` holds blocks `mobility_extensions`, `charging_infrastructure`, `rail_traction`, `marine_propulsion`, `aviation_power`, `offroad_hydraulics`. Fault variants: `missing_charger_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement vehicle dynamics, route optimization, rail-network load flow, ship resistance, flight dynamics, propulsion maps, battery electrochemistry, charger curves, or hydraulic valve/pump maps. They check whether mapped snapshot signals close before asking for finer signals such as charger meter boundary, rail meter grouping, marine/aviation power basis, hydraulic power boundary, SOC basis, speed basis, or hydraulic pressure basis.
 
@@ -361,11 +319,7 @@ The tenth implemented starter pack is under:
 examples/hierarchical/agriculture_food_bioprocess/
 ```
 
-Included templates:
-
-- `level_0_agri_food_bioprocess_balance.yaml`: coarse greenhouse heat/CO2, irrigation water, fermentation mass, drying heat/water, and cold-chain accounting.
-- `conflict_level_0_missing_irrigation_drainage.yaml`: same Level 0 template with an intentionally omitted irrigation drainage return term.
-- `level_1_greenhouse_irrigation_fermentation_drying_cold_chain.yaml`: irrigation/crop-water, greenhouse heat, greenhouse CO2, fermentation, drying, and cold-chain blocks with local balances, ratio checks, and range post-checks.
+`tree.yaml` holds blocks `agriculture_food_bioprocess`, `irrigation_crop_water`, `greenhouse_climate`, `greenhouse_co2`, `fermentation_bioreactor`, `drying_process`, `cold_chain_storage`. Fault variants: `missing_irrigation_drainage`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement crop-growth models, photosynthesis kinetics, microbial kinetics, drying-rate models, refrigeration maps, detailed food-process simulation, or greenhouse climate-control optimization. They check whether mapped snapshot signals close before asking for finer signals such as greenhouse heat boundary, CO2 balance basis, irrigation drainage boundary, fermentation mass/yield basis, dryer water/exhaust basis, or cold-chain heat-gain boundary.
 
@@ -373,8 +327,8 @@ These templates intentionally do not implement crop-growth models, photosynthesi
 
 `examples/hierarchical/heated_tank/` contains a synthetic non-SI CSV, a coarse
 volume/energy audit and a six-block coupled hierarchy with an explicit heater
-nameplate-efficiency assumption. `sim_tank.py` regenerates the CSV;
-`python -m physicsguard.cli testfile snapshot tank_run_contract.yaml --row 70 --out measured_k70.yaml` writes the mapped SI snapshot; use `first_step_contract.yaml` for the coarse model.
+nameplate-efficiency assumption. `sim_tank.py` exposes `main(argv=None)` and regenerates the CSV only when called; importing it does not generate data;
+`python -m physicsguard.cli testfile snapshot tank_run_contract.yaml --row 70 --out measured_k70.yaml` writes the mapped SI snapshot. Evaluate the same `heated_tank.yaml` tree with either the full snapshot or the nine-channel `sparse_measured_k70.yaml`; sparse command power remains a low-confidence heat-input proxy. The tree owns coarse tank energy and volume relations and refines them inside the same file. Its explicit nameplate signal constraint repeats the declared efficiency assumption, adds no measurement or independent physical evidence, and lets downstream heat closure remain an independent check. Reference initial guesses describe a physically consistent nominal state; observed snapshots retain their measured values.
 The heater current halves at 600 s while its command stays unchanged; inflow changes
 at 900 s. This is a low-fidelity diagnostic reference. Measurements contain no
 hand-computed connected endpoints or intermediate heat flows.
@@ -383,3 +337,113 @@ For the full heated-tank time series, run `testfile series tank_run_contract.yam
 --out tank_series.yaml`, then `validation run validation_plan.yaml` from the
 example directory. The compact report identifies the heater failure interval
 starting at 600 seconds, without listing sixty repeated point failures.
+
+## Current Starter Tree Catalog
+
+### Aerospace Satellite Thermal
+
+`examples/hierarchical/aerospace_satellite_thermal/`: `tree.yaml` holds blocks `aerospace_satellite_thermal`, `satellite_power_accounting`, `satellite_thermal_accounting`. Fault variants: `missing_radiator_heat`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Agriculture Food Bioprocess
+
+`examples/hierarchical/agriculture_food_bioprocess/`: `tree.yaml` holds blocks `agriculture_food_bioprocess`, `irrigation_crop_water`, `greenhouse_climate`, `greenhouse_co2`, `fermentation_bioreactor`, `drying_process`, `cold_chain_storage`. Fault variants: `missing_irrigation_drainage`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Building Hvac
+
+`examples/hierarchical/building_hvac/`: `tree.yaml` holds blocks `building_hvac`, `zone_loads`, `chilled_water_loop`, `chiller_condenser`, `air_handler`, `plant_electrical`, `district_energy_interface`. Fault variants: `unmet_cooling_load`; benign variants: `fan_auxiliary_plus_50W`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Cold Chain Logistics
+
+`examples/hierarchical/cold_chain_logistics/`: `tree.yaml` holds blocks `cold_chain_logistics`, `warehouse_thermal_accounting`, `truck_cooling_accounting`, `fleet_power_accounting`. Fault variants: `missing_door_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Combustion Boiler Furnace
+
+`examples/hierarchical/combustion_boiler_furnace/`: `tree.yaml` holds blocks `combustion_boiler_furnace`, `boiler_heat_accounting`, `air_flue_mass_accounting`, `draft_fan_power`. Fault variants: `missing_stack_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Coolant Loop
+
+`examples/hierarchical/coolant_loop/`: `tree.yaml` holds blocks `coolant_loop`, `stack_heat_interface`, `pump`, `radiator`, `thermal_mass`, `bypass_or_valve`. Fault variants: `heat_rejection`, `radiator`; benign variants: `small_shaft_power_shift`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Cross Domain Audit Primitives
+
+`examples/hierarchical/cross_domain_audit_primitives/`: `tree.yaml` holds blocks `cross_domain_audit_primitives`, `explicit_unit_conversion`, `sensor_calibration`, `boundary_loss_accounting`, `time_alignment`. Fault variants: `bad_temperature_offset`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Data Center Electronics Cooling
+
+`examples/hierarchical/data_center_electronics_cooling/`: `tree.yaml` holds blocks `data_center_electronics_cooling`, `it_load_rack_heat`, `facility_power_chain`, `room_air_cooling`, `coolant_loop`, `cooling_plant_efficiency`. Fault variants: `underreported_cooling_capacity`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Distribution Power Der
+
+`examples/hierarchical/distribution_power_der/`: `tree.yaml` holds blocks `distribution_power_der`, `substation_transformer`, `feeder_section_a`, `feeder_section_b`, `der_interface`, `power_quality_voltage`. Fault variants: `missing_line_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Fuel Cell System
+
+`examples/hierarchical/fuel_cell_system/`: `tree.yaml` holds blocks `fc_system`, `stack`, `cathode_air_path`, `anode_hydrogen_path`, `coolant_loop`, `hv_system`, `controls`, `compressor`, `intercooler`, `humidifier`, `exhaust_valve`, `coolant_pump`, `radiator`, `thermal_mass`, `bypass_or_valve`. Fault variants: `hydrogen_power_underread`, `cathode_air_underfeed`; benign variants: `net_power_rounding`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Geothermal Underground Wells
+
+`examples/hierarchical/geothermal_underground_wells/`: `tree.yaml` holds blocks `geothermal_underground_wells`, `well_mass_accounting`, `geothermal_heat_accounting`, `reinjection_pump_power`. Fault variants: `missing_brine_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Industrial Utilities
+
+`examples/hierarchical/industrial_utilities/`: `tree.yaml` holds blocks `industrial_utilities`, `steam_condensate`, `compressed_air`, `refrigeration_chilled_water`, `cooling_water`, `utility_power`. Fault variants: `missing_air_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Manufacturing Thermal Process
+
+`examples/hierarchical/manufacturing_thermal_process/`: `tree.yaml` holds blocks `manufacturing_thermal_process`, `furnace_heat_accounting`, `production_line_power`, `material_yield_accounting`. Fault variants: `missing_exhaust_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Medical Bioprocess Equipment
+
+`examples/hierarchical/medical_bioprocess_equipment/`: `tree.yaml` holds blocks `medical_bioprocess_equipment`, `ventilator_flow_accounting`, `dialysis_fluid_accounting`, `sterilizer_incubator_thermal`. Fault variants: `missing_ventilator_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Mining Metallurgy
+
+`examples/hierarchical/mining_metallurgy/`: `tree.yaml` holds blocks `mining_metallurgy`, `ore_mass_accounting`, `mill_power_accounting`, `slurry_water_accounting`. Fault variants: `missing_tailings`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Mobility Extensions
+
+`examples/hierarchical/mobility_extensions/`: `tree.yaml` holds blocks `mobility_extensions`, `charging_infrastructure`, `rail_traction`, `marine_propulsion`, `aviation_power`, `offroad_hydraulics`. Fault variants: `missing_charger_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Oil Gas Pipeline Storage
+
+`examples/hierarchical/oil_gas_pipeline_storage/`: `tree.yaml` holds blocks `oil_gas_pipeline_storage`, `pipeline_compression`, `pipeline_mass_accounting`, `terminal_storage_transfer`. Fault variants: `unmetered_pipeline_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Pid Actuator Loop
+
+`examples/hierarchical/pid_actuator_loop/`: `tree.yaml` holds blocks `control_loop`, `controller`, `actuator`, `sensor`, `command_position`, `feedback_position`. Fault variants: `actuator_feedback_conflict`; benign variants: `feedback_rounding`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Process Industry
+
+`examples/hierarchical/process_industry/`: `tree.yaml` holds blocks `process_industry`, `reactor_conversion`, `separator_split`, `heat_exchange_utility`, `rotating_equipment`. Fault variants: `missing_cooling_duty`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Renewable Microgrid
+
+`examples/hierarchical/renewable_microgrid/`: `tree.yaml` holds blocks `renewable_microgrid`, `pv_system`, `wind_system`, `battery_storage`, `grid_interconnect`, `load_dispatch`. Fault variants: `unserved_load`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Robotics Mechatronics
+
+`examples/hierarchical/robotics_mechatronics/`: `tree.yaml` holds blocks `robotics_mechatronics`, `robot_power_chain`, `joint_thermal_accounting`, `pneumatic_actuator_accounting`. Fault variants: `missing_drive_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Stormwater Sewer Drainage
+
+`examples/hierarchical/stormwater_sewer_drainage/`: `tree.yaml` holds blocks `stormwater_sewer_drainage`, `catchment_runoff`, `sewer_conveyance`, `detention_storage`, `pump_station`, `pollutant_load`. Fault variants: `unreported_overflow`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Wastewater Treatment
+
+`examples/hierarchical/wastewater_treatment/`: `tree.yaml` holds blocks `wastewater_plant`, `biological_reactor`, `secondary_clarifier`, `sludge_recycle`, `aeration_energy`. Fault variants: `global_cod_loss`, `reactor_cod_loss`; benign variants: `unit_flow_rounding`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+### Water Supply Network
+
+`examples/hierarchical/water_supply_network/`: `tree.yaml` holds blocks `water_supply_network`, `distribution_water_accounting`, `pump_station_power`. Fault variants: `unmetered_leakage`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+
+The utilities tree uses its original fine operating point: supplied air is 5 kg/s,
+production plus instrument demand is 4.375 kg/s, and leakage is 0.625 kg/s.
+The separate older coarse point (4.5 demand / 0.5 leakage) is not mixed into it.
+Stormwater keeps gross catchment runoff at 280 and conveyance at 240; explicit
+storage accounting distinguishes them. Its detention boundary is independently
+60 = 50 + 5 + 5 and is refined only by its own matching quantities.
+The wastewater tree retains independent global budgets and separately scoped
+reactor/clarifier/recycle/blower records. Child links check same-unit parent
+books; passing unit checks do not validate a reconciled whole-plant point.
+PID signals distinguish pre-step command/measurement from post-step actuator
+and feedback positions; no instantaneous plant dynamics are invented.

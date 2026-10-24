@@ -2,7 +2,7 @@
 # Purpose: future holdout series.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: reference from a PhysicsGuard model validation plan (depth)
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 # PhysicsGuard disjoint future-holdout artifact
 # Boundary: Fixture evidence only; exact future horizon for rollout comparison.
 series_id: pump_loop_future_holdout

@@ -3,11 +3,29 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Literal, Optional
+from typing import Annotated, Any, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.variable import ensure_non_empty
+
+
+MAPPING_CONFIDENCE_ERROR = (
+    "mapping confidence uses high|medium|low|proposed "
+    "(0.9 -> high, 0.6 -> medium, 0.3 -> low)"
+)
+
+
+def mapping_confidence_word(value: Any) -> str:
+    if not isinstance(value, str) or value not in {"high", "medium", "low", "proposed"}:
+        raise ValueError(MAPPING_CONFIDENCE_ERROR)
+    return value
+
+
+MappingConfidence = Annotated[
+    Literal["high", "medium", "low", "proposed"],
+    BeforeValidator(mapping_confidence_word),
+]
 
 
 CoverageStatus = Literal[
@@ -214,15 +232,8 @@ class CoveragePolicySpec(BaseModel):
     fail_on_duplicate_active_mappings: bool = True
     require_mapping_for_covered_roles: bool = True
     require_mapping_evidence: bool = True
-    minimum_mapping_confidence: Optional[float] = None
+    minimum_mapping_confidence: Optional[MappingConfidence] = None
     metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @field_validator("minimum_mapping_confidence")
-    @classmethod
-    def _minimum_mapping_confidence_valid(cls, value: Optional[float]) -> Optional[float]:
-        if value is not None and not 0 <= value <= 1:
-            raise ValueError("minimum_mapping_confidence must be between 0 and 1")
-        return value
 
     @model_validator(mode="after")
     def _metadata_json_serializable(self) -> "CoveragePolicySpec":

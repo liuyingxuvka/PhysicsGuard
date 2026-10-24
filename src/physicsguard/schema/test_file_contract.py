@@ -8,8 +8,9 @@ from typing import Any, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
+from physicsguard.schema.observation_spec import SourceModelSpec
 from physicsguard.schema.parameter_coverage import (
-    CoveragePolicySpec,
+    CoveragePolicySpec, MappingConfidence,
 )
 from physicsguard.schema.variable import ensure_non_empty
 
@@ -160,7 +161,7 @@ class ConversionSpec(BaseModel):
 
 class ContractCoverageSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    min_confidence: float = Field(default=0.6, ge=0, le=1)
+    min_confidence: MappingConfidence = "medium"
 
 
 class FieldSpec(BaseModel):
@@ -169,7 +170,7 @@ class FieldSpec(BaseModel):
     unit: str | None = None
     target: str | None = None
     targets: dict[str, str] = Field(default_factory=dict)
-    confidence: float | str | None = None
+    confidence: Optional[MappingConfidence] = None
     evidence: str | None = None
     reason: str | None = None
     conversion: ConversionSpec | None = None
@@ -189,6 +190,7 @@ class TestFileContractSpec(BaseModel):
     """One executable file: identity, field roles, mapping evidence and units."""
     model_config = ConfigDict(extra="forbid")
     contract_id: str
+    source_model: Optional[SourceModelSpec] = None
     data_file: str
     manifest: str
     model: str

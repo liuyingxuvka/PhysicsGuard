@@ -42,6 +42,9 @@ class ValidationInput:
     prediction_requested: bool = False
     stateful_dynamic: bool = False
     predictive_rollout_passed: bool = False
+    missing_input_count: int = 0
+    missing_input_finding_count: int = 0
+    dependent_checks_not_run: bool = True
 
 
 @dataclass(frozen=True)
@@ -128,6 +131,7 @@ class ValidationBlocked:
 
 @dataclass(frozen=True)
 class State:
+    input_failure_reports: tuple[tuple[str, int, int, bool], ...] = ()
     contracts_ready: tuple[str, ...] = ()
     depth_inputs_ready: tuple[str, ...] = ()
     direct_validation_ran: tuple[str, ...] = ()
@@ -142,13 +146,21 @@ class State:
 class CheckContracts:
     name = "CheckContracts"
     reads = ()
-    writes = ("contracts_ready", "blocked")
+    writes = ("contracts_ready", "blocked", "input_failure_reports")
     accepted_input_type = ValidationInput
     input_description = "model-dataset validation request"
     output_description = "ContractsReady or ValidationBlocked"
     idempotency = "Contract checks are deterministic for current files."
 
     def apply(self, input_obj: ValidationInput, state: State) -> Iterable[FunctionResult]:
+        if input_obj.missing_input_count:
+            report = (input_obj.case_id, input_obj.missing_input_count,
+                      input_obj.missing_input_finding_count, input_obj.dependent_checks_not_run)
+            yield FunctionResult(output=ValidationBlocked(input_obj.case_id, "input_unavailable"),
+                new_state=replace(state, blocked=state.blocked + (input_obj.case_id,),
+                                  input_failure_reports=state.input_failure_reports + (report,)),
+                label="unavailable_input_reported_once")
+            return
         if not input_obj.contracts_passed:
             yield FunctionResult(
                 output=ValidationBlocked(input_obj.case_id, "contracts_not_passed"),
@@ -436,7 +448,16 @@ def no_pass_without_holdout_and_feedback(state: State, trace) -> InvariantResult
     return InvariantResult.pass_()
 
 
+def one_finding_per_missing_input(state: State, trace) -> InvariantResult:
+    del trace
+    for case, unavailable, reported, not_run in state.input_failure_reports:
+        if reported != unavailable or not not_run:
+            return InvariantResult.fail(f"{case}: unavailable inputs must be reported once, with dependent checks not_run")
+    return InvariantResult.pass_()
+
+
 INVARIANTS = (
+    Invariant("one_finding_per_missing_input", "An unavailable input is reported once; dependent checks do not run.", one_finding_per_missing_input),
     Invariant("no_pass_without_contracts", "Validation pass requires passing contracts.", no_pass_without_contracts),
     Invariant("no_pass_without_direct_validation", "Validation pass requires direct validation.", no_pass_without_direct_validation),
     Invariant("no_pass_without_depth_inputs", "Validation pass requires checked depth inputs.", no_pass_without_depth_inputs),
@@ -444,6 +465,7 @@ INVARIANTS = (
 )
 
 EXTERNAL_INPUTS = (
+    ValidationInput("missing_declared_series", True, True, False, True, False, False, True, True, missing_input_count=1, missing_input_finding_count=1),
     ValidationInput("clean_no_calibration", True, True, False, True, False, False, True, True),
     ValidationInput("calibrated_pass", True, True, True, True, False, True, True, True),
     ValidationInput("optimizer_only", True, True, True, True, False, True, False, True),
@@ -527,6 +549,7 @@ IMPLEMENTED_BY = {
     "GateValidationClaim": "src/physicsguard/core/model_dataset_validation.py:_status",
 }
 TESTED_BY = {
+    "one_finding_per_missing_input": ["tests/test_validation_depth.py:test_missing_declared_series_is_one_finding"],
     "no_pass_without_direct_validation": [
         "tests/test_model_dataset_validation.py:test_clean_model_dataset_validation_passes",
         "tests/test_model_dataset_validation.py:test_conservative_calibration_does_not_turn_direct_failure_into_pass",
@@ -544,6 +567,7 @@ TESTED_BY = {
 }
 EXPECTED_STATUS = {"ValidationPassed": "pass", "ValidationPartial": "partial", "ValidationBlocked": "fail"}
 REQUIRED_LABELS = (
+    "unavailable_input_reported_once",
     "contracts_passed",
     "direct_validation_ran",
     "calibration_not_enabled",
@@ -563,7 +587,7 @@ REQUIRED_LABELS = (
 
 
 def _explorer(workflow: Workflow) -> Explorer:
-    """Every ordered pair of the plain and the depth inputs (1,056 sequences, well under a second)."""
+    """Explore ordered pairs of the plain and depth inputs."""
     return Explorer(
         workflow=workflow,
         initial_states=(initial_state(),),
@@ -635,10 +659,23 @@ class _DirectValidationSkipped(RunDirectValidation):
             yield result
 
 
+class _DuplicateMissingInputFinding(CheckContracts):
+    """Known bad: an unavailable input produces an extra downstream finding."""
+    def apply(self, input_obj, state):
+        for result in super().apply(input_obj, state):
+            if input_obj.missing_input_count:
+                reports = result.new_state.input_failure_reports
+                case, unavailable, reported, not_run = reports[-1]
+                result = replace(result, new_state=replace(result.new_state,
+                    input_failure_reports=reports[:-1] + ((case, unavailable, reported + 1, not_run),)))
+            yield result
+
+
 def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
     variants = {
+        "duplicate_missing_input_finding": _DuplicateMissingInputFinding(),
         "hard_depth_gate_ignored": _HardDepthGateIgnored(),
         "failed_holdout_passes": _FailedHoldoutPasses(),
         "failed_contracts_continue": _FailedContractsContinue(),
@@ -707,7 +744,7 @@ def _uncertain_mapping(pump: Path, plan: dict) -> None:
     edges_path = pump / "contracts" / "clean_contract.yaml"
     edges = _load(edges_path)
     edge = edges["fields"]["flow_readback_kg_s"]
-    edge["confidence"] = 0.4
+    edge["confidence"] = "low"
     _write(edges_path, edges)
 
 
@@ -748,6 +785,7 @@ def _failing_holdout(pump: Path, plan: dict) -> None:
 
 
 REAL_CASES = {
+    "missing_declared_series": ("clean_validation_plan.yaml", lambda pump, plan: plan["depth"]["observed_series"].update(path="../observed/absent_series.yaml")),
     "clean_no_calibration": ("clean_validation_plan.yaml", lambda pump, plan: None),
     "missing_contract": ("clean_validation_plan.yaml", lambda pump, plan: plan["contracts"][0].update(contract="../contracts/unclassified_contract.yaml")),
     "calibrated_pass": ("calibration_validation_plan.yaml", lambda pump, plan: plan.update(observed_file="../observed/clean_observed.yaml")),
@@ -793,7 +831,15 @@ def conformance() -> ReplayReport:
             shutil.copytree(PUMP, pump)
             plan = _edit_plan(pump, plan_name, change)
             try:
-                real_status = validate_model_dataset(plan).status
+                report = validate_model_dataset(plan)
+                real_status = report.status
+                if case_id == "missing_declared_series":
+                    expected_input = inputs[case_id]
+                    actual_count = len(report.findings)
+                    not_run = all(report.depth[key]["status"] == "not_run"
+                                  for key in ("time", "scenarios", "residual_series", "envelopes", "adequacy"))
+                    if actual_count != expected_input.missing_input_finding_count or not_run != expected_input.dependent_checks_not_run:
+                        mismatches.append(f"{case_id}: real findings/not_run differ from the model input")
             except ValueError:
                 real_status = "fail"
             run = workflow.execute(initial_state(), inputs[case_id], terminal_predicate=terminal_predicate)

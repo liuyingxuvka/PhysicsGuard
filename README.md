@@ -12,7 +12,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.15.21` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.22` | Python 3.11+ | `physicsguard` | MIT |
 
 English comes first. A Chinese mirror follows below.
 
@@ -22,7 +22,7 @@ PhysicsGuard is a Python toolkit and agent skill set (Codex, Claude Code) for AI
 
 It helps an agent build a low-fidelity physical understanding map before it tries to fix, explain, or generate anything. That map names the visible symptom, subsystem boundary, interfaces, SI units, conservation relations, mapped signals, assumptions, residual checks, and stop condition.
 
-From that map, PhysicsGuard can evaluate observed or user-mapped values, rank suspicious blocks, expose assumptions, recommend the next signals or parameters to inspect, and produce a candidate-model blueprint for a separate user-owned model.
+From that map, PhysicsGuard can evaluate observed or user-mapped values, rank suspicious blocks, expose assumptions, recommend the next signals or parameters to inspect, and produce a candidate-model audit for a separate user-owned model.
 
 The task-local diagnostic route also preserves bounded measurement, mapping,
 and model uncertainty as intervals. It reports robust pass/fail,
@@ -58,7 +58,7 @@ visible symptom
 -> low-fidelity residual hierarchy
 -> suspicious blocks and assumptions
 -> next-signal recommendations
--> optional candidate-model blueprint
+-> optional candidate-model audit
 ```
 
 The important design choice is modesty. PhysicsGuard does not try to recreate a full solver. It checks explicit, reviewable relations such as balances, gains, signs, map bounds, controller steps, flow splits, and sanity envelopes.
@@ -69,7 +69,7 @@ The important design choice is modesty. PhysicsGuard does not try to recreate a 
 | --- | --- | --- |
 | Understand a simulation failure | Level 0 physical map with symptom, subsystem, expected relation, key signals, SI units, assumptions, and first residuals | Low-fidelity understanding, not solver reconstruction |
 | Localize a likely bug | Hierarchy report with suspicious blocks, top residuals, assumption cards, and recommended refinements | Ranking is diagnostic evidence, not proof of the only fault |
-| Decide what to export next | Targeted signal, parameter, unit, bound, map, or topology request | Missing data stays explicit |
+| Decide what to export next | Specific signal, parameter, unit, bound, map, or topology request | Missing data stays explicit |
 | Validate mapped data files | One test-file contract, generated manifest, unit-aware snapshots and series | File coverage is not physical correctness |
 | Compare model and dataset | Logical checks, relation checks, validation reports, and optional bounded calibration | Calibration is conservative and bounded |
 | Build a candidate model | Interfaces, units, assumptions, block relations, examples, and validation order | Candidate models are new artifacts, not recovered commercial models |
@@ -107,11 +107,13 @@ Discover relations and inspect a model before evaluating it:
 ```powershell
 python -m physicsguard.cli modules list
 python -m physicsguard.cli modules describe TankVolumeRateModule --pretty
-python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --observed examples/hierarchical/heated_tank/measured_k70.yaml
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --json
 python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
 ```
 
-Module descriptions expose units, finite variable bounds/scales, parameter names, residuals and validity metadata. Marked synthetic examples are not physical defaults or audit evidence. Hierarchy descriptions show declared blocks, connections, refinements and fault variants without solving; Mermaid renders that structure. See the installed skill's [model format and templates](skill/physicsguard/references/model-format.md). Compact hierarchy summaries also show assumption-card ids, statuses and whether they were applied.
+Module descriptions expose units, finite variable bounds/scales, parameter names, residuals and validity metadata. Marked synthetic examples are not physical defaults or audit evidence. Hierarchy descriptions print one readable tree with components, connections, refinements, declared fault variants and rules. `--observed` counts mapped signals per block, `--json` retains the full structure, and `--mermaid` draws it; none solves or evaluates. See the installed skill's [model format and templates](skill/physicsguard/references/model-format.md). Compact hierarchy summaries also show assumption-card ids, statuses and whether they were applied.
 
 ## Main CLI Paths
 
@@ -121,7 +123,6 @@ Project and model-understanding checks:
 
 ```powershell
 python -m physicsguard.cli preflight review skill/physicsguard/references/templates/model_understanding_preflight.yaml --pretty
-python -m physicsguard.cli intake review skill/physicsguard/references/templates/external_model_intake.yaml --pretty
 ```
 
 Model-derived fault signatures and next measurements:
@@ -150,7 +151,7 @@ Connections mean the two endpoints are the same physical quantity. A known value
 
 Intermediate derivation uses each residual's supported structural value/control dependencies. An unrelated missing channel does not suppress a fully measured aggregate balance or fixed-parameter map check. Only `equation`, `connection`, `boundary` and `assumption` relations with one unknown can supply a finite, bounded scalar root. Ambiguous, flat, undefined or unsupported cases remain unknown; this is not a global nonlinear uniqueness proof. Relations used to derive values never count as checks, scores or top residuals, and an evaluation with no remaining check is refused. Component order determines which eligible relation supplies a value: put measurement-to-internal relations first. Strict library evaluation checks for remaining missing values after derivation; the CLI skips and lists them. Observed values and conversion evidence are unchanged; `hierarchy run` and `hierarchy compare` retain their existing reference-solve boundaries. See the [hierarchy workflow](skill/physicsguard/references/model-format.md) for supported-source and ordering limits.
 
-Parent blocks include failing descendants in `audit_pass`, while `own_audit_pass` and `score` retain their local meaning and `subtree_score` reports the subtree maximum. `refines` links a detail block to its parent's coarse components; refinement reports compare their checked relations and resolve each template id as `block`, `file` or `missing` without executing it.
+Parent blocks include failing descendants in `audit_pass`, while `own_audit_pass` and `score` retain their local meaning and `subtree_score` reports the subtree maximum. `refines` links a detail block to its parent's coarse components; refinement reports compare their checked relations and resolve each template id as `block`, `file` or `planned` without executing it.
 
 ## Assumption Cards
 
@@ -169,7 +170,7 @@ PhysicsGuard can use compact diagrams and tables to explain:
 - observed signal mappings;
 - active, proposed, and rejected assumptions;
 - coarse-to-fine refinement paths;
-- candidate-model blueprints.
+- candidate-model audits.
 
 Those visuals are explanation aids. Validation still comes from residual reports, explicit mappings, tests, and examples.
 
@@ -201,7 +202,7 @@ PhysicsGuard includes low-fidelity audit relations for:
 - engine, turbo, aftertreatment, thermal, humidifier, heat exchanger, radiator, and compressor sanity checks;
 - fluid networks, pumps, valves, pressure drops, split/merge relations, and lumped volumes.
 
-Each relation is low fidelity by design. The value is not that it replaces the target model; the value is that it gives the AI a checkable physics boundary before it changes the target workflow.
+Each relation is low fidelity by design. The value is not that it replaces the simulation model; the value is that it gives the AI a checkable physics boundary before it changes the simulation workflow.
 
 ## Documentation Map
 
@@ -246,7 +247,7 @@ MIT. See [`LICENSE`](./LICENSE).
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.15.21` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.15.22` | Python 3.11+ | `physicsguard` | MIT |
 
 ## 它是什么
 
@@ -254,7 +255,7 @@ PhysicsGuard 是一个用于 AI 辅助物理仿真调试的 Python 工具包和 
 
 它让 agent 在修模型、解释问题或生成候选模型之前，先建立一个低保真的物理理解图：可见症状、子系统边界、接口、SI 单位、守恒关系、映射信号、假设、residual 检查和停止条件。
 
-基于这个图，PhysicsGuard 可以代入 observed / user-mapped values，排序可疑 block，暴露假设，推荐下一步该检查的信号或参数，并产出一个独立候选模型的 blueprint。
+基于这个图，PhysicsGuard 可以代入 observed / user-mapped values，排序可疑 block，暴露假设，推荐下一步该检查的信号或参数，并产出一个独立候选模型的 audit。
 
 它不解析商业 solver 格式，不逆向专有模型，不替代原始 solver，也不声称高保真等价。原始工程模型仍然是事实来源。
 
@@ -284,7 +285,7 @@ visible symptom
 -> low-fidelity residual hierarchy
 -> suspicious blocks and assumptions
 -> next-signal recommendations
--> optional candidate-model blueprint
+-> optional candidate-model audit
 ```
 
 关键是克制。PhysicsGuard 不试图重建完整 solver，只检查明确、可审阅的关系，比如 balance、gain、sign、map bounds、controller step、flow split 和 sanity envelope。
@@ -333,11 +334,13 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 ```powershell
 python -m physicsguard.cli modules list
 python -m physicsguard.cli modules describe TankVolumeRateModule --pretty
-python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --observed examples/hierarchical/heated_tank/measured_k70.yaml
+python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --json
 python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
 ```
 
-模块说明列出单位、变量的有限边界与尺度、参数名、残差及适用范围。标记为 synthetic 的示例不是物理默认值或审计证据。分层说明不求解，只展示声明的块、连接、细化和故障变体；Mermaid 图表达同一结构。格式及可配套使用的模板见技能中的[模型格式页](skill/physicsguard/references/model-format.md)。紧凑分层摘要还显示假设卡的 id、状态及是否应用。
+模块说明列出单位、变量的有限边界与尺度、参数名、残差及适用范围。标记为 synthetic 的示例不是物理默认值或审计证据。分层说明默认输出一页文字树，列出组件、连接、细化、针对各块的故障变体和规则；`--observed` 统计每块信号，`--json` 保留完整结构，`--mermaid` 画图，均不求解或评估。格式及可配套使用的模板见技能中的[模型格式页](skill/physicsguard/references/model-format.md)。紧凑分层摘要还显示假设卡的 id、状态及是否应用。
 
 ## 主要 CLI 路线
 
@@ -347,7 +350,6 @@ python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/
 
 ```powershell
 python -m physicsguard.cli preflight review skill/physicsguard/references/templates/model_understanding_preflight.yaml --pretty
-python -m physicsguard.cli intake review skill/physicsguard/references/templates/external_model_intake.yaml --pretty
 ```
 
 由模型生成故障特征和下一步测量：
@@ -376,7 +378,7 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 
 中间量推导使用每条残差受支持的结构值依赖和控制依赖。无关通道缺测不会跳过自身测量齐备的总量平衡或固定参数表检查。只有 `equation`、`connection`、`boundary`、`assumption` 关系在恰有一个未知量时才能提供有限边界内的标量根；歧义、平坦、无定义或不支持的情形仍保持未知，不构成一般非线性唯一根证明。用于推出的关系永不计入检查、分数或最大残差，没有剩余检查时拒绝评估。组件顺序决定先使用哪条合格关系，应把测量值到内部量的关系放在前面。严格库入口在推导后判断剩余缺值，CLI 则跳过并列出；观测值和转换证据不变，`hierarchy run`、`hierarchy compare` 保留原有参考求解边界。支持范围和排序限制见[分层审计工作流](skill/physicsguard/references/model-format.md)。
 
-父块的 `audit_pass` 包含后代失败；`own_audit_pass` 和 `score` 保留本块含义，`subtree_score` 给出子树最大分数。`refines` 将细块关联到父块自己的粗组件，报告用已检查关系比较粗细一致性，并逐个将模板引用解析为 `block`、`file` 或 `missing`，不会执行模板。
+父块的 `audit_pass` 包含后代失败；`own_audit_pass` 和 `score` 保留本块含义，`subtree_score` 给出子树最大分数。`refines` 将细块关联到父块自己的粗组件，报告用已检查关系比较粗细一致性，并逐个将模板引用解析为 `block`、`file` 或 `planned`，不会执行模板。
 
 ## 假设卡片
 
@@ -395,7 +397,7 @@ PhysicsGuard 可以用紧凑图表解释：
 - observed signal mapping；
 - active / proposed / rejected assumptions；
 - coarse-to-fine refinement path；
-- candidate-model blueprint。
+- candidate-model audit。
 
 这些图是解释辅助。真正验证仍然来自 residual report、显式 mapping、tests 和 examples。
 

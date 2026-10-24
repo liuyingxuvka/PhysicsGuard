@@ -25,20 +25,16 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_subparsers = hierarchy_parser.add_subparsers(dest="hierarchy_command", required=True)
     hierarchy_description = hierarchy_subparsers.add_parser("describe", help="print a readable declared tree without solving")
     hierarchy_description.add_argument("audit", type=Path)
-    hierarchy_description.add_argument("--mermaid", action="store_true")
+    description_format = hierarchy_description.add_mutually_exclusive_group()
+    description_format.add_argument("--mermaid", action="store_true")
+    description_format.add_argument("--json", action="store_true", help="print the full declared structure")
+    hierarchy_description.add_argument("--observed", type=Path, help="count mapped snapshot signals without evaluation")
     hierarchy_description.add_argument("--pretty", action="store_true")
 
     hierarchy_run = hierarchy_subparsers.add_parser("run", help="run a hierarchical audit")
     hierarchy_run.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
     hierarchy_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     hierarchy_run.add_argument("--json", action="store_true", help="print the full report instead of the summary")
-
-    hierarchy_inspect = hierarchy_subparsers.add_parser(
-        "inspect",
-        help="inspect a hierarchical audit without solving",
-    )
-    hierarchy_inspect.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
-    hierarchy_inspect.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     hierarchy_evaluate = hierarchy_subparsers.add_parser(
         "evaluate",
@@ -98,19 +94,6 @@ def build_parser() -> argparse.ArgumentParser:
     preflight_review.add_argument("preflight", type=Path, help="path to preflight YAML")
     preflight_review.add_argument("--audit", type=Path, help="check declared blocks against this audit model")
     preflight_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
-    intake_parser = subparsers.add_parser(
-        "intake",
-        help="external model intake commands",
-    )
-    intake_subparsers = intake_parser.add_subparsers(dest="intake_command", required=True)
-    intake_review = intake_subparsers.add_parser(
-        "review",
-        help="review a PhysicsGuard external-model intake YAML",
-    )
-    intake_review.add_argument("intake", type=Path, help="path to intake YAML")
-    intake_review.add_argument("--audit", type=Path, help="check variable names and units against this audit model")
-    intake_review.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
 
     testfile_parser = subparsers.add_parser(
         "testfile",
@@ -212,6 +195,14 @@ def _hierarchy_summary(report: dict) -> dict:
             _pick(item, ("block_id", "rule_id", "next_template_ids", "template_status", "next_required_variables", "next_required_parameters"))
             for item in report.get("recommended_refinements", [])[:5]
         ],
+        "mapping_summary": {
+            "rows": len(report.get("signal_mapping_ledger", [])),
+            "with_issues": sum(bool(row.get("issue_codes")) for row in report.get("signal_mapping_ledger", [])),
+            "review_required": sum(row.get("review_required") is True for row in report.get("signal_mapping_ledger", [])),
+            "stale": sum("stale_mapping" in row.get("issue_codes", []) for row in report.get("signal_mapping_ledger", [])),
+            "low_confidence": sum("low_confidence" in row.get("issue_codes", []) for row in report.get("signal_mapping_ledger", [])),
+            "missing_unit": sum("missing_unit" in row.get("issue_codes", []) for row in report.get("signal_mapping_ledger", [])),
+        },
         "signal_mapping_ledger": [
             _pick(row, ("physics_variable", "external_signal", "expected_unit", "observed_unit", "issue_codes", "recommended_action"))
             for row in report.get("signal_mapping_ledger", [])
@@ -287,15 +278,6 @@ def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
     return 0 if report["audit_pass"] else 1
 
 
-def hierarchy_inspect(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.hierarchy import inspect_hierarchy
-    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
-
-    spec = load_hierarchical_audit_spec(path)
-    _print_json(inspect_hierarchy(spec), pretty)
-    return 0
-
-
 def modules_command(module_type: str | None = None, pretty: bool = False) -> int:
     from physicsguard.modules.registry import default_module_registry, describe_module_type
 
@@ -308,15 +290,21 @@ def modules_command(module_type: str | None = None, pretty: bool = False) -> int
     return 0
 
 
-def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False) -> int:
-    from physicsguard.core.hierarchy import describe_hierarchy
+def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False,
+                       full: bool = False, observed_path: Path | None = None) -> int:
+    from physicsguard.core.hierarchy import describe_hierarchy, render_hierarchy_text
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
 
-    description = describe_hierarchy(load_hierarchical_audit_spec(path), mermaid=mermaid)
+    observed = load_observed_values(observed_path) if observed_path is not None else None
+    description = describe_hierarchy(load_hierarchical_audit_spec(path), mermaid=mermaid,
+                                     observed=observed, base_dir=path.parent)
     if mermaid:
         print(description)
-    else:
+    elif full:
         _print_json(description, pretty)
+    else:
+        print(render_hierarchy_text(description))
     return 0
 
 
@@ -390,14 +378,6 @@ def preflight_review(path: Path, pretty: bool = False, audit: Path | None = None
     from physicsguard.workflow import review_model_understanding_preflight
 
     report = review_model_understanding_preflight(path, audit=audit)
-    _print_json(report.to_dict(), pretty)
-    return 0 if report.ok else 1
-
-
-def intake_review(path: Path, pretty: bool = False, audit: Path | None = None) -> int:
-    from physicsguard.workflow import review_external_model_intake
-
-    report = review_external_model_intake(path, audit=audit)
     _print_json(report.to_dict(), pretty)
     return 0 if report.ok else 1
 
@@ -506,11 +486,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                                    getattr(args, "pretty", False))
         if args.command == "hierarchy":
             if args.hierarchy_command == "describe":
-                return hierarchy_describe(args.audit, args.mermaid, args.pretty)
+                return hierarchy_describe(args.audit, args.mermaid, args.pretty, args.json, args.observed)
             if args.hierarchy_command == "run":
                 return hierarchy_run(args.audit, args.pretty, args.json)
-            if args.hierarchy_command == "inspect":
-                return hierarchy_inspect(args.audit, args.pretty)
             if args.hierarchy_command == "evaluate":
                 return hierarchy_evaluate(args.audit, args.observed, args.pretty, args.json)
             if args.hierarchy_command == "compare":
@@ -523,9 +501,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "preflight":
             if args.preflight_command == "review":
                 return preflight_review(args.preflight, args.pretty, args.audit)
-        if args.command == "intake":
-            if args.intake_command == "review":
-                return intake_review(args.intake, args.pretty, args.audit)
         if args.command == "testfile":
             if args.testfile_command == "manifest":
                 return testfile_manifest_command(

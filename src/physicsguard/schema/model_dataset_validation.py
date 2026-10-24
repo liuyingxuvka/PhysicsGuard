@@ -8,7 +8,7 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from physicsguard.schema.parameter_coverage import UsePolicy, ValidationRole
+from physicsguard.schema.parameter_coverage import MappingConfidence, UsePolicy, ValidationRole
 from physicsguard.schema.validation_depth import ValidationDepthPlanSpec
 from physicsguard.schema.variable import ensure_non_empty, is_qualified_variable_name
 
@@ -38,9 +38,9 @@ class ValidationVariableRoleSpec(BaseModel):
 
     source_id: Optional[str] = None
     target: str
-    validation_role: ValidationRole
+    validation_role: ValidationRole = "validation_output"
     use_policy: UsePolicy = "unspecified"
-    mapping_confidence: Optional[float] = None
+    mapping_confidence: Optional[MappingConfidence] = None
     measurement_confidence: Optional[float] = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -49,7 +49,7 @@ class ValidationVariableRoleSpec(BaseModel):
     def _target_not_empty(cls, value: str) -> str:
         return ensure_non_empty(value, "target")
 
-    @field_validator("mapping_confidence", "measurement_confidence")
+    @field_validator("measurement_confidence")
     @classmethod
     def _confidence_valid(cls, value: Optional[float], info) -> Optional[float]:
         if value is not None and not 0 <= value <= 1:
@@ -218,8 +218,8 @@ class ModelValidationPlanSpec(BaseModel):
         for target in targets:
             if "." in target and not is_qualified_variable_name(target):
                 raise ValueError("qualified model targets must use component.variable format")
-        if self.depth is not None and self.depth.time_scope.claim_scope != "snapshot" and not self.variable_roles:
-            raise ValueError("non-snapshot validation requires non-empty variable_roles")
+        if self.depth is not None and self.depth.time_scope.claim_scope != "snapshot" and not self.variable_roles and not self.contracts:
+            raise ValueError("non-snapshot validation requires non-empty variable_roles after contract defaults")
         _ensure_json_serializable(self.metadata, "validation plan metadata")
         return self
 

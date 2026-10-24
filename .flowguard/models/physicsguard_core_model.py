@@ -1,25 +1,9 @@
-"""FlowGuard model for the PhysicsGuard Core bootstrap.
+"""Executable guards for hierarchy run, observed evaluate, reference compare and read-only describe.
 
-Risk intent brief:
-- Prevent solving models before schema, variable bounds, and residual setup are valid.
-- Prevent raw or non-finite residuals from reaching the bounded solver.
-- Preserve the architecture boundary that setup failures stop before solving,
-  while diagnostics are emitted after valid solve attempts.
-- Keep optimizer convergence separate from physical audit pass/fail status.
-- Keep diagnostic-only residuals out of the solver objective while preserving them
-  for JSON diagnostics.
-- Add observed-value evaluation without allowing the solver to modify observed
-  values, and compare observed values only after a reference solve.
-- Add hierarchical audit run/plan/evaluate/compare/inspect modes without automatic
-  refinement execution; hierarchy run and plan solve first, hierarchy evaluate
-  substitutes observed values without solving, hierarchy compare solves a
-  reference and evaluates observed values, and inspect does not solve.
-- Add AssumptionGuard Lite without hidden assumptions: parameter assumptions are
-  explicit fills or overrides before module construction; variable assumptions
-  become fixed residuals, not free solver variables; every assumption is reported.
-- A partial snapshot derives explicitly licensed intermediate values or lists
-  unresolved variables; producing relation occurrences never count as checks.
-- Model only the framework lifecycle, not numerical optimizer details or physics.
+Preserve finite registry/normalized residual requirements, explicit assumptions,
+immutable observed values, bounded partial derivation and independent checks.
+Coarse/detail consistency and planned refinement are reported without executing
+templates; numerical convergence alone never licenses an audit pass.
 """
 
 from __future__ import annotations
@@ -135,7 +119,7 @@ class State:
     observed_without_solver: tuple[str, ...] = ()
     comparisons: tuple[str, ...] = ()
     hierarchy_reports: tuple[str, ...] = ()
-    hierarchy_inspections: tuple[str, ...] = ()
+    hierarchy_descriptions: tuple[str, ...] = ()
     assumptions_seen: tuple[str, ...] = ()
     assumptions_reported: tuple[str, ...] = ()
     parameter_assumptions_applied: tuple[str, ...] = ()
@@ -159,6 +143,11 @@ class State:
     checked_relations: tuple[str, ...] = ()
     child_failures: tuple[str, ...] = ()
     parent_failures: tuple[str, ...] = ()
+    coarse_refinement_expected: tuple[str, ...] = ()
+    coarse_refinement_reported: tuple[str, ...] = ()
+    planned_refinements_expected: tuple[str, ...] = ()
+    planned_refinements_reported: tuple[str, ...] = ()
+    refinement_templates_loaded: tuple[str, ...] = ()
 
 
 class ValidateSystem:
@@ -309,7 +298,7 @@ class BuildRegistry:
 class AssembleResiduals:
     name = "AssembleResiduals"
     reads = ("registry_valid",)
-    writes = ("residuals_normalized", "variable_assumptions_fixed", "failures", "derivation_cases", "producing_relations")
+    writes = ('residuals_normalized', 'variable_assumptions_fixed', 'failures', 'derivation_cases', 'producing_relations', 'coarse_refinement_expected', 'planned_refinements_expected')
     accepted_input_type = RegistryReady
     input_description = "RegistryReady"
     output_description = "ResidualsReady or SetupFailed"
@@ -380,7 +369,7 @@ class AssembleResiduals:
                 label="missing_observed_values_failed",
             )
             return
-        if input_obj.mode == "hierarchy_inspect":
+        if input_obj.mode == "hierarchy_describe":
             yield FunctionResult(
                 output=ResidualsReady(
                     input_obj.case_id,
@@ -412,6 +401,9 @@ class AssembleResiduals:
             new_state=replace(
                 state,
                 residuals_normalized=state.residuals_normalized + (input_obj.case_id,),
+                coarse_refinement_expected=state.coarse_refinement_expected + ((input_obj.case_id,) if input_obj.case_id == "growth_coarse_bad_audit" else ()),
+                planned_refinements_expected=state.planned_refinements_expected + ((input_obj.case_id,) if input_obj.case_id == "growth_planned_bad_audit" else ()),
+
                 variable_assumptions_fixed=(
                     state.variable_assumptions_fixed + (input_obj.case_id,)
                     if input_obj.variable_assumption
@@ -433,18 +425,8 @@ class AssembleResiduals:
 
 class ExecuteMode:
     name = "ExecuteMode"
-    reads = ("registry_valid", "residuals_normalized")
-    writes = (
-        "solve_attempted",
-        "observed_evaluations",
-        "observed_without_solver",
-        "comparisons",
-        "hierarchy_reports",
-        "hierarchy_inspections",
-        "checked_relations",
-        "child_failures",
-        "parent_failures",
-    )
+    reads = ('registry_valid', 'residuals_normalized', 'coarse_refinement_expected', 'planned_refinements_expected')
+    writes = ('solve_attempted', 'observed_evaluations', 'observed_without_solver', 'comparisons', 'hierarchy_reports', 'hierarchy_descriptions', 'checked_relations', 'child_failures', 'parent_failures', 'coarse_refinement_reported', 'planned_refinements_reported', 'refinement_templates_loaded')
     accepted_input_type = ResidualsReady
     input_description = "ResidualsReady"
     output_description = "HierarchyFinished, HierarchyInspected, or SetupFailed"
@@ -458,15 +440,15 @@ class ExecuteMode:
                 label="solver_setup_failed",
             )
             return
-        if input_obj.mode == "hierarchy_inspect":
+        if input_obj.mode == "hierarchy_describe":
             yield FunctionResult(
                 output=HierarchyInspected(input_obj.case_id),
                 new_state=replace(
                     state,
-                    hierarchy_inspections=state.hierarchy_inspections
+                    hierarchy_descriptions=state.hierarchy_descriptions
                     + (input_obj.case_id,),
                 ),
-                label="hierarchy_inspected_without_solver",
+                label="hierarchy_described_without_solver",
             )
             return
         if input_obj.case_id not in state.residuals_normalized:
@@ -490,6 +472,9 @@ class ExecuteMode:
                     observed_evaluations=state.observed_evaluations + (input_obj.case_id,),
                     observed_without_solver=state.observed_without_solver + (input_obj.case_id,),
                     hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,),
+                    coarse_refinement_reported=state.coarse_refinement_reported + ((input_obj.case_id,) if input_obj.case_id in state.coarse_refinement_expected else ()),
+                    planned_refinements_reported=state.planned_refinements_reported + ((input_obj.case_id,) if input_obj.case_id in state.planned_refinements_expected else ()),
+
                     checked_relations=state.checked_relations + (f"{input_obj.case_id}:independent",),
                     child_failures=state.child_failures + ((input_obj.case_id,) if "child_bad_audit" in input_obj.case_id else ()),
                     parent_failures=state.parent_failures + ((input_obj.case_id,) if "child_bad_audit" in input_obj.case_id else ()),
@@ -504,7 +489,9 @@ class ExecuteMode:
                         else state.audit_failures
                     ),
                 ),
-                label=("child_failure_propagated" if "child_bad_audit" in input_obj.case_id else
+                label=("coarse_failure_consistency_reported" if input_obj.case_id in state.coarse_refinement_expected else
+                       "planned_template_reported_not_executed" if input_obj.case_id in state.planned_refinements_expected else
+                       "child_failure_propagated" if "child_bad_audit" in input_obj.case_id else
                        "derived_relations_excluded_from_checks" if input_obj.case_id in state.derivation_cases
                        else "hierarchy_observed_evaluated_without_solver"),
             )
@@ -592,7 +579,7 @@ class GenerateDiagnostics:
         "observed_evaluations",
         "comparisons",
         "hierarchy_reports",
-        "hierarchy_inspections",
+        "hierarchy_descriptions",
         "parameter_assumptions_applied",
         "variable_assumptions_fixed",
         "assumption_overrides_warned",
@@ -634,17 +621,17 @@ class GenerateDiagnostics:
             )
             return
         if isinstance(input_obj, HierarchyInspected):
-            if input_obj.case_id not in state.hierarchy_inspections:
+            if input_obj.case_id not in state.hierarchy_descriptions:
                 yield FunctionResult(
-                    output=SetupFailed(input_obj.case_id, "diagnostics_missing_hierarchy_inspect"),
+                    output=SetupFailed(input_obj.case_id, "diagnostics_missing_hierarchy_describe"),
                     new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
-                    label="diagnostics_missing_hierarchy_inspect",
+                    label="diagnostics_missing_hierarchy_describe",
                 )
                 return
             yield FunctionResult(
                 output=DiagnosticsReady(input_obj.case_id),
                 new_state=_diagnostics_state(state, input_obj.case_id),
-                label="diagnostics_after_hierarchy_inspect",
+                label="diagnostics_after_hierarchy_describe",
             )
             return
         case_id = getattr(input_obj, "case_id", "<unknown>")
@@ -703,7 +690,7 @@ def diagnostics_after_solver_or_failure(state: State, trace) -> InvariantResult:
         | set(state.observed_evaluations)
         | set(state.comparisons)
         | set(state.hierarchy_reports)
-        | set(state.hierarchy_inspections)
+        | set(state.hierarchy_descriptions)
         | set(state.failures)
     )
     extra = tuple(sorted(set(state.diagnostics_emitted) - solved_or_failed))
@@ -768,11 +755,11 @@ def hierarchy_run_requires_solve(state: State, trace) -> InvariantResult:
     return InvariantResult.pass_()
 
 
-def hierarchy_inspect_does_not_solve(state: State, trace) -> InvariantResult:
+def hierarchy_describe_does_not_solve(state: State, trace) -> InvariantResult:
     del trace
-    bad = tuple(sorted(set(state.hierarchy_inspections) & set(state.solve_attempted)))
+    bad = tuple(sorted(set(state.hierarchy_descriptions) & set(state.solve_attempted)))
     if bad:
-        return InvariantResult.fail(f"hierarchy inspect unexpectedly solved: {bad!r}")
+        return InvariantResult.fail(f"hierarchy describe unexpectedly solved: {bad!r}")
     return InvariantResult.pass_()
 
 
@@ -841,6 +828,19 @@ def parent_fails_with_child(state: State, trace) -> InvariantResult:
     return InvariantResult.fail(f"failed child omitted from parent verdict: {sorted(missing)}") if missing else InvariantResult.pass_()
 
 
+def coarse_failure_with_passing_children_is_inconsistent(state: State, trace) -> InvariantResult:
+    del trace
+    missing = set(state.coarse_refinement_expected) - set(state.coarse_refinement_reported)
+    return InvariantResult.fail(f"coarse failure with passing children lost its inconsistency: {sorted(missing)}") if missing else InvariantResult.pass_()
+
+
+def planned_template_is_reported_not_executed(state: State, trace) -> InvariantResult:
+    del trace
+    missing = set(state.planned_refinements_expected) - set(state.planned_refinements_reported)
+    loaded = set(state.planned_refinements_expected) & set(state.refinement_templates_loaded)
+    return InvariantResult.fail(f"planned targets missing={sorted(missing)}, loaded={sorted(loaded)}") if missing or loaded else InvariantResult.pass_()
+
+
 INVARIANTS = (
     Invariant("parent_fails_with_child", "A failed child makes every containing parent fail.", parent_fails_with_child),
     Invariant("derived_relations_are_not_checks", "A producing relation is never an independent check.", derived_relations_are_not_checks),
@@ -885,9 +885,9 @@ INVARIANTS = (
         predicate=hierarchy_run_requires_solve,
     ),
     Invariant(
-        name="hierarchy_inspect_does_not_solve",
-        description="Hierarchy inspect validates structure without a solve attempt.",
-        predicate=hierarchy_inspect_does_not_solve,
+        name="hierarchy_describe_does_not_solve",
+        description="Hierarchy describe validates structure without a solve attempt.",
+        predicate=hierarchy_describe_does_not_solve,
     ),
     Invariant(
         name="assumptions_are_reported_in_diagnostics",
@@ -914,6 +914,8 @@ INVARIANTS = (
         description="A partial snapshot lists missing or explicitly derived variables without silent fills.",
         predicate=unobserved_variables_stay_listed,
     ),
+    Invariant("coarse_failure_with_passing_children_is_inconsistent", "Checked coarse failure with passing children is explicitly inconsistent.", coarse_failure_with_passing_children_is_inconsistent),
+    Invariant("planned_template_is_reported_not_executed", "An unbuilt refinement is reported as planned and never loaded or executed.", planned_template_is_reported_not_executed),
 )
 
 
@@ -940,7 +942,7 @@ EXTERNAL_INPUTS = (
     AuditInput("hierarchy_evaluate_partial_snapshot", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
     AuditInput("hierarchy_evaluate_zero_product", True, True, True, True, True, True, mode="hierarchy_evaluate", observed_values_complete=False, unobserved_zero_product=True),
     AuditInput("hierarchy_compare_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_compare", True),
-    AuditInput("hierarchy_inspect", True, True, True, True, True, True, False, False, "hierarchy_inspect", True),
+    AuditInput("hierarchy_describe", True, True, True, True, True, True, False, False, "hierarchy_describe", True),
     AuditInput("assumption_parameter_fill", True, True, True, True, True, True, has_assumptions=True, parameter_assumption=True),
     AuditInput("assumption_variable_boundary", True, True, True, True, True, True, has_assumptions=True, variable_assumption=True),
     AuditInput("assumption_parameter_override", True, True, True, True, True, True, has_assumptions=True, parameter_assumption=True, assumption_override=True),
@@ -950,6 +952,8 @@ EXTERNAL_INPUTS = (
     AuditInput("assumption_free_variable", True, True, True, True, True, True, has_assumptions=True, assumption_as_free_variable=True),
     AuditInput("no_converge", True, True, True, True, False, True),
     AuditInput("bad_schema", False, True, True, True, True, True),
+    AuditInput("growth_coarse_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate"),
+    AuditInput("growth_planned_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate"),
 )
 
 MAX_SEQUENCE_LENGTH = 1
@@ -1001,10 +1005,17 @@ IMPLEMENTED_BY = {
     "ExecuteMode.solve": "src/physicsguard/core/solver.py:BoundedSolver.solve",
     "ExecuteMode.evaluate": "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed",
     "ExecuteMode.hierarchy": "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner",
-    "ExecuteMode.inspect": "src/physicsguard/core/hierarchy.py:inspect_hierarchy",
+    "ExecuteMode.describe": "src/physicsguard/core/hierarchy.py:describe_hierarchy",
+    "ExecuteMode.growth": "src/physicsguard/core/hierarchy.py:RefinementPlanner.recommended_refinements",
     "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
 }
 TESTED_BY = {
+    "coarse_failure_with_passing_children_is_inconsistent": [
+        "tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations",
+    ],
+    "planned_template_is_reported_not_executed": [
+        "tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned",
+    ],
     "no_solve_without_valid_registry": [
         "tests/test_residual_builder.py:test_duplicate_fully_qualified_variables_fail",
         "tests/test_solver.py:test_bounds_are_respected",
@@ -1027,8 +1038,9 @@ TESTED_BY = {
         "tests/test_hierarchy_runner.py:test_clean_hierarchical_example_audit_pass_true",
         "tests/test_hierarchy_runner.py:test_conflict_hierarchical_example_identifies_top_block_and_refinement",
     ],
-    "hierarchy_inspect_does_not_solve": [
-        "tests/test_hierarchy_spec.py:test_refines_requires_a_parent_owned_component_and_inspect_exposes_it",
+    "hierarchy_describe_does_not_solve": [
+        "tests/test_hierarchy_spec.py:test_refines_requires_a_parent_owned_component_and_describe_exposes_it",
+        "tests/test_hierarchy_cli.py:test_describe_json_keeps_every_inspect_field",
     ],
     "assumptions_are_reported_in_diagnostics": [
         "tests/test_assumption_diagnostics.py:test_normal_diagnostic_json_includes_assumptions_section",
@@ -1075,11 +1087,11 @@ REQUIRED_LABELS = (
     "hierarchy_run_solved_and_reported",
     "hierarchy_observed_evaluated_without_solver",
     "hierarchy_compare_solved_and_evaluated",
-    "hierarchy_inspected_without_solver",
+    "hierarchy_described_without_solver",
     "diagnostics_after_hierarchy_run",
     "diagnostics_after_hierarchy_evaluate",
     "diagnostics_after_hierarchy_compare",
-    "diagnostics_after_hierarchy_inspect",
+    "diagnostics_after_hierarchy_describe",
     "parameter_assumption_filled",
     "variable_assumption_boundary_ready",
     "assumption_override_warned",
@@ -1096,6 +1108,8 @@ REQUIRED_LABELS = (
     "unobserved_values_derived",
     "derived_relations_excluded_from_checks",
     "child_failure_propagated",
+    "coarse_failure_consistency_reported",
+    "planned_template_reported_not_executed",
 )
 ASSUMPTION_LABELS = {
     "parameter_fill": "parameter_assumption_filled",
@@ -1255,14 +1269,14 @@ class _HierarchySkipsSolve(ExecuteMode):
         yield from super().apply(input_obj, state)
 
 
-class _InspectSolves(ExecuteMode):
-    """Known bad: structural inspect assembles residuals and solves a reference."""
+class _DescribeSolves(ExecuteMode):
+    """Known bad: structural describe assembles residuals and solves a reference."""
 
     writes = ExecuteMode.writes + ("residuals_normalized",)
 
     def apply(self, input_obj, state):
         for result in super().apply(input_obj, state):
-            if input_obj.mode == "hierarchy_inspect":
+            if input_obj.mode == "hierarchy_describe":
                 result = replace(result, new_state=replace(result.new_state,
                                  residuals_normalized=state.residuals_normalized + (input_obj.case_id,),
                                  solve_attempted=state.solve_attempted + (input_obj.case_id,)))
@@ -1321,6 +1335,24 @@ class _CountsDerivationsAsChecks(ExecuteMode):
             yield result
 
 
+class _CoarseFailureReportedConsistent(ExecuteMode):
+    def apply(self, input_obj: ResidualsReady, state: State) -> Iterable[FunctionResult]:
+        for result in super().apply(input_obj, state):
+            if input_obj.case_id == "growth_coarse_bad_audit":
+                yield replace(result, new_state=replace(result.new_state, coarse_refinement_reported=state.coarse_refinement_reported))
+            else:
+                yield result
+
+
+class _PlannedTargetLoaded(ExecuteMode):
+    def apply(self, input_obj: ResidualsReady, state: State) -> Iterable[FunctionResult]:
+        for result in super().apply(input_obj, state):
+            if input_obj.case_id == "growth_planned_bad_audit":
+                yield replace(result, new_state=replace(result.new_state, refinement_templates_loaded=state.refinement_templates_loaded + (input_obj.case_id,)))
+            else:
+                yield result
+
+
 def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
@@ -1337,10 +1369,12 @@ def broken_variants() -> dict[str, Explorer]:
         "post_checks_enter_solver": _PostChecksEnterSolver(),
         "comparison_skips_reference": _ComparisonSkipsReference(),
         "hierarchy_skips_solve": _HierarchySkipsSolve(),
-        "inspect_solves": _InspectSolves(),
+        "describe_solves": _DescribeSolves(),
         "diagnostics_drop_assumptions": _DiagnosticsDropAssumptions(),
         "variable_assumption_not_fixed": _VariableAssumptionNotFixed(),
         "override_not_warned": _OverrideNotWarned(),
+        "coarse_failure_reported_consistent": _CoarseFailureReportedConsistent(),
+        "planned_target_loaded": _PlannedTargetLoaded(),
     }
     return {
         name: _explorer(Workflow(
@@ -1370,15 +1404,15 @@ def _solver_counted():
 
 
 def _hierarchy(mode: str, audit_file: str, observed_file: str | None = None, keep: int | None = None):
-    from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner, describe_hierarchy
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
 
     spec = load_hierarchical_audit_spec(ROOT / audit_file)
     with _solver_counted() as calls:
-        if mode == "inspect":
-            inspect_hierarchy(spec)
-            return ("hierarchy_inspected_without_solver" if not calls else "solver_attempted"), None
+        if mode == "describe":
+            describe_hierarchy(spec)
+            return ("hierarchy_described_without_solver" if not calls else "solver_attempted"), None
         if mode == "run":
             report = HierarchicalAuditRunner(spec).run()
             if not calls:
@@ -1420,6 +1454,32 @@ def _hierarchy(mode: str, audit_file: str, observed_file: str | None = None, kee
     return ("hierarchy_observed_evaluated_without_solver" if not calls else "solver_attempted"), report.audit_pass
 
 
+def _coolant_declared_fault_run() -> tuple[str, bool]:
+    """Replay the existing underread on the same connected tree, without a copy."""
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+
+    directory = ROOT / "examples/hierarchical/coolant_loop"
+    spec = load_hierarchical_audit_spec(directory / "tree.yaml")
+    nominal = load_observed_values(directory / "nominal_observed.yaml")
+    before = spec.model_dump(mode="json"), nominal.model_dump(mode="json")
+    variant = next(v for v in spec.fault_variants if v.id == "heat_rejection")
+    change, = variant.changes
+    assert change.scale is not None and not variant.parameters and not variant.rederive
+    data = spec.model_dump(mode="json")
+    boundary = next(row for row in data["system"]["boundaries"] if row["variable"] == change.variable)
+    boundary["value"] = nominal.variables[change.variable].value * change.scale
+    with _solver_counted() as calls:
+        report = HierarchicalAuditRunner(HierarchicalAuditSpec.model_validate(data), directory).run()
+    assert (spec.model_dump(mode="json"), nominal.model_dump(mode="json")) == before
+    if not calls:
+        return "no_solver_call", report.audit_pass
+    return ("optimizer_converged_audit_failed" if report.optimization_success and not report.audit_pass
+            else "hierarchy_run_solved_and_reported"), report.audit_pass
+
+
 def _partial_snapshot(audit_file: str, unobserved: str) -> tuple[str, bool]:
     """The CLI path: a solved snapshot without one variable, evaluated with skip_unobserved."""
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
@@ -1447,15 +1507,18 @@ def _derived_tank_snapshot() -> tuple[str, bool]:
     from physicsguard.io.observation_loader import load_observed_values
 
     example = ROOT / "examples/hierarchical/heated_tank"
-    spec = load_hierarchical_audit_spec(example / "first_step_level0.yaml")
-    observed = load_observed_values(example / "first_step_measured_k70.yaml")
+    sparse = example / "sparse_measured_k70.yaml"
+    assert sparse.is_file(), f"new sparse snapshot is not implemented: {sparse}"
+    spec = load_hierarchical_audit_spec(example / "heated_tank.yaml")
+    observed = load_observed_values(sparse)
     before = observed.model_dump(mode="json")
     with _solver_counted() as calls:
-        report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+        report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
     used = set(report.metadata["derivation_residual_occurrences"])
     checked = set(report.metadata["checked_residual_occurrences"])
-    thermal = report.top_blocks[0].block_id == "thermal" and not report.audit_pass
-    valid = used and checked and not used & checked and report.derived_variables and thermal
+    thermal = any(block.block_id in {"tank", "thermal"} and not block.own_audit_pass for block in report.top_blocks) and not report.audit_pass
+    heater = any("heater" in rec.next_template_ids and rec.template_status.get("heater") == "block" for rec in report.recommended_refinements)
+    valid = used and checked and not used & checked and report.derived_variables and thermal and heater
     valid = valid and not calls and observed.model_dump(mode="json") == before
     return ("derived_relations_excluded_from_checks" if valid else "derived_relations_misreported"), report.audit_pass
 
@@ -1490,9 +1553,10 @@ def _child_failure_snapshot() -> tuple[str, bool]:
     with _solver_counted() as calls:
         report = HierarchicalAuditRunner(load_hierarchical_audit_spec(example / "heated_tank.yaml")).evaluate_observed(observed)
     blocks = {block.block_id: block for block in report.top_blocks}
-    valid = not calls and not report.audit_pass and report.top_blocks[0].block_id == "heater"
+    own_failures = [block for block in report.top_blocks if not block.own_audit_pass]
+    valid = not calls and not report.audit_pass and max(own_failures, key=lambda block: block.level).block_id == "heater"
     valid = valid and all(not blocks[name].audit_pass for name in ("heater", "thermal", "tank"))
-    valid = valid and blocks["thermal"].own_audit_pass and blocks["tank"].own_audit_pass and blocks["hydraulics"].audit_pass
+    valid = valid and blocks["hydraulics"].audit_pass
     return "child_failure_propagated" if valid else "child_failure_hidden", report.audit_pass
 
 
@@ -1546,8 +1610,98 @@ def _assumption(relative: str) -> tuple[str, None]:
     return ASSUMPTION_LABELS.get(summary.cards[0].application, summary.cards[0].application), None
 
 
+def _growth_coarse_report() -> tuple[str, bool]:
+    """Framework-only two-relation witness; no claim of a physical module."""
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "growth", "system": {"system_name": "growth", "components": [
+        {"id": name, "type": "DummyResidualModule", "parameters": {"target": 0.}} for name in ("coarse", "fine")
+    ]}, "hierarchy": {"blocks": [
+        {"id": "parent", "components": ["coarse"]},
+        {"id": "child", "parent_id": "parent", "level": 1, "components": ["fine"], "refines": ["coarse"]},
+    ]}})
+    observed = ObservedValuesSpec(variables={"coarse.x": {"value": 2.}, "fine.x": {"value": 0.}})
+    before = observed.model_dump(mode="json")
+    with _solver_counted() as calls:
+        report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+    row, = report.refinement_checks
+    assert row["coarse_pass"] is False and row["children_pass"] is True and row["consistent"] is False
+    assert "refinement_inconsistent: parent" in report.warnings
+    assert not calls and observed.model_dump(mode="json") == before
+    return "coarse_failure_consistency_reported", report.audit_pass
+
+
+def _growth_planned_report() -> tuple[str, bool]:
+    import builtins
+    import io
+    import os
+    from tempfile import TemporaryDirectory
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+    from physicsguard.io import hierarchy_loader, yaml_loader, test_file_contract_loader
+
+    target = "future_subsystem"
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "planned", "system": {"system_name": "planned", "components": [
+        {"id": "coarse", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+    ]}, "hierarchy": {"blocks": [{"id": "root", "components": ["coarse"]}], "refinement_rules": [
+        {"id": "grow", "block_id": "root", "score_threshold": 1., "next_template_ids": [target]},
+    ]}})
+    observed = ObservedValuesSpec(variables={"coarse.x": {"value": 2.}})
+    before = observed.model_dump(mode="json")
+    attempts = []
+    restores = []
+    with TemporaryDirectory() as directory:
+        base = Path(directory) / "audit"
+        base.mkdir()
+        candidates = {candidate.resolve() for parent in (base, base.parent) for candidate in (parent / target, parent / (target + ".yaml"))}
+        assert len(candidates) == 4 and all(not candidate.exists() for candidate in candidates)
+        def is_candidate(value):
+            return isinstance(value, (str, bytes, os.PathLike)) and Path(os.fsdecode(value)).resolve() in candidates
+        def forbidden_loader(*args, **kwargs):
+            attempts.append(("loader", str(args[0]) if args else str(kwargs)))
+            raise AssertionError("refinement suggestions must not load a model")
+        def guard_method(original):
+            def checked(self, *args, **kwargs):
+                if is_candidate(self):
+                    attempts.append(("path", str(self)))
+                    raise AssertionError("planned candidate must not be read or executed")
+                return original(self, *args, **kwargs)
+            return checked
+        def guard_raw_open(original):
+            def checked(file, *args, **kwargs):
+                if is_candidate(file):
+                    attempts.append(("open", str(file)))
+                    raise AssertionError("planned candidate must not be opened")
+                return original(file, *args, **kwargs)
+            return checked
+        for owner, name in [(hierarchy_loader, "load_hierarchical_audit_spec"), (yaml_loader, "load_system_spec"), (test_file_contract_loader, "load_yaml_mapping")]:
+            restores.append((owner, name, getattr(owner, name)))
+            setattr(owner, name, forbidden_loader)
+        for name in ("read_text", "read_bytes", "open"):
+            restores.append((Path, name, getattr(Path, name)))
+            setattr(Path, name, guard_method(getattr(Path, name)))
+        for owner in (builtins, io):
+            restores.append((owner, "open", owner.open))
+            owner.open = guard_raw_open(owner.open)
+        try:
+            with _solver_counted() as solver_calls:
+                report = HierarchicalAuditRunner(spec, base_dir=base).evaluate_observed(observed)
+        finally:
+            for owner, name, original in reversed(restores):
+                setattr(owner, name, original)
+    assert not attempts and not solver_calls and observed.model_dump(mode="json") == before
+    rec, = report.recommended_refinements
+    assert rec.next_template_ids == [target] and rec.template_status == {target: "planned"}
+    return "planned_template_reported_not_executed", report.audit_pass
+
+
 PITCH = "examples/hierarchical/observed_debugging"
 REAL_CASES = {
+    "growth_coarse_bad_audit": _growth_coarse_report,
+    "growth_planned_bad_audit": _growth_planned_report,
     "hierarchy_evaluate_derived_child_bad_audit": _child_failure_snapshot,
     "hierarchy_evaluate_derived_bad_audit": _derived_tank_snapshot,
     "hierarchy_evaluate_partial_unresolved": _unresolved_partial_snapshot,
@@ -1558,14 +1712,14 @@ REAL_CASES = {
     "evaluate_bad_audit": lambda: _hierarchy("evaluate", "examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_conflict.yaml"),
     "evaluate_missing_observed": lambda: _hierarchy("evaluate", "examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_clean.yaml", keep=1),
     "compare_bad_audit": lambda: _hierarchy("compare", "examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_conflict.yaml"),
-    "hierarchy_clean": lambda: _hierarchy("run", "examples/hierarchical/coolant_loop/level_0_cooling_balance.yaml"),
-    "hierarchy_bad_audit": lambda: _hierarchy("run", "examples/hierarchical/coolant_loop/conflict_level_0_heat_rejection.yaml"),
+    "hierarchy_clean": lambda: _hierarchy("run", "examples/hierarchical/coolant_loop/tree.yaml"),
+    "hierarchy_bad_audit": lambda: _coolant_declared_fault_run(),
     "hierarchy_evaluate_clean": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_clean.yaml"),
     "hierarchy_evaluate_bad_audit": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_fault.yaml"),
     "hierarchy_evaluate_missing_observed": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_clean.yaml", keep=1),
     "hierarchy_evaluate_zero_product": _zero_product_snapshot,
-    "hierarchy_evaluate_partial_snapshot": lambda: _partial_snapshot("examples/hierarchical/coolant_loop/level_1_components.yaml", "cool.Q_stack_heat_W"),
-    "hierarchy_inspect": lambda: _hierarchy("inspect", f"{PITCH}/pitch_feedback_level_0.yaml"),
+    "hierarchy_evaluate_partial_snapshot": lambda: _partial_snapshot("examples/hierarchical/coolant_loop/tree.yaml", "cool.Q_stack_heat_W"),
+    "hierarchy_describe": lambda: _hierarchy("describe", f"{PITCH}/pitch_feedback_level_0.yaml"),
     "assumption_parameter_fill": lambda: _assumption("examples/assumptions/parameter_assumption.yaml"),
     "assumption_parameter_override": lambda: _assumption("examples/assumptions/parameter_override_warning.yaml"),
     "assumption_proposed": lambda: _assumption("examples/assumptions/proposed_assumption.yaml"),
@@ -1620,3 +1774,13 @@ if __name__ == "__main__":
     for name, variant in broken_variants().items():
         print(f"known-bad {name}: {'caught' if not variant.explore().ok else 'MISSED'}")
     print(conformance().format_text())
+
+
+NOT_MODELED = {
+    "src/physicsguard/cli.py:build_parser": "Parser declarations are checked against every skill/readme command by test_skill_files_name_only_existing_commands; this contains no audit-state transition.",
+    "scripts/extract_test_file_manifest.py:main": "Maintenance wrapper delegates to the native manifest reader covered by contract/CLI tests; no separate physical lifecycle.",
+    "scripts/install_physicsguard_skills.py:main": "Skill installation is governed by native transactional installer tests, not the residual-audit workflow.",
+    "scripts/portable_model_headers.py:main": "Portable comment-header generation is checked by native header/parse tests; it changes no physical model data.",
+    "src/physicsguard/cli.py:main": "Argument parsing, formatting and exit dispatch are covered by native CLI tests; the five flows model their actual behavior owners.",
+    "examples/hierarchical/heated_tank/sim_tank.py:main": "External synthetic CSV generator, not a device-audit lifecycle; its imported entrypoint and generated CSV bytes are covered by test_generator_reproduces_committed_csv.",
+}

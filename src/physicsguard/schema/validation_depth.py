@@ -8,7 +8,8 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from physicsguard.schema.observation_spec import ObservedValueSpec
+from physicsguard.schema.observation_spec import ObservedValueSpec, SourceModelSpec
+from physicsguard.schema.parameter_coverage import MappingConfidence
 from physicsguard.schema.predictive_rollout import ModelSemantics, PredictiveRolloutPlanSpec
 from physicsguard.schema.validation_adequacy import ValidationAdequacyPlanSpec
 from physicsguard.schema.variable import ensure_non_empty, is_qualified_variable_name
@@ -80,14 +81,7 @@ class MappingReviewPlanSpec(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    minimum_confidence: float = 0.75
-
-    @field_validator("minimum_confidence")
-    @classmethod
-    def _minimum_confidence_valid(cls, value: float) -> float:
-        if not math.isfinite(value) or not 0 <= value <= 1:
-            raise ValueError("minimum_confidence must be between 0 and 1")
-        return value
+    minimum_confidence: MappingConfidence = "high"
 
 
 class TimeScopePlanSpec(BaseModel):
@@ -198,7 +192,7 @@ class ValidationDepthPlanSpec(BaseModel):
 
     dataset: DatasetIdentityPlanSpec
     mapping_review: MappingReviewPlanSpec
-    observed_series: ValidationIdentityReferenceSpec
+    observed_series: Optional[ValidationIdentityReferenceSpec] = None
     time_scope: TimeScopePlanSpec
     model_semantics: ModelSemantics = "pointwise"
     adequacy: Optional[ValidationAdequacyPlanSpec] = None
@@ -302,6 +296,7 @@ class ObservedSeriesSpec(BaseModel):
     """Bounded scalar/time/scenario observations evaluated pointwise."""
 
     model_config = ConfigDict(extra="forbid")
+    source_model: Optional[SourceModelSpec] = None
 
     series_id: str
     time_unit: str = "s"

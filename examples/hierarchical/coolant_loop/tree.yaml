@@ -1,8 +1,8 @@
-# PhysicsGuard hierarchical audit/model blueprint
+# PhysicsGuard hierarchical audit model
 # Purpose: Connected 10 kW single-phase coolant loop with equal radiator and hot-bypass branches; synthetic low-fidelity reference, SI units.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/coolant_loop/tree.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: coolant_loop_tree
 description: Connected 10 kW single-phase coolant loop with equal radiator and hot-bypass
   branches; synthetic low-fidelity reference, SI units.
@@ -220,10 +220,6 @@ hierarchy:
     - heat_source
     - heat_rejected
     - thermal_balance
-    refinement_template_ids:
-    - stack_heat_interface
-    - radiator
-    - thermal_mass
   - id: stack_heat_interface
     level: 1
     parent_id: coolant_loop

@@ -32,7 +32,7 @@ def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def test_hierarchy_run_clean_example_returns_valid_json() -> None:
-    result = run_cli("hierarchy", "run", str(FC / "level_0_system_balance.yaml"), "--pretty", "--json")
+    result = run_cli("hierarchy", "run", str(FC / "tree.yaml"), "--pretty", "--json")
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
     assert data["audit_pass"]
@@ -52,8 +52,18 @@ def test_hierarchy_run_clean_example_returns_valid_json() -> None:
     }.issubset(data)
 
 
-def test_hierarchy_run_conflict_fails_with_code_1_and_audit_false() -> None:
-    result = run_cli("hierarchy", "run", str(FC / "conflict_level_0_h2_power.yaml"), "--pretty")
+def test_hierarchy_run_conflict_fails_with_code_1_and_audit_false(tmp_path) -> None:
+    import yaml
+    data = yaml.safe_load((FC / "tree.yaml").read_text())
+    nominal = yaml.safe_load((FC / "nominal_observed.yaml").read_text())
+    variant = next(row for row in data["fault_variants"] if row["id"] == "hydrogen_power_underread")
+    change, = variant["changes"]
+    value = nominal["variables"][change["variable"]]["value"] * change["scale"]
+    data["system"]["boundaries"].append({"variable": change["variable"], "value": value,
+                                          "scale": data["system"]["boundaries"][0]["scale"]})
+    audit = tmp_path / "same-tree-underread.yaml"
+    audit.write_text(yaml.safe_dump(data))
+    result = run_cli("hierarchy", "run", str(audit), "--pretty", "--json")
     assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     assert not data["audit_pass"]
@@ -61,14 +71,35 @@ def test_hierarchy_run_conflict_fails_with_code_1_and_audit_false() -> None:
     assert data["recommended_refinements"]
 
 
-def test_hierarchy_inspect_returns_block_tree_json() -> None:
-    result = run_cli("hierarchy", "inspect", str(FC / "level_0_system_balance.yaml"), "--pretty")
+def test_describe_json_keeps_every_inspect_field(monkeypatch) -> None:
+    result = run_cli("hierarchy", "describe", str(FC / "tree.yaml"), "--pretty", "--json")
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
-    assert data["audit_name"] == "fuel_cell_level_0_system_balance"
+    assert data["audit_name"] == "fuel_cell_connected_tree"
     assert data["root_blocks"] == ["fc_system"]
     assert data["blocks"][0]["id"] == "fc_system"
     assert data["missing_components"] == []
+    from physicsguard.core.hierarchy import describe_hierarchy, HierarchicalAuditRunner
+    from physicsguard.core.solver import BoundedSolver
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("description must not solve or evaluate")
+    monkeypatch.setattr(BoundedSolver, "solve", forbidden)
+    monkeypatch.setattr(HierarchicalAuditRunner, "evaluate_observed", forbidden)
+    spec = load_hierarchical_audit_spec(FC / "tree.yaml")
+    before = spec.model_dump(mode="json")
+    declared = describe_hierarchy(spec)
+    assert spec.model_dump(mode="json") == before
+    assert declared["solver_attempted"] is False
+    assert {"root_blocks", "unassigned_components", "scoring", "confidence", "referenced_components", "missing_components"} <= data.keys()
+    assert data["scoring"] == spec.hierarchy.scoring.model_dump()
+    assert data["confidence"] == spec.hierarchy.confidence.model_dump()
+    for block, row in zip(spec.hierarchy.blocks, data["blocks"]):
+        assert row["component_ids"] == block.components
+        for key in ("required_variables", "optional_variables", "required_parameters", "optional_parameters", "refines", "tags"):
+            assert row[key] == getattr(block, key)
+    assert data["blocks"] == declared["blocks"]
 
 
 def test_hierarchy_evaluate_observed_fault_returns_block_rollup_without_solver() -> None:
@@ -86,7 +117,7 @@ def test_hierarchy_evaluate_observed_fault_returns_block_rollup_without_solver()
     assert data["metadata"]["mode"] == "hierarchy_evaluate"
     assert data["metadata"]["solver_attempted"] is False
     assert data["top_blocks"][0]["block_id"] == "pitch_rate_feedback"
-    assert data["recommended_refinements"][0]["next_template_ids"]
+    assert data["recommended_refinements"][0]["next_required_variables"]
 
 
 def test_hierarchy_compare_observed_fault_returns_deviations_and_hierarchy() -> None:
@@ -125,7 +156,7 @@ def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
     from physicsguard.core.solver import BoundedSolver
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 
-    audit = ROOT / "examples" / "hierarchical" / "coolant_loop" / "level_1_components.yaml"
+    audit = ROOT / "examples" / "hierarchical" / "coolant_loop" / "tree.yaml"
     spec = load_hierarchical_audit_spec(audit)
     solved = BoundedSolver(ResidualBuilder(spec.system), spec.system.solver).solve().variables
     snapshot = {"variables": {name: {"value": float(value)} for name, value in solved.items() if name != "cool.Q_stack_heat_W"}}
@@ -181,18 +212,126 @@ def test_pitch_parent_verdict_and_own_score_are_distinct(fault) -> None:
         assert parent["subtree_score"] == data["top_blocks"][0]["score"] > 1
 
 
-def test_cli_resolves_real_coolant_templates_and_reports_missing_files() -> None:
+def test_cli_resolves_real_coolant_templates_and_reports_missing_files(tmp_path) -> None:
+    import yaml
     directory = ROOT / "examples/hierarchical/coolant_loop"
-    result = run_cli("hierarchy", "run", str(directory / "conflict_level_0_heat_rejection.yaml"))
+    audit_data = yaml.safe_load((directory / "tree.yaml").read_text())
+    observed = yaml.safe_load((directory / "nominal_observed.yaml").read_text())
+    variant = next(row for row in audit_data["fault_variants"] if row["id"] == "heat_rejection")
+    change, = variant["changes"]
+    observed["variables"][change["variable"]]["value"] *= change["scale"]
+    measured = tmp_path / "heat-rejection.yaml"
+    measured.write_text(yaml.safe_dump(observed))
+    result = run_cli("hierarchy", "evaluate", str(directory / "tree.yaml"), str(measured), "--json")
     assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
-    assert any(rec["template_status"].get("coolant_loop/level_1_components") == "file" for rec in data["recommended_refinements"])
-    result = run_cli("hierarchy", "run", str(directory / "conflict_level_1_radiator.yaml"))
+    assert any(rec["template_status"].get("radiator") == "block" for rec in data["recommended_refinements"])
+    # File and unbuilt targets remain separately observable in a temporary rule,
+    # while shipped tree rules resolve only to their real local blocks.
+    existing = tmp_path / "existing_detail.yaml"
+    existing.write_text("# A future audit file is present, but this check must not load it.\n")
+    audit_data["hierarchy"]["refinement_rules"][0]["next_template_ids"] = [existing.name, "future_detail"]
+    audit = tmp_path / "same-tree-new-detail.yaml"
+    audit.write_text(yaml.safe_dump(audit_data))
+    result = run_cli("hierarchy", "evaluate", str(audit), str(measured), "--json")
     assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
-    assert any(rec["template_status"].get("coolant_loop/radiator_detail") == "missing" for rec in data["recommended_refinements"])
-    assert "refinement_template_missing: coolant_loop/radiator_detail" in data["warnings"]
+    assert any(rec["template_status"].get(existing.name) == "file" for rec in data["recommended_refinements"])
+    assert any(rec["template_status"].get("future_detail") == "planned" for rec in data["recommended_refinements"])
+    assert "refinement_template_planned: future_detail" in data["warnings"]
 
 
 def test_removed_hierarchy_plan_exits_two():
     assert run_cli('hierarchy','plan','x.yaml').returncode == 2
+
+
+def test_describe_prints_a_readable_tree_with_variants() -> None:
+    tank = ROOT / "examples/hierarchical/heated_tank/heated_tank.yaml"
+    result = run_cli("hierarchy", "describe", str(tank))
+    assert result.returncode == 0, result.stderr
+    assert len(result.stdout.encode()) <= 3000
+    assert result.stdout.startswith("audit heated_tank: 6 blocks,")
+    heater = next(line for line in result.stdout.splitlines() if line.lstrip().startswith("heater [L2]"))
+    assert "variants: heater_half" in heater and "heater_el(ElectricalPowerModule)" in heater
+    assert "refines: tank_energy" in result.stdout and "heater (block)" in result.stdout
+    assert "links: " in result.stdout
+    assert run_cli("hierarchy", "inspect", str(tank)).returncode == 2
+
+
+def test_describe_observed_counts_signals_per_block(monkeypatch) -> None:
+    from physicsguard.core.hierarchy import describe_hierarchy, HierarchicalAuditRunner
+    from physicsguard.core.solver import BoundedSolver
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    directory = ROOT / "examples/hierarchical/heated_tank"
+    result = run_cli("hierarchy", "describe", str(directory / "heated_tank.yaml"),
+                     "--observed", str(directory / "measured_k70.yaml"))
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.count("| signals:") == 6
+    spec = load_hierarchical_audit_spec(directory / "heated_tank.yaml")
+    observed = load_observed_values(directory / "measured_k70.yaml")
+    observed.variables["heater_el.current_A"].review_required = True
+    before = spec.model_dump(mode="json"), observed.model_dump(mode="json")
+    def forbidden(*args, **kwargs):
+        pytest.fail("signal description must not solve or evaluate")
+    monkeypatch.setattr(BoundedSolver, "solve", forbidden)
+    monkeypatch.setattr(HierarchicalAuditRunner, "evaluate_observed", forbidden)
+    description = describe_hierarchy(spec, observed=observed)
+    assert (spec.model_dump(mode="json"), observed.model_dump(mode="json")) == before
+    rows = {block["id"]: block["signals"] for block in description["blocks"]}
+    assert rows["heater"] == {"mapped": 3, "review_required": 1, "required_missing": 0}
+    assert sum(row["mapped"] for row in rows.values()) == len(observed.variables)
+    assert description["solver_attempted"] is False
+
+
+def test_full_evaluation_preserves_source_model_without_changing_the_verdict(tmp_path):
+    import yaml
+
+    audit = OBSERVED / "pitch_feedback_level_0.yaml"
+    original = OBSERVED / "pitch_feedback_observed_fault.yaml"
+    payload = yaml.safe_load(original.read_text())
+    header = {"model_name": " model A ", "tool": "exporter", "scenario": "run A"}
+    payload["source_model"] = header
+    measured = tmp_path / "source-model.yaml"
+    measured.write_text(yaml.safe_dump(payload))
+    plain = run_cli("hierarchy", "evaluate", str(audit), str(original), "--json")
+    tagged = run_cli("hierarchy", "evaluate", str(audit), str(measured), "--json")
+    assert plain.returncode == tagged.returncode == 1, tagged.stderr
+    before, after = json.loads(plain.stdout), json.loads(tagged.stdout)
+    assert after["metadata"].pop("source_model") == header
+    assert after == before
+
+
+def test_full_evaluation_without_source_model_omits_the_header():
+    result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"),
+                     str(OBSERVED / "pitch_feedback_observed_fault.yaml"), "--json")
+    assert result.returncode == 1, result.stderr
+    assert "source_model" not in json.loads(result.stdout)["metadata"]
+
+
+def test_mapping_summary_counts_the_whole_native_ledger(tmp_path):
+    import yaml
+
+    directory = ROOT / "examples/hierarchical/building_hvac"
+    payload = yaml.safe_load((directory / "nominal_observed.yaml").read_text())
+    variable = next(iter(payload["variables"].values()))
+    variable.update(mapping_confidence="low", mapping_status="stale", review_required=True)
+    variable.pop("unit", None)
+    observed = tmp_path / "mapping.yaml"
+    observed.write_text(yaml.safe_dump(payload))
+    args = ("hierarchy", "evaluate", str(directory / "tree.yaml"), str(observed))
+    full, compact = run_cli(*args, "--json"), run_cli(*args)
+    assert full.returncode == compact.returncode == 0, full.stderr
+    ledger = json.loads(full.stdout)["signal_mapping_ledger"]
+    summary = json.loads(compact.stdout)["mapping_summary"]
+    assert summary == {
+        "rows": len(ledger),
+        "with_issues": sum(bool(row["issue_codes"]) for row in ledger),
+        "review_required": sum(row["review_required"] is True for row in ledger),
+        "stale": sum("stale_mapping" in row["issue_codes"] for row in ledger),
+        "low_confidence": sum("low_confidence" in row["issue_codes"] for row in ledger),
+        "missing_unit": sum("missing_unit" in row["issue_codes"] for row in ledger),
+    }
+    assert all(summary[key] >= 1 for key in ("stale", "low_confidence", "review_required"))
+    assert summary["missing_unit"] >= 1

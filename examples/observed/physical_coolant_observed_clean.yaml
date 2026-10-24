@@ -2,7 +2,7 @@
 # Purpose: Observed coolant values consistent with the low-fidelity heat balance.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 observation_name: physical_coolant_observed_clean
 description: Observed coolant values consistent with the low-fidelity heat balance.
 variables:

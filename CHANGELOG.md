@@ -1,12 +1,14 @@
 # Changelog
 
-## Unreleased
+## v0.15.22 - 2026-10-24 - One model tree for physics audits
 
-- Competing causes are written only as fault_variants in the audit tree and checked with hierarchy variants: a pairwise table says which causes a checked signature or an unmeasured signal can separate, physically masked fault pairs are listed instead of failing, and --observed reports a model miss when no variant explains the data. The task-model command group and its four hand-written templates are removed.
-
-- The top-level run, evaluate and compare commands are removed. Use hierarchy run|evaluate|compare on the same file: a single-system file is read as a tree with one root block, so it gets the same derivation and localization as any tree.
-
-- Maintenance checks of PhysicsGuard's own model tree now run on FlowGuard 0.70.11.
+- Each domain starter pack is one connected tree with fault and benign variants and a nominal snapshot. Separate level/conflict copies and their generator are removed. The heated-tank reference grows in the same file from coarse tank balances to finer blocks, with its original sparse signals retained.
+- Use hierarchy run, evaluate and compare for tree and single-system files. hierarchy describe prints a readable tree; --observed counts mapped signals per block, --json keeps the full structure and --mermaid draws it. The old top-level run/evaluate/compare and hierarchy inspect commands are removed.
+- Competing causes use fault_variants and hierarchy variants. Pairwise evidence and next signals distinguish causes, masked physical pairs remain visible, and --observed reports a model miss when no variant explains a failed audit. Handwritten task-model diagnosis is removed.
+- Unbuilt refinement suggestions are planned and never loaded automatically. The unused refinement_template_ids block field is rejected; list next templates in refinement rules.
+- External-model intake is removed. Optional source_model context belongs in snapshots or contracts; observed reports retain it and summarize mappings that need review.
+- Validation reads contracted series and variable roles unless explicitly overridden. Mapping confidence uses high, medium, low or proposed. A missing input is reported once; dependent checks are marked not_run. Existing holdout, coverage and direct-validation gates remain enforced.
+- Skills share one model-tree vocabulary and example headers describe audits. The old producer_receipt_id input is rejected in favor of producer_id. Maintenance uses FlowGuard 0.70.11.
 
 ## v0.15.21 - 2026-10-23
 

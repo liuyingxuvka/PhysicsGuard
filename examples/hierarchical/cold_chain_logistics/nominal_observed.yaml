@@ -1,0 +1,59 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Authored nominal supplied signals only; coarse aliases remain derived, not additional measurements.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: cold_chain_logistics_nominal
+description: Authored nominal supplied signals only; coarse aliases remain derived,
+  not additional measurements.
+variables:
+  warehouse_refrigeration_capacity.value:
+    value: 200000.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: W
+    external_signal: mapped_warehouse_refrigeration_capacity
+  product_heat_gain.value:
+    value: 120000.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: W
+    external_signal: mapped_product_heat_gain
+  door_infiltration_heat_gain.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: W
+    external_signal: mapped_door_infiltration_heat_gain
+  envelope_heat_gain.value:
+    value: 30000.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: W
+    external_signal: mapped_envelope_heat_gain
+  truck_cooling_capacity.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[4]"
+    unit: W
+    external_signal: mapped_truck_cooling_capacity
+  cargo_heat_gain.value:
+    value: 30000.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: W
+    external_signal: mapped_cargo_heat_gain
+  truck_ambient_heat_gain.value:
+    value: 20000.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: W
+    external_signal: mapped_truck_ambient_heat_gain
+  cold_chain_facility_power.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: W
+    external_signal: mapped_cold_chain_facility_power
+  refrigeration_electric_power.value:
+    value: 80000.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: W
+    external_signal: mapped_refrigeration_electric_power
+  auxiliary_logistics_power.value:
+    value: 20000.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: W
+    external_signal: mapped_auxiliary_logistics_power

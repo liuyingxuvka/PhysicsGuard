@@ -1,0 +1,109 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Original fine supplied nominal boundary values only; root aggregates and aliases remain derived.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: data_center_electronics_cooling_nominal
+description: Original fine supplied nominal boundary values only; root aggregates
+  and aliases remain derived.
+variables:
+  it_electric_power.value:
+    value: 1000000.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: W
+    external_signal: mapped_it_electric_power
+  server_heat_rejection.value:
+    value: 850000.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: W
+    external_signal: mapped_server_heat_rejection
+  network_heat_rejection.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: W
+    external_signal: mapped_network_heat_rejection
+  storage_heat_rejection.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: W
+    external_signal: mapped_storage_heat_rejection
+  rack_return_air_temperature.value:
+    value: 308.15
+    source: "tree.yaml#system.boundaries[4]"
+    unit: K
+    external_signal: mapped_rack_return_air_temperature
+  facility_electric_power.value:
+    value: 1500000.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: W
+    external_signal: mapped_facility_electric_power
+  cooling_electric_power.value:
+    value: 400000.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: W
+    external_signal: mapped_cooling_electric_power
+  ups_loss_power.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: W
+    external_signal: mapped_ups_loss_power
+  power_distribution_loss.value:
+    value: 25000.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: W
+    external_signal: mapped_power_distribution_loss
+  other_facility_power.value:
+    value: 25000.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: W
+    external_signal: mapped_other_facility_power
+  pue.value:
+    value: 1.5
+    source: "tree.yaml#system.boundaries[10]"
+    external_signal: mapped_pue
+    unit: "1"
+  cooling_capacity.value:
+    value: 1200000.0
+    source: "tree.yaml#system.boundaries[11]"
+    unit: W
+    external_signal: mapped_cooling_capacity
+  room_auxiliary_heat_gain.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[12]"
+    unit: W
+    external_signal: mapped_room_auxiliary_heat_gain
+  cooling_distribution_loss.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[13]"
+    unit: W
+    external_signal: mapped_cooling_distribution_loss
+  supply_air_temperature.value:
+    value: 295.15
+    source: "tree.yaml#system.boundaries[14]"
+    unit: K
+    external_signal: mapped_supply_air_temperature
+  coolant_heat_pickup.value:
+    value: 1200000.0
+    source: "tree.yaml#system.boundaries[15]"
+    unit: W
+    external_signal: mapped_coolant_heat_pickup
+  coolant_heat_rejection.value:
+    value: 1200000.0
+    source: "tree.yaml#system.boundaries[16]"
+    unit: W
+    external_signal: mapped_coolant_heat_rejection
+  coolant_pump_power.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[17]"
+    unit: W
+    external_signal: mapped_coolant_pump_power
+  coolant_supply_temperature.value:
+    value: 291.15
+    source: "tree.yaml#system.boundaries[18]"
+    unit: K
+    external_signal: mapped_coolant_supply_temperature
+  cooling_cop.value:
+    value: 3.0
+    source: "tree.yaml#system.boundaries[19]"
+    external_signal: mapped_cooling_cop
+    unit: "1"

@@ -357,7 +357,7 @@ class RefinementPlanner:
                 for candidate in (root / template_id, root / (template_id + ".yaml")):
                     if candidate.is_file():
                         return "file"
-        return "missing"
+        return "planned"
 
     def recommended_refinements(
         self,
@@ -551,6 +551,8 @@ class HierarchicalAuditRunner:
                 "optimization_success_semantics": "not_applicable_no_solver",
                 "audit_threshold": self.spec.system.solver.audit_threshold,
                 "observation_name": observed.observation_name,
+                **({"source_model": observed.source_model.model_dump(mode="json", exclude_unset=True)}
+                   if observed.source_model is not None else {}),
                 "observed_variable_count": len(observed.variables),
                 "unknown_observed_variables": unknown,
                 "unobserved_variables": missing,
@@ -739,9 +741,9 @@ class HierarchicalAuditRunner:
         missing_required_parameters = sorted({item for block in block_diagnostics for item in block.missing_required_parameters})
         report_warnings = list(warnings)
         report_warnings.extend(f"refinement_inconsistent: {item['parent']}" for item in refinement_checks if item["consistent"] is False)
-        report_warnings.extend(f"refinement_template_missing: {name}" for block in block_diagnostics
+        report_warnings.extend(f"refinement_template_planned: {name}" for block in block_diagnostics
                                for rec in block.recommended_refinements for name, status in rec.template_status.items()
-                               if status == "missing")
+                               if status == "planned")
         if unassigned:
             report_warnings.append(f"{len(unassigned)} residuals were not assigned to hierarchy blocks")
         unassigned_components = block_index.unassigned_components()
@@ -819,42 +821,11 @@ def _refinement_checks(hierarchy, blocks, records, threshold, metadata):
     return checks
 
 
-def inspect_hierarchy(spec: HierarchicalAuditSpec) -> dict[str, Any]:
-    index = BlockIndex(spec.hierarchy, spec.system)
-    children = {block.id: [child.id for child in index.children(block.id)] for block in spec.hierarchy.blocks}
-    return {
-        "audit_name": spec.audit_name,
-        "system_name": spec.system.system_name,
-        "blocks": [
-            {
-                "id": block.id,
-                "name": block.name,
-                "level": block.level,
-                "parent_id": block.parent_id,
-                "children": children[block.id],
-                "components": list(block.components),
-                "refines": list(block.refines),
-                "tags": list(block.tags),
-                "required_variables": list(block.required_variables),
-                "optional_variables": list(block.optional_variables),
-                "required_parameters": list(block.required_parameters),
-                "optional_parameters": list(block.optional_parameters),
-                "refinement_template_ids": list(block.refinement_template_ids),
-            }
-            for block in spec.hierarchy.blocks
-        ],
-        "root_blocks": [block.id for block in index.root_blocks()],
-        "refinement_rules": [rule.model_dump() for rule in spec.hierarchy.refinement_rules],
-        "referenced_components": sorted(index._component_to_block),
-        "missing_components": index.unassigned_components(),
-        "unassigned_components": index.unassigned_components(),
-        "scoring": spec.hierarchy.scoring.model_dump(),
-        "confidence": spec.hierarchy.confidence.model_dump(),
-    }
-
-
-def describe_hierarchy(spec: HierarchicalAuditSpec, *, mermaid: bool = False) -> dict[str, Any] | str:
-    """Render the declared model tree and native module contracts without solving."""
+def describe_hierarchy(
+    spec: HierarchicalAuditSpec, *, mermaid: bool = False,
+    observed: ObservedValuesSpec | None = None, base_dir: Path | None = None,
+) -> dict[str, Any] | str:
+    """Read declared structure and optional signal bindings; never solve or evaluate."""
     from physicsguard.modules.registry import default_module_registry, describe_module_type
     from physicsguard.core.assumptions import AssumptionManager
 
@@ -864,37 +835,16 @@ def describe_hierarchy(spec: HierarchicalAuditSpec, *, mermaid: bool = False) ->
     assumptions = AssumptionManager(spec.system)
     effective = assumptions.apply_parameter_assumptions(spec.system)
     components = {component.id: component for component in effective.components}
+    # Variable declarations validate binding names without reading residuals or data values.
+    registered = (set(ResidualBuilder(spec.system, registry).build_registry().names())
+                  if observed is not None else set())
+    planner = RefinementPlanner(base_dir)
     connections = []
     for connection in spec.system.connections:
         source = index.component_block(connection.from_variable.split(".")[0])
         target = index.component_block(connection.to_variable.split(".")[0])
         connections.append({**connection.model_dump(), "from_block": source, "to_block": target,
                             "scope": "within_block" if source == target else "between_blocks"})
-    if mermaid:
-        # Generated IDs keep user labels out of Mermaid's identifier grammar.
-        node_ids = {name: f"component_{i}" for i, name in enumerate(components)}
-        def label(value: Any) -> str:
-            return str(value).replace("&", "&amp;").replace('"', "&quot;").replace("\n", " ")
-        lines = ["flowchart TD"]
-        def block_lines(block: AuditBlockSpec, depth: int) -> None:
-            indent = "  " * depth
-            lines.append(f'{indent}subgraph block_{spec.hierarchy.blocks.index(block)}["{label(block.id)} (level {block.level})"]')
-            for name in block.components:
-                lines.append(f'{indent}  {node_ids[name]}["{label(name)}: {label(components[name].type)}"]')
-            for child in index.children(block.id):
-                block_lines(child, depth + 1)
-            lines.append(indent + "end")
-        for root in index.root_blocks():
-            block_lines(root, 1)
-        for name in index.unassigned_components():
-            lines.append(f'  {node_ids[name]}["{label(name)}: {label(components[name].type)} (unassigned)"]')
-        for connection in connections:
-            source, target = connection["from_variable"], connection["to_variable"]
-            text = f"{source} = {target}"
-            if connection["scale"] is not None:
-                text += f"; residual scale={connection['scale']}"
-            lines.append(f'  {node_ids[source.split(".")[0]]} -->|"{label(text)}"| {node_ids[target.split(".")[0]]}')
-        return "\n".join(lines)
     blocks = []
     for block in spec.hierarchy.blocks:
         row = {key: getattr(block, key) for key in ("id", "name", "level", "parent_id", "refines")}
@@ -906,16 +856,121 @@ def describe_hierarchy(spec: HierarchicalAuditSpec, *, mermaid: bool = False) ->
                  parameters=components[name].parameters, component_id=name)}
             for name in block.components
         ]
+        row["component_ids"] = list(block.components)
+        for key in ("tags", "required_variables", "optional_variables", "required_parameters", "optional_parameters"):
+            row[key] = list(getattr(block, key))
         row["connections"] = [connection for connection in connections if block.id in (connection["from_block"], connection["to_block"])]
+        row["fault_variants"] = [variant.id for variant in spec.fault_variants
+                                 if variant.kind == "fault" and block.id in variant.expect_blocks]
+        row["refinement_rules"] = [
+            {**rule.model_dump(), "template_status": {
+                target: planner._template_status(target, spec.hierarchy) for target in rule.next_template_ids}}
+            for rule in spec.hierarchy.refinement_rules if rule.block_id in (None, block.id)
+        ]
+        if observed is not None:
+            mapped = [value for name, value in observed.variables.items()
+                      if name in registered and index.component_block(name.split(".", 1)[0]) == block.id]
+            row["signals"] = {
+                "mapped": len(mapped),
+                "review_required": sum(value.review_required or value.mapping_status == "review_required" for value in mapped),
+                "required_missing": sum(name not in observed.variables for name in block.required_variables),
+            }
         blocks.append(row)
-    return {"audit_name": spec.audit_name, "system_name": spec.system.system_name, "blocks": blocks,
-            "unassigned_components": index.unassigned_components(), "connections": connections,
-            "boundaries": [boundary.model_dump() for boundary in spec.system.boundaries],
-            "assumptions": [card.model_dump() for card in spec.system.assumptions],
-            "parameter_assumption_applications": [card for card in assumptions.summary_dict()["cards"] if card["target_type"] == "parameter"],
-            "refinement_rules": [rule.model_dump() for rule in spec.hierarchy.refinement_rules],
-            "fault_variants": [variant.model_dump() for variant in spec.fault_variants],
-            "solver_attempted": False}
+    description = {
+        "audit_name": spec.audit_name, "system_name": spec.system.system_name, "blocks": blocks,
+        "unassigned_components": index.unassigned_components(), "connections": connections,
+        "boundaries": [boundary.model_dump() for boundary in spec.system.boundaries],
+        "assumptions": [card.model_dump() for card in spec.system.assumptions],
+        "parameter_assumption_applications": [card for card in assumptions.summary_dict()["cards"] if card["target_type"] == "parameter"],
+        "refinement_rules": [rule.model_dump() for rule in spec.hierarchy.refinement_rules],
+        "fault_variants": [variant.model_dump() for variant in spec.fault_variants],
+        "solver_attempted": False,
+        "root_blocks": [block.id for block in index.root_blocks()],
+        "referenced_components": sorted(index._component_to_block),
+        "missing_components": index.unassigned_components(),
+        "scoring": spec.hierarchy.scoring.model_dump(), "confidence": spec.hierarchy.confidence.model_dump(),
+        "component_count": len(components),
+        "unassigned_component_types": {name: components[name].type for name in index.unassigned_components()},
+    }
+    return _render_hierarchy_mermaid(description) if mermaid else description
+
+
+def render_hierarchy_text(description: dict[str, Any]) -> str:
+    """Render one compact page from the same full structural JSON."""
+    blocks = {block["id"]: block for block in description["blocks"]}
+    variants = description["fault_variants"]
+    lines = [f"audit {description['audit_name']}: {len(blocks)} blocks, {description['component_count']} components, "
+             f"{len(variants)} variants ({sum(v['kind'] == 'benign' for v in variants)} benign), "
+             f"{len(description['refinement_rules'])} refinement rules, {len(description['assumptions'])} assumptions"]
+    def visit(identifier, depth):
+        block = blocks[identifier]
+        parts = [f"{'  ' * depth}{identifier} [L{block['level']}] components: "
+                 + (", ".join(f"{c['id']}({c['type']})" for c in block["components"]) or "none")]
+        if block["refines"]:
+            parts.append("refines: " + ", ".join(block["refines"]))
+        if block["fault_variants"]:
+            parts.append("variants: " + ", ".join(block["fault_variants"]))
+        if block["refinement_rules"]:
+            parts.append("rules: " + "; ".join(
+                f"{rule['id']} -> " + ", ".join(f"{target} ({rule['template_status'][target]})" for target in rule["next_template_ids"])
+                for rule in block["refinement_rules"]))
+        if block["required_variables"]:
+            parts.append("needs: " + ", ".join(block["required_variables"]))
+        if "signals" in block:
+            signals = block["signals"]
+            parts.append(f"signals: {signals['mapped']} mapped, {signals['review_required']} review_required, {signals['required_missing']} required missing")
+        lines.append(" | ".join(parts))
+        for child in block["children"]:
+            visit(child, depth + 1)
+    for root in description["root_blocks"]:
+        visit(root, 0)
+    links = {}
+    for connection in description["connections"]:
+        if connection["scope"] == "between_blocks":
+            pair = (connection["from_block"] or "unassigned", connection["to_block"] or "unassigned")
+            links[pair] = links.get(pair, 0) + 1
+    if links:
+        lines.append("links: " + ", ".join(f"{source} -> {target} ({count})" for (source, target), count in links.items()))
+    if description["unassigned_components"]:
+        lines.append("unassigned: " + ", ".join(description["unassigned_components"]))
+    return "\n".join(lines)
+
+
+def _render_hierarchy_mermaid(description: dict[str, Any]) -> str:
+    """Keep identifiers generated and escape all user-supplied label content."""
+    from html import escape
+
+    blocks = {block["id"]: block for block in description["blocks"]}
+    types = {component["id"]: component["type"] for block in blocks.values() for component in block["components"]}
+    types.update(description["unassigned_component_types"])
+    node_ids = {name: f"component_{i}" for i, name in enumerate(types)}
+    block_ids = {name: f"block_{i}" for i, name in enumerate(blocks)}
+    label = lambda value: escape(" ".join(str(value).splitlines()), quote=True)
+    lines = ["flowchart TD"]
+    def visit(identifier, depth):
+        block = blocks[identifier]
+        text = f"{identifier} (level {block['level']})"
+        if block["fault_variants"]:
+            text += "; variants: " + ", ".join(block["fault_variants"])
+        indent = "  " * depth
+        lines.append(f'{indent}subgraph {block_ids[identifier]}["{label(text)}"]')
+        for component in block["components"]:
+            name = component["id"]
+            lines.append(f'{indent}  {node_ids[name]}["{label(name)}: {label(types[name])}"]')
+        for child in block["children"]:
+            visit(child, depth + 1)
+        lines.append(indent + "end")
+    for root in description["root_blocks"]:
+        visit(root, 1)
+    for name in description["unassigned_components"]:
+        lines.append(f'  {node_ids[name]}["{label(name)}: {label(types[name])} (unassigned)"]')
+    for connection in description["connections"]:
+        source, target = connection["from_variable"], connection["to_variable"]
+        text = f"{source} = {target}"
+        if connection["scale"] is not None:
+            text += f"; residual scale={connection['scale']}"
+        lines.append(f'  {node_ids[source.split(".")[0]]} -->|"{label(text)}"| {node_ids[target.split(".")[0]]}')
+    return "\n".join(lines)
 
 
 def _attach_signal_mapping_context(
@@ -1261,7 +1316,8 @@ __all__ = [
     "RecommendedRefinement",
     "RefinementPlanner",
     "ResidualBlockAssignment",
-    "inspect_hierarchy",
+    "describe_hierarchy",
+    "render_hierarchy_text",
 ]
 
 

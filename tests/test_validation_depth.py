@@ -66,11 +66,11 @@ def test_series_required_variables_are_checked_after_native_derivation(drop_temp
     from physicsguard.schema.validation_depth import ObservedSeriesSpec
 
     example = ROOT / "examples/hierarchical/heated_tank"
-    spec = load_hierarchical_audit_spec(example / "first_step_level0.yaml")
+    spec = load_hierarchical_audit_spec(example / "heated_tank.yaml")
     blocks = [block.model_copy(update={"required_variables": ["heat.Q_out_W"]}) if block.id == "thermal" else block
               for block in spec.hierarchy.blocks]
     spec = spec.model_copy(update={"hierarchy": spec.hierarchy.model_copy(update={"blocks": blocks})})
-    variables = load_observed_values(example / "first_step_measured_k30.yaml").model_dump(mode="json")["variables"]
+    variables = load_observed_values(example / "measured_k30.yaml").model_dump(mode="json")["variables"]
     if drop_temperatures:
         del variables["heat.T_previous_K"]
         del variables["heat.T_current_K"]
@@ -98,7 +98,7 @@ def test_uncertain_required_mapping_blocks_broad_validation(tmp_path: Path) -> N
     edges = _load(edges_path)
     edge = edges["fields"]["flow_readback_kg_s"]
     edge.pop("evidence")
-    edge["confidence"] = 0.4
+    edge["confidence"] = "low"
     edge["review_required"] = True
     _write(edges_path, edges)
     plan_path = _clean_plan(pump)
@@ -310,3 +310,33 @@ def test_omitted_adequacy_uses_manifest_facts_without_an_extra_plan_warning(tmp_
     assert report.status=='pass'
     assert report.depth_summary['adequacy']['available_point_count']==3
     assert 'validation_adequacy_plan_missing' not in {f['type'] for f in report.findings}
+
+
+def test_series_is_built_from_the_contract_when_no_file_is_declared() -> None:
+    from physicsguard.io.test_file_contract_loader import load_model_validation_plan
+    from physicsguard.core.validation_depth import _contract_series
+    path = ROOT / "examples/hierarchical/heated_tank/validation_plan.yaml"
+    plan = load_model_validation_plan(path)
+    assert plan.depth.observed_series is None
+    findings = []
+    series = _contract_series(plan, path.parent, findings, set())
+    assert not findings
+    assert series is not None and len(series.points) == 120
+    assert series.points[0].source_row_index == 0
+    assert series.points[-1].source_row_index == 119
+    assert "lvl_prev.level_m" in series.points[0].variables
+    assert "lvl_cur.level_m" in series.points[0].variables
+
+
+def test_missing_declared_series_is_one_finding(tmp_path: Path) -> None:
+    pump = _copy_pump(tmp_path)
+    path = _clean_plan(pump)
+    plan = _load(path)
+    series_path = path.parent / plan["depth"]["observed_series"]["path"]
+    series_path.unlink()
+    report = validate_model_dataset(path)
+    assert report.status == "fail"
+    assert len(report.findings) == 1
+    assert report.findings[0]["target"] == plan["depth"]["observed_series"]["path"]
+    for check in ("time", "scenarios", "residual_series", "envelopes", "adequacy"):
+        assert report.depth[check]["status"] == "not_run"

@@ -74,7 +74,7 @@ def test_contract_diff_flags_possible_rename():
 
 
 @pytest.mark.parametrize('row',[30,70])
-@pytest.mark.parametrize('contract,prefix',[('tank_run_contract.yaml','measured'),('first_step_contract.yaml','first_step_measured')])
+@pytest.mark.parametrize('contract,prefix',[('tank_run_contract.yaml','measured')])
 def test_snapshot_matches_existing_tank_values(contract,prefix,row):
     actual = snapshot(TANK/contract,row)
     stored = yaml.safe_load((TANK/f'{prefix}_k{row}.yaml').read_text())
@@ -116,3 +116,21 @@ def test_next_row_and_nonfinite_values_cannot_be_invented():
 def test_documented_unit_table(source,target,factor,offset):
     from physicsguard.core.units import unit_conversion
     assert unit_conversion(source,target)==pytest.approx((factor,offset))
+
+
+def test_snapshot_copies_the_contract_source_model(tmp_path):
+    from physicsguard.schema.validation_depth import ObservedSeriesSpec
+
+    header = {"model_name": " model A ", "tool": "exporter", "scenario": "run A"}
+    path = changed_contract(tmp_path, lambda data: None)
+    baseline = snapshot(path, 0)
+    assert 'source_model' not in baseline
+    assert 'source_model' not in series(path, '0:2')
+    contract = yaml.safe_load(path.read_text())
+    contract['source_model'] = header
+    path.write_text(yaml.safe_dump(contract))
+    copied = snapshot(path, 0)
+    sequence = series(path, '0:2')
+    assert copied['source_model'] == sequence['source_model'] == header
+    assert ObservedSeriesSpec.model_validate(sequence).source_model.model_dump(exclude_unset=True) == header
+    assert copied['variables'] == baseline['variables']

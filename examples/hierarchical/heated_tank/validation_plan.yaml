@@ -2,24 +2,14 @@
 # Purpose: validation plan.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli validation run examples/hierarchical/heated_tank/validation_plan.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 validation_id: tank_run_validation
 audit_file: heated_tank.yaml
 observed_file: measured_k30.yaml
 contracts:
   - {contract: tank_run_contract.yaml, required_status: pass}
 variable_roles:
-  - {mapping_confidence: 0.9, source_id: 'field:level_m', target: lvl_prev.level_m, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:level_m', target: lvl_cur.level_m, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:inflow_Lps', target: inflow_mass.V_dot_m3_s, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:outflow_m3s', target: vol.V_dot_out_m3_s, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:T_in_C', target: through.T_in_K, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:T_tank_C', target: heat.T_previous_K, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:T_tank_C', target: heat.T_current_K, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:T_amb_C', target: loss.T_ambient_K, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:P_heater_cmd_kW', target: heater_cmd.x, use_policy: preferred, validation_role: model_input}
-  - {mapping_confidence: 0.9, source_id: 'field:I_heater_A', target: heater_el.current_A, use_policy: holdout_only, validation_role: validation_output}
-  - {mapping_confidence: 0.9, source_id: 'field:U_heater_V', target: heater_el.V_V, use_policy: holdout_only, validation_role: validation_output}
+  - {target: heater_cmd.x, use_policy: preferred, validation_role: model_input}
 calibration: {enabled: false, method: none}
 depth:
   dataset:
@@ -29,8 +19,7 @@ depth:
     parameter_roles: {identity_id: tank_roles, path: tank_run_contract.yaml}
     testbench: {identity_id: tank_bench, path: tank_run_contract.yaml}
     testbench_version: v1
-  mapping_review: {minimum_confidence: 0.6}
-  observed_series: {identity_id: tank_series, path: tank_series.yaml}
+  mapping_review: {minimum_confidence: medium}
   time_scope: {claim_scope: time_window}
   scenarios: [{scenario_id: default}]
   adequacy: {}

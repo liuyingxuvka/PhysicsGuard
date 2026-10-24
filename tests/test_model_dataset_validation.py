@@ -100,3 +100,18 @@ def test_internal_dataset_evaluations_do_not_compute_unused_unit_hints(monkeypat
     monkeypatch.setattr(hierarchy,'_unit_factor_followups',unused_hint)
     report=validate_model_dataset(PUMP/'validation/clean_validation_plan.yaml')
     assert report.status=='pass'
+
+
+def test_roles_default_to_the_contract_and_plan_rows_override() -> None:
+    from physicsguard.io.test_file_contract_loader import load_model_validation_plan
+    from physicsguard.core.validation_adequacy import resolve_validation_roles
+    path = ROOT / "examples/hierarchical/heated_tank/validation_plan.yaml"
+    plan = resolve_validation_roles(load_model_validation_plan(path), path.parent)
+    roles = {role.target: role for role in plan.variable_roles}
+    assert len(roles) == 11
+    assert roles["lvl_prev.level_m"].source_id == roles["lvl_cur.level_m"].source_id == "field:level_m"
+    assert roles["lvl_cur.level_m"].use_policy == "holdout_only"
+    assert roles["heater_cmd.x"].source_id == "field:P_heater_cmd_kW"
+    assert roles["heater_cmd.x"].mapping_confidence == "high"
+    assert roles["heater_cmd.x"].validation_role == "model_input"
+    assert roles["heater_cmd.x"].use_policy == "preferred"

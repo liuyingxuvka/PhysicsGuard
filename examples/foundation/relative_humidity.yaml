@@ -1,8 +1,8 @@
-# PhysicsGuard system audit/model blueprint
+# PhysicsGuard system audit model
 # Purpose: foundation relative humidity.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/foundation/relative_humidity.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: foundation_relative_humidity
 components:
   - id: rh

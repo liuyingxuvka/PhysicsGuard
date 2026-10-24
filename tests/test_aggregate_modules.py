@@ -308,10 +308,10 @@ def test_aggregate_efficiency_unsafe_denominator_fails_clearly() -> None:
 
 
 def test_aggregate_modules_run_through_hierarchical_yaml_example() -> None:
-    spec = load_hierarchical_audit_spec(FC / "level_0_system_balance.yaml")
+    spec = load_hierarchical_audit_spec(FC / "tree.yaml")
     builder = ResidualBuilder(spec.system)
     result = BoundedSolver(builder, spec.system.solver).solve()
-    report = DiagnosticReporter().generate(spec.system, builder, result)
+    report = DiagnosticReporter().generate(spec.system, builder, result, top_n=len(builder.diagnostic_residual_records(builder.build_registry().dict_to_vector(result.variables))))
     keys = {residual.diagnostic_key for residual in report.top_residuals}
 
     assert result.optimization_success

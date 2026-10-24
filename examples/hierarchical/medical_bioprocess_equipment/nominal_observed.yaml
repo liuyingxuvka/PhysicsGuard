@@ -1,0 +1,54 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Authored nominal supplied signals only; coarse aliases remain derived, not additional measurements.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: medical_bioprocess_equipment_nominal
+description: Authored nominal supplied signals only; coarse aliases remain derived,
+  not additional measurements.
+variables:
+  ventilator_supply_mass_flow.value:
+    value: 0.1
+    source: "tree.yaml#system.boundaries[0]"
+    unit: kg/s
+    external_signal: mapped_ventilator_supply_mass_flow
+  patient_delivery_mass_flow.value:
+    value: 0.09
+    source: "tree.yaml#system.boundaries[1]"
+    unit: kg/s
+    external_signal: mapped_patient_delivery_mass_flow
+  ventilator_leak_mass_flow.value:
+    value: 0.01
+    source: "tree.yaml#system.boundaries[2]"
+    unit: kg/s
+    external_signal: mapped_ventilator_leak_mass_flow
+  dialysate_inlet_mass_flow.value:
+    value: 0.2
+    source: "tree.yaml#system.boundaries[3]"
+    unit: kg/s
+    external_signal: mapped_dialysate_inlet_mass_flow
+  dialysate_outlet_mass_flow.value:
+    value: 0.2
+    source: "tree.yaml#system.boundaries[4]"
+    unit: kg/s
+    external_signal: mapped_dialysate_outlet_mass_flow
+  heater_power.value:
+    value: 500.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: W
+    external_signal: mapped_heater_power
+  useful_chamber_heat.value:
+    value: 400.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: W
+    external_signal: mapped_useful_chamber_heat
+  wall_heat_loss.value:
+    value: 100.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: W
+    external_signal: mapped_wall_heat_loss
+  incubator_temperature.value:
+    value: 310.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: K
+    external_signal: mapped_incubator_temperature

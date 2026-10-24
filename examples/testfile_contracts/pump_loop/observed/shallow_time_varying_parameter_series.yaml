@@ -2,7 +2,7 @@
 # Purpose: shallow time varying parameter series.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: reference from a PhysicsGuard model validation plan (depth)
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 # PhysicsGuard intentionally shallow bounded observed series
 # Purpose: negative calibration showing that one value cannot validate a time-varying parameter.
 # Boundary: PhysicsGuard shallow-depth regression fixture only.

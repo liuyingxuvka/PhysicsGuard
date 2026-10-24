@@ -16,7 +16,7 @@ from flowguard.explorer import Explorer
 
 MODEL_ID = 'test_file_contract'
 PARENT = 'system'
-COMPONENTS = ['evidence', 'schema']
+COMPONENTS = ['data_binding', 'schema']
 ROOT = Path(__file__).resolve().parents[2]
 PUMP = ROOT / 'examples/testfile_contracts/pump_loop'
 IMPLEMENTED_BY = {

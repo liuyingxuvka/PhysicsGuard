@@ -51,3 +51,17 @@ def test_non_json_metadata_fails() -> None:
                 "metadata": {"bad": object()},
             }
         )
+
+
+def test_numeric_mapping_confidence_is_rejected_with_the_word_mapping() -> None:
+    with pytest.raises(ValidationError, match=r"mapping confidence uses high\|medium\|low\|proposed"):
+        ObservedValuesSpec.model_validate({"variables": {"signal.x": {"value": 1., "mapping_confidence": .9}}})
+
+
+def test_snapshot_accepts_source_model_and_rejects_unknown_keys() -> None:
+    header = {"model_name": " model A ", "tool": "exporter", "scenario": "run A"}
+    spec = ObservedValuesSpec.model_validate({"variables": {"a.x": {"value": 1.}}, "source_model": header})
+    assert spec.source_model.model_dump(exclude_unset=True) == header
+    with pytest.raises(ValidationError, match="extra_forbidden"):
+        ObservedValuesSpec.model_validate({"variables": {"a.x": {"value": 1.}},
+                                           "source_model": {"unknown": "value"}})

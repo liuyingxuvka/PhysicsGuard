@@ -8,7 +8,21 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from physicsguard.schema.parameter_coverage import MappingConfidence
 from physicsguard.schema.variable import is_qualified_variable_name
+
+
+class SourceModelSpec(BaseModel):
+    """Optional external-model context, with no effect on audit conclusions."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    model_name: Optional[str] = None
+    tool: Optional[str] = None
+    tool_version: Optional[str] = None
+    model_version: Optional[str] = None
+    scenario: Optional[str] = None
+    export_time: Optional[str] = None
 
 
 class ObservedValueSpec(BaseModel):
@@ -19,7 +33,7 @@ class ObservedValueSpec(BaseModel):
     source: Optional[str] = None
     description: Optional[str] = None
     external_signal: Optional[str] = None
-    mapping_confidence: float | str | None = None
+    mapping_confidence: Optional[MappingConfidence] = None
     mapping_status: Optional[str] = None
     review_required: bool = False
     conversion_factor: Optional[float] = None
@@ -40,15 +54,6 @@ class ObservedValueSpec(BaseModel):
     def _optional_text_valid(cls, value: Optional[str]) -> Optional[str]:
         if value is not None and not value.strip():
             raise ValueError("mapping text fields cannot be blank")
-        return value
-
-    @field_validator("mapping_confidence")
-    @classmethod
-    def _mapping_confidence_valid(cls, value: float | str | None) -> float | str | None:
-        if isinstance(value, float) and not math.isfinite(value):
-            raise ValueError("mapping_confidence must be finite")
-        if isinstance(value, str) and not value.strip():
-            raise ValueError("mapping_confidence cannot be blank")
         return value
 
     @field_validator("conversion_factor", "conversion_offset")
@@ -73,6 +78,7 @@ class ObservedValuesSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     observation_name: Optional[str] = None
+    source_model: Optional[SourceModelSpec] = None
     description: Optional[str] = None
     variables: dict[str, ObservedValueSpec]
     metadata: dict[str, Any] = Field(default_factory=dict)

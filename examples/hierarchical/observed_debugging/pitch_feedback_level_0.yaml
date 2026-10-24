@@ -1,8 +1,8 @@
-# PhysicsGuard hierarchical audit/model blueprint
+# PhysicsGuard hierarchical audit model
 # Purpose: Direct observed-value hierarchical audit for a mapped controller feedback signal.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: observed_pitch_feedback_level_0
 description: Direct observed-value hierarchical audit for a mapped controller feedback signal.
 system:
@@ -40,8 +40,6 @@ hierarchy:
       name: F14-style flight-control loop
       level: 0
       components: []
-      refinement_template_ids:
-        - observed_debugging/pitch_feedback_level_0
       metadata:
         purpose: coarse external-signal audit example
     - id: pitch_rate_feedback
@@ -55,8 +53,6 @@ hierarchy:
         - controller_q_gain.y
       required_parameters:
         - controller_q_gain.a
-      refinement_template_ids:
-        - observed_debugging/manual_signal_mapping_review
       metadata:
         expected_relation: controller_q_gain.y = 0.8156 * controller_q_gain.x
         external_signal_mapping_is_ai_or_user_supplied: true
@@ -66,8 +62,6 @@ hierarchy:
       trigger_diagnostic_keys:
         - linear_relation_mismatch
       score_threshold: 1.0
-      next_template_ids:
-        - observed_debugging/manual_signal_mapping_review
       next_required_variables:
         - actual feedback gain block input
         - actual feedback gain block output

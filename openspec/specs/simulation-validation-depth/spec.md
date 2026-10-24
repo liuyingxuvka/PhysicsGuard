@@ -144,7 +144,7 @@ A child's `refines` SHALL name only components owned directly by its parent. The
 - **THEN** `coarse_pass` and `consistent` SHALL be null with an explicit reason rather than a claim of agreement
 
 ### Requirement: Template availability does not execute refinement
-Each recommendation SHALL preserve its template ids and give a `template_status` mapping for every id. A same-file block id SHALL resolve as `block`; a file found from the audit directory or its parent, with or without `.yaml`, SHALL resolve as `file`. Missing ids SHALL resolve as `missing` with `refinement_template_missing: <id>`. Lookup SHALL NOT execute templates or imply that a found file passed an audit. Hierarchy inspection SHALL include each block's `refines` links.
+Each recommendation SHALL preserve its template ids and give a `template_status` mapping for every id. A same-file block id SHALL resolve as `block`; a file found from the audit directory or its parent, with or without `.yaml`, SHALL resolve as `file`. Unbuilt ids SHALL resolve as `planned` with `refinement_template_planned: <id>`; this is a suggestion, not a claim that a model exists. The retired block field `refinement_template_ids` SHALL be rejected; next template ids SHALL be declared only through `hierarchy.refinement_rules[].next_template_ids`. Lookup SHALL NOT execute templates or imply that a found file passed an audit. Hierarchy description SHALL include each block's `refines` links.
 
 #### Scenario: One recommendation names multiple templates
 - **WHEN** a recommendation contains both a resolvable id and a missing id
@@ -257,7 +257,8 @@ The installed skill SHALL include `references/model-format.md` and paired audit/
 
 #### Scenario: A hierarchy is described without solving
 - **WHEN** `hierarchy describe AUDIT` is requested
-- **THEN** the output SHALL include block levels, parents/children, `refines`, component relations, intra/interblock connections, refinement rules and fault variants
+- **THEN** default text SHALL show one depth-first tree with component types, `refines`, declared fault variants, rules and block links; `--json` SHALL retain every previous structural key plus roots, unassigned components, scoring, confidence and required/optional declarations
+- **AND** `--observed SNAPSHOT` SHALL add mapped, review-required and required-missing signal counts without solving or evaluating
 - **AND** `--mermaid` SHALL render declared block subgraphs, component nodes and labeled connections starting with `flowchart TD`, without claiming an audit pass
 
 ### Requirement: Compact hierarchy summaries retain assumptions
@@ -269,7 +270,7 @@ Compact hierarchy audit summaries SHALL include each assumption card's `id`, `st
 
 ### Requirement: current single-file mapping gate
 Validation SHALL derive mappings from each test-file contract's fields, including
-unit compatibility, target registry, confidence and evidence. No old sidecar
+unit compatibility, registry of variables named by `target`, confidence and evidence. No old sidecar
 mapping format SHALL be loaded. Data freshness, unresolved mappings, overstated
 scope, overlapping holdout content and pointwise prediction remain hard gates.
 

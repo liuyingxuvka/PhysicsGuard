@@ -1,0 +1,1186 @@
+# PhysicsGuard hierarchical audit model
+# Purpose: Global plant budget and separately scoped unit-accounting records in one audit tree. The global budget is an independent supplied boundary record,...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/wastewater_treatment/tree.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: wastewater_scoped_tree
+description: Global plant budget and separately scoped unit-accounting records in one audit tree. The
+  global budget is an independent supplied boundary record, not a same-operating-point whole-plant closure
+  derived or verified from these four unit records.
+system:
+  system_name: wastewater_scoped_tree
+  components:
+  - id: global_influent_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 1.2
+      scale: 1.0
+      external_signal: mapped_influent_mass_flow
+      mapping_confidence: template
+  - id: global_effluent_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 1.0
+      scale: 1.0
+      external_signal: mapped_effluent_mass_flow
+      mapping_confidence: template
+  - id: global_waste_sludge_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 0.18
+      scale: 0.1
+      external_signal: mapped_waste_sludge_mass_flow
+      mapping_confidence: template
+  - id: global_gas_vent_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.02
+      scale: 0.01
+      external_signal: mapped_gas_vent_mass_flow
+      mapping_confidence: template
+  - id: global_cod_in
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.06
+      scale: 0.01
+      external_signal: mapped_influent_cod_load
+      mapping_confidence: template
+  - id: global_cod_effluent
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.01
+      scale: 0.01
+      external_signal: mapped_effluent_cod_load
+      mapping_confidence: template
+  - id: global_cod_to_sludge
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.02
+      scale: 0.01
+      external_signal: mapped_cod_to_waste_sludge
+      mapping_confidence: template
+  - id: global_cod_oxidized
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.03
+      scale: 0.01
+      external_signal: mapped_cod_oxidized_or_biogas_equivalent
+      mapping_confidence: template
+  - id: global_tn_in
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1.0
+      initial_guess: 0.004
+      scale: 0.001
+      external_signal: mapped_influent_total_nitrogen_load
+      mapping_confidence: template
+  - id: global_tn_effluent
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1.0
+      initial_guess: 0.001
+      scale: 0.001
+      external_signal: mapped_effluent_total_nitrogen_load
+      mapping_confidence: template
+  - id: global_tn_to_sludge
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1.0
+      initial_guess: 0.001
+      scale: 0.001
+      external_signal: mapped_nitrogen_to_sludge
+      mapping_confidence: template
+  - id: global_tn_denitrified
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1.0
+      initial_guess: 0.002
+      scale: 0.001
+      external_signal: mapped_denitrified_nitrogen_equivalent
+      mapping_confidence: template
+  - id: global_oxygen_transferred
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.045
+      scale: 0.01
+      external_signal: mapped_aeration_oxygen_transfer
+      mapping_confidence: template
+  - id: global_oxygen_for_carbon
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.03
+      scale: 0.01
+      external_signal: mapped_oxygen_for_carbon_oxidation
+      mapping_confidence: template
+  - id: global_oxygen_for_nitrification
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.01
+      scale: 0.01
+      external_signal: mapped_oxygen_for_nitrification
+      mapping_confidence: template
+  - id: global_oxygen_excess
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.005
+      scale: 0.001
+      external_signal: mapped_residual_or_unaccounted_oxygen
+      mapping_confidence: template
+  - id: global_grid_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 15000.0
+      scale: 10000.0
+      external_signal: mapped_plant_grid_power
+      mapping_confidence: template
+  - id: global_aeration_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 10000.0
+      scale: 10000.0
+      external_signal: mapped_aeration_power
+      mapping_confidence: template
+  - id: global_pumping_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 3000.0
+      scale: 1000.0
+      external_signal: mapped_pumping_power
+      mapping_confidence: template
+  - id: global_mixing_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 1000.0
+      scale: 1000.0
+      external_signal: mapped_mixing_power
+      mapping_confidence: template
+  - id: global_other_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 1000.0
+      scale: 1000.0
+      external_signal: mapped_other_or_unaccounted_power
+      mapping_confidence: template
+  - id: global_plant_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - global_influent_flow.value
+      mass_out_variables:
+      - global_effluent_flow.value
+      - global_waste_sludge_flow.value
+      - global_gas_vent_flow.value
+      residual_scale_kg_s: 0.01
+  - id: global_cod_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - global_cod_in.value
+      mass_out_variables:
+      - global_cod_effluent.value
+      - global_cod_to_sludge.value
+      - global_cod_oxidized.value
+      residual_scale_kg_s: 0.001
+  - id: global_nitrogen_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - global_tn_in.value
+      mass_out_variables:
+      - global_tn_effluent.value
+      - global_tn_to_sludge.value
+      - global_tn_denitrified.value
+      residual_scale_kg_s: 0.0001
+  - id: global_oxygen_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - global_oxygen_transferred.value
+      mass_out_variables:
+      - global_oxygen_for_carbon.value
+      - global_oxygen_for_nitrification.value
+      - global_oxygen_excess.value
+      residual_scale_kg_s: 0.001
+  - id: global_electrical_balance
+    type: AggregateElectricalBusBalanceModule
+    parameters:
+      generation_power_variables:
+      - global_grid_power.value
+      consumption_power_variables:
+      - global_aeration_power.value
+      - global_pumping_power.value
+      - global_mixing_power.value
+      loss_power_variables:
+      - global_other_loss_power.value
+      residual_scale_W: 100.0
+  - id: unit_aeration_oxygen_transfer
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.05
+      scale: 0.01
+      external_signal: mapped_aeration_oxygen_transfer
+      mapping_confidence: template
+  - id: unit_oxygen_for_bod
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.032
+      scale: 0.01
+      external_signal: mapped_oxygen_for_bod
+      mapping_confidence: template
+  - id: unit_oxygen_for_nitrification
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.012
+      scale: 0.01
+      external_signal: mapped_oxygen_for_nitrification
+      mapping_confidence: template
+  - id: unit_oxygen_residual_or_storage
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: -1.0
+      upper_bound: 1.0
+      initial_guess: 0.006
+      scale: 0.001
+      external_signal: mapped_do_storage_or_unaccounted_o2
+      mapping_confidence: template
+  - id: unit_reactor_cod_in
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.06
+      scale: 0.01
+      external_signal: mapped_reactor_cod_in
+      mapping_confidence: template
+  - id: unit_reactor_cod_effluent
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.012
+      scale: 0.01
+      external_signal: mapped_reactor_cod_out
+      mapping_confidence: template
+  - id: unit_reactor_cod_to_biomass
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.018
+      scale: 0.01
+      external_signal: mapped_cod_to_biomass
+      mapping_confidence: template
+  - id: unit_reactor_cod_oxidized
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.03
+      scale: 0.01
+      external_signal: mapped_cod_oxidized
+      mapping_confidence: template
+  - id: unit_clarifier_tss_in
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.04
+      scale: 0.01
+      external_signal: mapped_clarifier_tss_in
+      mapping_confidence: template
+  - id: unit_clarifier_tss_effluent
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.004
+      scale: 0.001
+      external_signal: mapped_effluent_tss
+      mapping_confidence: template
+  - id: unit_clarifier_tss_return
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.03
+      scale: 0.01
+      external_signal: mapped_return_sludge_tss
+      mapping_confidence: template
+  - id: unit_clarifier_tss_waste
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.006
+      scale: 0.001
+      external_signal: mapped_waste_sludge_tss
+      mapping_confidence: template
+  - id: unit_underflow_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 0.42
+      scale: 0.1
+      external_signal: mapped_clarifier_underflow_mass_flow
+      mapping_confidence: template
+  - id: unit_return_sludge_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 0.35
+      scale: 0.1
+      external_signal: mapped_return_activated_sludge_flow
+      mapping_confidence: template
+  - id: unit_waste_sludge_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 0.07
+      scale: 0.1
+      external_signal: mapped_waste_activated_sludge_flow
+      mapping_confidence: template
+  - id: unit_aeration_blower_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 12000.0
+      scale: 10000.0
+      external_signal: mapped_blower_power
+      mapping_confidence: template
+  - id: unit_air_to_water_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 2500.0
+      scale: 1000.0
+      external_signal: mapped_oxygen_transfer_useful_power_equivalent
+      mapping_confidence: template
+  - id: unit_aeration_losses
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 9500.0
+      scale: 10000.0
+      external_signal: mapped_aeration_loss_or_unaccounted_power
+      mapping_confidence: template
+  - id: unit_reactor_oxygen_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - unit_aeration_oxygen_transfer.value
+      mass_out_variables:
+      - unit_oxygen_for_bod.value
+      - unit_oxygen_for_nitrification.value
+      - unit_oxygen_residual_or_storage.value
+      residual_scale_kg_s: 0.001
+  - id: unit_reactor_cod_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - unit_reactor_cod_in.value
+      mass_out_variables:
+      - unit_reactor_cod_effluent.value
+      - unit_reactor_cod_to_biomass.value
+      - unit_reactor_cod_oxidized.value
+      residual_scale_kg_s: 0.001
+  - id: unit_clarifier_solids_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - unit_clarifier_tss_in.value
+      mass_out_variables:
+      - unit_clarifier_tss_effluent.value
+      - unit_clarifier_tss_return.value
+      - unit_clarifier_tss_waste.value
+      residual_scale_kg_s: 0.001
+  - id: unit_sludge_recycle_split
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - unit_underflow_flow.value
+      mass_out_variables:
+      - unit_return_sludge_flow.value
+      - unit_waste_sludge_flow.value
+      residual_scale_kg_s: 0.001
+  - id: unit_aeration_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - unit_aeration_blower_power.value
+      load_power_variables:
+      - unit_air_to_water_power.value
+      loss_power_variables:
+      - unit_aeration_losses.value
+      residual_scale_W: 100.0
+  - id: aeration_oxygen_transfer
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.05
+      scale: 0.01
+      external_signal: mapped_aeration_oxygen_transfer
+      mapping_confidence: template
+  - id: oxygen_for_bod
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.032
+      scale: 0.01
+      external_signal: mapped_oxygen_for_bod
+      mapping_confidence: template
+  - id: oxygen_for_nitrification
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.012
+      scale: 0.01
+      external_signal: mapped_oxygen_for_nitrification
+      mapping_confidence: template
+  - id: oxygen_residual_or_storage
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: -1.0
+      upper_bound: 1.0
+      initial_guess: 0.006
+      scale: 0.001
+      external_signal: mapped_do_storage_or_unaccounted_o2
+      mapping_confidence: template
+  - id: reactor_cod_in
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.06
+      scale: 0.01
+      external_signal: mapped_reactor_cod_in
+      mapping_confidence: template
+  - id: reactor_cod_effluent
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.012
+      scale: 0.01
+      external_signal: mapped_reactor_cod_out
+      mapping_confidence: template
+  - id: reactor_cod_to_biomass
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.018
+      scale: 0.01
+      external_signal: mapped_cod_to_biomass
+      mapping_confidence: template
+  - id: reactor_cod_oxidized
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.03
+      scale: 0.01
+      external_signal: mapped_cod_oxidized
+      mapping_confidence: template
+  - id: clarifier_tss_in
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.04
+      scale: 0.01
+      external_signal: mapped_clarifier_tss_in
+      mapping_confidence: template
+  - id: clarifier_tss_effluent
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.004
+      scale: 0.001
+      external_signal: mapped_effluent_tss
+      mapping_confidence: template
+  - id: clarifier_tss_return
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.03
+      scale: 0.01
+      external_signal: mapped_return_sludge_tss
+      mapping_confidence: template
+  - id: clarifier_tss_waste
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.006
+      scale: 0.001
+      external_signal: mapped_waste_sludge_tss
+      mapping_confidence: template
+  - id: underflow_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 0.42
+      scale: 0.1
+      external_signal: mapped_clarifier_underflow_mass_flow
+      mapping_confidence: template
+  - id: return_sludge_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 0.35
+      scale: 0.1
+      external_signal: mapped_return_activated_sludge_flow
+      mapping_confidence: template
+  - id: waste_sludge_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 100.0
+      initial_guess: 0.07
+      scale: 0.1
+      external_signal: mapped_waste_activated_sludge_flow
+      mapping_confidence: template
+  - id: aeration_blower_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 12000.0
+      scale: 10000.0
+      external_signal: mapped_blower_power
+      mapping_confidence: template
+  - id: air_to_water_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 2500.0
+      scale: 1000.0
+      external_signal: mapped_oxygen_transfer_useful_power_equivalent
+      mapping_confidence: template
+  - id: aeration_losses
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000.0
+      initial_guess: 9500.0
+      scale: 10000.0
+      external_signal: mapped_aeration_loss_or_unaccounted_power
+      mapping_confidence: template
+  - id: reactor_oxygen_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - aeration_oxygen_transfer.value
+      mass_out_variables:
+      - oxygen_for_bod.value
+      - oxygen_for_nitrification.value
+      - oxygen_residual_or_storage.value
+      residual_scale_kg_s: 0.001
+  - id: reactor_cod_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - reactor_cod_in.value
+      mass_out_variables:
+      - reactor_cod_effluent.value
+      - reactor_cod_to_biomass.value
+      - reactor_cod_oxidized.value
+      residual_scale_kg_s: 0.001
+  - id: clarifier_solids_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - clarifier_tss_in.value
+      mass_out_variables:
+      - clarifier_tss_effluent.value
+      - clarifier_tss_return.value
+      - clarifier_tss_waste.value
+      residual_scale_kg_s: 0.001
+  - id: sludge_recycle_split
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - underflow_flow.value
+      mass_out_variables:
+      - return_sludge_flow.value
+      - waste_sludge_flow.value
+      residual_scale_kg_s: 0.001
+  - id: aeration_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - aeration_blower_power.value
+      load_power_variables:
+      - air_to_water_power.value
+      loss_power_variables:
+      - aeration_losses.value
+      residual_scale_W: 100.0
+  boundaries:
+  - variable: global_influent_flow.value
+    value: 1.2
+    scale: 1.0e-09
+  - variable: global_effluent_flow.value
+    value: 1.0
+    scale: 1.0e-09
+  - variable: global_waste_sludge_flow.value
+    value: 0.18
+    scale: 1.0e-09
+  - variable: global_gas_vent_flow.value
+    value: 0.02
+    scale: 1.0e-09
+  - variable: global_cod_in.value
+    value: 0.06
+    scale: 1.0e-09
+  - variable: global_cod_effluent.value
+    value: 0.01
+    scale: 1.0e-09
+  - variable: global_cod_to_sludge.value
+    value: 0.02
+    scale: 1.0e-09
+  - variable: global_cod_oxidized.value
+    value: 0.03
+    scale: 1.0e-09
+  - variable: global_tn_in.value
+    value: 0.004
+    scale: 1.0e-09
+  - variable: global_tn_effluent.value
+    value: 0.001
+    scale: 1.0e-09
+  - variable: global_tn_to_sludge.value
+    value: 0.001
+    scale: 1.0e-09
+  - variable: global_tn_denitrified.value
+    value: 0.002
+    scale: 1.0e-09
+  - variable: global_oxygen_transferred.value
+    value: 0.045
+    scale: 1.0e-09
+  - variable: global_oxygen_for_carbon.value
+    value: 0.03
+    scale: 1.0e-09
+  - variable: global_oxygen_for_nitrification.value
+    value: 0.01
+    scale: 1.0e-09
+  - variable: global_oxygen_excess.value
+    value: 0.005
+    scale: 1.0e-09
+  - variable: global_grid_power.value
+    value: 15000.0
+    scale: 1.0e-06
+  - variable: global_aeration_power.value
+    value: 10000.0
+    scale: 1.0e-06
+  - variable: global_pumping_power.value
+    value: 3000.0
+    scale: 1.0e-06
+  - variable: global_mixing_power.value
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: global_other_loss_power.value
+    value: 1000.0
+    scale: 1.0e-06
+  - variable: aeration_oxygen_transfer.value
+    value: 0.05
+    scale: 1.0e-09
+  - variable: oxygen_for_bod.value
+    value: 0.032
+    scale: 1.0e-09
+  - variable: oxygen_for_nitrification.value
+    value: 0.012
+    scale: 1.0e-09
+  - variable: oxygen_residual_or_storage.value
+    value: 0.006
+    scale: 1.0e-09
+  - variable: reactor_cod_in.value
+    value: 0.06
+    scale: 1.0e-09
+  - variable: reactor_cod_effluent.value
+    value: 0.012
+    scale: 1.0e-09
+  - variable: reactor_cod_to_biomass.value
+    value: 0.018
+    scale: 1.0e-09
+  - variable: reactor_cod_oxidized.value
+    value: 0.03
+    scale: 1.0e-09
+  - variable: clarifier_tss_in.value
+    value: 0.04
+    scale: 1.0e-09
+  - variable: clarifier_tss_effluent.value
+    value: 0.004
+    scale: 1.0e-09
+  - variable: clarifier_tss_return.value
+    value: 0.03
+    scale: 1.0e-09
+  - variable: clarifier_tss_waste.value
+    value: 0.006
+    scale: 1.0e-09
+  - variable: underflow_flow.value
+    value: 0.42
+    scale: 1.0e-09
+  - variable: return_sludge_flow.value
+    value: 0.35
+    scale: 1.0e-09
+  - variable: waste_sludge_flow.value
+    value: 0.07
+    scale: 1.0e-09
+  - variable: aeration_blower_power.value
+    value: 12000.0
+    scale: 1.0e-06
+  - variable: air_to_water_power.value
+    value: 2500.0
+    scale: 1.0e-06
+  - variable: aeration_losses.value
+    value: 9500.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+  connections:
+  - from_variable: unit_aeration_oxygen_transfer.value
+    to_variable: aeration_oxygen_transfer.value
+  - from_variable: unit_oxygen_for_bod.value
+    to_variable: oxygen_for_bod.value
+  - from_variable: unit_oxygen_for_nitrification.value
+    to_variable: oxygen_for_nitrification.value
+  - from_variable: unit_oxygen_residual_or_storage.value
+    to_variable: oxygen_residual_or_storage.value
+  - from_variable: unit_reactor_cod_in.value
+    to_variable: reactor_cod_in.value
+  - from_variable: unit_reactor_cod_effluent.value
+    to_variable: reactor_cod_effluent.value
+  - from_variable: unit_reactor_cod_to_biomass.value
+    to_variable: reactor_cod_to_biomass.value
+  - from_variable: unit_reactor_cod_oxidized.value
+    to_variable: reactor_cod_oxidized.value
+  - from_variable: unit_clarifier_tss_in.value
+    to_variable: clarifier_tss_in.value
+  - from_variable: unit_clarifier_tss_effluent.value
+    to_variable: clarifier_tss_effluent.value
+  - from_variable: unit_clarifier_tss_return.value
+    to_variable: clarifier_tss_return.value
+  - from_variable: unit_clarifier_tss_waste.value
+    to_variable: clarifier_tss_waste.value
+  - from_variable: unit_underflow_flow.value
+    to_variable: underflow_flow.value
+  - from_variable: unit_return_sludge_flow.value
+    to_variable: return_sludge_flow.value
+  - from_variable: unit_waste_sludge_flow.value
+    to_variable: waste_sludge_flow.value
+  - from_variable: unit_aeration_blower_power.value
+    to_variable: aeration_blower_power.value
+  - from_variable: unit_air_to_water_power.value
+    to_variable: air_to_water_power.value
+  - from_variable: unit_aeration_losses.value
+    to_variable: aeration_losses.value
+hierarchy:
+  blocks:
+  - id: wastewater_plant
+    name: Wastewater treatment plant
+    level: 0
+    tags:
+    - wastewater
+    - water_treatment
+    components:
+    - global_influent_flow
+    - global_effluent_flow
+    - global_waste_sludge_flow
+    - global_gas_vent_flow
+    - global_cod_in
+    - global_cod_effluent
+    - global_cod_to_sludge
+    - global_cod_oxidized
+    - global_tn_in
+    - global_tn_effluent
+    - global_tn_to_sludge
+    - global_tn_denitrified
+    - global_oxygen_transferred
+    - global_oxygen_for_carbon
+    - global_oxygen_for_nitrification
+    - global_oxygen_excess
+    - global_grid_power
+    - global_aeration_power
+    - global_pumping_power
+    - global_mixing_power
+    - global_other_loss_power
+    - global_plant_mass_balance
+    - global_cod_balance
+    - global_nitrogen_balance
+    - global_oxygen_balance
+    - global_electrical_balance
+    - unit_aeration_oxygen_transfer
+    - unit_oxygen_for_bod
+    - unit_oxygen_for_nitrification
+    - unit_oxygen_residual_or_storage
+    - unit_reactor_cod_in
+    - unit_reactor_cod_effluent
+    - unit_reactor_cod_to_biomass
+    - unit_reactor_cod_oxidized
+    - unit_clarifier_tss_in
+    - unit_clarifier_tss_effluent
+    - unit_clarifier_tss_return
+    - unit_clarifier_tss_waste
+    - unit_underflow_flow
+    - unit_return_sludge_flow
+    - unit_waste_sludge_flow
+    - unit_aeration_blower_power
+    - unit_air_to_water_power
+    - unit_aeration_losses
+    - unit_reactor_oxygen_balance
+    - unit_reactor_cod_balance
+    - unit_clarifier_solids_balance
+    - unit_sludge_recycle_split
+    - unit_aeration_power_balance
+    description: Independent global budget plus parent-owned coarse books for each distinct unit boundary.
+      Unit refinements below check only their named unit books, never claim the global budget is closed
+      by unit records.
+  - id: biological_reactor
+    name: Biological reactor
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - aeration_oxygen_transfer
+    - oxygen_for_bod
+    - oxygen_for_nitrification
+    - oxygen_residual_or_storage
+    - reactor_cod_in
+    - reactor_cod_effluent
+    - reactor_cod_to_biomass
+    - reactor_cod_oxidized
+    - reactor_oxygen_balance
+    - reactor_cod_balance
+    tags:
+    - activated_sludge
+    - oxygen_balance
+    - cod_balance
+    required_variables:
+    - aeration_oxygen_transfer.value
+    - oxygen_for_bod.value
+    - oxygen_for_nitrification.value
+    - reactor_cod_in.value
+    - reactor_cod_effluent.value
+    refines: &id001
+    - unit_reactor_oxygen_balance
+    - unit_reactor_cod_balance
+  - id: secondary_clarifier
+    name: Secondary clarifier
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - clarifier_tss_in
+    - clarifier_tss_effluent
+    - clarifier_tss_return
+    - clarifier_tss_waste
+    - clarifier_solids_balance
+    tags:
+    - clarifier
+    - tss_balance
+    required_variables:
+    - clarifier_tss_in.value
+    - clarifier_tss_effluent.value
+    - clarifier_tss_return.value
+    refines: &id002
+    - unit_clarifier_solids_balance
+  - id: sludge_recycle
+    name: Sludge recycle and wasting
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - underflow_flow
+    - return_sludge_flow
+    - waste_sludge_flow
+    - sludge_recycle_split
+    tags:
+    - return_activated_sludge
+    - waste_activated_sludge
+    refines: &id003
+    - unit_sludge_recycle_split
+  - id: aeration_energy
+    name: Aeration energy
+    level: 1
+    parent_id: wastewater_plant
+    components:
+    - aeration_blower_power
+    - air_to_water_power
+    - aeration_losses
+    - aeration_power_balance
+    tags:
+    - aeration
+    - energy_balance
+    refines: &id004
+    - unit_aeration_power_balance
+  refinement_rules:
+  - id: refine_wastewater_level_0_balance
+    block_id: wastewater_plant
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_electrical_bus_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - biological_reactor
+    - secondary_clarifier
+    - sludge_recycle
+    - aeration_energy
+    next_required_variables:
+    - aeration.oxygen_transferred_kg_s
+    - reactor.oxygen_demand_kg_s
+    - clarifier.solids_in_kg_s
+    - clarifier.solids_effluent_kg_s
+    - sludge.return_flow_kg_s
+    next_required_parameters:
+    - plant.signal_mapping_confidence
+    - plant.COD_basis
+    - plant.TN_basis
+    rationale: Inspect the separately scoped unit records and their signal bases after a global-budget
+      discrepancy. These suggestions do not claim the four units establish same-point whole-plant closure.
+    priority: 10
+  - id: refine_biological_reactor
+    block_id: biological_reactor
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - reactor.ammonia_load_kg_s
+    - reactor.nitrate_load_kg_s
+    - reactor.do_kg_s_or_mg_L
+    - reactor.biomass_production_kg_s
+    next_required_parameters:
+    - reactor.COD_basis
+    - reactor.oxygen_transfer_basis
+    rationale: Reactor COD or oxygen accounting residual is high; inspect ASM-style component mapping
+      and oxygen demand terms before adding kinetics.
+    priority: 20
+  - id: refine_secondary_clarifier
+    block_id: secondary_clarifier
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - clarifier.underflow_tss_kg_s
+    - clarifier.effluent_tss_kg_s
+    - clarifier.sludge_blanket_or_capture_indicator
+    rationale: Clarifier solids residual is high; inspect TSS mappings, underflow/overflow split, and
+      waste-sludge accounting.
+    priority: 15
+  scoring:
+    method: max
+metadata:
+  boundary: Global and unit records have separate declared control volumes and are not asserted to be
+    one reconciled whole-plant operating point.
+  not_inferred:
+  - global waste sludge0.18 is not unit WAS0.07
+  - global oxygen0.045 is not reactor transfer0.05
+  - global aeration power10000 is not unit blower12000
+  - global COD effluent/sludge are not reactor or clarifier COD/TSS streams
+  refinement_scope:
+    biological_reactor: *id001
+    secondary_clarifier: *id002
+    sludge_recycle: *id003
+    aeration_energy: *id004
+  limitations:
+  - Only exact same unit quantities are connected. No invented missing waste/air/loss stream closes any
+    gap.
+  - Global mass/COD/nitrogen/oxygen/electrical budgets remain independently supplied accounting checks.
+    Passing unit checks cannot license global plant closure.
+  - No dynamic ASM kinetics, biological rate inference or inferred cross-control-volume conversion.
+fault_variants:
+- id: global_cod_loss
+  kind: fault
+  description: 'Original global conflict: supplied global oxidized COD changes from0.03 to0.02kg/s. It
+    is a global-budget fault, not a fabricated reactor reading.'
+  changes:
+  - variable: global_cod_oxidized.value
+    set: 0.02
+  expect_blocks:
+  - wastewater_plant
+- id: reactor_cod_loss
+  kind: fault
+  description: A separately scoped reactor COD oxidation reading changes from0.03 to0.02kg/s; both its
+    unit coarse book and true reactor block see the same value.
+  changes:
+  - variable: reactor_cod_oxidized.value
+    set: 0.02
+  expect_blocks:
+  - wastewater_plant
+  - biological_reactor
+- id: unit_flow_rounding
+  kind: benign
+  description: Synthetic nonzero flow rounding below the unchanged original boundary scale; not a claim
+    about field-instrument resolution.
+  changes:
+  - variable: underflow_flow.value
+    offset: 1.0e-10

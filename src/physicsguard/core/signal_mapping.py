@@ -6,12 +6,12 @@ from dataclasses import dataclass, field
 from typing import Any, Iterable
 
 from physicsguard.core.diagnostics import ResidualDiagnostic
+from physicsguard.core.parameter_coverage import confidence_value
 from physicsguard.core.registry import VariableRegistry
 from physicsguard.schema.observation_spec import ObservedValueSpec, ObservedValuesSpec
 from physicsguard.schema.system_spec import SystemSpec
 
 
-LOW_CONFIDENCE_LABELS = {"low", "template", "unknown", "unreviewed", "review_required", "needs_review"}
 REVIEW_STATUS_LABELS = {"review_required", "needs_review", "unreviewed", "template"}
 
 
@@ -238,20 +238,14 @@ def _mapping_recommendation(issue_codes: tuple[str, ...], variable: str) -> str:
     return f"Complete the mapping evidence for {variable}."
 
 
-def _is_low_confidence(value: float | str | None) -> bool:
+def _is_low_confidence(value: str | None) -> bool:
     if value is None:
         return False
-    if isinstance(value, (float, int)):
-        return float(value) < 0.75
-    return _label(str(value)) in LOW_CONFIDENCE_LABELS
+    return confidence_value(value) < confidence_value("high")
 
 
-def _confidence_text(value: float | str | None) -> str:
-    if value is None:
-        return ""
-    if isinstance(value, (float, int)):
-        return f"{float(value):.3g}"
-    return str(value)
+def _confidence_text(value: str | None) -> str:
+    return value or ""
 
 
 def _label(value: str | None) -> str:

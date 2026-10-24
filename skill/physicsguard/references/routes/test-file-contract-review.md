@@ -3,7 +3,7 @@
 ## Entry boundary
 Use only for concrete CSV/TSV test data. Model-only work uses `ai-debugging`.
 After a contract passes, hand model/data consistency work to `model-dataset-validation`.
-One contract stores field roles, units, targets, conversion, confidence and evidence; its generated manifest stores file identity, without separate catalogs or mapping sidecars.
+One contract stores field roles, units, variable mappings, conversion, confidence and evidence; its generated manifest stores file identity, without separate catalogs or mapping sidecars.
 
 ## Workflow
 1. Copy `references/templates/test_file_contract.yaml`. Set `data_file`, `model`,
@@ -13,10 +13,10 @@ One contract stores field roles, units, targets, conversion, confidence and evid
    The source path is relative to the manifest directory (absolute across drives).
    Content hashes identify the actual data and extractor; regenerate after changes.
 3. Declare every field once under `fields`: `measured` or `command` with unit,
-   target, confidence and evidence; or `ignored` with a reason. The named
-   `time_column` already declares its timing role. Do not invent a target.
+   `target`, confidence and evidence; or `ignored` with a reason. The named
+   `time_column` already declares its timing role. Do not invent the variable named by `target`.
 4. Run `python -m physicsguard.cli testfile contract-check CONTRACT.yaml`.
-   Missing roles, unknown targets, stale hashes, absent evidence and uncertain
+   Missing roles, unknown mapped variables, stale hashes, absent evidence and uncertain
    units block a pass. `review_required` or a reasoned `planned_child_model`
    remains partial, so request evidence or model extension before proceeding.
 5. Generate SI observations without changing the raw data:
@@ -34,10 +34,10 @@ W/kW/MW; m³/s/L/s/L/min/m³/h; Pa/kPa/bar/MPa; rad/s/rpm;
 kg/s/g/s/kg/h; m/mm; s/min/h. Identical unit labels are unchanged.
 Other pairs require explicit `conversion: {factor: ..., offset: ...}`.
 An explicit conversion that contradicts a known pair fails. Each output value
-records the target unit, factor, offset, field@row, confidence and source.
+records the unit of the variable named by `target`, factor, offset, field@row, confidence and source.
 Audit evaluation never performs a hidden conversion or moves observed values.
-Confidence labels are high=.9, medium=.6 and low=.3; the default minimum is .6.
-Use numeric confidence or an explicitly justified lower threshold when appropriate.
+Mapping confidence accepts high, medium, low or proposed; the default minimum is medium.
+Proposed mappings remain below low. Use an explicitly justified word threshold when appropriate; numeric mapping confidence is rejected.
 
 ## Required outputs
 Report `contract_status`, every field disposition, mapping gaps, and the safe

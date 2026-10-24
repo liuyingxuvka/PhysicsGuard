@@ -4,6 +4,9 @@
 # Use with: python -m physicsguard.cli testfile contract-check tank_run_contract.yaml
 # Boundary: Low-fidelity SI audit only; no commercial-tool equivalence.
 contract_id: tank_run
+source_model:
+  model_name: example_external_model
+  tool: user-provided export
 data_file: tank_run.csv
 manifest: tank_run_manifest.yaml
 model: heated_tank.yaml

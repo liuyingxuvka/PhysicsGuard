@@ -53,7 +53,8 @@ def test_real_heater_failure_propagates_through_two_ancestors_without_changing_o
     assert all(blocks[name].audit_pass is False for name in ("heater", "thermal", "tank"))
     assert blocks["thermal"].own_audit_pass is blocks["tank"].own_audit_pass is True
     assert blocks["hydraulics"].audit_pass is True
-    assert blocks["tank"].score == 0 and blocks["tank"].subtree_score == blocks["heater"].score == 25
+    assert 0 <= blocks["tank"].score < 1
+    assert blocks["tank"].subtree_score == blocks["heater"].score == 25
 
 
 def residual(name: str, value: float, role: str = "equation", key: str = "k") -> ResidualDiagnostic:

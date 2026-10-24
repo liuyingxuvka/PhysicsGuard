@@ -2,7 +2,7 @@
 # Purpose: deep time varying validation plan.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli validation run examples/testfile_contracts/pump_loop/validation/deep_time_varying_validation_plan.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_file: ../model/pump_loop_hierarchy.yaml
 calibration:
   enabled: false
@@ -106,7 +106,7 @@ depth:
       path: ../contracts/clean_contract.yaml
     testbench_version: v1
   mapping_review:
-    minimum_confidence: 0.75
+    minimum_confidence: high
   model_semantics: pointwise
   observed_series:
     identity_id: deep_time_varying_parameter_series
@@ -171,13 +171,13 @@ physical_envelopes:
 redundant_sensor_checks: []
 validation_id: pump_loop_deep_time_varying_validation
 variable_roles:
-- mapping_confidence: 0.9
+- mapping_confidence: high
   measurement_confidence: 0.8
   source_id: field:cmd_speed_rad_s
   target: pump_signal_map.x
   use_policy: preferred
   validation_role: model_input
-- mapping_confidence: 0.9
+- mapping_confidence: high
   measurement_confidence: 0.8
   source_id: field:flow_readback_kg_s
   target: pump_signal_map.y

@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from typing import Any
 
+from physicsguard.core.validation_adequacy import _identity_result, _same_content, _finding
 from physicsguard.io.observation_loader import load_observed_series
 from physicsguard.schema.predictive_rollout import (
     ModelSemantics,
@@ -53,8 +54,13 @@ def evaluate_predictive_rollout(
     prediction_identity = _identity_result(rollout.prediction_series, base_dir)
     holdout_identity = _identity_result(rollout.future_holdout_series, base_dir)
     identities = [model_identity, *training, prediction_identity, holdout_identity]
-    if any(item["status"] != "current" for item in identities):
-        findings.append(_finding("error", "predictive_artifact_missing", "one or more predictive artifacts are missing"))
+    missing_paths = set()
+    for identity in identities:
+        if identity["status"] != "current":
+            path = identity["path"]
+            if path not in missing_paths:
+                findings.append(_finding("error", "predictive_artifact_missing", "predictive input is missing", path, {"identity": identity}))
+                missing_paths.add(path)
 
     train_paths = {_normalized_path(base_dir, item.path) for item in rollout.training}
     train_cases = {case for item in rollout.training for case in item.case_ids}
@@ -81,13 +87,13 @@ def evaluate_predictive_rollout(
             )
         )
 
-    predicted = _load_series(rollout.prediction_series, base_dir, findings, "prediction_series_unreadable")
-    holdout = _load_series(rollout.future_holdout_series, base_dir, findings, "future_holdout_series_unreadable")
+    predicted = _load_series(rollout.prediction_series, base_dir, findings, "prediction_series_unreadable") if prediction_identity["status"] == "current" else None
+    holdout = _load_series(rollout.future_holdout_series, base_dir, findings, "future_holdout_series_unreadable") if holdout_identity["status"] == "current" else None
     metrics, alignment_gaps, metric_findings = evaluate_predictive_rollout_artifacts(
         rollout,
         predicted,
         holdout,
-    )
+    ) if not missing_paths and predicted is not None and holdout is not None else (_empty_metrics(), [], [])
     findings.extend(metric_findings)
     status = "blocked" if any(item["severity"] == "error" for item in findings) else "pass"
     result = {
@@ -105,6 +111,7 @@ def evaluate_predictive_rollout(
         "overlapping_case_ids": overlap_cases,
         "alignment_gaps": alignment_gaps,
         "metrics": metrics,
+        "metrics_status": "not_run" if missing_paths or predicted is None or holdout is None else "evaluated",
         "finding_codes": sorted({item["type"] for item in findings}),
         "covered_horizon": {
             "training_end_time": rollout.training_end_time,
@@ -247,16 +254,6 @@ def _step_alignment_gaps(times: list[float], step_size: float) -> list[str]:
     return []
 
 
-def _identity_result(reference: RolloutArtifactIdentitySpec, base_dir: Path) -> dict[str, Any]:
-    path = _resolve_path(base_dir, reference.path)
-    return {
-        "identity_id": reference.identity_id,
-        "path": reference.path,
-        "status": "current" if path.is_file() else "missing",
-        "case_ids": list(reference.case_ids),
-    }
-
-
 def _load_series(reference, base_dir, findings, code):
     try:
         return load_observed_series(_resolve_path(base_dir, reference.path))
@@ -292,10 +289,6 @@ def _empty_metrics() -> dict[str, Any]:
     }
 
 
-def _finding(severity, code, message, target=None, details=None):
-    return {"severity": severity, "type": code, "message": message, "target": target, "details": details or {}}
-
-
 def _resolve_path(base_dir: Path, value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else base_dir / path
@@ -303,10 +296,6 @@ def _resolve_path(base_dir: Path, value: str) -> Path:
 
 def _normalized_path(base_dir: Path, value: str) -> str:
     return str(_resolve_path(base_dir, value).resolve()).casefold()
-
-
-def _same_content(left: Path, right: Path) -> bool:
-    return left.is_file() and right.is_file() and left.read_bytes() == right.read_bytes()
 
 
 __all__ = [

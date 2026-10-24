@@ -1,0 +1,159 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Original fine supplied nominal boundary values only; root aggregates and aliases remain derived.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: distribution_power_der_nominal
+description: Original fine supplied nominal boundary values only; root aggregates
+  and aliases remain derived.
+variables:
+  substation_active_import.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: W
+    external_signal: mapped_substation_active_import
+  substation_reactive_import.value:
+    value: 45000.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: var
+    external_signal: mapped_substation_reactive_import
+  substation_apparent_power.value:
+    value: 109658.6
+    source: "tree.yaml#system.boundaries[2]"
+    unit: VA
+    external_signal: mapped_substation_apparent_power
+  substation_power_factor.value:
+    value: 0.9119211808284986
+    source: "tree.yaml#system.boundaries[3]"
+    external_signal: mapped_substation_power_factor
+    unit: "1"
+  substation_voltage_pu.value:
+    value: 1.02
+    source: "tree.yaml#system.boundaries[4]"
+    unit: pu
+    external_signal: mapped_substation_voltage_pu
+  section_a_load_active.value:
+    value: 70000.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: W
+    external_signal: mapped_section_a_load_active
+  section_a_load_reactive.value:
+    value: 30000.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: var
+    external_signal: mapped_section_a_load_reactive
+  section_a_line_loss_active.value:
+    value: 5000.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: W
+    external_signal: mapped_section_a_line_loss_active
+  section_a_line_reactive_loss.value:
+    value: 1000.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: var
+    external_signal: mapped_section_a_line_reactive_loss
+  section_a_downstream_active.value:
+    value: 45000.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: W
+    external_signal: mapped_section_a_downstream_active
+  section_a_downstream_reactive.value:
+    value: 19000.0
+    source: "tree.yaml#system.boundaries[10]"
+    unit: var
+    external_signal: mapped_section_a_downstream_reactive
+  section_a_min_voltage_pu.value:
+    value: 0.98
+    source: "tree.yaml#system.boundaries[11]"
+    unit: pu
+    external_signal: mapped_section_a_min_voltage_pu
+  section_b_load_active.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[12]"
+    unit: W
+    external_signal: mapped_section_b_load_active
+  section_b_load_reactive.value:
+    value: 18000.0
+    source: "tree.yaml#system.boundaries[13]"
+    unit: var
+    external_signal: mapped_section_b_load_reactive
+  section_b_line_loss_active.value:
+    value: 5000.0
+    source: "tree.yaml#system.boundaries[14]"
+    unit: W
+    external_signal: mapped_section_b_line_loss_active
+  section_b_line_reactive_loss.value:
+    value: 1000.0
+    source: "tree.yaml#system.boundaries[15]"
+    unit: var
+    external_signal: mapped_section_b_line_reactive_loss
+  section_b_min_voltage_pu.value:
+    value: 0.96
+    source: "tree.yaml#system.boundaries[16]"
+    unit: pu
+    external_signal: mapped_section_b_min_voltage_pu
+  section_a_der_active.value:
+    value: 20000.0
+    source: "tree.yaml#system.boundaries[17]"
+    unit: W
+    external_signal: mapped_section_a_der_active
+  section_a_der_reactive_support.value:
+    value: 5000.0
+    source: "tree.yaml#system.boundaries[18]"
+    unit: var
+    external_signal: mapped_section_a_der_reactive_support
+  section_b_storage_discharge_active.value:
+    value: 10000.0
+    source: "tree.yaml#system.boundaries[19]"
+    unit: W
+    external_signal: mapped_section_b_storage_discharge_active
+  pv_export_active.value:
+    value: 20000.0
+    source: "tree.yaml#system.boundaries[20]"
+    unit: W
+    external_signal: mapped_pv_export_active
+  battery_discharge_active.value:
+    value: 10000.0
+    source: "tree.yaml#system.boundaries[21]"
+    unit: W
+    external_signal: mapped_battery_discharge_active
+  der_metered_active.value:
+    value: 30000.0
+    source: "tree.yaml#system.boundaries[22]"
+    unit: W
+    external_signal: mapped_der_metered_active
+  total_load_active.value:
+    value: 120000.0
+    source: "tree.yaml#system.boundaries[23]"
+    unit: W
+    external_signal: mapped_total_load_active
+  total_load_reactive.value:
+    value: 48000.0
+    source: "tree.yaml#system.boundaries[24]"
+    unit: var
+    external_signal: mapped_total_load_reactive
+  total_line_loss_active.value:
+    value: 10000.0
+    source: "tree.yaml#system.boundaries[25]"
+    unit: W
+    external_signal: mapped_total_line_loss_active
+  feeder_load_apparent.value:
+    value: 129244.0
+    source: "tree.yaml#system.boundaries[26]"
+    unit: VA
+    external_signal: mapped_feeder_load_apparent_power
+  feeder_load_power_factor.value:
+    value: 0.9284763702763764
+    source: "tree.yaml#system.boundaries[27]"
+    external_signal: mapped_feeder_load_power_factor
+    unit: "1"
+  feeder_min_voltage_pu.value:
+    value: 0.96
+    source: "tree.yaml#system.boundaries[28]"
+    unit: pu
+    external_signal: mapped_feeder_min_voltage_pu
+  feeder_max_voltage_pu.value:
+    value: 1.02
+    source: "tree.yaml#system.boundaries[29]"
+    unit: pu
+    external_signal: mapped_feeder_max_voltage_pu

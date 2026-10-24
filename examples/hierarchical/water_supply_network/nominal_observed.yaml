@@ -1,0 +1,49 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Authored nominal supplied signals only; coarse aliases remain derived, not additional measurements.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: water_supply_network_nominal
+description: Authored nominal supplied signals only; coarse aliases remain derived,
+  not additional measurements.
+variables:
+  treatment_outflow_mass_flow.value:
+    value: 100.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: kg/s
+    external_signal: mapped_treatment_outflow_mass_flow
+  customer_demand_mass_flow.value:
+    value: 90.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: kg/s
+    external_signal: mapped_customer_demand_mass_flow
+  distribution_leakage_mass_flow.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: kg/s
+    external_signal: mapped_distribution_leakage_mass_flow
+  reservoir_storage_rate.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: kg/s
+    external_signal: mapped_reservoir_storage_rate
+  pump_electric_power.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[4]"
+    unit: W
+    external_signal: mapped_pump_electric_power
+  delivered_hydraulic_power.value:
+    value: 80000.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: W
+    external_signal: mapped_delivered_hydraulic_power
+  pump_loss_power.value:
+    value: 20000.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: W
+    external_signal: mapped_pump_loss_power
+  pump_station_efficiency.value:
+    value: 0.8
+    source: "tree.yaml#system.boundaries[7]"
+    external_signal: mapped_pump_station_efficiency
+    unit: "1"

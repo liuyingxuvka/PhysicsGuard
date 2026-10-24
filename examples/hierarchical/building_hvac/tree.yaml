@@ -1,8 +1,8 @@
-# PhysicsGuard hierarchical audit/model blueprint
+# PhysicsGuard hierarchical audit model
 # Purpose: Connected L0 plant balances and L1 zone, water loop, chiller, air-handler, electrical and campus metering audits at one SI working point.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/building_hvac/tree.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: building_hvac_connected_tree
 description: Connected L0 plant balances and L1 zone, water loop, chiller, air-handler,
   electrical and campus metering audits at one SI working point.
@@ -631,13 +631,6 @@ hierarchy:
     - coarse_chiller_cooling_output.value
     - coarse_chiller_electric_power.value
     - coarse_grid_power.value
-    refinement_template_ids: &id001
-    - zone_loads
-    - chilled_water_loop
-    - chiller_condenser
-    - air_handler
-    - plant_electrical
-    - district_energy_interface
   - id: zone_loads
     name: Zone cooling load
     level: 1
@@ -738,7 +731,7 @@ hierarchy:
     - aggregate_efficiency_mismatch
     - aggregate_electrical_bus_balance_mismatch
     score_threshold: 1.0
-    next_template_ids: *id001
+    next_template_ids: ["zone_loads", "chilled_water_loop", "chiller_condenser", "air_handler", "plant_electrical", "district_energy_interface"]
     next_required_variables:
     - zone_cooling_coil_load.value
     - chiller_evaporator_cooling.value

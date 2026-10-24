@@ -34,8 +34,16 @@ class AuditBlockSpec(BaseModel):
     required_parameters: list[str] = Field(default_factory=list)
     optional_parameters: list[str] = Field(default_factory=list)
     refines: list[str] = Field(default_factory=list)
-    refinement_template_ids: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _retired_refinement_templates(cls, value: Any) -> Any:
+        if isinstance(value, dict) and "refinement_template_ids" in value:
+            raise ValueError(
+                "refinement_template_ids is retired; list next templates in hierarchy.refinement_rules[].next_template_ids"
+            )
+        return value
 
     @field_validator("id")
     @classmethod
@@ -61,7 +69,7 @@ class AuditBlockSpec(BaseModel):
             raise ValueError("block level must be nonnegative")
         return value
 
-    @field_validator("components", "tags", "refines", "refinement_template_ids")
+    @field_validator("components", "tags", "refines")
     @classmethod
     def _non_empty_string_list(cls, values: list[str], info) -> list[str]:
         normalized: list[str] = []

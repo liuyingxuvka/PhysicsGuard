@@ -15,9 +15,9 @@ FC = ROOT / "examples" / "hierarchical" / "fuel_cell_system"
 
 
 def test_valid_hierarchical_yaml_loads() -> None:
-    spec = load_hierarchical_audit_spec(FC / "level_0_system_balance.yaml")
-    assert spec.audit_name == "fuel_cell_level_0_system_balance"
-    assert spec.system.system_name == "fuel_cell_level_0_system_balance"
+    spec = load_hierarchical_audit_spec(FC / "tree.yaml")
+    assert spec.audit_name == "fuel_cell_connected_tree"
+    assert spec.system.system_name == "fuel_cell_connected_tree"
     assert spec.hierarchy.blocks[0].id == "fc_system"
 
 

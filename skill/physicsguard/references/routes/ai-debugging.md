@@ -15,13 +15,12 @@ consistency claims to `model-dataset-validation`. Multi-project/database questio
    Name blocks, conserved quantities, interfaces, SI units, assumptions and uncertain mappings.
 3. Build or reuse the audit. Read `references/model-format.md`; start from `references/templates/audit_model.yaml`.
    Choose real relations with `python -m physicsguard.cli modules describe TYPE` (synthetic examples are introspection).
-   Read the declared tree with `python -m physicsguard.cli hierarchy describe AUDIT.yaml` or `--mermaid`.
+   Read `python -m physicsguard.cli hierarchy describe AUDIT.yaml`: default text, `--observed SNAPSHOT.yaml` for signal counts, `--json` for the full structure or `--mermaid` for a diagram; it never solves or evaluates.
 4. Map signals. For CSV/TSV use one contract: `python -m physicsguard.cli testfile manifest DATA.csv --profile CONTRACT.yaml --out MANIFEST.yaml`,
    then `python -m physicsguard.cli testfile contract-check CONTRACT.yaml` and
    `python -m physicsguard.cli testfile snapshot CONTRACT.yaml --row 70 --out OBSERVED.yaml`.
    Use `python -m physicsguard.cli testfile series CONTRACT.yaml --out SERIES.yaml` for series.
-   A hand-written snapshot retains source signal, unit, confidence, factor/offset and review state.
-   If needed, run `python -m physicsguard.cli intake review INTAKE.yaml --audit AUDIT.yaml`.
+   A hand-written snapshot retains source signal, unit, confidence, factor/offset and review state; optional `source_model` records tool/model context. Review mappings through the evaluation ledger and compact `mapping_summary`.
    `stale_when` names reconfirmation conditions; when one occurs mark the mapping `stale`.
 5. Run `python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml`.
    Read `audit_pass`, `top_blocks`, checked/derived/unchecked relations, mapping issues and refinements.
@@ -69,31 +68,31 @@ Connection endpoints mean the same physical quantity: retain the tight default s
 positive finite tolerance. Use an explicit relation when endpoints can physically differ.
 Inspect assumptions with `python -m physicsguard.cli assumptions inspect MODEL.yaml`; this does not solve.
 
-## Workflow B: Build A Candidate Model From A PhysicsGuard Blueprint
-Only when requested, define each block's target fidelity, validate its low-fidelity checks and interfaces,
+## Workflow B: Build A Candidate Model From A PhysicsGuard Audit
+Only when requested, define each block's required fidelity, validate its low-fidelity checks and interfaces,
 then generate a candidate through documented APIs (for Simulink: new_system/add_block/set_param/add_line).
 Run it, map its outputs back to PhysicsGuard and refine one block at a time. It is a candidate engineering
 model, not a recovered commercial model. Read `references/model-generation.md` before generation.
 
 ## Required Header For New PhysicsGuard YAML
-Use a specific one-layer comment header on audits, hierarchies, snapshots and candidate blueprints:
+Use a specific one-layer comment header on audits, hierarchies, snapshots and candidate audits:
 ```yaml
-# PhysicsGuard audit/model blueprint
+# PhysicsGuard audit/model audit
 # Purpose: Low-fidelity residual audit for <short model purpose>.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit or audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 ```
 Do not add provenance metadata solely for this header.
 
 ## Hard Boundaries
 - Do not add or imply commercial-tool adapters unless explicitly requested; CSV/TSV ingestion uses test-file contracts only.
 - Do not reverse engineer commercial model internals.
-- Do not claim the generated target model is equivalent to a commercial or high-fidelity model.
+- Do not claim the generated candidate model is equivalent to a commercial or high-fidelity model.
 - Do not add high-fidelity solvers, automatic repair, or natural-language report generation.
 - Do not use assumptions as solver-tunable variables.
 - Do not silently invent signal mappings, units, or parameters.
-- Do not mark fields covered without evidence; unknown meanings/targets stay review-required, planned as model extensions or failing.
+- Do not mark fields covered without evidence; unknown meanings or variables stay review-required, planned as model extensions or failing.
 - Do not answer multi-project, historical-test or database questions from one project; this route does not own the database ledger.
 - Do not treat signal_mapping_ledger as a conversion engine; it records evidence and review state, never changes observations.
 - Do not claim a plausible parameter is wrong without residual evidence or an explicit design envelope.

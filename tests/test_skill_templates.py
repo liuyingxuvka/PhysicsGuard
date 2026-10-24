@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 
-from physicsguard.workflow import review_external_model_intake, review_model_understanding_preflight
+from physicsguard.workflow import review_model_understanding_preflight
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,7 +34,6 @@ def test_installed_model_and_snapshot_templates_keep_an_independent_native_check
     assert not installer.pending_changes(SKILL_ROOT, tmp_path)
 
 
-def test_skill_preflight_and_intake_templates_pass_their_reviews() -> None:
+def test_skill_preflight_template_passes_its_review() -> None:
     templates = SKILL_ROOT / "physicsguard" / "references" / "templates"
     assert review_model_understanding_preflight(templates / "model_understanding_preflight.yaml").status == "pass"
-    assert review_external_model_intake(templates / "external_model_intake.yaml").status == "pass"

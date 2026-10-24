@@ -2,7 +2,7 @@
 # Purpose: calibration validation plan.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli validation run examples/testfile_contracts/pump_loop/validation/calibration_validation_plan.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 validation_id: pump_loop_calibration_validation
 audit_file: ../model/pump_loop_hierarchy.yaml
 observed_file: ../observed/calibration_train.yaml

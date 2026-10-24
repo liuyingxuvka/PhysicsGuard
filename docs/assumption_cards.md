@@ -56,11 +56,11 @@ They use:
 
 The role participates in the solver like a boundary residual, but the assumed value is not a free optimization variable.
 
-If an explicit boundary already targets the same variable, the explicit boundary is preferred. The assumption is not applied unless `allow_override: true`, in which case the explicit boundary is skipped and a warning is reported.
+If an explicit boundary already names the same variable, the explicit boundary is preferred. The assumption is not applied unless `allow_override: true`, in which case the explicit boundary is skipped and a warning is reported.
 
 ## Parameter Assumptions
 
-Active parameter assumptions apply before module construction. If the target component exists and the parameter is missing, the parameter is filled and the card reports:
+Active parameter assumptions apply before module construction. If the component named by `target` exists and the parameter is missing, the parameter is filled and the card reports:
 
 ```text
 application: parameter_fill

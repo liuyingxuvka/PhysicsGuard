@@ -4,6 +4,9 @@
 # Use with: python -m physicsguard.cli hierarchy evaluate audit_model.yaml observed_snapshot.yaml
 # Boundary: One measured SI snapshot; not a time-series or external-tool equivalence claim.
 observation_name: measured_dc_power_nominal
+source_model:
+  model_name: example_external_model
+  tool: user-provided export
 variables:
   power.V_V:
     value: 24.0

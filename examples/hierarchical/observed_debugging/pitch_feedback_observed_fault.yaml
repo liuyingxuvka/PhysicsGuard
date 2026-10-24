@@ -2,7 +2,7 @@
 # Purpose: Faulted externally observed values with reversed feedback sign.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 observation_name: pitch_feedback_observed_fault
 description: Faulted externally observed values with reversed feedback sign.
 variables:

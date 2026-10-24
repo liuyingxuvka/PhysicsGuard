@@ -6,7 +6,7 @@ import json
 import math
 from typing import Any, Literal
 
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.variable import ensure_non_empty
 
@@ -74,7 +74,7 @@ class PredictiveRolloutPlanSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     rollout_id: str
-    producer_id: str | None = Field(default=None, validation_alias=AliasChoices("producer_id", "producer_receipt_id"))
+    producer_id: str | None = None
     model_identity: RolloutArtifactIdentitySpec
     training: list[RolloutArtifactIdentitySpec]
     prediction_series: RolloutArtifactIdentitySpec
@@ -88,6 +88,13 @@ class PredictiveRolloutPlanSpec(BaseModel):
     signal_scales: dict[str, float]
     threshold_source: str
     thresholds: PredictiveThresholdsSpec
+
+    @model_validator(mode="before")
+    @classmethod
+    def _producer_name(cls, value: Any) -> Any:
+        if isinstance(value, dict) and "producer_receipt_id" in value:
+            raise ValueError("use producer_id for the trajectory producer identity")
+        return value
 
     @field_validator("rollout_id", "step_unit", "threshold_source")
     @classmethod

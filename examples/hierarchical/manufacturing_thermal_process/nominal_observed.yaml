@@ -1,0 +1,64 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Authored nominal supplied signals only; coarse aliases remain derived, not additional measurements.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: manufacturing_thermal_process_nominal
+description: Authored nominal supplied signals only; coarse aliases remain derived,
+  not additional measurements.
+variables:
+  furnace_heat_input.value:
+    value: 1000000.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: W
+    external_signal: mapped_furnace_heat_input
+  product_heat_gain.value:
+    value: 700000.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: W
+    external_signal: mapped_product_heat_gain
+  exhaust_heat_loss.value:
+    value: 200000.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: W
+    external_signal: mapped_exhaust_heat_loss
+  wall_heat_loss.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: W
+    external_signal: mapped_wall_heat_loss
+  line_electric_power.value:
+    value: 200000.0
+    source: "tree.yaml#system.boundaries[4]"
+    unit: W
+    external_signal: mapped_line_electric_power
+  machine_drive_power.value:
+    value: 150000.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: W
+    external_signal: mapped_machine_drive_power
+  line_auxiliary_power.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: W
+    external_signal: mapped_line_auxiliary_power
+  line_drive_fraction.value:
+    value: 0.75
+    source: "tree.yaml#system.boundaries[7]"
+    external_signal: mapped_line_drive_fraction
+    unit: "1"
+  raw_material_feed_mass_flow.value:
+    value: 50.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: kg/s
+    external_signal: mapped_raw_material_feed_mass_flow
+  finished_product_mass_flow.value:
+    value: 45.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: kg/s
+    external_signal: mapped_finished_product_mass_flow
+  scrap_mass_flow.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[10]"
+    unit: kg/s
+    external_signal: mapped_scrap_mass_flow

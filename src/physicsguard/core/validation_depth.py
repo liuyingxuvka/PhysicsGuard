@@ -15,8 +15,11 @@ from typing import Any, Iterable
 
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.predictive_rollout import evaluate_predictive_rollout
-from physicsguard.core.parameter_coverage import _metadata_is_stale
-from physicsguard.core.validation_adequacy import evaluate_validation_adequacy, load_contract_field_mappings
+from physicsguard.core.parameter_coverage import _metadata_is_stale, confidence_value
+from physicsguard.core.validation_adequacy import (
+    evaluate_validation_adequacy, load_contract_field_mappings, resolve_validation_roles, unique_input_findings, contract_input_error_path, _identity_result, _same_content,
+)
+from physicsguard.core.test_file_contract import testfile_series
 from physicsguard.io.observation_loader import load_observed_series
 from physicsguard.io.test_file_contract_loader import load_test_file_contract
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
@@ -54,36 +57,42 @@ def evaluate_validation_depth(
     plan: ModelValidationPlanSpec,
     *,
     base_dir: Path,
-    audit_spec: HierarchicalAuditSpec,
-    scalar_observed: ObservedValuesSpec,
+    audit_spec: HierarchicalAuditSpec | None,
+    scalar_observed: ObservedValuesSpec | None,
     scalar_direct: dict[str, Any],
+    _roles_resolved: bool = False,
+    unavailable_contracts: set[str] | None = None,
 ) -> ValidationDepthEvaluation:
     """Evaluate the optional depth plan and always return the depth payload."""
 
     if plan.depth is None:
+        if scalar_observed is None or audit_spec is None:
+            return ValidationDepthEvaluation(dict(artifact_kind=DEPTH_KIND, validation_id=plan.validation_id,
+                status="blocked", ok=False, claim_scope="snapshot", covered_scope=None,
+                model_semantics="pointwise", dataset=_not_run(), mapping=_not_run(), time=_not_run(),
+                scenarios=_not_run(), split=_not_run(), residual_series=_not_run(), envelopes=_not_run(),
+                adequacy=_not_run(), predictive=_not_run(), assumptions=[], findings=[],
+                safe_claim="required inputs are unavailable; no validation claim is supported",
+                unsafe_claim_boundary=UNSAFE_BOUNDARY), [], [], None)
         return _legacy_snapshot_depth(plan, base_dir, scalar_observed, scalar_direct)
 
+    if not _roles_resolved:
+        plan = resolve_validation_roles(plan, base_dir)
     depth = plan.depth
     findings: list[dict[str, Any]] = []
 
     dataset_result = _dataset_identity_result(depth.dataset, base_dir, findings)
-    series_identity = _identity_result(depth.observed_series, base_dir)
-    dataset_result["files"].append(series_identity)
-    if series_identity["status"] != "current":
-        dataset_result["status"] = "missing" if series_identity["status"] == "missing" else "stale"
-        _add_finding(
-            findings,
-            "error",
-            "observed_series_missing",
-            "observed series file is missing",
-            depth.observed_series.path,
-            {"identity": series_identity},
-        )
-
-    series = _load_series(depth.observed_series, base_dir, findings)
+    if depth.observed_series is not None:
+        series_identity = _identity_result(depth.observed_series, base_dir)
+        dataset_result["files"].append(series_identity)
+        series = _load_series(depth.observed_series, base_dir, findings)
+        if series is None:
+            dataset_result["status"] = "missing" if series_identity["status"] == "missing" else "unreadable"
+    else:
+        series = _contract_series(plan, base_dir, findings, unavailable_contracts or set())
     mapping_result = _mapping_review_result(plan, base_dir, findings)
-    time_result = _time_result(depth.time_scope, series, findings)
-    scenario_result = _scenario_result(depth, series, findings)
+    time_result = _time_result(depth.time_scope, series, findings) if series is not None else _not_run(observed_scope=None, point_count=None, valid_point_count=None)
+    scenario_result = _scenario_result(depth, series, findings) if series is not None else _not_run()
     split_result = _split_result(plan, base_dir, depth.split, findings)
     residual_result, series_direct = _residual_series_result(
         audit_spec,
@@ -94,8 +103,8 @@ def evaluate_validation_depth(
             if depth.adequacy is not None
             else ()
         ),
-    )
-    envelope_result, envelope_findings = _envelope_result(plan, series, findings)
+    ) if series is not None and audit_spec is not None else (_not_run(audit_pass=None, points=[], aggregate={}), None)
+    envelope_result, envelope_findings = _envelope_result(plan, series, findings) if series is not None else (_not_run(aggregate={}), [])
     adequacy_evaluation = evaluate_validation_adequacy(
         plan,
         depth,
@@ -103,6 +112,7 @@ def evaluate_validation_depth(
         audit_spec=audit_spec,
         series=series,
         residual_result=residual_result,
+        inputs_available=dataset_result["status"] == "current" and audit_spec is not None and not unavailable_contracts,
     )
     findings.extend(adequacy_evaluation.findings)
     predictive_evaluation = evaluate_predictive_rollout(
@@ -111,6 +121,8 @@ def evaluate_validation_depth(
         base_dir=base_dir,
     )
     findings.extend(predictive_evaluation.findings)
+    if depth.time_scope.claim_scope != "snapshot" and not plan.variable_roles and series is not None:
+        _add_finding(findings, "error", "validation_roles_empty", "non-snapshot validation requires effective variable roles", plan.validation_id)
 
     # A hard envelope violation is part of the physical audit result even when
     # the residual average is small.
@@ -124,6 +136,7 @@ def evaluate_validation_depth(
                 "hard physical-envelope violation prevents a series audit pass"
             )
 
+    findings = unique_input_findings(findings, base_dir)
     status = _depth_status(findings)
     payload = {
         "artifact_kind": DEPTH_KIND,
@@ -153,6 +166,42 @@ def evaluate_validation_depth(
         envelope_findings=envelope_findings,
         series_direct_validation=series_direct,
     )
+
+
+def _not_run(**fields: Any) -> dict[str, Any]:
+    return {"status": "not_run", "reason": "required input is unavailable", **fields}
+
+
+def _contract_series(plan, base_dir, findings, unavailable_contracts) -> ObservedSeriesSpec | None:
+    points = []
+    headers = []
+    unavailable = False
+    for index, reference in enumerate(plan.contracts):
+        path = _resolve_path(base_dir, reference.contract)
+        if str(path) in unavailable_contracts:
+            unavailable = True
+            continue
+        try:
+            native = testfile_series(path)
+            headers.append({key: value for key, value in native.items() if key not in {"points", "series_id"}})
+            for point in native["points"]:
+                if len(plan.contracts) > 1:
+                    point = {**point, "point_id": f"contract_{index}:{point['point_id']}",
+                             "scenario_id": native["series_id"]}
+                points.append(point)
+        except Exception as exc:
+            unavailable = True
+            _add_finding(findings, "error", "observed_series_unreadable", "contract-backed series could not be loaded", contract_input_error_path(path, exc), {"error": str(exc)})
+    if unavailable:
+        return None
+    if not points:
+        _add_finding(findings, "error", "observed_series_missing", "no observed series file or readable contract series was declared", plan.validation_id)
+        return None
+    if len(plan.contracts) == 1:
+        return ObservedSeriesSpec.model_validate(native)
+    header = {key: value for key, value in headers[0].items()
+              if all(other.get(key) == value for other in headers)}
+    return ObservedSeriesSpec.model_validate({**header, "series_id": plan.validation_id, "points": points})
 
 
 def summarize_validation_depth(payload: dict[str, Any]) -> dict[str, Any]:
@@ -407,10 +456,12 @@ def _dataset_identity_result(dataset, base_dir: Path, findings: list[dict[str, A
             )
 
     observed_version = None
+    testbench_read = False
     if testbench["status"] != "missing":
         try:
             contract = load_test_file_contract(_resolve_path(base_dir, dataset.testbench.path))
             observed_version = contract.metadata.get("testbench_version")
+            testbench_read = True
         except Exception as exc:
             _add_finding(
                 findings,
@@ -420,7 +471,7 @@ def _dataset_identity_result(dataset, base_dir: Path, findings: list[dict[str, A
                 dataset.testbench.path,
                 {"error": str(exc)},
             )
-    if observed_version != dataset.testbench_version:
+    if testbench_read and observed_version != dataset.testbench_version:
         _add_finding(
             findings,
             "error",
@@ -432,7 +483,7 @@ def _dataset_identity_result(dataset, base_dir: Path, findings: list[dict[str, A
 
     if any(item["status"] == "missing" for item in identities):
         status = "missing"
-    elif any(item["status"] == "stale" for item in identities) or observed_version != dataset.testbench_version:
+    elif not testbench_read or any(item["status"] == "stale" for item in identities) or observed_version != dataset.testbench_version:
         status = "stale"
     else:
         status = "current"
@@ -458,6 +509,9 @@ def _mapping_review_result(
     load_findings: list[dict[str, Any]] = []
     edges, edge_files = load_contract_field_mappings(plan, base_dir, load_findings)
     findings.extend(load_findings)
+    if load_findings:
+        return _not_run(mapping_edge_files=edge_files, minimum_confidence=mapping.minimum_confidence,
+                        signals=[], unresolved_targets=[])
 
     signal_results: list[dict[str, Any]] = []
     unresolved: list[str] = []
@@ -492,7 +546,7 @@ def _mapping_review_result(
             issues.append("mapping_stale")
         if not candidate.unit_evidence:
             issues.append("unit_evidence_missing")
-        if candidate.confidence is None or candidate.confidence < mapping.minimum_confidence:
+        if candidate.confidence is None or candidate.confidence < confidence_value(mapping.minimum_confidence):
             issues.append("confidence_below_threshold")
         if candidate.review_required:
             issues.append("human_review_required")
@@ -804,7 +858,7 @@ def _split_result(
         )
     blocked = bool(stale or overlap_paths or overlap_contents or overlap_cases)
     return {
-        "status": "blocked" if blocked else "pass",
+        "status": "not_run" if stale and not (overlap_paths or overlap_contents or overlap_cases) else "blocked" if blocked else "pass",
         "training": training,
         "holdout": holdout,
         "overlapping_paths": overlap_paths,
@@ -890,6 +944,7 @@ def _residual_series_result(
             continue
         observed = ObservedValuesSpec(
             observation_name=point.point_id,
+            source_model=series.source_model.model_copy(deep=True) if series.source_model is not None else None,
             variables={
                 name: value
                 for name, value in point.variables.items()
@@ -1294,16 +1349,6 @@ def _parameter_contribution_results(
     return results
 
 
-def _identity_result(reference: ValidationIdentityReferenceSpec, base_dir: Path) -> dict[str, Any]:
-    path = _resolve_path(base_dir, reference.path)
-    return {
-        "identity_id": reference.identity_id,
-        "path": reference.path,
-        "status": "current" if path.is_file() else "missing",
-        "case_ids": list(reference.case_ids),
-    }
-
-
 def _inferred_split_refs(
     path_value: str | None,
     identity_id: str,
@@ -1443,10 +1488,6 @@ def _percentile(values: list[float], fraction: float) -> float | None:
     ordered = sorted(values)
     index = max(0, min(len(ordered) - 1, math.ceil(fraction * len(ordered)) - 1))
     return ordered[index]
-
-
-def _same_content(left: Path, right: Path) -> bool:
-    return left.is_file() and right.is_file() and left.read_bytes() == right.read_bytes()
 
 
 def _resolve_path(base: Path, value: str) -> Path:

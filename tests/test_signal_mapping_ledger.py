@@ -39,7 +39,7 @@ def _mapped_observation_file(tmp_path: Path) -> Path:
     payload["variables"]["controller_q_gain.y"].update(
         {
             "external_signal": "simout.feedback_command_deg",
-            "mapping_confidence": 0.95,
+            "mapping_confidence": "high",
             "unit": "deg",
         }
     )

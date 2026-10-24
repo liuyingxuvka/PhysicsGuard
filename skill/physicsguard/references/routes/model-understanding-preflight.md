@@ -4,7 +4,7 @@
 
 Accept this route only when:
 
-- A non-trivial external model must be understood before residual interpretation or blueprint work.
+- A non-trivial external model must be understood before residual interpretation or model-generation work.
 - The physical boundary, inventory, assumptions, access gaps, semantics, or stop conditions need a current review.
 
 Reject or hand off when:
@@ -55,7 +55,7 @@ analysis claims.
 5. If prediction is intended, confirm that an official or user-owned execution
    route can preserve initial state and step semantics and produce an exact
    trajectory plus disjoint future holdout. Without that route, stop at bounded
-   pointwise validation or a candidate-model blueprint.
+   pointwise validation or a candidate-model audit.
 6. Declare whether each critical observation is a point value or a bounded
    interval. For intervals, identify measurement, mapping, and model-approximation
    contributions and keep unknown bounds explicit. Also freeze the competing
@@ -67,9 +67,7 @@ Preflight pass is planning evidence only. It is not residual validation.
 ## Check against the audit model
 `python -m physicsguard.cli preflight review PREFLIGHT.yaml --audit AUDIT.yaml`
 checks each declared block ID (`preflight_block_unknown` on an unknown block).
-`python -m physicsguard.cli intake review INTAKE.yaml --audit AUDIT.yaml`
-checks registered variables and conversion from the source unit using the
-documented unit table (`intake_variable_unknown`, `intake_unit_not_convertible`).
+Mapping identity, units and review state are reported by `hierarchy evaluate` in `signal_mapping_ledger` and compact `mapping_summary`; model context belongs in the optional snapshot or contract `source_model`.
 Omitting `--audit` preserves the structural review.
 
 A failed observed audit may add `unit_conversion_family` with a named variable

@@ -1,0 +1,567 @@
+# PhysicsGuard hierarchical audit model
+# Purpose: One coarse-to-fine oil gas pipeline storage audit; supplied quantities connect coarse balances to their finer relations.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/oil_gas_pipeline_storage/tree.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: oil_gas_pipeline_storage
+description: One coarse-to-fine oil gas pipeline storage audit; supplied quantities
+  connect coarse balances to their finer relations.
+system:
+  system_name: oil_gas_pipeline_storage
+  components:
+  - id: coarse_compressor_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 300000.0
+      scale: 30000.0
+      external_signal: mapped_compressor_electric_power
+      mapping_confidence: template
+  - id: coarse_gas_transport_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 240000.0
+      scale: 24000.0
+      external_signal: mapped_gas_transport_power
+      mapping_confidence: template
+  - id: coarse_compressor_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 60000.0
+      scale: 6000.0
+      external_signal: mapped_compressor_loss_power
+      mapping_confidence: template
+  - id: coarse_compressor_transfer_efficiency
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.8
+      scale: 1.0
+      external_signal: mapped_compressor_transfer_efficiency
+      mapping_confidence: template
+  - id: coarse_pipeline_compression_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - coarse_compressor_electric_power.value
+      load_power_variables:
+      - coarse_gas_transport_power.value
+      - coarse_compressor_loss_power.value
+      residual_scale_W: 100.0
+  - id: coarse_pipeline_compression_ratio_check
+    type: RatioModule
+    parameters:
+      numerator_variable: coarse_gas_transport_power.value
+      denominator_variable: coarse_compressor_electric_power.value
+      output_variable: coarse_compressor_transfer_efficiency.value
+      residual_scale: 0.01
+  - id: coarse_pipeline_inlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100.0
+      scale: 100.0
+      external_signal: mapped_pipeline_inlet_mass_flow
+      mapping_confidence: template
+  - id: coarse_pipeline_delivered_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 98.0
+      scale: 98.0
+      external_signal: mapped_pipeline_delivered_mass_flow
+      mapping_confidence: template
+  - id: coarse_pipeline_leak_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2.0
+      scale: 2.0
+      external_signal: mapped_pipeline_leak_mass_flow
+      mapping_confidence: template
+  - id: coarse_pipeline_mass_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - coarse_pipeline_inlet_mass_flow.value
+      mass_out_variables:
+      - coarse_pipeline_delivered_mass_flow.value
+      - coarse_pipeline_leak_mass_flow.value
+      residual_scale_kg_s: 0.01
+  - id: coarse_storage_inlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 20.0
+      scale: 20.0
+      external_signal: mapped_storage_inlet_mass_flow
+      mapping_confidence: template
+  - id: coarse_storage_outlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 18.0
+      scale: 18.0
+      external_signal: mapped_storage_outlet_mass_flow
+      mapping_confidence: template
+  - id: coarse_storage_inventory_rate
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2.0
+      scale: 2.0
+      external_signal: mapped_storage_inventory_rate
+      mapping_confidence: template
+  - id: coarse_terminal_storage_transfer_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - coarse_storage_inlet_mass_flow.value
+      mass_out_variables:
+      - coarse_storage_outlet_mass_flow.value
+      - coarse_storage_inventory_rate.value
+      residual_scale_kg_s: 0.01
+  - id: compressor_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 300000.0
+      scale: 30000.0
+      external_signal: mapped_compressor_electric_power
+      mapping_confidence: template
+  - id: gas_transport_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 240000.0
+      scale: 24000.0
+      external_signal: mapped_gas_transport_power
+      mapping_confidence: template
+  - id: compressor_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 60000.0
+      scale: 6000.0
+      external_signal: mapped_compressor_loss_power
+      mapping_confidence: template
+  - id: compressor_transfer_efficiency
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 10.0
+      initial_guess: 0.8
+      scale: 1.0
+      external_signal: mapped_compressor_transfer_efficiency
+      mapping_confidence: template
+  - id: pipeline_compression_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - compressor_electric_power.value
+      load_power_variables:
+      - gas_transport_power.value
+      - compressor_loss_power.value
+      residual_scale_W: 100.0
+  - id: pipeline_compression_ratio_check
+    type: RatioModule
+    parameters:
+      numerator_variable: gas_transport_power.value
+      denominator_variable: compressor_electric_power.value
+      output_variable: compressor_transfer_efficiency.value
+      residual_scale: 0.01
+  - id: pipeline_inlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 100.0
+      scale: 100.0
+      external_signal: mapped_pipeline_inlet_mass_flow
+      mapping_confidence: template
+  - id: pipeline_delivered_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 98.0
+      scale: 98.0
+      external_signal: mapped_pipeline_delivered_mass_flow
+      mapping_confidence: template
+  - id: pipeline_leak_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2.0
+      scale: 2.0
+      external_signal: mapped_pipeline_leak_mass_flow
+      mapping_confidence: template
+  - id: pipeline_mass_accounting_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - pipeline_inlet_mass_flow.value
+      mass_out_variables:
+      - pipeline_delivered_mass_flow.value
+      - pipeline_leak_mass_flow.value
+      residual_scale_kg_s: 0.01
+  - id: storage_inlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 20.0
+      scale: 20.0
+      external_signal: mapped_storage_inlet_mass_flow
+      mapping_confidence: template
+  - id: storage_outlet_mass_flow
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 18.0
+      scale: 18.0
+      external_signal: mapped_storage_outlet_mass_flow
+      mapping_confidence: template
+  - id: storage_inventory_rate
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: kg/s
+      lower_bound: 0.0
+      upper_bound: 1000000000000.0
+      initial_guess: 2.0
+      scale: 2.0
+      external_signal: mapped_storage_inventory_rate
+      mapping_confidence: template
+  - id: terminal_storage_transfer_mass_balance
+    type: AggregateMassBalanceModule
+    parameters:
+      mass_in_variables:
+      - storage_inlet_mass_flow.value
+      mass_out_variables:
+      - storage_outlet_mass_flow.value
+      - storage_inventory_rate.value
+      residual_scale_kg_s: 0.01
+  boundaries:
+  - variable: compressor_electric_power.value
+    value: 300000.0
+    scale: 1.0e-06
+  - variable: gas_transport_power.value
+    value: 240000.0
+    scale: 1.0e-06
+  - variable: compressor_loss_power.value
+    value: 60000.0
+    scale: 1.0e-06
+  - variable: compressor_transfer_efficiency.value
+    value: 0.8
+    scale: 1.0e-09
+  - variable: pipeline_inlet_mass_flow.value
+    value: 100.0
+    scale: 1.0e-06
+  - variable: pipeline_delivered_mass_flow.value
+    value: 98.0
+    scale: 1.0e-06
+  - variable: pipeline_leak_mass_flow.value
+    value: 2.0
+    scale: 1.0e-06
+  - variable: storage_inlet_mass_flow.value
+    value: 20.0
+    scale: 1.0e-06
+  - variable: storage_outlet_mass_flow.value
+    value: 18.0
+    scale: 1.0e-06
+  - variable: storage_inventory_rate.value
+    value: 2.0
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+  connections:
+  - from_variable: coarse_compressor_electric_power.value
+    to_variable: compressor_electric_power.value
+    description: Same supplied W quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_gas_transport_power.value
+    to_variable: gas_transport_power.value
+    description: Same supplied W quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_compressor_loss_power.value
+    to_variable: compressor_loss_power.value
+    description: Same supplied W quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_compressor_transfer_efficiency.value
+    to_variable: compressor_transfer_efficiency.value
+    description: Same supplied declared-unit quantity; no additional observation.
+    scale: 1.0e-09
+  - from_variable: coarse_pipeline_inlet_mass_flow.value
+    to_variable: pipeline_inlet_mass_flow.value
+    description: Same supplied kg/s quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_pipeline_delivered_mass_flow.value
+    to_variable: pipeline_delivered_mass_flow.value
+    description: Same supplied kg/s quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_pipeline_leak_mass_flow.value
+    to_variable: pipeline_leak_mass_flow.value
+    description: Same supplied kg/s quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_storage_inlet_mass_flow.value
+    to_variable: storage_inlet_mass_flow.value
+    description: Same supplied kg/s quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_storage_outlet_mass_flow.value
+    to_variable: storage_outlet_mass_flow.value
+    description: Same supplied kg/s quantity; no additional observation.
+    scale: 1.0e-06
+  - from_variable: coarse_storage_inventory_rate.value
+    to_variable: storage_inventory_rate.value
+    description: Same supplied kg/s quantity; no additional observation.
+    scale: 1.0e-06
+hierarchy:
+  blocks:
+  - id: oil_gas_pipeline_storage
+    name: Oil and gas pipeline storage
+    level: 0
+    tags:
+    - oil_gas_pipeline_storage
+    - level_0
+    - oil_gas
+    - pipeline
+    - storage
+    components:
+    - coarse_compressor_electric_power
+    - coarse_gas_transport_power
+    - coarse_compressor_loss_power
+    - coarse_compressor_transfer_efficiency
+    - coarse_pipeline_compression_power_balance
+    - coarse_pipeline_compression_ratio_check
+    - coarse_pipeline_inlet_mass_flow
+    - coarse_pipeline_delivered_mass_flow
+    - coarse_pipeline_leak_mass_flow
+    - coarse_pipeline_mass_accounting_mass_balance
+    - coarse_storage_inlet_mass_flow
+    - coarse_storage_outlet_mass_flow
+    - coarse_storage_inventory_rate
+    - coarse_terminal_storage_transfer_mass_balance
+    required_variables:
+    - coarse_compressor_electric_power.value
+  - id: pipeline_compression
+    name: Pipeline compression
+    level: 1
+    parent_id: oil_gas_pipeline_storage
+    components:
+    - compressor_electric_power
+    - gas_transport_power
+    - compressor_loss_power
+    - compressor_transfer_efficiency
+    - pipeline_compression_power_balance
+    - pipeline_compression_ratio_check
+    tags:
+    - compression
+    - pipeline_power
+    required_variables:
+    - compressor_electric_power.value
+    refines:
+    - coarse_pipeline_compression_power_balance
+    - coarse_pipeline_compression_ratio_check
+  - id: pipeline_mass_accounting
+    name: Pipeline mass accounting
+    level: 1
+    parent_id: oil_gas_pipeline_storage
+    components:
+    - pipeline_inlet_mass_flow
+    - pipeline_delivered_mass_flow
+    - pipeline_leak_mass_flow
+    - pipeline_mass_accounting_mass_balance
+    tags:
+    - pipeline
+    - mass_balance
+    - leak
+    required_variables:
+    - pipeline_inlet_mass_flow.value
+    refines:
+    - coarse_pipeline_mass_accounting_mass_balance
+  - id: terminal_storage_transfer
+    name: Terminal storage transfer
+    level: 1
+    parent_id: oil_gas_pipeline_storage
+    components:
+    - storage_inlet_mass_flow
+    - storage_outlet_mass_flow
+    - storage_inventory_rate
+    - terminal_storage_transfer_mass_balance
+    tags:
+    - storage
+    - inventory
+    required_variables:
+    - storage_inlet_mass_flow.value
+    refines:
+    - coarse_terminal_storage_transfer_mass_balance
+  refinement_rules:
+  - id: refine_oil_gas_pipeline_storage_level_0
+    block_id: oil_gas_pipeline_storage
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - aggregate_power_balance_mismatch
+    - range_check_violation
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - pipeline_compression
+    - pipeline_mass_accounting
+    - terminal_storage_transfer
+    next_required_variables:
+    - pipeline.inlet_kg_s
+    - pipeline.delivered_kg_s
+    - pipeline.leak_kg_s
+    - compressor.power_W
+    next_required_parameters:
+    - pipeline_meter_boundary
+    - leak_boundary
+    - compressor_power_grouping
+    rationale: Coarse oil/gas residual is high; refine compression, pipeline mass,
+      and storage transfer before adding hydraulic or equipment detail.
+    priority: 10
+  - id: refine_pipeline_compression
+    block_id: pipeline_compression
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - compressor_electric_power.value
+    - gas_transport_power.value
+    - compressor_loss_power.value
+    next_required_parameters:
+    - pipeline_meter_boundary
+    - leak_boundary
+    - compressor_power_grouping
+    rationale: Compression residual is high; inspect electric-power grouping and transfer-power
+      basis before adding compressor maps.
+    priority: 10
+  - id: refine_pipeline_mass_accounting
+    block_id: pipeline_mass_accounting
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - pipeline_inlet_mass_flow.value
+    - pipeline_delivered_mass_flow.value
+    - pipeline_leak_mass_flow.value
+    next_required_parameters:
+    - pipeline_meter_boundary
+    - leak_boundary
+    - compressor_power_grouping
+    rationale: Pipeline mass residual is high; inspect delivered flow, leak accounting,
+      and boundary grouping before adding hydraulics.
+    priority: 10
+  - id: refine_terminal_storage_transfer
+    block_id: terminal_storage_transfer
+    trigger_diagnostic_keys:
+    - aggregate_mass_balance_mismatch
+    - ratio_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - storage_inlet_mass_flow.value
+    - storage_outlet_mass_flow.value
+    - storage_inventory_rate.value
+    next_required_parameters:
+    - pipeline_meter_boundary
+    - leak_boundary
+    - compressor_power_grouping
+    rationale: Storage residual is high; inspect inventory sign convention and tank
+      boundary before adding tank detail.
+    priority: 10
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: oil_gas_pipeline_storage
+  assumptions:
+  - Gas streams are mapped as kg/s accounting streams; no gas-network hydraulics,
+    compressor maps, reservoir physics, or multiphase flow is inferred.
+  - This template is a steady snapshot low-fidelity audit over mapped SI signals.
+  - All assumptions, sign conventions, and metering boundaries must be explicit before
+    interpreting residuals.
+  - No high-fidelity simulator, calibrated performance map, or commercial-tool-equivalent
+    behavior is implemented.
+fault_variants:
+- id: unmetered_pipeline_leak
+  kind: fault
+  description: Original physical supplied-signal conflict; coarse aliases propagate
+    through connections.
+  changes:
+  - variable: pipeline_leak_mass_flow.value
+    set: 0.0
+  expect_blocks:
+  - oil_gas_pipeline_storage
+  - pipeline_mass_accounting
+- id: within_original_tolerance
+  kind: benign
+  description: Nonzero supplied-signal perturbation below unchanged declared normalizations;
+    native neutrality remains to check.
+  changes:
+  - variable: compressor_transfer_efficiency.value
+    offset: 1.0000000000000002e-12

@@ -2,7 +2,7 @@
 # Purpose: tank run contract.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli testfile contract-check examples/hierarchical/heated_tank/tank_run_contract.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 contract_id: tank_run
 data_file: tank_run.csv
 manifest: tank_run_manifest.yaml

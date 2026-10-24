@@ -1,0 +1,961 @@
+# PhysicsGuard hierarchical audit model
+# Purpose: One connected coarse-to-fine data center electronics cooling tree with real same-quantity handoffs and scoped parent relations.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/data_center_electronics_cooling/tree.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: data_center_electronics_cooling
+description: One connected coarse-to-fine data center electronics cooling tree with
+  real same-quantity handoffs and scoped parent relations.
+system:
+  system_name: data_center_electronics_cooling
+  components:
+  - id: coarse_it_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1000000.0
+      scale: 100000.0
+      external_signal: mapped_it_electric_power
+      mapping_confidence: template
+  - id: coarse_it_heat_rejection
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1000000.0
+      scale: 100000.0
+      external_signal: mapped_it_heat_rejection
+      mapping_confidence: template
+  - id: coarse_facility_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1500000.0
+      scale: 100000.0
+      external_signal: mapped_facility_electric_power
+      mapping_confidence: template
+  - id: coarse_cooling_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 400000.0
+      scale: 100000.0
+      external_signal: mapped_cooling_electric_power
+      mapping_confidence: template
+  - id: coarse_ups_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 50000.0
+      scale: 10000.0
+      external_signal: mapped_ups_loss_power
+      mapping_confidence: template
+  - id: coarse_power_distribution_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 25000.0
+      scale: 10000.0
+      external_signal: mapped_power_distribution_loss
+      mapping_confidence: template
+  - id: coarse_other_facility_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 25000.0
+      scale: 10000.0
+      external_signal: mapped_other_facility_power
+      mapping_confidence: template
+  - id: coarse_pue
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 1.0
+      upper_bound: 10.0
+      initial_guess: 1.5
+      scale: 1.0
+      external_signal: mapped_pue
+      mapping_confidence: template
+  - id: coarse_cooling_capacity
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1200000.0
+      scale: 100000.0
+      external_signal: mapped_cooling_capacity
+      mapping_confidence: template
+  - id: coarse_room_auxiliary_heat_gain
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 100000.0
+      scale: 100000.0
+      external_signal: mapped_room_auxiliary_heat_gain
+      mapping_confidence: template
+  - id: coarse_cooling_distribution_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 100000.0
+      scale: 100000.0
+      external_signal: mapped_cooling_distribution_loss
+      mapping_confidence: template
+  - id: coarse_cooling_cop
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 50.0
+      initial_guess: 3.0
+      scale: 1.0
+      external_signal: mapped_cooling_cop
+      mapping_confidence: template
+  - id: coarse_supply_air_temperature
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: K
+      lower_bound: 250.0
+      upper_bound: 330.0
+      initial_guess: 295.15
+      scale: 10.0
+      external_signal: mapped_supply_air_temperature
+      mapping_confidence: template
+  - id: coarse_it_power_to_heat_check
+    type: SumModule
+    parameters:
+      input_variables:
+      - coarse_it_electric_power.value
+      output_variable: coarse_it_heat_rejection.value
+      residual_scale: 100.0
+  - id: coarse_facility_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - coarse_facility_electric_power.value
+      load_power_variables:
+      - coarse_it_electric_power.value
+      - coarse_cooling_electric_power.value
+      - coarse_ups_loss_power.value
+      - coarse_power_distribution_loss.value
+      - coarse_other_facility_power.value
+      residual_scale_W: 100.0
+  - id: coarse_pue_check
+    type: RatioModule
+    parameters:
+      numerator_variable: coarse_facility_electric_power.value
+      denominator_variable: coarse_it_electric_power.value
+      output_variable: coarse_pue.value
+      residual_scale: 0.01
+  - id: coarse_room_cooling_heat_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - coarse_cooling_capacity.value
+      heat_out_variables:
+      - coarse_it_heat_rejection.value
+      - coarse_room_auxiliary_heat_gain.value
+      - coarse_cooling_distribution_loss.value
+      residual_scale_W: 100.0
+  - id: coarse_cooling_cop_check
+    type: RatioModule
+    parameters:
+      numerator_variable: coarse_cooling_capacity.value
+      denominator_variable: coarse_cooling_electric_power.value
+      output_variable: coarse_cooling_cop.value
+      residual_scale: 0.01
+  - id: coarse_supply_air_temperature_range
+    type: RangeCheckModule
+    parameters:
+      variable: coarse_supply_air_temperature.value
+      lower_bound: 290.15
+      upper_bound: 305.15
+      residual_scale: 1.0
+      role: post_check
+  - id: coarse_it_heat_partition_total
+    type: SumModule
+    parameters:
+      input_variables:
+      - server_heat_rejection.value
+      - network_heat_rejection.value
+      - storage_heat_rejection.value
+      output_variable: coarse_it_heat_rejection.value
+      residual_scale: 100.0
+  - id: coarse_extra_coolant_heat_pickup
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1200000.0
+      scale: 100000.0
+      external_signal: mapped_coolant_heat_pickup
+      mapping_confidence: template
+  - id: coarse_extra_coolant_heat_rejection
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1200000.0
+      scale: 100000.0
+      external_signal: mapped_coolant_heat_rejection
+      mapping_confidence: template
+  - id: coarse_extra_coolant_loop_heat_balance
+    type: SumModule
+    parameters:
+      input_variables:
+      - coarse_extra_coolant_heat_pickup.value
+      output_variable: coarse_extra_coolant_heat_rejection.value
+      residual_scale: 100.0
+  - id: it_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1000000.0
+      scale: 100000.0
+      external_signal: mapped_it_electric_power
+      mapping_confidence: template
+  - id: server_heat_rejection
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 850000.0
+      scale: 100000.0
+      external_signal: mapped_server_heat_rejection
+      mapping_confidence: template
+  - id: network_heat_rejection
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 100000.0
+      scale: 100000.0
+      external_signal: mapped_network_heat_rejection
+      mapping_confidence: template
+  - id: storage_heat_rejection
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 50000.0
+      scale: 10000.0
+      external_signal: mapped_storage_heat_rejection
+      mapping_confidence: template
+  - id: rack_return_air_temperature
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: K
+      lower_bound: 250.0
+      upper_bound: 350.0
+      initial_guess: 308.15
+      scale: 10.0
+      external_signal: mapped_rack_return_air_temperature
+      mapping_confidence: template
+  - id: facility_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1500000.0
+      scale: 100000.0
+      external_signal: mapped_facility_electric_power
+      mapping_confidence: template
+  - id: cooling_electric_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 400000.0
+      scale: 100000.0
+      external_signal: mapped_cooling_electric_power
+      mapping_confidence: template
+  - id: ups_loss_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 50000.0
+      scale: 10000.0
+      external_signal: mapped_ups_loss_power
+      mapping_confidence: template
+  - id: power_distribution_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 25000.0
+      scale: 10000.0
+      external_signal: mapped_power_distribution_loss
+      mapping_confidence: template
+  - id: other_facility_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 25000.0
+      scale: 10000.0
+      external_signal: mapped_other_facility_power
+      mapping_confidence: template
+  - id: pue
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 1.0
+      upper_bound: 10.0
+      initial_guess: 1.5
+      scale: 1.0
+      external_signal: mapped_pue
+      mapping_confidence: template
+  - id: cooling_capacity
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1200000.0
+      scale: 100000.0
+      external_signal: mapped_cooling_capacity
+      mapping_confidence: template
+  - id: room_auxiliary_heat_gain
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 100000.0
+      scale: 100000.0
+      external_signal: mapped_room_auxiliary_heat_gain
+      mapping_confidence: template
+  - id: cooling_distribution_loss
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 100000.0
+      scale: 100000.0
+      external_signal: mapped_cooling_distribution_loss
+      mapping_confidence: template
+  - id: supply_air_temperature
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: K
+      lower_bound: 250.0
+      upper_bound: 330.0
+      initial_guess: 295.15
+      scale: 10.0
+      external_signal: mapped_supply_air_temperature
+      mapping_confidence: template
+  - id: coolant_heat_pickup
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1200000.0
+      scale: 100000.0
+      external_signal: mapped_coolant_heat_pickup
+      mapping_confidence: template
+  - id: coolant_heat_rejection
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 1200000.0
+      scale: 100000.0
+      external_signal: mapped_coolant_heat_rejection
+      mapping_confidence: template
+  - id: coolant_pump_power
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: W
+      lower_bound: 0.0
+      upper_bound: 10000000000.0
+      initial_guess: 50000.0
+      scale: 10000.0
+      external_signal: mapped_coolant_pump_power
+      mapping_confidence: template
+  - id: coolant_supply_temperature
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: K
+      lower_bound: 250.0
+      upper_bound: 330.0
+      initial_guess: 291.15
+      scale: 10.0
+      external_signal: mapped_coolant_supply_temperature
+      mapping_confidence: template
+  - id: cooling_cop
+    type: MappedSignalModule
+    parameters:
+      local_name: value
+      unit: null
+      lower_bound: 0.0
+      upper_bound: 50.0
+      initial_guess: 3.0
+      scale: 1.0
+      external_signal: mapped_cooling_cop
+      mapping_confidence: template
+  - id: it_heat_partition_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - it_electric_power.value
+      heat_out_variables:
+      - server_heat_rejection.value
+      - network_heat_rejection.value
+      - storage_heat_rejection.value
+      residual_scale_W: 100.0
+  - id: rack_return_air_temperature_range
+    type: RangeCheckModule
+    parameters:
+      variable: rack_return_air_temperature.value
+      lower_bound: 295.15
+      upper_bound: 320.15
+      residual_scale: 1.0
+      role: post_check
+  - id: facility_power_balance
+    type: AggregatePowerBalanceModule
+    parameters:
+      source_power_variables:
+      - facility_electric_power.value
+      load_power_variables:
+      - it_electric_power.value
+      - cooling_electric_power.value
+      - ups_loss_power.value
+      - power_distribution_loss.value
+      - other_facility_power.value
+      residual_scale_W: 100.0
+  - id: pue_check
+    type: RatioModule
+    parameters:
+      numerator_variable: facility_electric_power.value
+      denominator_variable: it_electric_power.value
+      output_variable: pue.value
+      residual_scale: 0.01
+  - id: room_cooling_heat_balance
+    type: AggregateThermalBalanceModule
+    parameters:
+      heat_in_variables:
+      - cooling_capacity.value
+      heat_out_variables:
+      - server_heat_rejection.value
+      - network_heat_rejection.value
+      - storage_heat_rejection.value
+      - room_auxiliary_heat_gain.value
+      - cooling_distribution_loss.value
+      residual_scale_W: 100.0
+  - id: supply_air_temperature_range
+    type: RangeCheckModule
+    parameters:
+      variable: supply_air_temperature.value
+      lower_bound: 290.15
+      upper_bound: 305.15
+      residual_scale: 1.0
+      role: post_check
+  - id: coolant_loop_heat_balance
+    type: SumModule
+    parameters:
+      input_variables:
+      - coolant_heat_pickup.value
+      output_variable: coolant_heat_rejection.value
+      residual_scale: 100.0
+  - id: coolant_supply_temperature_range
+    type: RangeCheckModule
+    parameters:
+      variable: coolant_supply_temperature.value
+      lower_bound: 285.15
+      upper_bound: 305.15
+      residual_scale: 1.0
+      role: post_check
+  - id: cooling_cop_check
+    type: RatioModule
+    parameters:
+      numerator_variable: cooling_capacity.value
+      denominator_variable: cooling_electric_power.value
+      output_variable: cooling_cop.value
+      residual_scale: 0.01
+  boundaries:
+  - variable: it_electric_power.value
+    value: 1000000.0
+    scale: 1.0e-06
+  - variable: server_heat_rejection.value
+    value: 850000.0
+    scale: 1.0e-06
+  - variable: network_heat_rejection.value
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: storage_heat_rejection.value
+    value: 50000.0
+    scale: 1.0e-06
+  - variable: rack_return_air_temperature.value
+    value: 308.15
+    scale: 1.0e-06
+  - variable: facility_electric_power.value
+    value: 1500000.0
+    scale: 1.0e-06
+  - variable: cooling_electric_power.value
+    value: 400000.0
+    scale: 1.0e-06
+  - variable: ups_loss_power.value
+    value: 50000.0
+    scale: 1.0e-06
+  - variable: power_distribution_loss.value
+    value: 25000.0
+    scale: 1.0e-06
+  - variable: other_facility_power.value
+    value: 25000.0
+    scale: 1.0e-06
+  - variable: pue.value
+    value: 1.5
+    scale: 1.0e-09
+  - variable: cooling_capacity.value
+    value: 1200000.0
+    scale: 1.0e-06
+  - variable: room_auxiliary_heat_gain.value
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: cooling_distribution_loss.value
+    value: 100000.0
+    scale: 1.0e-06
+  - variable: supply_air_temperature.value
+    value: 295.15
+    scale: 1.0e-06
+  - variable: coolant_heat_pickup.value
+    value: 1200000.0
+    scale: 1.0e-06
+  - variable: coolant_heat_rejection.value
+    value: 1200000.0
+    scale: 1.0e-06
+  - variable: coolant_pump_power.value
+    value: 50000.0
+    scale: 1.0e-06
+  - variable: coolant_supply_temperature.value
+    value: 291.15
+    scale: 1.0e-06
+  - variable: cooling_cop.value
+    value: 3.0
+    scale: 1.0e-09
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+  connections:
+  - from_variable: coarse_it_electric_power.value
+    to_variable: it_electric_power.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_facility_electric_power.value
+    to_variable: facility_electric_power.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_cooling_electric_power.value
+    to_variable: cooling_electric_power.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_ups_loss_power.value
+    to_variable: ups_loss_power.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_power_distribution_loss.value
+    to_variable: power_distribution_loss.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_other_facility_power.value
+    to_variable: other_facility_power.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_pue.value
+    to_variable: pue.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-09
+  - from_variable: coarse_cooling_capacity.value
+    to_variable: cooling_capacity.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_room_auxiliary_heat_gain.value
+    to_variable: room_auxiliary_heat_gain.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_cooling_distribution_loss.value
+    to_variable: cooling_distribution_loss.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_cooling_cop.value
+    to_variable: cooling_cop.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-09
+  - from_variable: coarse_supply_air_temperature.value
+    to_variable: supply_air_temperature.value
+    description: Same physical quantity at the same stated boundary; original fine
+      supplied signal remains authoritative.
+    scale: 1.0e-06
+  - from_variable: coarse_extra_coolant_heat_pickup.value
+    to_variable: coolant_heat_pickup.value
+    scale: 1.0e-06
+    description: Same coolant-loop heat-duty port, not pump electrical power.
+  - from_variable: coarse_extra_coolant_heat_rejection.value
+    to_variable: coolant_heat_rejection.value
+    scale: 1.0e-06
+    description: Same coolant-loop heat-duty port, not pump electrical power.
+hierarchy:
+  blocks:
+  - id: data_center_electronics_cooling
+    name: Data center and electronics cooling
+    level: 0
+    tags:
+    - data_center
+    - electronics_cooling
+    - level_0
+    - pue
+    - cooling
+    - it_power
+    components:
+    - coarse_it_electric_power
+    - coarse_it_heat_rejection
+    - coarse_facility_electric_power
+    - coarse_cooling_electric_power
+    - coarse_ups_loss_power
+    - coarse_power_distribution_loss
+    - coarse_other_facility_power
+    - coarse_pue
+    - coarse_cooling_capacity
+    - coarse_room_auxiliary_heat_gain
+    - coarse_cooling_distribution_loss
+    - coarse_cooling_cop
+    - coarse_supply_air_temperature
+    - coarse_it_power_to_heat_check
+    - coarse_facility_power_balance
+    - coarse_pue_check
+    - coarse_room_cooling_heat_balance
+    - coarse_cooling_cop_check
+    - coarse_supply_air_temperature_range
+    - coarse_it_heat_partition_total
+    - coarse_extra_coolant_heat_pickup
+    - coarse_extra_coolant_heat_rejection
+    - coarse_extra_coolant_loop_heat_balance
+    required_variables:
+    - coarse_it_electric_power.value
+    - coarse_it_heat_rejection.value
+    - coarse_facility_electric_power.value
+    - coarse_cooling_capacity.value
+    - coarse_cooling_electric_power.value
+  - id: it_load_rack_heat
+    name: IT load and rack heat
+    level: 1
+    parent_id: data_center_electronics_cooling
+    components:
+    - it_electric_power
+    - server_heat_rejection
+    - network_heat_rejection
+    - storage_heat_rejection
+    - rack_return_air_temperature
+    - it_heat_partition_balance
+    - rack_return_air_temperature_range
+    tags:
+    - it_power
+    - rack
+    - heat_rejection
+    required_variables:
+    - it_electric_power.value
+    - server_heat_rejection.value
+    - network_heat_rejection.value
+    - storage_heat_rejection.value
+    refines:
+    - coarse_it_power_to_heat_check
+  - id: facility_power_chain
+    name: Facility power chain
+    level: 1
+    parent_id: data_center_electronics_cooling
+    components:
+    - facility_electric_power
+    - cooling_electric_power
+    - ups_loss_power
+    - power_distribution_loss
+    - other_facility_power
+    - pue
+    - facility_power_balance
+    - pue_check
+    tags:
+    - facility_power
+    - pue
+    - ups
+    - distribution
+    refines:
+    - coarse_facility_power_balance
+    - coarse_pue_check
+  - id: room_air_cooling
+    name: Room air cooling
+    level: 1
+    parent_id: data_center_electronics_cooling
+    components:
+    - cooling_capacity
+    - room_auxiliary_heat_gain
+    - cooling_distribution_loss
+    - supply_air_temperature
+    - room_cooling_heat_balance
+    - supply_air_temperature_range
+    tags:
+    - room_cooling
+    - heat_balance
+    - supply_air
+    refines:
+    - coarse_room_cooling_heat_balance
+    - coarse_supply_air_temperature_range
+  - id: coolant_loop
+    name: Coolant or chilled-water loop
+    level: 1
+    parent_id: data_center_electronics_cooling
+    components:
+    - coolant_heat_pickup
+    - coolant_heat_rejection
+    - coolant_pump_power
+    - coolant_supply_temperature
+    - coolant_loop_heat_balance
+    - coolant_supply_temperature_range
+    tags:
+    - coolant_loop
+    - chilled_water
+    - liquid_cooling
+    refines:
+    - coarse_extra_coolant_loop_heat_balance
+  - id: cooling_plant_efficiency
+    name: Cooling plant efficiency
+    level: 1
+    parent_id: data_center_electronics_cooling
+    components:
+    - cooling_cop
+    - cooling_cop_check
+    tags:
+    - cooling_plant
+    - cop
+    refines:
+    - coarse_cooling_cop_check
+  refinement_rules:
+  - id: refine_data_center_electronics_cooling_level_0
+    block_id: data_center_electronics_cooling
+    trigger_diagnostic_keys:
+    - sum_relation_mismatch
+    - aggregate_power_balance_mismatch
+    - ratio_relation_mismatch
+    - aggregate_thermal_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids:
+    - it_load_rack_heat
+    - facility_power_chain
+    - room_air_cooling
+    - coolant_loop
+    - cooling_plant_efficiency
+    next_required_variables:
+    - it.power_W
+    - it.heat_rejection_W
+    - facility.total_power_W
+    - cooling.capacity_W
+    - cooling.electric_power_W
+    - room.supply_air_temperature_K
+    next_required_parameters:
+    - it_power_meter_boundary
+    - pue_power_meter_grouping
+    - cooling_heat_gain_boundary
+    - cooling_power_meter_grouping
+    rationale: Coarse data-center residual is high; refine into IT heat, room cooling,
+      cooling plant, and facility power-chain checks before adding airflow, CFD, electronics
+      thermal, or equipment-map detail.
+    priority: 10
+  - id: refine_it_load_rack_heat
+    block_id: it_load_rack_heat
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - rack.server_power_W
+    - rack.network_power_W
+    - rack.storage_power_W
+    - rack.return_air_temperature_K
+    next_required_parameters:
+    - it_power_meter_boundary
+    - rack_heat_partition_basis
+    rationale: IT heat residual is high; inspect rack power partition and return-air
+      temperature before adding electronics thermal or airflow detail.
+    priority: 25
+  - id: refine_facility_power_chain
+    block_id: facility_power_chain
+    trigger_diagnostic_keys:
+    - aggregate_power_balance_mismatch
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - facility.total_power_W
+    - it.power_W
+    - cooling.power_W
+    - ups.loss_W
+    - distribution.loss_W
+    next_required_parameters:
+    - pue_power_meter_grouping
+    - ups_meter_boundary
+    rationale: Facility power residual is high; inspect meter grouping and PUE basis
+      before adding UPS or electrical-distribution detail.
+    priority: 20
+  - id: refine_room_air_cooling
+    block_id: room_air_cooling
+    trigger_diagnostic_keys:
+    - aggregate_thermal_balance_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - room.cooling_capacity_W
+    - room.auxiliary_heat_gain_W
+    - room.supply_air_temperature_K
+    - rack.heat_rejection_W
+    next_required_parameters:
+    - cooling_heat_gain_boundary
+    - supply_air_temperature_basis
+    rationale: Room cooling residual is high; inspect cooling capacity, auxiliary
+      gains, and temperature mapping before adding CFD or airflow-network detail.
+    priority: 15
+  - id: refine_coolant_loop
+    block_id: coolant_loop
+    trigger_diagnostic_keys:
+    - sum_relation_mismatch
+    - range_check_violation
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - coolant.heat_pickup_W
+    - coolant.heat_rejection_W
+    - coolant.supply_temperature_K
+    - coolant.pump_power_W
+    next_required_parameters:
+    - coolant_heat_boundary
+    - coolant_temperature_basis
+    rationale: Coolant-loop residual is high; inspect heat pickup/rejection and supply
+      temperature before adding hydraulic or liquid-cooling detail.
+    priority: 10
+  - id: refine_cooling_plant_efficiency
+    block_id: cooling_plant_efficiency
+    trigger_diagnostic_keys:
+    - ratio_relation_mismatch
+    score_threshold: 1.0
+    next_template_ids: []
+    next_required_variables:
+    - cooling.capacity_W
+    - cooling.electric_power_W
+    - cooling.cop
+    next_required_parameters:
+    - cooling_power_meter_grouping
+    - cooling_capacity_basis
+    rationale: Cooling COP residual is high; inspect cooling-capacity and electric-power
+      basis before adding chiller, CDU, or economizer maps.
+    priority: 5
+  scoring:
+    method: max
+metadata:
+  template_level: 1
+  domain: data_center_electronics_cooling
+  assumptions:
+  - This template checks steady snapshot accounting only and does not implement CFD,
+    airflow-network, chip/package thermal, UPS, PDU, chiller, CDU, or economizer maps.
+  - IT power, facility power, cooling power, and cooling duties are positive watt
+    magnitudes with caller-supplied meter boundaries.
+  - PUE and COP are simple mapped ratios and do not imply certified reporting or equipment
+    performance guarantees.
+  - Temperature range checks are post-check sanity diagnostics and do not define solved
+    thermal-control behavior.
+fault_variants:
+- id: underreported_cooling_capacity
+  kind: fault
+  description: Original physical conflict on the actual supplied same-boundary fine
+    signal.
+  changes:
+  - variable: cooling_capacity.value
+    set: 900000.0
+  expect_blocks:
+  - data_center_electronics_cooling
+  - room_air_cooling
+- id: within_original_tolerance
+  kind: benign
+  description: Nonzero roundoff-scale supplied-signal change below existing scales;
+    final actual neutrality remains to verify.
+  changes:
+  - variable: pue.value
+    offset: 1.0000000000000002e-12

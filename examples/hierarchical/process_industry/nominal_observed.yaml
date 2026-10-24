@@ -1,0 +1,119 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Original fine supplied nominal boundary values only; root aggregates and aliases remain derived.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: process_industry_nominal
+description: Original fine supplied nominal boundary values only; root aggregates
+  and aliases remain derived.
+variables:
+  reactor_feed_mass_flow.value:
+    value: 10.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: kg/s
+    external_signal: mapped_reactor_feed_mass_flow
+  reactor_product_mass_flow.value:
+    value: 10.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: kg/s
+    external_signal: mapped_reactor_product_mass_flow
+  reactor_feed_A_molar_flow.value:
+    value: 100.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: mol/s
+    external_signal: mapped_reactor_feed_A_molar_flow
+  reactor_unreacted_A_molar_flow.value:
+    value: 20.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: mol/s
+    external_signal: mapped_reactor_unreacted_A_molar_flow
+  reactor_reacted_A_molar_flow.value:
+    value: 80.0
+    source: "tree.yaml#system.boundaries[4]"
+    unit: mol/s
+    external_signal: mapped_reactor_reacted_A_molar_flow
+  reactor_conversion_A.value:
+    value: 0.8
+    source: "tree.yaml#system.boundaries[5]"
+    external_signal: mapped_reactor_conversion_A
+    unit: "1"
+  separator_feed_mass_flow.value:
+    value: 10.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: kg/s
+    external_signal: mapped_separator_feed_mass_flow
+  separator_product_mass_flow.value:
+    value: 8.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: kg/s
+    external_signal: mapped_separator_product_mass_flow
+  separator_purge_mass_flow.value:
+    value: 1.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: kg/s
+    external_signal: mapped_separator_purge_mass_flow
+  separator_waste_mass_flow.value:
+    value: 1.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: kg/s
+    external_signal: mapped_separator_waste_mass_flow
+  separator_product_split_fraction.value:
+    value: 0.8
+    source: "tree.yaml#system.boundaries[10]"
+    external_signal: mapped_separator_product_split_fraction
+    unit: "1"
+  separator_purge_split_fraction.value:
+    value: 0.1
+    source: "tree.yaml#system.boundaries[11]"
+    external_signal: mapped_separator_purge_split_fraction
+    unit: "1"
+  reactor_heat_release.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[12]"
+    unit: W
+    external_signal: mapped_reactor_heat_release
+  cooling_duty.value:
+    value: 45000.0
+    source: "tree.yaml#system.boundaries[13]"
+    unit: W
+    external_signal: mapped_cooling_duty
+  ambient_heat_loss.value:
+    value: 5000.0
+    source: "tree.yaml#system.boundaries[14]"
+    unit: W
+    external_signal: mapped_ambient_heat_loss
+  utility_electric_power.value:
+    value: 15000.0
+    source: "tree.yaml#system.boundaries[15]"
+    unit: W
+    external_signal: mapped_utility_electric_power
+  pump_power.value:
+    value: 4000.0
+    source: "tree.yaml#system.boundaries[16]"
+    unit: W
+    external_signal: mapped_pump_power
+  compressor_power.value:
+    value: 9000.0
+    source: "tree.yaml#system.boundaries[17]"
+    unit: W
+    external_signal: mapped_compressor_power
+  agitator_power.value:
+    value: 2000.0
+    source: "tree.yaml#system.boundaries[18]"
+    unit: W
+    external_signal: mapped_agitator_power
+  pump_efficiency.value:
+    value: 0.7
+    source: "tree.yaml#system.boundaries[19]"
+    external_signal: mapped_pump_efficiency
+    unit: "1"
+  compressor_pressure_ratio.value:
+    value: 2.5
+    source: "tree.yaml#system.boundaries[20]"
+    external_signal: mapped_compressor_pressure_ratio
+    unit: "1"
+  control_valve_opening.value:
+    value: 0.6
+    source: "tree.yaml#system.boundaries[21]"
+    external_signal: mapped_control_valve_opening
+    unit: "1"

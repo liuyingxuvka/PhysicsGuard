@@ -1,0 +1,129 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Synthetic declared measurement/log subset. Values retain the original boundary records; mappings require physical review.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: pid_actuator_loop_nominal
+description: Synthetic declared measurement/log subset. Values retain the original boundary records; mappings
+  require physical review.
+variables:
+  pid.setpoint:
+    value: 10.0
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/pid/setpoint
+    source: "tree.yaml#system.boundaries[0]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  pid.measurement:
+    value: 8.0
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/pid/measurement
+    source: "tree.yaml#system.boundaries[1]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  pid.error:
+    value: 2.0
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/pid/error
+    source: "tree.yaml#system.boundaries[2]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  pid.error_previous:
+    value: 1.0
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/pid/error_previous
+    source: "tree.yaml#system.boundaries[3]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  pid.integral_previous:
+    value: 3.0
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/pid/integral_previous
+    source: "tree.yaml#system.boundaries[4]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  act.command:
+    value: 6.6
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/act/command
+    source: "tree.yaml#system.boundaries[9]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  act.actual_previous:
+    value: 4.0
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/act/actual_previous
+    source: "tree.yaml#system.boundaries[10]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  act.actual_current:
+    value: 5.3
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/act/actual_current
+    source: "tree.yaml#system.boundaries[11]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  fb.command:
+    value: 5.3
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/fb/command
+    source: "tree.yaml#system.boundaries[15]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  fb.feedback_position:
+    value: 5.3
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/fb/feedback_position
+    source: "tree.yaml#system.boundaries[17]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  sensor.measured_previous:
+    value: 5.0
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/sensor/measured_previous
+    source: "tree.yaml#system.boundaries[13]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.
+  sensor.measured_current:
+    value: 5.15
+    unit: '1'
+    external_signal: bench/pid_actuator_loop/sensor/measured_current
+    source: "tree.yaml#system.boundaries[14]"
+    mapping_confidence: proposed
+    mapping_status: review_required
+    review_required: true
+    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+      are not extra measurements.

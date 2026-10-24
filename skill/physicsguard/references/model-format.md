@@ -9,17 +9,17 @@ The electrical example supplies all three measurements so its power relation rem
 ```sh
 python -m physicsguard.cli modules list
 python -m physicsguard.cli modules describe TankVolumeRateModule --pretty
-python -m physicsguard.cli hierarchy describe AUDIT.yaml --pretty
+python -m physicsguard.cli hierarchy describe AUDIT.yaml
+python -m physicsguard.cli hierarchy describe AUDIT.yaml --json
+python -m physicsguard.cli hierarchy describe AUDIT.yaml --observed OBSERVED.yaml
 python -m physicsguard.cli hierarchy describe AUDIT.yaml --mermaid
 python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --json
 ```
 
 `modules list` prints each registered type and its first documentation sentence.
 `modules describe` returns variables (units, bounds, initial guesses, scales), required/optional parameter names, residual names/roles/diagnostic keys/descriptions, and validity metadata. Its marked synthetic parameters or external variables are introspection examples, not physical defaults, measurements or an audit pass.
-`hierarchy describe` shows blocks, parents, children, `refines`, components,
-actual `supplied` parameters and `native_reads_with_defaults` (access logs, not required/optional classification),
-connections, refinement rules and fault variants without solving. `--mermaid`
-draws the declared blocks and labeled connections; it is not validation evidence.
+`hierarchy describe` prints a readable tree with components, refinements, declared fault variants and rules; `--observed` adds per-block mapped/review/missing signal counts without solving or evaluating.
+`--json` keeps the full structure, native `supplied` parameters and `native_reads_with_defaults` access logs; `--mermaid` draws blocks and labeled connections. These are declarations, not validation evidence.
 
 ## System, components and parameters
 
@@ -100,7 +100,7 @@ blocks:
 
 `refines` must name the parent's own components. It is not implied by parentage.
 Block ids are unique and contain no whitespace; parents must exist, cycles are rejected, levels are nonnegative and component ownership is unique. Blocks can declare `name`, `tags`, JSON `metadata`, and required/optional variables and parameters.
-Under `hierarchy.refinement_rules`, select `block_id`, `score_threshold`, optional `trigger_diagnostic_keys` and `next_template_ids`; include `rationale` and the next required signals. Template ids refer to same-file blocks or files relative to the audit directory or its parent. Reports distinguish `block`, `file` and `missing`; finding a file never executes it. Inconsistent coarse/detail checks stay visible.
+Under `hierarchy.refinement_rules`, select `block_id`, `score_threshold`, optional `trigger_diagnostic_keys` and `next_template_ids`; include `rationale` and the next required signals. Template ids refer to same-file blocks or files relative to the audit directory or its parent. Reports distinguish `block`, `file` and `planned`; a planned target is not built yet and becomes `block` or `file` once built; finding it never executes it. List next template ids only in `hierarchy.refinement_rules[].next_template_ids`; the retired block field is rejected. Inconsistent coarse/detail checks stay visible.
 
 Component residuals belong to their owning block; connections between sibling blocks roll up to their nearest common ancestor, boundaries to the owning component. Unassigned residuals remain explicit.
 `own_audit_pass` is local, `audit_pass` includes descendants, and `subtree_score` is the maximum own score in the subtree; local `score` still orders `top_blocks`.
@@ -111,7 +111,7 @@ Refinement rules may filter `trigger_roles`, `trigger_diagnostic_keys`, `confide
 
 ## Observed snapshots and freshness
 
-An observed file has `observation_name` and `variables` keyed by qualified names:
+An observed file has `observation_name` and `variables` keyed by qualified names; optional `source_model` holds only model/tool/version/scenario/export-time context and never changes a verdict:
 
 ```yaml
 variables:

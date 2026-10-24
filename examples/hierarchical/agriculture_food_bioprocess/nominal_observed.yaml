@@ -1,0 +1,204 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Authored nominal supplied signals only; coarse aliases remain derived, not additional measurements.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: agriculture_food_bioprocess_nominal
+description: Authored nominal supplied signals only; coarse aliases remain derived,
+  not additional measurements.
+variables:
+  irrigation_supply_mass_flow.value:
+    value: 10.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: kg/s
+    external_signal: mapped_irrigation_supply_mass_flow
+  crop_evapotranspiration_mass_flow.value:
+    value: 6.5
+    source: "tree.yaml#system.boundaries[1]"
+    unit: kg/s
+    external_signal: mapped_crop_evapotranspiration_mass_flow
+  drainage_return_mass_flow.value:
+    value: 2.5
+    source: "tree.yaml#system.boundaries[2]"
+    unit: kg/s
+    external_signal: mapped_drainage_return_mass_flow
+  crop_water_storage_rate.value:
+    value: 1.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: kg/s
+    external_signal: mapped_crop_water_storage_rate
+  drainage_return_fraction.value:
+    value: 0.25
+    source: "tree.yaml#system.boundaries[4]"
+    external_signal: mapped_drainage_return_fraction
+    unit: "1"
+  root_zone_water_fraction.value:
+    value: 0.4
+    source: "tree.yaml#system.boundaries[5]"
+    external_signal: mapped_root_zone_water_fraction
+    unit: "1"
+  solar_heat_gain.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: W
+    external_signal: mapped_solar_heat_gain
+  greenhouse_heating_power.value:
+    value: 20000.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: W
+    external_signal: mapped_greenhouse_heating_power
+  greenhouse_transmission_loss.value:
+    value: 45000.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: W
+    external_signal: mapped_greenhouse_transmission_loss
+  greenhouse_ventilation_heat_loss.value:
+    value: 25000.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: W
+    external_signal: mapped_greenhouse_ventilation_heat_loss
+  greenhouse_air_temperature.value:
+    value: 295.15
+    source: "tree.yaml#system.boundaries[10]"
+    unit: K
+    external_signal: mapped_greenhouse_air_temperature
+  co2_supply_molar_flow.value:
+    value: 2.0
+    source: "tree.yaml#system.boundaries[11]"
+    unit: mol/s
+    external_signal: mapped_co2_supply_molar_flow
+  co2_plant_uptake_molar_flow.value:
+    value: 1.5
+    source: "tree.yaml#system.boundaries[12]"
+    unit: mol/s
+    external_signal: mapped_co2_plant_uptake_molar_flow
+  co2_vent_loss_molar_flow.value:
+    value: 0.5
+    source: "tree.yaml#system.boundaries[13]"
+    unit: mol/s
+    external_signal: mapped_co2_vent_loss_molar_flow
+  greenhouse_co2_mol_fraction.value:
+    value: 0.001
+    source: "tree.yaml#system.boundaries[14]"
+    external_signal: mapped_greenhouse_co2_mol_fraction
+    unit: "1"
+  fermentation_substrate_feed_mass_flow.value:
+    value: 4.0
+    source: "tree.yaml#system.boundaries[15]"
+    unit: kg/s
+    external_signal: mapped_fermentation_substrate_feed_mass_flow
+  fermentation_product_mass_flow.value:
+    value: 3.0
+    source: "tree.yaml#system.boundaries[16]"
+    unit: kg/s
+    external_signal: mapped_fermentation_product_mass_flow
+  fermentation_offgas_mass_flow.value:
+    value: 0.5
+    source: "tree.yaml#system.boundaries[17]"
+    unit: kg/s
+    external_signal: mapped_fermentation_offgas_mass_flow
+  fermentation_biomass_purge_mass_flow.value:
+    value: 0.5
+    source: "tree.yaml#system.boundaries[18]"
+    unit: kg/s
+    external_signal: mapped_fermentation_biomass_purge_mass_flow
+  fermentation_product_yield.value:
+    value: 0.75
+    source: "tree.yaml#system.boundaries[19]"
+    external_signal: mapped_fermentation_product_yield
+    unit: "1"
+  fermentation_heat_release.value:
+    value: 25000.0
+    source: "tree.yaml#system.boundaries[20]"
+    unit: W
+    external_signal: mapped_fermentation_heat_release
+  fermentation_cooling_duty.value:
+    value: 22000.0
+    source: "tree.yaml#system.boundaries[21]"
+    unit: W
+    external_signal: mapped_fermentation_cooling_duty
+  fermentation_jacket_loss.value:
+    value: 3000.0
+    source: "tree.yaml#system.boundaries[22]"
+    unit: W
+    external_signal: mapped_fermentation_jacket_loss
+  fermentation_reactor_temperature.value:
+    value: 303.15
+    source: "tree.yaml#system.boundaries[23]"
+    unit: K
+    external_signal: mapped_fermentation_reactor_temperature
+  wet_product_feed_mass_flow.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[24]"
+    unit: kg/s
+    external_signal: mapped_wet_product_feed_mass_flow
+  dry_product_mass_flow.value:
+    value: 4.0
+    source: "tree.yaml#system.boundaries[25]"
+    unit: kg/s
+    external_signal: mapped_dry_product_mass_flow
+  dryer_water_evaporation_mass_flow.value:
+    value: 1.0
+    source: "tree.yaml#system.boundaries[26]"
+    unit: kg/s
+    external_signal: mapped_dryer_water_evaporation_mass_flow
+  dryer_exhaust_water_mass_flow.value:
+    value: 1.0
+    source: "tree.yaml#system.boundaries[27]"
+    unit: kg/s
+    external_signal: mapped_dryer_exhaust_water_mass_flow
+  dryer_heat_input.value:
+    value: 60000.0
+    source: "tree.yaml#system.boundaries[28]"
+    unit: W
+    external_signal: mapped_dryer_heat_input
+  dryer_product_heat_loss.value:
+    value: 45000.0
+    source: "tree.yaml#system.boundaries[29]"
+    unit: W
+    external_signal: mapped_dryer_product_heat_loss
+  dryer_exhaust_heat_loss.value:
+    value: 15000.0
+    source: "tree.yaml#system.boundaries[30]"
+    unit: W
+    external_signal: mapped_dryer_exhaust_heat_loss
+  dried_product_moisture_fraction.value:
+    value: 0.125
+    source: "tree.yaml#system.boundaries[31]"
+    external_signal: mapped_dried_product_moisture_fraction
+    unit: "1"
+  cold_room_cooling_capacity.value:
+    value: 30000.0
+    source: "tree.yaml#system.boundaries[32]"
+    unit: W
+    external_signal: mapped_cold_room_cooling_capacity
+  cold_room_product_heat_gain.value:
+    value: 15000.0
+    source: "tree.yaml#system.boundaries[33]"
+    unit: W
+    external_signal: mapped_cold_room_product_heat_gain
+  cold_room_infiltration_heat_gain.value:
+    value: 10000.0
+    source: "tree.yaml#system.boundaries[34]"
+    unit: W
+    external_signal: mapped_cold_room_infiltration_heat_gain
+  cold_room_door_heat_gain.value:
+    value: 5000.0
+    source: "tree.yaml#system.boundaries[35]"
+    unit: W
+    external_signal: mapped_cold_room_door_heat_gain
+  cold_room_temperature.value:
+    value: 277.15
+    source: "tree.yaml#system.boundaries[36]"
+    unit: K
+    external_signal: mapped_cold_room_temperature
+  cold_room_refrigeration_power.value:
+    value: 10000.0
+    source: "tree.yaml#system.boundaries[37]"
+    unit: W
+    external_signal: mapped_cold_room_refrigeration_power
+  cold_room_cop.value:
+    value: 3.0
+    source: "tree.yaml#system.boundaries[38]"
+    external_signal: mapped_cold_room_cop
+    unit: "1"

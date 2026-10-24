@@ -76,9 +76,9 @@ def test_each_declared_tank_fault_is_detected_with_direct_block_evidence() -> No
                for name in faults)
     assert rows["heater_half"]["signature"] == {"heater": "-"}
     # thermal owns heat/qout despite having children; its own failure is not discarded.
-    assert rows["extra_wall_loss"]["signature"] == {"thermal": "-"}
-    assert rows["inlet_temp_offset"]["signature"] == {"thermal": "-"}
-    assert "hydraulics" in rows["outflow_unit_x1000"]["signature"]
+    assert rows["extra_wall_loss"]["signature"] == {"tank": "-", "thermal": "-"}
+    assert rows["inlet_temp_offset"]["signature"] == {"tank": "-", "thermal": "-"}
+    assert rows["outflow_unit_x1000"]["signature"] == {"hydraulics": "+", "tank": "+"}
     assert rows["outflow_rounding"]["neutral"] and rows["outflow_rounding"]["signature"] == {}
     assert "heater_half" in result["matching_variants"]
     assert tuple(item.model_dump(mode="json") for item in (spec, nominal, observed)) == before
@@ -242,7 +242,7 @@ def test_masked_pair_is_listed_not_failed() -> None:
     pair = next(row for row in result["pairs"] if row["id"] == "heater_half+inlet_temp_offset")
     assert pair["status"] == "evaluated" and pair["pair_status"] == "masked"
     assert pair["signature"] == {"heater": "-"}
-    assert pair["expected_blocks"] == ["heater", "thermal"]
+    assert pair["expected_blocks"] == ["heater", "tank", "thermal"]
     assert pair["detected"] and not pair["expect_blocks_met"] and pair["ok"]
     assert result["masked_pairs"] == [pair["id"]]
     assert result["ok"]

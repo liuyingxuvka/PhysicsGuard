@@ -179,7 +179,10 @@ def _snapshot(resolved, rows, units, row):
             variables[target] = dict(value=number, unit=units[target], source=resolved.contract.data_file,
                 external_signal=f'{name}@{index}', conversion_factor=factor, conversion_offset=offset,
                 mapping_confidence=field.confidence, description=field.evidence)
-    return dict(observation_name=f'{resolved.contract.contract_id}_step_{row}', variables=variables)
+    snapshot = dict(observation_name=f'{resolved.contract.contract_id}_step_{row}', variables=variables)
+    if resolved.contract.source_model is not None:
+        snapshot['source_model'] = resolved.contract.source_model.model_dump(mode='json', exclude_unset=True)
+    return snapshot
 
 
 def testfile_snapshot(path, row):
@@ -212,4 +215,7 @@ def testfile_series(path, row_range=None):
                 raise ValueError(f'{column}@{row}: time must be finite')
             point['timestamp'] = timestamp
         points.append(point)
-    return dict(series_id=resolved.contract.contract_id, time_unit='s', points=points)
+    result = dict(series_id=resolved.contract.contract_id, time_unit='s', points=points)
+    if resolved.contract.source_model is not None:
+        result['source_model'] = resolved.contract.source_model.model_dump(mode='json', exclude_unset=True)
+    return result

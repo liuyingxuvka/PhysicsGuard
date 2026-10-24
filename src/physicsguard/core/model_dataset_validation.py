@@ -15,6 +15,7 @@ from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.test_file_contract import check_test_file_contract
 from physicsguard.core.validation_depth import evaluate_validation_depth, summarize_validation_depth
+from physicsguard.core.validation_adequacy import resolve_validation_roles, unique_input_findings, contract_input_error_path
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
 from physicsguard.io.test_file_contract_loader import load_model_validation_plan
@@ -72,15 +73,19 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
     plan_path = Path(path)
     plan = load_model_validation_plan(plan_path)
     base_dir = plan_path.parent
+    plan = resolve_validation_roles(plan, base_dir)
     findings: list[ContractFinding] = []
     findings.extend(_contract_findings(plan, base_dir))
 
     audit_path = _resolve_path(base_dir, plan.audit_file)
     observed_path = _resolve_path(base_dir, plan.observed_file)
-    spec = load_hierarchical_audit_spec(audit_path)
-    observed = load_observed_values(observed_path)
-    direct = _evaluate(spec, observed)
-    if not direct["audit_pass"]:
+    spec = _load_validation_input(load_hierarchical_audit_spec, audit_path, findings)
+    observed = _load_validation_input(load_observed_values, observed_path, findings)
+    direct = _evaluate(spec, observed) if spec is not None and observed is not None else {
+        "status": "not_run", "audit_pass": None, "max_abs_normalized_residual": None,
+        "residual_norm": None, "top_residuals": [], "top_blocks": [], "warnings": [],
+    }
+    if direct["audit_pass"] is False:
         findings.append(
             ContractFinding(
                 severity="warning",
@@ -96,6 +101,8 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
         audit_spec=spec,
         scalar_observed=observed,
         scalar_direct=direct,
+        _roles_resolved=True,
+        unavailable_contracts={item.details["contract"] for item in findings if "contract" in item.details},
     )
     if depth_evaluation.series_direct_validation is not None:
         direct = dict(direct)
@@ -107,13 +114,20 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
     )
 
     envelope_findings = [
-        *_envelope_findings(plan, observed),
+        *(_envelope_findings(plan, observed) if observed is not None else []),
         *depth_evaluation.envelope_findings,
     ]
-    redundant_findings = _redundant_sensor_findings(plan, observed)
+    redundant_findings = _redundant_sensor_findings(plan, observed) if observed is not None else []
     findings.extend(_finding_from_dict(item) for item in envelope_findings + redundant_findings)
 
-    calibration = _calibration_summary(plan, base_dir, spec, observed)
+    calibration_ready = spec is not None and observed is not None
+    if plan.calibration.enabled:
+        for reference in (plan.calibration.train_observed, plan.calibration.holdout_observed):
+            if reference and _load_validation_input(load_observed_values, _resolve_path(base_dir, reference), findings) is None:
+                calibration_ready = False
+    calibration = _calibration_summary(plan, base_dir, spec, observed) if calibration_ready else CalibrationSummary(
+        enabled=plan.calibration.enabled, method=plan.calibration.method,
+        message="not_run: required validation input is unavailable")
     if calibration.optimization_success is True and calibration.holdout_audit_pass is False:
         findings.append(
             ContractFinding(
@@ -139,7 +153,7 @@ def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
     status = _status(findings, direct, calibration)
     calibration_dict = asdict(calibration)
     confidence_dicts = [item.model_dump(mode="json") for item in confidence_updates]
-    finding_dicts = [asdict(item) for item in findings]
+    finding_dicts = unique_input_findings([asdict(item) for item in findings], base_dir)
     safe_claim = _safe_claim(
         status,
         depth_status=str(depth_evaluation.payload["status"]),
@@ -196,9 +210,14 @@ def _contract_findings(plan: ModelValidationPlanSpec, base_dir: Path) -> list[Co
                     severity="error",
                     type="validation_contract_check_failed",
                     message=f"failed to check referenced contract: {exc}",
-                    target=str(contract_path),
+                    target=contract_input_error_path(contract_path, exc),
+                    details={"contract": str(contract_path)},
                 )
             )
+            continue
+        missing_inputs = [item for item in review.findings if item.type.endswith("_file_missing") or item.type == "source_file_missing"]
+        if missing_inputs:
+            findings.extend(replace(item, details={**item.details, "contract": str(contract_path)}) for item in missing_inputs)
             continue
         if reference.required_status == "pass" and review.status != "pass":
             findings.append(
@@ -207,7 +226,7 @@ def _contract_findings(plan: ModelValidationPlanSpec, base_dir: Path) -> list[Co
                     type="validation_contract_not_passed",
                     message="validation requires a passing test-file contract",
                     target=str(contract_path),
-                    details={"status": review.status},
+                    details={"status": review.status, "contract": str(contract_path)},
                 )
             )
         elif review.status == "fail":
@@ -217,9 +236,19 @@ def _contract_findings(plan: ModelValidationPlanSpec, base_dir: Path) -> list[Co
                     type="validation_contract_failed",
                     message="referenced contract failed",
                     target=str(contract_path),
+                    details={"contract": str(contract_path)},
                 )
             )
     return findings
+
+
+def _load_validation_input(loader, path: Path, findings: list[ContractFinding]):
+    try:
+        return loader(path)
+    except Exception as exc:
+        findings.append(ContractFinding("error", "validation_input_unreadable", "validation input could not be loaded",
+            target=str(getattr(exc, "filename", None) or path), details={"error": str(exc)}))
+        return None
 
 
 def _evaluate(spec: HierarchicalAuditSpec, observed: ObservedValuesSpec) -> dict[str, Any]:

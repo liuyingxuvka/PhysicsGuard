@@ -100,7 +100,7 @@ def test_hierarchy_description_has_real_tree_connections_and_never_solves(monkey
     monkeypatch.setattr(BoundedSolver, "solve", no_solve)
     path = ROOT / "examples/hierarchical/heated_tank/heated_tank.yaml"
     spec = load_hierarchical_audit_spec(path)
-    assert main(["hierarchy", "describe", str(path)]) == 0
+    assert main(["hierarchy", "describe", str(path), "--json"]) == 0
     report = json.loads(capsys.readouterr().out)
     assert {block["id"] for block in report["blocks"]} == {block.id for block in spec.hierarchy.blocks}
     assert len(report["blocks"]) == 6 and report["solver_attempted"] is False
@@ -114,7 +114,7 @@ def test_hierarchy_description_has_real_tree_connections_and_never_solves(monkey
     mermaid = capsys.readouterr().out
     assert mermaid.startswith("flowchart TD\n")
     assert mermaid.count("subgraph ") == 6
-    assert all(f'"{block.id} (level {block.level})"' in mermaid for block in spec.hierarchy.blocks)
+    assert all(f'"{block.id} (level {block.level})' in mermaid for block in spec.hierarchy.blocks)
     assert "vol.volume_current_m3" in mermaid
 
 

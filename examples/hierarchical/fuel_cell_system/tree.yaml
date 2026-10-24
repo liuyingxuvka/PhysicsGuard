@@ -1,8 +1,8 @@
-# PhysicsGuard hierarchical audit/model blueprint
+# PhysicsGuard hierarchical audit model
 # Purpose: Synthetic connected L0/L1/L2 reaction-energy, electrical, dry-air, hydrogen and coolant audit. No high-fidelity electrochemistry, gas pressure...
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/fuel_cell_system/tree.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: fuel_cell_connected_tree
 description: Synthetic connected L0/L1/L2 reaction-energy, electrical, dry-air, hydrogen
   and coolant audit. No high-fidelity electrochemistry, gas pressure dynamics or coolant

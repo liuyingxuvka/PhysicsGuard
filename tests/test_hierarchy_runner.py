@@ -111,33 +111,56 @@ def run(path: Path):
     return HierarchicalAuditRunner(spec).run(top_n_residuals=20, top_n_blocks=10)
 
 
+def run_declared_fault(directory: Path, identifier: str):
+    """Use the same tree and the declared sensor fault as a pinned measurement."""
+    spec = load_hierarchical_audit_spec(directory / "tree.yaml")
+    observed = load_observed_values(directory / "nominal_observed.yaml")
+    variant = next(variant for variant in spec.fault_variants if variant.id == identifier)
+    change, = variant.changes
+    assert (change.scale is not None or change.set is not None) and not variant.parameters and not variant.rederive
+    data = spec.model_dump(mode="json")
+    value = (observed.variables[change.variable].value * change.scale if change.scale is not None else change.set)
+    boundary = next((item for item in data["system"]["boundaries"] if item["variable"] == change.variable), None)
+    if boundary is None:
+        # Same exact-measurement scale as the existing tree's boundary rows.
+        data["system"]["boundaries"].append({"variable": change.variable, "value": value,
+                                               "scale": data["system"]["boundaries"][0]["scale"]})
+    else:
+        boundary["value"] = value
+    return HierarchicalAuditRunner(HierarchicalAuditSpec.model_validate(data), directory).run(
+        top_n_residuals=20, top_n_blocks=10)
+
+
 def test_clean_hierarchical_example_audit_pass_true() -> None:
-    report = run(FC / "level_0_system_balance.yaml")
+    report = run(FC / "tree.yaml")
     assert report.optimization_success
     assert report.audit_pass
-    assert report.top_blocks[0].block_id == "fc_system"
-    assert report.top_blocks[0].confidence == 1.0
+    root = next(block for block in report.top_blocks if block.block_id == "fc_system")
+    assert root.audit_pass and root.confidence == 1.0
 
 
 def test_conflict_hierarchical_example_identifies_top_block_and_refinement() -> None:
-    report = run(FC / "conflict_level_0_h2_power.yaml")
+    report = run_declared_fault(FC, "hydrogen_power_underread")
     assert report.optimization_success
     assert not report.audit_pass
-    assert report.top_blocks[0].block_id == "fc_system"
+    root = next(block for block in report.top_blocks if block.block_id == "fc_system")
+    assert not root.audit_pass
     assert not report.top_blocks[0].audit_pass
-    assert report.recommended_refinements[0].next_template_ids
-    assert "aggregate_efficiency_mismatch" in report.recommended_refinements[0].trigger_diagnostic_keys
+    recommendation = next(row for row in report.recommended_refinements if row.rule_id == "refine_fc_system")
+    assert recommendation.next_template_ids
+    assert any(item.diagnostic_key == "aggregate_efficiency_mismatch" for item in root.top_residuals)
+    assert set(recommendation.next_template_ids) == {"stack", "cathode_air_path", "anode_hydrogen_path", "coolant_loop", "hv_system"}
 
 
 def test_level_1_cathode_conflict_recommends_cathode_template() -> None:
-    report = run(FC / "conflict_level_1_cathode_air_path.yaml")
+    report = run_declared_fault(FC, "cathode_air_underfeed")
     assert not report.audit_pass
     assert report.top_blocks[0].block_id == "cathode_air_path"
-    assert report.recommended_refinements[0].next_template_ids == ["fuel_cell_system/level_2_cathode_air_path"]
+    assert report.recommended_refinements[0].next_template_ids == ["compressor", "intercooler", "humidifier", "exhaust_valve"]
 
 
 def test_pid_actuator_conflict_identifies_actuator_block() -> None:
-    report = run(PID / "conflict_actuator_feedback.yaml")
+    report = run_declared_fault(PID, "actuator_feedback_conflict")
     assert not report.audit_pass
     assert report.top_blocks[0].block_id == "actuator"
     assert report.recommended_refinements[0].rule_id == "refine_actuator_feedback"
@@ -181,7 +204,7 @@ def test_hierarchy_compare_observed_fault_includes_variable_deviations() -> None
 
 
 def test_hierarchical_report_is_json_serializable() -> None:
-    spec = load_hierarchical_audit_spec(FC / "conflict_level_0_h2_power.yaml")
+    spec = load_hierarchical_audit_spec(FC / "tree.yaml")
     runner = HierarchicalAuditRunner(spec)
     report = runner.run()
     data = runner.to_json(report, pretty=True)
@@ -202,7 +225,7 @@ def test_hierarchy_evaluate_skips_residuals_that_need_unobserved_variables(monke
     from physicsguard.schema.observation_spec import ObservedValuesSpec
     import pytest
 
-    spec = load_hierarchical_audit_spec(ROOT / "examples" / "hierarchical" / "coolant_loop" / "level_1_components.yaml")
+    spec = load_hierarchical_audit_spec(ROOT / "examples" / "hierarchical" / "coolant_loop" / "tree.yaml")
     solved = BoundedSolver(ResidualBuilder(spec.system), spec.system.solver).solve().variables
     observed = ObservedValuesSpec(
         variables={name: {"value": value} for name, value in solved.items() if name != "cool.Q_stack_heat_W"}
@@ -398,7 +421,7 @@ def test_partial_heat_zero_product_cannot_supply_a_check() -> None:
 def test_run_and_complete_compare_do_not_capture_observed_dependencies(monkeypatch) -> None:
     monkeypatch.setattr("physicsguard.core.residual.module_residual_dependencies",
                         lambda *a, **kw: pytest.fail("ordinary solve/complete compare must not start provenance capture"))
-    assert run(FC / "level_0_system_balance.yaml").audit_pass
+    assert run(FC / "tree.yaml").audit_pass
     spec = load_hierarchical_audit_spec(OBSERVED / "pitch_feedback_level_0.yaml")
     observed = load_observed_values(OBSERVED / "pitch_feedback_observed_clean.yaml")
     assert HierarchicalAuditRunner(spec).compare_observed(observed).observed_audit_pass

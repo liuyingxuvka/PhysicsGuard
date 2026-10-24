@@ -33,12 +33,12 @@ def test_valid_hierarchical_audit_spec_passes() -> None:
     assert spec.hierarchy.blocks[1].parent_id == "root"
 
 
-def test_refines_requires_a_parent_owned_component_and_inspect_exposes_it(monkeypatch) -> None:
-    from physicsguard.core.hierarchy import inspect_hierarchy
+def test_refines_requires_a_parent_owned_component_and_describe_exposes_it(monkeypatch) -> None:
+    from physicsguard.core.hierarchy import describe_hierarchy
     from physicsguard.core.solver import BoundedSolver
 
     def no_solve(*args, **kwargs):
-        pytest.fail("inspect must not solve")
+        pytest.fail("describe must not solve")
 
     monkeypatch.setattr(BoundedSolver, "solve", no_solve)
 
@@ -47,7 +47,7 @@ def test_refines_requires_a_parent_owned_component_and_inspect_exposes_it(monkey
     data["hierarchy"]["blocks"][0]["components"] = ["coarse"]
     data["hierarchy"]["blocks"][1]["refines"] = ["coarse"]
     spec = HierarchicalAuditSpec.model_validate(data)
-    assert inspect_hierarchy(spec)["blocks"][1]["refines"] == ["coarse"]
+    assert describe_hierarchy(spec)["blocks"][1]["refines"] == ["coarse"]
     data["hierarchy"]["blocks"][1]["refines"] = ["a"]
     with pytest.raises(ValidationError, match="child.*not owned by its parent: a"):
         HierarchicalAuditSpec.model_validate(data)
@@ -111,3 +111,15 @@ def test_invalid_score_method_fails() -> None:
     data["scoring"] = {"method": "median"}
     with pytest.raises(ValidationError, match="scoring method"):
         HierarchySpec.model_validate(data)
+
+
+def test_retired_refinement_template_ids_names_the_single_rule_owner() -> None:
+    data = hierarchy_data()
+    # Presence is retired even when the former optional list was empty.
+    data["blocks"][0]["refinement_template_ids"] = []
+    with pytest.raises(ValidationError) as error:
+        HierarchySpec.model_validate(data)
+    assert error.value.errors()[0]["msg"] == (
+        "Value error, refinement_template_ids is retired; "
+        "list next templates in hierarchy.refinement_rules[].next_template_ids"
+    )

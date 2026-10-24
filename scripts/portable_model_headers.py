@@ -12,13 +12,13 @@ import yaml
 REPOSITORY_URL = "https://github.com/liuyingxuvka/PhysicsGuard"
 HEADER_MARKER = "PhysicsGuard"
 BOUNDARY_LINE = (
-    "Low-fidelity SI-unit residual audit or blueprint only; not a "
+    "Low-fidelity SI-unit residual audit only; not a "
     "high-fidelity solver, commercial-tool adapter, or reverse-engineered model."
 )
 
 
 def tracked_example_yaml_files(root: Path) -> list[Path]:
-    git_cmd = ["git", "ls-files", "examples/*.yaml", "examples/**/*.yaml"]
+    git_cmd = ["git", "ls-files", "--cached", "--others", "--exclude-standard", "examples/*.yaml", "examples/**/*.yaml"]
     if os.name == "nt":
         git_cmd = ["cmd", "/c", *git_cmd]
     try:
@@ -56,10 +56,10 @@ def artifact_kind(data: dict[str, Any]) -> str:
     if "require_all_manifest_fields" in data:
         return "parameter coverage policy"
     if "hierarchy" in data:
-        return "hierarchical audit/model blueprint"
+        return "hierarchical audit model"
     if "observation_name" in data:
         return "observed-values snapshot"
-    return "system audit/model blueprint"
+    return "system audit model"
 
 
 def purpose_for(path: Path, data: dict[str, Any]) -> str:

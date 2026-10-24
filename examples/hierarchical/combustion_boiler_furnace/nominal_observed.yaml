@@ -1,0 +1,64 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Authored nominal supplied signals only; coarse aliases remain derived, not additional measurements.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: combustion_boiler_furnace_nominal
+description: Authored nominal supplied signals only; coarse aliases remain derived,
+  not additional measurements.
+variables:
+  fuel_thermal_power.value:
+    value: 2000000.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: W
+    external_signal: mapped_fuel_thermal_power
+  useful_steam_heat_power.value:
+    value: 1600000.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: W
+    external_signal: mapped_useful_steam_heat_power
+  stack_heat_loss.value:
+    value: 300000.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: W
+    external_signal: mapped_stack_heat_loss
+  casing_heat_loss.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: W
+    external_signal: mapped_casing_heat_loss
+  boiler_useful_heat_fraction.value:
+    value: 0.8
+    source: "tree.yaml#system.boundaries[4]"
+    external_signal: mapped_boiler_useful_heat_fraction
+    unit: "1"
+  air_fuel_mass_flow.value:
+    value: 10.5
+    source: "tree.yaml#system.boundaries[5]"
+    unit: kg/s
+    external_signal: mapped_air_fuel_mass_flow
+  flue_gas_mass_flow.value:
+    value: 10.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: kg/s
+    external_signal: mapped_flue_gas_mass_flow
+  ash_purge_mass_flow.value:
+    value: 0.5
+    source: "tree.yaml#system.boundaries[7]"
+    unit: kg/s
+    external_signal: mapped_ash_purge_mass_flow
+  draft_fan_electric_power.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: W
+    external_signal: mapped_draft_fan_electric_power
+  air_movement_power.value:
+    value: 40000.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: W
+    external_signal: mapped_air_movement_power
+  fan_loss_power.value:
+    value: 10000.0
+    source: "tree.yaml#system.boundaries[10]"
+    unit: W
+    external_signal: mapped_fan_loss_power

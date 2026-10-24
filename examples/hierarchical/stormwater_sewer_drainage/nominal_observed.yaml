@@ -1,0 +1,150 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Gross catchment plus sewer inflow is 280 kg/s, not conveyance inflow 240. Global storage is catchment surface 40 plus sewer 0. Detention 60=50+5+5...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: stormwater_sewer_drainage_nominal
+description: Gross catchment plus sewer inflow is 280 kg/s, not conveyance inflow
+  240. Global storage is catchment surface 40 plus sewer 0. Detention 60=50+5+5 has
+  its own scoped balance and does not add 5 to the gross-network storage.
+variables:
+  impervious_runoff_mass_flow.value:
+    value: 120.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: kg/s
+    external_signal: mapped_impervious_runoff_mass_flow
+  pervious_runoff_mass_flow.value:
+    value: 80.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: kg/s
+    external_signal: mapped_pervious_runoff_mass_flow
+  rainfall_runoff_mass_flow.value:
+    value: 200.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: kg/s
+    external_signal: mapped_rainfall_runoff_mass_flow
+  inlet_capture_mass_flow.value:
+    value: 160.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: kg/s
+    external_signal: mapped_inlet_capture_mass_flow
+  catchment_surface_storage_rate.value:
+    value: 40.0
+    source: "tree.yaml#system.boundaries[4]"
+    unit: kg/s
+    external_signal: mapped_catchment_surface_storage_rate
+  sanitary_base_mass_flow.value:
+    value: 50.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: kg/s
+    external_signal: mapped_sanitary_base_mass_flow
+  upstream_inflow_mass_flow.value:
+    value: 30.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: kg/s
+    external_signal: mapped_upstream_inflow_mass_flow
+  sewer_conveyance_inflow_mass_flow.value:
+    value: 240.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: kg/s
+    external_signal: mapped_sewer_conveyance_inflow_mass_flow
+  treatment_outflow_mass_flow.value:
+    value: 210.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: kg/s
+    external_signal: mapped_treatment_outflow_mass_flow
+  controlled_overflow_mass_flow.value:
+    value: 20.0
+    source: "tree.yaml#system.boundaries[9]"
+    unit: kg/s
+    external_signal: mapped_controlled_overflow_mass_flow
+  infiltration_to_groundwater_mass_flow.value:
+    value: 10.0
+    source: "tree.yaml#system.boundaries[10]"
+    unit: kg/s
+    external_signal: mapped_infiltration_to_groundwater_mass_flow
+  sewer_storage_rate.value:
+    value: 0.0
+    source: "tree.yaml#system.boundaries[11]"
+    unit: kg/s
+    external_signal: mapped_sewer_storage_rate
+  conveyance_overflow_fraction.value:
+    value: 0.08333333333333333
+    source: "tree.yaml#system.boundaries[12]"
+    external_signal: mapped_conveyance_overflow_fraction
+    unit: "1"
+  detention_inflow_mass_flow.value:
+    value: 60.0
+    source: "tree.yaml#system.boundaries[13]"
+    unit: kg/s
+    external_signal: mapped_detention_inflow_mass_flow
+  detention_outflow_mass_flow.value:
+    value: 50.0
+    source: "tree.yaml#system.boundaries[14]"
+    unit: kg/s
+    external_signal: mapped_detention_outflow_mass_flow
+  detention_overflow_mass_flow.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[15]"
+    unit: kg/s
+    external_signal: mapped_detention_overflow_mass_flow
+  detention_storage_accumulation_rate.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[16]"
+    unit: kg/s
+    external_signal: mapped_detention_storage_accumulation_rate
+  detention_fill_fraction.value:
+    value: 0.55
+    source: "tree.yaml#system.boundaries[17]"
+    external_signal: mapped_detention_fill_fraction
+    unit: "1"
+  pump_station_electric_power.value:
+    value: 12000.0
+    source: "tree.yaml#system.boundaries[18]"
+    unit: W
+    external_signal: mapped_pump_station_electric_power
+  pump_hydraulic_power.value:
+    value: 8000.0
+    source: "tree.yaml#system.boundaries[19]"
+    unit: W
+    external_signal: mapped_pump_hydraulic_power
+  pump_loss_power.value:
+    value: 4000.0
+    source: "tree.yaml#system.boundaries[20]"
+    unit: W
+    external_signal: mapped_pump_loss_power
+  wet_well_fill_fraction.value:
+    value: 0.6
+    source: "tree.yaml#system.boundaries[21]"
+    external_signal: mapped_wet_well_fill_fraction
+    unit: "1"
+  pump_running_fraction.value:
+    value: 0.8
+    source: "tree.yaml#system.boundaries[22]"
+    external_signal: mapped_pump_running_fraction
+    unit: "1"
+  pollutant_inflow_load.value:
+    value: 0.5
+    source: "tree.yaml#system.boundaries[23]"
+    unit: kg/s
+    external_signal: mapped_pollutant_inflow_load
+  pollutant_treated_discharge_load.value:
+    value: 0.25
+    source: "tree.yaml#system.boundaries[24]"
+    unit: kg/s
+    external_signal: mapped_pollutant_treated_discharge_load
+  pollutant_overflow_load.value:
+    value: 0.0625
+    source: "tree.yaml#system.boundaries[25]"
+    unit: kg/s
+    external_signal: mapped_pollutant_overflow_load
+  pollutant_removed_load.value:
+    value: 0.125
+    source: "tree.yaml#system.boundaries[26]"
+    unit: kg/s
+    external_signal: mapped_pollutant_removed_load
+  pollutant_storage_rate.value:
+    value: 0.0625
+    source: "tree.yaml#system.boundaries[27]"
+    unit: kg/s
+    external_signal: mapped_pollutant_storage_rate

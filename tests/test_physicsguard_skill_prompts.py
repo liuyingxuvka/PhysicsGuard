@@ -37,8 +37,8 @@ def test_route_table_names_every_route_file_and_the_description_is_short() -> No
 def test_one_model_tree_and_format_guide_are_available_from_the_skill() -> None:
     skill = SKILL_ROOT / "physicsguard"
     text = (skill / "SKILL.md").read_text(encoding="utf-8")
-    paragraphs = [paragraph for paragraph in text.split("\n\n") if "five abilities" in paragraph]
-    assert len(paragraphs) == 1 and len(paragraphs[0].splitlines()) <= 6
+    labels = re.findall(r"^- (Node|Parent|Known-bad|Real binding|Test binding|Readback|Current vs target):", text, re.M)
+    assert labels == ["Node", "Parent", "Known-bad", "Real binding", "Test binding", "Readback", "Current vs target"]
     assert "references/model-format.md" in text.split("## Rules for every route", 1)[1]
     guide = (skill / "references/model-format.md").read_text(encoding="utf-8")
     assert len(guide.splitlines()) <= 150
@@ -60,7 +60,7 @@ def test_ai_debugging_keeps_four_hard_boundaries() -> None:
         assert boundaries.count(rule) == 1, rule
 
 
-def test_debugging_route_is_short_and_names_only_real_commands():
+def test_skill_files_name_only_existing_commands():
     import argparse
     from physicsguard.cli import build_parser
     skill=SKILL_ROOT/'physicsguard'
@@ -69,13 +69,17 @@ def test_debugging_route_is_short_and_names_only_real_commands():
     assert text.count('Do not learn by modifying PhysicsGuard itself')==1
     assert not (skill/'references/protocol.md').exists()
     assert '## Minimum workflow' not in text and '## Workflow A' not in text
-    commands=re.findall(r'python -m physicsguard\.cli ([a-z][a-z-]*)(?: ([a-z][a-z-]*))?',text)
-    assert commands
     def choices(parser):
-        return next((action.choices for action in parser._actions if isinstance(action,argparse._SubParsersAction)),{})
-    root=choices(build_parser())
-    for command,subcommand in commands:
-        assert command in root,command
-        nested=choices(root[command])
-        if nested:
-            assert subcommand in nested,(command,subcommand)
+        return next((action.choices for action in parser._actions if isinstance(action, argparse._SubParsersAction)), {})
+    parsers = choices(build_parser())
+    files = [skill / 'SKILL.md', ROOT / 'README.md', *sorted((skill / 'references').rglob('*.md'))]
+    seen = 0
+    for path in files:
+        commands = re.findall(r'physicsguard\.cli ([a-z][a-z-]*)(?: ([a-z][a-z-]*))?', path.read_text())
+        for command, subcommand in commands:
+            seen += 1
+            assert command in parsers, (path, command)
+            nested = choices(parsers[command])
+            if nested:
+                assert subcommand in nested, (path, command, subcommand)
+    assert seen

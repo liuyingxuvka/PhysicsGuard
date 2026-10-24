@@ -118,105 +118,6 @@ def review_model_understanding_preflight(path: Path, audit: Path | None = None) 
     )
 
 
-def review_external_model_intake(path: Path, audit: Path | None = None) -> WorkflowReview:
-    data = _load_yaml(path)
-    missing: list[str] = []
-    findings: list[WorkflowFinding] = []
-    if not isinstance(data, dict):
-        return _invalid_yaml_review("external_model_intake")
-    root = data.get("external_model_snapshot")
-    if not isinstance(root, dict):
-        missing.append("external_model_snapshot")
-        root = {}
-
-    for field_name in ("model_name", "tool", "model_version", "scenario", "export_time", "observed_file"):
-        _require_text(root, field_name, missing)
-    signals = root.get("signals")
-    if not isinstance(signals, list) or not signals:
-        missing.append("signals")
-        signals = []
-
-    review_required = 0
-    stale_count = 0
-    for index, signal in enumerate(signals):
-        label = f"signals[{index}]"
-        if not isinstance(signal, dict):
-            missing.append(label)
-            continue
-        for field_name in (
-            "external_signal",
-            "physicsguard_variable",
-            "unit_from_source",
-            "expected_si_unit",
-            "mapping_confidence",
-        ):
-            _require_text(signal, field_name, missing, prefix=label)
-        _require_list(signal, "stale_when", missing, prefix=label)
-        if signal.get("review_required") is True:
-            review_required += 1
-        confidence = str(signal.get("mapping_confidence", "")).lower()
-        if confidence in {"low", "review_required", "uncertain"}:
-            review_required += 1
-        if not signal.get("conversion_note"):
-            review_required += 1
-        stale_when = signal.get("stale_when")
-        if isinstance(stale_when, list) and stale_when:
-            stale_count += 1
-
-    if audit is not None:
-        from physicsguard.core.units import unit_conversion
-        _blocks, units = _audit_context(audit)
-        for index, signal in enumerate(signals):
-            if not isinstance(signal, dict):
-                continue
-            variable = signal.get('physicsguard_variable')
-            if not isinstance(variable, str) or variable not in units:
-                findings.append(WorkflowFinding('error', 'intake_variable_unknown',
-                    f'Variable {variable!r} is not in the audit registry.', f'signals[{index}].physicsguard_variable'))
-                continue
-            source_unit = signal.get('unit_from_source')
-            try:
-                if not isinstance(source_unit, str):
-                    raise ValueError('missing unit')
-                unit_conversion(source_unit, units[variable])
-            except ValueError:
-                findings.append(WorkflowFinding('error', 'intake_unit_not_convertible',
-                    f'{source_unit!r} cannot be converted to registered unit {units[variable]!r} for {variable}.',
-                    f'signals[{index}].unit_from_source'))
-    has_error = any(f.severity == 'error' for f in findings)
-    if review_required:
-        findings.append(
-            WorkflowFinding(
-                "warning",
-                "signal_mapping_review_required",
-                "One or more signal mappings need review before model fault claims.",
-                "signals",
-                review_required,
-            )
-        )
-    status = "fail" if has_error else "partial" if missing or findings else "pass"
-    return WorkflowReview(
-        artifact_kind="external_model_intake",
-        status=status,
-        ok=not missing and not has_error,
-        findings=tuple(findings),
-        missing_inputs=tuple(missing),
-        next_actions=(
-            ("review_signal_mappings_before_fault_claims",)
-            if review_required
-            else ("run_physicsguard_hierarchy_evaluate_with_observed_snapshot",)
-        ),
-        summary={
-            "model_name": root.get("model_name"),
-            "tool": root.get("tool"),
-            "signal_count": len(signals),
-            "review_required_count": review_required,
-            "stale_trigger_count": stale_count,
-            "semantics": "Intake records mapping evidence only; it does not convert observed values.",
-        },
-    )
-
-
 def _invalid_yaml_review(kind: str) -> WorkflowReview:
     return WorkflowReview(
         artifact_kind=kind,
@@ -282,7 +183,6 @@ def _preflight_next_actions(
 __all__ = [
     "WorkflowFinding",
     "WorkflowReview",
-    "review_external_model_intake",
     "review_model_understanding_preflight",
 ]
 

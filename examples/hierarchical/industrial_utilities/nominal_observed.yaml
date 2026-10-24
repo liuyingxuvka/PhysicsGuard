@@ -1,0 +1,175 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: Nominal uses the unchanged detailed operating point: air generation 5 kg/s, production 4.125 plus instrument 0.25 and leak 0.625. The former...
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: industrial_utilities_nominal
+description: 'Nominal uses the unchanged detailed operating point: air generation
+  5 kg/s, production 4.125 plus instrument 0.25 and leak 0.625. The former standalone
+  coarse 4.5/0.5 split was a different operating point; it is not an identity link.'
+variables:
+  boiler_steam_generation_mass_flow.value:
+    value: 20.0
+    source: "tree.yaml#system.boundaries[0]"
+    unit: kg/s
+    external_signal: mapped_boiler_steam_generation_mass_flow
+  imported_steam_mass_flow.value:
+    value: 2.0
+    source: "tree.yaml#system.boundaries[1]"
+    unit: kg/s
+    external_signal: mapped_imported_steam_mass_flow
+  process_steam_demand_mass_flow.value:
+    value: 18.0
+    source: "tree.yaml#system.boundaries[2]"
+    unit: kg/s
+    external_signal: mapped_process_steam_demand_mass_flow
+  deaerator_steam_use_mass_flow.value:
+    value: 2.0
+    source: "tree.yaml#system.boundaries[3]"
+    unit: kg/s
+    external_signal: mapped_deaerator_steam_use_mass_flow
+  steam_vent_loss_mass_flow.value:
+    value: 1.0
+    source: "tree.yaml#system.boundaries[4]"
+    unit: kg/s
+    external_signal: mapped_steam_vent_loss_mass_flow
+  exported_steam_mass_flow.value:
+    value: 1.0
+    source: "tree.yaml#system.boundaries[5]"
+    unit: kg/s
+    external_signal: mapped_exported_steam_mass_flow
+  condensate_return_mass_flow.value:
+    value: 15.0
+    source: "tree.yaml#system.boundaries[6]"
+    unit: kg/s
+    external_signal: mapped_condensate_return_mass_flow
+  makeup_water_mass_flow.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[7]"
+    unit: kg/s
+    external_signal: mapped_makeup_water_mass_flow
+  boiler_feedwater_mass_flow.value:
+    value: 20.0
+    source: "tree.yaml#system.boundaries[8]"
+    unit: kg/s
+    external_signal: mapped_boiler_feedwater_mass_flow
+  condensate_return_fraction.value:
+    value: 0.75
+    source: "tree.yaml#system.boundaries[9]"
+    external_signal: mapped_condensate_return_fraction
+    unit: "1"
+  steam_header_pressure.value:
+    value: 900000.0
+    source: "tree.yaml#system.boundaries[10]"
+    unit: Pa
+    external_signal: mapped_steam_header_pressure
+  compressor_air_output_mass_flow.value:
+    value: 5.0
+    source: "tree.yaml#system.boundaries[11]"
+    unit: kg/s
+    external_signal: mapped_compressor_air_output_mass_flow
+  production_air_use_mass_flow.value:
+    value: 4.125
+    source: "tree.yaml#system.boundaries[12]"
+    unit: kg/s
+    external_signal: mapped_production_air_use_mass_flow
+  instrument_air_use_mass_flow.value:
+    value: 0.25
+    source: "tree.yaml#system.boundaries[13]"
+    unit: kg/s
+    external_signal: mapped_instrument_air_use_mass_flow
+  air_leak_mass_flow.value:
+    value: 0.625
+    source: "tree.yaml#system.boundaries[14]"
+    unit: kg/s
+    external_signal: mapped_air_leak_mass_flow
+  air_leak_fraction.value:
+    value: 0.125
+    source: "tree.yaml#system.boundaries[15]"
+    external_signal: mapped_air_leak_fraction
+    unit: "1"
+  compressed_air_header_pressure.value:
+    value: 700000.0
+    source: "tree.yaml#system.boundaries[16]"
+    unit: Pa
+    external_signal: mapped_compressed_air_header_pressure
+  compressor_electric_power.value:
+    value: 100000.0
+    source: "tree.yaml#system.boundaries[17]"
+    unit: W
+    external_signal: mapped_compressor_electric_power
+  refrigeration_cooling_capacity.value:
+    value: 450000.0
+    source: "tree.yaml#system.boundaries[18]"
+    unit: W
+    external_signal: mapped_refrigeration_cooling_capacity
+  chilled_water_process_load.value:
+    value: 400000.0
+    source: "tree.yaml#system.boundaries[19]"
+    unit: W
+    external_signal: mapped_chilled_water_process_load
+  chilled_water_distribution_loss.value:
+    value: 50000.0
+    source: "tree.yaml#system.boundaries[20]"
+    unit: W
+    external_signal: mapped_chilled_water_distribution_loss
+  chiller_electric_power.value:
+    value: 150000.0
+    source: "tree.yaml#system.boundaries[21]"
+    unit: W
+    external_signal: mapped_chiller_electric_power
+  chiller_cop.value:
+    value: 3.0
+    source: "tree.yaml#system.boundaries[22]"
+    external_signal: mapped_chiller_cop
+    unit: "1"
+  chilled_water_supply_temperature.value:
+    value: 279.15
+    source: "tree.yaml#system.boundaries[23]"
+    unit: K
+    external_signal: mapped_chilled_water_supply_temperature
+  process_heat_to_cooling_water.value:
+    value: 600000.0
+    source: "tree.yaml#system.boundaries[24]"
+    unit: W
+    external_signal: mapped_process_heat_to_cooling_water
+  chiller_condenser_heat.value:
+    value: 600000.0
+    source: "tree.yaml#system.boundaries[25]"
+    unit: W
+    external_signal: mapped_chiller_condenser_heat
+  cooling_water_heat_rejection.value:
+    value: 1200000.0
+    source: "tree.yaml#system.boundaries[26]"
+    unit: W
+    external_signal: mapped_cooling_water_heat_rejection
+  cooling_water_makeup_mass_flow.value:
+    value: 2.0
+    source: "tree.yaml#system.boundaries[27]"
+    unit: kg/s
+    external_signal: mapped_cooling_water_makeup_mass_flow
+  cooling_water_evaporation_mass_flow.value:
+    value: 1.5
+    source: "tree.yaml#system.boundaries[28]"
+    unit: kg/s
+    external_signal: mapped_cooling_water_evaporation_mass_flow
+  cooling_water_blowdown_mass_flow.value:
+    value: 0.5
+    source: "tree.yaml#system.boundaries[29]"
+    unit: kg/s
+    external_signal: mapped_cooling_water_blowdown_mass_flow
+  cooling_water_pump_fan_power.value:
+    value: 30000.0
+    source: "tree.yaml#system.boundaries[30]"
+    unit: W
+    external_signal: mapped_cooling_water_pump_fan_power
+  utility_electric_power.value:
+    value: 300000.0
+    source: "tree.yaml#system.boundaries[31]"
+    unit: W
+    external_signal: mapped_utility_electric_power
+  boiler_auxiliary_power.value:
+    value: 20000.0
+    source: "tree.yaml#system.boundaries[32]"
+    unit: W
+    external_signal: mapped_boiler_auxiliary_power

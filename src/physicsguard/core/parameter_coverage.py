@@ -29,13 +29,11 @@ class ContractReview:
         return asdict(self)
 
 
-CONFIDENCE = {"high": .9, "medium": .6, "low": .3}
+CONFIDENCE = {"high": .9, "medium": .6, "low": .3, "proposed": 0.}
 
 
 def confidence_value(value):
-    if isinstance(value, str):
-        return CONFIDENCE.get(value.lower(), -1.)
-    return float(value) if isinstance(value, (float, int)) and not isinstance(value, bool) and 0 <= value <= 1 else -1.
+    return CONFIDENCE.get(value, -1.) if isinstance(value, str) else -1.
 
 
 def field_targets(field):
@@ -72,7 +70,7 @@ def check_field_mappings(contract, manifest, target_units):
             add("mapping_review_required", name, "mapping awaits review", severity="warning")
         if not field.evidence or not field.evidence.strip():
             add("mapping_missing_evidence", name, "mapping requires explicit evidence")
-        if confidence_value(field.confidence) < contract.coverage.min_confidence:
+        if confidence_value(field.confidence) < confidence_value(contract.coverage.min_confidence):
             add("mapping_confidence_below_minimum", name, "mapping confidence is below the contract minimum")
         targets = field_targets(field)
         if not targets:

@@ -1,0 +1,275 @@
+# PhysicsGuard hierarchical audit model
+# Purpose: One controller step and post-step actuator/sensor checks. The PID measurement at the start of the step is not the filtered sensor result at the end.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/pid_actuator_loop/tree.yaml --pretty
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+audit_name: pid_actuator_tree
+system:
+  system_name: pid_actuator_tree
+  components:
+  - id: coarse_err
+    type: ControlErrorModule
+    parameters: {}
+  - id: coarse_act
+    type: ActuatorFirstOrderSaturationModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+      lower: 0.0
+      upper: 10.0
+  - id: coarse_sensor
+    type: SensorLowPassFilterStepModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+  - id: pid
+    type: PIDControllerStepModule
+    parameters:
+      Kp: 2.0
+      Ki: 0.5
+      Kd: 0.1
+      dt_s: 1.0
+      output_lower: 0.0
+      output_upper: 10.0
+  - id: act
+    type: ActuatorFirstOrderSaturationModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+      lower: 0.0
+      upper: 10.0
+  - id: sensor
+    type: SensorLowPassFilterStepModule
+    parameters:
+      tau_s: 2.0
+      dt_s: 1.0
+  - id: fb
+    type: ActuatorPositionFeedbackModule
+    parameters:
+      command_to_position_gain: 1.0
+      feedback_gain: 1.0
+  - id: command_position
+    type: GainBiasModule
+    parameters:
+      gain: 1.0
+      bias: 0.0
+      residual_scale: 0.01
+      x_lower_bound: -1000000000.0
+      x_upper_bound: 1000000000.0
+      x_initial_guess: 5.3
+      x_scale: 1.0
+      y_lower_bound: -1000000000.0
+      y_upper_bound: 1000000000.0
+      y_initial_guess: 5.3
+      y_scale: 1.0
+  - id: feedback_position
+    type: GainBiasModule
+    parameters:
+      gain: 1.0
+      bias: 0.0
+      residual_scale: 0.01
+      x_lower_bound: -1000000000.0
+      x_upper_bound: 1000000000.0
+      x_initial_guess: 5.3
+      x_scale: 1.0
+      y_lower_bound: -1000000000.0
+      y_upper_bound: 1000000000.0
+      y_initial_guess: 5.3
+      y_scale: 1.0
+  boundaries:
+  - variable: pid.setpoint
+    value: 10.0
+    scale: 1.0e-06
+  - variable: pid.measurement
+    value: 8.0
+    scale: 1.0e-06
+  - variable: pid.error
+    value: 2.0
+    scale: 1.0e-06
+  - variable: pid.error_previous
+    value: 1.0
+    scale: 1.0e-06
+  - variable: pid.integral_previous
+    value: 3.0
+    scale: 1.0e-06
+  - variable: pid.integral_current
+    value: 5.0
+    scale: 1.0e-06
+  - variable: pid.derivative_error
+    value: 1.0
+    scale: 1.0e-06
+  - variable: pid.output_unsaturated
+    value: 6.6
+    scale: 1.0e-06
+  - variable: pid.output
+    value: 6.6
+    scale: 1.0e-06
+  - variable: act.command
+    value: 6.6
+    scale: 1.0e-06
+  - variable: act.actual_previous
+    value: 4.0
+    scale: 1.0e-06
+  - variable: act.actual_current
+    value: 5.3
+    scale: 1.0e-06
+  - variable: sensor.true_value_current
+    value: 5.3
+    scale: 1.0e-06
+  - variable: sensor.measured_previous
+    value: 5.0
+    scale: 1.0e-06
+  - variable: sensor.measured_current
+    value: 5.15
+    scale: 1.0e-06
+  - variable: fb.command
+    value: 5.3
+    scale: 1.0e-06
+  - variable: fb.actual_position
+    value: 5.3
+    scale: 1.0e-06
+  - variable: fb.feedback_position
+    value: 5.3
+    scale: 1.0e-06
+  solver:
+    tolerance: 1.0e-08
+    audit_threshold: 1.0
+  connections:
+  - from_variable: coarse_err.setpoint
+    to_variable: pid.setpoint
+  - from_variable: coarse_err.measurement
+    to_variable: pid.measurement
+  - from_variable: coarse_err.error
+    to_variable: pid.error
+  - from_variable: coarse_act.command
+    to_variable: act.command
+  - from_variable: coarse_act.actual_previous
+    to_variable: act.actual_previous
+  - from_variable: coarse_act.actual_current
+    to_variable: act.actual_current
+  - from_variable: coarse_sensor.true_value_current
+    to_variable: sensor.true_value_current
+  - from_variable: coarse_sensor.measured_previous
+    to_variable: sensor.measured_previous
+  - from_variable: coarse_sensor.measured_current
+    to_variable: sensor.measured_current
+  - from_variable: fb.command
+    to_variable: command_position.x
+  - from_variable: fb.actual_position
+    to_variable: command_position.y
+  - from_variable: fb.actual_position
+    to_variable: feedback_position.x
+  - from_variable: fb.feedback_position
+    to_variable: feedback_position.y
+  - from_variable: pid.output
+    to_variable: act.command
+  - from_variable: act.actual_current
+    to_variable: fb.actual_position
+  - from_variable: act.actual_current
+    to_variable: sensor.true_value_current
+hierarchy:
+  blocks:
+  - id: control_loop
+    level: 0
+    components:
+    - coarse_err
+    - coarse_act
+    - coarse_sensor
+    description: Pre-step control error, actuator transition and sensor-filter reference relations. No
+      plant dynamics are inferred.
+  - id: controller
+    level: 1
+    parent_id: control_loop
+    components:
+    - pid
+    refines:
+    - coarse_err
+  - id: actuator
+    level: 1
+    parent_id: control_loop
+    components:
+    - act
+    - fb
+    refines:
+    - coarse_act
+  - id: sensor
+    level: 1
+    parent_id: control_loop
+    components:
+    - sensor
+    refines:
+    - coarse_sensor
+  - id: command_position
+    level: 2
+    parent_id: actuator
+    components:
+    - command_position
+    refines:
+    - fb
+    description: A finer view of one original feedback consistency law, with unchanged gain and normalization.
+  - id: feedback_position
+    level: 2
+    parent_id: actuator
+    components:
+    - feedback_position
+    refines:
+    - fb
+    description: A finer view of one original feedback consistency law, with unchanged gain and normalization.
+  refinement_rules:
+  - id: refine_control_loop
+    block_id: control_loop
+    trigger_diagnostic_keys:
+    - control_error_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - controller
+    - actuator
+    - sensor
+    priority: 10
+  - id: refine_actuator_feedback
+    block_id: actuator
+    trigger_diagnostic_keys:
+    - actuator_feedback_position_mismatch
+    - actuator_command_position_mismatch
+    score_threshold: 1.0
+    next_template_ids:
+    - command_position
+    - feedback_position
+    next_required_variables:
+    - fb.command
+    - fb.actual_position
+    - fb.feedback_position
+    rationale: Actuator feedback consistency failed.
+    priority: 20
+description: One controller step and post-step actuator/sensor checks. The PID measurement at the start
+  of the step is not the filtered sensor result at the end.
+fault_variants:
+- id: actuator_feedback_conflict
+  kind: fault
+  description: 'Original conflict: the post-step feedback reading is 2.0 while actual position and post-step
+    target remain5.3; PID actuator command remains6.6.'
+  changes:
+  - variable: fb.feedback_position
+    set: 2.0
+  expect_blocks:
+  - actuator
+  - feedback_position
+- id: feedback_rounding
+  kind: benign
+  description: Synthetic nonzero feedback rounding below the original fixed-boundary and feedback residual
+    normalizations; not a sensor-accuracy claim.
+  changes:
+  - variable: fb.feedback_position
+    offset: 1.0e-08
+metadata:
+  boundary: One discrete step with explicit time roles, no automatic closed-loop update or unmodeled plant
+    proxy.
+  time_roles:
+    pid.measurement: pre-step feedback reading8.0
+    act.command: controller output6.6
+    act.actual_current: end-step actual position5.3
+    fb.command: separate end-step expected position5.3, never equal to act.command by declaration
+    sensor.measured_current: end-step filtered reading5.15, not the pre-step PID measurement8.0
+  assumptions:
+  - Control coordinates use dimensionless signal units. Original gains, tau, dt, normalizations and boundary
+    values are retained.

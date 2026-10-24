@@ -94,7 +94,7 @@ Prediction needs `model_semantics: stateful_dynamic` and a
 path, file content, and case id. PhysicsGuard compares the externally generated
 trajectory (alignment, error, lag, drift, stability); it does not turn a
 pointwise relation into a simulator.
-The rollout declares initial state, step size/unit, horizon, target signals/scales and project-sourced thresholds; optional `producer_id` identifies the trajectory-producing run.
+The rollout declares initial state, step size/unit, horizon, declared signals/scales and project-sourced thresholds; optional `producer_id` identifies the trajectory-producing run.
 
 ## Calibration Boundary
 
@@ -150,3 +150,5 @@ family quotas are enforced; their shortfalls remain warnings. Explicit parameter
 classification/contribution evidence and all native hard gates remain required
 when that parameter scope is requested. Manifest metadata records the actual
 maximum gap; refresh older manifests to obtain those facts.
+
+Contract field mappings supply validation roles by default. Plan rows override only explicitly authored fields for the same target. When `depth.observed_series` is omitted, validation reads the native contract series in memory. A missing declared input is reported once; dependent checks are marked `not_run`. Mapping confidence uses `high`, `medium`, `low` or `proposed`; measurement and computed validation confidence stay numeric.

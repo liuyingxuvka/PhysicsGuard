@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
+import pytest
 
 from physicsguard.core.model_dataset_validation import validate_model_dataset
 from physicsguard.core.predictive_rollout import (
@@ -188,17 +189,14 @@ def test_rollout_plan_without_producer_id_still_passes() -> None:
     assert "producer identity" not in result.result["claim_boundary"]
 
 
-def test_legacy_producer_identifier_is_read_but_serializes_with_the_new_name():
+def test_legacy_producer_identifier_requires_the_current_name():
     payload = _plan().model_dump(mode='json')
-    identity = payload.pop('producer_id')
-    payload['producer_receipt_id'] = identity
-    plan = PredictiveRolloutPlanSpec.model_validate(payload)
-    assert plan.producer_id == identity
-    assert plan.model_dump(mode='json')['producer_id'] == identity
-    assert 'producer_receipt_id' not in plan.model_dump(mode='json')
+    payload['producer_receipt_id'] = payload.pop('producer_id')
+    with pytest.raises(ValueError, match='producer_id'):
+        PredictiveRolloutPlanSpec.model_validate(payload)
 
 
-def test_native_results_have_no_output_version_or_receipt_shape():
-    result = evaluate_predictive_rollout('stateful_dynamic',_plan(),base_dir=PUMP).result
+def test_native_results_have_no_output_version():
+    result = evaluate_predictive_rollout('stateful_dynamic', _plan(), base_dir=PUMP).result
     assert result['artifact_kind'] == 'physicsguard_predictive_rollout_result'
-    assert 'receipt_version' not in result
+    assert 'output_version' not in result

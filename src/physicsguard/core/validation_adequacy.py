@@ -11,12 +11,13 @@ from typing import Any, Iterable
 from physicsguard.io.test_file_contract_loader import (
     load_spec,
     load_data_file_manifest,
+    load_test_file_contract,
 )
-from physicsguard.core.parameter_coverage import _metadata_is_stale
+from physicsguard.core.parameter_coverage import _metadata_is_stale, field_targets
 from physicsguard.core.test_file_contract import resolve_test_file_contract, contract_field_mappings, contract_role_matrix
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
-from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
+from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec, ValidationVariableRoleSpec
 from physicsguard.schema.parameter_coverage import MappingEdgeSpec, ParameterRoleMatrixSpec
 from physicsguard.schema.validation_adequacy import (
     ANTI_DEGENERACY_FLOOR_ALGORITHM,
@@ -32,6 +33,55 @@ class ValidationAdequacyEvaluation:
     findings: list[dict[str, Any]]
 
 
+def contract_input_error_path(contract_path: Path, error: Exception) -> str:
+    """Attribute a native loading failure to the actual referenced input."""
+    try:
+        contract = load_test_file_contract(contract_path)
+    except Exception:
+        return str(contract_path)
+    for value in (contract.manifest, contract.data_file, contract.model):
+        candidate = (contract_path.parent / value).resolve()
+        if str(candidate) in str(error):
+            return str(candidate)
+    return str(getattr(error, "filename", None) or contract_path)
+
+
+def unique_input_findings(findings: list[dict[str, Any]], base_dir: Path) -> list[dict[str, Any]]:
+    """A shared input may serve several declared identities; report its failure once."""
+    seen = set()
+    result = []
+    for item in findings:
+        code = item["type"]
+        if code.endswith(("_unreadable", "_file_missing")) or code in {"observed_series_missing", "predictive_artifact_missing", "validation_contract_check_failed"}:
+            path = item.get("details", {}).get("identity", {}).get("path") or item.get("target")
+            key = str(_resolve_path(base_dir, path).resolve()) if path else code
+            if key in seen:
+                continue
+            seen.add(key)
+        result.append(item)
+    return result
+
+
+def resolve_validation_roles(plan: ModelValidationPlanSpec, base_dir: Path) -> ModelValidationPlanSpec:
+    """Inherit contract field roles; merge only explicitly authored plan keys."""
+    roles: dict[str, dict[str, Any]] = {}
+    for reference in plan.contracts:
+        try:
+            resolved = resolve_test_file_contract(_resolve_path(base_dir, reference.contract))
+        except Exception:
+            # The input-loading route reports this failure, once, with provenance.
+            continue
+        for name, field in resolved.contract.fields.items():
+            for target in field_targets(field).values():
+                roles.setdefault(target, dict(target=target, source_id=f"field:{name}",
+                    validation_role="validation_output", use_policy="holdout_only",
+                    mapping_confidence=field.confidence))
+    for role in plan.variable_roles:
+        roles.setdefault(role.target, {"target": role.target}).update(role.model_dump(exclude_unset=True))
+    effective = [ValidationVariableRoleSpec.model_validate(row) for row in roles.values()]
+    return plan.model_copy(update={"variable_roles": effective})
+
+
 def evaluate_validation_adequacy(
     plan: ModelValidationPlanSpec,
     depth: ValidationDepthPlanSpec,
@@ -40,6 +90,7 @@ def evaluate_validation_adequacy(
     audit_spec: HierarchicalAuditSpec,
     series: ObservedSeriesSpec | None,
     residual_result: dict[str, Any],
+    inputs_available: bool = True,
 ) -> ValidationAdequacyEvaluation:
     """Load exact target artifacts and evaluate quantitative adequacy."""
 
@@ -51,28 +102,38 @@ def evaluate_validation_adequacy(
     adequacy = depth.adequacy or ValidationAdequacyPlanSpec()
 
     load_findings: list[dict[str, Any]] = []
+    manifest_path = _resolve_path(base_dir, depth.dataset.field_schema.path)
+    roles_path = _resolve_path(base_dir, depth.dataset.parameter_roles.path)
     manifest = _load_or_find(
         load_data_file_manifest,
-        _resolve_path(base_dir, depth.dataset.field_schema.path),
+        manifest_path,
         "validation_manifest_unreadable",
         load_findings,
-    )
+    ) if manifest_path.is_file() else None
     role_matrix = _load_or_find(
         contract_role_matrix,
-        _resolve_path(base_dir, depth.dataset.parameter_roles.path),
+        roles_path,
         "validation_role_matrix_unreadable",
         load_findings,
-    )
-    if manifest is None or role_matrix is None:
+    ) if roles_path.is_file() else None
+    if manifest is None or role_matrix is None or series is None or not inputs_available:
         result = _blocked_empty_result(
             series,
             residual_result,
             [item["type"] for item in load_findings],
             depth.adequacy,
         )
+        result["status"] = "not_run"
+        result["temporal"]["status"] = "not_run"
         return ValidationAdequacyEvaluation(result=result, findings=load_findings)
 
     mapping_edges, _ = load_contract_field_mappings(plan, base_dir, load_findings)
+    if load_findings:
+        result = _blocked_empty_result(series, residual_result,
+            [item["type"] for item in load_findings], depth.adequacy)
+        result["status"] = "not_run"
+        result["temporal"]["status"] = "not_run"
+        return ValidationAdequacyEvaluation(result=result, findings=load_findings)
 
     result = evaluate_validation_adequacy_artifacts(
         adequacy=adequacy,
@@ -1195,7 +1256,7 @@ def load_contract_field_mappings(
                     "error",
                     "validation_mapping_edges_unreadable",
                     "a referenced test-file contract or its mapping edges could not be read",
-                    str(contract_path),
+                    contract_input_error_path(contract_path, exc),
                     {"error": str(exc)},
                 )
             )
@@ -1482,6 +1543,20 @@ def _finding(severity: str, code: str, message: str, target: str | None = None, 
 def _resolve_path(base_dir: Path, value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else base_dir / path
+
+
+def _identity_result(reference: Any, base_dir: Path) -> dict[str, Any]:
+    path = _resolve_path(base_dir, reference.path)
+    return {
+        "identity_id": reference.identity_id,
+        "path": reference.path,
+        "status": "current" if path.is_file() else "missing",
+        "case_ids": list(reference.case_ids),
+    }
+
+
+def _same_content(left: Path, right: Path) -> bool:
+    return left.is_file() and right.is_file() and left.read_bytes() == right.read_bytes()
 
 
 __all__ = [

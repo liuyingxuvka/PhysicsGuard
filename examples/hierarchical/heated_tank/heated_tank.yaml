@@ -1,39 +1,66 @@
-# PhysicsGuard hierarchical audit/model blueprint
+# PhysicsGuard hierarchical audit model
 # Purpose: Measured heated-tank command, electrical power, volume and energy audits in one six-block hierarchy.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/heated_tank/heated_tank.yaml --pretty
-# Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: heated_tank
 description: Measured heated-tank command, electrical power, volume and energy audits
   in one six-block hierarchy.
 system:
   system_name: heated_tank_level_1_heater
   components:
+  # Explicit fixed nameplate signal, matching the assumption below; not a measurement.
+  - id: heater_nameplate
+    type: SumModule
+    parameters:
+      input_variables: [heater_eff.efficiency]
+      weights: [0.0]
+      output_variable: heater_eff.efficiency
+      bias: 0.98
+      residual_scale: 0.1
   - id: lvl_prev
     type: TankLevelVolumeModule
     parameters:
       area_m2: 0.5
       residual_scale_m3: 0.0005
+    variable_overrides:
+      level_m: {initial_guess: 1.0}
+      volume_m3: {initial_guess: 0.5}
   - id: lvl_cur
     type: TankLevelVolumeModule
     parameters:
       area_m2: 0.5
       residual_scale_m3: 0.0005
+    variable_overrides:
+      level_m: {initial_guess: 1.0}
+      volume_m3: {initial_guess: 0.5}
   - id: vol
     type: TankVolumeRateModule
     parameters:
       dt_s: 10.0
       residual_scale_m3: 0.0005
+    variable_overrides:
+      volume_previous_m3: {initial_guess: 0.5}
+      volume_current_m3: {initial_guess: 0.5}
+      V_dot_in_m3_s: {initial_guess: 0.001}
+      V_dot_out_m3_s: {initial_guess: 0.001}
   - id: inflow_mass
     type: VolumetricMassFlowConversionModule
     parameters:
       rho_kg_m3: 1000.0
       residual_scale_kg_s: 0.001
+    variable_overrides:
+      V_dot_m3_s: {initial_guess: 0.001}
+      m_dot_kg_s: {initial_guess: 1.0}
   - id: heater_el
     type: ElectricalPowerModule
     parameters:
       residual_scale_W: 200.0
       P_upper_bound: 1.0e5
+    variable_overrides:
+      V_V: {initial_guess: 400.0}
+      current_A: {initial_guess: 50.0}
+      P_W: {initial_guess: 20000.0}
   - id: heater_cmd
     type: LinearRelationModule
     parameters:
@@ -50,28 +77,36 @@ system:
       y_upper_bound: 1.0e5
       y_initial_guess: 20000.0
       y_scale: 1000.0
+    variable_overrides:
+      x: {initial_guess: 20000.0}
+      y: {initial_guess: 20000.0}
   - id: heater_eff
     type: EfficiencyModule
     parameters:
       residual_scale: 0.01
-  - id: heat
-    type: ThermalMassStepModule
-    parameters:
-      C_J_K: 2093000.0
-      dt_s: 10.0
-      residual_scale_K: 0.005
-      Q_in_lower_bound: -1.0e6
-      Q_out_lower_bound: -1.0e6
+    variable_overrides:
+      input_power_W: {initial_guess: 20000.0}
+      useful_output_power_W: {initial_guess: 19600.0}
+      efficiency: {initial_guess: 0.98}
   - id: through
     type: CoolantHeatBalanceModule
     parameters:
       cp_J_kgK: 4186.0
       residual_scale_W: 200.0
+    variable_overrides:
+      m_dot_kg_s: {initial_guess: 1.0}
+      T_in_K: {initial_guess: 295.0}
+      T_out_K: {initial_guess: 300.0}
+      Q_dot_W: {initial_guess: 20930.0}
   - id: loss
     type: AmbientHeatLossModule
     parameters:
       UA_W_K: 20.0
       residual_scale_W: 200.0
+    variable_overrides:
+      T_body_K: {initial_guess: 300.0}
+      T_ambient_K: {initial_guess: 295.0}
+      Q_loss_W: {initial_guess: 100.0}
   - id: qout
     type: SumModule
     parameters:
@@ -80,6 +115,42 @@ system:
       - loss.Q_loss_W
       output_variable: heat.Q_out_W
       residual_scale: 200.0
+  - id: heat
+    type: ThermalMassStepModule
+    parameters:
+      C_J_K: 2093000.0
+      dt_s: 10.0
+      residual_scale_K: 0.005
+      Q_in_lower_bound: -1.0e6
+      Q_out_lower_bound: -1.0e6
+    variable_overrides:
+      T_previous_K: {initial_guess: 300.0}
+      T_current_K: {initial_guess: 299.99316770186334}
+      Q_in_W: {initial_guess: 19600.0}
+      Q_out_W: {initial_guess: 21030.0}
+  - id: tank_energy
+    type: ThermalMassStepModule
+    parameters:
+      C_J_K: 2093000.0
+      dt_s: 10.0
+      residual_scale_K: 0.005
+      Q_in_lower_bound: -1.0e6
+      Q_out_lower_bound: -1.0e6
+    variable_overrides:
+      T_previous_K: {initial_guess: 300.0}
+      T_current_K: {initial_guess: 299.99316770186334}
+      Q_in_W: {initial_guess: 19600.0}
+      Q_out_W: {initial_guess: 21030.0}
+  - id: tank_volume
+    type: TankVolumeRateModule
+    parameters:
+      dt_s: 10.0
+      residual_scale_m3: 0.0005
+    variable_overrides:
+      volume_previous_m3: {initial_guess: 0.5}
+      volume_current_m3: {initial_guess: 0.5}
+      V_dot_in_m3_s: {initial_guess: 0.001}
+      V_dot_out_m3_s: {initial_guess: 0.001}
   connections:
   - from_variable: lvl_prev.volume_m3
     to_variable: vol.volume_previous_m3
@@ -100,6 +171,22 @@ system:
     to_variable: through.T_out_K
   - from_variable: heat.T_previous_K
     to_variable: loss.T_body_K
+  - from_variable: heat.T_previous_K
+    to_variable: tank_energy.T_previous_K
+  - from_variable: heat.T_current_K
+    to_variable: tank_energy.T_current_K
+  - from_variable: heat.Q_in_W
+    to_variable: tank_energy.Q_in_W
+  - from_variable: heat.Q_out_W
+    to_variable: tank_energy.Q_out_W
+  - from_variable: vol.volume_previous_m3
+    to_variable: tank_volume.volume_previous_m3
+  - from_variable: vol.volume_current_m3
+    to_variable: tank_volume.volume_current_m3
+  - from_variable: vol.V_dot_in_m3_s
+    to_variable: tank_volume.V_dot_in_m3_s
+  - from_variable: vol.V_dot_out_m3_s
+    to_variable: tank_volume.V_dot_out_m3_s
   solver:
     method: least_squares
     max_iterations: 60
@@ -121,10 +208,13 @@ hierarchy:
   - id: tank
     name: Heated water tank
     level: 0
-    components: []
+    components:
+    - tank_energy
+    - tank_volume
   - id: hydraulics
     level: 1
     parent_id: tank
+    refines: [tank_volume]
     components:
     - lvl_prev
     - lvl_cur
@@ -133,6 +223,7 @@ hierarchy:
   - id: thermal
     level: 1
     parent_id: tank
+    refines: [tank_energy]
     components:
     - heat
     - qout
@@ -141,6 +232,7 @@ hierarchy:
     level: 2
     parent_id: thermal
     components:
+    - heater_nameplate
     - heater_cmd
     - heater_el
     - heater_eff
@@ -170,18 +262,6 @@ hierarchy:
     - heater efficiency
     rationale: Energy does not close; split heater, throughflow and loss.
     priority: 10
-  - id: refine_hydraulics
-    block_id: hydraulics
-    trigger_diagnostic_keys:
-    - tank_volume_rate_mismatch
-    score_threshold: 1.0
-    next_template_ids:
-    - tank_level1_orifice
-    next_required_variables:
-    - outflow pressure
-    - orifice opening
-    rationale: Volume does not close; check flow meters and level sensor.
-    priority: 10
 fault_variants:
 - id: heater_half
   kind: fault
@@ -196,21 +276,21 @@ fault_variants:
   description: An alternate device has larger wall heat loss.
   parameters: {loss.UA_W_K: 400.0}
   rederive: [heat.T_current_K]
-  expect_blocks: [thermal]
+  expect_blocks: [tank, thermal]
 - id: inlet_temp_offset
   kind: fault
   description: The inlet temperature sensor has a positive offset.
   changes:
   - variable: through.T_in_K
     offset: 2.4
-  expect_blocks: [thermal]
+  expect_blocks: [tank, thermal]
 - id: outflow_unit_x1000
   kind: fault
   description: The measured volumetric outflow has a unit scale error.
   changes:
   - variable: vol.V_dot_out_m3_s
     scale: 1000.0
-  expect_blocks: [hydraulics]
+  expect_blocks: [tank, hydraulics]
 - id: outflow_rounding
   kind: benign
   description: A one-millilitre-per-second outflow rounding offset stays within tolerance.
