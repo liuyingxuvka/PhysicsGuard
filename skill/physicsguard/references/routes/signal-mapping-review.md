@@ -14,7 +14,7 @@ Reject or hand off when:
 
 ## Minimum workflow
 
-1. Bind every governed external object to its exact variable named by `target`, unit, conversion, revision, and evidence.
+1. Name the audit file this route binds to and read it with `python -m physicsguard.cli hierarchy describe AUDIT.yaml` (no audit yet: build one first, as in `## Start from the model`); then bind every governed external object to its exact variable named by `target`, unit, conversion, revision, and evidence.
 2. Following the route protocol below, check confidence, review, time coverage, intervals, and stale conditions.
 3. Keep unresolved mappings visible and do not mutate observed values.
 

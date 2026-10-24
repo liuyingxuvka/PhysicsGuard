@@ -14,7 +14,7 @@ Reject or hand off when:
 
 ## Minimum workflow
 
-1. Freeze the symptom, external authority, physical boundary, and required inventory.
+1. Name the audit file this route binds to and read it with `python -m physicsguard.cli hierarchy describe AUDIT.yaml` (no audit yet: build one first, as in `## Start from the model`); then freeze the symptom, external authority, physical boundary, and required inventory.
 2. Following the route protocol below, review subsystems, signals, parameters, assumptions, uncertainty, and prediction access.
 3. Proceed only inside the passed planning boundary; send unresolved mappings or files to their direct owners.
 

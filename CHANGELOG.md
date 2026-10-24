@@ -4,6 +4,7 @@
 
 - Maintenance checks of PhysicsGuard's own model tree run on FlowGuard 0.70.12.
 - hierarchy run, evaluate, compare and variants now print the audit tree with each block's verdict (failing residuals, unchecked blocks, refinement checks, next signals, fault-variant signatures and model miss); --json still prints the full report. hierarchy describe names benign variants and shows which block each assumption card applies to; its per-block count is now "declared needs missing".
+- The skill starts from the model: describe the existing audit tree (or build a coarse one) before choosing a route, and read verdicts on the same tree.
 
 ## v0.15.22 - 2026-10-24 - One model tree for physics audits
 

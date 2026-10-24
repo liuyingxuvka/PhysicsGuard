@@ -90,10 +90,11 @@ python scripts/install_physicsguard_skills.py --target ~/.claude/skills         
 python scripts/install_physicsguard_skills.py --target ~/.claude/skills --check     # installed copy equals this checkout?
 ```
 
-Run the public example:
+Read the public example's model, then evaluate it:
 
 ```powershell
-python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml
+python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml
 ```
 
 The example represents a mapped controller feedback signal. The fault case has a reversed sign, so PhysicsGuard ranks `pitch_rate_feedback` as suspicious and recommends checking sign convention, gain, mapping confidence, unit conversion, and related signal-chain mappings.
@@ -317,10 +318,11 @@ python scripts/install_physicsguard_skills.py --target ~/.claude/skills         
 python scripts/install_physicsguard_skills.py --target ~/.claude/skills --check     # installed copy equals this checkout?
 ```
 
-运行公开示例：
+先读公开示例的模型，再评估它：
 
 ```powershell
-python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml --pretty
+python -m physicsguard.cli hierarchy describe examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml
+python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_debugging/pitch_feedback_level_0.yaml examples/hierarchical/observed_debugging/pitch_feedback_observed_fault.yaml
 ```
 
 这个例子表示一个映射过的 controller feedback signal。故障 case 的符号反了，所以 PhysicsGuard 会把 `pitch_rate_feedback` 排为可疑项，并建议检查 sign convention、gain、mapping confidence、unit conversion 和相关 signal-chain mapping。

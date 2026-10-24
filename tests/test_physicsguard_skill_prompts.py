@@ -83,3 +83,18 @@ def test_skill_files_name_only_existing_commands():
             if nested:
                 assert subcommand in nested, (path, command, subcommand)
     assert seen
+
+
+def test_skill_starts_from_the_model() -> None:
+    skill = SKILL_ROOT / "physicsguard"
+    text = (skill / "SKILL.md").read_text(encoding="utf-8")
+    headings = re.findall(r"^## (.+)$", text, re.M)
+    assert headings[0] == "Start from the model"
+    section = text.split("## Start from the model", 1)[1].split("\n## ", 1)[0]
+    for term in ("hierarchy describe", "(planned)", "audit_model.yaml"):
+        assert term in section
+    assert text.index("## Start from the model") < text.index("Pick one route")
+    for route in sorted((skill / "references" / "routes").glob("*.md")):
+        body = route.read_text(encoding="utf-8")
+        first = re.search(r"^1\. (.+(?:\n   .+)*)", body, re.M).group(1)
+        assert "hierarchy describe" in first or "AUDIT" in first, route.name

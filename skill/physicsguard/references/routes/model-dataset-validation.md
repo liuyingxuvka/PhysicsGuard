@@ -14,7 +14,7 @@ Reject or hand off when:
 
 ## Minimum workflow
 
-1. Check that every referenced test-file contract passes.
+1. Name the audit file this route binds to and read it with `python -m physicsguard.cli hierarchy describe AUDIT.yaml` (no audit yet: build one first, as in `## Start from the model`); then check that every referenced test-file contract passes.
 2. Following the route protocol below, run `python -m physicsguard.cli validation run PLAN.yaml`.
 3. Return the status, the `depth_summary`, open warnings, and only the covered scope.
 

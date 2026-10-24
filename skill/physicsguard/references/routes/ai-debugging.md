@@ -7,7 +7,8 @@ Hand off complete boundary/inventory work to `model-understanding-preflight`, ma
 consistency claims to `model-dataset-validation`. Multi-project/database questions need their owner.
 
 ## Workflow
-1. State the visible symptom, external source of truth, physical boundary and stop condition.
+1. If the audit exists, run `python -m physicsguard.cli hierarchy describe AUDIT.yaml` first and say on which blocks the
+   symptom lands. State the visible symptom, external source of truth, physical boundary and stop condition.
    Hand off if another route owns the complete request; start with the coarsest useful check.
 2. When understanding is uncertain, use `references/templates/model_understanding_preflight.yaml`:
    `python -m physicsguard.cli preflight review PREFLIGHT.yaml --audit AUDIT.yaml`.

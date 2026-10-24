@@ -6,7 +6,8 @@ After a contract passes, hand model/data consistency work to `model-dataset-vali
 One contract stores field roles, units, variable mappings, conversion, confidence and evidence; its generated manifest stores file identity, without separate catalogs or mapping sidecars.
 
 ## Workflow
-1. Copy `references/templates/test_file_contract.yaml`. Set `data_file`, `model`,
+1. Name the audit the contract's `model` points to and read it with `python -m physicsguard.cli hierarchy describe AUDIT.yaml`
+   (no audit yet: build one first, as in `## Start from the model`). Copy `references/templates/test_file_contract.yaml`. Set `data_file`, `model`,
    `manifest` and `time_column`. All paths are relative to that contract.
 2. Generate the manifest, using the contract's field units and optional exporter:
    `python -m physicsguard.cli testfile manifest DATA.csv --profile CONTRACT.yaml --out MANIFEST.yaml`.

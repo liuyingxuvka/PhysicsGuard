@@ -5,6 +5,15 @@ description: "Use for engineering-simulation results and test data: low-fidelity
 
 # PhysicsGuard
 
+## Start from the model
+
+1. Find this system's audit file (the path you were given, or `grep -rl "^hierarchy:" --include=*.yaml .`) and run `python -m physicsguard.cli hierarchy describe AUDIT.yaml` (add `--observed SNAPSHOT.yaml` when a snapshot exists). Name the blocks the request is about; keep the discussion on those blocks.
+2. No audit yet: build a coarse balance from `references/templates/audit_model.yaml` and read it back with `hierarchy describe` before any evaluation.
+3. After evaluating or comparing causes, read the verdicts on the same tree (the default output of `hierarchy evaluate|variants`).
+4. A refinement that is not built yet shows as `(planned)` on the tree: that is the target; once built it shows as `(block)`.
+
+## Choose a route
+
 Pick one route, then load only its file.
 
 | The request | Route file |
