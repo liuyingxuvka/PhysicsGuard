@@ -200,7 +200,7 @@ Variant reports SHALL distinguish fault detection, benign neutrality and expecte
 - **AND** any physical-masking claim SHALL rely on actual composed-device evidence rather than inherited hierarchy failure or expected example labels
 
 ### Requirement: Command exit codes preserve the checked verdict
-Single-system and hierarchy audit commands SHALL exit `0` when `audit_pass` is true and `1` when it is false. Compare commands SHALL use `observed_audit_pass`; other checks SHALL retain their native `ok` or status policy. Any command that cannot run because of input, file, schema, missing-required-variable or usage errors SHALL exit `2`. Successful non-judgment inspection, manifest generation and diff commands SHALL exit `0`. These exit codes SHALL NOT change the report JSON.
+Audit commands SHALL exit `0` when `audit_pass` is true and `1` when it is false. Compare commands SHALL use `observed_audit_pass`; other checks SHALL retain their native `ok` or status policy. Any command that cannot run because of input, file, schema, missing-required-variable or usage errors SHALL exit `2`. Successful non-judgment inspection, manifest generation and diff commands SHALL exit `0`. These exit codes SHALL NOT change the report JSON.
 
 #### Scenario: The observed pitch feedback is faulty
 - **WHEN** hierarchy evaluation or comparison reports the observed audit as false

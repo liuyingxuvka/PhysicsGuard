@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -165,6 +167,7 @@ def test_cli_dummy_system_passes_with_code_0() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "run",
             str(ROOT / "examples" / "dummy_system.yaml"),
         ],
@@ -183,7 +186,9 @@ def test_cli_stdout_is_valid_json_with_required_keys() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "run",
+            "--json",
             str(ROOT / "examples" / "dummy_system.yaml"),
         ],
         cwd=ROOT,
@@ -194,20 +199,24 @@ def test_cli_stdout_is_valid_json_with_required_keys() -> None:
     )
     data = json.loads(result.stdout)
     assert {
+        "audit_name",
+        "top_blocks",
+        "block_assignments",
+        "checked_residuals",
+        "unchecked_residuals",
         "system_name",
         "optimization_success",
         "audit_pass",
-        "audit_threshold",
         "max_abs_normalized_residual",
         "residual_norm",
-        "variables",
         "top_residuals",
-        "bound_hits",
         "warnings",
         "metadata",
     }.issubset(data)
     assert "role" in data["top_residuals"][0]
 
+    assert data["metadata"]["solver"]["audit_threshold"] == 1.0
+    assert data["metadata"]["wrapped_single_block"] is True
 
 def test_cli_invalid_file_returns_nonzero() -> None:
     result = subprocess.run(
@@ -215,6 +224,7 @@ def test_cli_invalid_file_returns_nonzero() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "run",
             str(ROOT / "examples" / "missing.yaml"),
         ],
@@ -233,9 +243,11 @@ def test_cli_run_physical_coolant_returns_valid_json() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "run",
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             "--pretty",
+            "--json",
         ],
         cwd=ROOT,
         env=cli_env(),
@@ -248,26 +260,17 @@ def test_cli_run_physical_coolant_returns_valid_json() -> None:
     assert data["optimization_success"]
     assert data["audit_pass"]
 
+    assert data["system_name"] == "physical_coolant_heat_balance"
 
-def test_cli_run_still_works_as_alias() -> None:
+@pytest.mark.parametrize("retired", ["run", "evaluate", "compare"])
+def test_retired_top_level_audit_commands_are_rejected(retired) -> None:
     result = subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "physicsguard.cli",
-            "run",
-            str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
-            "--pretty",
-        ],
-        cwd=ROOT,
-        env=cli_env(),
-        text=True,
-        capture_output=True,
-        check=False,
+        [sys.executable, "-m", "physicsguard.cli", retired,
+         str(ROOT / "examples" / "physical_coolant_heat_balance.yaml")],
+        cwd=ROOT, env=cli_env(), text=True, capture_output=True, check=False,
     )
-    assert result.returncode == 0, result.stderr
-    assert json.loads(result.stdout)["system_name"] == "physical_coolant_heat_balance"
-
+    assert result.returncode == 2
+    assert "invalid choice" in result.stderr and retired in result.stderr
 
 def test_cli_evaluate_clean_observed_returns_audit_pass_true() -> None:
     result = subprocess.run(
@@ -275,10 +278,12 @@ def test_cli_evaluate_clean_observed_returns_audit_pass_true() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "evaluate",
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             str(ROOT / "examples" / "observed" / "physical_coolant_observed_clean.yaml"),
             "--pretty",
+            "--json",
         ],
         cwd=ROOT,
         env=cli_env(),
@@ -289,7 +294,7 @@ def test_cli_evaluate_clean_observed_returns_audit_pass_true() -> None:
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
     assert data["audit_pass"]
-    assert data["metadata"]["mode"] == "evaluate"
+    assert data["metadata"]["mode"] == "hierarchy_evaluate"
 
 
 def test_cli_evaluate_conflict_observed_returns_audit_pass_false() -> None:
@@ -298,6 +303,7 @@ def test_cli_evaluate_conflict_observed_returns_audit_pass_false() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "evaluate",
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             str(ROOT / "examples" / "observed" / "physical_coolant_observed_conflict.yaml"),
@@ -321,6 +327,7 @@ def test_cli_compare_conflict_observed_includes_variable_deviations() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "compare",
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             str(ROOT / "examples" / "observed" / "physical_coolant_observed_conflict.yaml"),
@@ -344,6 +351,7 @@ def test_cli_invalid_observed_file_returns_nonzero() -> None:
             sys.executable,
             "-m",
             "physicsguard.cli",
+            "hierarchy",
             "evaluate",
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             str(ROOT / "examples" / "observed" / "missing.yaml"),
@@ -359,7 +367,7 @@ def test_cli_invalid_observed_file_returns_nonzero() -> None:
 
 def test_cli_dummy_conflict_is_checked_and_not_passed() -> None:
     result = subprocess.run(
-        [sys.executable, "-m", "physicsguard.cli", "run", str(ROOT / "examples/dummy_conflict_system.yaml")],
+        [sys.executable, "-m", "physicsguard.cli", "hierarchy", "run", str(ROOT / "examples/dummy_conflict_system.yaml")],
         cwd=ROOT, env=cli_env(), text=True, capture_output=True, check=False,
     )
     assert result.returncode == 1, result.stderr

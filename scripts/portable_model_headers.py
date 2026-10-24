@@ -37,18 +37,10 @@ def tracked_example_yaml_files(root: Path) -> list[Path]:
 def artifact_kind(data: dict[str, Any]) -> str:
     if "series_id" in data and "points" in data:
         return "observed series"
-    if "logical_dataset_id" in data:
-        return "logical dataset record"
     if "validation_id" in data and "audit_file" in data:
         return "model-dataset validation plan"
-    if "project_id" in data and "relations" in data:
-        return "test-file relation index"
-    if "project_id" in data and "test_files" in data:
-        return "test-file project index"
     if "contract_id" in data:
         return "test-file contract"
-    if "binding_id" in data:
-        return "test-file model binding"
     if "manifest_id" in data and "fields" in data:
         return "data-file manifest"
     if "profile_id" in data and "expected_fields" in data:
@@ -90,25 +82,19 @@ def use_hint(path: Path, data: dict[str, Any]) -> str:
     rel = path.as_posix()
     if "series_id" in data and "points" in data:
         return "reference from a PhysicsGuard model validation plan (depth)"
-    if "logical_dataset_id" in data:
-        return f"python -m physicsguard.cli dataset logical-check {rel} --pretty"
     if "validation_id" in data and "audit_file" in data:
         return f"python -m physicsguard.cli validation run {rel} --pretty"
-    if "project_id" in data and "relations" in data:
-        return f"python -m physicsguard.cli dataset relation-check {rel} --pretty"
-    if "project_id" in data and "test_files" in data:
-        return f"python -m physicsguard.cli testfile project-check {rel} --pretty"
     if "contract_id" in data:
         return f"python -m physicsguard.cli testfile contract-check {rel} --pretty"
     if "hierarchy" in data:
         return f"python -m physicsguard.cli hierarchy run {rel} --pretty"
     if "observation_name" in data:
-        return "pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate"
-    if "manifest_id" in data or "binding_id" in data or "profile_id" in data:
+        return "pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate"
+    if "manifest_id" in data or "profile_id" in data:
         return "reference from a PhysicsGuard test-file contract"
     if "parameters" in data or "roles" in data or "edges" in data or "require_all_manifest_fields" in data:
         return "reference from a PhysicsGuard test-file contract"
-    return f"python -m physicsguard.cli run {rel} --pretty"
+    return f"python -m physicsguard.cli hierarchy run {rel} --pretty"
 
 
 def header_for(path: Path, data: dict[str, Any]) -> str:

@@ -2,12 +2,9 @@
 
 __all__ = [
     "BoundedSolver",
-    "AuditEvaluator",
-    "ComparisonResult",
     "ContractReview",
     "DiagnosticReporter",
     "ModuleRegistry",
-    "ObservedEvaluationResult",
     "ResidualBuilder",
     "ResidualRecord",
     "SolverResult",
@@ -28,10 +25,13 @@ __all__ = [
 
 
 def __getattr__(name: str):
-    if name == "DiagnosticReporter":
-        from physicsguard.core.diagnostics import DiagnosticReporter
+    if name in {"DiagnosticReporter", "VariableDeviationDiagnostic"}:
+        from physicsguard.core.diagnostics import DiagnosticReporter, VariableDeviationDiagnostic
 
-        return DiagnosticReporter
+        return {
+            "DiagnosticReporter": DiagnosticReporter,
+            "VariableDeviationDiagnostic": VariableDeviationDiagnostic,
+        }[name]
     if name in {"field_signature_hash", "generate_delimited_manifest", "sha256_file"}:
         from physicsguard.core.data_file_manifest import (
             field_signature_hash,
@@ -68,25 +68,6 @@ def __getattr__(name: str):
         from physicsguard.core.model_dataset_validation import validate_model_dataset
 
         return validate_model_dataset
-    if name in {
-        "AuditEvaluator",
-        "ComparisonResult",
-        "ObservedEvaluationResult",
-        "VariableDeviationDiagnostic",
-    }:
-        from physicsguard.core.evaluator import (
-            AuditEvaluator,
-            ComparisonResult,
-            ObservedEvaluationResult,
-            VariableDeviationDiagnostic,
-        )
-
-        return {
-            "AuditEvaluator": AuditEvaluator,
-            "ComparisonResult": ComparisonResult,
-            "ObservedEvaluationResult": ObservedEvaluationResult,
-            "VariableDeviationDiagnostic": VariableDeviationDiagnostic,
-        }[name]
     if name in {"VariableRecord", "VariableRegistry"}:
         from physicsguard.core.registry import VariableRecord, VariableRegistry
 

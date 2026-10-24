@@ -41,7 +41,7 @@ class AuditInput:
     residual_within_threshold: bool
     has_post_check_residuals: bool = False
     post_check_enters_solver: bool = False
-    mode: str = "solve"
+    mode: str = "hierarchy_run"
     observed_values_complete: bool = True
     has_assumptions: bool = False
     parameter_assumption: bool = False
@@ -58,7 +58,7 @@ class Validated:
     case_id: str
     has_post_check_residuals: bool = False
     post_check_enters_solver: bool = False
-    mode: str = "solve"
+    mode: str = "hierarchy_run"
     observed_values_complete: bool = True
     has_assumptions: bool = False
     parameter_assumption: bool = False
@@ -75,7 +75,7 @@ class RegistryReady:
     case_id: str
     has_post_check_residuals: bool = False
     post_check_enters_solver: bool = False
-    mode: str = "solve"
+    mode: str = "hierarchy_run"
     observed_values_complete: bool = True
     has_assumptions: bool = False
     parameter_assumption: bool = False
@@ -89,7 +89,7 @@ class RegistryReady:
 @dataclass(frozen=True)
 class ResidualsReady:
     case_id: str
-    mode: str = "solve"
+    mode: str = "hierarchy_run"
     observed_values_complete: bool = True
     has_assumptions: bool = False
     parameter_assumption: bool = False
@@ -97,27 +97,6 @@ class ResidualsReady:
     assumption_override: bool = False
     proposed_assumption: bool = False
     rejected_assumption: bool = False
-
-
-@dataclass(frozen=True)
-class SolverFinished:
-    case_id: str
-    optimization_success: bool
-    audit_pass: bool
-
-
-@dataclass(frozen=True)
-class ObservedEvaluated:
-    case_id: str
-    audit_pass: bool
-
-
-@dataclass(frozen=True)
-class ComparisonFinished:
-    case_id: str
-    reference_optimization_success: bool
-    reference_audit_pass: bool
-    observed_audit_pass: bool
 
 
 @dataclass(frozen=True)
@@ -368,7 +347,8 @@ class AssembleResiduals:
         if (
             input_obj.mode == "hierarchy_evaluate"
             and not input_obj.observed_values_complete
-            and ("partial" in input_obj.case_id or "derived" in input_obj.case_id)
+            and ("partial" in input_obj.case_id or "derived" in input_obj.case_id
+                 or input_obj.case_id == "evaluate_missing_observed")
         ):
             derives = "unresolved" not in input_obj.case_id
             yield FunctionResult(
@@ -384,12 +364,16 @@ class AssembleResiduals:
                 label="unobserved_values_derived" if derives else "unobserved_residuals_skipped",
             )
             return
-        if input_obj.mode in {
-            "evaluate",
-            "compare",
-            "hierarchy_evaluate",
-            "hierarchy_compare",
-        } and not input_obj.observed_values_complete:
+        if input_obj.mode == "hierarchy_evaluate" and not input_obj.observed_values_complete:
+            # The partial/derived cases above have independent checks. These cases
+            # have none after derivation; a missing input alone is not a refusal.
+            yield FunctionResult(
+                output=SetupFailed(input_obj.case_id, "no_independent_observed_check"),
+                new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
+                label="no_independent_observed_check_failed",
+            )
+            return
+        if input_obj.mode == "hierarchy_compare" and not input_obj.observed_values_complete:
             yield FunctionResult(
                 output=SetupFailed(input_obj.case_id, "missing_observed_values"),
                 new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
@@ -463,7 +447,7 @@ class ExecuteMode:
     )
     accepted_input_type = ResidualsReady
     input_description = "ResidualsReady"
-    output_description = "SolverFinished, ObservedEvaluated, or ComparisonFinished"
+    output_description = "HierarchyFinished, HierarchyInspected, or SetupFailed"
     idempotency = "Mode execution is deterministic for this audit case."
 
     def apply(self, input_obj: ResidualsReady, state: State) -> Iterable[FunctionResult]:
@@ -490,30 +474,6 @@ class ExecuteMode:
                 output=SetupFailed(input_obj.case_id, "solver_setup_invalid"),
                 new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
                 label="solver_setup_failed",
-            )
-            return
-        if input_obj.mode == "evaluate":
-            yield FunctionResult(
-                output=ObservedEvaluated(
-                    input_obj.case_id,
-                    audit_pass="bad_audit" not in input_obj.case_id,
-                ),
-                new_state=replace(
-                    state,
-                    observed_evaluations=state.observed_evaluations + (input_obj.case_id,),
-                    observed_without_solver=state.observed_without_solver + (input_obj.case_id,),
-                    audit_passes=(
-                        state.audit_passes + (input_obj.case_id,)
-                        if "bad_audit" not in input_obj.case_id
-                        else state.audit_passes
-                    ),
-                    audit_failures=(
-                        state.audit_failures + (input_obj.case_id,)
-                        if "bad_audit" in input_obj.case_id
-                        else state.audit_failures
-                    ),
-                ),
-                label="observed_evaluated_without_solver",
             )
             return
         if input_obj.mode == "hierarchy_evaluate":
@@ -547,40 +507,6 @@ class ExecuteMode:
                 label=("child_failure_propagated" if "child_bad_audit" in input_obj.case_id else
                        "derived_relations_excluded_from_checks" if input_obj.case_id in state.derivation_cases
                        else "hierarchy_observed_evaluated_without_solver"),
-            )
-            return
-        if input_obj.mode == "compare":
-            yield FunctionResult(
-                output=ComparisonFinished(
-                    input_obj.case_id,
-                    reference_optimization_success="no_converge" not in input_obj.case_id,
-                    reference_audit_pass="bad_reference_audit" not in input_obj.case_id,
-                    observed_audit_pass="bad_audit" not in input_obj.case_id,
-                ),
-                new_state=replace(
-                    state,
-                    solve_attempted=state.solve_attempted + (input_obj.case_id,),
-                    observed_evaluations=state.observed_evaluations + (input_obj.case_id,),
-                    comparisons=state.comparisons + (input_obj.case_id,),
-                    optimization_successes=(
-                        state.optimization_successes + (input_obj.case_id,)
-                        if "no_converge" not in input_obj.case_id
-                        else state.optimization_successes
-                    ),
-                    audit_passes=(
-                        state.audit_passes + (input_obj.case_id,)
-                        if "bad_audit" not in input_obj.case_id
-                        and "bad_reference_audit" not in input_obj.case_id
-                        else state.audit_passes
-                    ),
-                    audit_failures=(
-                        state.audit_failures + (input_obj.case_id,)
-                        if "bad_audit" in input_obj.case_id
-                        or "bad_reference_audit" in input_obj.case_id
-                        else state.audit_failures
-                    ),
-                ),
-                label="compare_solved_and_evaluated",
             )
             return
         if input_obj.mode == "hierarchy_compare":
@@ -645,46 +571,17 @@ class ExecuteMode:
                         else state.audit_failures
                     ),
                 ),
-                label="hierarchy_run_solved_and_reported",
-            )
-            return
-        if input_obj.mode != "solve":
-            yield FunctionResult(
-                output=SetupFailed(input_obj.case_id, "unsupported_mode"),
-                new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
-                label="unsupported_mode_failed",
+                label=(
+                    "optimizer_converged_audit_failed"
+                    if not audit_pass and "no_converge" not in input_obj.case_id
+                    else "hierarchy_run_solved_and_reported"
+                ),
             )
             return
         yield FunctionResult(
-            output=SolverFinished(
-                input_obj.case_id,
-                optimization_success="no_converge" not in input_obj.case_id,
-                audit_pass="bad_audit" not in input_obj.case_id,
-            ),
-            new_state=replace(
-                state,
-                solve_attempted=state.solve_attempted + (input_obj.case_id,),
-                optimization_successes=(
-                    state.optimization_successes + (input_obj.case_id,)
-                    if "no_converge" not in input_obj.case_id
-                    else state.optimization_successes
-                ),
-                audit_passes=(
-                    state.audit_passes + (input_obj.case_id,)
-                    if "bad_audit" not in input_obj.case_id
-                    else state.audit_passes
-                ),
-                audit_failures=(
-                    state.audit_failures + (input_obj.case_id,)
-                    if "bad_audit" in input_obj.case_id
-                    else state.audit_failures
-                ),
-            ),
-            label=(
-                "optimizer_converged_audit_failed"
-                if "bad_audit" in input_obj.case_id and "no_converge" not in input_obj.case_id
-                else "solver_attempted"
-            ),
+            output=SetupFailed(input_obj.case_id, "unsupported_mode"),
+            new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
+            label="unsupported_mode_failed",
         )
 
 
@@ -705,53 +602,11 @@ class GenerateDiagnostics:
     )
     writes = ("diagnostics_emitted", "assumptions_reported")
     accepted_input_type = object
-    input_description = "SolverFinished, ObservedEvaluated, ComparisonFinished, HierarchyFinished, or HierarchyInspected"
+    input_description = "HierarchyFinished, HierarchyInspected, or SetupFailed"
     output_description = "DiagnosticsReady"
     idempotency = "Diagnostics are pure JSON-ready projections of the current result."
 
     def apply(self, input_obj, state: State) -> Iterable[FunctionResult]:
-        if isinstance(input_obj, SolverFinished):
-            if input_obj.case_id not in state.solve_attempted:
-                yield FunctionResult(
-                    output=SetupFailed(input_obj.case_id, "diagnostics_missing_solver_result"),
-                    new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
-                    label="diagnostics_missing_solver",
-                )
-                return
-            yield FunctionResult(
-                output=DiagnosticsReady(input_obj.case_id),
-                new_state=_diagnostics_state(state, input_obj.case_id),
-                label="diagnostics_after_solver",
-            )
-            return
-        if isinstance(input_obj, ObservedEvaluated):
-            if input_obj.case_id not in state.observed_evaluations:
-                yield FunctionResult(
-                    output=SetupFailed(input_obj.case_id, "diagnostics_missing_observed_result"),
-                    new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
-                    label="diagnostics_missing_observed",
-                )
-                return
-            yield FunctionResult(
-                output=DiagnosticsReady(input_obj.case_id),
-                new_state=_diagnostics_state(state, input_obj.case_id),
-                label="diagnostics_after_observed_evaluation",
-            )
-            return
-        if isinstance(input_obj, ComparisonFinished):
-            if input_obj.case_id not in state.comparisons:
-                yield FunctionResult(
-                    output=SetupFailed(input_obj.case_id, "diagnostics_missing_comparison_result"),
-                    new_state=replace(state, failures=state.failures + (input_obj.case_id,)),
-                    label="diagnostics_missing_comparison",
-                )
-                return
-            yield FunctionResult(
-                output=DiagnosticsReady(input_obj.case_id),
-                new_state=_diagnostics_state(state, input_obj.case_id),
-                label="diagnostics_after_comparison",
-            )
-            return
         if isinstance(input_obj, HierarchyFinished):
             if (
                 input_obj.case_id not in state.hierarchy_reports
@@ -1070,10 +925,10 @@ EXTERNAL_INPUTS = (
     AuditInput("raw_residual", True, True, True, False, True, True),
     AuditInput("post_check_diagnostic_only", True, True, True, True, True, True, True, False),
     AuditInput("post_check_bad_selection", True, True, True, True, True, True, True, True),
-    AuditInput("evaluate_clean", True, True, True, True, True, True, False, False, "evaluate", True),
-    AuditInput("evaluate_bad_audit", True, True, True, True, True, False, False, False, "evaluate", True),
-    AuditInput("evaluate_missing_observed", True, True, True, True, True, True, False, False, "evaluate", False),
-    AuditInput("compare_bad_audit", True, True, True, True, True, False, False, False, "compare", True),
+    AuditInput("evaluate_clean", True, True, True, True, True, True, False, False, "hierarchy_evaluate", True),
+    AuditInput("evaluate_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_evaluate", True),
+    AuditInput("evaluate_missing_observed", True, True, True, True, True, True, False, False, "hierarchy_evaluate", False),
+    AuditInput("compare_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_compare", True),
     AuditInput("hierarchy_clean", True, True, True, True, True, True, False, False, "hierarchy_run", True),
     AuditInput("hierarchy_bad_audit", True, True, True, True, True, False, False, False, "hierarchy_run", True),
     AuditInput("hierarchy_evaluate_clean", True, True, True, True, True, True, False, False, "hierarchy_evaluate", True),
@@ -1144,7 +999,7 @@ IMPLEMENTED_BY = {
     "ValidateSystem": "src/physicsguard/io/yaml_loader.py:load_system_spec",
     "AssembleResiduals": "src/physicsguard/core/residual.py:ResidualBuilder",
     "ExecuteMode.solve": "src/physicsguard/core/solver.py:BoundedSolver.solve",
-    "ExecuteMode.evaluate": "src/physicsguard/core/evaluator.py:AuditEvaluator.evaluate_observed",
+    "ExecuteMode.evaluate": "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed",
     "ExecuteMode.hierarchy": "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner",
     "ExecuteMode.inspect": "src/physicsguard/core/hierarchy.py:inspect_hierarchy",
     "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
@@ -1166,7 +1021,7 @@ TESTED_BY = {
         "tests/test_residual_builder.py:test_post_check_residuals_are_not_in_solver_vector",
     ],
     "comparison_requires_reference_and_observed": [
-        "tests/test_evaluator.py:test_compare_to_reference_returns_reference_and_observed_variables",
+        "tests/test_hierarchy_runner.py:test_compare_to_reference_returns_reference_and_observed_variables",
     ],
     "hierarchy_run_requires_solve": [
         "tests/test_hierarchy_runner.py:test_clean_hierarchical_example_audit_pass_true",
@@ -1197,7 +1052,7 @@ TESTED_BY = {
         "tests/test_diagnostics.py:test_report_distinguishes_optimization_success_from_audit_pass",
     ],
     "observed_evaluation_does_not_solve": [
-        "tests/test_evaluator.py:test_evaluate_observed_does_not_call_solver",
+        "tests/test_hierarchy_runner.py:test_evaluate_observed_does_not_call_solver",
         "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_clean_does_not_solve_and_passes",
     ],
     "variable_assumptions_are_fixed_residuals": [
@@ -1215,13 +1070,7 @@ REQUIRED_LABELS = (
     "schema_valid",
     "registry_ready",
     "residuals_ready",
-    "solver_attempted",
     "optimizer_converged_audit_failed",
-    "diagnostics_after_solver",
-    "observed_evaluated_without_solver",
-    "diagnostics_after_observed_evaluation",
-    "compare_solved_and_evaluated",
-    "diagnostics_after_comparison",
     "hierarchy_index_ready",
     "hierarchy_run_solved_and_reported",
     "hierarchy_observed_evaluated_without_solver",
@@ -1242,7 +1091,7 @@ REQUIRED_LABELS = (
     "residual_reference_failed",
     "residual_normalization_failed",
     "post_check_solver_selection_failed",
-    "missing_observed_values_failed",
+    "no_independent_observed_check_failed",
     "unobserved_residuals_skipped",
     "unobserved_values_derived",
     "derived_relations_excluded_from_checks",
@@ -1372,13 +1221,24 @@ class _PostChecksEnterSolver(AssembleResiduals):
 
 
 class _ComparisonSkipsReference(ExecuteMode):
-    """Known bad: compare reports an observation without a reference solve."""
+    """Known bad: hierarchy comparison omits the reference solve."""
 
     def apply(self, input_obj, state):
-        if input_obj.mode == "compare":
-            for result in super().apply(replace(input_obj, mode="evaluate"), state):
-                yield replace(result, output=ComparisonFinished(input_obj.case_id, False, False, result.output.audit_pass),
-                              new_state=replace(result.new_state, comparisons=state.comparisons + (input_obj.case_id,)))
+        if input_obj.mode == "hierarchy_compare":
+            for result in super().apply(replace(input_obj, mode="hierarchy_evaluate"), state):
+                yield replace(
+                    result,
+                    output=HierarchyFinished(
+                        input_obj.case_id,
+                        optimization_success=False,
+                        audit_pass=result.output.audit_pass,
+                        compare_mode=True,
+                    ),
+                    new_state=replace(
+                        result.new_state,
+                        comparisons=state.comparisons + (input_obj.case_id,),
+                    ),
+                )
             return
         yield from super().apply(input_obj, state)
 
@@ -1509,39 +1369,6 @@ def _solver_counted():
         BoundedSolver.solve = original
 
 
-def _solve(relative: str) -> tuple[str, bool]:
-    from physicsguard.core.diagnostics import DiagnosticReporter
-    from physicsguard.core.residual import ResidualBuilder
-    from physicsguard.core.solver import BoundedSolver
-    from physicsguard.io.yaml_loader import load_system_spec
-
-    system = load_system_spec(ROOT / relative)
-    builder = ResidualBuilder(system)
-    result = BoundedSolver(builder, system.solver).solve()
-    report = DiagnosticReporter().generate(system, builder, result)
-    if report.optimization_success and not report.audit_pass:
-        return "optimizer_converged_audit_failed", report.audit_pass
-    return "solver_attempted", report.audit_pass
-
-
-def _evaluate(system_file: str, observed_file: str, keep: int | None = None) -> tuple[str, bool | None]:
-    from physicsguard.core.evaluator import AuditEvaluator
-    from physicsguard.io.observation_loader import load_observed_values
-    from physicsguard.io.yaml_loader import load_system_spec
-
-    observed = load_observed_values(ROOT / observed_file)
-    if keep is not None:
-        observed = observed.model_copy(update={"variables": dict(list(observed.variables.items())[:keep])})
-    with _solver_counted() as calls:
-        try:
-            report = AuditEvaluator(load_system_spec(ROOT / system_file)).evaluate_observed(observed)
-        except ValueError as exc:
-            if "observed values missing required registered variables" in str(exc):
-                return "missing_observed_values_failed", None
-            raise
-    return ("observed_evaluated_without_solver" if not calls else "solver_attempted"), report.audit_pass
-
-
 def _hierarchy(mode: str, audit_file: str, observed_file: str | None = None, keep: int | None = None):
     from physicsguard.core.hierarchy import HierarchicalAuditRunner, inspect_hierarchy
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
@@ -1554,16 +1381,42 @@ def _hierarchy(mode: str, audit_file: str, observed_file: str | None = None, kee
             return ("hierarchy_inspected_without_solver" if not calls else "solver_attempted"), None
         if mode == "run":
             report = HierarchicalAuditRunner(spec).run()
-            return ("hierarchy_run_solved_and_reported" if calls else "no_solver_call"), report.audit_pass
+            if not calls:
+                return "no_solver_call", report.audit_pass
+            label = (
+                "optimizer_converged_audit_failed"
+                if report.optimization_success and not report.audit_pass
+                else "hierarchy_run_solved_and_reported"
+            )
+            return label, report.audit_pass
+        if mode not in {"evaluate", "compare"}:
+            raise ValueError(f"unsupported replay mode: {mode}")
         observed = load_observed_values(ROOT / observed_file)
         if keep is not None:
             observed = observed.model_copy(update={"variables": dict(list(observed.variables.items())[:keep])})
+        before = observed.model_dump(mode="json")
         try:
-            report = HierarchicalAuditRunner(spec).evaluate_observed(observed)
+            if mode == "compare":
+                report = HierarchicalAuditRunner(spec).compare_observed(observed)
+                assert observed.model_dump(mode="json") == before
+                assert calls, "comparison requires a reference solve"
+                assert report.reference_optimization_success
+                assert report.reference_audit_pass
+                assert report.reference_variables and report.observed_variables
+                return "hierarchy_compare_solved_and_evaluated", report.observed_audit_pass
+            report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
         except ValueError as exc:
-            if "observed values missing required registered variables" in str(exc):
-                return "missing_observed_values_failed", None
+            assert observed.model_dump(mode="json") == before
+            if mode == "evaluate":
+                assert not calls, "observed evaluation must not solve"
+                if "no residual can be evaluated without them" in str(exc):
+                    return "no_independent_observed_check_failed", None
             raise
+        assert observed.model_dump(mode="json") == before
+    if keep is not None and report.derived_variables:
+        assert report.checked_residuals, "derived values alone are not independent checks"
+        assert not set(report.metadata["derivation_residual_occurrences"]) & set(report.metadata["checked_residual_occurrences"])
+        return ("derived_relations_excluded_from_checks" if not calls else "solver_attempted"), report.audit_pass
     return ("hierarchy_observed_evaluated_without_solver" if not calls else "solver_attempted"), report.audit_pass
 
 
@@ -1668,7 +1521,7 @@ def _zero_product_snapshot() -> tuple[str, bool | None]:
                 raise
             assert not calls, "partial observations must not solve"
             assert observed.model_dump(mode="json") == before
-            return "missing_observed_values_failed", None
+            return "no_independent_observed_check_failed", None
     assert observed.model_dump(mode="json") == before
     return ("solver_attempted" if calls else "residual_evaluated_from_unobserved_guess"), report.audit_pass
 
@@ -1698,12 +1551,13 @@ REAL_CASES = {
     "hierarchy_evaluate_derived_child_bad_audit": _child_failure_snapshot,
     "hierarchy_evaluate_derived_bad_audit": _derived_tank_snapshot,
     "hierarchy_evaluate_partial_unresolved": _unresolved_partial_snapshot,
-    "clean": lambda: _solve("examples/dummy_system.yaml"),
-    "converged_bad_audit": lambda: _solve("examples/dummy_conflict_system.yaml"),
+    "clean": lambda: _hierarchy("run", "examples/dummy_system.yaml"),
+    "converged_bad_audit": lambda: _hierarchy("run", "examples/dummy_conflict_system.yaml"),
     "bad_schema": _bad_schema,
-    "evaluate_clean": lambda: _evaluate("examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_clean.yaml"),
-    "evaluate_bad_audit": lambda: _evaluate("examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_conflict.yaml"),
-    "evaluate_missing_observed": lambda: _evaluate("examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_clean.yaml", keep=1),
+    "evaluate_clean": lambda: _hierarchy("evaluate", "examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_clean.yaml"),
+    "evaluate_bad_audit": lambda: _hierarchy("evaluate", "examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_conflict.yaml"),
+    "evaluate_missing_observed": lambda: _hierarchy("evaluate", "examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_clean.yaml", keep=1),
+    "compare_bad_audit": lambda: _hierarchy("compare", "examples/physical_coolant_heat_balance.yaml", "examples/observed/physical_coolant_observed_conflict.yaml"),
     "hierarchy_clean": lambda: _hierarchy("run", "examples/hierarchical/coolant_loop/level_0_cooling_balance.yaml"),
     "hierarchy_bad_audit": lambda: _hierarchy("run", "examples/hierarchical/coolant_loop/conflict_level_0_heat_rejection.yaml"),
     "hierarchy_evaluate_clean": lambda: _hierarchy("evaluate", f"{PITCH}/pitch_feedback_level_0.yaml", f"{PITCH}/pitch_feedback_observed_clean.yaml"),
@@ -1730,7 +1584,11 @@ class ReplayReport:
 
     def format_text(self, max_examples: int | None = None) -> str:
         lines = [f"conformance: {self.checked - len(self.mismatches)}/{self.checked} model cases match the real code"]
-        return "\n".join(lines + [f"  mismatch: {line}" for line in self.mismatches[:max_examples]])
+        examples = list(self.mismatches[:max_examples])
+        for mismatch in self.mismatches:
+            if "real replay raised " in mismatch and mismatch not in examples:
+                examples.append(mismatch)
+        return "\n".join(lines + [f"  mismatch: {line}" for line in examples])
 
 
 def conformance() -> ReplayReport:
@@ -1744,7 +1602,11 @@ def conformance() -> ReplayReport:
     for case_id, real in REAL_CASES.items():
         run = workflow.execute(initial_state(), inputs[case_id], terminal_predicate=terminal_predicate)
         model_labels = [step.label for step in run.completed_paths[0].trace.steps]
-        real_label, real_audit_pass = real()
+        try:
+            real_label, real_audit_pass = real()
+        except (ValueError, AssertionError) as exc:
+            mismatches.append(f"{case_id}: real replay raised {type(exc).__name__}: {exc}")
+            continue
         if real_label not in model_labels:
             mismatches.append(f"{case_id}: real code gave {real_label!r}, model labels {model_labels}")
         expected_pass = inputs[case_id].residual_within_threshold

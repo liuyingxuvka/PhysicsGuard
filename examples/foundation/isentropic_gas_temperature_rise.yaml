@@ -1,7 +1,7 @@
 # PhysicsGuard system audit/model blueprint
 # Purpose: foundation isentropic gas temperature rise.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: python -m physicsguard.cli run examples/foundation/isentropic_gas_temperature_rise.yaml --pretty
+# Use with: python -m physicsguard.cli hierarchy run examples/foundation/isentropic_gas_temperature_rise.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 system_name: foundation_isentropic_gas_temperature_rise
 components:

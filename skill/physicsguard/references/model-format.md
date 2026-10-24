@@ -27,8 +27,8 @@ draws the declared blocks and labeled connections; it is not validation evidence
 ## System, components and parameters
 
 The larger `examples/hierarchical/heated_tank/heated_tank.yaml` has a `tank` root with hydraulics and thermal subsystems.
-An audit has `audit_name`, `system` and `hierarchy`. In `system`, declare
-`system_name` and components with unique `id`, registered `type` and `parameters`:
+A single-system file is read as a tree with one root block.
+An audit has `audit_name`, `system` and `hierarchy`. In `system`, declare `system_name` and components with unique `id`, registered `type` and `parameters`:
 
 ```yaml
 components:

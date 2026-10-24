@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The top-level run, evaluate and compare commands are removed. Use hierarchy run|evaluate|compare on the same file: a single-system file is read as a tree with one root block, so it gets the same derivation and localization as any tree.
+
 - Maintenance checks of PhysicsGuard's own model tree now run on FlowGuard 0.70.11.
 
 ## v0.15.21 - 2026-10-23

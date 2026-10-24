@@ -1,7 +1,7 @@
 # PhysicsGuard observed-values snapshot
-# Purpose: Measured heated-tank signals for CSV rows 70->71.
+# Purpose: tank run first step step 70.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: python -m physicsguard.cli hierarchy evaluate first_step_level0.yaml first_step_measured_k70.yaml --pretty
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 observation_name: tank_run_first_step_step_70
 variables:

@@ -1,7 +1,7 @@
 # PhysicsGuard hierarchical audit/model blueprint
 # Purpose: Measured heated-tank command, electrical power, volume and energy audits in one six-block hierarchy.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: python -m physicsguard.cli hierarchy inspect heated_tank.yaml --pretty
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/heated_tank/heated_tank.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: heated_tank
 description: Measured heated-tank command, electrical power, volume and energy audits

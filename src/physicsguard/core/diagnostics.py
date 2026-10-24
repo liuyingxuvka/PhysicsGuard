@@ -36,6 +36,18 @@ class BoundHitDiagnostic:
 
 
 @dataclass(frozen=True)
+class VariableDeviationDiagnostic:
+    variable: str
+    reference_value: float
+    observed_value: float
+    raw_delta: float
+    scale: float
+    normalized_delta: float
+    abs_normalized_delta: float
+    unit: Optional[str]
+
+
+@dataclass(frozen=True)
 class DiagnosticReport:
     system_name: str
     optimization_success: bool

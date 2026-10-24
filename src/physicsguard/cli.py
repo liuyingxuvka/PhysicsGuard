@@ -18,38 +18,6 @@ def build_parser() -> argparse.ArgumentParser:
     module_describe = module_commands.add_parser("describe", help="describe a native module contract using marked synthetic inputs")
     module_describe.add_argument("module_type")
     module_describe.add_argument("--pretty", action="store_true")
-    run_parser = subparsers.add_parser("run", help="run a PhysicsGuard YAML audit")
-    run_parser.add_argument("system", type=Path, help="path to a YAML SystemSpec")
-    run_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
-    evaluate_parser = subparsers.add_parser(
-        "evaluate",
-        help="evaluate observed values without solving",
-    )
-    evaluate_parser.add_argument("system", type=Path, help="path to a YAML SystemSpec")
-    evaluate_parser.add_argument(
-        "observed",
-        type=Path,
-        help="path to a YAML ObservedValuesSpec",
-    )
-    evaluate_parser.add_argument(
-        "--pretty",
-        action="store_true",
-        help="pretty-print JSON output",
-    )
-
-    compare_parser = subparsers.add_parser(
-        "compare",
-        help="solve a reference model and compare observed values",
-    )
-    compare_parser.add_argument("system", type=Path, help="path to a YAML SystemSpec")
-    compare_parser.add_argument(
-        "observed",
-        type=Path,
-        help="path to a YAML ObservedValuesSpec",
-    )
-    compare_parser.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-
     hierarchy_parser = subparsers.add_parser(
         "hierarchy",
         help="hierarchical coarse-to-fine audit commands",
@@ -354,48 +322,6 @@ def _validation_summary(report: dict) -> dict:
     }
 
 
-def solve(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.diagnostics import DiagnosticReporter
-    from physicsguard.core.residual import ResidualBuilder
-    from physicsguard.core.solver import BoundedSolver
-    from physicsguard.io.yaml_loader import load_system_spec
-
-    system = load_system_spec(path)
-    builder = ResidualBuilder(system)
-    solver = BoundedSolver(builder, system.solver)
-    solver_result = solver.solve()
-    reporter = DiagnosticReporter()
-    report = reporter.generate(system, builder, solver_result)
-    _print_json(reporter.to_dict(report), pretty)
-    return 0 if report.audit_pass else 1
-
-
-def evaluate(system_path: Path, observed_path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.diagnostics import DiagnosticReporter
-    from physicsguard.core.evaluator import AuditEvaluator
-    from physicsguard.io.observation_loader import load_observed_values
-    from physicsguard.io.yaml_loader import load_system_spec
-
-    system = load_system_spec(system_path)
-    observed = load_observed_values(observed_path)
-    report = AuditEvaluator(system).evaluate_observed(observed)
-    _print_json(DiagnosticReporter().to_dict(report), pretty)
-    return 0 if report.audit_pass else 1
-
-
-def compare(system_path: Path, observed_path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.diagnostics import DiagnosticReporter
-    from physicsguard.core.evaluator import AuditEvaluator
-    from physicsguard.io.observation_loader import load_observed_values
-    from physicsguard.io.yaml_loader import load_system_spec
-
-    system = load_system_spec(system_path)
-    observed = load_observed_values(observed_path)
-    report = AuditEvaluator(system).compare_to_reference(observed)
-    _print_json(DiagnosticReporter().to_dict(report), pretty)
-    return 0 if report.observed_audit_pass else 1
-
-
 def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
@@ -695,12 +621,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "modules":
             return modules_command(args.module_type if args.modules_command == "describe" else None,
                                    getattr(args, "pretty", False))
-        if args.command == "run":
-            return solve(args.system, args.pretty)
-        if args.command == "evaluate":
-            return evaluate(args.system, args.observed, args.pretty)
-        if args.command == "compare":
-            return compare(args.system, args.observed, args.pretty)
         if args.command == "hierarchy":
             if args.hierarchy_command == "describe":
                 return hierarchy_describe(args.audit, args.mermaid, args.pretty)

@@ -115,7 +115,7 @@ Module descriptions expose units, finite variable bounds/scales, parameter names
 
 ## Main CLI Paths
 
-Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
+Exit codes: 0 passed, 1 checked and not passed, 2 could not run. Single-system files use `hierarchy run|evaluate|compare` and are read as a tree with one root block.
 
 Project and model-understanding checks:
 
@@ -342,7 +342,7 @@ python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/
 
 ## 主要 CLI 路线
 
-退出码：0 表示运行并通过，1 表示已检查但未通过，2 表示无法运行。
+退出码：0 表示运行并通过，1 表示已检查但未通过，2 表示无法运行。 单系统文件使用 `hierarchy run|evaluate|compare`，并读取为只有一个根块的树。
 
 项目和模型理解检查：
 

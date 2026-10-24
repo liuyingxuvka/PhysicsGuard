@@ -112,8 +112,8 @@ def test_hierarchy_invalid_file_returns_nonzero() -> None:
     assert result.returncode == 2
 
 
-def test_existing_run_command_still_works_after_hierarchy_cli_added() -> None:
-    result = run_cli("run", str(ROOT / "examples" / "dummy_system.yaml"), "--pretty")
+def test_single_system_runs_through_hierarchy_cli() -> None:
+    result = run_cli("hierarchy", "run", str(ROOT / "examples" / "dummy_system.yaml"), "--pretty", "--json")
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)["system_name"] == "dummy_clean_system"
 

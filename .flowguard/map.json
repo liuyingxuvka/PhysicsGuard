@@ -52,7 +52,6 @@
         "tests/test_cli.py",
         "tests/test_diagnosability.py",
         "tests/test_diagnostics.py",
-        "tests/test_evaluator.py",
         "tests/test_fault_variants.py",
         "tests/test_hierarchy_block_index.py",
         "tests/test_hierarchy_cli.py",
@@ -75,7 +74,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:34bb4efc1cbaa2563300c6f572fee29baa8f753061d1c8b942c10fab8fc6e9ab"
+      "fingerprint": "sha256:c2ef155d3eb2e8867458d477afcab7b0989d58be0597cb5b5935832521ec975b"
     },
     {
       "id": "routing",
@@ -106,9 +105,9 @@
     {
       "id": "simulation",
       "layer": "engine",
-      "summary": "Residual assembly, bounded solve, observed evaluation, hierarchy and signal mapping",
+      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping",
       "responsibilities": [
-        "Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API. For failed observed audits, probe at most 20 observed dependency ancestors for bounded unit factors/offsets, rederive affected native values, and emit hints without editing observations.",
+        "Use one evaluation engine for tree and single-system files through HierarchicalAuditRunner. Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API. For failed observed audits, probe at most 20 observed dependency ancestors for bounded unit factors/offsets, rederive affected native values, and emit hints without editing observations.",
         "Separate numerical optimization success, observed audit and diagnostic limits",
         "Derive intermediate values from connections and bounded one-unknown relations with finite structural value/control provenance; keep producing occurrences separate from independent checks and list unresolved inputs; preserve per-result sources through finite native tuple/dict returns, lexical helpers and fixed numeric parameter tables",
         "Treat connections as physical identities with a tight default residual scale or an explicit positive finite tolerance",
@@ -120,7 +119,6 @@
         "src/physicsguard/core/_residual_dependencies.py",
         "src/physicsguard/core/assumptions.py",
         "src/physicsguard/core/diagnostics.py",
-        "src/physicsguard/core/evaluator.py",
         "src/physicsguard/core/hierarchy.py",
         "src/physicsguard/core/registry.py",
         "src/physicsguard/core/residual.py",
@@ -168,7 +166,6 @@
         "tests/test_distribution_power_der_starter_pack.py",
         "tests/test_domain_judgment_module_behaviors.py",
         "tests/test_electrochemical_extra_helpers.py",
-        "tests/test_evaluator.py",
         "tests/test_expanded_domain_starter_packs.py",
         "tests/test_gas_rotating_helpers.py",
         "tests/test_heat_exchanger_helpers.py",
@@ -211,7 +208,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:b34517c2d5f09796e978bdcb6f5bd268145a2b1c54c8ccc496a4218eef851e2e"
+      "fingerprint": "sha256:8e645f46d6e9ed08fd1d01331266d68dca9c11eebe03e8626fb0792d54728807"
     },
     {
       "id": "validation",
@@ -379,7 +376,6 @@
         "tests/test_diagnostics.py",
         "tests/test_domain_judgment_module_behaviors.py",
         "tests/test_electrochemical_extra_helpers.py",
-        "tests/test_evaluator.py",
         "tests/test_gas_rotating_helpers.py",
         "tests/test_heat_exchanger_helpers.py",
         "tests/test_hierarchy_block_index.py",
@@ -466,7 +462,6 @@
         "tests/test_data_center_electronics_cooling_starter_pack.py",
         "tests/test_distribution_power_der_starter_pack.py",
         "tests/test_electrochemical_extra_helpers.py",
-        "tests/test_evaluator.py",
         "tests/test_expanded_domain_starter_packs.py",
         "tests/test_gas_rotating_helpers.py",
         "tests/test_heat_exchanger_helpers.py",
@@ -503,7 +498,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:3c9f351aaf26d0e55b382d195fa83da29884290c85b475a86244851ba463c678"
+      "fingerprint": "sha256:006b5f0e84fe2bd5a6df150816950b2d12e8f4a899b4608500ad9a3e2f45c1af"
     },
     {
       "id": "modules",
@@ -576,7 +571,8 @@
       "summary": "Skill installation, starter-pack generation and example headers",
       "responsibilities": [
         "Install the physicsguard skill by replacing its copy in --target and removing retired skill directories; --check and --dry-run change nothing",
-        "Publish the exact final version commit through the repository release workflow"
+        "Publish the exact final version commit through the repository release workflow",
+        "Keep portable example headers on the canonical hierarchy commands for both tree and single-system audits"
       ],
       "files": [
         "scripts/*.py"
@@ -601,7 +597,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:c427982e84da2fa0de12f52225d50650db9eb1ae11a176b236a4029ae3e124e3"
+      "fingerprint": "sha256:26290753268c8e7e64bfaf6622b10e0b9a9372d06c50385b07e8472f3163e240"
     },
     {
       "id": "example_tools",

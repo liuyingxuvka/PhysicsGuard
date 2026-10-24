@@ -11,8 +11,7 @@ from typing import Any, Iterable, Optional
 import numpy as np
 
 from physicsguard.core.assumptions import AssumptionSummary
-from physicsguard.core.diagnostics import DiagnosticReporter, ResidualDiagnostic
-from physicsguard.core.evaluator import VariableDeviationDiagnostic
+from physicsguard.core.diagnostics import DiagnosticReporter, ResidualDiagnostic, VariableDeviationDiagnostic
 from physicsguard.core.registry import VariableRegistry
 from physicsguard.core.residual import ResidualBuilder, ResidualRecord
 from physicsguard.core.signal_mapping import (
@@ -618,6 +617,7 @@ class HierarchicalAuditRunner:
             warnings=_dedupe(warnings),
             metadata={
                 "mode": "hierarchy_compare",
+                **({"wrapped_single_block": True} if self.spec.metadata.get("wrapped_single_block") is True else {}),
                 "solver_attempted": True,
                 "reference_solver": {
                     "status": solver_result.status,
@@ -767,7 +767,10 @@ class HierarchicalAuditRunner:
             recommended_refinements=recommendations,
             assumptions=assumptions,
             warnings=_dedupe(report_warnings),
-            metadata=dict(metadata),
+            metadata={
+                **metadata,
+                **({"wrapped_single_block": True} if self.spec.metadata.get("wrapped_single_block") is True else {}),
+            },
             derived_variables=derived_variables,
             checked_residuals=[record.name for record in all_records],
             unchecked_residuals=unchecked_residuals,

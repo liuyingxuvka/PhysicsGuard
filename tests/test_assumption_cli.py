@@ -40,7 +40,7 @@ def test_assumptions_inspect_returns_valid_json() -> None:
 
 
 def test_normal_run_on_assumption_example_includes_assumptions_section() -> None:
-    result = run_cli("run", str(EXAMPLES / "variable_assumption.yaml"), "--pretty")
+    result = run_cli("hierarchy", "run", str(EXAMPLES / "variable_assumption.yaml"), "--pretty", "--json")
     assert result.returncode == 0, result.stderr
     data = json.loads(result.stdout)
     assert data["assumptions"]["cards"][0]["id"] == "assume_coolant_inlet_temperature"

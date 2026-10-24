@@ -1,7 +1,7 @@
 # PhysicsGuard observed-values snapshot
 # Purpose: Physically measurable meter-channel subset selected unchanged from the actual hierarchy run reference solution; synthetic values and proposed bench...
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: pair with an audit YAML via python -m physicsguard.cli evaluate or hierarchy evaluate
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 observation_name: building_hvac_synthetic_nominal
 description: Physically measurable meter-channel subset selected unchanged from the

@@ -1,7 +1,7 @@
 # PhysicsGuard hierarchical audit/model blueprint
-# Purpose: Coarse volume and energy balances over one measured 10-second step.
+# Purpose: Whole-tank single-step volume and energy balance.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: python -m physicsguard.cli hierarchy inspect first_step_level0.yaml --pretty
+# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/heated_tank/first_step_level0.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit or blueprint only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: heated_tank_level_0
 description: Whole-tank single-step volume and energy balance.
