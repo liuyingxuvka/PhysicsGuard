@@ -22,11 +22,6 @@ __all__ = [
     "mapping_warnings",
     "sha256_file",
     "validate_model_dataset",
-    "evaluate_hypothesis_observation",
-    "evaluate_diagnosability",
-    "evaluate_interval_residual",
-    "freeze_hypothesis_plan",
-    "rank_observation_candidates",
 ]
 
 _PUBLIC_EXPORTS = {
@@ -45,11 +40,6 @@ _PUBLIC_EXPORTS = {
     'mapping_warnings': 'physicsguard.core.signal_mapping',
     'sha256_file': 'physicsguard.core.data_file_manifest',
     'validate_model_dataset': 'physicsguard.core.model_dataset_validation',
-    'evaluate_hypothesis_observation': 'physicsguard.core.task_local_revision',
-    'evaluate_diagnosability': 'physicsguard.core.diagnosability',
-    'evaluate_interval_residual': 'physicsguard.core.diagnosability',
-    'freeze_hypothesis_plan': 'physicsguard.core.task_local_revision',
-    'rank_observation_candidates': 'physicsguard.core.task_local_revision',
 }
 
 

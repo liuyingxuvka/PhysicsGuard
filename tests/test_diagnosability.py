@@ -2,144 +2,56 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from physicsguard.cli import main
-from physicsguard.core.diagnosability import (
-    evaluate_diagnosability,
-    evaluate_interval_residual,
-)
-from physicsguard.schema.diagnosability import (
-    DiagnosabilityRequestSpec,
-    IntervalResidualSpec,
-)
+from physicsguard.core.diagnosability import evaluate_fault_variants
+from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
+from physicsguard.schema.observation_spec import ObservedValuesSpec
 
 
-def test_interval_residual_preserves_robust_statuses() -> None:
-    robust_pass = evaluate_interval_residual(
-        IntervalResidualSpec.model_validate(
-            {
-                "residual_id": "r1",
-                "observed": {"lower": -0.2, "upper": 0.4},
-                "acceptable": {"lower": -1.0, "upper": 1.0},
-                "source_ref": "test:interval",
-            }
-        )
-    )
-    indeterminate = evaluate_interval_residual(
-        IntervalResidualSpec.model_validate(
-            {
-                "residual_id": "r2",
-                "observed": {"lower": 0.5, "upper": 1.5},
-                "acceptable": {"lower": -1.0, "upper": 1.0},
-                "source_ref": "test:interval",
-            }
-        )
-    )
-    robust_fail = evaluate_interval_residual(
-        IntervalResidualSpec.model_validate(
-            {
-                "residual_id": "r3",
-                "observed": {"lower": 1.2, "upper": 1.5},
-                "acceptable": {"lower": -1.0, "upper": 1.0},
-                "source_ref": "test:interval",
-            }
-        )
-    )
-    not_run = evaluate_interval_residual(
-        IntervalResidualSpec.model_validate(
-            {
-                "residual_id": "r4",
-                "observed": None,
-                "acceptable": {"lower": -1.0, "upper": 1.0},
-                "source_ref": "test:interval",
-            }
-        )
-    )
-    assert robust_pass["status"] == "robust_pass"
-    assert indeterminate["status"] == "indeterminate"
-    assert robust_fail["status"] == "robust_fail"
-    assert not_run["status"] == "not_run"
-
-
-def _request() -> DiagnosabilityRequestSpec:
-    return DiagnosabilityRequestSpec.model_validate(
-        {
-            "diagnosis_id": "pump-diagnosis",
-            "fault_signatures": [
-                {
-                    "hypothesis_id": "gain",
-                    "predicted_intervals": {
-                        "speed": {"lower": 9.0, "upper": 11.0},
-                        "current": {"lower": 4.0, "upper": 5.0},
-                    },
-                },
-                {
-                    "hypothesis_id": "mapping",
-                    "predicted_intervals": {
-                        "speed": {"lower": -11.0, "upper": -9.0},
-                        "current": {"lower": 4.5, "upper": 5.5},
-                    },
-                },
-                {
-                    "hypothesis_id": "sensor",
-                    "predicted_intervals": {
-                        "speed": {"lower": 9.5, "upper": 10.5},
-                        "current": {"lower": 7.0, "upper": 8.0},
-                    },
-                },
-            ],
-            "available_signal_ids": ["current", "speed"],
-        }
-    )
-
-
-def test_diagnosability_reports_pairwise_evidence_and_next_signal() -> None:
-    result = evaluate_diagnosability(_request())
-    assert result["status"] == "isolable"
-    assert result["recommended_next_signal_id"] == "current"
-    assert result["unresolved_hypothesis_pairs"] == []
-    assert {
-        row["status"] for row in result["pairwise_diagnosability"]
-    } == {"distinguishable"}
-
-
-def test_observation_rejects_incompatible_signature() -> None:
-    payload = _request().model_dump(mode="json")
-    payload["observed_signals"] = {
-        "speed": {"lower": 9.8, "upper": 10.2},
-    }
-    request = DiagnosabilityRequestSpec.model_validate(payload)
-    result = evaluate_diagnosability(request)
-    assert result["rejected_hypothesis_ids"] == ["mapping"]
-    assert result["viable_hypothesis_ids"] == ["gain", "sensor"]
-
-
-def test_task_model_diagnose_cli(tmp_path, capsys) -> None:
-    path = tmp_path / "diagnosis.yaml"
-    path.write_text(
-        json.dumps(_request().model_dump(mode="json")),
-        encoding="utf-8",
-    )
-    assert main(["task-model", "diagnose", str(path)]) == 0
-    assert json.loads(capsys.readouterr().out)["status"] == "isolable"
-
-
-def test_interval_residual_cli_exits_1_only_on_robust_fail(tmp_path, capsys) -> None:
-    passing = tmp_path / "pass.yaml"
-    failing = tmp_path / "fail.yaml"
-    base = {"residual_id": "r", "acceptable": {"lower": -1.0, "upper": 1.0}, "source_ref": "test:interval"}
-    passing.write_text(json.dumps({**base, "observed": {"lower": 0.5, "upper": 1.5}}), encoding="utf-8")
-    failing.write_text(json.dumps({**base, "observed": {"lower": 1.2, "upper": 1.5}}), encoding="utf-8")
-    assert main(["task-model", "interval-residual", str(passing)]) == 0
-    assert json.loads(capsys.readouterr().out)["status"] == "indeterminate"
-    assert main(["task-model", "interval-residual", str(failing)]) == 1
-    assert json.loads(capsys.readouterr().out)["status"] == "robust_fail"
-
-
-def test_task_model_diagnose_cli_exits_1_when_hypotheses_cannot_be_separated(tmp_path, capsys) -> None:
-    payload = _request().model_dump(mode="json")
-    payload["fault_signatures"] = payload["fault_signatures"][:2]
-    payload["fault_signatures"][1]["predicted_intervals"] = payload["fault_signatures"][0]["predicted_intervals"]
-    path = tmp_path / "indistinguishable.yaml"
-    path.write_text(json.dumps(payload), encoding="utf-8")
-    assert main(["task-model", "diagnose", str(path)]) == 1
-    assert json.loads(capsys.readouterr().out)["status"] == "indistinguishable"
+def test_next_signal_uses_unmeasured_scaled_separation_and_pairwise_is_native(tmp_path, capsys) -> None:
+    # The original export oracle's actual device parameters and physical scale contrast.
+    spec = HierarchicalAuditSpec.model_validate({
+        "audit_name": "variant-boundaries",
+        "system": {"system_name": "variant-boundaries", "components": [
+            {"id": "a", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+            {"id": "b", "type": "DummyResidualModule", "parameters": {"target": 0.}},
+            {"id": "fine", "type": "DummyResidualModule", "parameters": {"target": 10., "scale": 1.}},
+            {"id": "wide", "type": "DummyResidualModule", "parameters": {
+                "target": 100., "scale": 1000., "lower_bound": 0., "upper_bound": 10000.}},
+        ]},
+        "hierarchy": {"blocks": [
+            {"id": "thermal", "level": 0, "components": ["a", "fine", "wide"]},
+            {"id": "heater", "parent_id": "thermal", "level": 1, "components": ["b"]},
+        ]},
+        "fault_variants": [
+            {"id": "one", "kind": "fault", "changes": [{"variable": "a.x", "offset": 2.}],
+             "expect_blocks": ["thermal"], "parameters": {"fine.target": 10., "wide.target": 1000.}},
+            {"id": "two", "kind": "fault", "changes": [{"variable": "a.x", "offset": 2.}],
+             "expect_blocks": ["thermal"], "parameters": {"fine.target": 20., "wide.target": 2000.}},
+        ],
+    })
+    nominal = ObservedValuesSpec(variables={"a.x": {"value": 0.}, "b.x": {"value": 0.}})
+    before = spec.model_dump(mode="json"), nominal.model_dump(mode="json")
+    result = evaluate_fault_variants(spec, nominal)
+    group, = result["indistinguishable"]
+    assert group["variant_ids"] == ["one", "two"] and group["signature"] == {"thermal": "+"}
+    assert group["next_signal"] == "fine.x" and group["next_signal"] not in nominal.variables
+    assert group["normalized_separation"] == pytest.approx(10.)
+    pair, = result["pairwise"]
+    assert pair["variants"] == ["one", "two"] and pair["separable_by"] == "fine.x"
+    assert pair["normalized_separation"] == pytest.approx(10.)
+    ranked = result["next_signal"]
+    assert [row["signal"] for row in ranked] == ["fine.x", "wide.x"]
+    assert ranked[0]["separates"] == ranked[1]["separates"] == [["one", "two"]]
+    assert ranked[0]["normalized_separation"] == pytest.approx(10.)
+    assert ranked[1]["normalized_separation"] == pytest.approx(1.)
+    audit_path, nominal_path = tmp_path / "audit.yaml", tmp_path / "nominal.yaml"
+    audit_path.write_text(json.dumps(spec.model_dump(mode="json")), encoding="utf-8")
+    nominal_path.write_text(json.dumps(nominal.model_dump(mode="json")), encoding="utf-8")
+    assert main(["hierarchy", "variants", str(audit_path), str(nominal_path), "--json"]) == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["ok"]
+    assert output["pairwise"] == result["pairwise"] and output["next_signal"] == result["next_signal"]
+    assert (spec.model_dump(mode="json"), nominal.model_dump(mode="json")) == before

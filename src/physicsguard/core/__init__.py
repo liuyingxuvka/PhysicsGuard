@@ -18,9 +18,6 @@ __all__ = [
     "inspect_test_file_contract",
     "sha256_file",
     "validate_model_dataset",
-    "evaluate_hypothesis_observation",
-    "freeze_hypothesis_plan",
-    "rank_observation_candidates",
 ]
 
 
@@ -93,20 +90,4 @@ def __getattr__(name: str):
         from physicsguard.modules.registry import ModuleRegistry
 
         return ModuleRegistry
-    if name in {
-        "evaluate_hypothesis_observation",
-        "freeze_hypothesis_plan",
-        "rank_observation_candidates",
-    }:
-        from physicsguard.core.task_local_revision import (
-            evaluate_hypothesis_observation,
-            freeze_hypothesis_plan,
-            rank_observation_candidates,
-        )
-
-        return {
-            "evaluate_hypothesis_observation": evaluate_hypothesis_observation,
-            "freeze_hypothesis_plan": freeze_hypothesis_plan,
-            "rank_observation_candidates": rank_observation_candidates,
-        }[name]
     raise AttributeError(name)

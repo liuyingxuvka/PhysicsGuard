@@ -15,10 +15,7 @@ python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --json
 ```
 
 `modules list` prints each registered type and its first documentation sentence.
-`modules describe` returns variables (units, bounds, initial guesses, scales),
-required/optional parameter names, residual names/roles/diagnostic keys/descriptions,
-and validity metadata. Its marked synthetic parameters or external variables are
-introspection examples, not physical defaults, measurements or an audit pass.
+`modules describe` returns variables (units, bounds, initial guesses, scales), required/optional parameter names, residual names/roles/diagnostic keys/descriptions, and validity metadata. Its marked synthetic parameters or external variables are introspection examples, not physical defaults, measurements or an audit pass.
 `hierarchy describe` shows blocks, parents, children, `refines`, components,
 actual `supplied` parameters and `native_reads_with_defaults` (access logs, not required/optional classification),
 connections, refinement rules and fault variants without solving. `--mermaid`
@@ -139,12 +136,14 @@ Connections propagate known values within variable bounds without overwriting me
 Put measurement-to-internal components first: in the tank, electrical power before command comparison, inflow conversion before throughflow, and thermal balance last.
 Read `derived_variables`, `checked_residuals` and `unchecked_residuals`; producers never count as checks. No independent check means refusal.
 
-Once the coarse and refined checks are useful, add top-level `fault_variants`: use unique `id`, required `kind: fault` or `benign`, qualified `parameters` overrides and/or `changes` entries naming `variable` and exactly one of `scale`, `offset`, `set`, `flip_sign: true`. `rederive` removes listed measurements before deriving them under the device; `expect_blocks` names required own failures. Audit with the nominal model: `task-model variants AUDIT.yaml NOMINAL.yaml --pairs --json`.
+Once the coarse and refined checks are useful, add top-level `fault_variants`: use unique `id`, required `kind: fault` or `benign`, qualified `parameters` overrides and/or `changes` entries naming `variable` and exactly one of `scale`, `offset`, `set`, `flip_sign: true`. `rederive` removes listed measurements before deriving them under the device; `expect_blocks` names required own failures. Audit with the nominal model: `hierarchy variants AUDIT.yaml NOMINAL.yaml --pairs --json`.
 Keep the model and snapshot unchanged. Read own checked-block signs, missing expected failures, indistinguishable groups and unmeasured `next_signal`.
 Observed-value changes and rederive names must be registered measurements present in the nominal snapshot, and numeric edits must be finite. A parameter override may replace a legal module default absent from YAML; the native constructor still validates its value.
 The device is a copy: remove requested measurements, derive them with its changed parameters, then check the generated data with the unchanged nominal model; this is neither reference optimization nor time-forward rollout.
 Each signature uses the sign of a block's largest directly checked residual when that block has an own failure, retaining a genuine own failure even when the block has children. Producing or unchecked relations cannot supply fault evidence.
 Unavailable generated measurements keep `status: not_evaluable`, a reason, null signature/audit status and false check flags; other rows remain visible and the case cannot match observed data. Full JSON retains counterfactual `generated_values`, `device_values` and `rederived_variables`; the compact view omits the value maps.
+Nonempty proper-subset pair failures are physically masked and listed in `masked_pairs`; an empty or outside-expected signature fails. `pairwise` and ranked `next_signal` expose remaining discrimination.
+With `--observed`, a failing audit with no matching fault signature reports `model_miss`; healthy observed data is not a model miss.
 A matching signature is bounded discrimination, not proof of the physical cause.
 Strict library evaluation rejects still-missing variables after derivation; the CLI lists and skips them, but neither accepts zero independent checks. `hierarchy compare` still requires the complete registered observed snapshot and solves a reference, as does `hierarchy run`.
 Use contracts and disjoint validation evidence for model/data claims; a snapshot alone licenses neither time prediction nor high-fidelity truth.

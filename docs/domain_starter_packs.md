@@ -26,7 +26,7 @@ Use these four entrypoints (replace `coolant_loop` with either other pack):
 python -m physicsguard.cli hierarchy describe examples/hierarchical/coolant_loop/tree.yaml
 python -m physicsguard.cli hierarchy run examples/hierarchical/coolant_loop/tree.yaml
 python -m physicsguard.cli hierarchy evaluate examples/hierarchical/coolant_loop/tree.yaml examples/hierarchical/coolant_loop/nominal_observed.yaml
-python -m physicsguard.cli task-model variants examples/hierarchical/coolant_loop/tree.yaml examples/hierarchical/coolant_loop/nominal_observed.yaml
+python -m physicsguard.cli hierarchy variants examples/hierarchical/coolant_loop/tree.yaml examples/hierarchical/coolant_loop/nominal_observed.yaml
 ```
 
 `describe` inspects the declared topology without solving. `run` solves a

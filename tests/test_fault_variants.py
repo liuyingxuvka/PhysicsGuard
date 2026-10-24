@@ -6,10 +6,9 @@ from pathlib import Path
 import pytest
 
 from physicsguard.cli import main
-from physicsguard.core.diagnosability import evaluate_diagnosability, evaluate_fault_variants
+from physicsguard.core.diagnosability import evaluate_fault_variants
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.observation_loader import load_observed_values
-from physicsguard.schema.diagnosability import DiagnosabilityRequestSpec
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 from physicsguard.schema.observation_spec import ObservedValuesSpec
 
@@ -56,6 +55,7 @@ def test_clean_nominal_is_accepted_without_mutating_inputs() -> None:
 
     assert result["nominal_audit_pass"] and result["ok"]
     assert result["nominal_signature"] == {} and result["variants"] == []
+    assert result["model_miss"] is None
     assert (spec.model_dump(mode="json"), nominal.model_dump(mode="json")) == before
 
 
@@ -100,6 +100,7 @@ def test_combined_faults_report_every_direct_failure() -> None:
     assert pair["generated_values"]["a.x"] == 2. and pair["generated_values"]["b.x"] == 3.
     assert pair["expected_blocks"] == ["heater", "thermal"]
     assert pair["detected"] and pair["expect_blocks_met"] and result["ok"]
+    assert pair["pair_status"] == "ok"
 
 
 def test_benign_default_parameter_override_keeps_the_verdict() -> None:
@@ -144,7 +145,7 @@ def test_a_noop_fault_cannot_claim_detection(tmp_path, capsys) -> None:
     audit, measured = tmp_path / "noop.yaml", tmp_path / "nominal.yaml"
     audit.write_text(json.dumps(spec.model_dump(mode="json")))
     measured.write_text(json.dumps(nominal.model_dump(mode="json")))
-    assert main(["task-model", "variants", str(audit), str(measured)]) == 1
+    assert main(["hierarchy", "variants", str(audit), str(measured), "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["variants"][0]["detected"] is False
 
 
@@ -162,12 +163,12 @@ def test_variant_input_errors_keep_exit_two(error, tmp_path, capsys) -> None:
     audit, measured = tmp_path / "bad.yaml", tmp_path / "nominal.yaml"
     audit.write_text(json.dumps(data))
     measured.write_text(json.dumps(nominal.model_dump(mode="json")))
-    assert main(["task-model", "variants", str(audit), str(measured)]) == 2
+    assert main(["hierarchy", "variants", str(audit), str(measured), "--json"]) == 2
     captured = capsys.readouterr()
     assert "physicsguard error:" in captured.err and not captured.out
 
 
-def test_pair_cancellation_is_reported_instead_of_inheriting_single_fault_codes() -> None:
+def test_undetected_pair_fails() -> None:
     spec, nominal = _case([_fault("plus", "a.x", 2., "thermal"), _fault("minus", "a.x", -2., "thermal")])
 
     result = evaluate_fault_variants(spec, nominal, pairs=True)
@@ -179,6 +180,7 @@ def test_pair_cancellation_is_reported_instead_of_inheriting_single_fault_codes(
     assert pair["generated_values"]["a.x"] == 0. and pair["audit_pass"]
     assert pair["signature"] == {} and not pair["detected"] and not pair["expect_blocks_met"]
     assert not pair["ok"] and not result["ok"]
+    assert pair["pair_status"] == "undetected"
 
 
 def test_out_of_domain_pair_remains_explicit_without_losing_other_results() -> None:
@@ -196,24 +198,25 @@ def test_out_of_domain_pair_remains_explicit_without_losing_other_results() -> N
     assert pair["status"] == "not_evaluable" and "could not rederive" in pair["reason"]
     assert pair["signature"] is None and pair["audit_pass"] is None
     assert not pair["detected"] and not pair["ok"] and not result["ok"]
+    assert pair["pair_status"] is None
 
 
-def test_unavailable_single_preserves_valid_rows_and_does_not_export_partial_diagnosis(tmp_path, capsys) -> None:
+def test_unavailable_single_preserves_valid_rows(tmp_path, capsys) -> None:
     spec, nominal = _case([
         {"id": "outside_bounds", "kind": "fault", "parameters": {"a.target": 200.}, "rederive": ["a.x"]},
         _fault("valid_fault", "b.x", 2., "heater"),
     ])
-    audit, measured, target = (tmp_path / name for name in ("audit.yaml", "nominal.yaml", "diagnosis.yaml"))
+    audit, measured = (tmp_path / name for name in ("audit.yaml", "nominal.yaml"))
     audit.write_text(json.dumps(spec.model_dump(mode="json")))
     measured.write_text(json.dumps(nominal.model_dump(mode="json")))
-    assert main(["task-model", "variants", str(audit), str(measured), "--write-diagnose", str(target)]) == 1
+    assert main(["hierarchy", "variants", str(audit), str(measured), "--json"]) == 1
     output = json.loads(capsys.readouterr().out)
     rows = {row["id"]: row for row in output["variants"]}
     assert rows["outside_bounds"]["status"] == "not_evaluable" and rows["outside_bounds"]["signature"] is None
     assert rows["valid_fault"]["status"] == "evaluated" and rows["valid_fault"]["signature"] == {"heater": "+"}
-    assert output["diagnose_export"]["status"] == "not_written"
-    assert output["diagnose_export"]["variants"][0]["id"] == "outside_bounds"
-    assert not output["ok"] and not target.exists()
+    assert not output["ok"]
+    assert output["pairwise"] == []  # one evaluated fault cannot form a usable pair
+    assert rows["outside_bounds"]["pair_status"] is None
 
 
 @pytest.mark.parametrize(("operation", "value", "expected"), [("scale", .5, 1.5), ("offset", 2., 5.), ("set", 0., 0.), ("flip_sign", True, -3.)])
@@ -231,29 +234,68 @@ def test_each_measurement_edit_uses_the_real_changed_value(operation, value, exp
     assert nominal.variables["a.x"].value == 3.
 
 
-def test_next_signal_uses_unmeasured_scaled_separation_and_export_is_native(tmp_path, capsys) -> None:
-    variants = [
-        {**_fault("one", "a.x", 2., "thermal"), "parameters": {"fine.target": 10., "wide.target": 1000.}},
-        {**_fault("two", "a.x", 2., "thermal"), "parameters": {"fine.target": 20., "wide.target": 2000.}},
-    ]
-    spec, nominal = _case(variants, unmeasured_signals=True)
+def test_masked_pair_is_listed_not_failed() -> None:
+    spec = load_hierarchical_audit_spec(TANK / "heated_tank.yaml")
+    nominal = load_observed_values(TANK / "measured_k30.yaml")
+    before = spec.model_dump(mode="json"), nominal.model_dump(mode="json")
+    result = evaluate_fault_variants(spec, nominal, pairs=True, base_dir=TANK)
+    pair = next(row for row in result["pairs"] if row["id"] == "heater_half+inlet_temp_offset")
+    assert pair["status"] == "evaluated" and pair["pair_status"] == "masked"
+    assert pair["signature"] == {"heater": "-"}
+    assert pair["expected_blocks"] == ["heater", "thermal"]
+    assert pair["detected"] and not pair["expect_blocks_met"] and pair["ok"]
+    assert result["masked_pairs"] == [pair["id"]]
+    assert result["ok"]
+    assert (spec.model_dump(mode="json"), nominal.model_dump(mode="json")) == before
 
+
+def test_failure_outside_the_expected_blocks_fails() -> None:
+    variants = [_fault("one", "a.x", 2., "thermal"), _fault("two", "a.x", 3., "thermal")]
+    for variant in variants:
+        variant["changes"].append({"variable": "b.x", "offset": .75})
+    spec, nominal = _case(variants)
+    for component in spec.system.components:
+        component.parameters["scale"] = 1.
+    result = evaluate_fault_variants(spec, nominal, pairs=True)
+    assert all(row["ok"] and row["signature"] == {"thermal": "+"} for row in result["variants"])
+    pair, = result["pairs"]
+    assert pair["generated_values"] == {"a.x": 5., "b.x": 1.5}
+    assert pair["signature"] == {"heater": "+", "thermal": "+"}
+    assert pair["expected_blocks"] == ["thermal"]
+    assert pair["pair_status"] == "outside" and not pair["ok"] and not result["ok"]
+    assert result["masked_pairs"] == []
+
+
+def test_observed_failure_no_variant_explains_is_a_model_miss(tmp_path, capsys) -> None:
+    spec, nominal = _case([_fault("one", "a.x", 2., "thermal")])
+    observed = nominal.model_copy(deep=True)
+    observed.variables["b.x"].value = 2.
+    before = tuple(item.model_dump(mode="json") for item in (spec, nominal, observed))
+    result = evaluate_fault_variants(spec, nominal, observed=observed)
+    assert result["nominal_audit_pass"] and result["ok"]
+    assert result["matching_variants"] == [] and result["model_miss"] is True
+    audit, measured, actual = (tmp_path / name for name in ("audit.yaml", "nominal.yaml", "observed.yaml"))
+    for path, value in ((audit, spec), (measured, nominal), (actual, observed)):
+        path.write_text(json.dumps(value.model_dump(mode="json")), encoding="utf-8")
+    assert main(["hierarchy", "variants", str(audit), str(measured), "--observed", str(actual), "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["model_miss"] is True
+    healthy = evaluate_fault_variants(spec, nominal, observed=nominal)
+    assert healthy["matching_variants"] == [] and healthy["model_miss"] is False
+    assert tuple(item.model_dump(mode="json") for item in (spec, nominal, observed)) == before
+
+
+def test_pairwise_rows_cover_every_fault_pair() -> None:
+    spec, nominal = _case([
+        _fault("one", "a.x", 2., "thermal"), _fault("two", "a.x", 3., "thermal"),
+        _fault("three", "a.x", -2., "thermal"),
+        {"id": "rounding", "kind": "benign", "parameters": {"a.scale": 1.}},
+    ])
     result = evaluate_fault_variants(spec, nominal)
-
-    group, = result["indistinguishable"]
-    assert group["variant_ids"] == ["one", "two"] and group["signature"] == {"thermal": "+"}
-    assert group["next_signal"] == "fine.x" and group["next_signal"] not in nominal.variables
-    # Raw separation is larger for wide (1000), but scale-normalized separation is 1 vs 10.
-    assert group["normalized_separation"] == pytest.approx(10.)
-    request = DiagnosabilityRequestSpec.model_validate(result["diagnose_request"])
-    assert {item.hypothesis_id for item in request.fault_signatures} == {"one", "two"}
-    assert evaluate_diagnosability(request)["status"] == "isolable"
-    audit_path, nominal_path, export_path = (tmp_path / name for name in ("audit.yaml", "nominal.yaml", "diagnosis.yaml"))
-    audit_path.write_text(json.dumps(spec.model_dump(mode="json")), encoding="utf-8")
-    nominal_path.write_text(json.dumps(nominal.model_dump(mode="json")), encoding="utf-8")
-    assert main(["task-model", "variants", str(audit_path), str(nominal_path),
-                 "--write-diagnose", str(export_path), "--json"]) == 0
-    assert json.loads(capsys.readouterr().out)["ok"]
-    assert export_path.is_file()
-    assert main(["task-model", "diagnose", str(export_path)]) == 0
-    assert json.loads(capsys.readouterr().out)["status"] == "isolable"
+    rows = result["pairwise"]
+    assert len(rows) == 3
+    by_pair = {frozenset(row["variants"]): row for row in rows}
+    assert set(by_pair) == {frozenset(("one", "two")), frozenset(("one", "three")), frozenset(("two", "three"))}
+    assert by_pair[frozenset(("one", "two"))]["separable_by"] is None
+    assert by_pair[frozenset(("one", "three"))]["separable_by"] == "signature"
+    assert by_pair[frozenset(("two", "three"))]["separable_by"] == "signature"
+    assert result["next_signal"] == []

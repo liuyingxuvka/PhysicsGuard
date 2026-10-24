@@ -66,59 +66,13 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_compare.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     hierarchy_compare.add_argument("--json", action="store_true", help="print the full report instead of the summary")
 
-    task_model_parser = subparsers.add_parser(
-        "task-model",
-        help="task-local hypothesis, interval-residual and diagnosability commands",
-    )
-    task_model_subparsers = task_model_parser.add_subparsers(
-        dest="task_model_command",
-        required=True,
-    )
-    task_model_plan = task_model_subparsers.add_parser(
-        "plan",
-        help="freeze competing hypotheses and rank the next observation",
-    )
-    task_model_plan.add_argument("plan", type=Path, help="path to a HypothesisPlanSpec YAML")
-    task_model_plan.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    task_model_observe = task_model_subparsers.add_parser(
-        "observe",
-        help="compare bound evidence with frozen predictions and expose a model miss",
-    )
-    task_model_observe.add_argument("plan", type=Path, help="path to a HypothesisPlanSpec YAML")
-    task_model_observe.add_argument(
-        "observation",
-        type=Path,
-        help="path to a DiagnosticObservationSpec YAML",
-    )
-    task_model_observe.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    task_model_interval = task_model_subparsers.add_parser(
-        "interval-residual",
-        help="classify one residual interval as robust pass, fail, indeterminate, or not-run",
-    )
-    task_model_interval.add_argument(
-        "residual",
-        type=Path,
-        help="path to an IntervalResidualSpec YAML",
-    )
-    task_model_interval.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    task_model_diagnose = task_model_subparsers.add_parser(
-        "diagnose",
-        help="evaluate task-local fault signatures and recommend the next signal",
-    )
-    task_model_diagnose.add_argument(
-        "diagnosis",
-        type=Path,
-        help="path to a DiagnosabilityRequestSpec YAML",
-    )
-    task_model_diagnose.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
-    task_model_variants = task_model_subparsers.add_parser("variants", help="generate model-derived fault signatures")
-    task_model_variants.add_argument("audit", type=Path)
-    task_model_variants.add_argument("nominal", type=Path)
-    task_model_variants.add_argument("--pairs", action="store_true")
-    task_model_variants.add_argument("--observed", type=Path)
-    task_model_variants.add_argument("--write-diagnose", type=Path)
-    task_model_variants.add_argument("--json", action="store_true", help="include generated values and diagnosis input")
-    task_model_variants.add_argument("--pretty", action="store_true")
+    hierarchy_variants = hierarchy_subparsers.add_parser("variants", help="compare model-derived fault signatures and next signals")
+    hierarchy_variants.add_argument("audit", type=Path)
+    hierarchy_variants.add_argument("nominal", type=Path)
+    hierarchy_variants.add_argument("--pairs", action="store_true")
+    hierarchy_variants.add_argument("--observed", type=Path)
+    hierarchy_variants.add_argument("--json", action="store_true", help="print full generated values and pairwise evidence")
+    hierarchy_variants.add_argument("--pretty", action="store_true")
 
     assumptions_parser = subparsers.add_parser(
         "assumptions",
@@ -392,97 +346,26 @@ def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, ful
     return 0 if report["observed_audit_pass"] else 1
 
 
-def task_model_plan_command(path: Path, pretty: bool = False) -> int:
-    from physicsguard.core.task_local_revision import freeze_hypothesis_plan
-    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
-    from physicsguard.schema.task_local_revision import HypothesisPlanSpec
-
-    plan = HypothesisPlanSpec.model_validate(load_yaml_mapping(path))
-    output = freeze_hypothesis_plan(plan, base_dir=path.parent)
-    _print_json(output, pretty)
-    return 0 if output["status"] == "pass" else 1
-
-
-def task_model_observe_command(
-    plan_path: Path,
-    observation_path: Path,
-    pretty: bool = False,
-) -> int:
-    from physicsguard.core.task_local_revision import evaluate_hypothesis_observation
-    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
-    from physicsguard.schema.task_local_revision import DiagnosticObservationSpec, HypothesisPlanSpec
-
-    plan = HypothesisPlanSpec.model_validate(load_yaml_mapping(plan_path))
-    observation = DiagnosticObservationSpec.model_validate(
-        load_yaml_mapping(observation_path)
-    )
-    output = evaluate_hypothesis_observation(
-        plan,
-        observation,
-        base_dir=plan_path.parent,
-    )
-    _print_json(output, pretty)
-    return 0 if output["status"] == "pass" else 1
-
-
-def task_model_interval_residual_command(
-    path: Path,
-    pretty: bool = False,
-) -> int:
-    from physicsguard.core.diagnosability import evaluate_interval_residual
-    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
-    from physicsguard.schema.diagnosability import IntervalResidualSpec
-
-    residual = IntervalResidualSpec.model_validate(load_yaml_mapping(path))
-    output = evaluate_interval_residual(residual)
-    _print_json(output, pretty)
-    return 1 if output["status"] == "robust_fail" else 0
-
-
-def task_model_diagnose_command(
-    path: Path,
-    pretty: bool = False,
-) -> int:
-    from physicsguard.core.diagnosability import evaluate_diagnosability
-    from physicsguard.io.test_file_contract_loader import load_yaml_mapping
-    from physicsguard.schema.diagnosability import DiagnosabilityRequestSpec
-
-    diagnosis = DiagnosabilityRequestSpec.model_validate(
-        load_yaml_mapping(path)
-    )
-    output = evaluate_diagnosability(diagnosis)
-    _print_json(output, pretty)
-    return 1 if output["status"] == "indistinguishable" else 0
-
-
-def task_model_variants_command(audit, nominal, pairs=False, observed=None, write_diagnose=None, full=False, pretty=False) -> int:
+def hierarchy_variants_command(audit, nominal, pairs=False, observed=None, full=False, pretty=False) -> int:
     from physicsguard.core.diagnosability import evaluate_fault_variants
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
 
-    output = evaluate_fault_variants(load_hierarchical_audit_spec(audit), load_observed_values(nominal),
-        pairs=pairs, observed=load_observed_values(observed) if observed is not None else None, base_dir=audit.parent)
-    if write_diagnose is not None:
-        import yaml
-        if output["diagnose_request"] is None:
-            faults = [row for row in output["variants"] if row["kind"] == "fault"]
-            unavailable = [row for row in faults if row["status"] == "not_evaluable"]
-            if len(faults) < 2 or not unavailable:
-                raise ValueError("diagnosis export requires at least two fault signatures with shared registered signals")
-            output["diagnose_export"] = {"status": "not_written", "reason": "fault_variant_not_evaluable",
-                                         "variants": [{"id": row["id"], "reason": row["reason"]} for row in unavailable]}
-            output["ok"] = False
-        else:
-            write_diagnose.write_text(yaml.safe_dump(output["diagnose_request"], sort_keys=False), encoding="utf-8")
+    output = evaluate_fault_variants(
+        load_hierarchical_audit_spec(audit), load_observed_values(nominal), pairs=pairs,
+        observed=load_observed_values(observed) if observed is not None else None, base_dir=audit.parent,
+    )
     if full:
         _print_json(output, pretty)
     else:
-        summary = {key: value for key, value in output.items() if key != "diagnose_request"}
+        keys = ("ok", "nominal_audit_pass", "masked_pairs", "indistinguishable", "matching_variants", "model_miss", "claim_boundary")
+        summary = {key: output[key] for key in keys if key in output}
         for key in ("variants", "pairs"):
             summary[key] = [{name: value for name, value in row.items() if name not in {"generated_values", "device_values"}}
                             for row in output[key]]
+        summary["next_signal"] = output["next_signal"][:5]
         _print_json(summary, pretty)
-    return 0 if output["ok"] else 1
+    return 0 if output["ok"] and output["model_miss"] is not True else 1
 
 
 def assumptions_inspect(path: Path, pretty: bool = False) -> int:
@@ -632,28 +515,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return hierarchy_evaluate(args.audit, args.observed, args.pretty, args.json)
             if args.hierarchy_command == "compare":
                 return hierarchy_compare(args.audit, args.observed, args.pretty, args.json)
-        if args.command == "task-model":
-            if args.task_model_command == "variants":
-                return task_model_variants_command(args.audit, args.nominal, args.pairs, args.observed,
-                                                   args.write_diagnose, args.json, args.pretty)
-            if args.task_model_command == "plan":
-                return task_model_plan_command(args.plan, args.pretty)
-            if args.task_model_command == "observe":
-                return task_model_observe_command(
-                    args.plan,
-                    args.observation,
-                    args.pretty,
-                )
-            if args.task_model_command == "interval-residual":
-                return task_model_interval_residual_command(
-                    args.residual,
-                    args.pretty,
-                )
-            if args.task_model_command == "diagnose":
-                return task_model_diagnose_command(
-                    args.diagnosis,
-                    args.pretty,
-                )
+            if args.hierarchy_command == "variants":
+                return hierarchy_variants_command(args.audit, args.nominal, args.pairs, args.observed, args.json, args.pretty)
         if args.command == "assumptions":
             if args.assumptions_command == "inspect":
                 return assumptions_inspect(args.system, args.pretty)

@@ -32,19 +32,14 @@ consistency claims to `model-dataset-validation`. Multi-project/database questio
    do not replace them with numerical probing or a whole-module read union. Custom missing inputs
    need supported dependencies; custom checks with every registered value supplied remain usable.
    With no independent check the command stops. CLI lists remaining gaps; strict library mode rejects them.
-6. Compare competing causes using declared `fault_variants` and
-   `python -m physicsguard.cli task-model variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --write-diagnose DIAGNOSE.yaml --json`.
-   Read detection, benign checks, expected blocks, matching variants and indistinguishable groups.
-   Unavailable variants retain reasons/null signatures and cannot become matches or discrimination evidence. Exit 0 means checks
-   pass, 1 means a failed/not-evaluable case, 2 means invalid input. Variants describe another device,
-   not time-forward prediction; preserve the original model and measurements.
-   Use `python -m physicsguard.cli task-model diagnose DIAGNOSE.yaml` when isolation is needed.
-   For non-trivial diagnosis keep two live hypotheses unless only one is physically meaningful:
-   `python -m physicsguard.cli task-model plan HYPOTHESIS_PLAN.yaml`, then acquire evidence and run
-   `python -m physicsguard.cli task-model observe HYPOTHESIS_PLAN.yaml OBSERVATION.yaml`.
-   Freeze expectations before observing; retain supported/weakened/undetermined outcomes and weakening conditions.
-   Use `python -m physicsguard.cli task-model interval-residual INTERVAL.yaml` for bounded uncertainty;
-   keep robust_pass/robust_fail/indeterminate/not_run distinct (exit 1 only for robust_fail).
+6. Compare competing causes declared as `fault_variants` in the audit tree:
+   `python -m physicsguard.cli hierarchy variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --json`.
+   Read `pairwise`, signatures and expected blocks; same-signature causes may need an unmeasured `next_signal`.
+   `masked_pairs` lists nonempty proper-subset failures; undetected or outside-expected pairs fail the check.
+   `matching_variants` is bounded signature agreement; `model_miss` means failing observed data matches no fault variant.
+   Represent bounded sensor accuracy with a `kind: benign` measurement-offset variant that must remain neutral.
+   Variants copy another device and rederive without changing the nominal model or measurements; unavailable rows keep reasons/null signatures.
+   Exit 0 means checks pass without a model miss, 1 a failed/not-evaluable check or miss, and 2 invalid input.
 7. Refine one suspicious block with `refines` and its recommended template. Request only the next
    discriminating signal: pressure upstream/downstream, command/actual/feedback, map axes/output,
    bus source/load/loss/storage power, or stack current/cell count/gas flow. Check same-family

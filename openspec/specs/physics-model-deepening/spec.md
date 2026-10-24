@@ -1,34 +1,14 @@
 # physics-model-deepening Specification
 
 ## Purpose
-Keep a non-trivial PhysicsGuard diagnosis honest: competing hypotheses with expectations, the most discriminating next observation, and a visible model miss when the observation contradicts every hypothesis.
+Compare declared model-derived device variants, request a discriminating next measurement, and report when the observations exceed the declared alternatives.
 
 ## Requirements
-### Requirement: Competing hypotheses carry expectations
-`task-model plan` SHALL accept a plan only when each hypothesis declares at least one signal, residual or timing expectation, and SHALL report `blocked` while the model file named in the plan does not exist.
+### Requirement: Competing causes are model-derived variants
+Competing causes SHALL be declared as `fault_variants` in the audit tree and evaluated by the native variant engine. Evaluation SHALL copy device data, rederive declared outcomes, and check them against the unchanged nominal model; it SHALL NOT optimize observations or claim the true physical cause.
 
-#### Scenario: The model file is missing
-- **WHEN** `model.path` names a file that does not exist
-- **THEN** the plan status SHALL be `blocked` and the command SHALL exit 1
+### Requirement: Next signals follow bounded separation evidence
+`hierarchy variants` SHALL return `pairwise` checked-signature or scale-normalized unmeasured-signal separation and rank `next_signal` by the number of same-signature pairs separated, then normalized separation. Unavailable cases SHALL retain reasons and SHALL NOT create discrimination evidence. Physically masked pairs SHALL stay visible; undetected or outside-expected pairs SHALL fail.
 
-#### Scenario: A plan uses the retired receipt fields
-- **WHEN** a plan still carries `blueprint`, `coverage`, `native_depth_receipt` or `predecessor`
-- **THEN** validation SHALL reject it
-
-### Requirement: The next observation is the most discriminating one
-`task-model plan` SHALL rank observation candidates by residual relevance and by how differently the live hypotheses predict them.
-
-#### Scenario: Two candidates are equally relevant
-- **WHEN** two candidates have the same residual relevance
-- **THEN** the one whose predicted outcomes separate the live hypotheses SHALL rank first
-
-### Requirement: Observations are compared with frozen predictions
-`task-model observe` SHALL compare an observation with the predictions frozen in the plan, keep supported, weakened and undetermined hypotheses, and SHALL NOT rewrite an old prediction.
-
-#### Scenario: The observation contradicts every hypothesis
-- **WHEN** every live hypothesis is contradicted
-- **THEN** the terminal reason SHALL be `model_miss` and the command SHALL exit 1
-
-#### Scenario: An expected target is not observed
-- **WHEN** an expected target is missing from the observation
-- **THEN** it SHALL stay undetermined and open and SHALL NOT count as support
+### Requirement: Observations return matches or a model miss
+With `--observed`, the report SHALL compare the observed checked signature with evaluated fault variants and return `matching_variants`. A failed observed audit with no match SHALL set `model_miss: true` and exit 1; a healthy observed audit SHALL NOT be a model miss. Without observations, `model_miss` SHALL be null.

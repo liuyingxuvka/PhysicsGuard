@@ -124,11 +124,10 @@ python -m physicsguard.cli preflight review skill/physicsguard/references/templa
 python -m physicsguard.cli intake review skill/physicsguard/references/templates/external_model_intake.yaml --pretty
 ```
 
-Model-derived fault signatures and a diagnosis input:
+Model-derived fault signatures and next measurements:
 
 ```powershell
-python -m physicsguard.cli task-model variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --write-diagnose DIAGNOSE.yaml --json
-python -m physicsguard.cli task-model diagnose DIAGNOSE.yaml
+python -m physicsguard.cli hierarchy variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --json
 ```
 
 Declare `fault_variants` in the audit to describe another device through parameter or measurement changes and selected values to rederive. PhysicsGuard evaluates the resulting data against the nominal model, preserves both inputs, groups identical fault signatures and recommends an unmeasured signal using scale-normalized differences. Detection is separate from proving the cause or distinguishing every fault; inspect `detected`, `neutral`, `expect_blocks_met`, `indistinguishable` and `matching_variants`.
@@ -351,11 +350,10 @@ python -m physicsguard.cli preflight review skill/physicsguard/references/templa
 python -m physicsguard.cli intake review skill/physicsguard/references/templates/external_model_intake.yaml --pretty
 ```
 
-由模型生成故障特征和诊断输入：
+由模型生成故障特征和下一步测量：
 
 ```powershell
-python -m physicsguard.cli task-model variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --write-diagnose DIAGNOSE.yaml --json
-python -m physicsguard.cli task-model diagnose DIAGNOSE.yaml
+python -m physicsguard.cli hierarchy variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --json
 ```
 
 在审计文件的 `fault_variants` 中用参数、测量改动及指定重新推导的值描述“另一台装置”。PhysicsGuard 用名义模型检查变体数据，保留原模型与观测，把相同故障特征分组，并按变量尺度归一化的差异推荐尚未测量的信号。检出不等于证明真实原因或区分全部故障；应读取 `detected`、`neutral`、`expect_blocks_met`、`indistinguishable` 和 `matching_variants`。

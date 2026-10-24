@@ -24,7 +24,7 @@
         "Exit 0 on a passed check, 1 on a checked failure, and 2 when the command cannot run; comparison uses observed audit status",
         "Inspect assumption cards from either a single SystemSpec or the system inside a hierarchical audit",
         "Expose local/subtree verdicts, refinement consistency and per-template status in hierarchy summaries; pass the audit directory for file resolution",
-        "Run task-model variants with optional pairs and observed matching; export native diagnosability YAML on explicit request"
+        "Run hierarchy variants with optional fault compositions and observed signature matching; expose masked pairs, next signals and model misses without changing nominal inputs"
       ],
       "files": [
         "src/physicsguard/__init__.py",
@@ -34,16 +34,16 @@
       "entrypoints": [],
       "state": [],
       "side_effects": [
-        "Write the explicitly requested --write-diagnose YAML file from validated model-derived fault intervals"
+        "Write explicitly requested native manifest, SI snapshot or series output files"
       ],
       "depends_on": [
+        "diagnosis",
         "evidence",
         "loaders",
         "modules",
         "routing",
         "schema",
         "simulation",
-        "task_revision",
         "validation"
       ],
       "tests": [
@@ -63,7 +63,6 @@
         "tests/test_predictive_rollout_validation.py",
         "tests/test_signal_mapping_ledger.py",
         "tests/test_solver.py",
-        "tests/test_task_local_revision.py",
         "tests/test_test_file_contract_cli.py",
         "tests/test_test_file_contract_core.py",
         "tests/test_test_file_contract_schema.py",
@@ -74,7 +73,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:c2ef155d3eb2e8867458d477afcab7b0989d58be0597cb5b5935832521ec975b"
+      "fingerprint": "sha256:cc035d4b8a2f7b237306600723f7af49796c6a85ed18ad68106893b15cb5cc16"
     },
     {
       "id": "routing",
@@ -250,41 +249,6 @@
       "fingerprint": "sha256:e290d3629a4636120f17517b4caf0b98102c8eb9150cc3970b0a4c568d24168e"
     },
     {
-      "id": "task_revision",
-      "layer": "workflows",
-      "summary": "Task-local hypotheses, interval residuals and diagnosability",
-      "responsibilities": [
-        "Rank the most discriminating next observation and keep a model miss visible when every hypothesis is contradicted Alternate-device signature batches skip unused unit hints without changing signatures or verdicts.",
-        "Evaluate interval residuals and distinguish hypotheses with bounded diagnosability evidence",
-        "Generate alternate-device measurement variants, rederive requested signals and audit them with the nominal model; compare own checked signatures and scaled unmeasured signals while reporting unavailable generation honestly"
-      ],
-      "files": [
-        "src/physicsguard/core/task_local_revision.py",
-        "src/physicsguard/core/diagnosability.py"
-      ],
-      "entrypoints": [],
-      "state": [],
-      "side_effects": [],
-      "depends_on": [
-        "schema",
-        "simulation"
-      ],
-      "tests": [
-        "tests/test_cli.py",
-        "tests/test_diagnosability.py",
-        "tests/test_physicsguard_skill_prompts.py",
-        "tests/test_signal_mapping_ledger.py",
-        "tests/test_task_local_revision.py",
-        "tests/test_fault_variants.py"
-      ],
-      "models": [
-        ".flowguard/models/physicsguard_interval_diagnosability_model.py",
-        ".flowguard/models/physicsguard_fault_variants_model.py"
-      ],
-      "status": "confirmed",
-      "fingerprint": "sha256:c8639fa85c6f72754bee91a6a773b19a25a2e39e2ac1cfdf1588964d0d38cecf"
-    },
-    {
       "id": "evidence",
       "layer": "workflows",
       "summary": "Test-file contracts, manifests and contract differences",
@@ -403,7 +367,6 @@
         "tests/test_solver.py",
         "tests/test_system_spec.py",
         "tests/test_tank_helpers.py",
-        "tests/test_task_local_revision.py",
         "tests/test_test_file_contract_cli.py",
         "tests/test_test_file_contract_core.py",
         "tests/test_test_file_contract_schema.py",
@@ -417,7 +380,7 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:f50b6fcef8d90eb633a924f5af70db2361d4975b1cdf87e513931458f715699e"
+      "fingerprint": "sha256:fa6b3ecc9b18fa3f3dd2649a1b8cb55caaf84a95b9af0f94de8d180d2aa8624b"
     },
     {
       "id": "loaders",
@@ -592,7 +555,6 @@
         "tests/test_install_physicsguard_skills.py",
         "tests/test_physicsguard_skill_prompts.py",
         "tests/test_portable_model_headers.py",
-        "tests/test_task_local_revision.py",
         "tests/test_source_style.py"
       ],
       "models": [],
@@ -618,6 +580,38 @@
       "models": [],
       "status": "confirmed",
       "fingerprint": "sha256:641da1daaaa70b66f981a15185b5ef631cab113ae67cab3efda177521be9c36c"
+    },
+    {
+      "id": "diagnosis",
+      "layer": "workflows",
+      "summary": "Model-derived device variants, physical masking, pairwise separation and observed model misses",
+      "responsibilities": [
+        "Copy alternate-device data, rederive requested signals, and audit against the unchanged nominal model while preserving input specifications and observations",
+        "Classify evaluated fault compositions as complete, physically masked, undetected or outside expected blocks; preserve unavailable rows with reasons and null signatures",
+        "Compare direct signed failure evidence and scale-normalized unmeasured signals, rank next measurements and report observed signature matches or a bounded model miss"
+      ],
+      "files": [
+        "src/physicsguard/core/diagnosability.py"
+      ],
+      "entrypoints": [],
+      "state": [],
+      "side_effects": [],
+      "depends_on": [
+        "schema",
+        "simulation"
+      ],
+      "tests": [
+        "tests/test_cli.py",
+        "tests/test_diagnosability.py",
+        "tests/test_physicsguard_skill_prompts.py",
+        "tests/test_signal_mapping_ledger.py",
+        "tests/test_fault_variants.py"
+      ],
+      "models": [
+        ".flowguard/models/physicsguard_fault_variants_model.py"
+      ],
+      "status": "confirmed",
+      "fingerprint": "sha256:cbf39834987fc6d9ed9966cb9a9855f593dc0f0b4b2e212d125807e0533e36a4"
     }
   ],
   "flows": [

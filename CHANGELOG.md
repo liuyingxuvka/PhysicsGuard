@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Competing causes are written only as fault_variants in the audit tree and checked with hierarchy variants: a pairwise table says which causes a checked signature or an unmeasured signal can separate, physically masked fault pairs are listed instead of failing, and --observed reports a model miss when no variant explains the data. The task-model command group and its four hand-written templates are removed.
+
 - The top-level run, evaluate and compare commands are removed. Use hierarchy run|evaluate|compare on the same file: a single-system file is read as a tree with one root block, so it gets the same derivation and localization as any tree.
 
 - Maintenance checks of PhysicsGuard's own model tree now run on FlowGuard 0.70.11.

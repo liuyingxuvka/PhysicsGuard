@@ -162,8 +162,7 @@ An audit MAY declare `fault_variants` with unique ids, fault or benign kinds, pa
 - **WHEN** an otherwise valid edit cannot produce a required rederived measurement
 - **THEN** its row SHALL report `not_evaluable` with a reason, null signature and audit verdict, and false detection, neutrality and success flags
 - **AND** other cases SHALL remain visible, the aggregate command SHALL exit `1`, and the unavailable case SHALL NOT enter signature groups or observed matches
-- **AND** incomplete fault evaluation SHALL NOT produce a complete diagnosis request; schema or unknown-id errors SHALL retain input-error exit `2`
-- **AND** explicit diagnosis export SHALL preserve those rows with exit `1` and `diagnose_export.status: not_written` plus reasons in full and compact output, without creating a partial file; fewer than two declared fault hypotheses SHALL remain input error `2`
+- **AND** schema or unknown-id errors SHALL retain input-error exit `2`
 
 #### Scenario: A change has multiple operations
 - **WHEN** one change entry declares more than one of scale, offset, set or sign flip
@@ -189,10 +188,15 @@ Variant reports SHALL distinguish fault detection, benign neutrality and expecte
 - **THEN** they SHALL remain indistinguishable and the report SHALL identify an available next signal or an explicit absence
 - **AND** identical signatures alone SHALL NOT justify a feature-pair exclusion
 
-#### Scenario: The command writes diagnosis input
-- **WHEN** `task-model variants` receives `--write-diagnose`
-- **THEN** it SHALL write native diagnosability input with fault-signature intervals using device values plus or minus variable scale times audit threshold
-- **AND** `task-model diagnose` SHALL retain its separate discrimination verdict
+#### Scenario: Two faults can be separated without a second prediction engine
+- **WHEN** two evaluated faults have different direct checked signatures or a separating currently unmeasured signal
+- **THEN** `pairwise` SHALL identify `signature` or the signal with maximum actual device-value separation divided by registry scale
+- **AND** same-signature pairs SHALL contribute to ranked `next_signal`; no usable positive separation SHALL remain explicit
+
+#### Scenario: Composed faults physically mask one expected failure
+- **WHEN** a pair's actual failed blocks are a nonempty proper subset of its expected-block union
+- **THEN** the row SHALL report `pair_status: masked`, remain in `masked_pairs`, and preserve the false expected-block completeness fact without failing solely for that masking
+- **AND** an empty failure signature SHALL report `undetected` and fail, while a failure outside the expected union SHALL report `outside` and fail
 
 #### Scenario: Optional composed faults and observations are requested
 - **WHEN** `--pairs` or `--observed` is supplied
