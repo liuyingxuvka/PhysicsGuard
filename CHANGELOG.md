@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Maintenance checks of PhysicsGuard's own model tree run on FlowGuard 0.70.12.
+
 ## v0.15.22 - 2026-10-24 - One model tree for physics audits
 
 - Each domain starter pack is one connected tree with fault and benign variants and a nominal snapshot. Separate level/conflict copies and their generator are removed. The heated-tank reference grows in the same file from coarse tank balances to finer blocks, with its original sparse signals retained.

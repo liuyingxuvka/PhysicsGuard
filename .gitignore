@@ -19,21 +19,9 @@ env/
 .env.*
 
 # Local/private operational data
-SLIM_LOG.md
 kb/
-docs/flowguard_adoption_log.md
-.flowguard/adoption_log.jsonl
-.flowguard/evidence/
 /work/
 openspec/**/run-artifacts/
-openspec/**/verification-receipts/
-openspec/**/verification-reports/
-openspec/**/provenance/
-
-# Local MATLAB/Simulink experiment artifacts
-examples/hierarchical/simulink_f14_experiment/models/
-examples/hierarchical/simulink_f14_experiment/outputs/
-examples/hierarchical/simulink_f14_experiment/generated/
 
 # OS/editor
 .DS_Store
