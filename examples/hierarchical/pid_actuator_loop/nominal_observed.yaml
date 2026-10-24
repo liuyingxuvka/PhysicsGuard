@@ -15,7 +15,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   pid.measurement:
     value: 8.0
@@ -25,7 +25,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   pid.error:
     value: 2.0
@@ -35,7 +35,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   pid.error_previous:
     value: 1.0
@@ -45,7 +45,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   pid.integral_previous:
     value: 3.0
@@ -55,7 +55,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   act.command:
     value: 6.6
@@ -65,7 +65,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   act.actual_previous:
     value: 4.0
@@ -75,7 +75,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   act.actual_current:
     value: 5.3
@@ -85,7 +85,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   fb.command:
     value: 5.3
@@ -95,7 +95,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   fb.feedback_position:
     value: 5.3
@@ -105,7 +105,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   sensor.measured_previous:
     value: 5.0
@@ -115,7 +115,7 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.
   sensor.measured_current:
     value: 5.15
@@ -125,5 +125,5 @@ variables:
     mapping_confidence: proposed
     mapping_status: review_required
     review_required: true
-    description: Same original boundary quantity/time role; coarse aliases and unobserved internal states
+    description: Same original boundary quantity/time role; the coarse error and unobserved internal states
       are not extra measurements.

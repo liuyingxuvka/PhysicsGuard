@@ -9,17 +9,6 @@ description: One connected coarse-to-fine distribution power der tree with real 
 system:
   system_name: distribution_power_der
   components:
-  - id: coarse_substation_active_import
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 100000.0
-      scale: 100000.0
-      external_signal: mapped_substation_active_import
-      mapping_confidence: template
   - id: coarse_der_active_generation
     type: MappedSignalModule
     parameters:
@@ -52,17 +41,6 @@ system:
       initial_guess: 10000.0
       scale: 10000.0
       external_signal: mapped_feeder_line_loss_active
-      mapping_confidence: template
-  - id: coarse_substation_reactive_import
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: var
-      lower_bound: -1000000000.0
-      upper_bound: 1000000000.0
-      initial_guess: 45000.0
-      scale: 10000.0
-      external_signal: mapped_substation_reactive_import
       mapping_confidence: template
   - id: coarse_der_reactive_support
     type: MappedSignalModule
@@ -97,55 +75,11 @@ system:
       scale: 1000.0
       external_signal: mapped_feeder_reactive_loss
       mapping_confidence: template
-  - id: coarse_feeder_load_apparent
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: VA
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 129244.0
-      scale: 100000.0
-      external_signal: mapped_feeder_load_apparent_power
-      mapping_confidence: template
-  - id: coarse_feeder_load_power_factor
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: null
-      lower_bound: 0.0
-      upper_bound: 1.0
-      initial_guess: 0.9284763702763764
-      scale: 0.1
-      external_signal: mapped_feeder_load_power_factor
-      mapping_confidence: template
-  - id: coarse_feeder_min_voltage_pu
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: pu
-      lower_bound: 0.0
-      upper_bound: 2.0
-      initial_guess: 0.96
-      scale: 0.1
-      external_signal: mapped_feeder_min_voltage_pu
-      mapping_confidence: template
-  - id: coarse_feeder_max_voltage_pu
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: pu
-      lower_bound: 0.0
-      upper_bound: 2.0
-      initial_guess: 1.02
-      scale: 0.1
-      external_signal: mapped_feeder_max_voltage_pu
-      mapping_confidence: template
   - id: coarse_feeder_active_balance
     type: AggregateElectricalBusBalanceModule
     parameters:
       generation_power_variables:
-      - coarse_substation_active_import.value
+      - substation_active_import.value
       - coarse_der_active_generation.value
       consumption_power_variables:
       - coarse_feeder_load_active.value
@@ -156,7 +90,7 @@ system:
     type: AggregatePowerBalanceModule
     parameters:
       source_power_variables:
-      - coarse_substation_reactive_import.value
+      - substation_reactive_import.value
       - coarse_der_reactive_support.value
       load_power_variables:
       - coarse_feeder_load_reactive.value
@@ -167,23 +101,9 @@ system:
     type: RatioModule
     parameters:
       numerator_variable: coarse_feeder_load_active.value
-      denominator_variable: coarse_feeder_load_apparent.value
-      output_variable: coarse_feeder_load_power_factor.value
+      denominator_variable: feeder_load_apparent.value
+      output_variable: feeder_load_power_factor.value
       residual_scale: 0.001
-  - id: coarse_feeder_min_voltage_check
-    type: RangeCheckModule
-    parameters:
-      variable: coarse_feeder_min_voltage_pu.value
-      lower_bound: 0.95
-      residual_scale: 0.01
-      role: post_check
-  - id: coarse_feeder_max_voltage_check
-    type: RangeCheckModule
-    parameters:
-      variable: coarse_feeder_max_voltage_pu.value
-      upper_bound: 1.05
-      residual_scale: 0.01
-      role: post_check
   - id: coarse_total_reactive_loss
     type: SumModule
     parameters:
@@ -217,7 +137,7 @@ system:
   - id: coarse_extra_substation_power_factor_check
     type: RatioModule
     parameters:
-      numerator_variable: coarse_substation_active_import.value
+      numerator_variable: substation_active_import.value
       denominator_variable: coarse_extra_substation_apparent_power.value
       output_variable: coarse_extra_substation_power_factor.value
       residual_scale: 0.001
@@ -808,11 +728,6 @@ system:
     tolerance: 1.0e-08
     audit_threshold: 1.0
   connections:
-  - from_variable: coarse_substation_active_import.value
-    to_variable: substation_active_import.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
   - from_variable: coarse_der_active_generation.value
     to_variable: der_metered_active.value
     description: Same physical quantity at the same stated boundary; original fine
@@ -828,11 +743,6 @@ system:
     description: Same physical quantity at the same stated boundary; original fine
       supplied signal remains authoritative.
     scale: 1.0e-06
-  - from_variable: coarse_substation_reactive_import.value
-    to_variable: substation_reactive_import.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
   - from_variable: coarse_der_reactive_support.value
     to_variable: section_a_der_reactive_support.value
     description: Same physical quantity at the same stated boundary; original fine
@@ -843,26 +753,6 @@ system:
     description: Same physical quantity at the same stated boundary; original fine
       supplied signal remains authoritative.
     scale: 1.0e-06
-  - from_variable: coarse_feeder_load_apparent.value
-    to_variable: feeder_load_apparent.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
-  - from_variable: coarse_feeder_load_power_factor.value
-    to_variable: feeder_load_power_factor.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-09
-  - from_variable: coarse_feeder_min_voltage_pu.value
-    to_variable: feeder_min_voltage_pu.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-09
-  - from_variable: coarse_feeder_max_voltage_pu.value
-    to_variable: feeder_max_voltage_pu.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-09
   - from_variable: coarse_extra_substation_apparent_power.value
     to_variable: substation_apparent_power.value
     scale: 1.0e-06
@@ -886,34 +776,23 @@ hierarchy:
     - reactive_power
     - voltage
     components:
-    - coarse_substation_active_import
     - coarse_der_active_generation
     - coarse_feeder_load_active
     - coarse_feeder_line_loss_active
-    - coarse_substation_reactive_import
     - coarse_der_reactive_support
     - coarse_feeder_load_reactive
     - coarse_feeder_reactive_loss
-    - coarse_feeder_load_apparent
-    - coarse_feeder_load_power_factor
-    - coarse_feeder_min_voltage_pu
-    - coarse_feeder_max_voltage_pu
     - coarse_feeder_active_balance
     - coarse_feeder_reactive_balance
     - coarse_feeder_load_power_factor_check
-    - coarse_feeder_min_voltage_check
-    - coarse_feeder_max_voltage_check
     - coarse_total_reactive_loss
     - coarse_extra_substation_apparent_power
     - coarse_extra_substation_power_factor
     - coarse_extra_substation_power_factor_check
     required_variables:
-    - coarse_substation_active_import.value
     - coarse_der_active_generation.value
     - coarse_feeder_load_active.value
     - coarse_feeder_line_loss_active.value
-    - coarse_feeder_load_power_factor.value
-    - coarse_feeder_min_voltage_pu.value
   - id: substation_transformer
     name: Substation transformer
     level: 1
@@ -1025,8 +904,6 @@ hierarchy:
     - coarse_feeder_active_balance
     - coarse_feeder_reactive_balance
     - coarse_feeder_load_power_factor_check
-    - coarse_feeder_min_voltage_check
-    - coarse_feeder_max_voltage_check
   refinement_rules:
   - id: refine_distribution_power_der_level_0
     block_id: distribution_power_der
@@ -1125,18 +1002,28 @@ metadata:
 fault_variants:
 - id: missing_line_loss
   kind: fault
-  description: Original physical conflict on the actual supplied same-boundary fine
-    signal.
+  description: 'A supplied-signal fault: total_line_loss_active.value reads 5000;
+    it fails in distribution_power_der, power_quality_voltage.'
   changes:
   - variable: total_line_loss_active.value
     set: 5000.0
   expect_blocks:
   - distribution_power_der
   - power_quality_voltage
+- id: battery_discharge_active_sensor_gain
+  kind: fault
+  description: The battery_discharge_active.value sensor reads 50% high (gain error);
+    its own relation fails in der_interface.
+  changes:
+  - variable: battery_discharge_active.value
+    scale: 1.5
+  expect_blocks:
+  - der_interface
 - id: within_original_tolerance
   kind: benign
-  description: Nonzero roundoff-scale supplied-signal change below existing scales;
-    final actual neutrality remains to verify.
+  description: 'Measurement error inside the declared tolerance: substation_power_factor.value
+    reads +3e-10 1; it moves a checked residual by about 0.3 of its scale, below the
+    audit threshold, and must stay neutral.'
   changes:
   - variable: substation_power_factor.value
-    offset: 1.0000000000000002e-12
+    offset: 3.0e-10

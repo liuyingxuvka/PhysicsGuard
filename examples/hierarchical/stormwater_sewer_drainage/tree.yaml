@@ -11,39 +11,6 @@ description: One connected coarse-to-fine audit tree. Gross catchment plus sewer
 system:
   system_name: stormwater_sewer_drainage_level_1_catchment_conveyance_storage_pump
   components:
-  - id: coarse_rainfall_runoff_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 200.0
-      scale: 100.0
-      external_signal: mapped_rainfall_runoff_mass_flow
-      mapping_confidence: template
-  - id: coarse_sanitary_base_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 50.0
-      scale: 10.0
-      external_signal: mapped_sanitary_base_mass_flow
-      mapping_confidence: template
-  - id: coarse_upstream_inflow_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 30.0
-      scale: 10.0
-      external_signal: mapped_upstream_inflow_mass_flow
-      mapping_confidence: template
   - id: coarse_total_network_inflow_mass_flow
     type: MappedSignalModule
     parameters:
@@ -54,39 +21,6 @@ system:
       initial_guess: 280.0
       scale: 100.0
       external_signal: mapped_total_network_inflow_mass_flow
-      mapping_confidence: template
-  - id: coarse_treatment_outflow_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 210.0
-      scale: 100.0
-      external_signal: mapped_treatment_outflow_mass_flow
-      mapping_confidence: template
-  - id: coarse_controlled_overflow_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 20.0
-      scale: 10.0
-      external_signal: mapped_controlled_overflow_mass_flow
-      mapping_confidence: template
-  - id: coarse_infiltration_to_groundwater_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 10.0
-      scale: 10.0
-      external_signal: mapped_infiltration_to_groundwater_mass_flow
       mapping_confidence: template
   - id: coarse_network_storage_accumulation_rate
     type: MappedSignalModule
@@ -110,144 +44,35 @@ system:
       scale: 0.1
       external_signal: mapped_overflow_fraction
       mapping_confidence: template
-  - id: coarse_pollutant_inflow_load
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 0.5
-      scale: 0.1
-      external_signal: mapped_pollutant_inflow_load
-      mapping_confidence: template
-  - id: coarse_pollutant_treated_discharge_load
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 0.25
-      scale: 0.1
-      external_signal: mapped_pollutant_treated_discharge_load
-      mapping_confidence: template
-  - id: coarse_pollutant_overflow_load
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 0.0625
-      scale: 0.01
-      external_signal: mapped_pollutant_overflow_load
-      mapping_confidence: template
-  - id: coarse_pollutant_removed_load
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 0.125
-      scale: 0.1
-      external_signal: mapped_pollutant_removed_load
-      mapping_confidence: template
-  - id: coarse_pollutant_storage_rate
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: -1000000.0
-      upper_bound: 1000000.0
-      initial_guess: 0.0625
-      scale: 0.01
-      external_signal: mapped_pollutant_storage_rate
-      mapping_confidence: template
-  - id: coarse_pump_station_electric_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 12000.0
-      scale: 10000.0
-      external_signal: mapped_pump_station_electric_power
-      mapping_confidence: template
-  - id: coarse_pump_hydraulic_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 8000.0
-      scale: 1000.0
-      external_signal: mapped_pump_hydraulic_power
-      mapping_confidence: template
-  - id: coarse_pump_loss_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 4000.0
-      scale: 1000.0
-      external_signal: mapped_pump_loss_power
-      mapping_confidence: template
   - id: coarse_total_network_inflow_check
     type: SumModule
     parameters:
       input_variables:
-      - coarse_rainfall_runoff_mass_flow.value
-      - coarse_sanitary_base_mass_flow.value
-      - coarse_upstream_inflow_mass_flow.value
+      - rainfall_runoff_mass_flow.value
+      - sanitary_base_mass_flow.value
+      - upstream_inflow_mass_flow.value
       output_variable: coarse_total_network_inflow_mass_flow.value
       residual_scale: 0.01
   - id: coarse_network_mass_balance
     type: AggregateMassBalanceModule
     parameters:
       mass_in_variables:
-      - coarse_rainfall_runoff_mass_flow.value
-      - coarse_sanitary_base_mass_flow.value
-      - coarse_upstream_inflow_mass_flow.value
+      - rainfall_runoff_mass_flow.value
+      - sanitary_base_mass_flow.value
+      - upstream_inflow_mass_flow.value
       mass_out_variables:
-      - coarse_treatment_outflow_mass_flow.value
-      - coarse_controlled_overflow_mass_flow.value
-      - coarse_infiltration_to_groundwater_mass_flow.value
+      - treatment_outflow_mass_flow.value
+      - controlled_overflow_mass_flow.value
+      - infiltration_to_groundwater_mass_flow.value
       mass_storage_rate_variable: coarse_network_storage_accumulation_rate.value
       residual_scale_kg_s: 0.01
   - id: coarse_overflow_fraction_check
     type: RatioModule
     parameters:
-      numerator_variable: coarse_controlled_overflow_mass_flow.value
+      numerator_variable: controlled_overflow_mass_flow.value
       denominator_variable: coarse_total_network_inflow_mass_flow.value
       output_variable: coarse_overflow_fraction.value
       residual_scale: 0.001
-  - id: coarse_pollutant_load_balance
-    type: AggregateMassBalanceModule
-    parameters:
-      mass_in_variables:
-      - coarse_pollutant_inflow_load.value
-      mass_out_variables:
-      - coarse_pollutant_treated_discharge_load.value
-      - coarse_pollutant_overflow_load.value
-      - coarse_pollutant_removed_load.value
-      mass_storage_rate_variable: coarse_pollutant_storage_rate.value
-      residual_scale_kg_s: 0.001
-  - id: coarse_pump_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_pump_station_electric_power.value
-      load_power_variables:
-      - coarse_pump_hydraulic_power.value
-      loss_power_variables:
-      - coarse_pump_loss_power.value
-      residual_scale_W: 100.0
   - id: coarse_extra_detention_inflow_mass_flow
     type: MappedSignalModule
     parameters:
@@ -806,62 +631,6 @@ system:
     tolerance: 1.0e-08
     audit_threshold: 1.0
   connections:
-  - from_variable: coarse_rainfall_runoff_mass_flow.value
-    to_variable: rainfall_runoff_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_sanitary_base_mass_flow.value
-    to_variable: sanitary_base_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_upstream_inflow_mass_flow.value
-    to_variable: upstream_inflow_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_treatment_outflow_mass_flow.value
-    to_variable: treatment_outflow_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_controlled_overflow_mass_flow.value
-    to_variable: controlled_overflow_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_infiltration_to_groundwater_mass_flow.value
-    to_variable: infiltration_to_groundwater_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_pollutant_inflow_load.value
-    to_variable: pollutant_inflow_load.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-09
-  - from_variable: coarse_pollutant_treated_discharge_load.value
-    to_variable: pollutant_treated_discharge_load.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-09
-  - from_variable: coarse_pollutant_overflow_load.value
-    to_variable: pollutant_overflow_load.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-09
-  - from_variable: coarse_pollutant_removed_load.value
-    to_variable: pollutant_removed_load.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-09
-  - from_variable: coarse_pollutant_storage_rate.value
-    to_variable: pollutant_storage_rate.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-09
-  - from_variable: coarse_pump_station_electric_power.value
-    to_variable: pump_station_electric_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_pump_hydraulic_power.value
-    to_variable: pump_hydraulic_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_pump_loss_power.value
-    to_variable: pump_loss_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
   - from_variable: coarse_extra_detention_inflow_mass_flow.value
     to_variable: detention_inflow_mass_flow.value
     description: Same physical quantity within this explicitly scoped control volume.
@@ -893,28 +662,12 @@ hierarchy:
     - pollutant_load
     - pump_power
     components:
-    - coarse_rainfall_runoff_mass_flow
-    - coarse_sanitary_base_mass_flow
-    - coarse_upstream_inflow_mass_flow
     - coarse_total_network_inflow_mass_flow
-    - coarse_treatment_outflow_mass_flow
-    - coarse_controlled_overflow_mass_flow
-    - coarse_infiltration_to_groundwater_mass_flow
     - coarse_network_storage_accumulation_rate
     - coarse_overflow_fraction
-    - coarse_pollutant_inflow_load
-    - coarse_pollutant_treated_discharge_load
-    - coarse_pollutant_overflow_load
-    - coarse_pollutant_removed_load
-    - coarse_pollutant_storage_rate
-    - coarse_pump_station_electric_power
-    - coarse_pump_hydraulic_power
-    - coarse_pump_loss_power
     - coarse_total_network_inflow_check
     - coarse_network_mass_balance
     - coarse_overflow_fraction_check
-    - coarse_pollutant_load_balance
-    - coarse_pump_power_balance
     - coarse_extra_detention_inflow_mass_flow
     - coarse_extra_detention_outflow_mass_flow
     - coarse_extra_detention_overflow_mass_flow
@@ -922,12 +675,7 @@ hierarchy:
     - coarse_storage_from_control_volumes
     - coarse_extra_detention_storage_balance
     required_variables:
-    - coarse_rainfall_runoff_mass_flow.value
-    - coarse_treatment_outflow_mass_flow.value
-    - coarse_controlled_overflow_mass_flow.value
     - coarse_network_storage_accumulation_rate.value
-    - coarse_pollutant_inflow_load.value
-    - coarse_pump_station_electric_power.value
   - id: catchment_runoff
     name: Catchment runoff and inlet capture
     level: 1
@@ -1017,8 +765,6 @@ hierarchy:
     - pump_station
     - power
     - wet_well
-    refines:
-    - coarse_pump_power_balance
   - id: pollutant_load
     name: Pollutant load accounting
     level: 1
@@ -1034,8 +780,6 @@ hierarchy:
     - pollutant_load
     - water_quality
     - accounting
-    refines:
-    - coarse_pollutant_load_balance
   refinement_rules:
   - id: refine_stormwater_sewer_drainage_level_0
     block_id: stormwater_sewer_drainage
@@ -1177,16 +921,29 @@ metadata:
 fault_variants:
 - id: unreported_overflow
   kind: fault
-  description: Original omitted-flow fault, evaluated on the declared detailed operating
-    point.
+  description: 'A supplied-signal fault: controlled_overflow_mass_flow.value reads
+    0; it fails in stormwater_sewer_drainage, sewer_conveyance.'
   changes:
   - variable: controlled_overflow_mass_flow.value
     set: 0.0
   expect_blocks:
   - stormwater_sewer_drainage
   - sewer_conveyance
+- id: catchment_surface_storage_rate_sensor_gain
+  kind: fault
+  description: The catchment_surface_storage_rate.value sensor reads 50% high (gain
+    error); its own relation fails in catchment_runoff, stormwater_sewer_drainage.
+  changes:
+  - variable: catchment_surface_storage_rate.value
+    scale: 1.5
+  expect_blocks:
+  - catchment_runoff
+  - stormwater_sewer_drainage
 - id: within_original_tolerance
   kind: benign
   changes:
   - variable: sewer_storage_rate.value
-    offset: 1.0000000000000002e-12
+    offset: 3.0e-07
+  description: 'Measurement error inside the declared tolerance: sewer_storage_rate.value
+    reads +3e-07 kg/s; it moves a checked residual by about 0.3 of its scale, below
+    the audit threshold, and must stay neutral.'

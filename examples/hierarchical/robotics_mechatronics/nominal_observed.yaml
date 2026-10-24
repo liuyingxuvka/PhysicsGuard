@@ -1,11 +1,10 @@
 # PhysicsGuard observed-values snapshot
-# Purpose: Authored nominal supplied signals only; coarse aliases remain derived, not additional measurements.
+# Purpose: Authored nominal supplied signals only.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
 # Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 observation_name: robotics_mechatronics_nominal
-description: Authored nominal supplied signals only; coarse aliases remain derived,
-  not additional measurements.
+description: Authored nominal supplied signals only.
 variables:
   dc_bus_power.value:
     value: 10000.0

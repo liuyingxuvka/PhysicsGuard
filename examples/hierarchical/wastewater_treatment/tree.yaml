@@ -4,9 +4,10 @@
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/wastewater_treatment/tree.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: wastewater_scoped_tree
-description: Global plant budget and separately scoped unit-accounting records in one audit tree. The
-  global budget is an independent supplied boundary record, not a same-operating-point whole-plant closure
-  derived or verified from these four unit records.
+description: Global plant budget and separately scoped unit-accounting records in
+  one audit tree. The global budget is an independent supplied boundary record, not
+  a same-operating-point whole-plant closure derived or verified from these four unit
+  records.
 system:
   system_name: wastewater_scoped_tree
   components:
@@ -1003,9 +1004,9 @@ hierarchy:
     - unit_clarifier_solids_balance
     - unit_sludge_recycle_split
     - unit_aeration_power_balance
-    description: Independent global budget plus parent-owned coarse books for each distinct unit boundary.
-      Unit refinements below check only their named unit books, never claim the global budget is closed
-      by unit records.
+    description: Independent global budget plus parent-owned coarse books for each
+      distinct unit boundary. Unit refinements below check only their named unit books,
+      never claim the global budget is closed by unit records.
   - id: biological_reactor
     name: Biological reactor
     level: 1
@@ -1103,8 +1104,9 @@ hierarchy:
     - plant.signal_mapping_confidence
     - plant.COD_basis
     - plant.TN_basis
-    rationale: Inspect the separately scoped unit records and their signal bases after a global-budget
-      discrepancy. These suggestions do not claim the four units establish same-point whole-plant closure.
+    rationale: Inspect the separately scoped unit records and their signal bases after
+      a global-budget discrepancy. These suggestions do not claim the four units establish
+      same-point whole-plant closure.
     priority: 10
   - id: refine_biological_reactor
     block_id: biological_reactor
@@ -1120,8 +1122,8 @@ hierarchy:
     next_required_parameters:
     - reactor.COD_basis
     - reactor.oxygen_transfer_basis
-    rationale: Reactor COD or oxygen accounting residual is high; inspect ASM-style component mapping
-      and oxygen demand terms before adding kinetics.
+    rationale: Reactor COD or oxygen accounting residual is high; inspect ASM-style
+      component mapping and oxygen demand terms before adding kinetics.
     priority: 20
   - id: refine_secondary_clarifier
     block_id: secondary_clarifier
@@ -1133,14 +1135,14 @@ hierarchy:
     - clarifier.underflow_tss_kg_s
     - clarifier.effluent_tss_kg_s
     - clarifier.sludge_blanket_or_capture_indicator
-    rationale: Clarifier solids residual is high; inspect TSS mappings, underflow/overflow split, and
-      waste-sludge accounting.
+    rationale: Clarifier solids residual is high; inspect TSS mappings, underflow/overflow
+      split, and waste-sludge accounting.
     priority: 15
   scoring:
     method: max
 metadata:
-  boundary: Global and unit records have separate declared control volumes and are not asserted to be
-    one reconciled whole-plant operating point.
+  boundary: Global and unit records have separate declared control volumes and are
+    not asserted to be one reconciled whole-plant operating point.
   not_inferred:
   - global waste sludge0.18 is not unit WAS0.07
   - global oxygen0.045 is not reactor transfer0.05
@@ -1152,16 +1154,17 @@ metadata:
     sludge_recycle: *id003
     aeration_energy: *id004
   limitations:
-  - Only exact same unit quantities are connected. No invented missing waste/air/loss stream closes any
-    gap.
-  - Global mass/COD/nitrogen/oxygen/electrical budgets remain independently supplied accounting checks.
-    Passing unit checks cannot license global plant closure.
-  - No dynamic ASM kinetics, biological rate inference or inferred cross-control-volume conversion.
+  - Only exact same unit quantities are connected. No invented missing waste/air/loss
+    stream closes any gap.
+  - Global mass/COD/nitrogen/oxygen/electrical budgets remain independently supplied
+    accounting checks. Passing unit checks cannot license global plant closure.
+  - No dynamic ASM kinetics, biological rate inference or inferred cross-control-volume
+    conversion.
 fault_variants:
 - id: global_cod_loss
   kind: fault
-  description: 'Original global conflict: supplied global oxidized COD changes from0.03 to0.02kg/s. It
-    is a global-budget fault, not a fabricated reactor reading.'
+  description: 'A supplied-signal fault: global_cod_oxidized.value reads 0.02; it
+    fails in wastewater_plant.'
   changes:
   - variable: global_cod_oxidized.value
     set: 0.02
@@ -1169,8 +1172,8 @@ fault_variants:
   - wastewater_plant
 - id: reactor_cod_loss
   kind: fault
-  description: A separately scoped reactor COD oxidation reading changes from0.03 to0.02kg/s; both its
-    unit coarse book and true reactor block see the same value.
+  description: A separately scoped reactor COD oxidation reading changes from0.03
+    to0.02kg/s; both its unit coarse book and true reactor block see the same value.
   changes:
   - variable: reactor_cod_oxidized.value
     set: 0.02
@@ -1179,8 +1182,9 @@ fault_variants:
   - biological_reactor
 - id: unit_flow_rounding
   kind: benign
-  description: Synthetic nonzero flow rounding below the unchanged original boundary scale; not a claim
-    about field-instrument resolution.
+  description: 'Measurement error inside the declared tolerance: underflow_flow.value
+    reads +3e-10 kg/s; it moves a checked residual by about 0.3 of its scale, below
+    the audit threshold, and must stay neutral.'
   changes:
   - variable: underflow_flow.value
-    offset: 1.0e-10
+    offset: 3.0e-10

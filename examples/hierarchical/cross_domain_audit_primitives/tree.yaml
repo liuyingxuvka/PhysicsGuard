@@ -1,11 +1,11 @@
 # PhysicsGuard hierarchical audit model
-# Purpose: One coarse-to-fine cross domain audit primitives audit; supplied quantities connect coarse balances to their finer relations.
+# Purpose: One cross domain audit primitives audit tree as a flat partition: no coarse level; each child block checks its own supplied signals.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/cross_domain_audit_primitives/tree.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: cross_domain_audit_primitives
-description: One coarse-to-fine cross domain audit primitives audit; supplied quantities
-  connect coarse balances to their finer relations.
+description: 'One cross domain audit primitives audit tree as a flat partition: no
+  coarse level; each child block checks its own supplied signals.'
 hierarchy:
   blocks:
   - id: cross_domain_audit_primitives
@@ -17,19 +17,8 @@ hierarchy:
     - sensor
     - loss
     - time_alignment
-    components:
-    - coarse_temperature_c_to_k
-    - coarse_pressure_sensor_scale
-    - coarse_metered_source_power
-    - coarse_metered_load_power
-    - coarse_unmetered_loss_power
-    - coarse_sample_delay
-    - coarse_boundary_loss_power_balance
-    - coarse_sample_delay_range
-    required_variables:
-    - coarse_temperature_c_to_k.x
-    - coarse_temperature_c_to_k.y
-    - coarse_pressure_sensor_scale.true_value
+    components: []
+    required_variables: []
   - id: explicit_unit_conversion
     name: Explicit unit conversion
     level: 1
@@ -38,8 +27,6 @@ hierarchy:
     - temperature_c_to_k
     tags:
     - unit_conversion
-    refines:
-    - coarse_temperature_c_to_k
   - id: sensor_calibration
     name: Sensor calibration
     level: 1
@@ -48,8 +35,6 @@ hierarchy:
     - pressure_sensor_scale
     tags:
     - sensor
-    refines:
-    - coarse_pressure_sensor_scale
   - id: boundary_loss_accounting
     name: Boundary loss accounting
     level: 1
@@ -61,8 +46,6 @@ hierarchy:
     - boundary_loss_power_balance
     tags:
     - boundary_loss
-    refines:
-    - coarse_boundary_loss_power_balance
   - id: time_alignment
     name: Time alignment
     level: 1
@@ -72,37 +55,7 @@ hierarchy:
     - sample_delay_range
     tags:
     - time_alignment
-    refines:
-    - coarse_sample_delay_range
-  refinement_rules:
-  - id: refine_cross_domain_audit_primitives_level_0
-    block_id: cross_domain_audit_primitives
-    trigger_diagnostic_keys:
-    - unit_scale_mismatch
-    - sensor_scale_offset_mismatch
-    - aggregate_power_balance_mismatch
-    - range_check_violation
-    score_threshold: 1.0
-    next_template_ids:
-    - explicit_unit_conversion
-    - sensor_calibration
-    - boundary_loss_accounting
-    - time_alignment
-    next_required_variables:
-    - unit.source_value
-    - unit.target_value
-    - sensor.true_value
-    - sensor.measured_value
-    - boundary.source_power_W
-    - timing.sample_delay_s
-    next_required_parameters:
-    - explicit_unit_factor_offset
-    - sensor_calibration_basis
-    - meter_grouping
-    - sample_alignment_basis
-    rationale: Primitive audit residual is high; refine unit, sensor, boundary, and
-      timing checks before adding domain-specific physics.
-    priority: 10
+  refinement_rules: []
   scoring:
     method: max
 metadata:
@@ -142,89 +95,6 @@ system:
     value: 0.2
     variable: sample_delay.value
   components:
-  - id: coarse_temperature_c_to_k
-    type: UnitScaleModule
-    parameters:
-      factor: 1.0
-      offset: 273.15
-      source_unit: degC
-      target_unit: K
-      x_initial_guess: 25.0
-      y_initial_guess: 298.15
-      x_scale: 10.0
-      y_scale: 10.0
-      residual_scale: 0.01
-  - id: coarse_pressure_sensor_scale
-    type: SensorScaleOffsetModule
-    parameters:
-      scale_factor: 1.0
-      offset: 0.0
-      true_initial_guess: 200000.0
-      measured_initial_guess: 200000.0
-      true_scale: 100000.0
-      measured_scale: 100000.0
-      residual_scale: 100.0
-  - id: coarse_metered_source_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000000.0
-      initial_guess: 100000.0
-      scale: 10000.0
-      external_signal: mapped_metered_source_power
-      mapping_confidence: template
-  - id: coarse_metered_load_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000000.0
-      initial_guess: 80000.0
-      scale: 8000.0
-      external_signal: mapped_metered_load_power
-      mapping_confidence: template
-  - id: coarse_unmetered_loss_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000000.0
-      initial_guess: 20000.0
-      scale: 2000.0
-      external_signal: mapped_unmetered_loss_power
-      mapping_confidence: template
-  - id: coarse_sample_delay
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: s
-      lower_bound: 0.0
-      upper_bound: 1000000000000.0
-      initial_guess: 0.2
-      scale: 1.0
-      external_signal: mapped_sample_delay
-      mapping_confidence: template
-  - id: coarse_boundary_loss_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_metered_source_power.value
-      load_power_variables:
-      - coarse_metered_load_power.value
-      - coarse_unmetered_loss_power.value
-      residual_scale_W: 100.0
-  - id: coarse_sample_delay_range
-    type: RangeCheckModule
-    parameters:
-      variable: coarse_sample_delay.value
-      lower_bound: 0.0
-      upper_bound: 1.0
-      residual_scale: 0.1
-      role: post_check
   - id: temperature_c_to_k
     parameters:
       factor: 1.0
@@ -312,54 +182,31 @@ system:
     audit_threshold: 1.0
     tolerance: 1.0e-08
   system_name: cross_domain_audit_primitives
-  connections:
-  - from_variable: coarse_temperature_c_to_k.x
-    to_variable: temperature_c_to_k.x
-    description: Same supplied degC quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_temperature_c_to_k.y
-    to_variable: temperature_c_to_k.y
-    description: Same supplied K quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_pressure_sensor_scale.true_value
-    to_variable: pressure_sensor_scale.true_value
-    description: Same supplied declared-unit quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_pressure_sensor_scale.measured_value
-    to_variable: pressure_sensor_scale.measured_value
-    description: Same supplied declared-unit quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_metered_source_power.value
-    to_variable: metered_source_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_metered_load_power.value
-    to_variable: metered_load_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_unmetered_loss_power.value
-    to_variable: unmetered_loss_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_sample_delay.value
-    to_variable: sample_delay.value
-    description: Same supplied s quantity; no additional observation.
-    scale: 1.0e-06
+  connections: []
 fault_variants:
 - id: bad_temperature_offset
   kind: fault
-  description: Original physical supplied-signal conflict; coarse aliases propagate
-    through connections.
+  description: 'A supplied-signal fault: temperature_c_to_k.y reads 25; it fails in
+    explicit_unit_conversion.'
   changes:
   - variable: temperature_c_to_k.y
     set: 25.0
   expect_blocks:
-  - cross_domain_audit_primitives
   - explicit_unit_conversion
+- id: metered_load_power_sensor_gain
+  kind: fault
+  description: The metered_load_power.value sensor reads 50% high (gain error); its
+    own relation fails in boundary_loss_accounting.
+  changes:
+  - variable: metered_load_power.value
+    scale: 1.5
+  expect_blocks:
+  - boundary_loss_accounting
 - id: within_original_tolerance
   kind: benign
-  description: Nonzero supplied-signal perturbation below unchanged declared normalizations;
-    native neutrality remains to check.
+  description: 'Measurement error inside the declared tolerance: sample_delay.value
+    reads +3e-07 s; it moves a checked residual by about 0.3 of its scale, below the
+    audit threshold, and must stay neutral.'
   changes:
   - variable: sample_delay.value
-    offset: 1.0e-09
+    offset: 3.0e-07

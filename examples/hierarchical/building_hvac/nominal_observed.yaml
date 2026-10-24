@@ -194,7 +194,7 @@ metadata:
   value_origin: Untouched original BoundedSolver.solve variables captured during native
     cli.main hierarchy run tree.yaml --json.
   source_audit: tree.yaml
-  measurement_scope: Coarse aliases, COP and duplicate campus meter bookkeeping aliases
+  measurement_scope: Root-level coarse signals, COP and duplicate campus meter bookkeeping aliases
     are omitted and propagated or derived. Thermal power channels represent ordinary
     instrument-side flow/temperature calorimetry or integrated heat-flux metering;
     the audit does not infer them from nominal cooling balances.

@@ -7,18 +7,23 @@ Starter packs are not solver replacements. They should help an AI agent locate s
 ## Start With A Connected Tree
 
 A starter pack uses one `tree.yaml` and one paired `nominal_observed.yaml`, plus
-only necessary data files. The root owns its coarse balances; finer blocks live
-in the same file and `refines` points only to coarse components owned by the
-immediate parent. Connections share the same physical quantities. Rules name
+only necessary data files. The root holds only real system-level relations;
+when there are none the tree is a flat partition (the header says "flat
+partition: no coarse level") and children carry no `refines`. For coarse to fine,
+read `coolant_loop` and `heated_tank`: finer blocks live in the same file and
+`refines` points only to coarse components owned by the immediate parent. Connections share the same physical quantities. Rules name
 real blocks in that tree, faults and benign perturbations are `fault_variants`,
 and every supplied snapshot signal keeps its SI unit, external name and source.
+Each pack has at least two faults that fail different blocks (so `hierarchy
+variants --pairs` has pairs to separate) and one benign measurement error sized to
+0.1-0.5 of a checked residual's scale, which must stay neutral.
 Every starter pack below uses this form; no separate level or conflict copies remain.
 
-| Pack | Start here | Paired snapshot |
-| --- | --- | --- |
-| Coolant loop | `examples/hierarchical/coolant_loop/tree.yaml` | `examples/hierarchical/coolant_loop/nominal_observed.yaml` |
-| Fuel-cell system | `examples/hierarchical/fuel_cell_system/tree.yaml` | `examples/hierarchical/fuel_cell_system/nominal_observed.yaml` |
-| Building HVAC | `examples/hierarchical/building_hvac/tree.yaml` | `examples/hierarchical/building_hvac/nominal_observed.yaml` |
+| Pack | Start here | Paired snapshot | coarse level |
+| --- | --- | --- | --- |
+| Coolant loop | `examples/hierarchical/coolant_loop/tree.yaml` | `examples/hierarchical/coolant_loop/nominal_observed.yaml` | real relations |
+| Fuel-cell system | `examples/hierarchical/fuel_cell_system/tree.yaml` | `examples/hierarchical/fuel_cell_system/nominal_observed.yaml` | real relations |
+| Building HVAC | `examples/hierarchical/building_hvac/tree.yaml` | `examples/hierarchical/building_hvac/nominal_observed.yaml` | real relations |
 
 Use these four entrypoints (replace `coolant_loop` with either other pack):
 
@@ -58,7 +63,7 @@ hydraulic-network or heat-exchanger-map simulation. The paired snapshot selects
 13 of the reference solution's 27 variables: separate input/rejected heat meters,
 main flow, coolant/air temperatures, pump pressures and shaft power, and inventory
 temperatures. Coarse heat-rejection and radiator-duty faults retain the two old
-conflict directions; `small_shaft_power_shift` adds 1 W to the shaft-power reading
+conflict directions; `small_shaft_power_shift` adds 4.73 W to the shaft-power reading
 as a benign measurement perturbation. These are synthetic meter projections,
 with proposed mappings that still need review for any real plant.
 
@@ -88,7 +93,7 @@ valve setting, and coolant temperatures, flow, pressures and heat meters.
 Unmeasured reaction rates, repeated ports, efficiency states and intermediates
 are omitted. The two faults are `hydrogen_power_underread` (the reacted-energy
 channel) and `cathode_air_underfeed` (air feed); `net_power_rounding` adds a benign
-1 W net-power perturbation. Keep any remaining `missing_required_variables` and
+300 W net-power perturbation (0.3 of the 1 kW balance scale). Keep any remaining `missing_required_variables` and
 `unchecked_residuals` visible: nominal `audit_pass` does not mean every relation
 was evaluable or that proposed meter mappings have been verified on a real plant.
 
@@ -101,7 +106,7 @@ heat gain, 26 kW of evaporator cooling, 8 kW of chiller input and 34 kW of conde
 rejection. The district interface meters that same campus chilled-water link;
 it is not a second cooling source. The paired snapshot retains heat-flow and
 electrical meters (15 of 32 reference variables), including an independent
-air-side fan-heat meter, while omitting duplicate coarse aliases, COP and district
+air-side fan-heat meter, while omitting the root-level coarse signals, COP and district
 bookkeeping aliases.
 Direct child `refines` links name the root's zone, chiller and electrical
 balances. Fan heat and the scope of steady positive-power accounting are explicit;
@@ -110,6 +115,9 @@ no building dynamics or chiller-performance map is recovered. The
 The benign `fan_auxiliary_plus_50W` changes fan power, feeder power and independently
 metered fan heat together by 50 W so both electrical and heat accounting stay
 closed; it is not an isolated faulty meter reading.
+`chilled_water_distribution_gain_within_tolerance` offsets one heat meter by 30 W
+(0.3 of its residual scale) and must stay neutral; `chilled_water_pump_power_sensor_gain`
+is a second fault on the plant electrical balance.
 
 ## Cross-Domain Pattern
 
@@ -192,19 +200,19 @@ Do not add detailed models, hidden unit conversion tables, empirical correlation
 
 Starter trees are maintained directly; the one-time generator and copied level/conflict files are removed. Each pack has one connected tree, a nominal snapshot and declared fault/benign variants. These are starter packs, not detailed component libraries. They should be used to test signal mapping, units, accounting boundaries, and first-pass physical plausibility before adding domain-specific modules.
 
-| Pack | Path | Included templates | First useful checks |
-| --- | --- | --- | --- |
-| Cross-domain audit primitives | `examples/hierarchical/cross_domain_audit_primitives/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | unit conversion, sensor scale/offset, boundary loss, sample delay |
-| Oil/gas pipeline and storage | `examples/hierarchical/oil_gas_pipeline_storage/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | pipeline mass closure, compression power, tank inventory |
-| Water supply network | `examples/hierarchical/water_supply_network/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | source flow, pump power, leakage, reservoir storage |
-| Manufacturing thermal process | `examples/hierarchical/manufacturing_thermal_process/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | furnace heat, line power, material flow, exhaust loss |
-| Mining and metallurgy | `examples/hierarchical/mining_metallurgy/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | ore split, milling power, slurry water, tailings accounting |
-| Combustion boiler and furnace | `examples/hierarchical/combustion_boiler_furnace/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | fuel/air/flue mass, useful heat, stack loss, draft fan power |
-| Geothermal underground wells | `examples/hierarchical/geothermal_underground_wells/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | brine production/reinjection, heat extraction, pump power |
-| Cold-chain logistics | `examples/hierarchical/cold_chain_logistics/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | warehouse/truck heat loads, refrigeration power, fleet charging |
-| Robotics and mechatronics | `examples/hierarchical/robotics_mechatronics/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | DC bus accounting, joint losses, drive heat, actuator supply |
-| Aerospace and satellite thermal | `examples/hierarchical/aerospace_satellite_thermal/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | spacecraft power, battery SOC, radiator heat, propellant mass |
-| Medical and bioprocess equipment | `examples/hierarchical/medical_bioprocess_equipment/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | ventilator flow, dialysis mass, sterilizer heat, incubator thermal load |
+| Pack | Path | Included templates | First useful checks | coarse level |
+| --- | --- | --- | --- | --- |
+| Cross-domain audit primitives | `examples/hierarchical/cross_domain_audit_primitives/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | unit conversion, sensor scale/offset, boundary loss, sample delay | none |
+| Oil/gas pipeline and storage | `examples/hierarchical/oil_gas_pipeline_storage/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | pipeline mass closure, compression power, tank inventory | none |
+| Water supply network | `examples/hierarchical/water_supply_network/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | source flow, pump power, leakage, reservoir storage | none |
+| Manufacturing thermal process | `examples/hierarchical/manufacturing_thermal_process/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | furnace heat, line power, material flow, exhaust loss | none |
+| Mining and metallurgy | `examples/hierarchical/mining_metallurgy/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | ore split, milling power, slurry water, tailings accounting | none |
+| Combustion boiler and furnace | `examples/hierarchical/combustion_boiler_furnace/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | fuel/air/flue mass, useful heat, stack loss, draft fan power | none |
+| Geothermal underground wells | `examples/hierarchical/geothermal_underground_wells/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | brine production/reinjection, heat extraction, pump power | none |
+| Cold-chain logistics | `examples/hierarchical/cold_chain_logistics/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | warehouse/truck heat loads, refrigeration power, fleet charging | none |
+| Robotics and mechatronics | `examples/hierarchical/robotics_mechatronics/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | DC bus accounting, joint losses, drive heat, actuator supply | none |
+| Aerospace and satellite thermal | `examples/hierarchical/aerospace_satellite_thermal/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | spacecraft power, battery SOC, radiator heat, propellant mass | none |
+| Medical and bioprocess equipment | `examples/hierarchical/medical_bioprocess_equipment/` | `tree.yaml`, `tree.yaml`, `tree.yaml` | ventilator flow, dialysis mass, sterilizer heat, incubator thermal load | none |
 
 ## Flagship Level 2 Entrypoints
 
@@ -225,7 +233,7 @@ The second starter pack is under:
 examples/hierarchical/renewable_microgrid/
 ```
 
-`tree.yaml` holds blocks `renewable_microgrid`, `pv_system`, `wind_system`, `battery_storage`, `grid_interconnect`, `load_dispatch`. Fault variants: `unserved_load`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `renewable_microgrid`, `pv_system`, `wind_system`, `battery_storage`, `grid_interconnect`, `load_dispatch`. Fault variants: `unserved_load`, `battery_capacity_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement a full PV performance model, wind turbine aerodynamics, AC power-flow, or dispatch optimization. They check whether mapped signals close at a snapshot before asking for finer signals such as module temperature, inverter DC voltage/current, battery energy previous/current, or import/export metering conventions.
 
@@ -237,7 +245,7 @@ The third starter pack is under:
 examples/hierarchical/building_hvac/
 ```
 
-`tree.yaml` holds blocks `building_hvac`, `zone_loads`, `chilled_water_loop`, `chiller_condenser`, `air_handler`, `plant_electrical`, `district_energy_interface`. Fault variants: `unmet_cooling_load`; benign variants: `fan_auxiliary_plus_50W`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `building_hvac`, `zone_loads`, `chilled_water_loop`, `chiller_condenser`, `air_handler`, `plant_electrical`, `district_energy_interface`. Fault variants: `unmet_cooling_load`, `chilled_water_pump_power_sensor_gain`; benign variants: `fan_auxiliary_plus_50W`, `chilled_water_distribution_gain_within_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement EnergyPlus-style building simulation, chiller or cooling-tower performance maps, detailed air-loop psychrometrics, hydronic network hydraulics, or district-energy network simulation. They check whether mapped snapshot signals close before asking for finer signals such as zone air states, chilled-water temperatures, condenser-water temperatures, COP basis, auxiliary power grouping, or district metering conventions.
 
@@ -249,7 +257,7 @@ The fourth starter pack is under:
 examples/hierarchical/distribution_power_der/
 ```
 
-`tree.yaml` holds blocks `distribution_power_der`, `substation_transformer`, `feeder_section_a`, `feeder_section_b`, `der_interface`, `power_quality_voltage`. Fault variants: `missing_line_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `distribution_power_der`, `substation_transformer`, `feeder_section_a`, `feeder_section_b`, `der_interface`, `power_quality_voltage`. Fault variants: `missing_line_loss`, `battery_discharge_active_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement AC load flow, phase-unbalanced distribution simulation, impedance-based voltage drop, protection coordination, or detailed inverter controls. They check whether mapped snapshot signals close before asking for finer signals such as per-section power flow, per-phase P/Q/S, voltage bases, section current, line impedance, inverter reactive-power convention, or DER import/export metering basis.
 
@@ -261,7 +269,7 @@ The fifth starter pack is under:
 examples/hierarchical/process_industry/
 ```
 
-`tree.yaml` holds blocks `process_industry`, `reactor_conversion`, `separator_split`, `heat_exchange_utility`, `rotating_equipment`. Fault variants: `missing_cooling_duty`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `process_industry`, `reactor_conversion`, `separator_split`, `heat_exchange_utility`, `rotating_equipment`. Fault variants: `missing_cooling_duty`, `agitator_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement reaction kinetics, detailed separator phase equilibrium, process property packages, heat-exchanger rating, pump/compressor maps, valve characteristics, or full process-flow simulation. They check whether mapped snapshot signals close before asking for finer signals such as stream compositions, conversion basis, split basis, heat-duty sign convention, temperature states, pressure states, and utility-meter grouping.
 
@@ -273,7 +281,7 @@ The sixth starter pack is under:
 examples/hierarchical/stormwater_sewer_drainage/
 ```
 
-`tree.yaml` holds blocks `stormwater_sewer_drainage`, `catchment_runoff`, `sewer_conveyance`, `detention_storage`, `pump_station`, `pollutant_load`. Fault variants: `unreported_overflow`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `stormwater_sewer_drainage`, `catchment_runoff`, `sewer_conveyance`, `detention_storage`, `pump_station`, `pollutant_load`. Fault variants: `unreported_overflow`, `catchment_surface_storage_rate_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement a SWMM replacement, rainfall-runoff response model, Saint-Venant hydraulic routing, pump curves, detention routing, sediment transport, or water-quality kinetics. They check whether mapped snapshot signals close before asking for finer signals such as runoff partition, inlet capture, overflow boundary, storage sign convention, pump meter grouping, wet-well level basis, or pollutant load basis.
 
@@ -285,7 +293,7 @@ The seventh starter pack is under:
 examples/hierarchical/industrial_utilities/
 ```
 
-`tree.yaml` holds blocks `industrial_utilities`, `steam_condensate`, `compressed_air`, `refrigeration_chilled_water`, `cooling_water`, `utility_power`. Fault variants: `missing_air_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `industrial_utilities`, `steam_condensate`, `compressed_air`, `refrigeration_chilled_water`, `cooling_water`, `utility_power`. Fault variants: `missing_air_leak`, `boiler_auxiliary_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement plant-wide utility optimization, boiler maps, compressor maps, chiller maps, cooling-tower performance, steam-network hydraulics, or compressed-air network hydraulics. They check whether mapped snapshot signals close before asking for finer signals such as steam metering boundary, condensate return basis, air leak boundary, chiller power grouping, cooling-water heat-rejection boundary, or makeup/blowdown basis.
 
@@ -297,7 +305,7 @@ The eighth implemented starter pack is under:
 examples/hierarchical/data_center_electronics_cooling/
 ```
 
-`tree.yaml` holds blocks `data_center_electronics_cooling`, `it_load_rack_heat`, `facility_power_chain`, `room_air_cooling`, `coolant_loop`, `cooling_plant_efficiency`. Fault variants: `underreported_cooling_capacity`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `data_center_electronics_cooling`, `it_load_rack_heat`, `facility_power_chain`, `room_air_cooling`, `coolant_loop`, `cooling_plant_efficiency`. Fault variants: `underreported_cooling_capacity`, `coolant_heat_pickup_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement CFD, airflow-network simulation, chip/package thermal models, UPS/PDU equipment models, chiller/CDU/economizer maps, or detailed cooling-control optimization. They check whether mapped snapshot signals close before asking for finer signals such as IT power meter boundary, PUE meter grouping, room heat-gain boundary, cooling power grouping, coolant heat boundary, or temperature basis.
 
@@ -309,7 +317,7 @@ The ninth implemented starter pack is under:
 examples/hierarchical/mobility_extensions/
 ```
 
-`tree.yaml` holds blocks `mobility_extensions`, `charging_infrastructure`, `rail_traction`, `marine_propulsion`, `aviation_power`, `offroad_hydraulics`. Fault variants: `missing_charger_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `mobility_extensions`, `charging_infrastructure`, `rail_traction`, `marine_propulsion`, `aviation_power`, `offroad_hydraulics`. Fault variants: `missing_charger_loss`, `aircraft_auxiliary_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement vehicle dynamics, route optimization, rail-network load flow, ship resistance, flight dynamics, propulsion maps, battery electrochemistry, charger curves, or hydraulic valve/pump maps. They check whether mapped snapshot signals close before asking for finer signals such as charger meter boundary, rail meter grouping, marine/aviation power basis, hydraulic power boundary, SOC basis, speed basis, or hydraulic pressure basis.
 
@@ -321,7 +329,7 @@ The tenth implemented starter pack is under:
 examples/hierarchical/agriculture_food_bioprocess/
 ```
 
-`tree.yaml` holds blocks `agriculture_food_bioprocess`, `irrigation_crop_water`, `greenhouse_climate`, `greenhouse_co2`, `fermentation_bioreactor`, `drying_process`, `cold_chain_storage`. Fault variants: `missing_irrigation_drainage`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`tree.yaml` holds blocks `agriculture_food_bioprocess`, `irrigation_crop_water`, `greenhouse_climate`, `greenhouse_co2`, `fermentation_bioreactor`, `drying_process`, `cold_chain_storage`. Fault variants: `missing_irrigation_drainage`, `co2_plant_uptake_molar_flow_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 These templates intentionally do not implement crop-growth models, photosynthesis kinetics, microbial kinetics, drying-rate models, refrigeration maps, detailed food-process simulation, or greenhouse climate-control optimization. They check whether mapped snapshot signals close before asking for finer signals such as greenhouse heat boundary, CO2 balance basis, irrigation drainage boundary, fermentation mass/yield basis, dryer water/exhaust basis, or cold-chain heat-gain boundary.
 
@@ -344,99 +352,99 @@ starting at 600 seconds, without listing sixty repeated point failures.
 
 ### Aerospace Satellite Thermal
 
-`examples/hierarchical/aerospace_satellite_thermal/`: `tree.yaml` holds blocks `aerospace_satellite_thermal`, `satellite_power_accounting`, `satellite_thermal_accounting`. Fault variants: `missing_radiator_heat`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/aerospace_satellite_thermal/`: `tree.yaml` holds blocks `aerospace_satellite_thermal`, `satellite_power_accounting`, `satellite_thermal_accounting`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Agriculture Food Bioprocess
 
-`examples/hierarchical/agriculture_food_bioprocess/`: `tree.yaml` holds blocks `agriculture_food_bioprocess`, `irrigation_crop_water`, `greenhouse_climate`, `greenhouse_co2`, `fermentation_bioreactor`, `drying_process`, `cold_chain_storage`. Fault variants: `missing_irrigation_drainage`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/agriculture_food_bioprocess/`: `tree.yaml` holds blocks `agriculture_food_bioprocess`, `irrigation_crop_water`, `greenhouse_climate`, `greenhouse_co2`, `fermentation_bioreactor`, `drying_process`, `cold_chain_storage`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Building Hvac
 
-`examples/hierarchical/building_hvac/`: `tree.yaml` holds blocks `building_hvac`, `zone_loads`, `chilled_water_loop`, `chiller_condenser`, `air_handler`, `plant_electrical`, `district_energy_interface`. Fault variants: `unmet_cooling_load`; benign variants: `fan_auxiliary_plus_50W`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/building_hvac/`: `tree.yaml` holds blocks `building_hvac`, `zone_loads`, `chilled_water_loop`, `chiller_condenser`, `air_handler`, `plant_electrical`, `district_energy_interface`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Cold Chain Logistics
 
-`examples/hierarchical/cold_chain_logistics/`: `tree.yaml` holds blocks `cold_chain_logistics`, `warehouse_thermal_accounting`, `truck_cooling_accounting`, `fleet_power_accounting`. Fault variants: `missing_door_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/cold_chain_logistics/`: `tree.yaml` holds blocks `cold_chain_logistics`, `warehouse_thermal_accounting`, `truck_cooling_accounting`, `fleet_power_accounting`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Combustion Boiler Furnace
 
-`examples/hierarchical/combustion_boiler_furnace/`: `tree.yaml` holds blocks `combustion_boiler_furnace`, `boiler_heat_accounting`, `air_flue_mass_accounting`, `draft_fan_power`. Fault variants: `missing_stack_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/combustion_boiler_furnace/`: `tree.yaml` holds blocks `combustion_boiler_furnace`, `boiler_heat_accounting`, `air_flue_mass_accounting`, `draft_fan_power`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Coolant Loop
 
-`examples/hierarchical/coolant_loop/`: `tree.yaml` holds blocks `coolant_loop`, `stack_heat_interface`, `pump`, `radiator`, `thermal_mass`, `bypass_or_valve`. Fault variants: `heat_rejection`, `radiator`; benign variants: `small_shaft_power_shift`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/coolant_loop/`: `tree.yaml` holds blocks `coolant_loop`, `stack_heat_interface`, `pump`, `radiator`, `thermal_mass`, `bypass_or_valve`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Cross Domain Audit Primitives
 
-`examples/hierarchical/cross_domain_audit_primitives/`: `tree.yaml` holds blocks `cross_domain_audit_primitives`, `explicit_unit_conversion`, `sensor_calibration`, `boundary_loss_accounting`, `time_alignment`. Fault variants: `bad_temperature_offset`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/cross_domain_audit_primitives/`: `tree.yaml` holds blocks `cross_domain_audit_primitives`, `explicit_unit_conversion`, `sensor_calibration`, `boundary_loss_accounting`, `time_alignment`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Data Center Electronics Cooling
 
-`examples/hierarchical/data_center_electronics_cooling/`: `tree.yaml` holds blocks `data_center_electronics_cooling`, `it_load_rack_heat`, `facility_power_chain`, `room_air_cooling`, `coolant_loop`, `cooling_plant_efficiency`. Fault variants: `underreported_cooling_capacity`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/data_center_electronics_cooling/`: `tree.yaml` holds blocks `data_center_electronics_cooling`, `it_load_rack_heat`, `facility_power_chain`, `room_air_cooling`, `coolant_loop`, `cooling_plant_efficiency`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Distribution Power Der
 
-`examples/hierarchical/distribution_power_der/`: `tree.yaml` holds blocks `distribution_power_der`, `substation_transformer`, `feeder_section_a`, `feeder_section_b`, `der_interface`, `power_quality_voltage`. Fault variants: `missing_line_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/distribution_power_der/`: `tree.yaml` holds blocks `distribution_power_der`, `substation_transformer`, `feeder_section_a`, `feeder_section_b`, `der_interface`, `power_quality_voltage`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Fuel Cell System
 
-`examples/hierarchical/fuel_cell_system/`: `tree.yaml` holds blocks `fc_system`, `stack`, `cathode_air_path`, `anode_hydrogen_path`, `coolant_loop`, `hv_system`, `controls`, `compressor`, `intercooler`, `humidifier`, `exhaust_valve`, `coolant_pump`, `radiator`, `thermal_mass`, `bypass_or_valve`. Fault variants: `hydrogen_power_underread`, `cathode_air_underfeed`; benign variants: `net_power_rounding`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/fuel_cell_system/`: `tree.yaml` holds blocks `fc_system`, `stack`, `cathode_air_path`, `anode_hydrogen_path`, `coolant_loop`, `hv_system`, `controls`, `compressor`, `intercooler`, `humidifier`, `exhaust_valve`, `coolant_pump`, `radiator`, `thermal_mass`, `bypass_or_valve`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Geothermal Underground Wells
 
-`examples/hierarchical/geothermal_underground_wells/`: `tree.yaml` holds blocks `geothermal_underground_wells`, `well_mass_accounting`, `geothermal_heat_accounting`, `reinjection_pump_power`. Fault variants: `missing_brine_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/geothermal_underground_wells/`: `tree.yaml` holds blocks `geothermal_underground_wells`, `well_mass_accounting`, `geothermal_heat_accounting`, `reinjection_pump_power`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Industrial Utilities
 
-`examples/hierarchical/industrial_utilities/`: `tree.yaml` holds blocks `industrial_utilities`, `steam_condensate`, `compressed_air`, `refrigeration_chilled_water`, `cooling_water`, `utility_power`. Fault variants: `missing_air_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/industrial_utilities/`: `tree.yaml` holds blocks `industrial_utilities`, `steam_condensate`, `compressed_air`, `refrigeration_chilled_water`, `cooling_water`, `utility_power`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Manufacturing Thermal Process
 
-`examples/hierarchical/manufacturing_thermal_process/`: `tree.yaml` holds blocks `manufacturing_thermal_process`, `furnace_heat_accounting`, `production_line_power`, `material_yield_accounting`. Fault variants: `missing_exhaust_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/manufacturing_thermal_process/`: `tree.yaml` holds blocks `manufacturing_thermal_process`, `furnace_heat_accounting`, `production_line_power`, `material_yield_accounting`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Medical Bioprocess Equipment
 
-`examples/hierarchical/medical_bioprocess_equipment/`: `tree.yaml` holds blocks `medical_bioprocess_equipment`, `ventilator_flow_accounting`, `dialysis_fluid_accounting`, `sterilizer_incubator_thermal`. Fault variants: `missing_ventilator_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/medical_bioprocess_equipment/`: `tree.yaml` holds blocks `medical_bioprocess_equipment`, `ventilator_flow_accounting`, `dialysis_fluid_accounting`, `sterilizer_incubator_thermal`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Mining Metallurgy
 
-`examples/hierarchical/mining_metallurgy/`: `tree.yaml` holds blocks `mining_metallurgy`, `ore_mass_accounting`, `mill_power_accounting`, `slurry_water_accounting`. Fault variants: `missing_tailings`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/mining_metallurgy/`: `tree.yaml` holds blocks `mining_metallurgy`, `ore_mass_accounting`, `mill_power_accounting`, `slurry_water_accounting`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Mobility Extensions
 
-`examples/hierarchical/mobility_extensions/`: `tree.yaml` holds blocks `mobility_extensions`, `charging_infrastructure`, `rail_traction`, `marine_propulsion`, `aviation_power`, `offroad_hydraulics`. Fault variants: `missing_charger_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/mobility_extensions/`: `tree.yaml` holds blocks `mobility_extensions`, `charging_infrastructure`, `rail_traction`, `marine_propulsion`, `aviation_power`, `offroad_hydraulics`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Oil Gas Pipeline Storage
 
-`examples/hierarchical/oil_gas_pipeline_storage/`: `tree.yaml` holds blocks `oil_gas_pipeline_storage`, `pipeline_compression`, `pipeline_mass_accounting`, `terminal_storage_transfer`. Fault variants: `unmetered_pipeline_leak`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/oil_gas_pipeline_storage/`: `tree.yaml` holds blocks `oil_gas_pipeline_storage`, `pipeline_compression`, `pipeline_mass_accounting`, `terminal_storage_transfer`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Pid Actuator Loop
 
-`examples/hierarchical/pid_actuator_loop/`: `tree.yaml` holds blocks `control_loop`, `controller`, `actuator`, `sensor`, `command_position`, `feedback_position`. Fault variants: `actuator_feedback_conflict`; benign variants: `feedback_rounding`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/pid_actuator_loop/`: `tree.yaml` holds blocks `control_loop`, `controller`, `actuator`, `sensor`, `command_position`, `feedback_position`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Process Industry
 
-`examples/hierarchical/process_industry/`: `tree.yaml` holds blocks `process_industry`, `reactor_conversion`, `separator_split`, `heat_exchange_utility`, `rotating_equipment`. Fault variants: `missing_cooling_duty`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/process_industry/`: `tree.yaml` holds blocks `process_industry`, `reactor_conversion`, `separator_split`, `heat_exchange_utility`, `rotating_equipment`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Renewable Microgrid
 
-`examples/hierarchical/renewable_microgrid/`: `tree.yaml` holds blocks `renewable_microgrid`, `pv_system`, `wind_system`, `battery_storage`, `grid_interconnect`, `load_dispatch`. Fault variants: `unserved_load`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/renewable_microgrid/`: `tree.yaml` holds blocks `renewable_microgrid`, `pv_system`, `wind_system`, `battery_storage`, `grid_interconnect`, `load_dispatch`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Robotics Mechatronics
 
-`examples/hierarchical/robotics_mechatronics/`: `tree.yaml` holds blocks `robotics_mechatronics`, `robot_power_chain`, `joint_thermal_accounting`, `pneumatic_actuator_accounting`. Fault variants: `missing_drive_loss`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/robotics_mechatronics/`: `tree.yaml` holds blocks `robotics_mechatronics`, `robot_power_chain`, `joint_thermal_accounting`, `pneumatic_actuator_accounting`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Stormwater Sewer Drainage
 
-`examples/hierarchical/stormwater_sewer_drainage/`: `tree.yaml` holds blocks `stormwater_sewer_drainage`, `catchment_runoff`, `sewer_conveyance`, `detention_storage`, `pump_station`, `pollutant_load`. Fault variants: `unreported_overflow`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/stormwater_sewer_drainage/`: `tree.yaml` holds blocks `stormwater_sewer_drainage`, `catchment_runoff`, `sewer_conveyance`, `detention_storage`, `pump_station`, `pollutant_load`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Wastewater Treatment
 
-`examples/hierarchical/wastewater_treatment/`: `tree.yaml` holds blocks `wastewater_plant`, `biological_reactor`, `secondary_clarifier`, `sludge_recycle`, `aeration_energy`. Fault variants: `global_cod_loss`, `reactor_cod_loss`; benign variants: `unit_flow_rounding`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/wastewater_treatment/`: `tree.yaml` holds blocks `wastewater_plant`, `biological_reactor`, `secondary_clarifier`, `sludge_recycle`, `aeration_energy`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 ### Water Supply Network
 
-`examples/hierarchical/water_supply_network/`: `tree.yaml` holds blocks `water_supply_network`, `distribution_water_accounting`, `pump_station_power`. Fault variants: `unmetered_leakage`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
+`examples/hierarchical/water_supply_network/`: `tree.yaml` holds blocks `water_supply_network`, `distribution_water_accounting`, `pump_station_power`. Fault variants: `missing_radiator_heat`, `avionics_power_sensor_gain`; benign variants: `within_original_tolerance`. Its paired `nominal_observed.yaml` contains the supplied SI signals.
 
 The utilities tree uses its original fine operating point: supplied air is 5 kg/s,
 production plus instrument demand is 4.375 kg/s, and leakage is 0.625 kg/s.

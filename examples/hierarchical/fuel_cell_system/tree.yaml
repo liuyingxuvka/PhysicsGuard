@@ -584,11 +584,12 @@ fault_variants:
   - cathode_air_path
 - id: net_power_rounding
   kind: benign
-  description: A1W net electrical meter rounding remains below the declared1kW balance
-    scale.
+  description: 'Measurement error inside the declared tolerance: net_power.x reads
+    +300 W; it moves a checked residual by about 0.3 of its scale, below the audit
+    threshold, and must stay neutral.'
   changes:
   - variable: net_power.x
-    offset: 1.0
+    offset: 300.0
 metadata:
   reference_boundary: Synthetic reference solution; not real bench validation. Reaction-energy
     basis and nameplate properties are explicit assumptions.

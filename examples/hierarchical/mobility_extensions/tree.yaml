@@ -1,278 +1,14 @@
 # PhysicsGuard hierarchical audit model
-# Purpose: One coarse-to-fine mobility extensions audit; supplied quantities connect coarse balances to their finer relations.
+# Purpose: One mobility extensions audit tree as a flat partition: no coarse level; each child block checks its own supplied signals.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/mobility_extensions/tree.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: mobility_extensions
-description: One coarse-to-fine mobility extensions audit; supplied quantities connect
-  coarse balances to their finer relations.
+description: 'One mobility extensions audit tree as a flat partition: no coarse level;
+  each child block checks its own supplied signals.'
 system:
   system_name: mobility_extensions
   components:
-  - id: coarse_charger_grid_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 500000.0
-      scale: 100000.0
-      external_signal: mapped_charger_grid_power
-      mapping_confidence: template
-  - id: coarse_battery_charge_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 450000.0
-      scale: 100000.0
-      external_signal: mapped_battery_charge_power
-      mapping_confidence: template
-  - id: coarse_charger_loss_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 50000.0
-      scale: 10000.0
-      external_signal: mapped_charger_loss_power
-      mapping_confidence: template
-  - id: coarse_charging_efficiency
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: null
-      lower_bound: 0.0
-      upper_bound: 1.0
-      initial_guess: 0.9
-      scale: 0.1
-      external_signal: mapped_charging_efficiency
-      mapping_confidence: template
-  - id: coarse_rail_substation_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 800000.0
-      scale: 100000.0
-      external_signal: mapped_rail_substation_power
-      mapping_confidence: template
-  - id: coarse_rail_traction_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 700000.0
-      scale: 100000.0
-      external_signal: mapped_rail_traction_power
-      mapping_confidence: template
-  - id: coarse_rail_auxiliary_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 50000.0
-      scale: 10000.0
-      external_signal: mapped_rail_auxiliary_power
-      mapping_confidence: template
-  - id: coarse_rail_distribution_loss_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 50000.0
-      scale: 10000.0
-      external_signal: mapped_rail_distribution_loss_power
-      mapping_confidence: template
-  - id: coarse_marine_fuel_energy_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 2000000.0
-      scale: 1000000.0
-      external_signal: mapped_marine_fuel_energy_power
-      mapping_confidence: template
-  - id: coarse_marine_propulsion_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 1500000.0
-      scale: 1000000.0
-      external_signal: mapped_marine_propulsion_power
-      mapping_confidence: template
-  - id: coarse_marine_hotel_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 300000.0
-      scale: 100000.0
-      external_signal: mapped_marine_hotel_power
-      mapping_confidence: template
-  - id: coarse_marine_waste_heat_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 200000.0
-      scale: 100000.0
-      external_signal: mapped_marine_waste_heat_power
-      mapping_confidence: template
-  - id: coarse_aircraft_fuel_energy_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 3000000.0
-      scale: 1000000.0
-      external_signal: mapped_aircraft_fuel_energy_power
-      mapping_confidence: template
-  - id: coarse_aircraft_propulsive_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 2400000.0
-      scale: 1000000.0
-      external_signal: mapped_aircraft_propulsive_power
-      mapping_confidence: template
-  - id: coarse_aircraft_auxiliary_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 200000.0
-      scale: 100000.0
-      external_signal: mapped_aircraft_auxiliary_power
-      mapping_confidence: template
-  - id: coarse_aircraft_waste_heat_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 400000.0
-      scale: 100000.0
-      external_signal: mapped_aircraft_waste_heat_power
-      mapping_confidence: template
-  - id: coarse_hydraulic_pump_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 300000.0
-      scale: 100000.0
-      external_signal: mapped_hydraulic_pump_power
-      mapping_confidence: template
-  - id: coarse_hydraulic_actuator_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 240000.0
-      scale: 100000.0
-      external_signal: mapped_hydraulic_actuator_power
-      mapping_confidence: template
-  - id: coarse_hydraulic_loss_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 10000000000.0
-      initial_guess: 60000.0
-      scale: 10000.0
-      external_signal: mapped_hydraulic_loss_power
-      mapping_confidence: template
-  - id: coarse_charger_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_charger_grid_power.value
-      load_power_variables:
-      - coarse_battery_charge_power.value
-      - coarse_charger_loss_power.value
-      residual_scale_W: 100.0
-  - id: coarse_charging_efficiency_check
-    type: RatioModule
-    parameters:
-      numerator_variable: coarse_battery_charge_power.value
-      denominator_variable: coarse_charger_grid_power.value
-      output_variable: coarse_charging_efficiency.value
-      residual_scale: 0.01
-  - id: coarse_rail_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_rail_substation_power.value
-      load_power_variables:
-      - coarse_rail_traction_power.value
-      - coarse_rail_auxiliary_power.value
-      - coarse_rail_distribution_loss_power.value
-      residual_scale_W: 100.0
-  - id: coarse_marine_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_marine_fuel_energy_power.value
-      load_power_variables:
-      - coarse_marine_propulsion_power.value
-      - coarse_marine_hotel_power.value
-      - coarse_marine_waste_heat_power.value
-      residual_scale_W: 100.0
-  - id: coarse_aircraft_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_aircraft_fuel_energy_power.value
-      load_power_variables:
-      - coarse_aircraft_propulsive_power.value
-      - coarse_aircraft_auxiliary_power.value
-      - coarse_aircraft_waste_heat_power.value
-      residual_scale_W: 100.0
-  - id: coarse_hydraulic_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_hydraulic_pump_power.value
-      load_power_variables:
-      - coarse_hydraulic_actuator_power.value
-      - coarse_hydraulic_loss_power.value
-      residual_scale_W: 100.0
   - id: charger_grid_power
     type: MappedSignalModule
     parameters:
@@ -727,83 +463,7 @@ system:
   solver:
     tolerance: 1.0e-08
     audit_threshold: 1.0
-  connections:
-  - from_variable: coarse_charger_grid_power.value
-    to_variable: charger_grid_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_battery_charge_power.value
-    to_variable: battery_charge_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_charger_loss_power.value
-    to_variable: charger_loss_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_charging_efficiency.value
-    to_variable: charging_efficiency.value
-    description: Same supplied declared-unit quantity; no additional observation.
-    scale: 1.0e-09
-  - from_variable: coarse_rail_substation_power.value
-    to_variable: rail_substation_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_rail_traction_power.value
-    to_variable: rail_traction_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_rail_auxiliary_power.value
-    to_variable: rail_auxiliary_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_rail_distribution_loss_power.value
-    to_variable: rail_distribution_loss_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_marine_fuel_energy_power.value
-    to_variable: marine_fuel_energy_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_marine_propulsion_power.value
-    to_variable: marine_propulsion_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_marine_hotel_power.value
-    to_variable: marine_hotel_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_marine_waste_heat_power.value
-    to_variable: marine_waste_heat_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_aircraft_fuel_energy_power.value
-    to_variable: aircraft_fuel_energy_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_aircraft_propulsive_power.value
-    to_variable: aircraft_propulsive_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_aircraft_auxiliary_power.value
-    to_variable: aircraft_auxiliary_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_aircraft_waste_heat_power.value
-    to_variable: aircraft_waste_heat_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_hydraulic_pump_power.value
-    to_variable: hydraulic_pump_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_hydraulic_actuator_power.value
-    to_variable: hydraulic_actuator_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
-  - from_variable: coarse_hydraulic_loss_power.value
-    to_variable: hydraulic_loss_power.value
-    description: Same supplied W quantity; no additional observation.
-    scale: 1.0e-06
+  connections: []
 hierarchy:
   blocks:
   - id: mobility_extensions
@@ -817,39 +477,8 @@ hierarchy:
     - marine
     - aviation
     - offroad_hydraulics
-    components:
-    - coarse_charger_grid_power
-    - coarse_battery_charge_power
-    - coarse_charger_loss_power
-    - coarse_charging_efficiency
-    - coarse_rail_substation_power
-    - coarse_rail_traction_power
-    - coarse_rail_auxiliary_power
-    - coarse_rail_distribution_loss_power
-    - coarse_marine_fuel_energy_power
-    - coarse_marine_propulsion_power
-    - coarse_marine_hotel_power
-    - coarse_marine_waste_heat_power
-    - coarse_aircraft_fuel_energy_power
-    - coarse_aircraft_propulsive_power
-    - coarse_aircraft_auxiliary_power
-    - coarse_aircraft_waste_heat_power
-    - coarse_hydraulic_pump_power
-    - coarse_hydraulic_actuator_power
-    - coarse_hydraulic_loss_power
-    - coarse_charger_power_balance
-    - coarse_charging_efficiency_check
-    - coarse_rail_power_balance
-    - coarse_marine_power_balance
-    - coarse_aircraft_power_balance
-    - coarse_hydraulic_power_balance
-    required_variables:
-    - coarse_charger_grid_power.value
-    - coarse_battery_charge_power.value
-    - coarse_rail_substation_power.value
-    - coarse_marine_fuel_energy_power.value
-    - coarse_aircraft_fuel_energy_power.value
-    - coarse_hydraulic_pump_power.value
+    components: []
+    required_variables: []
   - id: charging_infrastructure
     name: Charging infrastructure
     level: 1
@@ -871,9 +500,6 @@ hierarchy:
     - charger_grid_power.value
     - battery_charge_power.value
     - charger_loss_power.value
-    refines:
-    - coarse_charger_power_balance
-    - coarse_charging_efficiency_check
   - id: rail_traction
     name: Rail traction
     level: 1
@@ -890,8 +516,6 @@ hierarchy:
     - rail
     - traction
     - substation
-    refines:
-    - coarse_rail_power_balance
   - id: marine_propulsion
     name: Marine propulsion
     level: 1
@@ -908,8 +532,6 @@ hierarchy:
     - marine
     - propulsion
     - hotel_load
-    refines:
-    - coarse_marine_power_balance
   - id: aviation_power
     name: Aviation power
     level: 1
@@ -926,8 +548,6 @@ hierarchy:
     - aviation
     - propulsion
     - auxiliary_power
-    refines:
-    - coarse_aircraft_power_balance
   - id: offroad_hydraulics
     name: Off-road hydraulics
     level: 1
@@ -945,38 +565,7 @@ hierarchy:
     - offroad
     - hydraulics
     - actuator
-    refines:
-    - coarse_hydraulic_power_balance
   refinement_rules:
-  - id: refine_mobility_extensions_level_0
-    block_id: mobility_extensions
-    trigger_diagnostic_keys:
-    - aggregate_power_balance_mismatch
-    - ratio_relation_mismatch
-    score_threshold: 1.0
-    next_template_ids:
-    - charging_infrastructure
-    - rail_traction
-    - marine_propulsion
-    - aviation_power
-    - offroad_hydraulics
-    next_required_variables:
-    - charging.grid_power_W
-    - charging.battery_power_W
-    - rail.substation_power_W
-    - marine.fuel_energy_power_W
-    - aircraft.fuel_energy_power_W
-    - hydraulics.pump_power_W
-    next_required_parameters:
-    - charger_meter_boundary
-    - rail_meter_grouping
-    - marine_power_basis
-    - aviation_power_basis
-    - hydraulic_power_boundary
-    rationale: Coarse mobility residual is high; refine into charging, rail, marine,
-      aviation, and off-road hydraulic checks before adding vehicle dynamics, route
-      simulation, propulsion maps, or detailed hydraulic models.
-    priority: 10
   - id: refine_charging_infrastructure
     block_id: charging_infrastructure
     trigger_diagnostic_keys:
@@ -1088,18 +677,27 @@ metadata:
 fault_variants:
 - id: missing_charger_loss
   kind: fault
-  description: Original physical supplied-signal conflict; coarse aliases propagate
-    through connections.
+  description: 'A supplied-signal fault: charger_loss_power.value reads 0; it fails
+    in charging_infrastructure.'
   changes:
   - variable: charger_loss_power.value
     set: 0.0
   expect_blocks:
-  - mobility_extensions
   - charging_infrastructure
+- id: aircraft_auxiliary_power_sensor_gain
+  kind: fault
+  description: The aircraft_auxiliary_power.value sensor reads 50% high (gain error);
+    its own relation fails in aviation_power.
+  changes:
+  - variable: aircraft_auxiliary_power.value
+    scale: 1.5
+  expect_blocks:
+  - aviation_power
 - id: within_original_tolerance
   kind: benign
-  description: Nonzero supplied-signal perturbation below unchanged declared normalizations;
-    native neutrality remains to check.
+  description: 'Measurement error inside the declared tolerance: vehicle_battery_soc.value
+    reads +3e-10 1; it moves a checked residual by about 0.3 of its scale, below the
+    audit threshold, and must stay neutral.'
   changes:
   - variable: vehicle_battery_soc.value
-    offset: 1.0000000000000002e-12
+    offset: 3.0e-10

@@ -64,94 +64,6 @@ system:
       scale: 10000.0
       external_signal: mapped_chiller_evaporator_cooling
       mapping_confidence: template
-  - id: coarse_chiller_electric_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 8000.0
-      scale: 1000.0
-      external_signal: mapped_chiller_electric_power
-      mapping_confidence: template
-  - id: coarse_condenser_heat_rejection
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 34000.0
-      scale: 10000.0
-      external_signal: mapped_condenser_heat_rejection
-      mapping_confidence: template
-  - id: coarse_chiller_cop
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: null
-      lower_bound: 0.0
-      upper_bound: 20.0
-      initial_guess: 3.25
-      scale: 1.0
-      external_signal: mapped_chiller_cop
-      mapping_confidence: template
-  - id: coarse_grid_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 12000.0
-      scale: 10000.0
-      external_signal: mapped_building_hvac_grid_power
-      mapping_confidence: template
-  - id: coarse_supply_fan_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 2000.0
-      scale: 1000.0
-      external_signal: mapped_supply_fan_power
-      mapping_confidence: template
-  - id: coarse_chilled_water_pump_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 1000.0
-      scale: 1000.0
-      external_signal: mapped_chilled_water_pump_power
-      mapping_confidence: template
-  - id: coarse_condenser_pump_tower_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 800.0
-      scale: 1000.0
-      external_signal: mapped_condenser_pump_tower_power
-      mapping_confidence: template
-  - id: coarse_controls_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 200.0
-      scale: 100.0
-      external_signal: mapped_controls_or_other_hvac_power
-      mapping_confidence: template
   - id: coarse_zone_cooling_balance
     type: AggregateThermalBalanceModule
     parameters:
@@ -167,28 +79,28 @@ system:
     parameters:
       heat_in_variables:
       - coarse_chiller_cooling_output.value
-      - coarse_chiller_electric_power.value
+      - chiller_electric_power.value
       heat_out_variables:
-      - coarse_condenser_heat_rejection.value
+      - condenser_heat_rejection.value
       residual_scale_W: 100.0
   - id: coarse_chiller_cop_check
     type: AggregateEfficiencyModule
     parameters:
       useful_output_power_variable: coarse_chiller_cooling_output.value
-      input_power_variable: coarse_chiller_electric_power.value
-      efficiency_variable: coarse_chiller_cop.value
+      input_power_variable: chiller_electric_power.value
+      efficiency_variable: chiller_cop.value
       residual_scale: 0.01
   - id: coarse_hvac_electrical_balance
     type: AggregateElectricalBusBalanceModule
     parameters:
       generation_power_variables:
-      - coarse_grid_power.value
+      - grid_power.value
       consumption_power_variables:
-      - coarse_chiller_electric_power.value
-      - coarse_supply_fan_power.value
-      - coarse_chilled_water_pump_power.value
-      - coarse_condenser_pump_tower_power.value
-      - coarse_controls_power.value
+      - chiller_electric_power.value
+      - supply_fan_power.value
+      - chilled_water_pump_power.value
+      - condenser_pump_tower_power.value
+      - controls_power.value
       residual_scale_W: 100.0
   - id: zone_envelope_gain
     type: MappedSignalModule
@@ -482,22 +394,6 @@ system:
     to_variable: zone_cooling_coil_load.value
   - from_variable: coarse_chiller_cooling_output.value
     to_variable: chiller_evaporator_cooling.value
-  - from_variable: coarse_chiller_electric_power.value
-    to_variable: chiller_electric_power.value
-  - from_variable: coarse_condenser_heat_rejection.value
-    to_variable: condenser_heat_rejection.value
-  - from_variable: coarse_chiller_cop.value
-    to_variable: chiller_cop.value
-  - from_variable: coarse_grid_power.value
-    to_variable: grid_power.value
-  - from_variable: coarse_supply_fan_power.value
-    to_variable: supply_fan_power.value
-  - from_variable: coarse_chilled_water_pump_power.value
-    to_variable: chilled_water_pump_power.value
-  - from_variable: coarse_condenser_pump_tower_power.value
-    to_variable: condenser_pump_tower_power.value
-  - from_variable: coarse_controls_power.value
-    to_variable: controls_power.value
   - from_variable: chiller_evaporator_cooling.value
     to_variable: district_chilled_water_import.value
   - from_variable: zone_cooling_coil_load.value
@@ -520,22 +416,22 @@ system:
   - variable: coarse_chiller_cooling_output.value
     value: 26000.0
     scale: 1.0e-06
-  - variable: coarse_chiller_electric_power.value
+  - variable: chiller_electric_power.value
     value: 8000.0
     scale: 1.0e-06
-  - variable: coarse_condenser_heat_rejection.value
+  - variable: condenser_heat_rejection.value
     value: 34000.0
     scale: 1.0e-06
-  - variable: coarse_chiller_cop.value
+  - variable: chiller_cop.value
     value: 3.25
     scale: 1.0e-09
-  - variable: coarse_chilled_water_pump_power.value
+  - variable: chilled_water_pump_power.value
     value: 1000.0
     scale: 1.0e-06
-  - variable: coarse_condenser_pump_tower_power.value
+  - variable: condenser_pump_tower_power.value
     value: 800.0
     scale: 1.0e-06
-  - variable: coarse_controls_power.value
+  - variable: controls_power.value
     value: 200.0
     scale: 1.0e-06
   assumptions:
@@ -605,14 +501,6 @@ hierarchy:
     - coarse_ventilation_heat_gain
     - coarse_cooling_coil_load
     - coarse_chiller_cooling_output
-    - coarse_chiller_electric_power
-    - coarse_condenser_heat_rejection
-    - coarse_chiller_cop
-    - coarse_grid_power
-    - coarse_supply_fan_power
-    - coarse_chilled_water_pump_power
-    - coarse_condenser_pump_tower_power
-    - coarse_controls_power
     - coarse_zone_cooling_balance
     - coarse_chiller_heat_balance
     - coarse_chiller_cop_check
@@ -629,8 +517,6 @@ hierarchy:
     - coarse_ventilation_heat_gain.value
     - coarse_cooling_coil_load.value
     - coarse_chiller_cooling_output.value
-    - coarse_chiller_electric_power.value
-    - coarse_grid_power.value
   - id: zone_loads
     name: Zone cooling load
     level: 1
@@ -731,7 +617,13 @@ hierarchy:
     - aggregate_efficiency_mismatch
     - aggregate_electrical_bus_balance_mismatch
     score_threshold: 1.0
-    next_template_ids: ["zone_loads", "chilled_water_loop", "chiller_condenser", "air_handler", "plant_electrical", "district_energy_interface"]
+    next_template_ids:
+    - zone_loads
+    - chilled_water_loop
+    - chiller_condenser
+    - air_handler
+    - plant_electrical
+    - district_energy_interface
     next_required_variables:
     - zone_cooling_coil_load.value
     - chiller_evaporator_cooling.value
@@ -746,13 +638,26 @@ hierarchy:
 fault_variants:
 - id: unmet_cooling_load
   kind: fault
-  description: 'Original conflict_level_0_unmet_cooling_load: coil removes 22000 W
-    against 25000 W of mapped zone gains.'
+  description: 'A supplied-signal fault: zone_cooling_coil_load.value reads 22000;
+    it fails in building_hvac, chilled_water_loop, district_energy_interface, zone_loads.'
   changes:
   - variable: zone_cooling_coil_load.value
     set: 22000.0
   expect_blocks:
+  - building_hvac
+  - chilled_water_loop
+  - district_energy_interface
   - zone_loads
+- id: chilled_water_pump_power_sensor_gain
+  kind: fault
+  description: The chilled_water_pump_power.value sensor reads 50% high (gain error);
+    its own relation fails in building_hvac, plant_electrical.
+  changes:
+  - variable: chilled_water_pump_power.value
+    scale: 1.5
+  expect_blocks:
+  - building_hvac
+  - plant_electrical
 - id: fan_auxiliary_plus_50W
   kind: benign
   description: Supply fan and its electrical feeder both rise by 50 W; air-side fan
@@ -764,6 +669,14 @@ fault_variants:
     offset: 50.0
   - variable: fan_heat_to_air.value
     offset: 50.0
+- id: chilled_water_distribution_gain_within_tolerance
+  kind: benign
+  description: 'Measurement error inside the declared tolerance: chilled_water_distribution_gain.value
+    reads +30 W; it moves a checked residual by about 0.3 of its scale, below the
+    audit threshold, and must stay neutral.'
+  changes:
+  - variable: chilled_water_distribution_gain.value
+    offset: 30.0
 metadata:
   domain: building_hvac
   source_levels:

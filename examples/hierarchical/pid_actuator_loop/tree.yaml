@@ -10,18 +10,6 @@ system:
   - id: coarse_err
     type: ControlErrorModule
     parameters: {}
-  - id: coarse_act
-    type: ActuatorFirstOrderSaturationModule
-    parameters:
-      tau_s: 2.0
-      dt_s: 1.0
-      lower: 0.0
-      upper: 10.0
-  - id: coarse_sensor
-    type: SensorLowPassFilterStepModule
-    parameters:
-      tau_s: 2.0
-      dt_s: 1.0
   - id: pid
     type: PIDControllerStepModule
     parameters:
@@ -141,18 +129,6 @@ system:
     to_variable: pid.measurement
   - from_variable: coarse_err.error
     to_variable: pid.error
-  - from_variable: coarse_act.command
-    to_variable: act.command
-  - from_variable: coarse_act.actual_previous
-    to_variable: act.actual_previous
-  - from_variable: coarse_act.actual_current
-    to_variable: act.actual_current
-  - from_variable: coarse_sensor.true_value_current
-    to_variable: sensor.true_value_current
-  - from_variable: coarse_sensor.measured_previous
-    to_variable: sensor.measured_previous
-  - from_variable: coarse_sensor.measured_current
-    to_variable: sensor.measured_current
   - from_variable: fb.command
     to_variable: command_position.x
   - from_variable: fb.actual_position
@@ -173,10 +149,8 @@ hierarchy:
     level: 0
     components:
     - coarse_err
-    - coarse_act
-    - coarse_sensor
-    description: Pre-step control error, actuator transition and sensor-filter reference relations. No
-      plant dynamics are inferred.
+    description: Pre-step control error, actuator transition and sensor-filter reference
+      relations. No plant dynamics are inferred.
   - id: controller
     level: 1
     parent_id: control_loop
@@ -190,15 +164,11 @@ hierarchy:
     components:
     - act
     - fb
-    refines:
-    - coarse_act
   - id: sensor
     level: 1
     parent_id: control_loop
     components:
     - sensor
-    refines:
-    - coarse_sensor
   - id: command_position
     level: 2
     parent_id: actuator
@@ -206,7 +176,8 @@ hierarchy:
     - command_position
     refines:
     - fb
-    description: A finer view of one original feedback consistency law, with unchanged gain and normalization.
+    description: A finer view of one original feedback consistency law, with unchanged
+      gain and normalization.
   - id: feedback_position
     level: 2
     parent_id: actuator
@@ -214,7 +185,8 @@ hierarchy:
     - feedback_position
     refines:
     - fb
-    description: A finer view of one original feedback consistency law, with unchanged gain and normalization.
+    description: A finer view of one original feedback consistency law, with unchanged
+      gain and normalization.
   refinement_rules:
   - id: refine_control_loop
     block_id: control_loop
@@ -241,35 +213,46 @@ hierarchy:
     - fb.feedback_position
     rationale: Actuator feedback consistency failed.
     priority: 20
-description: One controller step and post-step actuator/sensor checks. The PID measurement at the start
-  of the step is not the filtered sensor result at the end.
+description: One controller step and post-step actuator/sensor checks. The PID measurement
+  at the start of the step is not the filtered sensor result at the end.
 fault_variants:
 - id: actuator_feedback_conflict
   kind: fault
-  description: 'Original conflict: the post-step feedback reading is 2.0 while actual position and post-step
-    target remain5.3; PID actuator command remains6.6.'
+  description: 'A supplied-signal fault: fb.feedback_position reads 2; it fails in
+    actuator, feedback_position.'
   changes:
   - variable: fb.feedback_position
     set: 2.0
   expect_blocks:
   - actuator
   - feedback_position
+- id: pid_sensor_gain
+  kind: fault
+  description: The pid.error sensor reads 50% high (gain error); its own relation
+    fails in controller.
+  changes:
+  - variable: pid.error
+    scale: 1.5
+  expect_blocks:
+  - controller
 - id: feedback_rounding
   kind: benign
-  description: Synthetic nonzero feedback rounding below the original fixed-boundary and feedback residual
-    normalizations; not a sensor-accuracy claim.
+  description: 'Measurement error inside the declared tolerance: fb.feedback_position
+    reads +3e-07 1; it moves a checked residual by about 0.3 of its scale, below the
+    audit threshold, and must stay neutral.'
   changes:
   - variable: fb.feedback_position
-    offset: 1.0e-08
+    offset: 3.0e-07
 metadata:
-  boundary: One discrete step with explicit time roles, no automatic closed-loop update or unmodeled plant
-    proxy.
+  boundary: One discrete step with explicit time roles, no automatic closed-loop update
+    or unmodeled plant proxy.
   time_roles:
     pid.measurement: pre-step feedback reading8.0
     act.command: controller output6.6
     act.actual_current: end-step actual position5.3
-    fb.command: separate end-step expected position5.3, never equal to act.command by declaration
+    fb.command: separate end-step expected position5.3, never equal to act.command
+      by declaration
     sensor.measured_current: end-step filtered reading5.15, not the pre-step PID measurement8.0
   assumptions:
-  - Control coordinates use dimensionless signal units. Original gains, tau, dt, normalizations and boundary
-    values are retained.
+  - Control coordinates use dimensionless signal units. Original gains, tau, dt, normalizations
+    and boundary values are retained.

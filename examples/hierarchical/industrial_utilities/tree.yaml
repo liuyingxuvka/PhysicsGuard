@@ -1,353 +1,16 @@
 # PhysicsGuard hierarchical audit model
-# Purpose: One connected coarse-to-fine audit tree. Nominal uses the unchanged detailed operating point: air generation 5 kg/s, production 4.125 plus...
+# Purpose: Flat partition: no coarse level. One connected audit tree. Nominal uses the unchanged detailed operating point: air generation 5 kg/s, production...
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
 # Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/industrial_utilities/tree.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: industrial_utilities
-description: 'One connected coarse-to-fine audit tree. Nominal uses the unchanged
-  detailed operating point: air generation 5 kg/s, production 4.125 plus instrument
-  0.25 and leak 0.625. The former standalone coarse 4.5/0.5 split was a different
-  operating point; it is not an identity link.'
+description: 'Flat partition: no coarse level. One connected audit tree. Nominal uses
+  the unchanged detailed operating point: air generation 5 kg/s, production 4.125
+  plus instrument 0.25 and leak 0.625. The former standalone coarse 4.5/0.5 split
+  was a different operating point; it is not an identity link.'
 system:
   system_name: industrial_utilities_level_1_steam_air_refrigeration_cooling_water
   components:
-  - id: coarse_boiler_steam_generation_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 20.0
-      scale: 10.0
-      external_signal: mapped_boiler_steam_generation_mass_flow
-      mapping_confidence: template
-  - id: coarse_imported_steam_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 2.0
-      scale: 1.0
-      external_signal: mapped_imported_steam_mass_flow
-      mapping_confidence: template
-  - id: coarse_process_steam_demand_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 18.0
-      scale: 10.0
-      external_signal: mapped_process_steam_demand_mass_flow
-      mapping_confidence: template
-  - id: coarse_deaerator_steam_use_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 2.0
-      scale: 1.0
-      external_signal: mapped_deaerator_steam_use_mass_flow
-      mapping_confidence: template
-  - id: coarse_steam_vent_loss_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 1.0
-      scale: 1.0
-      external_signal: mapped_steam_vent_loss_mass_flow
-      mapping_confidence: template
-  - id: coarse_exported_steam_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 1.0
-      scale: 1.0
-      external_signal: mapped_exported_steam_mass_flow
-      mapping_confidence: template
-  - id: coarse_condensate_return_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 15.0
-      scale: 10.0
-      external_signal: mapped_condensate_return_mass_flow
-      mapping_confidence: template
-  - id: coarse_makeup_water_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 5.0
-      scale: 10.0
-      external_signal: mapped_makeup_water_mass_flow
-      mapping_confidence: template
-  - id: coarse_boiler_feedwater_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 20.0
-      scale: 10.0
-      external_signal: mapped_boiler_feedwater_mass_flow
-      mapping_confidence: template
-  - id: coarse_condensate_return_fraction
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: null
-      lower_bound: 0.0
-      upper_bound: 1.0
-      initial_guess: 0.75
-      scale: 0.1
-      external_signal: mapped_condensate_return_fraction
-      mapping_confidence: template
-  - id: coarse_compressed_air_generation_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 5.0
-      scale: 1.0
-      external_signal: mapped_compressed_air_generation_mass_flow
-      mapping_confidence: template
-  - id: coarse_compressed_air_demand_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 4.5
-      scale: 1.0
-      external_signal: mapped_compressed_air_demand_mass_flow
-      mapping_confidence: template
-  - id: coarse_compressed_air_leak_mass_flow
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: kg/s
-      lower_bound: 0.0
-      upper_bound: 1000000.0
-      initial_guess: 0.5
-      scale: 0.1
-      external_signal: mapped_compressed_air_leak_mass_flow
-      mapping_confidence: template
-  - id: coarse_refrigeration_cooling_capacity
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 450000.0
-      scale: 100000.0
-      external_signal: mapped_refrigeration_cooling_capacity
-      mapping_confidence: template
-  - id: coarse_chilled_water_process_load
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 400000.0
-      scale: 100000.0
-      external_signal: mapped_chilled_water_process_load
-      mapping_confidence: template
-  - id: coarse_chilled_water_distribution_loss
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 50000.0
-      scale: 10000.0
-      external_signal: mapped_chilled_water_distribution_loss
-      mapping_confidence: template
-  - id: coarse_process_heat_to_cooling_water
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 600000.0
-      scale: 100000.0
-      external_signal: mapped_process_heat_to_cooling_water
-      mapping_confidence: template
-  - id: coarse_chiller_condenser_heat
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 600000.0
-      scale: 100000.0
-      external_signal: mapped_chiller_condenser_heat
-      mapping_confidence: template
-  - id: coarse_cooling_water_heat_rejection
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 1200000.0
-      scale: 100000.0
-      external_signal: mapped_cooling_water_heat_rejection
-      mapping_confidence: template
-  - id: coarse_utility_electric_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 300000.0
-      scale: 100000.0
-      external_signal: mapped_utility_electric_power
-      mapping_confidence: template
-  - id: coarse_compressor_electric_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 100000.0
-      scale: 100000.0
-      external_signal: mapped_compressor_electric_power
-      mapping_confidence: template
-  - id: coarse_chiller_electric_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 150000.0
-      scale: 100000.0
-      external_signal: mapped_chiller_electric_power
-      mapping_confidence: template
-  - id: coarse_cooling_water_pump_fan_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 30000.0
-      scale: 10000.0
-      external_signal: mapped_cooling_water_pump_fan_power
-      mapping_confidence: template
-  - id: coarse_boiler_auxiliary_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 1000000000.0
-      initial_guess: 20000.0
-      scale: 10000.0
-      external_signal: mapped_boiler_auxiliary_power
-      mapping_confidence: template
-  - id: coarse_steam_header_mass_balance
-    type: AggregateMassBalanceModule
-    parameters:
-      mass_in_variables:
-      - coarse_boiler_steam_generation_mass_flow.value
-      - coarse_imported_steam_mass_flow.value
-      mass_out_variables:
-      - coarse_process_steam_demand_mass_flow.value
-      - coarse_deaerator_steam_use_mass_flow.value
-      - coarse_steam_vent_loss_mass_flow.value
-      - coarse_exported_steam_mass_flow.value
-      residual_scale_kg_s: 0.01
-  - id: coarse_boiler_feedwater_makeup_check
-    type: SumModule
-    parameters:
-      input_variables:
-      - coarse_condensate_return_mass_flow.value
-      - coarse_makeup_water_mass_flow.value
-      output_variable: coarse_boiler_feedwater_mass_flow.value
-      residual_scale: 0.01
-  - id: coarse_condensate_return_fraction_check
-    type: RatioModule
-    parameters:
-      numerator_variable: coarse_condensate_return_mass_flow.value
-      denominator_variable: coarse_boiler_feedwater_mass_flow.value
-      output_variable: coarse_condensate_return_fraction.value
-      residual_scale: 0.001
-  - id: coarse_compressed_air_mass_balance
-    type: AggregateMassBalanceModule
-    parameters:
-      mass_in_variables:
-      - coarse_compressed_air_generation_mass_flow.value
-      mass_out_variables:
-      - coarse_compressed_air_demand_mass_flow.value
-      - coarse_compressed_air_leak_mass_flow.value
-      residual_scale_kg_s: 0.01
-  - id: coarse_refrigeration_service_balance
-    type: AggregateThermalBalanceModule
-    parameters:
-      heat_in_variables:
-      - coarse_refrigeration_cooling_capacity.value
-      heat_out_variables:
-      - coarse_chilled_water_process_load.value
-      - coarse_chilled_water_distribution_loss.value
-      residual_scale_W: 100.0
-  - id: coarse_cooling_water_heat_balance
-    type: AggregateThermalBalanceModule
-    parameters:
-      heat_in_variables:
-      - coarse_process_heat_to_cooling_water.value
-      - coarse_chiller_condenser_heat.value
-      heat_out_variables:
-      - coarse_cooling_water_heat_rejection.value
-      residual_scale_W: 100.0
-  - id: coarse_utility_electric_power_balance
-    type: AggregatePowerBalanceModule
-    parameters:
-      source_power_variables:
-      - coarse_utility_electric_power.value
-      load_power_variables:
-      - coarse_compressor_electric_power.value
-      - coarse_chiller_electric_power.value
-      - coarse_cooling_water_pump_fan_power.value
-      - coarse_boiler_auxiliary_power.value
-      residual_scale_W: 100.0
-  - id: coarse_air_demand_from_uses
-    type: SumModule
-    parameters:
-      input_variables:
-      - production_air_use_mass_flow.value
-      - instrument_air_use_mass_flow.value
-      output_variable: coarse_compressed_air_demand_mass_flow.value
-      residual_scale: 0.01
   - id: boiler_steam_generation_mass_flow
     type: MappedSignalModule
     parameters:
@@ -927,99 +590,7 @@ system:
   solver:
     tolerance: 1.0e-08
     audit_threshold: 1.0
-  connections:
-  - from_variable: coarse_boiler_steam_generation_mass_flow.value
-    to_variable: boiler_steam_generation_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_imported_steam_mass_flow.value
-    to_variable: imported_steam_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_process_steam_demand_mass_flow.value
-    to_variable: process_steam_demand_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_deaerator_steam_use_mass_flow.value
-    to_variable: deaerator_steam_use_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_steam_vent_loss_mass_flow.value
-    to_variable: steam_vent_loss_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_exported_steam_mass_flow.value
-    to_variable: exported_steam_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_condensate_return_mass_flow.value
-    to_variable: condensate_return_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_makeup_water_mass_flow.value
-    to_variable: makeup_water_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_boiler_feedwater_mass_flow.value
-    to_variable: boiler_feedwater_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_condensate_return_fraction.value
-    to_variable: condensate_return_fraction.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-09
-  - from_variable: coarse_compressed_air_generation_mass_flow.value
-    to_variable: compressor_air_output_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_compressed_air_leak_mass_flow.value
-    to_variable: air_leak_mass_flow.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-09
-  - from_variable: coarse_refrigeration_cooling_capacity.value
-    to_variable: refrigeration_cooling_capacity.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_chilled_water_process_load.value
-    to_variable: chilled_water_process_load.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_chilled_water_distribution_loss.value
-    to_variable: chilled_water_distribution_loss.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_process_heat_to_cooling_water.value
-    to_variable: process_heat_to_cooling_water.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_chiller_condenser_heat.value
-    to_variable: chiller_condenser_heat.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_cooling_water_heat_rejection.value
-    to_variable: cooling_water_heat_rejection.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_utility_electric_power.value
-    to_variable: utility_electric_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_compressor_electric_power.value
-    to_variable: compressor_electric_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_chiller_electric_power.value
-    to_variable: chiller_electric_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_cooling_water_pump_fan_power.value
-    to_variable: cooling_water_pump_fan_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
-  - from_variable: coarse_boiler_auxiliary_power.value
-    to_variable: boiler_auxiliary_power.value
-    description: Same physical quantity within this explicitly scoped control volume.
-    scale: 1.0e-06
+  connections: []
 hierarchy:
   blocks:
   - id: industrial_utilities
@@ -1034,47 +605,8 @@ hierarchy:
     - refrigeration
     - cooling_water
     - utility_power
-    components:
-    - coarse_boiler_steam_generation_mass_flow
-    - coarse_imported_steam_mass_flow
-    - coarse_process_steam_demand_mass_flow
-    - coarse_deaerator_steam_use_mass_flow
-    - coarse_steam_vent_loss_mass_flow
-    - coarse_exported_steam_mass_flow
-    - coarse_condensate_return_mass_flow
-    - coarse_makeup_water_mass_flow
-    - coarse_boiler_feedwater_mass_flow
-    - coarse_condensate_return_fraction
-    - coarse_compressed_air_generation_mass_flow
-    - coarse_compressed_air_demand_mass_flow
-    - coarse_compressed_air_leak_mass_flow
-    - coarse_refrigeration_cooling_capacity
-    - coarse_chilled_water_process_load
-    - coarse_chilled_water_distribution_loss
-    - coarse_process_heat_to_cooling_water
-    - coarse_chiller_condenser_heat
-    - coarse_cooling_water_heat_rejection
-    - coarse_utility_electric_power
-    - coarse_compressor_electric_power
-    - coarse_chiller_electric_power
-    - coarse_cooling_water_pump_fan_power
-    - coarse_boiler_auxiliary_power
-    - coarse_steam_header_mass_balance
-    - coarse_boiler_feedwater_makeup_check
-    - coarse_condensate_return_fraction_check
-    - coarse_compressed_air_mass_balance
-    - coarse_refrigeration_service_balance
-    - coarse_cooling_water_heat_balance
-    - coarse_utility_electric_power_balance
-    - coarse_air_demand_from_uses
-    required_variables:
-    - coarse_boiler_steam_generation_mass_flow.value
-    - coarse_process_steam_demand_mass_flow.value
-    - coarse_condensate_return_mass_flow.value
-    - coarse_compressed_air_generation_mass_flow.value
-    - coarse_refrigeration_cooling_capacity.value
-    - coarse_cooling_water_heat_rejection.value
-    - coarse_utility_electric_power.value
+    components: []
+    required_variables: []
   - id: steam_condensate
     name: Steam and condensate
     level: 1
@@ -1105,10 +637,6 @@ hierarchy:
     - process_steam_demand_mass_flow.value
     - condensate_return_mass_flow.value
     - boiler_feedwater_mass_flow.value
-    refines:
-    - coarse_steam_header_mass_balance
-    - coarse_boiler_feedwater_makeup_check
-    - coarse_condensate_return_fraction_check
   - id: compressed_air
     name: Compressed air
     level: 1
@@ -1128,8 +656,6 @@ hierarchy:
     - compressed_air
     - leak
     - pressure
-    refines:
-    - coarse_compressed_air_mass_balance
   - id: refrigeration_chilled_water
     name: Refrigeration and chilled water
     level: 1
@@ -1148,8 +674,6 @@ hierarchy:
     - refrigeration
     - chilled_water
     - cop
-    refines:
-    - coarse_refrigeration_service_balance
   - id: cooling_water
     name: Cooling water
     level: 1
@@ -1169,8 +693,6 @@ hierarchy:
     - cooling_tower
     - heat_rejection
     - makeup
-    refines:
-    - coarse_cooling_water_heat_balance
   - id: utility_power
     name: Utility electrical power
     level: 1
@@ -1182,40 +704,7 @@ hierarchy:
     tags:
     - utility_power
     - metering
-    refines:
-    - coarse_utility_electric_power_balance
   refinement_rules:
-  - id: refine_industrial_utilities_level_0
-    block_id: industrial_utilities
-    trigger_diagnostic_keys:
-    - aggregate_mass_balance_mismatch
-    - aggregate_thermal_balance_mismatch
-    - aggregate_power_balance_mismatch
-    - ratio_relation_mismatch
-    - sum_relation_mismatch
-    score_threshold: 1.0
-    next_template_ids:
-    - steam_condensate
-    - compressed_air
-    - refrigeration_chilled_water
-    - cooling_water
-    - utility_power
-    next_required_variables:
-    - steam.header_supply_kg_s
-    - steam.process_demand_kg_s
-    - condensate.return_kg_s
-    - air.compressor_output_kg_s
-    - refrigeration.cooling_capacity_W
-    - cooling_water.heat_rejection_W
-    next_required_parameters:
-    - steam_metering_boundary
-    - condensate_return_basis
-    - air_leak_boundary
-    - cooling_duty_sign_convention
-    rationale: Coarse utility-hub residual is high; refine into steam/condensate,
-      compressed air, refrigeration, cooling-water, and utility-power checks before
-      adding equipment maps or plant optimization.
-    priority: 10
   - id: refine_steam_condensate
     block_id: steam_condensate
     trigger_diagnostic_keys:
@@ -1327,16 +816,27 @@ metadata:
 fault_variants:
 - id: missing_air_leak
   kind: fault
-  description: Original omitted-flow fault, evaluated on the declared detailed operating
-    point.
+  description: 'A supplied-signal fault: air_leak_mass_flow.value reads 0; it fails
+    in industrial_utilities, compressed_air.'
   changes:
   - variable: air_leak_mass_flow.value
     set: 0.0
   expect_blocks:
-  - industrial_utilities
   - compressed_air
+- id: boiler_auxiliary_power_sensor_gain
+  kind: fault
+  description: The boiler_auxiliary_power.value sensor reads 50% high (gain error);
+    its own relation fails in utility_power.
+  changes:
+  - variable: boiler_auxiliary_power.value
+    scale: 1.5
+  expect_blocks:
+  - utility_power
 - id: within_original_tolerance
   kind: benign
   changes:
   - variable: air_leak_fraction.value
-    offset: 1.0000000000000002e-12
+    offset: 3.0e-10
+  description: 'Measurement error inside the declared tolerance: air_leak_fraction.value
+    reads +3e-10 1; it moves a checked residual by about 0.3 of its scale, below the
+    audit threshold, and must stay neutral.'

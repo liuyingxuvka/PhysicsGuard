@@ -39,7 +39,8 @@ def test_connected_starter_tree_has_a_measurable_consistent_reference_and_real_f
     reference = runner.run()
     assert reference.optimization_success and reference.audit_pass
     assert len(solutions) == 1
-    assert 0 < len(observed.variables) < len(solutions[0])
+    # A flat partition observes every supplied signal; a coarse level still derives its own.
+    assert 0 < len(observed.variables) <= len(solutions[0])
     for name, value in observed.variables.items():
         assert value.value == pytest.approx(solutions[0][name], rel=1e-8, abs=1e-8)
         assert value.unit and value.external_signal and value.source
@@ -63,15 +64,18 @@ def test_connected_starter_tree_has_a_measurable_consistent_reference_and_real_f
     description = describe_hierarchy(spec)
     assert not description["unassigned_components"]
     assert len(description["blocks"]) == len(spec.hierarchy.blocks)
-    assert any(connection["scope"] == "between_blocks" for connection in description["connections"])
     blocks = {block.id: block for block in spec.hierarchy.blocks}
+    root = next(block for block in blocks.values() if block.parent_id is None)
+    if root.components:
+        # Only a root with real system-level relations has a coarse level to refine and link to.
+        assert any(connection["scope"] == "between_blocks" for connection in description["connections"])
     # Keep the original per-domain ownership checks inside the single discovered case.
     assert set(LEGACY_BLOCKS.get(pack, ())) <= blocks.keys()
     assert all(component.type != "DummyResidualModule" for component in spec.system.components)
     if pack in LEGACY_BLOCKS:
         assert any(component.type in {"MappedSignalModule", "UnitScaleModule"} for component in spec.system.components)
     assert all(block.own_audit_pass for block in reference.top_blocks)
-    assert any(block.refines for block in blocks.values())
+    assert any(block.refines for block in blocks.values()) is bool(root.components)
     for block in blocks.values():
         if block.refines:
             assert set(block.refines) <= set(blocks[block.parent_id].components)
@@ -117,3 +121,69 @@ def test_every_starter_pack_is_one_tree() -> None:
         assert (directory / "nominal_observed.yaml").is_file(), directory
         assert not list(directory.rglob("level_*.yaml")), directory
         assert not list(directory.rglob("conflict_*.yaml")), directory
+
+
+@pytest.mark.parametrize("pack", TREE_PACKS)
+def test_no_copied_coarse_components(pack) -> None:
+    import json
+
+    spec = load_hierarchical_audit_spec(ROOT / pack / "tree.yaml")
+    components = {component.id: component for component in spec.system.components}
+    copies = [name for name, component in components.items()
+              if name.startswith("coarse_") and name[len("coarse_"):] in components
+              and component.type == components[name[len("coarse_"):]].type
+              and json.dumps(component.parameters, sort_keys=True).replace("coarse_", "")
+              == json.dumps(components[name[len("coarse_"):]].parameters, sort_keys=True)]
+    assert copies == []
+    root = next(block for block in spec.hierarchy.blocks if block.parent_id is None)
+    if not root.components:
+        assert not any(block.refines for block in spec.hierarchy.blocks)
+        assert not any(rule.block_id == root.id for rule in spec.hierarchy.refinement_rules)
+        assert "flat partition: no coarse level" in (ROOT / pack / "tree.yaml").read_text(encoding="utf-8").splitlines()[1].lower()
+
+
+def _residual_values(spec, directory, observed):
+    report = HierarchicalAuditRunner(spec, directory).evaluate_observed(
+        observed, 100000, len(spec.hierarchy.blocks), skip_unobserved=True, _unit_factor_hints=False)
+    values, seen = {}, {}
+    for item in report.top_residuals:
+        key = (item.name, item.source)
+        seen[key] = seen.get(key, 0) + 1
+        values[key + (seen[key],)] = item.normalized_value
+    return values
+
+
+@pytest.mark.parametrize("pack", TREE_PACKS)
+def test_benign_change_is_sized_to_the_residual_scale(pack) -> None:
+    directory = ROOT / pack
+    spec = load_hierarchical_audit_spec(directory / "tree.yaml")
+    observed = load_observed_values(directory / "nominal_observed.yaml")
+    before = _residual_values(spec, directory, observed)
+    sized = []
+    for variant in (variant for variant in spec.fault_variants if variant.kind == "benign"):
+        changed = observed.model_copy(deep=True)
+        for change in variant.changes:
+            assert change.offset is not None, (variant.id, "a benign measurement error is an offset")
+            item = changed.variables[change.variable]
+            changed.variables[change.variable] = item.model_copy(update={"value": item.value + change.offset})
+        after = _residual_values(spec, directory, changed)
+        shift = max(abs(value - before.get(key, 0.0)) for key, value in after.items())
+        assert max(abs(value) for value in after.values()) < spec.system.solver.audit_threshold
+        if shift >= 0.1:
+            sized.append(variant.id)
+    # At least one benign change moves a checked residual to 0.1-0.5 of its scale and stays neutral;
+    # a conserved change (building_hvac's 50 W fan step) may move none.
+    assert sized
+
+
+@pytest.mark.parametrize("pack", TREE_PACKS)
+def test_pack_has_two_separable_faults(pack) -> None:
+    directory = ROOT / pack
+    spec = load_hierarchical_audit_spec(directory / "tree.yaml")
+    faults = [variant for variant in spec.fault_variants if variant.kind == "fault"]
+    assert len(faults) >= 2
+    assert len({tuple(sorted(variant.expect_blocks)) for variant in faults}) >= 2
+    result = evaluate_fault_variants(spec, load_observed_values(directory / "nominal_observed.yaml"), pairs=True, base_dir=directory)
+    assert result["pairwise"]
+    assert all(row["detected"] and row["expect_blocks_met"] for row in result["variants"] if row["kind"] == "fault")
+    assert all(row["pair_status"] in {"ok", "masked"} for row in result["pairs"])

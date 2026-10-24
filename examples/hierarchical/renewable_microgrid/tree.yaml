@@ -20,17 +20,6 @@ system:
       scale: 10000.0
       external_signal: mapped_pv_available_dc_power
       mapping_confidence: template
-  - id: coarse_pv_ac_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 38000.0
-      scale: 10000.0
-      external_signal: mapped_pv_ac_power
-      mapping_confidence: template
   - id: coarse_pv_conversion_loss
     type: MappedSignalModule
     parameters:
@@ -42,28 +31,6 @@ system:
       scale: 1000.0
       external_signal: mapped_pv_inverter_or_dc_loss
       mapping_confidence: template
-  - id: coarse_wind_available_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 27000.0
-      scale: 10000.0
-      external_signal: mapped_wind_available_power
-      mapping_confidence: template
-  - id: coarse_wind_ac_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 25000.0
-      scale: 10000.0
-      external_signal: mapped_wind_ac_power
-      mapping_confidence: template
   - id: coarse_wind_curtailment_or_loss
     type: MappedSignalModule
     parameters:
@@ -74,50 +41,6 @@ system:
       initial_guess: 2000.0
       scale: 1000.0
       external_signal: mapped_wind_curtailment_or_losses
-      mapping_confidence: template
-  - id: coarse_grid_import_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 2000.0
-      scale: 1000.0
-      external_signal: mapped_grid_import_power
-      mapping_confidence: template
-  - id: coarse_site_load_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 60000.0
-      scale: 10000.0
-      external_signal: mapped_site_load_power
-      mapping_confidence: template
-  - id: coarse_battery_charge_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 3000.0
-      scale: 1000.0
-      external_signal: mapped_battery_charge_power
-      mapping_confidence: template
-  - id: coarse_grid_export_power
-    type: MappedSignalModule
-    parameters:
-      local_name: value
-      unit: W
-      lower_bound: 0.0
-      upper_bound: 100000000.0
-      initial_guess: 1000.0
-      scale: 1000.0
-      external_signal: mapped_grid_export_power
       mapping_confidence: template
   - id: coarse_renewable_curtailment_power
     type: MappedSignalModule
@@ -136,7 +59,7 @@ system:
       source_power_variables:
       - coarse_pv_available_power.value
       load_power_variables:
-      - coarse_pv_ac_power.value
+      - pv_ac_power.value
       loss_power_variables:
       - coarse_pv_conversion_loss.value
       residual_scale_W: 100.0
@@ -144,25 +67,11 @@ system:
     type: AggregatePowerBalanceModule
     parameters:
       source_power_variables:
-      - coarse_wind_available_power.value
+      - wind_available_power.value
       load_power_variables:
-      - coarse_wind_ac_power.value
+      - wind_ac_power.value
       loss_power_variables:
       - coarse_wind_curtailment_or_loss.value
-      residual_scale_W: 100.0
-  - id: coarse_microgrid_bus_balance
-    type: AggregateElectricalBusBalanceModule
-    parameters:
-      generation_power_variables:
-      - coarse_pv_ac_power.value
-      - coarse_wind_ac_power.value
-      - coarse_grid_import_power.value
-      consumption_power_variables:
-      - coarse_site_load_power.value
-      - coarse_battery_charge_power.value
-      - coarse_grid_export_power.value
-      loss_power_variables:
-      - coarse_renewable_curtailment_power.value
       residual_scale_W: 100.0
   - id: pv_irradiance
     type: MappedSignalModule
@@ -519,48 +428,13 @@ system:
     description: Same physical quantity at the same stated boundary; original fine
       supplied signal remains authoritative.
     scale: 1.0e-06
-  - from_variable: coarse_pv_ac_power.value
-    to_variable: pv_ac_power.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
   - from_variable: coarse_pv_conversion_loss.value
     to_variable: pv_inverter_loss.value
     description: Same physical quantity at the same stated boundary; original fine
       supplied signal remains authoritative.
     scale: 1.0e-06
-  - from_variable: coarse_wind_available_power.value
-    to_variable: wind_available_power.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
-  - from_variable: coarse_wind_ac_power.value
-    to_variable: wind_ac_power.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
   - from_variable: coarse_wind_curtailment_or_loss.value
     to_variable: wind_loss_or_curtailment.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
-  - from_variable: coarse_grid_import_power.value
-    to_variable: grid_import_power.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
-  - from_variable: coarse_site_load_power.value
-    to_variable: site_load_power.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
-  - from_variable: coarse_battery_charge_power.value
-    to_variable: battery_charge_power.value
-    description: Same physical quantity at the same stated boundary; original fine
-      supplied signal remains authoritative.
-    scale: 1.0e-06
-  - from_variable: coarse_grid_export_power.value
-    to_variable: grid_export_power.value
     description: Same physical quantity at the same stated boundary; original fine
       supplied signal remains authoritative.
     scale: 1.0e-06
@@ -581,25 +455,12 @@ hierarchy:
     - renewable_balance
     components:
     - coarse_pv_available_power
-    - coarse_pv_ac_power
     - coarse_pv_conversion_loss
-    - coarse_wind_available_power
-    - coarse_wind_ac_power
     - coarse_wind_curtailment_or_loss
-    - coarse_grid_import_power
-    - coarse_site_load_power
-    - coarse_battery_charge_power
-    - coarse_grid_export_power
     - coarse_renewable_curtailment_power
     - coarse_pv_power_balance
     - coarse_wind_power_balance
-    - coarse_microgrid_bus_balance
-    required_variables:
-    - coarse_pv_ac_power.value
-    - coarse_wind_ac_power.value
-    - coarse_grid_import_power.value
-    - coarse_site_load_power.value
-    - coarse_battery_charge_power.value
+    required_variables: []
   - id: pv_system
     name: PV array and inverter
     level: 1
@@ -666,8 +527,6 @@ hierarchy:
     - battery_energy_current.value
     - battery_capacity.value
     - battery_soc.value
-    refines:
-    - coarse_microgrid_bus_balance
   - id: grid_interconnect
     name: Grid interconnect
     level: 1
@@ -690,8 +549,6 @@ hierarchy:
     - load
     - dispatch
     - curtailment
-    refines:
-    - coarse_microgrid_bus_balance
   refinement_rules:
   - id: refine_microgrid_balance
     block_id: renewable_microgrid
@@ -785,18 +642,27 @@ metadata:
 fault_variants:
 - id: unserved_load
   kind: fault
-  description: Original physical conflict on the actual supplied same-boundary fine
-    signal.
+  description: 'A supplied-signal fault: site_load_power.value reads 62000; it fails
+    in load_dispatch.'
   changes:
   - variable: site_load_power.value
     set: 62000.0
   expect_blocks:
-  - renewable_microgrid
   - load_dispatch
+- id: battery_capacity_sensor_gain
+  kind: fault
+  description: The battery_capacity.value sensor reads 50% high (gain error); its
+    own relation fails in battery_storage.
+  changes:
+  - variable: battery_capacity.value
+    scale: 1.5
+  expect_blocks:
+  - battery_storage
 - id: within_original_tolerance
   kind: benign
-  description: Nonzero roundoff-scale supplied-signal change below existing scales;
-    final actual neutrality remains to verify.
+  description: 'Measurement error inside the declared tolerance: pv_efficiency.value
+    reads +3e-10 1; it moves a checked residual by about 0.3 of its scale, below the
+    audit threshold, and must stay neutral.'
   changes:
   - variable: pv_efficiency.value
-    offset: 1.0000000000000002e-12
+    offset: 3.0e-10

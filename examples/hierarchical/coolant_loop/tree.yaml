@@ -275,6 +275,7 @@ fault_variants:
     scale: 0.5
   expect_blocks:
   - coolant_loop
+  - thermal_mass
 - id: radiator
   kind: fault
   description: 'Reproduce conflict_level_1_radiator: the radiator duty channel reports
@@ -284,14 +285,17 @@ fault_variants:
   - variable: rad.Q_rejected_W
     scale: 2.0
   expect_blocks:
+  - bypass_or_valve
+  - coolant_loop
   - radiator
 - id: small_shaft_power_shift
   kind: benign
-  description: A 1 W shaft-power sensor perturbation stays within the original 1 kW
-    pump residual scale without changing any fixed operating-point measurement.
+  description: 'Measurement error inside the declared tolerance: pump.P_shaft_W reads
+    +4.73 W; it moves a checked residual by about 0.3 of its scale, below the audit
+    threshold, and must stay neutral.'
   changes:
   - variable: pump.P_shaft_W
-    offset: 1.0
+    offset: 4.73
 metadata:
   reference_boundary: Synthetic starter-pack operating point, not testbench validation.
   legacy_fault_sources:
