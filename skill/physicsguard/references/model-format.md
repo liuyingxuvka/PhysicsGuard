@@ -18,7 +18,7 @@ python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml --json
 
 `modules list` prints each registered type and its first documentation sentence.
 `modules describe` returns variables (units, bounds, initial guesses, scales), required/optional parameter names, residual names/roles/diagnostic keys/descriptions, and validity metadata. Its marked synthetic parameters or external variables are introspection examples, not physical defaults, measurements or an audit pass.
-`hierarchy describe` prints a readable tree with components, refinements, declared fault variants and rules; `--observed` adds per-block mapped/review/missing signal counts without solving or evaluating.
+`hierarchy describe` prints a readable tree with components, refinements, fault variants (benign ones named in the header), rules and assumption cards; `--observed` adds per-block mapped/review counts and `declared needs missing` (declared `required_variables` only) without solving or evaluating. Which inputs are really checkable only `evaluate` knows: `hierarchy run|evaluate|compare|variants` print the same tree with each block's verdict (`not checked: N inputs missing`).
 `--json` keeps the full structure, native `supplied` parameters and `native_reads_with_defaults` access logs; `--mermaid` draws blocks and labeled connections. These are declarations, not validation evidence.
 
 ## System, components and parameters

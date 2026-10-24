@@ -20,11 +20,11 @@ consistency claims to `model-dataset-validation`. Multi-project/database questio
    then `python -m physicsguard.cli testfile contract-check CONTRACT.yaml` and
    `python -m physicsguard.cli testfile snapshot CONTRACT.yaml --row 70 --out OBSERVED.yaml`.
    Use `python -m physicsguard.cli testfile series CONTRACT.yaml --out SERIES.yaml` for series.
-   A hand-written snapshot retains source signal, unit, confidence, factor/offset and review state; optional `source_model` records tool/model context. Review mappings through the evaluation ledger and compact `mapping_summary`.
+   A hand-written snapshot retains source signal, unit, confidence, factor/offset and review state; optional `source_model` records tool/model context. Review mappings through the evaluation ledger and the tree's `mapping:` line.
    `stale_when` names reconfirmation conditions; when one occurs mark the mapping `stale`.
 5. Run `python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml`.
-   Read `audit_pass`, `top_blocks`, checked/derived/unchecked relations, mapping issues and refinements.
-   Add `--json` for full details. Connections propagate identity without overwriting measurements.
+   Read the failing block lines and the tail lines of the tree (`own FAIL`, `not checked: N inputs missing`, `no checks`,
+   `refinement:`, `next:`, `mapping:`); add `--json` only when you need details. Connections propagate identity without overwriting measurements.
    Finite one-unknown equation/connection/boundary/assumption relations may derive an intermediate;
    ambiguous, flat, undefined or unsupported cases stay unknown. Producing relations are not checks.
    Supported per-residual value/control dependencies include zero products and flat branches;
@@ -32,10 +32,10 @@ consistency claims to `model-dataset-validation`. Multi-project/database questio
    need supported dependencies; custom checks with every registered value supplied remain usable.
    With no independent check the command stops. CLI lists remaining gaps; strict library mode rejects them.
 6. Compare competing causes declared as `fault_variants` in the audit tree:
-   `python -m physicsguard.cli hierarchy variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml --json`.
-   Read `pairwise`, signatures and expected blocks; same-signature causes may need an unmeasured `next_signal`.
-   `masked_pairs` lists nonempty proper-subset failures; undetected or outside-expected pairs fail the check.
-   `matching_variants` is bounded signature agreement; `model_miss` means failing observed data matches no fault variant.
+   `python -m physicsguard.cli hierarchy variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml`.
+   Read `variants failing here:` on each block, then `masked:`, `indistinguishable … next signal`, `matches:` and `model miss:`.
+   `masked:` lists nonempty proper-subset failures; undetected or outside-expected pairs fail the check (`--json`: `pairwise`).
+   `matches:` is bounded signature agreement; `model miss: yes` means failing observed data matches no fault variant.
    Represent bounded sensor accuracy with a `kind: benign` measurement-offset variant that must remain neutral.
    Variants copy another device and rederive without changing the nominal model or measurements; unavailable rows keep reasons/null signatures.
    Exit 0 means checks pass without a model miss, 1 a failed/not-evaluable check or miss, and 2 invalid input.

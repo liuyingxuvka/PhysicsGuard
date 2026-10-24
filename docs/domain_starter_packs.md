@@ -29,7 +29,9 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/coolant_loop
 python -m physicsguard.cli hierarchy variants examples/hierarchical/coolant_loop/tree.yaml examples/hierarchical/coolant_loop/nominal_observed.yaml
 ```
 
-`describe` inspects the declared topology without solving. `run` solves a
+`describe` inspects the declared topology without solving; `run`, `evaluate` and
+`variants` print the same tree with each block's verdict (add `--json` for the full
+report). `run` solves a
 low-fidelity reference; its generated working point is synthetic, not a measured
 plant record. The paired snapshots retain a declared bench-like measurement
 subset with SI units and mapping evidence, not the full solved vector. `evaluate`

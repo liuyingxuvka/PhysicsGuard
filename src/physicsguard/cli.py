@@ -174,75 +174,12 @@ def _pick(row: dict, keys: tuple[str, ...]) -> dict:
     return {key: row.get(key) for key in keys}
 
 
-def _hierarchy_summary(report: dict) -> dict:
-    """Compact view of a hierarchical audit report: verdict, suspicious blocks, open gaps; no input echo."""
-    metadata = report.get("metadata", {})
-    summary = {
-        "output": SUMMARY_HINT,
-        "mode": metadata.get("mode"),
-        "audit_name": report.get("audit_name"),
-        "audit_pass": report.get("audit_pass"),
-        "max_abs_normalized_residual": report.get("max_abs_normalized_residual"),
-        "top_blocks": [
-            _pick(block, ("block_id", "level", "score", "subtree_score", "confidence", "audit_pass", "own_audit_pass", "missing_required_variables", "missing_required_parameters"))
-            for block in report.get("top_blocks", [])[:5]
-        ],
-        "top_residuals": [
-            _pick(residual, ("name", "normalized_value", "role", "diagnostic_key"))
-            for residual in report.get("top_residuals", [])[:5]
-        ],
-        "recommended_refinements": [
-            _pick(item, ("block_id", "rule_id", "next_template_ids", "template_status", "next_required_variables", "next_required_parameters"))
-            for item in report.get("recommended_refinements", [])[:5]
-        ],
-        "mapping_summary": {
-            "rows": len(report.get("signal_mapping_ledger", [])),
-            "with_issues": sum(bool(row.get("issue_codes")) for row in report.get("signal_mapping_ledger", [])),
-            "review_required": sum(row.get("review_required") is True for row in report.get("signal_mapping_ledger", [])),
-            "stale": sum("stale_mapping" in row.get("issue_codes", []) for row in report.get("signal_mapping_ledger", [])),
-            "low_confidence": sum("low_confidence" in row.get("issue_codes", []) for row in report.get("signal_mapping_ledger", [])),
-            "missing_unit": sum("missing_unit" in row.get("issue_codes", []) for row in report.get("signal_mapping_ledger", [])),
-        },
-        "signal_mapping_ledger": [
-            _pick(row, ("physics_variable", "external_signal", "expected_unit", "observed_unit", "issue_codes", "recommended_action"))
-            for row in report.get("signal_mapping_ledger", [])
-            if row.get("issue_codes")
-        ],
-        "bug_family_followups": [
-            _pick(item, ("followup_id", "affected_blocks", "affected_variables", "recommended_action"))
-            for item in report.get("bug_family_followups", [])
-        ],
-        "missing_required_variables": report.get("missing_required_variables", []),
-        "missing_required_parameters": report.get("missing_required_parameters", []),
-        "derived_variables": list(report.get("derived_variables", {})),
-        "checked_residual_count": len(report.get("checked_residuals", [])),
-        "unchecked_residual_count": len(report.get("unchecked_residuals", {})),
-        "refinement_checks": report.get("refinement_checks", []),
-        "assumptions": [_pick(card, ("id", "status", "applied")) for card in report.get("assumptions", {}).get("cards", [])],
-        "warnings": report.get("warnings", []),
-    }
-    if metadata.get("solver_attempted"):
-        summary["optimization_success"] = report.get("optimization_success")
-    return summary
+def _print_tree(spec, base_dir: Path, report: dict | None = None, variants: dict | None = None) -> None:
+    """Compose the read-only structure with a report or a variant result into one tree view."""
+    from physicsguard.core.hierarchy import describe_hierarchy
+    from physicsguard.core.tree_view import render_tree_view
 
-
-def _comparison_summary(report: dict) -> dict:
-    observed = _hierarchy_summary(report["observed_hierarchy"])
-    del observed["output"]
-    return {
-        "output": SUMMARY_HINT,
-        "mode": "hierarchy_compare",
-        "audit_name": report.get("audit_name"),
-        "reference_optimization_success": report.get("reference_optimization_success"),
-        "reference_audit_pass": report.get("reference_audit_pass"),
-        "observed_audit_pass": report.get("observed_audit_pass"),
-        "top_variable_deviations": [
-            _pick(item, ("variable", "reference_value", "observed_value", "normalized_delta", "unit"))
-            for item in report.get("top_variable_deviations", [])[:5]
-        ],
-        "observed_hierarchy": observed,
-        "warnings": report.get("warnings", []),
-    }
+    print(render_tree_view(describe_hierarchy(spec, base_dir=base_dir), report=report, variants=variants))
 
 
 def _validation_summary(report: dict) -> dict:
@@ -274,7 +211,10 @@ def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
     spec = load_hierarchical_audit_spec(path)
     runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
     report = runner.to_dict(runner.run())
-    _print_json(report if full else _hierarchy_summary(report), pretty)
+    if full:
+        _print_json(report, pretty)
+    else:
+        _print_tree(spec, path.parent, report=report)
     return 0 if report["audit_pass"] else 1
 
 
@@ -292,7 +232,8 @@ def modules_command(module_type: str | None = None, pretty: bool = False) -> int
 
 def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False,
                        full: bool = False, observed_path: Path | None = None) -> int:
-    from physicsguard.core.hierarchy import describe_hierarchy, render_hierarchy_text
+    from physicsguard.core.hierarchy import describe_hierarchy
+    from physicsguard.core.tree_view import render_tree_view
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
 
@@ -304,7 +245,7 @@ def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False,
     elif full:
         _print_json(description, pretty)
     else:
-        print(render_hierarchy_text(description))
+        print(render_tree_view(description))
     return 0
 
 
@@ -317,7 +258,10 @@ def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, fu
     observed = load_observed_values(observed_path)
     runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
     report = runner.to_dict(runner.evaluate_observed(observed, skip_unobserved=True))
-    _print_json(report if full else _hierarchy_summary(report), pretty)
+    if full:
+        _print_json(report, pretty)
+    else:
+        _print_tree(spec, path.parent, report=report)
     return 0 if report["audit_pass"] else 1
 
 
@@ -330,7 +274,10 @@ def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, ful
     observed = load_observed_values(observed_path)
     runner = HierarchicalAuditRunner(spec, base_dir=path.parent)
     report = runner.to_dict(runner.compare_observed(observed))
-    _print_json(report if full else _comparison_summary(report), pretty)
+    if full:
+        _print_json(report, pretty)
+    else:
+        _print_tree(spec, path.parent, report=report)
     return 0 if report["observed_audit_pass"] else 1
 
 
@@ -339,20 +286,15 @@ def hierarchy_variants_command(audit, nominal, pairs=False, observed=None, full=
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
 
+    spec = load_hierarchical_audit_spec(audit)
     output = evaluate_fault_variants(
-        load_hierarchical_audit_spec(audit), load_observed_values(nominal), pairs=pairs,
+        spec, load_observed_values(nominal), pairs=pairs,
         observed=load_observed_values(observed) if observed is not None else None, base_dir=audit.parent,
     )
     if full:
         _print_json(output, pretty)
     else:
-        keys = ("ok", "nominal_audit_pass", "masked_pairs", "indistinguishable", "matching_variants", "model_miss", "claim_boundary")
-        summary = {key: output[key] for key in keys if key in output}
-        for key in ("variants", "pairs"):
-            summary[key] = [{name: value for name, value in row.items() if name not in {"generated_values", "device_values"}}
-                            for row in output[key]]
-        summary["next_signal"] = output["next_signal"][:5]
-        _print_json(summary, pretty)
+        _print_tree(spec, audit.parent, variants=output)
     return 0 if output["ok"] and output["model_miss"] is not True else 1
 
 

@@ -165,12 +165,10 @@ def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
     (tmp_path / "partial.yaml").write_text(yaml.safe_dump(snapshot), encoding="utf-8")
     result = run_cli("hierarchy", "evaluate", str(audit), str(tmp_path / "partial.yaml"))
     assert result.returncode == 0, result.stderr
-    data = json.loads(result.stdout)
-    assert data["audit_pass"]
-    assert data["missing_required_variables"] == []
-    assert data["derived_variables"] == ["cool.Q_stack_heat_W"]
-    assert data["checked_residual_count"] > 0
-    assert data["unchecked_residual_count"] == 0
+    head = result.stdout.splitlines()[0]
+    assert ": PASS;" in head and " 0 unchecked, 1 derived;" in head
+    assert int(head.split(": PASS; ")[1].split(" checked")[0]) > 0
+    assert "not checked:" not in result.stdout
     full = run_cli("hierarchy", "evaluate", str(audit), str(tmp_path / "partial.yaml"), "--json")
     assert full.returncode == 0, full.stderr
     report = json.loads(full.stdout)
@@ -186,25 +184,23 @@ def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
     assert "no residual can be evaluated without them" in result.stderr
 
 
-def test_hierarchy_evaluate_prints_a_compact_summary_without_input_echo() -> None:
+def test_hierarchy_evaluate_prints_the_tree_without_input_echo() -> None:
     args = ("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(OBSERVED / "pitch_feedback_observed_fault.yaml"))
-    summary = run_cli(*args)
+    tree = run_cli(*args)
     full = run_cli(*args, "--json")
-    assert summary.returncode == full.returncode == 1, summary.stderr
-    assert len(summary.stdout) < 4096 < len(full.stdout)
-    data = json.loads(summary.stdout)
-    assert data["output"] == "summary only; add --json for the full report"
-    assert data["audit_pass"] is False
-    assert data["top_blocks"][0]["block_id"] == "pitch_rate_feedback"
-    assert {item["followup_id"] for item in data["bug_family_followups"]} == {"linear_gain_sign_family"}
-    assert "metadata" not in data and "block_assignments" not in data
+    assert tree.returncode == full.returncode == 1, tree.stderr
+    assert len(tree.stdout) < 4096 < len(full.stdout)
+    assert not tree.stdout.startswith("{")
+    assert tree.stdout.startswith("audit observed_pitch_feedback_level_0 on pitch_feedback_observed_fault: FAIL;")
+    line = next(row for row in tree.stdout.splitlines() if row.startswith("  pitch_rate_feedback [L1]"))
+    assert "own FAIL" in line and "controller_q_gain.linear_relation" in line
     assert "hierarchy" not in json.loads(full.stdout)["metadata"]
 
 
 @pytest.mark.parametrize("fault", [False, True])
 def test_pitch_parent_verdict_and_own_score_are_distinct(fault) -> None:
     snapshot = "pitch_feedback_observed_fault.yaml" if fault else "pitch_feedback_observed_clean.yaml"
-    result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(OBSERVED / snapshot))
+    result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(OBSERVED / snapshot), "--json")
     assert result.returncode == int(fault), result.stderr
     data = json.loads(result.stdout)
     parent = next(block for block in data["top_blocks"] if block["block_id"] == "f14_flight_control")
@@ -282,7 +278,7 @@ def test_describe_observed_counts_signals_per_block(monkeypatch) -> None:
     description = describe_hierarchy(spec, observed=observed)
     assert (spec.model_dump(mode="json"), observed.model_dump(mode="json")) == before
     rows = {block["id"]: block["signals"] for block in description["blocks"]}
-    assert rows["heater"] == {"mapped": 3, "review_required": 1, "required_missing": 0}
+    assert rows["heater"] == {"mapped": 3, "review_required": 1, "declared_required_missing": 0}
     assert sum(row["mapped"] for row in rows.values()) == len(observed.variables)
     assert description["solver_attempted"] is False
 
@@ -323,17 +319,101 @@ def test_mapping_summary_counts_the_whole_native_ledger(tmp_path):
     observed = tmp_path / "mapping.yaml"
     observed.write_text(yaml.safe_dump(payload))
     args = ("hierarchy", "evaluate", str(directory / "tree.yaml"), str(observed))
-    full, compact = run_cli(*args, "--json"), run_cli(*args)
-    assert full.returncode == compact.returncode == 0, full.stderr
+    full, tree = run_cli(*args, "--json"), run_cli(*args)
+    assert full.returncode == tree.returncode == 0, full.stderr
     ledger = json.loads(full.stdout)["signal_mapping_ledger"]
-    summary = json.loads(compact.stdout)["mapping_summary"]
-    assert summary == {
-        "rows": len(ledger),
-        "with_issues": sum(bool(row["issue_codes"]) for row in ledger),
-        "review_required": sum(row["review_required"] is True for row in ledger),
-        "stale": sum("stale_mapping" in row["issue_codes"] for row in ledger),
-        "low_confidence": sum("low_confidence" in row["issue_codes"] for row in ledger),
-        "missing_unit": sum("missing_unit" in row["issue_codes"] for row in ledger),
-    }
-    assert all(summary[key] >= 1 for key in ("stale", "low_confidence", "review_required"))
-    assert summary["missing_unit"] >= 1
+    issues = sum(bool(row["issue_codes"]) for row in ledger)
+    assert f"; mapping {len(ledger)} rows, {issues} with issues" in tree.stdout.splitlines()[0]
+    mapping = next(line for line in tree.stdout.splitlines() if line.startswith("mapping: "))
+    assert all(code in mapping for code in ("stale_mapping", "low_confidence", "missing_unit"))
+
+
+TANK = ROOT / "examples" / "hierarchical" / "heated_tank"
+HEAD_REPORT_KEYS = {
+    "assumptions", "audit_name", "audit_pass", "block_assignments", "bug_family_followups", "checked_residuals",
+    "derived_variables", "max_abs_normalized_residual", "metadata", "missing_required_parameters",
+    "missing_required_variables", "optimization_success", "recommended_refinements", "refinement_checks",
+    "residual_norm", "signal_mapping_ledger", "system_name", "top_blocks", "top_residuals", "unassigned_residuals",
+    "unchecked_residuals", "warnings",
+}
+
+
+def _block_lines(text: str) -> dict[str, str]:
+    return {line.split(" [L")[0].strip(): line for line in text.splitlines() if " [L" in line}
+
+
+def test_evaluate_prints_the_tree_with_verdicts(capsys) -> None:
+    from physicsguard.cli import main
+
+    args = ("hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / "sparse_measured_k70.yaml"))
+    code = main(list(args))
+    tree = subprocess.CompletedProcess(args, code, capsys.readouterr().out, "")
+    full = run_cli(*args, "--json")
+    assert tree.returncode == full.returncode == 1, full.stderr
+    assert not tree.stdout.startswith("{") and len(tree.stdout) <= 3000
+    assert tree.stdout.startswith("audit heated_tank on tank_run_sparse_step_70: FAIL;")
+    lines = _block_lines(tree.stdout)
+    assert "own FAIL" in lines["thermal"]
+    assert "not checked: 6 inputs missing" in lines["heater"]
+    assert "assumptions: heater_nameplate_efficiency" in lines["heater"]
+    for block in ("throughflow", "envelope"):
+        assert "no checks" in lines[block] and "PASS" not in lines[block]
+    assert "next: refine_thermal -> heater (block) needs heater current" in tree.stdout
+    # The rule tree_view_shows_every_block_verdict: every block, with the report's own verdict.
+    verdicts = {row["block_id"]: row for row in json.loads(full.stdout)["block_verdicts"]}
+    assert set(lines) == set(verdicts)
+    for block_id, row in verdicts.items():
+        line = lines[block_id]
+        if row["checked_residual_count"]:
+            assert f"own {'PASS' if row['own_audit_pass'] else 'FAIL'} " in line
+        else:
+            assert "own PASS" not in line and "own FAIL" not in line
+        assert ("not checked: " in line) is bool(row["missing_required_variables"])
+    clean = run_cli("hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / "measured_k30.yaml"))
+    assert clean.returncode == 0 and ": PASS;" in clean.stdout.splitlines()[0]
+
+
+def test_variants_prints_the_tree_with_signatures() -> None:
+    args = ("hierarchy", "variants", str(TANK / "heated_tank.yaml"), str(TANK / "measured_k30.yaml"),
+            "--pairs", "--observed", str(TANK / "measured_k70.yaml"))
+    tree, full = run_cli(*args), run_cli(*args, "--json")
+    assert tree.returncode == full.returncode == 0, tree.stderr
+    assert len(tree.stdout) <= 3000
+    lines = _block_lines(tree.stdout)
+    assert "variants failing here: heater_half(-)" in lines["heater"]
+    for text in ("masked: heater_half+inlet_temp_offset", "matches: heater_half", "model miss: no",
+                 "indistinguishable: extra_wall_loss+inlet_temp_offset next signal heat.Q_out_W",
+                 "variant outflow_rounding benign: neutral", "pair heater_half+inlet_temp_offset: masked", "boundary: "):
+        assert text in tree.stdout
+    data = json.loads(full.stdout)
+    assert {"pairwise", "masked_pairs", "next_signal", "generated_values"} <= set(data) | set(data["variants"][0])
+
+
+def test_json_keeps_the_full_report() -> None:
+    for snapshot in ("sparse_measured_k70.yaml", "measured_k30.yaml"):
+        result = run_cli("hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / snapshot), "--json")
+        data = json.loads(result.stdout)
+        assert set(data) == HEAD_REPORT_KEYS | {"block_verdicts"}
+        assert [row["block_id"] for row in data["block_verdicts"]] == ["tank", "hydraulics", "thermal", "heater", "throughflow", "envelope"]
+    compare = run_cli("hierarchy", "compare", str(OBSERVED / "pitch_feedback_level_0.yaml"),
+                      str(OBSERVED / "pitch_feedback_observed_fault.yaml"))
+    assert compare.returncode == 1 and "; reference PASS" in compare.stdout.splitlines()[0]
+
+
+def test_describe_observed_counts_declared_needs() -> None:
+    result = run_cli("hierarchy", "describe", str(TANK / "heated_tank.yaml"), "--observed", str(TANK / "sparse_measured_k70.yaml"))
+    assert result.returncode == 0, result.stderr
+    assert "0 declared needs missing" in _block_lines(result.stdout)["heater"]
+    full = run_cli("hierarchy", "describe", str(TANK / "heated_tank.yaml"), "--observed", str(TANK / "sparse_measured_k70.yaml"), "--json")
+    signals = {block["id"]: block["signals"] for block in json.loads(full.stdout)["blocks"]}
+    assert set(signals["heater"]) == {"mapped", "review_required", "declared_required_missing"}
+
+
+def test_describe_names_benign_variants_and_assumption_blocks() -> None:
+    result = run_cli("hierarchy", "describe", str(TANK / "heated_tank.yaml"))
+    assert result.returncode == 0, result.stderr
+    first, *_ = result.stdout.splitlines()
+    assert first.endswith("; benign: outflow_rounding")
+    lines = _block_lines(result.stdout)
+    assert "assumptions: heater_nameplate_efficiency" in lines["heater"]
+    assert sum("assumptions:" in line for line in lines.values()) == 1

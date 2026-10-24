@@ -3,7 +3,8 @@
 Preserve finite registry/normalized residual requirements, explicit assumptions,
 immutable observed values, bounded partial derivation and independent checks.
 Coarse/detail consistency and planned refinement are reported without executing
-templates; numerical convergence alone never licenses an audit pass.
+templates; numerical convergence alone never licenses an audit pass. The one tree
+view shows every block with the verdict the report gives it.
 """
 
 from __future__ import annotations
@@ -148,6 +149,8 @@ class State:
     planned_refinements_expected: tuple[str, ...] = ()
     planned_refinements_reported: tuple[str, ...] = ()
     refinement_templates_loaded: tuple[str, ...] = ()
+    block_verdicts: tuple[str, ...] = ()
+    tree_view_rows: tuple[str, ...] = ()
 
 
 class ValidateSystem:
@@ -423,10 +426,29 @@ class AssembleResiduals:
         )
 
 
+def _block_verdicts(input_obj: ResidualsReady) -> tuple[str, ...]:
+    """Abstract per-block verdicts of one report: a checked block passes or fails,
+    a block with missing inputs is not checked, a block with only producing
+    relations has no checks (never PASS)."""
+    case = input_obj.case_id
+    rows = [f"{case}:root:{'FAIL' if 'bad_audit' in case else 'PASS'}"]
+    if "child_bad_audit" in case:
+        rows.append(f"{case}:child:FAIL")
+    if not input_obj.observed_values_complete:
+        rows.append(f"{case}:leaf:not checked")
+    rows.append(f"{case}:derived_only:no checks")
+    return tuple(rows)
+
+
+def _with_tree_view(state: State, input_obj: ResidualsReady) -> State:
+    rows = _block_verdicts(input_obj)
+    return replace(state, block_verdicts=state.block_verdicts + rows, tree_view_rows=state.tree_view_rows + rows)
+
+
 class ExecuteMode:
     name = "ExecuteMode"
     reads = ('registry_valid', 'residuals_normalized', 'coarse_refinement_expected', 'planned_refinements_expected')
-    writes = ('solve_attempted', 'observed_evaluations', 'observed_without_solver', 'comparisons', 'hierarchy_reports', 'hierarchy_descriptions', 'checked_relations', 'child_failures', 'parent_failures', 'coarse_refinement_reported', 'planned_refinements_reported', 'refinement_templates_loaded')
+    writes = ('solve_attempted', 'observed_evaluations', 'observed_without_solver', 'comparisons', 'hierarchy_reports', 'hierarchy_descriptions', 'checked_relations', 'child_failures', 'parent_failures', 'coarse_refinement_reported', 'planned_refinements_reported', 'refinement_templates_loaded', 'block_verdicts', 'tree_view_rows')
     accepted_input_type = ResidualsReady
     input_description = "ResidualsReady"
     output_description = "HierarchyFinished, HierarchyInspected, or SetupFailed"
@@ -468,7 +490,7 @@ class ExecuteMode:
                     observed_only=True,
                 ),
                 new_state=replace(
-                    state,
+                    _with_tree_view(state, input_obj),
                     observed_evaluations=state.observed_evaluations + (input_obj.case_id,),
                     observed_without_solver=state.observed_without_solver + (input_obj.case_id,),
                     hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,),
@@ -489,7 +511,8 @@ class ExecuteMode:
                         else state.audit_failures
                     ),
                 ),
-                label=("coarse_failure_consistency_reported" if input_obj.case_id in state.coarse_refinement_expected else
+                label=("tree_view_rendered_with_block_verdicts" if "tree_view" in input_obj.case_id else
+                       "coarse_failure_consistency_reported" if input_obj.case_id in state.coarse_refinement_expected else
                        "planned_template_reported_not_executed" if input_obj.case_id in state.planned_refinements_expected else
                        "child_failure_propagated" if "child_bad_audit" in input_obj.case_id else
                        "derived_relations_excluded_from_checks" if input_obj.case_id in state.derivation_cases
@@ -506,7 +529,7 @@ class ExecuteMode:
                     compare_mode=True,
                 ),
                 new_state=replace(
-                    state,
+                    _with_tree_view(state, input_obj),
                     solve_attempted=state.solve_attempted + (input_obj.case_id,),
                     observed_evaluations=state.observed_evaluations + (input_obj.case_id,),
                     comparisons=state.comparisons + (input_obj.case_id,),
@@ -539,7 +562,7 @@ class ExecuteMode:
                     audit_pass=audit_pass,
                 ),
                 new_state=replace(
-                    state,
+                    _with_tree_view(state, input_obj),
                     solve_attempted=state.solve_attempted + (input_obj.case_id,),
                     hierarchy_reports=state.hierarchy_reports + (input_obj.case_id,),
                     optimization_successes=(
@@ -841,6 +864,16 @@ def planned_template_is_reported_not_executed(state: State, trace) -> InvariantR
     return InvariantResult.fail(f"planned targets missing={sorted(missing)}, loaded={sorted(loaded)}") if missing or loaded else InvariantResult.pass_()
 
 
+def tree_view_shows_every_block_verdict(state: State, trace) -> InvariantResult:
+    del trace
+    hidden = sorted(set(state.block_verdicts) - set(state.tree_view_rows))
+    invented = sorted(set(state.tree_view_rows) - set(state.block_verdicts))
+    unchecked_pass = sorted(row for row in state.tree_view_rows if row.split(":")[1] in {"leaf", "derived_only"} and row.endswith(":PASS"))
+    if hidden or invented or unchecked_pass:
+        return InvariantResult.fail(f"tree view disagrees with block verdicts: hidden={hidden}, invented={invented}, unchecked_pass={unchecked_pass}")
+    return InvariantResult.pass_()
+
+
 INVARIANTS = (
     Invariant("parent_fails_with_child", "A failed child makes every containing parent fail.", parent_fails_with_child),
     Invariant("derived_relations_are_not_checks", "A producing relation is never an independent check.", derived_relations_are_not_checks),
@@ -916,6 +949,7 @@ INVARIANTS = (
     ),
     Invariant("coarse_failure_with_passing_children_is_inconsistent", "Checked coarse failure with passing children is explicitly inconsistent.", coarse_failure_with_passing_children_is_inconsistent),
     Invariant("planned_template_is_reported_not_executed", "An unbuilt refinement is reported as planned and never loaded or executed.", planned_template_is_reported_not_executed),
+    Invariant("tree_view_shows_every_block_verdict", "The tree view prints every block with the verdict of the report; a block without checked residuals is never PASS.", tree_view_shows_every_block_verdict),
 )
 
 
@@ -954,6 +988,7 @@ EXTERNAL_INPUTS = (
     AuditInput("bad_schema", False, True, True, True, True, True),
     AuditInput("growth_coarse_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate"),
     AuditInput("growth_planned_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate"),
+    AuditInput("hierarchy_evaluate_partial_tree_view_bad_audit", True, True, True, True, True, False, mode="hierarchy_evaluate", observed_values_complete=False),
 )
 
 MAX_SEQUENCE_LENGTH = 1
@@ -1007,9 +1042,13 @@ IMPLEMENTED_BY = {
     "ExecuteMode.hierarchy": "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner",
     "ExecuteMode.describe": "src/physicsguard/core/hierarchy.py:describe_hierarchy",
     "ExecuteMode.growth": "src/physicsguard/core/hierarchy.py:RefinementPlanner.recommended_refinements",
+    "ExecuteMode.tree_view": "src/physicsguard/core/tree_view.py:render_tree_view",
     "GenerateDiagnostics": "src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate",
 }
 TESTED_BY = {
+    "tree_view_shows_every_block_verdict": [
+        "tests/test_hierarchy_cli.py:test_evaluate_prints_the_tree_with_verdicts",
+    ],
     "coarse_failure_with_passing_children_is_inconsistent": [
         "tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations",
     ],
@@ -1110,6 +1149,7 @@ REQUIRED_LABELS = (
     "child_failure_propagated",
     "coarse_failure_consistency_reported",
     "planned_template_reported_not_executed",
+    "tree_view_rendered_with_block_verdicts",
 )
 ASSUMPTION_LABELS = {
     "parameter_fill": "parameter_assumption_filled",
@@ -1353,6 +1393,15 @@ class _PlannedTargetLoaded(ExecuteMode):
                 yield result
 
 
+class _TreeViewHidesAFailingBlock(ExecuteMode):
+    """Known bad: the tree view prints a failing block as PASS."""
+
+    def apply(self, input_obj: ResidualsReady, state: State) -> Iterable[FunctionResult]:
+        for result in super().apply(input_obj, state):
+            rows = tuple(row.replace(":FAIL", ":PASS") for row in result.new_state.tree_view_rows)
+            yield replace(result, new_state=replace(result.new_state, tree_view_rows=rows))
+
+
 def broken_variants() -> dict[str, Explorer]:
     """Known-bad variants; each must violate an invariant of the design."""
 
@@ -1375,6 +1424,7 @@ def broken_variants() -> dict[str, Explorer]:
         "override_not_warned": _OverrideNotWarned(),
         "coarse_failure_reported_consistent": _CoarseFailureReportedConsistent(),
         "planned_target_loaded": _PlannedTargetLoaded(),
+        "tree_view_hides_a_failing_block": _TreeViewHidesAFailingBlock(),
     }
     return {
         name: _explorer(Workflow(
@@ -1698,10 +1748,37 @@ def _growth_planned_report() -> tuple[str, bool]:
     return "planned_template_reported_not_executed", report.audit_pass
 
 
+def _tree_view_report() -> tuple[str, bool]:
+    """Render the sparse heated-tank evaluation; every block line carries the report's verdict."""
+    from physicsguard.core.hierarchy import HierarchicalAuditRunner, describe_hierarchy
+    from physicsguard.core.tree_view import render_tree_view
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    tank = ROOT / "examples/hierarchical/heated_tank"
+    spec = load_hierarchical_audit_spec(tank / "heated_tank.yaml")
+    runner = HierarchicalAuditRunner(spec, base_dir=tank)
+    with _solver_counted() as calls:
+        report = runner.to_dict(runner.evaluate_observed(load_observed_values(tank / "sparse_measured_k70.yaml"), skip_unobserved=True))
+        text = render_tree_view(describe_hierarchy(spec, base_dir=tank), report=report)
+    assert not calls
+    lines = {line.split(" [L")[0].strip(): line for line in text.splitlines() if " [L" in line}
+    assert set(lines) == {row["block_id"] for row in report["block_verdicts"]} == {block.id for block in spec.hierarchy.blocks}
+    for row in report["block_verdicts"]:
+        line = lines[row["block_id"]]
+        if row["checked_residual_count"]:
+            assert f"own {'PASS' if row['own_audit_pass'] else 'FAIL'} " in line, line
+        else:
+            assert "PASS" not in line.split(" | ")[-1], line
+        assert ("not checked: " in line) is bool(row["missing_required_variables"]), line
+    return "tree_view_rendered_with_block_verdicts", report["audit_pass"]
+
+
 PITCH = "examples/hierarchical/observed_debugging"
 REAL_CASES = {
     "growth_coarse_bad_audit": _growth_coarse_report,
     "growth_planned_bad_audit": _growth_planned_report,
+    "hierarchy_evaluate_partial_tree_view_bad_audit": _tree_view_report,
     "hierarchy_evaluate_derived_child_bad_audit": _child_failure_snapshot,
     "hierarchy_evaluate_derived_bad_audit": _derived_tank_snapshot,
     "hierarchy_evaluate_partial_unresolved": _unresolved_partial_snapshot,

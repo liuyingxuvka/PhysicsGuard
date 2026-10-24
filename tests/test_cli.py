@@ -118,20 +118,21 @@ def test_hierarchy_description_has_real_tree_connections_and_never_solves(monkey
     assert "vol.volume_current_m3" in mermaid
 
 
-def test_hierarchy_compact_summary_preserves_each_assumption_disposition() -> None:
-    from physicsguard.cli import _hierarchy_summary
-    from physicsguard.core.assumptions import AssumptionManager
-    from physicsguard.schema.system_spec import SystemSpec
+def test_tree_view_places_each_assumption_card_on_its_block() -> None:
+    from physicsguard.core.hierarchy import describe_hierarchy
+    from physicsguard.core.tree_view import render_tree_view
+    from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 
-    system = SystemSpec.model_validate({"system_name": "cards", "components": [{"id": "power", "type": "ElectricalPowerModule"}],
-        "assumptions": [{"id": name, "target_type": "context", "target": "scope", "value": "steady DC", "reason": "explicit scoped card", "status": status}
-                        for name, status in (("used", "active"), ("pending", "proposed"), ("declined", "rejected"))]})
-    manager = AssumptionManager(system)
-    manager.apply_parameter_assumptions(system)
-    result = _hierarchy_summary({"assumptions": manager.summary_dict()})
-    assert result["assumptions"] == [{"id": "used", "status": "active", "applied": True},
-                                     {"id": "pending", "status": "proposed", "applied": False},
-                                     {"id": "declined", "status": "rejected", "applied": False}]
+    spec = HierarchicalAuditSpec.model_validate({"audit_name": "cards", "system": {
+        "system_name": "cards", "components": [{"id": "power", "type": "ElectricalPowerModule"}],
+        "assumptions": [{"id": name, "target_type": "context", "target": target, "value": "steady DC",
+                         "reason": "explicit scoped card", "status": status}
+                        for name, target, status in (("used", "power", "active"), ("pending", "power.P_W", "proposed"),
+                                                     ("declined", "scope", "rejected"))]},
+        "hierarchy": {"blocks": [{"id": "root", "components": ["power"]}]}})
+    lines = render_tree_view(describe_hierarchy(spec)).splitlines()
+    assert "| assumptions: used, pending" in lines[1]
+    assert lines[-1] == "assumptions (no block): declined"
 
 
 def test_hierarchy_description_exposes_active_parameter_fills_without_mutating_the_model() -> None:
@@ -308,6 +309,7 @@ def test_cli_evaluate_conflict_observed_returns_audit_pass_false() -> None:
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             str(ROOT / "examples" / "observed" / "physical_coolant_observed_conflict.yaml"),
             "--pretty",
+            "--json",
         ],
         cwd=ROOT,
         env=cli_env(),
@@ -332,6 +334,7 @@ def test_cli_compare_conflict_observed_includes_variable_deviations() -> None:
             str(ROOT / "examples" / "physical_coolant_heat_balance.yaml"),
             str(ROOT / "examples" / "observed" / "physical_coolant_observed_conflict.yaml"),
             "--pretty",
+            "--json",
         ],
         cwd=ROOT,
         env=cli_env(),
@@ -371,4 +374,5 @@ def test_cli_dummy_conflict_is_checked_and_not_passed() -> None:
         cwd=ROOT, env=cli_env(), text=True, capture_output=True, check=False,
     )
     assert result.returncode == 1, result.stderr
-    assert json.loads(result.stdout)["audit_pass"] is False
+    assert result.stdout.splitlines()[0].startswith("audit ") and "(reference solve): FAIL;" in result.stdout.splitlines()[0]
+    assert "own FAIL" in result.stdout

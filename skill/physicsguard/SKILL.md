@@ -22,7 +22,7 @@ Pick one route, then load only its file.
 - Known-bad: `fault_variants` in the audit file; each one must fail in its `expect_blocks`, and a `benign` one must stay neutral (`hierarchy variants`).
 - Real binding: observed snapshots and series written by `testfile snapshot|series` from one test-file contract.
 - Test binding: `validation run` checks the audit against a contracted dataset (holdout, depth, adequacy).
-- Readback: `hierarchy describe` (text; `--observed`, `--json`, `--mermaid`).
+- Readback: `hierarchy describe` (text; `--observed`, `--json`, `--mermaid`); `hierarchy run|evaluate|compare|variants` print the same tree with verdicts (`--json` for the full report).
 - Current vs target: the audit file is the current model; a refinement whose next template is not built yet is `planned`, the target, and once built the refined tree replaces the coarse one in the same file.
 Read it with `python -m physicsguard.cli hierarchy describe audit.yaml`: default text, `--observed SNAPSHOT.yaml` for signal counts, `--json` for the full structure or `--mermaid` for a diagram. No solve or observed audit is performed.
 

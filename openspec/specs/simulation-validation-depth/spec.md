@@ -108,7 +108,7 @@ Observed evaluation SHALL use supported per-residual structural value/control de
 #### Scenario: Reports distinguish derivation from checks
 - **WHEN** observed evaluation runs with intermediate derivation
 - **THEN** the full report and block diagnostics SHALL separate `derived_variables`, `checked_residuals` and `unchecked_residuals`
-- **AND** the compact summary SHALL list derived names and checked/unchecked counts, with missing required variables judged after derivation
+- **AND** the default tree view SHALL count checked, unchecked and derived relations on its first line and mark each block with missing inputs `not checked: N inputs missing`, judged after derivation
 - **AND** strict library evaluation SHALL reject remaining missing values while CLI evaluation MAY skip and list them
 
 #### Scenario: A series requires an intermediate variable
@@ -257,16 +257,17 @@ The installed skill SHALL include `references/model-format.md` and paired audit/
 
 #### Scenario: A hierarchy is described without solving
 - **WHEN** `hierarchy describe AUDIT` is requested
-- **THEN** default text SHALL show one depth-first tree with component types, `refines`, declared fault variants, rules and block links; `--json` SHALL retain every previous structural key plus roots, unassigned components, scoring, confidence and required/optional declarations
-- **AND** `--observed SNAPSHOT` SHALL add mapped, review-required and required-missing signal counts without solving or evaluating
+- **THEN** default text SHALL show one depth-first tree with component types, `refines`, declared fault variants, rules, assumption cards on their blocks, benign variants named in the header and block links; `--json` SHALL retain every previous structural key plus roots, unassigned components, scoring, confidence and required/optional declarations
+- **AND** `--observed SNAPSHOT` SHALL add mapped, review-required and declared-needs-missing (`declared_required_missing`) signal counts without solving or evaluating
+- **AND** `hierarchy run|evaluate|compare|variants` SHALL print the same tree with each block's verdict by default and the full report with `--json`
 - **AND** `--mermaid` SHALL render declared block subgraphs, component nodes and labeled connections starting with `flowchart TD`, without claiming an audit pass
 
-### Requirement: Compact hierarchy summaries retain assumptions
-Compact hierarchy audit summaries SHALL include each assumption card's `id`, `status` and `applied` state without changing card application rules or observed values.
+### Requirement: The tree view shows assumption cards
+The tree view SHALL show each assumption card's `id` on the block that owns its target, and list cards without a block at the end, without changing card application rules or observed values; `--json` keeps each card's `status` and `applied` state.
 
 #### Scenario: An unapplied card remains visible
 - **WHEN** an audit contains a proposed or rejected card
-- **THEN** its compact summary SHALL retain the card with its status and `applied: false`
+- **THEN** the tree SHALL still show the card's id and the `--json` report SHALL retain its status and `applied: false`
 
 ### Requirement: current single-file mapping gate
 Validation SHALL derive mappings from each test-file contract's fields, including

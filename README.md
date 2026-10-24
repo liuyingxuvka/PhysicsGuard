@@ -98,7 +98,7 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 
 The example represents a mapped controller feedback signal. The fault case has a reversed sign, so PhysicsGuard ranks `pitch_rate_feedback` as suspicious and recommends checking sign convention, gain, mapping confidence, unit conversion, and related signal-chain mappings.
 
-`hierarchy run|plan|evaluate|compare` and `validation run` print a compact summary; add `--json` for the full report.
+`hierarchy run|evaluate|compare|variants` print the audit tree with each block's verdict (failing residuals, unchecked blocks, refinement checks, next signals); `validation run` prints a compact summary; add `--json` for the full report.
 
 `stale_when` records when a signal mapping needs reconfirmation; only explicit `mapping_status: stale` marks it stale.
 
@@ -113,7 +113,7 @@ python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/
 python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
 ```
 
-Module descriptions expose units, finite variable bounds/scales, parameter names, residuals and validity metadata. Marked synthetic examples are not physical defaults or audit evidence. Hierarchy descriptions print one readable tree with components, connections, refinements, declared fault variants and rules. `--observed` counts mapped signals per block, `--json` retains the full structure, and `--mermaid` draws it; none solves or evaluates. See the installed skill's [model format and templates](skill/physicsguard/references/model-format.md). Compact hierarchy summaries also show assumption-card ids, statuses and whether they were applied.
+Module descriptions expose units, finite variable bounds/scales, parameter names, residuals and validity metadata. Marked synthetic examples are not physical defaults or audit evidence. Hierarchy descriptions print one readable tree with components, connections, refinements, declared fault variants and rules. `--observed` counts mapped signals per block, `--json` retains the full structure, and `--mermaid` draws it; none solves or evaluates. See the installed skill's [model format and templates](skill/physicsguard/references/model-format.md). The tree names benign variants in its header and shows each assumption card on its block; `--observed` counts only declared needs (`declared needs missing`).
 
 ## Main CLI Paths
 
@@ -145,7 +145,7 @@ python -m physicsguard.cli testfile series CONTRACT.yaml --rows 0:120 --out seri
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 
-The [heated-tank reference](examples/hierarchical/heated_tank/) includes a reproducible non-SI CSV, coarse and six-block coupled models, an explicit nameplate-efficiency assumption, and measured-only snapshots. `hierarchy evaluate` can propagate connected quantities and derive supported intermediate values from those measurements. It reports `derived_variables`, `checked_residuals` and `unchecked_residuals`; the compact summary shows derived names and checked/unchecked counts. Do not fill remaining gaps with initial guesses or hand-computed intermediate snapshots.
+The [heated-tank reference](examples/hierarchical/heated_tank/) includes a reproducible non-SI CSV, coarse and six-block coupled models, an explicit nameplate-efficiency assumption, and measured-only snapshots. `hierarchy evaluate` can propagate connected quantities and derive supported intermediate values from those measurements. It reports `derived_variables`, `checked_residuals` and `unchecked_residuals`; the tree's first line counts checked, unchecked and derived relations. Do not fill remaining gaps with initial guesses or hand-computed intermediate snapshots.
 
 Connections mean the two endpoints are the same physical quantity. A known value can propagate to an unknown endpoint without overwriting measurements; conflicting measured endpoints remain a connection check. Their default residual scale is `1e-6` times the larger endpoint scale; an explicit positive finite connection `scale` can declare a small measurement tolerance. Use a relation module when the quantities may physically differ.
 
@@ -325,7 +325,7 @@ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/observed_deb
 
 这个例子表示一个映射过的 controller feedback signal。故障 case 的符号反了，所以 PhysicsGuard 会把 `pitch_rate_feedback` 排为可疑项，并建议检查 sign convention、gain、mapping confidence、unit conversion 和相关 signal-chain mapping。
 
-`hierarchy run|plan|evaluate|compare` 和 `validation run` 默认输出紧凑摘要；加 `--json` 输出完整报告。
+`hierarchy run|evaluate|compare|variants` 默认输出审计树，每个块带结论（失败残差、未检查的块、细化检查、下一步信号）；`validation run` 默认输出紧凑摘要；加 `--json` 输出完整报告。
 
 `stale_when` 记录信号映射何时需要重新确认；只有显式 `mapping_status: stale` 才表示映射已经过期。
 
@@ -340,7 +340,7 @@ python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/
 python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/heated_tank.yaml --mermaid
 ```
 
-模块说明列出单位、变量的有限边界与尺度、参数名、残差及适用范围。标记为 synthetic 的示例不是物理默认值或审计证据。分层说明默认输出一页文字树，列出组件、连接、细化、针对各块的故障变体和规则；`--observed` 统计每块信号，`--json` 保留完整结构，`--mermaid` 画图，均不求解或评估。格式及可配套使用的模板见技能中的[模型格式页](skill/physicsguard/references/model-format.md)。紧凑分层摘要还显示假设卡的 id、状态及是否应用。
+模块说明列出单位、变量的有限边界与尺度、参数名、残差及适用范围。标记为 synthetic 的示例不是物理默认值或审计证据。分层说明默认输出一页文字树，列出组件、连接、细化、针对各块的故障变体和规则；`--observed` 统计每块信号，`--json` 保留完整结构，`--mermaid` 画图，均不求解或评估。格式及可配套使用的模板见技能中的[模型格式页](skill/physicsguard/references/model-format.md)。树的页头点名良性变体，每张假设卡显示在它所在的块上；`--observed` 只数块声明的需要（`declared needs missing`）。
 
 ## 主要 CLI 路线
 
@@ -372,7 +372,7 @@ python -m physicsguard.cli testfile series CONTRACT.yaml --rows 0:120 --out seri
 python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 ```
 
-[加热水箱参考例子](examples/hierarchical/heated_tank/) 提供可重复生成的非 SI CSV、粗模型和六块耦合模型、明确的铭牌效率假设及仅含测量值的快照。`hierarchy evaluate` 可以传播相连的同一物理量，并从测量值推出受支持的中间量。报告区分 `derived_variables`、`checked_residuals` 和 `unchecked_residuals`，紧凑摘要给出推出的变量名和已检查、未检查数量。剩余缺口不能用初值或手算中间量快照补成通过。
+[加热水箱参考例子](examples/hierarchical/heated_tank/) 提供可重复生成的非 SI CSV、粗模型和六块耦合模型、明确的铭牌效率假设及仅含测量值的快照。`hierarchy evaluate` 可以传播相连的同一物理量，并从测量值推出受支持的中间量。报告区分 `derived_variables`、`checked_residuals` 和 `unchecked_residuals`，树的第一行给出已检查、未检查和推出的数量。剩余缺口不能用初值或手算中间量快照补成通过。
 
 连接表示两端是同一个物理量，已知端可传播到未知端，但不会覆盖测量值；相互冲突的实测端点仍由连接残差检查。默认残差尺度为较大端点变量尺度的 `1e-6` 倍；可用正的有限连接 `scale` 声明较小的测量容差。两端可能真实不同，应使用显式关系模块。
 

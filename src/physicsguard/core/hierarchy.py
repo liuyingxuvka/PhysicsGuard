@@ -114,6 +114,7 @@ class HierarchicalAuditReport:
     checked_residuals: list[str] = field(default_factory=list)
     unchecked_residuals: dict[str, list[str]] = field(default_factory=dict)
     refinement_checks: list[dict[str, Any]] = field(default_factory=list)
+    block_verdicts: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -777,6 +778,7 @@ class HierarchicalAuditRunner:
             checked_residuals=[record.name for record in all_records],
             unchecked_residuals=unchecked_residuals,
             refinement_checks=refinement_checks,
+            block_verdicts=[_block_verdict(block) for block in block_diagnostics],
         )
 
     def to_dict(self, report: Any) -> dict[str, Any]:
@@ -784,6 +786,19 @@ class HierarchicalAuditRunner:
 
     def to_json(self, report: HierarchicalAuditReport, pretty: bool = False) -> str:
         return json.dumps(self.to_dict(report), indent=2 if pretty else None, sort_keys=True)
+
+
+def _block_verdict(block: BlockDiagnostic) -> dict[str, Any]:
+    """One row per block of the tree (top_blocks keeps only the highest scores)."""
+    top = block.top_residuals[0] if block.top_residuals else None
+    return {
+        "block_id": block.block_id, "level": block.level, "own_audit_pass": block.own_audit_pass,
+        "audit_pass": block.audit_pass, "score": block.score,
+        "max_abs_normalized_residual": block.max_abs_normalized_residual,
+        "checked_residual_count": len(block.checked_residuals),
+        "missing_required_variables": list(block.missing_required_variables),
+        "top_residual": {"name": top.name, "normalized_value": top.normalized_value} if top else None,
+    }
 
 
 def _include_descendants(blocks: list[BlockDiagnostic]) -> list[BlockDiagnostic]:
@@ -873,7 +888,7 @@ def describe_hierarchy(
             row["signals"] = {
                 "mapped": len(mapped),
                 "review_required": sum(value.review_required or value.mapping_status == "review_required" for value in mapped),
-                "required_missing": sum(name not in observed.variables for name in block.required_variables),
+                "declared_required_missing": sum(name not in observed.variables for name in block.required_variables),
             }
         blocks.append(row)
     description = {
@@ -893,47 +908,6 @@ def describe_hierarchy(
         "unassigned_component_types": {name: components[name].type for name in index.unassigned_components()},
     }
     return _render_hierarchy_mermaid(description) if mermaid else description
-
-
-def render_hierarchy_text(description: dict[str, Any]) -> str:
-    """Render one compact page from the same full structural JSON."""
-    blocks = {block["id"]: block for block in description["blocks"]}
-    variants = description["fault_variants"]
-    lines = [f"audit {description['audit_name']}: {len(blocks)} blocks, {description['component_count']} components, "
-             f"{len(variants)} variants ({sum(v['kind'] == 'benign' for v in variants)} benign), "
-             f"{len(description['refinement_rules'])} refinement rules, {len(description['assumptions'])} assumptions"]
-    def visit(identifier, depth):
-        block = blocks[identifier]
-        parts = [f"{'  ' * depth}{identifier} [L{block['level']}] components: "
-                 + (", ".join(f"{c['id']}({c['type']})" for c in block["components"]) or "none")]
-        if block["refines"]:
-            parts.append("refines: " + ", ".join(block["refines"]))
-        if block["fault_variants"]:
-            parts.append("variants: " + ", ".join(block["fault_variants"]))
-        if block["refinement_rules"]:
-            parts.append("rules: " + "; ".join(
-                f"{rule['id']} -> " + ", ".join(f"{target} ({rule['template_status'][target]})" for target in rule["next_template_ids"])
-                for rule in block["refinement_rules"]))
-        if block["required_variables"]:
-            parts.append("needs: " + ", ".join(block["required_variables"]))
-        if "signals" in block:
-            signals = block["signals"]
-            parts.append(f"signals: {signals['mapped']} mapped, {signals['review_required']} review_required, {signals['required_missing']} required missing")
-        lines.append(" | ".join(parts))
-        for child in block["children"]:
-            visit(child, depth + 1)
-    for root in description["root_blocks"]:
-        visit(root, 0)
-    links = {}
-    for connection in description["connections"]:
-        if connection["scope"] == "between_blocks":
-            pair = (connection["from_block"] or "unassigned", connection["to_block"] or "unassigned")
-            links[pair] = links.get(pair, 0) + 1
-    if links:
-        lines.append("links: " + ", ".join(f"{source} -> {target} ({count})" for (source, target), count in links.items()))
-    if description["unassigned_components"]:
-        lines.append("unassigned: " + ", ".join(description["unassigned_components"]))
-    return "\n".join(lines)
 
 
 def _render_hierarchy_mermaid(description: dict[str, Any]) -> str:
@@ -1317,7 +1291,6 @@ __all__ = [
     "RefinementPlanner",
     "ResidualBlockAssignment",
     "describe_hierarchy",
-    "render_hierarchy_text",
 ]
 
 
