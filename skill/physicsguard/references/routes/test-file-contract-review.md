@@ -3,6 +3,7 @@
 ## Entry boundary
 Use only for concrete CSV/TSV test data. Model-only work uses `ai-debugging`.
 After a contract passes, hand model/data consistency work to `model-dataset-validation`.
+One contract stores field roles, units, targets, conversion, confidence and evidence; its generated manifest stores file identity, without separate catalogs or mapping sidecars.
 
 ## Workflow
 1. Copy `references/templates/test_file_contract.yaml`. Set `data_file`, `model`,

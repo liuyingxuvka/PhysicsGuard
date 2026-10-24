@@ -102,11 +102,15 @@ blocks:
 ```
 
 `refines` must name the parent's own components. It is not implied by parentage.
-Under `hierarchy.refinement_rules`, select `block_id`, `score_threshold`, optional
-`trigger_diagnostic_keys` and `next_template_ids`; include `rationale` and the next
-required signals. Template ids refer to same-file blocks or files relative to the
-audit directory or its parent. Reports distinguish `block`, `file` and `missing`;
-finding a file never executes it. Inconsistent coarse/detail checks stay visible.
+Block ids are unique and contain no whitespace; parents must exist, cycles are rejected, levels are nonnegative and component ownership is unique. Blocks can declare `name`, `tags`, JSON `metadata`, and required/optional variables and parameters.
+Under `hierarchy.refinement_rules`, select `block_id`, `score_threshold`, optional `trigger_diagnostic_keys` and `next_template_ids`; include `rationale` and the next required signals. Template ids refer to same-file blocks or files relative to the audit directory or its parent. Reports distinguish `block`, `file` and `missing`; finding a file never executes it. Inconsistent coarse/detail checks stay visible.
+
+Component residuals belong to their owning block; connections between sibling blocks roll up to their nearest common ancestor, boundaries to the owning component. Unassigned residuals remain explicit.
+`own_audit_pass` is local, `audit_pass` includes descendants, and `subtree_score` is the maximum own score in the subtree; local `score` still orders `top_blocks`.
+`hierarchy.scoring.method` supports `max`, `rms`, `top_k_mean` (`top_k`) and `weighted_sum` (`diagnostic_key_weights`); role filters include active relations and exclude `post_check` by default.
+`hierarchy.confidence` clips a heuristic base minus missing required-variable/parameter, no-residual and configured level penalties to its min/max; it is not probability.
+Refinement rules may filter `trigger_roles`, `trigger_diagnostic_keys`, `confidence_min` and a `score_threshold` (default 1.0); recommendations retain next required variables/parameters and sort by descending priority, then trigger score.
+`refinement_checks` compares checked coarse residuals with refining children: passing children plus a failed coarse check is inconsistent; a passing coarse check with a failed child is consistent. When coarse relations were consumed as producers or no scored coarse check is usable, `coarse_pass` and `consistent` are null with a reason.
 
 ## Observed snapshots and freshness
 
@@ -131,20 +135,16 @@ variables:
 
 ## Derivation order and fault variants
 
-Connections propagate known values without overwriting measurements. Supported
-per-residual value/control dependencies permit bounded one-unknown derivation
-for equation/connection/boundary/assumption relations. Ambiguous, flat or
-unsupported cases remain unknown; this is not general nonlinear uniqueness.
-Put measurement-to-internal components first: in the tank, electrical power before
-command comparison, inflow conversion before throughflow, and thermal balance last.
+Connections propagate known values within variable bounds without overwriting measurements or already derived values; propagating around a cycle creates no independent observation. Supported per-residual value/control dependencies permit bounded one-unknown derivation for equation/connection/boundary/assumption relations. Ambiguous, flat or unsupported cases remain unknown; this is not general nonlinear uniqueness.
+Put measurement-to-internal components first: in the tank, electrical power before command comparison, inflow conversion before throughflow, and thermal balance last.
 Read `derived_variables`, `checked_residuals` and `unchecked_residuals`; producers never count as checks. No independent check means refusal.
 
-Once the coarse and refined checks are useful, add top-level `fault_variants`:
-use unique `id`, required `kind: fault` or `benign`, qualified `parameters` overrides
-and/or `changes` entries naming `variable` and exactly one of `scale`, `offset`,
-`set`, `flip_sign: true`. `rederive` removes listed measurements before deriving
-them under the device; `expect_blocks` names required own failures. Audit with the nominal
-model: `task-model variants AUDIT.yaml NOMINAL.yaml --pairs --json`.
+Once the coarse and refined checks are useful, add top-level `fault_variants`: use unique `id`, required `kind: fault` or `benign`, qualified `parameters` overrides and/or `changes` entries naming `variable` and exactly one of `scale`, `offset`, `set`, `flip_sign: true`. `rederive` removes listed measurements before deriving them under the device; `expect_blocks` names required own failures. Audit with the nominal model: `task-model variants AUDIT.yaml NOMINAL.yaml --pairs --json`.
 Keep the model and snapshot unchanged. Read own checked-block signs, missing expected failures, indistinguishable groups and unmeasured `next_signal`.
+Observed-value changes and rederive names must be registered measurements present in the nominal snapshot, and numeric edits must be finite. A parameter override may replace a legal module default absent from YAML; the native constructor still validates its value.
+The device is a copy: remove requested measurements, derive them with its changed parameters, then check the generated data with the unchanged nominal model; this is neither reference optimization nor time-forward rollout.
+Each signature uses the sign of a block's largest directly checked residual when that block has an own failure, retaining a genuine own failure even when the block has children. Producing or unchecked relations cannot supply fault evidence.
+Unavailable generated measurements keep `status: not_evaluable`, a reason, null signature/audit status and false check flags; other rows remain visible and the case cannot match observed data. Full JSON retains counterfactual `generated_values`, `device_values` and `rederived_variables`; the compact view omits the value maps.
 A matching signature is bounded discrimination, not proof of the physical cause.
+Strict library evaluation rejects still-missing variables after derivation; the CLI lists and skips them, but neither accepts zero independent checks. `hierarchy compare` still requires the complete registered observed snapshot and solves a reference, as does `hierarchy run`.
 Use contracts and disjoint validation evidence for model/data claims; a snapshot alone licenses neither time prediction nor high-fidelity truth.

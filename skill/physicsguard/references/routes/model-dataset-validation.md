@@ -69,6 +69,7 @@ partial, stale, or review-required contracts.
    each relevant parameter as `static` or `time_varying` in
    `parameter_temporal_policies`. PhysicsGuard computes these coverages and
    reports every shortfall as a warning.
+   Representative sampling also applies `sqrt_n_stage_v1`: `min(N, max(12, ceil(sqrt(N))))`; requested strata cover start/middle/end, events, peaks, boundaries and modes, and every time-varying parameter needs its own temporal coverage and model contribution.
 
 2. Run validation once:
 
@@ -93,11 +94,11 @@ Prediction needs `model_semantics: stateful_dynamic` and a
 path, file content, and case id. PhysicsGuard compares the externally generated
 trajectory (alignment, error, lag, drift, stability); it does not turn a
 pointwise relation into a simulator.
+The rollout declares initial state, step size/unit, horizon, target signals/scales and project-sourced thresholds; optional `producer_id` identifies the trajectory-producing run.
 
 ## Calibration Boundary
 
-- First-version calibration is conservative: `none` or
-  `bounded_least_squares`.
+- Calibration supports `none`, `bounded_least_squares` and `coarse_grid_then_least_squares`; the coarse grid only chooses a bounded starting point before least squares, not a global optimum.
 - Do not implement or claim Adam/SPSA unless a later explicit change adds that
   backend.
 - Calibration may adjust only declared `calibration_candidate` parameters with
@@ -120,6 +121,7 @@ perturbations, model, assumptions, residual series, and physical envelopes. It
 is not high-fidelity
 proof, dynamic interpolation, universal model understanding, or
 commercial-model equivalence.
+For an external database ledger, return this validation status, safe boundary and remaining gaps as provider evidence; PhysicsGuard does not refresh or maintain the surrounding ledger.
 
 ## Single-file data mapping
 `testfile manifest` → `testfile contract-check` → `testfile snapshot|series`

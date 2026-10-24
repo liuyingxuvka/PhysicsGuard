@@ -64,6 +64,7 @@ consistency claims to `model-dataset-validation`. Multi-project/database questio
 Show one compact Mermaid diagram or table only when it clarifies localization or the next signal.
 Label heat/mass/power/signal flow, maps_to/refines_to/requires_signal edges; never imply recovered topology.
 Diagrams explain the audit; they are not validation evidence.
+Audit command exit status follows `audit_pass`; comparison follows `observed_audit_pass`, not reference optimizer convergence. A successful structural inspection returns 0.
 
 ## Claim Boundary
 Use the latest actual output. A matching signature does not prove cause or exhaust physical reality.

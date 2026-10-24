@@ -120,8 +120,8 @@ Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
 Project and model-understanding checks:
 
 ```powershell
-python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
-python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+python -m physicsguard.cli preflight review skill/physicsguard/references/templates/model_understanding_preflight.yaml --pretty
+python -m physicsguard.cli intake review skill/physicsguard/references/templates/external_model_intake.yaml --pretty
 ```
 
 Model-derived fault signatures and a diagnosis input:
@@ -149,7 +149,7 @@ The [heated-tank reference](examples/hierarchical/heated_tank/) includes a repro
 
 Connections mean the two endpoints are the same physical quantity. A known value can propagate to an unknown endpoint without overwriting measurements; conflicting measured endpoints remain a connection check. Their default residual scale is `1e-6` times the larger endpoint scale; an explicit positive finite connection `scale` can declare a small measurement tolerance. Use a relation module when the quantities may physically differ.
 
-Intermediate derivation uses each residual's supported structural value/control dependencies. An unrelated missing channel does not suppress a fully measured aggregate balance or fixed-parameter map check. Only `equation`, `connection`, `boundary` and `assumption` relations with one unknown can supply a finite, bounded scalar root. Ambiguous, flat, undefined or unsupported cases remain unknown; this is not a global nonlinear uniqueness proof. Relations used to derive values never count as checks, scores or top residuals, and an evaluation with no remaining check is refused. Component order determines which eligible relation supplies a value: put measurement-to-internal relations first. Strict library evaluation checks for remaining missing values after derivation; the CLI skips and lists them. Observed values and conversion evidence are unchanged; `hierarchy run` and `hierarchy compare` retain their existing reference-solve boundaries. See the [hierarchy workflow](docs/hierarchical_audit_workflow.md) for supported-source and ordering limits.
+Intermediate derivation uses each residual's supported structural value/control dependencies. An unrelated missing channel does not suppress a fully measured aggregate balance or fixed-parameter map check. Only `equation`, `connection`, `boundary` and `assumption` relations with one unknown can supply a finite, bounded scalar root. Ambiguous, flat, undefined or unsupported cases remain unknown; this is not a global nonlinear uniqueness proof. Relations used to derive values never count as checks, scores or top residuals, and an evaluation with no remaining check is refused. Component order determines which eligible relation supplies a value: put measurement-to-internal relations first. Strict library evaluation checks for remaining missing values after derivation; the CLI skips and lists them. Observed values and conversion evidence are unchanged; `hierarchy run` and `hierarchy compare` retain their existing reference-solve boundaries. See the [hierarchy workflow](skill/physicsguard/references/model-format.md) for supported-source and ordering limits.
 
 Parent blocks include failing descendants in `audit_pass`, while `own_audit_pass` and `score` retain their local meaning and `subtree_score` reports the subtree maximum. `refines` links a detail block to its parent's coarse components; refinement reports compare their checked relations and resolve each template id as `block`, `file` or `missing` without executing it.
 
@@ -208,21 +208,22 @@ Each relation is low fidelity by design. The value is not that it replaces the t
 
 | File | Purpose |
 | --- | --- |
-| [`docs/model_understanding_preflight.md`](./docs/model_understanding_preflight.md) | visible symptom, subsystem boundary, units, assumptions, and stop condition |
-| [`docs/task_local_model_deepening.md`](./docs/task_local_model_deepening.md) | competing hypotheses, next-observation ranking, and model-miss detection |
-| [`docs/external_model_intake.md`](./docs/external_model_intake.md) | safe intake of external model facts without claiming parser support |
-| [`docs/hierarchical_audit_workflow.md`](./docs/hierarchical_audit_workflow.md) | hierarchy and residual audit route |
-| [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | concrete test-file manifests and binding contracts |
-| [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | dataset validation and bounded calibration |
+| [`skill/physicsguard/references/routes/model-understanding-preflight.md`](./skill/physicsguard/references/routes/model-understanding-preflight.md) | visible symptom, physical boundary, units, assumptions and stop conditions |
+| [`skill/physicsguard/references/routes/ai-debugging.md`](./skill/physicsguard/references/routes/ai-debugging.md) | residual localization and bounded competing-cause checks |
+| [`skill/physicsguard/references/routes/signal-mapping-review.md`](./skill/physicsguard/references/routes/signal-mapping-review.md) | source signal, unit, conversion, confidence and review |
+| [`skill/physicsguard/references/model-format.md`](./skill/physicsguard/references/model-format.md) | audit trees, observed snapshots, assumptions and model growth |
+| [`skill/physicsguard/references/routes/test-file-contract-review.md`](./skill/physicsguard/references/routes/test-file-contract-review.md) | concrete test-file manifests and binding contracts |
+| [`skill/physicsguard/references/routes/model-dataset-validation.md`](./skill/physicsguard/references/routes/model-dataset-validation.md) | dataset validation and bounded calibration |
+| [`docs/module_spec_template.md`](./docs/module_spec_template.md) | developer guide for new physical relations |
 | [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption-card lifecycle |
+| [`docs/domain_starter_packs.md`](./docs/domain_starter_packs.md) | domain starter-pack coverage |
 
 ## Repository Layout
 
 ```text
 src/physicsguard/       Core package
 examples/               Low-fidelity relation and conflict examples
-templates/              Intake, preflight, test-file and model templates
-docs/                   Protocol and route documentation
+docs/                   Developer guides (module spec, assumption cards, starter packs)
 skill/                  agent skill material
 scripts/                Validation and release checks
 assets/readme-hero/     README hero image assets
@@ -346,8 +347,8 @@ python -m physicsguard.cli hierarchy describe examples/hierarchical/heated_tank/
 项目和模型理解检查：
 
 ```powershell
-python -m physicsguard.cli preflight review templates/model_understanding_preflight.yaml --pretty
-python -m physicsguard.cli intake review templates/external_model_intake.yaml --pretty
+python -m physicsguard.cli preflight review skill/physicsguard/references/templates/model_understanding_preflight.yaml --pretty
+python -m physicsguard.cli intake review skill/physicsguard/references/templates/external_model_intake.yaml --pretty
 ```
 
 由模型生成故障特征和诊断输入：
@@ -375,7 +376,7 @@ python -m physicsguard.cli validation run VALIDATION_PLAN.yaml --pretty
 
 连接表示两端是同一个物理量，已知端可传播到未知端，但不会覆盖测量值；相互冲突的实测端点仍由连接残差检查。默认残差尺度为较大端点变量尺度的 `1e-6` 倍；可用正的有限连接 `scale` 声明较小的测量容差。两端可能真实不同，应使用显式关系模块。
 
-中间量推导使用每条残差受支持的结构值依赖和控制依赖。无关通道缺测不会跳过自身测量齐备的总量平衡或固定参数表检查。只有 `equation`、`connection`、`boundary`、`assumption` 关系在恰有一个未知量时才能提供有限边界内的标量根；歧义、平坦、无定义或不支持的情形仍保持未知，不构成一般非线性唯一根证明。用于推出的关系永不计入检查、分数或最大残差，没有剩余检查时拒绝评估。组件顺序决定先使用哪条合格关系，应把测量值到内部量的关系放在前面。严格库入口在推导后判断剩余缺值，CLI 则跳过并列出；观测值和转换证据不变，`hierarchy run`、`hierarchy compare` 保留原有参考求解边界。支持范围和排序限制见[分层审计工作流](docs/hierarchical_audit_workflow.md)。
+中间量推导使用每条残差受支持的结构值依赖和控制依赖。无关通道缺测不会跳过自身测量齐备的总量平衡或固定参数表检查。只有 `equation`、`connection`、`boundary`、`assumption` 关系在恰有一个未知量时才能提供有限边界内的标量根；歧义、平坦、无定义或不支持的情形仍保持未知，不构成一般非线性唯一根证明。用于推出的关系永不计入检查、分数或最大残差，没有剩余检查时拒绝评估。组件顺序决定先使用哪条合格关系，应把测量值到内部量的关系放在前面。严格库入口在推导后判断剩余缺值，CLI 则跳过并列出；观测值和转换证据不变，`hierarchy run`、`hierarchy compare` 保留原有参考求解边界。支持范围和排序限制见[分层审计工作流](skill/physicsguard/references/model-format.md)。
 
 父块的 `audit_pass` 包含后代失败；`own_audit_pass` 和 `score` 保留本块含义，`subtree_score` 给出子树最大分数。`refines` 将细块关联到父块自己的粗组件，报告用已检查关系比较粗细一致性，并逐个将模板引用解析为 `block`、`file` 或 `missing`，不会执行模板。
 
@@ -434,20 +435,22 @@ PhysicsGuard 包含这些低保真审计关系：
 
 | 文件 | 作用 |
 | --- | --- |
-| [`docs/model_understanding_preflight.md`](./docs/model_understanding_preflight.md) | 症状、边界、单位、假设和停止条件 |
-| [`docs/external_model_intake.md`](./docs/external_model_intake.md) | 安全记录外部模型事实，不声称 parser 支持 |
-| [`docs/hierarchical_audit_workflow.md`](./docs/hierarchical_audit_workflow.md) | hierarchy 和 residual audit 路线 |
-| [`docs/test_file_contracts.md`](./docs/test_file_contracts.md) | 测试文件 manifest 和 binding contract |
-| [`docs/model_dataset_validation.md`](./docs/model_dataset_validation.md) | 数据集验证和有界 calibration |
-| [`docs/assumption_cards.md`](./docs/assumption_cards.md) | assumption card 生命周期 |
+| [`skill/physicsguard/references/routes/model-understanding-preflight.md`](./skill/physicsguard/references/routes/model-understanding-preflight.md) | 症状、物理边界、单位、假设和停止条件 |
+| [`skill/physicsguard/references/routes/ai-debugging.md`](./skill/physicsguard/references/routes/ai-debugging.md) | 残差定位和有边界的竞争原因检查 |
+| [`skill/physicsguard/references/routes/signal-mapping-review.md`](./skill/physicsguard/references/routes/signal-mapping-review.md) | 来源信号、单位、转换、置信度与复核 |
+| [`skill/physicsguard/references/model-format.md`](./skill/physicsguard/references/model-format.md) | 审计树、观测快照、假设和模型生长 |
+| [`skill/physicsguard/references/routes/test-file-contract-review.md`](./skill/physicsguard/references/routes/test-file-contract-review.md) | 测试文件 manifest 和 binding contract |
+| [`skill/physicsguard/references/routes/model-dataset-validation.md`](./skill/physicsguard/references/routes/model-dataset-validation.md) | 数据集验证和有界 calibration |
+| [`docs/module_spec_template.md`](./docs/module_spec_template.md) | 新物理关系的开发指南 |
+| [`docs/assumption_cards.md`](./docs/assumption_cards.md) | 假设卡生命周期 |
+| [`docs/domain_starter_packs.md`](./docs/domain_starter_packs.md) | 领域起步包覆盖 |
 
 ## 仓库结构
 
 ```text
 src/physicsguard/       核心包
 examples/               低保真关系和 conflict 示例
-templates/              intake、preflight、test-file 和 model 模板
-docs/                   协议和路线文档
+docs/                   开发指南（模块规格、假设卡、领域起步包）
 skill/                  agent skill material
 scripts/                验证和发布检查
 assets/readme-hero/     README hero 素材

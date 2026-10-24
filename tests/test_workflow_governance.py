@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_model_understanding_preflight_template_passes() -> None:
-    report = review_model_understanding_preflight(ROOT / "templates" / "model_understanding_preflight.yaml")
+    report = review_model_understanding_preflight(ROOT / "skill" / "physicsguard" / "references" / "templates" / "model_understanding_preflight.yaml")
 
     assert report.ok
     assert report.status == "pass"
@@ -38,7 +38,7 @@ def test_model_understanding_preflight_reports_missing_fields(tmp_path: Path) ->
 
 
 def test_external_model_intake_template_passes() -> None:
-    report = review_external_model_intake(ROOT / "templates" / "external_model_intake.yaml")
+    report = review_external_model_intake(ROOT / "skill" / "physicsguard" / "references" / "templates" / "external_model_intake.yaml")
 
     assert report.ok
     assert report.status == "pass"
@@ -90,7 +90,7 @@ def test_cli_preflight_review_outputs_json() -> None:
             "physicsguard.cli",
             "preflight",
             "review",
-            str(ROOT / "templates" / "model_understanding_preflight.yaml"),
+            str(ROOT / "skill" / "physicsguard" / "references" / "templates" / "model_understanding_preflight.yaml"),
         ],
         cwd=ROOT,
         text=True,
@@ -103,7 +103,7 @@ def test_cli_preflight_review_outputs_json() -> None:
 
 
 def test_preflight_audit_names_unknown_blocks_without_changing_unbound_behavior(tmp_path):
-    data=yaml.safe_load((ROOT/'templates/model_understanding_preflight.yaml').read_text())
+    data=yaml.safe_load((ROOT/'skill/physicsguard/references/templates/model_understanding_preflight.yaml').read_text())
     data['physicsguard_understanding']['subsystem_blocks']=[{'id':'not_in_the_model'}]
     path=tmp_path/'preflight.yaml';path.write_text(yaml.safe_dump(data))
     assert review_model_understanding_preflight(path).ok
@@ -116,7 +116,7 @@ def test_preflight_audit_names_unknown_blocks_without_changing_unbound_behavior(
 
 
 def test_intake_audit_checks_registered_variable_and_convertible_unit(tmp_path):
-    data=yaml.safe_load((ROOT/'templates/external_model_intake.yaml').read_text())
+    data=yaml.safe_load((ROOT/'skill/physicsguard/references/templates/external_model_intake.yaml').read_text())
     signal=data['external_model_snapshot']['signals'][0]
     audit=ROOT/'examples/hierarchical/heated_tank/heated_tank.yaml'
     path=tmp_path/'intake.yaml'

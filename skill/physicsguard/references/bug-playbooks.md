@@ -32,3 +32,7 @@ For power, heat, mass, species, and electrical-bus issues, start with aggregate 
 
 For fuel-cell or electrolyzer systems, check current, cell count, stack voltage, gas flow, water flow, air or hydrogen stoichiometry, heat, and auxiliary power before detailed physics.
 
+
+## Vehicle Or Drivetrain Mismatch
+
+Compare motor power, wheel force, acceleration, road load and braking power using gearbox, wheel torque/force and battery/motor checks; inspect gear ratio, wheel radius, sign convention, regenerative split and brake power.
