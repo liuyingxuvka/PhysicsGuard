@@ -176,7 +176,7 @@ def _preflight_next_actions(
     if findings:
         actions.append("review_uncertain_mappings_before_fault_claims")
     if not actions:
-        actions.append("create_or_select_level_0_physicsguard_audit")
+        actions.append("create_or_select_coarse_physicsguard_audit")
     return actions
 
 

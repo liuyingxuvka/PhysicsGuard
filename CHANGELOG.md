@@ -8,6 +8,7 @@
 - Domain starter packs no longer copy child components into a fake coarse level; each pack has a benign measurement change of meaningful size and at least two separable faults.
 - The heated-tank reference shows a planned refinement (envelope_wall_detail): a target that is reported with the signals it needs and never executed.
 - The header sample in the debugging route matches the generated audit header; docs no longer present module conflict fixtures as the audit tree's known-bad form, and starter packs no longer name deleted level or conflict files.
+- Preflight review's next action for a clean review is now create_or_select_coarse_physicsguard_audit.
 
 ## v0.15.22 - 2026-10-24 - One model tree for physics audits
 

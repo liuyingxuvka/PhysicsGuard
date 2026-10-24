@@ -152,7 +152,7 @@ def test_conflict_hierarchical_example_identifies_top_block_and_refinement() -> 
     assert set(recommendation.next_template_ids) == {"stack", "cathode_air_path", "anode_hydrogen_path", "coolant_loop", "hv_system"}
 
 
-def test_level_1_cathode_conflict_recommends_cathode_template() -> None:
+def test_cathode_conflict_recommends_cathode_template() -> None:
     report = run_declared_fault(FC, "cathode_air_underfeed")
     assert not report.audit_pass
     assert report.top_blocks[0].block_id == "cathode_air_path"

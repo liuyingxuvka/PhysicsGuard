@@ -38,9 +38,9 @@ field has a catalog row, role/disposition, and evidence-backed mapping.
 
 1. Put optional external model context in the snapshot or test-file contract's `source_model`: `model_name`, `tool`, `tool_version`, `model_version`, `scenario` and `export_time` are optional strings. Unknown keys are rejected. This header supplies context, not evidence that the model or audit passed.
 2. Run `python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml`.
-   The full report (`--json`) retains `signal_mapping_ledger`; compact `mapping_summary`
-   counts all ledger rows, rows with issues, explicit review requests, stale mappings,
-   low confidence and missing units. Both outputs use the same native ledger.
+   The full report (`--json`) retains `signal_mapping_ledger`; the tree's first line counts
+   all ledger rows and rows with issues, and its `mapping:` line names each variable with its
+   issue codes (stale, low confidence, missing unit). Both outputs use the same native ledger.
 
 3. If `signal_mapping_ledger` rows report `low_confidence`, `missing_unit`, `missing_conversion`, `review_required` or `stale_mapping`, review signal names, units, sign conventions, timing, and neighboring balance signals before blaming a physical parameter.
    Every variable a residual uses is either observed with its source signal and unit, or listed in `missing_required_variables` with its residuals skipped; both kinds of gap stay open in the claim.
