@@ -147,3 +147,4 @@ With `--observed`, a failing audit with no matching fault signature reports `mod
 A matching signature is bounded discrimination, not proof of the physical cause.
 Strict library evaluation rejects still-missing variables after derivation; the CLI lists and skips them, but neither accepts zero independent checks. `hierarchy compare` still requires the complete registered observed snapshot and solves a reference, as does `hierarchy run`.
 Use contracts and disjoint validation evidence for model/data claims; a snapshot alone licenses neither time prediction nor high-fidelity truth.
+To start in a domain, copy the nearest tree from the PhysicsGuard repository: `coolant_loop`, `fuel_cell_system`, `wastewater_treatment`, `building_hvac`, `data_center_electronics_cooling`, `distribution_power_der`, `pid_actuator_loop`, `process_industry`, `renewable_microgrid`, `stormwater_sewer_drainage`.
