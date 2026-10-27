@@ -81,11 +81,15 @@ def test_cli_validation_run_prints_a_compact_summary() -> None:
     full = run_cli("validation", "run", plan, "--json")
     assert summary.returncode == full.returncode == 1
     assert len(summary.stdout) < 4096 < len(full.stdout)
-    data = json.loads(summary.stdout)
-    assert data["output"] == "summary only; add --json for the full report"
-    assert data["status"] == json.loads(full.stdout)["status"]
-    assert data["depth_summary"] == json.loads(full.stdout)["depth_summary"]
-    assert "depth" not in data and "critical_parameter_uncovered" in {item["type"] for item in data["findings"]}
+    data = json.loads(full.stdout)
+    assert summary.stdout.startswith(f"validation {data['validation_id']} ")
+    assert f": {data['status']};" in summary.stdout.splitlines()[0]
+    assert f"{data['depth_summary']['point_count']} points" in summary.stdout
+    adequacy = data["depth_summary"].get("adequacy", {}).get("status", "not declared")
+    assert f"adequacy: {adequacy}" in summary.stdout
+    assert "critical_parameter_uncovered" in {item["type"] for item in data["findings"]}
+    assert "critical_parameter_uncovered" in summary.stdout
+    assert not summary.stdout.startswith("{")
 
 
 def test_manifest_out_resolves_source_relative_to_manifest(tmp_path: Path) -> None:

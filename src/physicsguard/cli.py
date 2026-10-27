@@ -455,7 +455,10 @@ def _print_validation_tree(path: Path, report: dict, full: bool = False) -> None
     else:
         print("not checked: tree structure unavailable; review input findings")
     adequacy = depth.get("adequacy", {})
-    print("adequacy: " + str(adequacy.get("status", "not declared")))
+    findings = [str(row["type"]) + (f" ({row['target']})" if row.get("target") else "")
+                for row in report.get("findings", [])]
+    print("adequacy: " + str(adequacy.get("status", "not declared"))
+          + ("; findings: " + "; ".join(findings) if findings else ""))
     print("next: " + ("; ".join(map(str, report.get("next_actions", []))) or "none reported"))
     print("safe claim: " + str(report.get("safe_claim") or "no claim reported"))
 

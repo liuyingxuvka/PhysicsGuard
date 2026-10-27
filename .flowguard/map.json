@@ -16,7 +16,7 @@
     {
       "id": "interface",
       "layer": "interface",
-      "summary": "CLI and lazy public API Validation defaults to a tree with native interval, input, snapshot, holdout and adequacy evidence; --json keeps the full report and --full restores text structure.",
+      "summary": "CLI and lazy public API Validation defaults to a tree with native interval, input, snapshot, holdout and adequacy evidence; --json keeps the full report and --full restores text structure. Finding codes remain visible on the adequacy line.",
       "responsibilities": [
         "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. run --json exposes the full diagnostic report. Preflight reviews optionally accept --audit; mapping review is part of hierarchy evaluate. Describe a declared tree as text, full JSON or Mermaid and count observed mappings per block without solving or evaluating; expose mapping-summary counts in observed summaries",
         "hierarchy run, evaluate, compare and variants print the tree view by default and validation run a compact summary with check counts and assumption dispositions; each prints the full report with --json",
@@ -66,7 +66,7 @@
         ".flowguard/models/physicsguard_cli_exit_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:f42cf4d4b1de60882d51988ecffe5cae2b0d37dfabb05498e984c1e39e685a17"
+      "fingerprint": "sha256:6c11a11fb4073fcd78b7f67d08abd00a6d93c658984dfc7ffa72e322dda83d1f"
     },
     {
       "id": "simulation",
