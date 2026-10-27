@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- validation run prints its verdicts on the tree; verdict views print verdicts only (--full keeps the structure).
+
 - Evaluations trace each residual dependency once per command; repeated traces were the main cost.
 
 - Maintenance checks run on FlowGuard 0.70.13.

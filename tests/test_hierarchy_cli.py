@@ -352,6 +352,9 @@ def test_evaluate_prints_the_tree_with_verdicts(capsys) -> None:
     assert tree.returncode == full.returncode == 1, full.stderr
     assert not tree.stdout.startswith("{") and len(tree.stdout) <= 3000
     assert tree.stdout.startswith("audit heated_tank on tank_run_sparse_step_70: FAIL;")
+    assert "components:" not in tree.stdout and not any(line.startswith("links:") for line in tree.stdout.splitlines())
+    with_structure = run_cli(*args, "--full")
+    assert with_structure.returncode == tree.returncode and "components:" in with_structure.stdout
     lines = _block_lines(tree.stdout)
     assert "own FAIL" in lines["thermal"]
     assert "not checked: 6 inputs missing" in lines["heater"]

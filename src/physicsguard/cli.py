@@ -35,6 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_run.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
     hierarchy_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     hierarchy_run.add_argument("--json", action="store_true", help="print the full report instead of the summary")
+    hierarchy_run.add_argument("--full", action="store_true", help="include declared tree structure in the text view")
 
     hierarchy_evaluate = hierarchy_subparsers.add_parser(
         "evaluate",
@@ -48,6 +49,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     hierarchy_evaluate.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     hierarchy_evaluate.add_argument("--json", action="store_true", help="print the full report instead of the summary")
+    hierarchy_evaluate.add_argument("--full", action="store_true", help="include declared tree structure in the text view")
 
     hierarchy_compare = hierarchy_subparsers.add_parser(
         "compare",
@@ -61,6 +63,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     hierarchy_compare.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     hierarchy_compare.add_argument("--json", action="store_true", help="print the full report instead of the summary")
+    hierarchy_compare.add_argument("--full", action="store_true", help="include declared tree structure in the text view")
 
     hierarchy_variants = hierarchy_subparsers.add_parser("variants", help="compare model-derived fault signatures and next signals")
     hierarchy_variants.add_argument("audit", type=Path)
@@ -68,6 +71,7 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_variants.add_argument("--pairs", action="store_true")
     hierarchy_variants.add_argument("--observed", type=Path)
     hierarchy_variants.add_argument("--json", action="store_true", help="print full generated values and pairwise evidence")
+    hierarchy_variants.add_argument("--full", action="store_true", help="include declared tree structure in the text view")
     hierarchy_variants.add_argument("--pretty", action="store_true")
 
     assumptions_parser = subparsers.add_parser(
@@ -156,6 +160,7 @@ def build_parser() -> argparse.ArgumentParser:
     validation_run.add_argument("plan", type=Path, help="path to ModelValidationPlan YAML")
     validation_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
     validation_run.add_argument("--json", action="store_true", help="print the full report instead of the summary")
+    validation_run.add_argument("--full", action="store_true", help="include declared tree structure in the text view")
 
     return parser
 
@@ -174,12 +179,12 @@ def _pick(row: dict, keys: tuple[str, ...]) -> dict:
     return {key: row.get(key) for key in keys}
 
 
-def _print_tree(spec, base_dir: Path, report: dict | None = None, variants: dict | None = None) -> None:
+def _print_tree(spec, base_dir: Path, report: dict | None = None, variants: dict | None = None, full: bool = False) -> None:
     """Compose the read-only structure with a report or a variant result into one tree view."""
     from physicsguard.core.hierarchy import describe_hierarchy
     from physicsguard.core.tree_view import render_tree_view
 
-    print(render_tree_view(describe_hierarchy(spec, base_dir=base_dir), report=report, variants=variants))
+    print(render_tree_view(describe_hierarchy(spec, base_dir=base_dir), report=report, variants=variants, full=full))
 
 
 def _validation_summary(report: dict) -> dict:
@@ -204,7 +209,7 @@ def _validation_summary(report: dict) -> dict:
     }
 
 
-def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
+def hierarchy_run(path: Path, pretty: bool = False, full: bool = False, full_tree: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 
@@ -214,7 +219,7 @@ def hierarchy_run(path: Path, pretty: bool = False, full: bool = False) -> int:
     if full:
         _print_json(report, pretty)
     else:
-        _print_tree(spec, path.parent, report=report)
+        _print_tree(spec, path.parent, report=report, full=full_tree)
     return 0 if report["audit_pass"] else 1
 
 
@@ -249,7 +254,7 @@ def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False,
     return 0
 
 
-def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, full: bool = False) -> int:
+def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, full: bool = False, full_tree: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
@@ -261,11 +266,11 @@ def hierarchy_evaluate(path: Path, observed_path: Path, pretty: bool = False, fu
     if full:
         _print_json(report, pretty)
     else:
-        _print_tree(spec, path.parent, report=report)
+        _print_tree(spec, path.parent, report=report, full=full_tree)
     return 0 if report["audit_pass"] else 1
 
 
-def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, full: bool = False) -> int:
+def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, full: bool = False, full_tree: bool = False) -> int:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
@@ -277,11 +282,11 @@ def hierarchy_compare(path: Path, observed_path: Path, pretty: bool = False, ful
     if full:
         _print_json(report, pretty)
     else:
-        _print_tree(spec, path.parent, report=report)
+        _print_tree(spec, path.parent, report=report, full=full_tree)
     return 0 if report["observed_audit_pass"] else 1
 
 
-def hierarchy_variants_command(audit, nominal, pairs=False, observed=None, full=False, pretty=False) -> int:
+def hierarchy_variants_command(audit, nominal, pairs=False, observed=None, full=False, pretty=False, full_tree: bool = False) -> int:
     from physicsguard.core.diagnosability import evaluate_fault_variants
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
@@ -294,7 +299,7 @@ def hierarchy_variants_command(audit, nominal, pairs=False, observed=None, full=
     if full:
         _print_json(output, pretty)
     else:
-        _print_tree(spec, audit.parent, variants=output)
+        _print_tree(spec, audit.parent, variants=output, full=full_tree)
     return 0 if output["ok"] and output["model_miss"] is not True else 1
 
 
@@ -390,11 +395,79 @@ def testfile_diff_command(old_contract: Path, new_contract: Path, pretty: bool =
     return 0
 
 
-def validation_run_command(path: Path, pretty: bool = False, full: bool = False) -> int:
+def _print_validation_tree(path: Path, report: dict, full: bool = False) -> None:
+    from physicsguard.core.hierarchy import describe_hierarchy
+    from physicsguard.core.tree_view import render_tree_view
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.test_file_contract_loader import load_model_validation_plan
+
+    depth = report.get("depth_summary", {})
+    calibration = report.get("calibration", {})
+    holdout = calibration.get("holdout_audit_pass")
+    holdout_text = ("PASS" if holdout else "FAIL") if holdout is not None else "not declared"
+    description = None
+    try:
+        plan = load_model_validation_plan(path)
+        audit_path = Path(plan.audit_file)
+        if not audit_path.is_absolute():
+            audit_path = path.parent / audit_path
+        description = describe_hierarchy(load_hierarchical_audit_spec(audit_path), base_dir=audit_path.parent)
+    except (OSError, ValueError):
+        # Input findings remain in the native report; a view must not change its exit.
+        pass
+    audit_name = description["audit_name"] if description else "unavailable audit"
+    print(f"validation {report['validation_id']} on {audit_name}: {report['status']}; "
+          f"{depth.get('point_count', 0)} points, holdout {holdout_text}")
+    if description:
+        blocks = {row["id"]: row for row in description["blocks"]}
+        direct = {row["block_id"]: row for row in report.get("direct_validation", {}).get("top_blocks", [])}
+        intervals = depth.get("failing_intervals", [])
+        structure = render_tree_view(description).splitlines() if full else []
+        prefixes = {line.split(" [L")[0].strip(): line for line in structure if " [L" in line}
+
+        def visit(identifier, level):
+            block = blocks[identifier]
+            parts = [prefixes.get(identifier, f"{'  ' * level}{identifier} [L{block['level']}]")]
+            failing = [row for row in intervals if row.get("top_block") == identifier]
+            for row in failing:
+                parts.append(f"interval FAIL {row['start_point']}-{row['end_point']} worst {row['max_abs']:.2f}")
+            row = direct.get(identifier)
+            if row:
+                missing = row.get("missing_required_variables", [])
+                if missing:
+                    parts.append(f"not checked: {len(missing)} inputs missing")
+                if row.get("checked_residuals"):
+                    parts.append(f"snapshot own {'PASS' if row['own_audit_pass'] else 'FAIL'} "
+                                 f"{row['max_abs_normalized_residual']:.2f}")
+                elif not missing and not failing:
+                    parts.append("no checks")
+            elif not failing:
+                parts.append("not checked: no reported block result")
+            print(" | ".join(parts))
+            for child in block["children"]:
+                visit(child, level + 1)
+
+        for root in description["root_blocks"]:
+            visit(root, 0)
+        for line in structure[1:]:
+            if " [L" not in line:
+                print(line)
+    else:
+        print("not checked: tree structure unavailable; review input findings")
+    adequacy = depth.get("adequacy", {})
+    print("adequacy: " + str(adequacy.get("status", "not declared")))
+    print("next: " + ("; ".join(map(str, report.get("next_actions", []))) or "none reported"))
+    print("safe claim: " + str(report.get("safe_claim") or "no claim reported"))
+
+
+def validation_run_command(path: Path, pretty: bool = False, full: bool = False, full_tree: bool = False) -> int:
     from physicsguard.core.model_dataset_validation import validate_model_dataset
 
     report = validate_model_dataset(path)
-    _print_json(report.to_dict() if full else _validation_summary(report.to_dict()), pretty)
+    if full:
+        _print_json(report.to_dict(), pretty)
+    else:
+        _print_validation_tree(path, report.to_dict(), full_tree)
     return 0 if report.ok else 1
 
 
@@ -430,13 +503,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.hierarchy_command == "describe":
                 return hierarchy_describe(args.audit, args.mermaid, args.pretty, args.json, args.observed)
             if args.hierarchy_command == "run":
-                return hierarchy_run(args.audit, args.pretty, args.json)
+                return hierarchy_run(args.audit, args.pretty, args.json, args.full)
             if args.hierarchy_command == "evaluate":
-                return hierarchy_evaluate(args.audit, args.observed, args.pretty, args.json)
+                return hierarchy_evaluate(args.audit, args.observed, args.pretty, args.json, args.full)
             if args.hierarchy_command == "compare":
-                return hierarchy_compare(args.audit, args.observed, args.pretty, args.json)
+                return hierarchy_compare(args.audit, args.observed, args.pretty, args.json, args.full)
             if args.hierarchy_command == "variants":
-                return hierarchy_variants_command(args.audit, args.nominal, args.pairs, args.observed, args.json, args.pretty)
+                return hierarchy_variants_command(args.audit, args.nominal, args.pairs, args.observed, args.json, args.pretty, args.full)
         if args.command == "assumptions":
             if args.assumptions_command == "inspect":
                 return assumptions_inspect(args.system, args.pretty)
@@ -473,7 +546,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return testfile_diff_command(args.old_contract, args.new_contract, args.pretty)
         if args.command == "validation":
             if args.validation_command == "run":
-                return validation_run_command(args.plan, args.pretty, args.json)
+                return validation_run_command(args.plan, args.pretty, args.json, args.full)
     except Exception as exc:
         print(f"physicsguard error: {exc}", file=sys.stderr)
         return 2

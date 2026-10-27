@@ -16,7 +16,7 @@
     {
       "id": "interface",
       "layer": "interface",
-      "summary": "CLI and lazy public API",
+      "summary": "CLI and lazy public API Validation defaults to a tree with native interval, input, snapshot, holdout and adequacy evidence; --json keeps the full report and --full restores text structure.",
       "responsibilities": [
         "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. run --json exposes the full diagnostic report. Preflight reviews optionally accept --audit; mapping review is part of hierarchy evaluate. Describe a declared tree as text, full JSON or Mermaid and count observed mappings per block without solving or evaluating; expose mapping-summary counts in observed summaries",
         "hierarchy run, evaluate, compare and variants print the tree view by default and validation run a compact summary with check counts and assumption dispositions; each prints the full report with --json",
@@ -66,12 +66,12 @@
         ".flowguard/models/physicsguard_cli_exit_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:262884802f915819bcb9b89a27aaf5a3e16c24f3237393a63525d3b2ae1b2f0a"
+      "fingerprint": "sha256:f42cf4d4b1de60882d51988ecffe5cae2b0d37dfabb05498e984c1e39e685a17"
     },
     {
       "id": "simulation",
       "layer": "engine",
-      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping Reuse dependency traces only inside one outer command, with complete constructor/registry input identity and exact observed reads; recompute residuals each time and retrace aliased observation tables.",
+      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping Reuse dependency traces only inside one outer command, with complete constructor/registry input identity and exact observed reads; recompute residuals each time and retrace aliased observation tables. Verdict lines omit repeated structure; describe and --full retain it.",
       "responsibilities": [
         "Use one evaluation engine for tree and single-system files through HierarchicalAuditRunner. Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API. For failed observed audits, probe at most 20 observed dependency ancestors for bounded unit factors/offsets, rederive affected native values, and emit hints without editing observations.",
         "Separate numerical optimization success, observed audit and diagnostic limits",
@@ -166,7 +166,7 @@
         ".flowguard/models/physicsguard_solver_audit_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:eb4c41989b2222d6c9fcaea6dd7a5953b6ceee4af1b5e68bba2d1128a806923f"
+      "fingerprint": "sha256:5176738d12e2981f846bd959420c3639ff1f0fa0b5058cbbd68410036fd3a6f6"
     },
     {
       "id": "validation",
@@ -684,14 +684,14 @@
   ],
   "model_digests": {
     ".flowguard/models/physicsguard_assumptions_model.py": "9baef30d334cd8366789a4ef7f6bf35f327505c84f72d463cf2905be891054fe",
-    ".flowguard/models/physicsguard_cli_exit_model.py": "b9f3d92e88c850767224b034c5f9c2b344085874c2f3c073c9bca1ca395af316",
+    ".flowguard/models/physicsguard_cli_exit_model.py": "73203624aa8053dbad515ffd05a1f1ebfea394202a757a9e5d20fdbc34d1714f",
     ".flowguard/models/physicsguard_core_model.py": "f2be8e44d5c19c7cb8da340a9f3fcef20d95556a96349486fab3f8f68e2637a2",
     ".flowguard/models/physicsguard_fault_variants_model.py": "62c2c8b7ce71d33b90b00bba0f13349f2f70623a1f0f3fffb082ecaf25d03bca",
     ".flowguard/models/physicsguard_model_dataset_validation_model.py": "fa090f7f144d42843826b37ed558c3a90cdf57a7a19f9d0138dbddb751b79a8a",
     ".flowguard/models/physicsguard_observed_derivation_model.py": "ff81eb9bef30cb99e45e46b1e6b63b8e6cfcc6ac3eb512cb9099b6568fdf43a3",
     ".flowguard/models/physicsguard_solver_audit_model.py": "2bd5963aba69c8958956e489d7bc446076edd894a27abe2828d6d5f743b79879",
     ".flowguard/models/physicsguard_test_file_contract_model.py": "0128448d226ab9b7ab6d194100f468072384ceb975fad986a4745d14c94c14df",
-    ".flowguard/models/physicsguard_tree_verdicts_model.py": "69530f56217db573504eb6f7a8b81dc6813716abb74801b41907958c3dec9d12"
+    ".flowguard/models/physicsguard_tree_verdicts_model.py": "80663b29e4ca7cae92cf415f71205b8611f29e1060b7849c2e91ef73496b9322"
   },
   "fingerprint_format": 2
 }

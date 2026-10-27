@@ -77,15 +77,17 @@ partial, stale, or review-required contracts.
    python -m physicsguard.cli validation run PLAN.yaml
    ```
 
-3. The default output is a compact summary: `status`, the direct no-fit
-   result, calibration and holdout status, `findings` (envelope,
-   redundant-sensor, mapping and adequacy), safe claim, unsafe claim boundary
-   and next actions. Add `--json` only for the full `depth` computation or the
-   confidence updates. Then read
-   `depth_summary`: covered scope, mapping status, series audit result,
-   envelope violations, split status, and `adequacy` (signals and parameters
-   below their floors). Every adequacy warning narrows the claim; a plan
-   without `depth` supports only a snapshot.
+3. The default output puts validation on the audit tree: the header names the status,
+   point count and holdout; each block shows reported failing intervals, missing
+   inputs and the direct snapshot result. The last lines are `adequacy:`, `next:`
+   and `safe claim:`. For example, `heater [L2] | interval FAIL step_60-step_119 worst 25.00`.
+   `--json` keeps the full depth computation, confidence updates, direct no-fit result,
+   calibration/holdout status, envelope/redundant-sensor/mapping/adequacy findings,
+   safe/unsafe claim boundaries and next actions. Read `depth_summary` for covered
+   scope, mapping, series audit, envelope violations, split and adequacy floors.
+   Every adequacy warning narrows the claim; without depth, only a snapshot is supported.
+   Verdict views omit repeated component/link structure; `--full` keeps it.
+
 
 ## Predictive Boundary
 

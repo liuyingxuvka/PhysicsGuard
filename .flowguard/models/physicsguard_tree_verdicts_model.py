@@ -11,8 +11,8 @@ READS_PARENT=('solve_attempted',)
 OUTPUTS={'tree_verdict': ('PASS', 'FAIL', 'not checked', 'no checks')}
 IMPLEMENTED_BY={'ExecuteMode.growth': 'src/physicsguard/core/hierarchy.py:RefinementPlanner.recommended_refinements', 'ExecuteMode.tree_view': 'src/physicsguard/core/tree_view.py:render_tree_view'}
 USES={}
-TESTED_BY={'parent_fails_with_child': ['tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores', 'tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement'], 'coarse_failure_with_passing_children_is_inconsistent': ['tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations'], 'planned_template_is_reported_not_executed': ['tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned'], 'tree_view_shows_every_block_verdict': ['tests/test_hierarchy_cli.py:test_evaluate_prints_the_tree_with_verdicts']}
-MUTATIONS={'parent_ignores_children': 'parent_fails_with_child', 'coarse_failure_reported_consistent': 'coarse_failure_with_passing_children_is_inconsistent', 'planned_target_loaded': 'planned_template_is_reported_not_executed', 'tree_view_hides_a_failing_block': 'tree_view_shows_every_block_verdict'}
+TESTED_BY={'parent_fails_with_child': ['tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores', 'tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement'], 'coarse_failure_with_passing_children_is_inconsistent': ['tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations'], 'planned_template_is_reported_not_executed': ['tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned'], 'tree_view_shows_every_block_verdict': ['tests/test_hierarchy_cli.py:test_evaluate_prints_the_tree_with_verdicts'], 'verdict_lines_omit_structure': ['tests/test_hierarchy_cli.py:test_evaluate_prints_the_tree_with_verdicts']}
+MUTATIONS={'parent_ignores_children': 'parent_fails_with_child', 'coarse_failure_reported_consistent': 'coarse_failure_with_passing_children_is_inconsistent', 'planned_target_loaded': 'planned_template_is_reported_not_executed', 'tree_view_hides_a_failing_block': 'tree_view_shows_every_block_verdict', 'verdict_lines_repeat_structure': 'verdict_lines_omit_structure'}
 REAL_CASE_IDS=('growth_coarse_bad_audit', 'growth_planned_bad_audit', 'hierarchy_evaluate_partial_tree_view_bad_audit', 'hierarchy_evaluate_derived_child_bad_audit', 'hierarchy_evaluate_partial_tree_view_not_checked')
 LABELS={'growth_coarse_bad_audit': 'coarse_failure_consistency_reported', 'growth_planned_bad_audit': 'planned_template_reported_not_executed', 'hierarchy_evaluate_partial_tree_view_bad_audit': 'tree_view_rendered_with_block_verdicts', 'hierarchy_evaluate_derived_child_bad_audit': 'child_failure_propagated', 'hierarchy_evaluate_derived_bad_audit': 'derived_relations_excluded_from_checks', 'hierarchy_evaluate_partial_unresolved': 'unobserved_residuals_skipped', 'clean': 'hierarchy_run_solved_and_reported', 'converged_bad_audit': 'optimizer_converged_audit_failed', 'bad_schema': 'schema_failed', 'evaluate_clean': 'hierarchy_observed_evaluated_without_solver', 'evaluate_bad_audit': 'hierarchy_observed_evaluated_without_solver', 'evaluate_missing_observed': 'derived_relations_excluded_from_checks', 'compare_bad_audit': 'hierarchy_compare_solved_and_evaluated', 'hierarchy_clean': 'hierarchy_run_solved_and_reported', 'hierarchy_bad_audit': 'optimizer_converged_audit_failed', 'hierarchy_evaluate_clean': 'hierarchy_observed_evaluated_without_solver', 'hierarchy_evaluate_bad_audit': 'hierarchy_observed_evaluated_without_solver', 'hierarchy_evaluate_missing_observed': 'no_independent_observed_check_failed', 'hierarchy_evaluate_zero_product': 'no_independent_observed_check_failed', 'hierarchy_evaluate_partial_snapshot': 'unobserved_values_derived', 'hierarchy_describe': 'hierarchy_described_without_solver', 'assumption_parameter_fill': 'parameter_assumption_filled', 'assumption_parameter_override': 'assumption_override_warned', 'assumption_proposed': 'proposed_assumption_not_applied', 'assumption_rejected': 'rejected_assumption_not_applied', 'assumption_variable_boundary': 'variable_assumption_boundary_ready', 'hierarchy_evaluate_partial_tree_view_not_checked': 'tree_view_rendered_with_block_verdicts'}
 # Expected finite fixture outcomes; conformance always runs native code afresh.
@@ -31,11 +31,12 @@ class State:
     tree_view_rows: tuple[str,...] = ()
     solve_attempted: tuple[str,...] = ()
     tree_verdict: str = ""
+    structure_rows: tuple[str,...] = ()
 
 class Evaluate:
     name="Evaluate"
     reads=('solve_attempted', 'child_failures', 'parent_failures', 'coarse_refinement_expected', 'coarse_refinement_reported', 'planned_refinements_expected', 'planned_refinements_reported', 'refinement_templates_loaded', 'block_verdicts', 'tree_view_rows')
-    writes=('solve_attempted', 'child_failures', 'parent_failures', 'coarse_refinement_expected', 'coarse_refinement_reported', 'planned_refinements_expected', 'planned_refinements_reported', 'refinement_templates_loaded', 'block_verdicts', 'tree_view_rows', 'tree_verdict')
+    writes=('solve_attempted', 'child_failures', 'parent_failures', 'coarse_refinement_expected', 'coarse_refinement_reported', 'planned_refinements_expected', 'planned_refinements_reported', 'refinement_templates_loaded', 'block_verdicts', 'tree_view_rows', 'tree_verdict', 'structure_rows')
     def __init__(self,defect=''):self.defect=defect
     def apply(self,q,state):
         key=q.case_id
@@ -62,6 +63,7 @@ class Evaluate:
         if self.defect=='coarse_failure_reported_consistent':values['coarse_refinement_reported']=()
         if self.defect=='planned_target_loaded' and key=='growth_planned_bad_audit':values['refinement_templates_loaded']=(key,)
         if self.defect=='tree_view_hides_a_failing_block' and values.get('tree_view_rows'):values['tree_view_rows']=values['tree_view_rows'][1:]
+        if self.defect=='verdict_lines_repeat_structure' and active:values['structure_rows']=('components:',)
         values['tree_verdict']=PORT_VALUES.get(key,'no checks')
         result=replace(state,**incoming,**values)
         yield FunctionResult(result.tree_verdict,result,label=LABELS.get(key,'stage_checked'))
@@ -95,7 +97,10 @@ def tree_view_shows_every_block_verdict(state: State, trace) -> InvariantResult:
         return InvariantResult.fail(f"tree view disagrees with block verdicts: hidden={hidden}, invented={invented}, unchecked_pass={unchecked_pass}")
     return InvariantResult.pass_()
 
-INVARIANTS=(
+def verdict_lines_omit_structure(state,trace):
+    return InvariantResult.fail('Verdict rows repeat components or links') if state.structure_rows else InvariantResult.pass_()
+
+INVARIANTS=(Invariant('verdict_lines_omit_structure','Verdict lines contain results without repeating declared components or links.',verdict_lines_omit_structure),
     Invariant("parent_fails_with_child", "A failed child makes every containing parent fail.", parent_fails_with_child),
     Invariant("coarse_failure_with_passing_children_is_inconsistent", "Checked coarse failure with passing children is explicitly inconsistent.", coarse_failure_with_passing_children_is_inconsistent),
     Invariant("planned_template_is_reported_not_executed", "An unbuilt refinement is reported as planned and never loaded or executed.", planned_template_is_reported_not_executed),
@@ -109,6 +114,19 @@ def make(defect='',names=None):
 def build_explorer():return make()
 def broken_variants():return {name:make(name,{rule}) for name,rule in MUTATIONS.items()}
 
+from contextlib import contextmanager
+
+@contextmanager
+def _rendered_lines():
+    from physicsguard.core import tree_view
+    original=tree_view.render_tree_view
+    captured=[]
+    def render(*args,**kwargs):
+        text=original(*args,**kwargs);captured.extend(text.splitlines());return text
+    tree_view.render_tree_view=render
+    try:yield captured
+    finally:tree_view.render_tree_view=original
+
 def conformance():
     mismatches=[]
     cases={case.case_id:case for case in EXTERNAL_INPUTS}
@@ -116,7 +134,9 @@ def conformance():
         q=cases[key]
         modeled=next(iter(Evaluate().apply(q,State())))
         try:
-            label,audit,ports,report,assumptions=replay_case(key)
+            with _rendered_lines() as lines:label,audit,ports,report,assumptions=replay_case(key)
+            if key=='hierarchy_evaluate_partial_tree_view_bad_audit' and (not lines or any('components:' in line or line.startswith('links:') for line in lines)):
+                mismatches.append('verdict_lines_omit_structure: verdict rows repeat declared structure')
             if label!=modeled.label:mismatches.append(f'{key}: native label {label!r}, model {modeled.label!r}')
             if audit is not None and audit!=q.residual_within_threshold:mismatches.append(f'{key}: audit_pass differs')
             if ports[2]!=modeled.new_state.tree_verdict:mismatches.append(f'{key}: native tree_verdict {ports[2]!r}, model {modeled.new_state.tree_verdict!r}')

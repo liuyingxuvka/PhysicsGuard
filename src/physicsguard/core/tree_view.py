@@ -39,7 +39,9 @@ def _card_blocks(description: dict[str, Any]) -> tuple[dict[str, list[str]], lis
     return placed, unplaced
 
 
-def _structure_parts(block: dict[str, Any], depth: int, cards: list[str]) -> list[str]:
+def _structure_parts(block: dict[str, Any], depth: int, cards: list[str], *, full: bool = True) -> list[str]:
+    if not full:
+        return [f"{'  ' * depth}{block['id']} [L{block['level']}]"] + (["assumptions: " + ", ".join(cards)] if cards else [])
     parts = [f"{'  ' * depth}{block['id']} [L{block['level']}] components: "
              + (", ".join(f"{c['id']}({c['type']})" for c in block["components"]) or "none")]
     if block["refines"]:
@@ -147,7 +149,7 @@ def _variants_tail(variants: dict[str, Any]) -> list[str]:
 
 
 def render_tree_view(description: dict[str, Any], report: dict[str, Any] | None = None,
-                     variants: dict[str, Any] | None = None) -> str:
+                     variants: dict[str, Any] | None = None, *, full: bool = False) -> str:
     """Render the declared tree; with a report or a variant result, add each block's verdict."""
     comparison = report if report is not None and "observed_hierarchy" in report else None
     audit = comparison["observed_hierarchy"] if comparison is not None else report
@@ -156,6 +158,7 @@ def render_tree_view(description: dict[str, Any], report: dict[str, Any] | None 
     if audit is not None and set(verdicts) != set(blocks):
         raise ValueError("report block_verdicts do not cover the tree's blocks")
     cards, unplaced = _card_blocks(description)
+    show_structure = full or (audit is None and variants is None)
     if audit is not None:
         lines = [_report_head(description, audit, comparison)]
     elif variants is not None:
@@ -171,7 +174,7 @@ def render_tree_view(description: dict[str, Any], report: dict[str, Any] | None 
 
     def visit(identifier: str, depth: int) -> None:
         block = blocks[identifier]
-        parts = _structure_parts(block, depth, cards.get(identifier, []))
+        parts = _structure_parts(block, depth, cards.get(identifier, []), full=show_structure)
         if audit is not None:
             parts.append(_verdict_part(verdicts[identifier]))
         if variants is not None:
@@ -189,7 +192,7 @@ def render_tree_view(description: dict[str, Any], report: dict[str, Any] | None 
         if connection["scope"] == "between_blocks":
             pair = (connection["from_block"] or "unassigned", connection["to_block"] or "unassigned")
             links[pair] = links.get(pair, 0) + 1
-    if links:
+    if links and show_structure:
         lines.append("links: " + ", ".join(f"{source} -> {target} ({count})" for (source, target), count in links.items()))
     if description["unassigned_components"]:
         lines.append("unassigned: " + ", ".join(description["unassigned_components"]))
