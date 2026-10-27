@@ -11,6 +11,7 @@ description: "Use for engineering-simulation results and test data: low-fidelity
 2. No audit yet: build a coarse balance from `references/templates/audit_model.yaml` and read it back with `hierarchy describe` before any evaluation.
 3. After evaluating or comparing causes, read the verdicts on the same tree (the default output of `hierarchy evaluate|variants`).
 4. A refinement that is not built yet shows as `(planned)` on the tree: that is the target; once built it shows as `(block)`.
+5. When one block of the audit tree gets too big to localize a fault, refine it into a finer block tree (a child block names the coarse components it refines with refines; a refinement not built yet shows as (planned)), and keep the work on the blocks the request names.
 
 ## Choose a route
 

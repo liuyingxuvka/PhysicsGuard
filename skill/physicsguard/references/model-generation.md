@@ -54,3 +54,9 @@ Stop and ask for user input when:
 - a required official tool interface is missing;
 - signal names or units cannot be mapped with reasonable confidence;
 - the generated candidate model fails for tool-specific reasons that are not visible from PhysicsGuard diagnostics.
+
+## Workflow B: Build A Candidate Model From A PhysicsGuard Audit
+Only when requested, define each block's required fidelity, validate its low-fidelity checks and interfaces,
+then generate a candidate through documented APIs (for Simulink: new_system/add_block/set_param/add_line).
+Run it, map its outputs back to PhysicsGuard and refine one block at a time. It is a candidate engineering
+model, not a recovered commercial model. Read `references/model-generation.md` before generation.
