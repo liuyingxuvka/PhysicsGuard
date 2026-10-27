@@ -1,62 +1,24 @@
 ## PhysicsGuard Core Repository Rules
 
-- This project is PhysicsGuard Core.
-- Do not implement real physical component models unless explicitly requested.
-- Use SI units internally.
-- Residuals must be normalized before solving.
-- Optimizer convergence is not the same as audit pass. Use `optimization_success` for numerical optimizer convergence and `audit_pass` for residual-threshold plausibility.
-- All solver variables must have finite bounds, finite initial guesses inside bounds, and positive finite scales.
-- Variable scales must be passed to the solver before solving.
-- Diagnostics must be JSON-serializable and suitable for AI consumption.
-- All core classes require tests.
-- Use Python 3.11+, type hints, pydantic, numpy, scipy, pyyaml, pytest.
-- Do not reverse engineer commercial simulation tools.
-- Do not add external simulation-tool dependencies.
-- DummyResidualModule is for framework tests only and has no physical meaning.
-- Generic mathematical audit modules are framework validation utilities only; do not treat them as real physical modules.
-- Real physical, foundation, control/signal, thermodynamic, humidity, rotating-machine, mechanical, electrochemical, component and engineering-component modules, and hierarchical audit features, are added only when explicitly requested.
-- Keep every physical module low-fidelity, documented, tested, and explicit about validity.
-- Never add undocumented equations.
-- Never imply equivalence with commercial solver internals.
-- Do not let observed evaluation modify observed values.
-- Do not confuse reference solve with observed audit.
-- Commercial-tool adapters remain future work; CSV/TSV test data is read only through a test-file contract (`testfile snapshot|series`).
-- Observed values used by an audit are SI; non-SI test data is converted only by `testfile snapshot|series`, and every converted value records its factor and offset.
-- Every physical, component and engineering module must document assumptions, limitations, SI units, residual equations, validity range, and diagnostic keys.
-- Prefer simple first-principles algebraic residuals.
-- Do not add empirical correlations unless the source and validity range are documented.
-- Do not add complex, detailed or commercial-equivalent models without explicit request: no compressor maps or surge/choke models, detailed pump maps, fuel-cell polarization physics, detailed electrolyzer or heat-exchanger maps, combustion/emissions models, thermal derating models, or detailed GT/Simulink/Modelica/Amesim-equivalent models.
-- Piecewise diagnostic checks should default to post_check unless they are intended to define the solved reference model.
-- Lookup-table modules must document extrapolation behavior.
-- Rate-limiter modules must be single-step checks unless a real time-series evaluator is explicitly requested.
-- Do not add saturation vapor pressure correlations unless explicitly requested.
-- Map-based modules must document axis units, output units, and extrapolation behavior.
-- Prefer low-fidelity explicit residuals over complex empirical correlations.
-- Prefer simple first-principles algebraic residuals and single-step audit relations over hidden stateful solvers.
-- The only unit table is the documented one in `src/physicsguard/core/units.py`; otherwise conversions use explicit user-provided factors and offsets; never convert silently inside an evaluation.
-- Every new engineering component module must include tests and at least one example.
-- Hierarchical audit should support coarse-to-fine debugging with machine-readable reports.
-- Hierarchical observed evaluation should substitute external values directly and must not move or solve observed values.
-- Use `hierarchy evaluate` for AI-guided debugging of mapped external simulation snapshots; use `hierarchy compare` only when a solved low-fidelity reference is intentionally needed.
-- Do not auto-refine or auto-execute next templates unless explicitly requested.
-- Refinement rules should recommend next steps, not silently change the model.
-- Block scores are diagnostic heuristics, not mathematical proof.
-- Confidence scores are heuristic and must not be presented as statistical certainty.
-- Do not use hierarchy features to imply commercial solver equivalence.
-- Keep hierarchical reports JSON-serializable, machine-readable, and AI-consumable.
-- PhysicsGuard is an AI debugging tool, not a universal automatic bug finder; AI agents may propose signal mappings and audit templates, but uncertain mappings must be recorded explicitly.
-- AI agents may add narrowly scoped low-fidelity audit modules only when the relation is explicit, documented, tested, SI-based, and not a high-fidelity or commercial-tool model.
-- Bug localization should proceed coarse-to-fine: visible symptom, coarse balance or relation, suspicious block, next required signals or parameters, then deeper template.
-- All assumptions must be explicit Assumption Cards.
-- Do not silently invent assumptions.
-- Do not silently apply assumptions.
-- Do not use assumptions as free optimization variables.
-- Proposed assumptions must not be applied.
-- Rejected assumptions must not be applied.
-- High-impact assumptions must produce warnings.
-- Every diagnostic report should expose assumptions.
-- Do not build complex scenario or probabilistic assumption logic unless explicitly requested.
-- Prefer transparency over cleverness.
+Read these model contracts before changes:
+
+- Audit setup: model `core`, rules `no_solve_without_valid_registry`, `no_solve_without_normalized_residuals`, `hierarchy_describe_does_not_solve`.
+- Observed work: model `observed_derivation`, rules `observed_evaluation_does_not_solve`, `unobserved_variables_stay_listed`, `no_residual_from_unobserved_guess`, `derived_relations_are_not_checks`, `comparison_requires_reference_and_observed`, `hierarchy_run_requires_solve`, `diagnostics_after_solver_or_failure`.
+- Assumption cards: model `assumptions`, rules `assumptions_are_reported_in_diagnostics`, `assumption_overrides_are_warned`, `variable_assumptions_are_fixed_residuals`.
+- Solver/audit distinction: model `solver_audit`, rules `audit_pass_and_failure_are_disjoint`, `post_checks_never_block_valid_solver_selection`.
+- Refinement and readback: model `tree_verdicts`, rules `parent_fails_with_child`, `coarse_failure_with_passing_children_is_inconsistent`, `planned_template_is_reported_not_executed`, `tree_view_shows_every_block_verdict`, `verdict_lines_omit_structure`.
+- CLI: model `cli_exit`, rules `exit_code_follows_audit_pass`, `default_view_is_the_tree`. Installation, generated CSV and native descriptions: models `skill_install`, `heated_tank_generator`, `module_descriptions`.
+
+Policies:
+
+- Real modules require an explicit request. Keep them low-fidelity; document equations, SI units, assumptions, limits, validity and diagnostic keys; provide tests and an example. Test all core classes.
+- Prefer explicit first-principles algebraic residuals or single-step relations. No undocumented equations/correlations, hidden stateful physics, high-fidelity or commercial-equivalent models. DummyResidualModule and generic math audits are framework utilities, not physical models.
+- Stack: Python 3.11+, type hints, pydantic, numpy, scipy, pyyaml, pytest; JSON diagnostics/reports.
+- Use SI internally. The sole unit table is `src/physicsguard/core/units.py`; else use explicit factors/offsets at `testfile snapshot|series`, never silent conversion during evaluation.
+- Do not invent or silently apply assumptions, mappings, units or parameters. Record uncertainty explicitly; confidence and block scores are heuristics, not probability or proof. Never present a solved reference as an external observation.
+- No commercial reverse engineering or external simulation-tool dependencies. Use documented, official or user-provided interfaces; keep adapters future work unless explicitly requested.
+- Lookup/map modules document axes, units and extrapolation. Piecewise diagnostic checks default to post_check unless they intentionally define the solved reference; rate limits remain single-step without an explicit series request.
+- Proceed coarse-to-fine from a visible symptom to the next discriminating signals. Recommend refinement; no silent template execution/auto-refinement, universal bug-finding or commercial equivalence claims.
 
 <!-- BEGIN FLOWGUARD PROJECT RULES -->
 

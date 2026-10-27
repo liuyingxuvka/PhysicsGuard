@@ -29,6 +29,9 @@ def test_generator_reproduces_committed_csv(tmp_path: Path, monkeypatch: pytest.
     result = subprocess.run([sys.executable, str(EXAMPLE / "sim_tank.py"), str(output)], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert output.read_bytes() == (EXAMPLE / "tank_run.csv").read_bytes()
+    inline = tmp_path / "inline.csv"
+    assert module.main([str(inline)]) == 0
+    assert inline.read_bytes() == (EXAMPLE / "tank_run.csv").read_bytes()
 
 
 def test_csv_contains_the_heater_fault_and_inflow_step() -> None:
