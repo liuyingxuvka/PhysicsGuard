@@ -59,9 +59,12 @@
         "tests/test_signal_mapping_ledger.py",
         "tests/test_test_file_contract_cli.py",
         "tests/test_version_consistency.py",
-        "tests/test_workflow_governance.py"
+        "tests/test_workflow_governance.py",
+        "tests/test_cli_exit.py"
       ],
-      "models": [],
+      "models": [
+        ".flowguard/models/physicsguard_cli_exit_model.py"
+      ],
       "status": "confirmed",
       "fingerprint": "sha256:262884802f915819bcb9b89a27aaf5a3e16c24f3237393a63525d3b2ae1b2f0a"
     },
@@ -681,7 +684,8 @@
   ],
   "model_digests": {
     ".flowguard/models/physicsguard_assumptions_model.py": "9baef30d334cd8366789a4ef7f6bf35f327505c84f72d463cf2905be891054fe",
-    ".flowguard/models/physicsguard_core_model.py": "efd77a323aae8e7449e5178255528709f791ac14fdc0d684c6555c39c7caa1fb",
+    ".flowguard/models/physicsguard_cli_exit_model.py": "b9f3d92e88c850767224b034c5f9c2b344085874c2f3c073c9bca1ca395af316",
+    ".flowguard/models/physicsguard_core_model.py": "f2be8e44d5c19c7cb8da340a9f3fcef20d95556a96349486fab3f8f68e2637a2",
     ".flowguard/models/physicsguard_fault_variants_model.py": "62c2c8b7ce71d33b90b00bba0f13349f2f70623a1f0f3fffb082ecaf25d03bca",
     ".flowguard/models/physicsguard_model_dataset_validation_model.py": "fa090f7f144d42843826b37ed558c3a90cdf57a7a19f9d0138dbddb751b79a8a",
     ".flowguard/models/physicsguard_observed_derivation_model.py": "ff81eb9bef30cb99e45e46b1e6b63b8e6cfcc6ac3eb512cb9099b6568fdf43a3",
