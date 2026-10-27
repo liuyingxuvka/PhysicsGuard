@@ -157,7 +157,8 @@
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_variable_registry.py",
-        "tests/test_residual_trace_reuse.py"
+        "tests/test_residual_trace_reuse.py",
+        "tests/test_core.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py",
@@ -677,31 +678,21 @@
       "code": "large_model",
       "component": "fault_variants",
       "reason": "one decision table judged through one entry function: there is no composing function to split into steps, and halving the table makes two models replay the same function with no new information"
-    },
-    {
-      "code": "test_file_mixes_models",
-      "component": "tests/test_hierarchy_cli.py",
-      "reason": "split in PG-409"
-    },
-    {
-      "code": "test_file_mixes_models",
-      "component": "tests/test_residual_builder.py",
-      "reason": "split in PG-409"
     }
   ],
   "model_digests": {
     ".flowguard/models/physicsguard_assumptions_model.py": "9baef30d334cd8366789a4ef7f6bf35f327505c84f72d463cf2905be891054fe",
     ".flowguard/models/physicsguard_cli_exit_model.py": "73203624aa8053dbad515ffd05a1f1ebfea394202a757a9e5d20fdbc34d1714f",
-    ".flowguard/models/physicsguard_core_model.py": "38ac6004ffc3d614a9771c8a180b47ad00f76b918db08ae231b9355e5ec797d5",
+    ".flowguard/models/physicsguard_core_model.py": "a4cccbd546d8e1c3f74f7768a6a16383f6a7a42211b2265e71d3d4234719ead8",
     ".flowguard/models/physicsguard_fault_variants_model.py": "62c2c8b7ce71d33b90b00bba0f13349f2f70623a1f0f3fffb082ecaf25d03bca",
     ".flowguard/models/physicsguard_heated_tank_generator_model.py": "4256f8e3dedce1b4aac25e36c663ab2a92476e521dcc076e24b9045a068b12e9",
     ".flowguard/models/physicsguard_model_dataset_validation_model.py": "fa090f7f144d42843826b37ed558c3a90cdf57a7a19f9d0138dbddb751b79a8a",
     ".flowguard/models/physicsguard_module_descriptions_model.py": "988284f37c833a5464ffb25ac8ff64d8f1a187e1eb1b4706028176f55de2c339",
-    ".flowguard/models/physicsguard_observed_derivation_model.py": "ff81eb9bef30cb99e45e46b1e6b63b8e6cfcc6ac3eb512cb9099b6568fdf43a3",
+    ".flowguard/models/physicsguard_observed_derivation_model.py": "f6a8eab002eaa65a45fd8d87b6ce4cfda78c35c6fe727734df93d9e7b522f85f",
     ".flowguard/models/physicsguard_skill_install_model.py": "57774267558b78cbfcada6ce2df14e12595051e868a4600902c9eb71ba82ae08",
-    ".flowguard/models/physicsguard_solver_audit_model.py": "2bd5963aba69c8958956e489d7bc446076edd894a27abe2828d6d5f743b79879",
+    ".flowguard/models/physicsguard_solver_audit_model.py": "dcc5ba04b47b7789fa85073a440f73357475e3083f6f9f2ef55ba55cd1dadba2",
     ".flowguard/models/physicsguard_test_file_contract_model.py": "0128448d226ab9b7ab6d194100f468072384ceb975fad986a4745d14c94c14df",
-    ".flowguard/models/physicsguard_tree_verdicts_model.py": "80663b29e4ca7cae92cf415f71205b8611f29e1060b7849c2e91ef73496b9322"
+    ".flowguard/models/physicsguard_tree_verdicts_model.py": "bb0bca4786aa07cfb453bf4215260adf2e46f9808051e28da5d1e785fb9e5d12"
   },
   "fingerprint_format": 2
 }

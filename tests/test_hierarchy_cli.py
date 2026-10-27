@@ -8,28 +8,7 @@ import sys
 import pytest
 
 
-ROOT = Path(__file__).resolve().parents[1]
-FC = ROOT / "examples" / "hierarchical" / "fuel_cell_system"
-OBSERVED = ROOT / "examples" / "hierarchical" / "observed_debugging"
-
-
-def cli_env() -> dict[str, str]:
-    env = os.environ.copy()
-    src = str(ROOT / "src")
-    env["PYTHONPATH"] = src + os.pathsep + env.get("PYTHONPATH", "")
-    return env
-
-
-def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [sys.executable, "-m", "physicsguard.cli", *args],
-        cwd=ROOT,
-        env=cli_env(),
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-
+from conftest import FC, OBSERVED, ROOT, TANK, _block_lines, cli_env, run_cli
 
 def test_hierarchy_run_clean_example_returns_valid_json() -> None:
     result = run_cli("hierarchy", "run", str(FC / "tree.yaml"), "--pretty", "--json")
@@ -71,37 +50,6 @@ def test_hierarchy_run_conflict_fails_with_code_1_and_audit_false(tmp_path) -> N
     root = next(block for block in data["top_blocks"] if block["block_id"] == "fc_system")
     assert not root["audit_pass"] and not data["top_blocks"][0]["audit_pass"]
     assert data["recommended_refinements"]
-
-
-def test_describe_json_keeps_every_inspect_field(monkeypatch) -> None:
-    result = run_cli("hierarchy", "describe", str(FC / "tree.yaml"), "--pretty", "--json")
-    assert result.returncode == 0, result.stderr
-    data = json.loads(result.stdout)
-    assert data["audit_name"] == "fuel_cell_connected_tree"
-    assert data["root_blocks"] == ["fc_system"]
-    assert data["blocks"][0]["id"] == "fc_system"
-    assert data["missing_components"] == []
-    from physicsguard.core.hierarchy import describe_hierarchy, HierarchicalAuditRunner
-    from physicsguard.core.solver import BoundedSolver
-    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
-
-    def forbidden(*args, **kwargs):
-        pytest.fail("description must not solve or evaluate")
-    monkeypatch.setattr(BoundedSolver, "solve", forbidden)
-    monkeypatch.setattr(HierarchicalAuditRunner, "evaluate_observed", forbidden)
-    spec = load_hierarchical_audit_spec(FC / "tree.yaml")
-    before = spec.model_dump(mode="json")
-    declared = describe_hierarchy(spec)
-    assert spec.model_dump(mode="json") == before
-    assert declared["solver_attempted"] is False
-    assert {"root_blocks", "unassigned_components", "scoring", "confidence", "referenced_components", "missing_components"} <= data.keys()
-    assert data["scoring"] == spec.hierarchy.scoring.model_dump()
-    assert data["confidence"] == spec.hierarchy.confidence.model_dump()
-    for block, row in zip(spec.hierarchy.blocks, data["blocks"]):
-        assert row["component_ids"] == block.components
-        for key in ("required_variables", "optional_variables", "required_parameters", "optional_parameters", "refines", "tags"):
-            assert row[key] == getattr(block, key)
-    assert data["blocks"] == declared["blocks"]
 
 
 def test_hierarchy_evaluate_observed_fault_returns_block_rollup_without_solver() -> None:
@@ -149,39 +97,6 @@ def test_single_system_runs_through_hierarchy_cli() -> None:
     result = run_cli("hierarchy", "run", str(ROOT / "examples" / "dummy_system.yaml"), "--pretty", "--json")
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)["system_name"] == "dummy_clean_system"
-
-
-def test_hierarchy_evaluate_reports_a_partial_snapshot(tmp_path: Path) -> None:
-    import yaml
-
-    from physicsguard.core.residual import ResidualBuilder
-    from physicsguard.core.solver import BoundedSolver
-    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
-
-    audit = ROOT / "examples" / "hierarchical" / "coolant_loop" / "tree.yaml"
-    spec = load_hierarchical_audit_spec(audit)
-    solved = BoundedSolver(ResidualBuilder(spec.system), spec.system.solver).solve().variables
-    snapshot = {"variables": {name: {"value": float(value)} for name, value in solved.items() if name != "cool.Q_stack_heat_W"}}
-    (tmp_path / "partial.yaml").write_text(yaml.safe_dump(snapshot), encoding="utf-8")
-    result = run_cli("hierarchy", "evaluate", str(audit), str(tmp_path / "partial.yaml"))
-    assert result.returncode == 0, result.stderr
-    head = result.stdout.splitlines()[0]
-    assert ": PASS;" in head and " 0 unchecked, 1 derived;" in head
-    assert int(head.split(": PASS; ")[1].split(" checked")[0]) > 0
-    assert "not checked:" not in result.stdout
-    full = run_cli("hierarchy", "evaluate", str(audit), str(tmp_path / "partial.yaml"), "--json")
-    assert full.returncode == 0, full.stderr
-    report = json.loads(full.stdout)
-    producing = report["derived_variables"]["cool.Q_stack_heat_W"]["residual_occurrence"]
-    assert producing not in report["metadata"]["checked_residual_occurrences"]
-    assert report["metadata"]["observed_variable_count"] == len(snapshot["variables"])
-
-    fault = yaml.safe_load((OBSERVED / "pitch_feedback_observed_fault.yaml").read_text(encoding="utf-8"))
-    del fault["variables"]["controller_q_gain.y"]
-    (tmp_path / "nothing_left.yaml").write_text(yaml.safe_dump(fault), encoding="utf-8")
-    result = run_cli("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(tmp_path / "nothing_left.yaml"))
-    assert result.returncode == 2
-    assert "no residual can be evaluated without them" in result.stderr
 
 
 def test_hierarchy_evaluate_prints_the_tree_without_input_echo() -> None:
@@ -328,7 +243,6 @@ def test_mapping_summary_counts_the_whole_native_ledger(tmp_path):
     assert all(code in mapping for code in ("stale_mapping", "low_confidence", "missing_unit"))
 
 
-TANK = ROOT / "examples" / "hierarchical" / "heated_tank"
 HEAD_REPORT_KEYS = {
     "assumptions", "audit_name", "audit_pass", "block_assignments", "bug_family_followups", "checked_residuals",
     "derived_variables", "max_abs_normalized_residual", "metadata", "missing_required_parameters",
@@ -336,44 +250,6 @@ HEAD_REPORT_KEYS = {
     "residual_norm", "signal_mapping_ledger", "system_name", "top_blocks", "top_residuals", "unassigned_residuals",
     "unchecked_residuals", "warnings",
 }
-
-
-def _block_lines(text: str) -> dict[str, str]:
-    return {line.split(" [L")[0].strip(): line for line in text.splitlines() if " [L" in line}
-
-
-def test_evaluate_prints_the_tree_with_verdicts(capsys) -> None:
-    from physicsguard.cli import main
-
-    args = ("hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / "sparse_measured_k70.yaml"))
-    code = main(list(args))
-    tree = subprocess.CompletedProcess(args, code, capsys.readouterr().out, "")
-    full = run_cli(*args, "--json")
-    assert tree.returncode == full.returncode == 1, full.stderr
-    assert not tree.stdout.startswith("{") and len(tree.stdout) <= 3000
-    assert tree.stdout.startswith("audit heated_tank on tank_run_sparse_step_70: FAIL;")
-    assert "components:" not in tree.stdout and not any(line.startswith("links:") for line in tree.stdout.splitlines())
-    with_structure = run_cli(*args, "--full")
-    assert with_structure.returncode == tree.returncode and "components:" in with_structure.stdout
-    lines = _block_lines(tree.stdout)
-    assert "own FAIL" in lines["thermal"]
-    assert "not checked: 6 inputs missing" in lines["heater"]
-    assert "assumptions: heater_nameplate_efficiency" in lines["heater"]
-    for block in ("throughflow", "envelope"):
-        assert "no checks" in lines[block] and "PASS" not in lines[block]
-    assert "next: refine_thermal -> heater (block) needs heater current" in tree.stdout
-    # The rule tree_view_shows_every_block_verdict: every block, with the report's own verdict.
-    verdicts = {row["block_id"]: row for row in json.loads(full.stdout)["block_verdicts"]}
-    assert set(lines) == set(verdicts)
-    for block_id, row in verdicts.items():
-        line = lines[block_id]
-        if row["checked_residual_count"]:
-            assert f"own {'PASS' if row['own_audit_pass'] else 'FAIL'} " in line
-        else:
-            assert "own PASS" not in line and "own FAIL" not in line
-        assert ("not checked: " in line) is bool(row["missing_required_variables"])
-    clean = run_cli("hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / "measured_k30.yaml"))
-    assert clean.returncode == 0 and ": PASS;" in clean.stdout.splitlines()[0]
 
 
 def test_variants_prints_the_tree_with_signatures() -> None:
