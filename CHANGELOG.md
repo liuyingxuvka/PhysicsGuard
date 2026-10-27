@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Maintenance checks run on FlowGuard 0.70.13.
+
 ## v0.15.23 - 2026-10-24 - Analysis on the audit tree
 
 - Command output: hierarchy run, evaluate, compare and variants now print the audit tree with each block's verdict (failing residuals, unchecked blocks, refinement checks, next signals, fault-variant signatures and model miss); --json still prints the full report. hierarchy describe names benign variants and shows which block each assumption card applies to; its per-block count is now "declared needs missing". Preflight review's next action for a clean review is now create_or_select_coarse_physicsguard_audit.

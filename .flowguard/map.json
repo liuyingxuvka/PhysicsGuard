@@ -63,7 +63,7 @@
       ],
       "models": [],
       "status": "confirmed",
-      "fingerprint": "sha256:73fe9e67cbc64fd3ee0496e339f170b133c61e086965f9bab4770a6788cc3389"
+      "fingerprint": "sha256:262884802f915819bcb9b89a27aaf5a3e16c24f3237393a63525d3b2ae1b2f0a"
     },
     {
       "id": "simulation",
@@ -155,7 +155,11 @@
         "tests/test_variable_registry.py"
       ],
       "models": [
-        ".flowguard/models/physicsguard_core_model.py"
+        ".flowguard/models/physicsguard_core_model.py",
+        ".flowguard/models/physicsguard_observed_derivation_model.py",
+        ".flowguard/models/physicsguard_assumptions_model.py",
+        ".flowguard/models/physicsguard_tree_verdicts_model.py",
+        ".flowguard/models/physicsguard_solver_audit_model.py"
       ],
       "status": "confirmed",
       "fingerprint": "sha256:0dbcd45e88ac19fa96e1043705476ff36031abfceaefb955e2dc2e6d949b93cb"
@@ -657,6 +661,32 @@
       "component": "validation",
       "contains": "src/physicsguard/core/validation_depth.py",
       "reason": "One depth computation (holdout, series, rollout, convergence) over the same validation plan; its sections share the depth payload."
+    },
+    {
+      "code": "large_model",
+      "component": "fault_variants",
+      "reason": "one decision table judged through one entry function: there is no composing function to split into steps, and halving the table makes two models replay the same function with no new information"
+    },
+    {
+      "code": "test_file_mixes_models",
+      "component": "tests/test_hierarchy_cli.py",
+      "reason": "split in PG-409"
+    },
+    {
+      "code": "test_file_mixes_models",
+      "component": "tests/test_residual_builder.py",
+      "reason": "split in PG-409"
     }
-  ]
+  ],
+  "model_digests": {
+    ".flowguard/models/physicsguard_assumptions_model.py": "9baef30d334cd8366789a4ef7f6bf35f327505c84f72d463cf2905be891054fe",
+    ".flowguard/models/physicsguard_core_model.py": "efd77a323aae8e7449e5178255528709f791ac14fdc0d684c6555c39c7caa1fb",
+    ".flowguard/models/physicsguard_fault_variants_model.py": "62c2c8b7ce71d33b90b00bba0f13349f2f70623a1f0f3fffb082ecaf25d03bca",
+    ".flowguard/models/physicsguard_model_dataset_validation_model.py": "fa090f7f144d42843826b37ed558c3a90cdf57a7a19f9d0138dbddb751b79a8a",
+    ".flowguard/models/physicsguard_observed_derivation_model.py": "ff81eb9bef30cb99e45e46b1e6b63b8e6cfcc6ac3eb512cb9099b6568fdf43a3",
+    ".flowguard/models/physicsguard_solver_audit_model.py": "2bd5963aba69c8958956e489d7bc446076edd894a27abe2828d6d5f743b79879",
+    ".flowguard/models/physicsguard_test_file_contract_model.py": "0128448d226ab9b7ab6d194100f468072384ceb975fad986a4745d14c94c14df",
+    ".flowguard/models/physicsguard_tree_verdicts_model.py": "69530f56217db573504eb6f7a8b81dc6813716abb74801b41907958c3dec9d12"
+  },
+  "fingerprint_format": 2
 }

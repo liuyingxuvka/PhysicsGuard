@@ -536,7 +536,6 @@ def replay_case(case):
  return label,audit,(observed,disposition,verdict,audit_status),report,assumptions
 
 
-
 def replay_assumption_report(case_id):
     """Check actual diagnostic card preservation, beyond the legacy summary label."""
     from physicsguard.core.residual import ResidualBuilder
