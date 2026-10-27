@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 from scipy.optimize import least_squares
 
+from physicsguard.core._residual_dependencies import residual_trace_scope
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.parameter_coverage import ContractFinding, ContractReview
 from physicsguard.core.residual import ResidualBuilder
@@ -69,6 +70,7 @@ class ModelDatasetValidationReport:
         return asdict(self)
 
 
+@residual_trace_scope
 def validate_model_dataset(path: str | Path) -> ModelDatasetValidationReport:
     plan_path = Path(path)
     plan = load_model_validation_plan(plan_path)

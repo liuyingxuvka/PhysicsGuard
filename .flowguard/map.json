@@ -68,7 +68,7 @@
     {
       "id": "simulation",
       "layer": "engine",
-      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping",
+      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping Reuse dependency traces only inside one outer command, with complete constructor/registry input identity and exact observed reads; recompute residuals each time and retrace aliased observation tables.",
       "responsibilities": [
         "Use one evaluation engine for tree and single-system files through HierarchicalAuditRunner. Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API. For failed observed audits, probe at most 20 observed dependency ancestors for bounded unit factors/offsets, rederive affected native values, and emit hints without editing observations.",
         "Separate numerical optimization success, observed audit and diagnostic limits",
@@ -152,7 +152,8 @@
         "tests/test_starter_pack_trees.py",
         "tests/test_tank_helpers.py",
         "tests/test_thermodynamic_conversion_helpers.py",
-        "tests/test_variable_registry.py"
+        "tests/test_variable_registry.py",
+        "tests/test_residual_trace_reuse.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py",
@@ -162,12 +163,12 @@
         ".flowguard/models/physicsguard_solver_audit_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:0dbcd45e88ac19fa96e1043705476ff36031abfceaefb955e2dc2e6d949b93cb"
+      "fingerprint": "sha256:eb4c41989b2222d6c9fcaea6dd7a5953b6ceee4af1b5e68bba2d1128a806923f"
     },
     {
       "id": "validation",
       "layer": "workflows",
-      "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout",
+      "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout Dataset sequences share one outer command trace scope; every report and verdict is recalculated.",
       "responsibilities": [
         "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas. Batch fitting and series checks skip unit hints they do not expose. Apply parameter-stratum checks only when the policy declares strata; preserve count, gap and native-contribution guards.",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
@@ -199,7 +200,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:686ab35ea41849c99f2e0a7bfe654eed3060ca2ceea2bafc0e7cbcd9dc1c4af7"
+      "fingerprint": "sha256:aaf0523f1d2a8946ff8f705111ef9ee4c8e352381d3e5477a3f34d374e1a06b5"
     },
     {
       "id": "schema",
@@ -482,7 +483,7 @@
     {
       "id": "diagnosis",
       "layer": "workflows",
-      "summary": "Model-derived device variants, physical masking, pairwise separation and observed model misses",
+      "summary": "Model-derived device variants, physical masking, pairwise separation and observed model misses Nested variant evaluations share the command-local dependency trace scope and discard it on exit.",
       "responsibilities": [
         "Copy alternate-device data, rederive requested signals, and audit against the unchanged nominal model while preserving input specifications and observations",
         "Classify evaluated fault compositions as complete, physically masked, undetected or outside expected blocks; preserve unavailable rows with reasons and null signatures",
@@ -506,7 +507,7 @@
         ".flowguard/models/physicsguard_fault_variants_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:cbf39834987fc6d9ed9966cb9a9855f593dc0f0b4b2e212d125807e0533e36a4"
+      "fingerprint": "sha256:24b948aa6aeb4dbf8d8a236bc5a922668c4cd58dd0f04424e59136a94c89401c"
     },
     {
       "id": "preflight",

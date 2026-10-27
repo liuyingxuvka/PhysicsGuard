@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from typing import Any
 
+from physicsguard.core._residual_dependencies import residual_trace_scope
 from physicsguard.core.hierarchy import HierarchicalAuditRunner
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
@@ -182,6 +183,7 @@ def _variant_discrimination(rows, nominal, registry):
     return {"pairwise": pairwise, "next_signal": next_signal, "indistinguishable": indistinguishable}
 
 
+@residual_trace_scope
 def evaluate_fault_variants(
     spec: HierarchicalAuditSpec, nominal: ObservedValuesSpec, *, pairs: bool = False,
     observed: ObservedValuesSpec | None = None, base_dir: Path | None = None,

@@ -18,6 +18,8 @@ from typing import Any
 
 import numpy as np
 
+from physicsguard.core.registry import VariableRecord
+
 
 Dependencies = frozenset[str] | None
 LiteralSources = tuple[Dependencies, ...] | dict[str, Dependencies]
@@ -484,17 +486,97 @@ class _Capture:
         return self.trace
 
 
+# Dependency lists are reused only inside one outer command; verdicts are never cached.
+from contextvars import ContextVar
+from functools import wraps
+from dataclasses import fields, is_dataclass
+
+_TRACE_REUSE = ContextVar('physicsguard_residual_trace_reuse', default=None)
+
+
+def residual_trace_scope(function):
+    @wraps(function)
+    def scoped(*args, **kwargs):
+        if _TRACE_REUSE.get() is not None:
+            return function(*args, **kwargs)
+        token = _TRACE_REUSE.set({})
+        try:
+            return function(*args, **kwargs)
+        finally:
+            _TRACE_REUSE.reset(token)
+    return scoped
+
+
+def _trace_value(value):
+    """Copy all key material, including complete arrays; unknown objects disable reuse."""
+    if type(value) is float:
+        return ('float', value.hex())
+    if type(value) in (str, bytes, bool, int, type(None)):
+        return (type(value), value)
+    if type(value) is np.ndarray:
+        if value.dtype.hasobject:
+            return _UNKNOWN
+        return ('array', value.dtype.str, value.shape, value.tobytes())
+    if isinstance(value, np.generic):
+        return ('scalar', value.dtype.str, value.tobytes())
+    if type(value) is VariableRecord:
+        # Its fixed eight-field schema avoids reflective dataclass walks for every module.
+        parts = tuple(_trace_value(item) for item in
+                      (value.name, value.unit, value.lower_bound, value.upper_bound,
+                       value.initial_guess, value.scale, value.source_component, value.local_name))
+        return _UNKNOWN if any(item is _UNKNOWN for item in parts) else (VariableRecord, parts)
+    if is_dataclass(value) and not isinstance(value, type):
+        parts = tuple((item.name, _trace_value(getattr(value, item.name))) for item in fields(value))
+    elif type(value) is dict:
+        parts = tuple((key, _trace_value(item)) for key, item in sorted(value.items(), key=lambda item: repr(item[0])))
+    elif type(value) in (list, tuple):
+        parts = tuple((index, _trace_value(item)) for index, item in enumerate(value))
+    else:
+        return _UNKNOWN
+    if any(item is _UNKNOWN for _, item in parts):
+        return _UNKNOWN
+    return (type(value), parts)
+
+
+def _trace_key(module, registry, record_type, vector):
+    # A constructor table that aliases observations is not a fixed input.
+    if any(value is vector or (type(value) is np.ndarray and type(vector) is np.ndarray and np.shares_memory(value, vector))
+           for value in vars(module).values()):
+        return None
+    key = (type(module), module.component_id, repr(sorted(module.parameters.items())))
+    attributes = _trace_value(vars(module))
+    layout = _trace_value(vars(registry))
+    if attributes is _UNKNOWN or layout is _UNKNOWN:
+        return None
+    return (key, attributes, type(registry), layout, module.residuals.__func__, record_type)
+
+
+def _trace_inputs(names, vector, registry):
+    return tuple((name, _trace_value(vector[registry.get_index(name)])) for name in sorted(names))
+
+
 def module_residual_dependencies(module: Any, vector: Any, registry: Any, record_type: type):
     """Run the real method once; pair each actual returned record with its sources.
 
     Private strong references retain constructor identities for this invocation.
-    No cache survives it. A custom method cannot be licensed from an empty owned
+    No cache survives the command. A custom method cannot be licensed from an empty owned
     variable list, and the former trace is restored even on errors or reentry.
     """
     filename = Path(module.residuals.__code__.co_filename)
     if not filename.is_relative_to(_NATIVE):
         records = module.residuals(vector, registry)
         return records, [None for record in records], False
+    cache = _TRACE_REUSE.get()
+    key = _trace_key(module, registry, record_type, vector) if cache is not None else None
+    if key is not None:
+        for previous, dependencies, no_reads in cache.get(key, ()):
+            if previous == _trace_inputs((name for name, value in previous), vector, registry):
+                records = module.residuals(vector, registry)
+                if len(records) == len(dependencies):
+                    if len({id(record) for record in records}) != len(records):
+                        return records, [None for record in records], no_reads
+                    return records, list(dependencies), no_reads
+                break
     capture = _Capture(registry, record_type, module, vector)
     try:
         sys.settrace(capture.trace)
@@ -507,4 +589,6 @@ def module_residual_dependencies(module: Any, vector: Any, registry: Any, record
         dependencies.append(entry[1] if entry is not None and entry[0] is record else None)
     if len({id(record) for record in records}) != len(records):
         dependencies = [None for record in records]
+    if key is not None and key == _trace_key(module, registry, record_type, vector):
+        cache.setdefault(key, []).append((_trace_inputs(capture.reads, vector, registry), tuple(dependencies), not capture.reads))
     return records, dependencies, not capture.reads

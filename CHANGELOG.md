@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Evaluations trace each residual dependency once per command; repeated traces were the main cost.
+
 - Maintenance checks run on FlowGuard 0.70.13.
 
 ## v0.15.23 - 2026-10-24 - Analysis on the audit tree

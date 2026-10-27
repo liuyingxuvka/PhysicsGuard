@@ -10,6 +10,7 @@ from typing import Any, Iterable, Optional
 
 import numpy as np
 
+from physicsguard.core._residual_dependencies import residual_trace_scope
 from physicsguard.core.assumptions import AssumptionSummary
 from physicsguard.core.diagnostics import DiagnosticReporter, ResidualDiagnostic, VariableDeviationDiagnostic
 from physicsguard.core.registry import VariableRegistry
@@ -432,6 +433,7 @@ class HierarchicalAuditRunner:
         self.spec = spec
         self.base_dir = base_dir
 
+    @residual_trace_scope
     def run(self, top_n_residuals: int = 20, top_n_blocks: int = 10) -> HierarchicalAuditReport:
         builder = ResidualBuilder(self.spec.system)
         solver_result = BoundedSolver(builder, self.spec.system.solver).solve()
@@ -470,6 +472,7 @@ class HierarchicalAuditRunner:
             top_n_blocks=top_n_blocks,
         )
 
+    @residual_trace_scope
     def evaluate_observed(
         self,
         observed: ObservedValuesSpec,
