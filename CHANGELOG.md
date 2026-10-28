@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Maintenance checks run on FlowGuard 0.70.14.
+- The self-models declare the product functions their replays call, so a change to one of them selects every model that runs it.
 
 ## v0.15.24 - 2026-10-27 - Fast evaluation and a child-model core
 

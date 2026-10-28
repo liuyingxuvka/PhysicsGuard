@@ -22,6 +22,9 @@ EXAMPLE = ROOT / "examples/hierarchical/heated_tank"
 SPEC = load_hierarchical_audit_spec(EXAMPLE / "heated_tank.yaml")
 NOMINAL = load_observed_values(EXAMPLE / "measured_k30.yaml")
 IMPLEMENTED_BY = {"EvaluateFaultVariants": "src/physicsguard/core/diagnosability.py:evaluate_fault_variants"}
+USES = {
+    'LoadObservedValues': 'src/physicsguard/io/observation_loader.py:load_observed_values',
+}
 TESTED_BY = {
     "clean_input_accepted": ["tests/test_fault_variants.py:test_clean_nominal_is_accepted_without_mutating_inputs"],
     "each_defect_rejected": ["tests/test_fault_variants.py:test_each_declared_tank_fault_is_detected_with_direct_block_evidence"],

@@ -10,7 +10,10 @@ PARENT="core"
 READS_PARENT=('residuals_normalized', 'solve_attempted')
 OUTPUTS={'audit': ('passed', 'failed', 'not_run')}
 IMPLEMENTED_BY={'ExecuteMode.solve': 'src/physicsguard/core/solver.py:BoundedSolver.solve', 'SolverResiduals': 'src/physicsguard/core/residual.py:ResidualBuilder.solver_residual_records', 'AuditWarnings': 'src/physicsguard/core/diagnostics.py:DiagnosticReporter._warnings'}
-USES={}
+USES = {
+    'HierarchicalAuditRunner': 'src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner',
+    'ResidualBuilder': 'src/physicsguard/core/residual.py:ResidualBuilder',
+}
 TESTED_BY={'audit_pass_and_failure_are_disjoint': ['tests/test_diagnostics.py:test_report_distinguishes_optimization_success_from_audit_pass'], 'post_checks_never_block_valid_solver_selection': ['tests/test_solver.py:test_range_check_post_check_does_not_pull_solution', 'tests/test_core.py:test_post_check_residuals_are_not_in_solver_vector']}
 MUTATIONS={'failed_audit_also_passes': 'audit_pass_and_failure_are_disjoint', 'post_checks_enter_solver': 'post_checks_never_block_valid_solver_selection'}
 REAL_CASE_IDS=('converged_bad_audit',)

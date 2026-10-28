@@ -548,6 +548,9 @@ IMPLEMENTED_BY = {
     "OptionalCalibration": "src/physicsguard/core/model_dataset_validation.py:_calibration_summary",
     "GateValidationClaim": "src/physicsguard/core/model_dataset_validation.py:_status",
 }
+USES = {
+    'ValidateModelDataset': 'src/physicsguard/core/model_dataset_validation.py:validate_model_dataset',
+}
 TESTED_BY = {
     "one_finding_per_missing_input": ["tests/test_validation_depth.py:test_missing_declared_series_is_one_finding"],
     "no_pass_without_direct_validation": [

@@ -10,7 +10,10 @@ PARENT="core"
 READS_PARENT=('solve_attempted',)
 OUTPUTS={'tree_verdict': ('PASS', 'FAIL', 'not checked', 'no checks')}
 IMPLEMENTED_BY={'ExecuteMode.growth': 'src/physicsguard/core/hierarchy.py:RefinementPlanner.recommended_refinements', 'ExecuteMode.tree_view': 'src/physicsguard/core/tree_view.py:render_tree_view'}
-USES={}
+USES = {
+    'HierarchicalAuditRunner': 'src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner',
+    'ResidualBuilder': 'src/physicsguard/core/residual.py:ResidualBuilder',
+}
 TESTED_BY={'parent_fails_with_child': ['tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores', 'tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement'], 'coarse_failure_with_passing_children_is_inconsistent': ['tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations'], 'planned_template_is_reported_not_executed': ['tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned'], 'tree_view_shows_every_block_verdict': ['tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts'], 'verdict_lines_omit_structure': ['tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts']}
 MUTATIONS={'parent_ignores_children': 'parent_fails_with_child', 'coarse_failure_reported_consistent': 'coarse_failure_with_passing_children_is_inconsistent', 'planned_target_loaded': 'planned_template_is_reported_not_executed', 'tree_view_hides_a_failing_block': 'tree_view_shows_every_block_verdict', 'verdict_lines_repeat_structure': 'verdict_lines_omit_structure'}
 REAL_CASE_IDS=('growth_coarse_bad_audit', 'growth_planned_bad_audit', 'hierarchy_evaluate_partial_tree_view_bad_audit', 'hierarchy_evaluate_derived_child_bad_audit', 'hierarchy_evaluate_partial_tree_view_not_checked')
