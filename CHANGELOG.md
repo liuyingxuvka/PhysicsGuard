@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Maintenance checks run on FlowGuard 0.70.14.
+
 ## v0.15.24 - 2026-10-27 - Fast evaluation and a child-model core
 
 - validation run prints its verdicts on the tree; verdict views print verdicts only (--full keeps the structure).
