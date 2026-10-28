@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.15.25 - 2026-10-28 - Declared replays and an owner for the unit-factor probe
 
 - Maintenance checks run on FlowGuard 0.70.14.
 - The self-models declare the product functions their replays call, so a change to one of them selects every model that runs it.
