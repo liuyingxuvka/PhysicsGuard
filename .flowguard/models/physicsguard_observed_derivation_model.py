@@ -15,6 +15,7 @@ IMPLEMENTED_BY = {
     "UnitFactorProbe": "src/physicsguard/core/hierarchy.py:_unit_factor_followups",
 }
 USES = {
+    'LoadHierarchicalAuditSpec': 'src/physicsguard/io/hierarchy_loader.py:load_hierarchical_audit_spec',
     'ResidualBuilder': 'src/physicsguard/core/residual.py:ResidualBuilder',
     'Diagnostics': 'src/physicsguard/core/diagnostics.py:DiagnosticReporter.generate',
     'HierarchicalAuditRunner': 'src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner',
