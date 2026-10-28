@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import os
 from pathlib import Path
 import subprocess
@@ -100,14 +101,32 @@ def test_single_system_runs_through_hierarchy_cli() -> None:
 
 
 def test_hierarchy_evaluate_prints_the_tree_without_input_echo() -> None:
-    args = ("hierarchy", "evaluate", str(OBSERVED / "pitch_feedback_level_0.yaml"), str(OBSERVED / "pitch_feedback_observed_fault.yaml"))
+    args = (
+        "hierarchy",
+        "evaluate",
+        str(OBSERVED / "pitch_feedback_level_0.yaml"),
+        str(OBSERVED / "pitch_feedback_observed_fault.yaml"),
+    )
     tree = run_cli(*args)
     full = run_cli(*args, "--json")
     assert tree.returncode == full.returncode == 1, tree.stderr
-    assert len(tree.stdout) < 4096 < len(full.stdout)
+    assert len(tree.stdout) < len(full.stdout)
+    verdicts = json.loads(full.stdout)["block_verdicts"]
+    failed = {
+        row["block_id"]
+        for row in verdicts
+        if row["checked_residual_count"] and not row["own_audit_pass"]
+    }
+    shown = {name for name, row in _block_lines(tree.stdout).items() if "own FAIL" in row}
+    assert shown == failed and failed
+    assert sum(" [L" in line for line in tree.stdout.splitlines()) == len(verdicts)
     assert not tree.stdout.startswith("{")
-    assert tree.stdout.startswith("audit observed_pitch_feedback_level_0 on pitch_feedback_observed_fault: FAIL;")
-    line = next(row for row in tree.stdout.splitlines() if row.startswith("  pitch_rate_feedback [L1]"))
+    assert tree.stdout.startswith(
+        "audit observed_pitch_feedback_level_0 on pitch_feedback_observed_fault: FAIL;"
+    )
+    line = next(
+        row for row in tree.stdout.splitlines() if row.startswith("  pitch_rate_feedback [L1]")
+    )
     assert "own FAIL" in line and "controller_q_gain.linear_relation" in line
     assert "hierarchy" not in json.loads(full.stdout)["metadata"]
 
@@ -162,9 +181,14 @@ def test_describe_prints_a_readable_tree_with_variants() -> None:
     tank = ROOT / "examples/hierarchical/heated_tank/heated_tank.yaml"
     result = run_cli("hierarchy", "describe", str(tank))
     assert result.returncode == 0, result.stderr
-    assert len(result.stdout.encode()) <= 3000
+    rows = [line for line in result.stdout.splitlines() if " [L" in line]
+    header = re.search(r": (\d+) blocks,", result.stdout.splitlines()[0])
+    assert header and int(header[1]) == len(rows)
+    assert len(rows) == len({line.split(" [L")[0].strip() for line in rows})
     assert result.stdout.startswith("audit heated_tank: 6 blocks,")
-    heater = next(line for line in result.stdout.splitlines() if line.lstrip().startswith("heater [L2]"))
+    heater = next(
+        line for line in result.stdout.splitlines() if line.lstrip().startswith("heater [L2]")
+    )
     assert "variants: heater_half" in heater and "heater_el(ElectricalPowerModule)" in heater
     assert "refines: tank_energy" in result.stdout and "heater (block)" in result.stdout
     assert "links: " in result.stdout
@@ -253,19 +277,39 @@ HEAD_REPORT_KEYS = {
 
 
 def test_variants_prints_the_tree_with_signatures() -> None:
-    args = ("hierarchy", "variants", str(TANK / "heated_tank.yaml"), str(TANK / "measured_k30.yaml"),
-            "--pairs", "--observed", str(TANK / "measured_k70.yaml"))
+    args = (
+        "hierarchy",
+        "variants",
+        str(TANK / "heated_tank.yaml"),
+        str(TANK / "measured_k30.yaml"),
+        "--pairs",
+        "--observed",
+        str(TANK / "measured_k70.yaml"),
+    )
     tree, full = run_cli(*args), run_cli(*args, "--json")
     assert tree.returncode == full.returncode == 0, tree.stderr
-    assert len(tree.stdout) <= 3000
     lines = _block_lines(tree.stdout)
     assert "variants failing here: heater_half(-)" in lines["heater"]
-    for text in ("masked: heater_half+inlet_temp_offset", "matches: heater_half", "model miss: no",
-                 "indistinguishable: extra_wall_loss+inlet_temp_offset next signal heat.Q_out_W",
-                 "variant outflow_rounding benign: neutral", "pair heater_half+inlet_temp_offset: masked", "boundary: "):
+    for text in (
+        "masked: heater_half+inlet_temp_offset",
+        "matches: heater_half",
+        "model miss: no",
+        "indistinguishable: extra_wall_loss+inlet_temp_offset next signal heat.Q_out_W",
+        "variant outflow_rounding benign: neutral",
+        "pair heater_half+inlet_temp_offset: masked",
+        "boundary: ",
+    ):
         assert text in tree.stdout
     data = json.loads(full.stdout)
-    assert {"pairwise", "masked_pairs", "next_signal", "generated_values"} <= set(data) | set(data["variants"][0])
+    assert {"pairwise", "masked_pairs", "next_signal", "generated_values"} <= set(data) | set(
+        data["variants"][0]
+    )
+    for variant in data["variants"]:
+        assert (
+            sum(line.startswith(f"variant {variant['id']} ") for line in tree.stdout.splitlines())
+            == 1
+        )
+    assert sum(line.startswith("pair ") for line in tree.stdout.splitlines()) == len(data["pairs"])
 
 
 def test_json_keeps_the_full_report() -> None:

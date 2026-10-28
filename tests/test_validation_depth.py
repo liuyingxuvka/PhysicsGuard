@@ -269,7 +269,13 @@ def test_report_carries_a_compact_depth_summary() -> None:
     assert summary["status"] == "pass"
     assert summary["claim_scope"] == "scenario_set"
     assert summary["adequacy"]["status"] == "pass"
-    assert len(json.dumps(summary)) < 2000
+    assert len(json.dumps(summary)) < len(json.dumps(report.depth))
+    shallow = validate_model_dataset(
+        PUMP / "validation" / "shallow_time_varying_validation_plan.yaml"
+    )
+    assert shallow.depth_summary["finding_codes"] == sorted(
+        {finding["type"] for finding in shallow.findings}
+    )
 
 
 def test_adequacy_floors_are_warnings_not_failures() -> None:

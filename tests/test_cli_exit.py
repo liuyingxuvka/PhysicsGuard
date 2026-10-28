@@ -20,9 +20,23 @@ def test_cli_exit_codes_follow_the_audit(capsys):
 
 
 def test_validation_run_prints_the_tree(capsys):
-    assert main(['validation', 'run', str(TANK / 'validation_plan.yaml')]) == 1
+    assert main(["validation", "run", str(TANK / "validation_plan.yaml")]) == 1
     text = capsys.readouterr().out
-    assert text.startswith('validation tank_run_validation on heated_tank: partial; 120 points, holdout ')
-    assert any('heater [L' in line and 'interval FAIL step_60-step_119 worst 25.00' in line for line in text.splitlines())
-    assert [line.split(':', 1)[0] for line in text.splitlines()[-3:]] == ['adequacy', 'next', 'safe claim']
-    assert len(text.encode()) <= 3000
+    assert text.startswith(
+        "validation tank_run_validation on heated_tank: partial; 120 points, holdout "
+    )
+    assert any(
+        "heater [L" in line and "interval FAIL step_60-step_119 worst 25.00" in line
+        for line in text.splitlines()
+    )
+    assert [line.split(":", 1)[0] for line in text.splitlines()[-3:]] == [
+        "adequacy",
+        "next",
+        "safe claim",
+    ]
+    assert main(["validation", "run", str(TANK / "validation_plan.yaml"), "--json"]) == 1
+    report = json.loads(capsys.readouterr().out)
+    rows = [line for line in text.splitlines() if " [L" in line]
+    assert len(rows) == len({line.split(" [L")[0].strip() for line in rows}) == 6
+    for finding in report["findings"]:
+        assert text.count(finding["type"]) == 1

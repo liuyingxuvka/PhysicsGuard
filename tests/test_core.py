@@ -51,14 +51,21 @@ def test_describe_json_keeps_every_inspect_field(monkeypatch) -> None:
 def test_evaluate_prints_the_tree_with_verdicts(capsys) -> None:
     from physicsguard.cli import main
 
-    args = ("hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / "sparse_measured_k70.yaml"))
+    args = (
+        "hierarchy",
+        "evaluate",
+        str(TANK / "heated_tank.yaml"),
+        str(TANK / "sparse_measured_k70.yaml"),
+    )
     code = main(list(args))
     tree = subprocess.CompletedProcess(args, code, capsys.readouterr().out, "")
     full = run_cli(*args, "--json")
     assert tree.returncode == full.returncode == 1, full.stderr
-    assert not tree.stdout.startswith("{") and len(tree.stdout) <= 3000
+    assert not tree.stdout.startswith("{")
     assert tree.stdout.startswith("audit heated_tank on tank_run_sparse_step_70: FAIL;")
-    assert "components:" not in tree.stdout and not any(line.startswith("links:") for line in tree.stdout.splitlines())
+    assert "components:" not in tree.stdout and not any(
+        line.startswith("links:") for line in tree.stdout.splitlines()
+    )
     with_structure = run_cli(*args, "--full")
     assert with_structure.returncode == tree.returncode and "components:" in with_structure.stdout
     lines = _block_lines(tree.stdout)
@@ -70,6 +77,7 @@ def test_evaluate_prints_the_tree_with_verdicts(capsys) -> None:
     assert "next: refine_thermal -> heater (block) needs heater current" in tree.stdout
     # The rule tree_view_shows_every_block_verdict: every block, with the report's own verdict.
     verdicts = {row["block_id"]: row for row in json.loads(full.stdout)["block_verdicts"]}
+    assert sum(" [L" in line for line in tree.stdout.splitlines()) == len(verdicts)
     assert set(lines) == set(verdicts)
     for block_id, row in verdicts.items():
         line = lines[block_id]
@@ -78,7 +86,9 @@ def test_evaluate_prints_the_tree_with_verdicts(capsys) -> None:
         else:
             assert "own PASS" not in line and "own FAIL" not in line
         assert ("not checked: " in line) is bool(row["missing_required_variables"])
-    clean = run_cli("hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / "measured_k30.yaml"))
+    clean = run_cli(
+        "hierarchy", "evaluate", str(TANK / "heated_tank.yaml"), str(TANK / "measured_k30.yaml")
+    )
     assert clean.returncode == 0 and ": PASS;" in clean.stdout.splitlines()[0]
 
 

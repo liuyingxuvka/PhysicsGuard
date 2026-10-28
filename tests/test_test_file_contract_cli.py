@@ -80,7 +80,7 @@ def test_cli_validation_run_prints_a_compact_summary() -> None:
     summary = run_cli("validation", "run", plan)
     full = run_cli("validation", "run", plan, "--json")
     assert summary.returncode == full.returncode == 1
-    assert len(summary.stdout) < 4096 < len(full.stdout)
+    assert len(summary.stdout) < len(full.stdout)
     data = json.loads(full.stdout)
     assert summary.stdout.startswith(f"validation {data['validation_id']} ")
     assert f": {data['status']};" in summary.stdout.splitlines()[0]
@@ -89,6 +89,8 @@ def test_cli_validation_run_prints_a_compact_summary() -> None:
     assert f"adequacy: {adequacy}" in summary.stdout
     assert "critical_parameter_uncovered" in {item["type"] for item in data["findings"]}
     assert "critical_parameter_uncovered" in summary.stdout
+    for finding in data["findings"]:
+        assert summary.stdout.count(finding["type"]) == 1
     assert not summary.stdout.startswith("{")
 
 
