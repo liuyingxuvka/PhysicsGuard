@@ -2,16 +2,12 @@
 
 ## Unreleased
 
-- README rewritten: the problem it solves for an AI user, a before/after example, a quick start and honest limits.
-
-- The skill also covers physics and engineering calculations an AI makes itself, routes a simulation's code to flowguard, and has a six-step quick check; modules list --find filters modules by name, domain and summary.
-
-- Each checked block prints a resolution line: a local first-order estimate of the smallest error per observed variable a checked residual can see, marked "(default scale)" when it uses a module default; --json carries it as "resolution", preserving numeric estimates with an explicit unknown when scale provenance is unavailable.
-
-- Hand-written snapshots can give raw_value and raw_unit; the loader converts them with the unit table or the recorded factor and records the conversion in the mapping ledger. A row whose value contradicts its raw value and conversion now stops the run with exit 2 and observed_value_disagrees_with_conversion:<variable>.
-
 - The compact tree prints one hint line per bug-family follow-up, for example "hint: unit_conversion heater.Q_dot_W multiply by 1000"; before, the hint existed only in --json.
-
+- Hand-written snapshots can give raw_value and raw_unit; the loader converts them with the unit table or the recorded factor and records the conversion in the mapping ledger. A row whose value contradicts its raw value and conversion now stops the run with exit 2 and observed_value_disagrees_with_conversion:<variable>.
+- Each checked block prints a resolution line: a local first-order estimate of the smallest error per observed variable a checked residual can see, marked "(default scale)" when it uses a module default; --json carries it as "resolution", preserving numeric estimates with an explicit unknown when scale provenance is unavailable.
+- modules list --find filters modules by name, domain and summary.
+- The skill also covers physics and engineering calculations an AI makes itself, routes a simulation's code to flowguard, and has a six-step quick check.
+- README rewritten: the problem it solves for an AI user, a before/after example, a quick start and honest limits.
 - Maintenance checks run on FlowGuard 0.71.0; the project rules name req add and PLAN changes lines, CLAUDE.md imports AGENTS.md, and every accepted debt has an expiry.
 
 ## v0.15.25 - 2026-10-28 - Declared replays and an owner for the unit-factor probe
