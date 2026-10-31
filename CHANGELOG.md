@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Maintenance checks run on FlowGuard 0.71.0; the project rules name req add and PLAN changes lines, CLAUDE.md imports AGENTS.md, and every accepted debt has an expiry.
+
 ## v0.15.25 - 2026-10-28 - Declared replays and an owner for the unit-factor probe
 
 - Maintenance checks run on FlowGuard 0.70.14.

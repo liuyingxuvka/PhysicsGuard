@@ -636,48 +636,14 @@
       "code": "dependency_cycle",
       "component": "modules",
       "contains": "modules <-> simulation; imports:",
-      "reason": "Physical modules use the engine variable registry and residual records, while the residual builder creates modules through the module registry. Both owners are in the engine layer; keep these real imports and domain tests."
-    },
-    {
-      "code": "large_component",
-      "component": "modules",
-      "contains": "LOC in 39 files",
-      "reason": "An equation library of 39 self-contained relation files, each with its own unit tests; the size comes from the number of physical relations, not from mixed responsibilities."
-    },
-    {
-      "code": "large_component",
-      "component": "validation",
-      "contains": "LOC in 4 files",
-      "reason": "Model-vs-dataset validation is one claim gate (contracts, holdout, depth, adequacy) over two engines; splitting by size would separate gates that must agree on the same findings."
-    },
-    {
-      "code": "large_component",
-      "component": "simulation",
-      "contains": "LOC in 9 files",
-      "reason": "The one evaluation engine (registry, residuals, solver, hierarchy runner, diagnostics, tree view); it is just over the limit and every file has one job."
-    },
-    {
-      "code": "large_file",
-      "component": "simulation",
-      "contains": "src/physicsguard/core/hierarchy.py",
-      "reason": "HierarchicalAuditRunner, block scoring, refinement planning and observed derivation share the block index and residual records of one evaluation; rendering already moved to tree_view.py."
-    },
-    {
-      "code": "large_file",
-      "component": "validation",
-      "contains": "src/physicsguard/core/validation_adequacy.py",
-      "reason": "One adequacy computation (per-signal, per-parameter and temporal coverage) over the same contract mappings; its sections share the finding format and floors."
-    },
-    {
-      "code": "large_file",
-      "component": "validation",
-      "contains": "src/physicsguard/core/validation_depth.py",
-      "reason": "One depth computation (holdout, series, rollout, convergence) over the same validation plan; its sections share the depth payload."
+      "reason": "Physical modules use the engine variable registry and residual records, while the residual builder creates modules through the module registry. Both owners are in the engine layer; keep these real imports and domain tests.",
+      "expires": "v0.17.0"
     },
     {
       "code": "large_model",
       "component": "fault_variants",
-      "reason": "one decision table judged through one entry function: there is no composing function to split into steps, and halving the table makes two models replay the same function with no new information"
+      "reason": "one decision table judged through one entry function: there is no composing function to split into steps, and halving the table makes two models replay the same function with no new information",
+      "expires": "v0.16.1"
     }
   ],
   "model_digests": {
