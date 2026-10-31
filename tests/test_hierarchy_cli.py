@@ -342,7 +342,6 @@ def test_describe_names_benign_variants_and_assumption_blocks() -> None:
     assert sum("assumptions:" in line for line in lines.values()) == 1
 
 
-
 def test_disagreeing_snapshot_exits_2_naming_the_variable(tmp_path) -> None:
     import yaml
     shower = ROOT / "examples/hierarchical/shower_mix"

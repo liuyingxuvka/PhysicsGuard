@@ -67,7 +67,6 @@ def test_snapshot_accepts_source_model_and_rejects_unknown_keys() -> None:
                                            "source_model": {"unknown": "value"}})
 
 
-
 def _raw_snapshot(tmp_path, original="observed_ai.yaml"):
     import yaml
     from pathlib import Path
@@ -124,7 +123,6 @@ def test_table_conversion_contradicting_recorded_factor_is_refused(tmp_path) -> 
     path.write_text(yaml.safe_dump(data))
     with pytest.raises(ValueError, match="observed_value_disagrees_with_conversion:heater.Q_dot_W"):
         load_observed_values(path)
-
 
 
 @pytest.mark.parametrize("raw", [

@@ -180,7 +180,6 @@ def test_a_thousandfold_flow_factor_slip_is_named_without_changing_observations(
     assert observed.model_dump()==before
 
 
-
 def test_no_raw_nested_comparison_omits_conversion_evidence() -> None:
     spec = load_hierarchical_audit_spec(ROOT / "examples/physical_coolant_heat_balance.yaml")
     observed = load_observed_values(ROOT / "examples/observed/physical_coolant_observed_clean.yaml")
