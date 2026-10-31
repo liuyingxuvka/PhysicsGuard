@@ -12,6 +12,7 @@ OUTPUTS={'tree_verdict': ('PASS', 'FAIL', 'not checked', 'no checks')}
 IMPLEMENTED_BY={'ExecuteMode.growth': 'src/physicsguard/core/hierarchy.py:RefinementPlanner.recommended_refinements', 'ExecuteMode.tree_view': 'src/physicsguard/core/tree_view.py:render_tree_view', 'RenderHints': 'src/physicsguard/core/tree_view.py:_report_tail'}
 USES = {
     'HierarchicalAuditRunner': 'src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner',
+    'DescribeHierarchy': 'src/physicsguard/core/hierarchy.py:describe_hierarchy',
     'EvaluateObserved': 'src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed',
     'ResidualBuilder': 'src/physicsguard/core/residual.py:ResidualBuilder',
     'LoadAudit': 'src/physicsguard/io/hierarchy_loader.py:load_hierarchical_audit_spec',

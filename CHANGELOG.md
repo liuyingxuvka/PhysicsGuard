@@ -9,6 +9,7 @@
 - The skill also covers physics and engineering calculations an AI makes itself, routes a simulation's code to flowguard, and has a six-step quick check.
 - README rewritten: the problem it solves for an AI user, a before/after example, a quick start and honest limits.
 - Maintenance checks run on FlowGuard 0.71.0; the project rules name req add and PLAN changes lines, CLAUDE.md imports AGENTS.md, and every accepted debt has an expiry.
+- Tree-view model checks now declare their hierarchy-description dependency for change selection.
 
 ## v0.15.25 - 2026-10-28 - Declared replays and an owner for the unit-factor probe
 
