@@ -148,6 +148,34 @@ fields, or normalized snapshot rows returned by the loader; unresolved raw rows 
 Record mapping uncertainty and `review_required` honestly.
 `stale_when` declares reconfirmation conditions; when one occurs, set `mapping_status: stale`. Do not present old mappings as current evidence.
 
+## Local resolution of observed checks
+
+`hierarchy evaluate` and `hierarchy compare` report `resolution`: a local first-order
+estimate at the observed working point, using the same residual builder without a
+reference solve. For each observed variable owned by a checked block, take the smallest
+`audit_threshold / abs(d(normalized residual) / d(variable))` among that block's independent
+checked residuals. Derived values are recomputed for each perturbation; producing relations
+are not reused as independent checks. This is a full threshold-sized error, not remaining
+headroom after the current residual. It is not a global detection guarantee for nonlinear physics.
+For example, the shower half-flow case reports about 8 K even though its current normalized
+mixing residual is already 0.5625; an explicit tighter scale reports about 0.2 K at full flow.
+
+The JSON entry is `{value, unit, residual, default_scale}`; values use the variable's own
+registry unit and name the winning checked residual. A null entry prints `<variable> unchecked`:
+no usable finite local sensitivity was established for that block. It does not replace the
+block's existing audit verdict. A true `default_scale` marks `(default scale)` because at least
+one contributing module scale input was omitted; false means those scale inputs were supplied.
+If the scale source cannot be established, the numeric estimate remains, with `default_scale: null`
+and `(scale source unavailable)`. This explicit unknown also covers custom or compound scale
+implementations that the native scale-source check cannot classify; it never becomes a false
+claim that the variable itself was unchecked.
+
+The tree prints one line per checked block in tree order, after `hint:` and before `mapping:`,
+using two significant digits. A checked block without its own observed variables says
+`resolution: <block> no observed variables`. Resolution never changes the audit threshold,
+module defaults, observations or verdict. Choose scales as tolerable errors in each residual's
+unit and read this estimate before calling a numerical answer checked.
+
 ## Derivation order and fault variants
 
 Connections propagate known values within variable bounds without overwriting measurements or already derived values; propagating around a cycle creates no independent observation. Supported per-residual value/control dependencies permit bounded one-unknown derivation for equation/connection/boundary/assumption relations. Ambiguous, flat or unsupported cases remain unknown; this is not general nonlinear uniqueness.

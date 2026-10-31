@@ -272,7 +272,7 @@ HEAD_REPORT_KEYS = {
     "derived_variables", "max_abs_normalized_residual", "metadata", "missing_required_parameters",
     "missing_required_variables", "optimization_success", "recommended_refinements", "refinement_checks",
     "residual_norm", "signal_mapping_ledger", "system_name", "top_blocks", "top_residuals", "unassigned_residuals",
-    "unchecked_residuals", "warnings",
+    "unchecked_residuals", "warnings", "resolution",
 }
 
 

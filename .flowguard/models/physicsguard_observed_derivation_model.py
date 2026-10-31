@@ -325,7 +325,7 @@ def _unit_hint_slip():
     hierarchy._derive_unobserved = counted
     try:
         spec = load_hierarchical_audit_spec(tank / "heated_tank.yaml")
-        report = hierarchy.HierarchicalAuditRunner(spec).evaluate_observed(observed)
+        report = hierarchy.HierarchicalAuditRunner(spec).evaluate_observed(observed, _resolution=False)
     finally:
         hierarchy._derive_unobserved = original
     problems = []

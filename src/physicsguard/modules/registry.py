@@ -103,7 +103,7 @@ def _description_placeholder(name: str, error: str) -> Any:
     return 1.0
 
 
-def _description_instance(
+def instantiate_module_with_parameter_reads(
     registry: ModuleRegistry, module_type: str, values: dict[str, Any],
     reads: dict[str, Any], component_id: str,
 ) -> BaseModule:
@@ -146,7 +146,7 @@ def describe_module_type(
     reads: dict[str, Any] = {}
     for _ in range(64):
         try:
-            module = _description_instance(registry, module_type, values, reads, component_id)
+            module = instantiate_module_with_parameter_reads(registry, module_type, values, reads, component_id)
             break
         except (ValueError, TypeError, KeyError) as exc:
             error = str(exc)

@@ -46,7 +46,7 @@ def _variant_device(spec, variants):
 def _variant_audit(spec, data, base_dir):
     try:
         return HierarchicalAuditRunner(spec, base_dir).evaluate_observed(
-            data, skip_unobserved=True, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False)
+            data, skip_unobserved=True, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False, _resolution=False)
     except ValueError as exc:
         if "no residual can be evaluated without them" in str(exc):
             raise _VariantNotEvaluable(str(exc)) from exc
@@ -196,7 +196,7 @@ def evaluate_fault_variants(
     physical simulator. No FlowGuard runtime dependency or reference solve.
     """
     runner = HierarchicalAuditRunner(spec, base_dir)
-    baseline = runner.evaluate_observed(nominal, skip_unobserved=True, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False)
+    baseline = runner.evaluate_observed(nominal, skip_unobserved=True, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False, _resolution=False)
     registry = ResidualBuilder(spec.system).build_registry()
     by_id = {variant.id: variant for variant in spec.fault_variants}
     if variant_ids is not None:
@@ -211,7 +211,7 @@ def evaluate_fault_variants(
     matching = None
     model_miss = None
     if observed is not None:
-        actual = runner.evaluate_observed(observed, skip_unobserved=True, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False)
+        actual = runner.evaluate_observed(observed, skip_unobserved=True, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False, _resolution=False)
         matching = [row["id"] for row in rows if row["kind"] == "fault" and row["status"] == "evaluated"
                     and row["signature"] == _signature(actual)]
         model_miss = not actual.audit_pass and not matching

@@ -12,12 +12,13 @@ OUTPUTS={'tree_verdict': ('PASS', 'FAIL', 'not checked', 'no checks')}
 IMPLEMENTED_BY={'ExecuteMode.growth': 'src/physicsguard/core/hierarchy.py:RefinementPlanner.recommended_refinements', 'ExecuteMode.tree_view': 'src/physicsguard/core/tree_view.py:render_tree_view', 'RenderHints': 'src/physicsguard/core/tree_view.py:_report_tail'}
 USES = {
     'HierarchicalAuditRunner': 'src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner',
+    'EvaluateObserved': 'src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed',
     'ResidualBuilder': 'src/physicsguard/core/residual.py:ResidualBuilder',
     'LoadAudit': 'src/physicsguard/io/hierarchy_loader.py:load_hierarchical_audit_spec',
     'LoadObserved': 'src/physicsguard/io/observation_loader.py:load_observed_values',
 }
-TESTED_BY={'parent_fails_with_child': ['tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores', 'tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement'], 'coarse_failure_with_passing_children_is_inconsistent': ['tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations'], 'planned_template_is_reported_not_executed': ['tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned'], 'tree_view_shows_every_block_verdict': ['tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts'], 'verdict_lines_omit_structure': ['tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts'], 'hint_shown_in_tree': ['tests/test_tree_view.py:test_unit_hint_line', 'tests/test_tree_view.py:test_conservation_hint_without_unit_hint']}
-MUTATIONS={'parent_ignores_children': 'parent_fails_with_child', 'coarse_failure_reported_consistent': 'coarse_failure_with_passing_children_is_inconsistent', 'planned_target_loaded': 'planned_template_is_reported_not_executed', 'tree_view_hides_a_failing_block': 'tree_view_shows_every_block_verdict', 'verdict_lines_repeat_structure': 'verdict_lines_omit_structure', 'tree_view_hides_hint': 'hint_shown_in_tree'}
+TESTED_BY={'parent_fails_with_child': ['tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores', 'tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement'], 'coarse_failure_with_passing_children_is_inconsistent': ['tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations'], 'planned_template_is_reported_not_executed': ['tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned'], 'tree_view_shows_every_block_verdict': ['tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts'], 'verdict_lines_omit_structure': ['tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts'], 'hint_shown_in_tree': ['tests/test_tree_view.py:test_unit_hint_line', 'tests/test_tree_view.py:test_conservation_hint_without_unit_hint'], 'resolution_shown': ['tests/test_tree_view.py:test_resolution_line_names_default_scale', 'tests/test_tree_view.py:test_resolution_rederives_values_and_keeps_checked_occurrence_scales', 'tests/test_tree_view.py:test_resolution_scale_origin_belongs_to_the_winning_residual', 'tests/test_tree_view.py:test_native_lookup_numeric_tables_keep_a_real_resolution', 'tests/test_tree_view.py:test_resolution_tree_order_empty_block_and_unknown_scale_source', 'tests/test_tree_view.py:test_resolution_is_optional_for_projectors_and_zero_sensitivity_is_unchecked']}
+MUTATIONS={'parent_ignores_children': 'parent_fails_with_child', 'coarse_failure_reported_consistent': 'coarse_failure_with_passing_children_is_inconsistent', 'planned_target_loaded': 'planned_template_is_reported_not_executed', 'tree_view_hides_a_failing_block': 'tree_view_shows_every_block_verdict', 'verdict_lines_repeat_structure': 'verdict_lines_omit_structure', 'tree_view_hides_hint': 'hint_shown_in_tree', 'tree_view_hides_resolution': 'resolution_shown'}
 REAL_CASE_IDS=('growth_coarse_bad_audit', 'growth_planned_bad_audit', 'hierarchy_evaluate_partial_tree_view_bad_audit', 'hierarchy_evaluate_derived_child_bad_audit', 'hierarchy_evaluate_partial_tree_view_not_checked')
 LABELS={'growth_coarse_bad_audit': 'coarse_failure_consistency_reported', 'growth_planned_bad_audit': 'planned_template_reported_not_executed', 'hierarchy_evaluate_partial_tree_view_bad_audit': 'tree_view_rendered_with_block_verdicts', 'hierarchy_evaluate_derived_child_bad_audit': 'child_failure_propagated', 'hierarchy_evaluate_derived_bad_audit': 'derived_relations_excluded_from_checks', 'hierarchy_evaluate_partial_unresolved': 'unobserved_residuals_skipped', 'clean': 'hierarchy_run_solved_and_reported', 'converged_bad_audit': 'optimizer_converged_audit_failed', 'bad_schema': 'schema_failed', 'evaluate_clean': 'hierarchy_observed_evaluated_without_solver', 'evaluate_bad_audit': 'hierarchy_observed_evaluated_without_solver', 'evaluate_missing_observed': 'derived_relations_excluded_from_checks', 'compare_bad_audit': 'hierarchy_compare_solved_and_evaluated', 'hierarchy_clean': 'hierarchy_run_solved_and_reported', 'hierarchy_bad_audit': 'optimizer_converged_audit_failed', 'hierarchy_evaluate_clean': 'hierarchy_observed_evaluated_without_solver', 'hierarchy_evaluate_bad_audit': 'hierarchy_observed_evaluated_without_solver', 'hierarchy_evaluate_missing_observed': 'no_independent_observed_check_failed', 'hierarchy_evaluate_zero_product': 'no_independent_observed_check_failed', 'hierarchy_evaluate_partial_snapshot': 'unobserved_values_derived', 'hierarchy_describe': 'hierarchy_described_without_solver', 'assumption_parameter_fill': 'parameter_assumption_filled', 'assumption_parameter_override': 'assumption_override_warned', 'assumption_proposed': 'proposed_assumption_not_applied', 'assumption_rejected': 'rejected_assumption_not_applied', 'assumption_variable_boundary': 'variable_assumption_boundary_ready', 'hierarchy_evaluate_partial_tree_view_not_checked': 'tree_view_rendered_with_block_verdicts'}
 # Expected finite fixture outcomes; conformance always runs native code afresh.
@@ -35,6 +36,12 @@ HINT_ROWS = {
 }
 HINT_INPUTS = tuple(AuditInput(key, True, True, True, True, True, False, mode='hierarchy_evaluate') for key in HINT_ROWS)
 PORT_VALUES.update({key: 'PASS' for key in HINT_ROWS})
+PORT_VALUES['observed_ai_half'] = 'no checks'
+RESOLUTION_ROWS = {
+    'observed_ai': ('mix.T_out_K +-0.2 K',),
+    'observed_ai_half': ('mix.T_out_K +-8 K (default scale)',),
+}
+RESOLUTION_INPUTS = (AuditInput('observed_ai_half', True, True, True, True, True, True, mode='hierarchy_evaluate'),)
 
 @dataclass(frozen=True)
 class State:
@@ -52,11 +59,13 @@ class State:
     structure_rows: tuple[str,...] = ()
     expected_hint_rows: tuple[str,...] = ()
     shown_hint_rows: tuple[str,...] = ()
+    expected_resolution_rows: tuple[str,...] = ()
+    shown_resolution_rows: tuple[str,...] = ()
 
 class Evaluate:
     name="Evaluate"
     reads=('solve_attempted', 'child_failures', 'parent_failures', 'coarse_refinement_expected', 'coarse_refinement_reported', 'planned_refinements_expected', 'planned_refinements_reported', 'refinement_templates_loaded', 'block_verdicts', 'tree_view_rows')
-    writes=('solve_attempted', 'child_failures', 'parent_failures', 'coarse_refinement_expected', 'coarse_refinement_reported', 'planned_refinements_expected', 'planned_refinements_reported', 'refinement_templates_loaded', 'block_verdicts', 'tree_view_rows', 'tree_verdict', 'structure_rows', 'expected_hint_rows', 'shown_hint_rows')
+    writes=('solve_attempted', 'child_failures', 'parent_failures', 'coarse_refinement_expected', 'coarse_refinement_reported', 'planned_refinements_expected', 'planned_refinements_reported', 'refinement_templates_loaded', 'block_verdicts', 'tree_view_rows', 'tree_verdict', 'structure_rows', 'expected_hint_rows', 'shown_hint_rows', 'expected_resolution_rows', 'shown_resolution_rows')
     def __init__(self,defect=''):self.defect=defect
     def apply(self,q,state):
         key=q.case_id
@@ -87,6 +96,9 @@ class Evaluate:
         hints = HINT_ROWS.get(key, ())
         values['expected_hint_rows'] = hints
         values['shown_hint_rows'] = hints[:-1] if self.defect == 'tree_view_hides_hint' else hints
+        resolutions = RESOLUTION_ROWS.get(key, ())
+        values['expected_resolution_rows'] = resolutions
+        values['shown_resolution_rows'] = () if self.defect == 'tree_view_hides_resolution' else resolutions
         values['tree_verdict']=PORT_VALUES.get(key,'no checks')
         result=replace(state,**incoming,**values)
         yield FunctionResult(result.tree_verdict,result,label=LABELS.get(key,'stage_checked'))
@@ -128,7 +140,13 @@ def hint_shown_in_tree(state, trace):
     return InvariantResult.fail('The tree dropped, reordered or invented a follow-up hint') if state.shown_hint_rows != state.expected_hint_rows else InvariantResult.pass_()
 
 
-INVARIANTS=(Invariant('hint_shown_in_tree', 'Every bug-family follow-up of the report is printed as one hint line on the compact tree.', hint_shown_in_tree),
+def resolution_shown(state, trace):
+    del trace
+    return InvariantResult.fail('A resolution, unit or default-scale mark is hidden') if state.shown_resolution_rows != state.expected_resolution_rows else InvariantResult.pass_()
+
+
+INVARIANTS=(Invariant(name='resolution_shown', description='Every observed variable of a checked block is printed on a resolution line with its unit, and a module-default residual scale is marked.', predicate=resolution_shown),
+    Invariant('hint_shown_in_tree', 'Every bug-family follow-up of the report is printed as one hint line on the compact tree.', hint_shown_in_tree),
     Invariant('verdict_lines_omit_structure','Verdict lines contain results without repeating declared components or links.',verdict_lines_omit_structure),
     Invariant("parent_fails_with_child", "A failed child makes every containing parent fail.", parent_fails_with_child),
     Invariant("coarse_failure_with_passing_children_is_inconsistent", "Checked coarse failure with passing children is explicitly inconsistent.", coarse_failure_with_passing_children_is_inconsistent),
@@ -137,7 +155,7 @@ INVARIANTS=(Invariant('hint_shown_in_tree', 'Every bug-family follow-up of the r
 )
 
 def make(defect='',names=None):
-    return Explorer(Workflow((Evaluate(defect),)),(State(),),EXTERNAL_INPUTS + HINT_INPUTS,
+    return Explorer(Workflow((Evaluate(defect),)),(State(),),EXTERNAL_INPUTS + HINT_INPUTS + RESOLUTION_INPUTS,
                     tuple(rule for rule in INVARIANTS if names is None or rule.name in names),
                     max_sequence_length=1,progress_steps=0)
 def build_explorer():return make()
@@ -175,16 +193,54 @@ def conformance():
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.io.observation_loader import load_observed_values
     shower = ROOT / 'examples/hierarchical/shower_mix'
-    for case in HINT_INPUTS:
+    for case in HINT_INPUTS + RESOLUTION_INPUTS:
+        case_mismatches = []
         try:
-            spec = load_hierarchical_audit_spec(shower / 'audit.yaml')
+            audit_file = 'audit_default_scales.yaml' if case.case_id == 'observed_ai_half' else 'audit.yaml'
+            spec = load_hierarchical_audit_spec(shower / audit_file)
+            observed = load_observed_values(shower / (case.case_id + '.yaml'))
             runner = HierarchicalAuditRunner(spec, base_dir=shower)
-            report = runner.to_dict(runner.evaluate_observed(load_observed_values(shower / (case.case_id + '.yaml'))))
-            text = render_tree_view(describe_hierarchy(spec, base_dir=shower), report=report)
+            report = runner.to_dict(runner.evaluate_observed(observed))
+            description = describe_hierarchy(spec, base_dir=shower)
+            text = render_tree_view(description, report=report)
             rows = tuple(line for line in text.splitlines() if line.startswith('hint:'))
             modeled = next(iter(Evaluate().apply(case, State()))).new_state
-            if rows != modeled.expected_hint_rows or len(rows) != len(report['bug_family_followups']):
-                mismatches.append(f'hint_shown_in_tree: {case.case_id} expected {modeled.expected_hint_rows!r}, got {rows!r}')
+            root = next(row for row in report['block_verdicts'] if row['level'] == 0)
+            native_port = ('PASS' if root['own_audit_pass'] else 'FAIL') if root['checked_residual_count'] else 'not checked' if root['missing_required_variables'] else 'no checks'
+            if native_port != modeled.tree_verdict:
+                case_mismatches.append(f'native root port {native_port!r}, model {modeled.tree_verdict!r}')
+            if case.case_id in HINT_ROWS and (rows != modeled.expected_hint_rows or len(rows) != len(report['bug_family_followups'])):
+                case_mismatches.append(f'hint_shown_in_tree: expected {modeled.expected_hint_rows!r}, got {rows!r}')
+            if case.case_id in RESOLUTION_ROWS:
+                expected_value = 8.0 if case.case_id == 'observed_ai_half' else 0.2
+                expected_default = case.case_id == 'observed_ai_half'
+                resolution_lines = [line for line in text.splitlines() if line.startswith('resolution:')]
+                fragment = RESOLUTION_ROWS[case.case_id][0]
+                entry = report.get('resolution', {}).get('mix.T_out_K')
+                if not any(fragment in line for line in resolution_lines) or entry is None:
+                    case_mismatches.append(f'resolution_shown: missing native resolution {fragment!r}')
+                elif abs(entry['value'] - expected_value) > expected_value * 1e-4 or entry['default_scale'] is not expected_default:
+                    case_mismatches.append(f'resolution_shown: wrong native sensitivity or scale origin: {entry!r}')
+                owned = {component: block['id'] for block in description['blocks'] for component in block['component_ids']}
+                checked = {row['block_id'] for row in report['block_verdicts'] if row['checked_residual_count']}
+                expected_variables = {name for name in observed.variables if owned.get(name.split('.', 1)[0]) in checked}
+                resolution = report.get('resolution', {})
+                if set(resolution) != expected_variables:
+                    case_mismatches.append('resolution_shown: observed variables omitted or invented')
+                visible = {part for line in resolution_lines for part in line.removeprefix('resolution: ').split(', ')}
+                for name in expected_variables & resolution.keys():
+                    entry = resolution[name]
+                    if entry is None:
+                        token = f'{name} unchecked'
+                    else:
+                        token = f"{name} +-{entry['value']:.2g} {entry['unit']}".rstrip() + (' (scale source unavailable)' if entry['default_scale'] is None else ' (default scale)' if entry['default_scale'] else '')
+                        if entry['unit'] != observed.variables[name].unit or entry['residual'] not in report['checked_residuals']:
+                            case_mismatches.append(f'resolution_shown: wrong unit or unchecked residual for {name}')
+                    if token not in visible:
+                        case_mismatches.append(f'resolution_shown: native line omits {token!r}')
         except Exception as exc:
-            mismatches.append(f'hint_shown_in_tree: {case.case_id} real replay raised {type(exc).__name__}: {exc}')
-    return ReplayReport(len(REAL_CASE_IDS) + len(HINT_INPUTS),mismatches)
+            rule = 'resolution_shown' if case.case_id in RESOLUTION_ROWS else 'hint_shown_in_tree'
+            case_mismatches.append(f'{rule}: real replay raised {type(exc).__name__}: {exc}')
+        if case_mismatches:
+            mismatches.append(f'{case.case_id}: ' + '; '.join(case_mismatches))
+    return ReplayReport(len(REAL_CASE_IDS) + len(HINT_INPUTS) + len(RESOLUTION_INPUTS),mismatches)

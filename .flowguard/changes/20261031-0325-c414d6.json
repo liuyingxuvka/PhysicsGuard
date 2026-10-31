@@ -1,0 +1,60 @@
+{
+  "kind": "change",
+  "goal": "PG-604: every checked block prints the smallest error its residuals can see",
+  "requests": [
+    {
+      "id": "R1",
+      "part": true
+    }
+  ],
+  "base": "0b475f1bbad7c5ca7eaf2eb6b5631b534bf53e00",
+  "tree": "c414d698ebf5843b47bf78f16c614f83494c17d8fddc2dfa354ae62b67e90688",
+  "promoted": "2026-10-31T03:25:16.482160+00:00",
+  "plan": [
+    {
+      "line": "touch: src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed",
+      "added_after_code": null,
+      "cleared": []
+    },
+    {
+      "line": "touch: src/physicsguard/core/tree_view.py:_report_tail",
+      "added_after_code": null,
+      "cleared": []
+    }
+  ],
+  "rules": [],
+  "acceptances": [],
+  "existing_cleared": [],
+  "implemented_by": [
+    "src/physicsguard/core/diagnosability.py:_variant_audit",
+    "src/physicsguard/core/diagnosability.py:evaluate_fault_variants",
+    "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed",
+    "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.to_dict",
+    "src/physicsguard/core/hierarchy.py:_derive_unobserved",
+    "src/physicsguard/core/hierarchy.py:_observed_resolution",
+    "src/physicsguard/core/hierarchy.py:_observed_resolution.location_key",
+    "src/physicsguard/core/model_dataset_validation.py:_evaluate",
+    "src/physicsguard/core/residual.py:ResidualBuilder.residual_scale_defaults",
+    "src/physicsguard/core/residual.py:ResidualBuilder.residual_scale_defaults.identities",
+    "src/physicsguard/core/tree_view.py:_report_tail",
+    "src/physicsguard/core/tree_view.py:render_tree_view",
+    "src/physicsguard/core/tree_view.py:render_tree_view.visit",
+    "src/physicsguard/core/validation_depth.py:_residual_series_result",
+    "src/physicsguard/modules/registry.py:_description_instance",
+    "src/physicsguard/modules/registry.py:_description_instance.profile",
+    "src/physicsguard/modules/registry.py:describe_module_type",
+    "src/physicsguard/modules/registry.py:instantiate_module_with_parameter_reads",
+    "src/physicsguard/modules/registry.py:instantiate_module_with_parameter_reads.profile",
+    "tests/test_tree_view.py:test_native_lookup_numeric_tables_keep_a_real_resolution",
+    "tests/test_tree_view.py:test_resolution_is_optional_for_projectors_and_zero_sensitivity_is_unchecked",
+    "tests/test_tree_view.py:test_resolution_is_optional_for_projectors_and_zero_sensitivity_is_unchecked.unused",
+    "tests/test_tree_view.py:test_resolution_line_names_default_scale",
+    "tests/test_tree_view.py:test_resolution_line_names_default_scale.forbidden_solve",
+    "tests/test_tree_view.py:test_resolution_rederives_values_and_keeps_checked_occurrence_scales",
+    "tests/test_tree_view.py:test_resolution_scale_origin_belongs_to_the_winning_residual",
+    "tests/test_tree_view.py:test_resolution_tree_order_empty_block_and_unknown_scale_source"
+  ],
+  "new_actions": [],
+  "corrections": [],
+  "checked": "This promotion ran one fresh target check with bound tests and the remaining function-selected tests; 4 warning(s) remained. The tree identifies the checked post-promotion content, before later component confirmation. Implementation provenance lists changed Python function definitions from the Git diff. Available static rule identities and checked PLAN lines are recorded. PLAN edit ordering, per-item clearance, acceptances, existing-item clearance and new-action judgments are not assessed; unknown order is null and unsupported lists are empty."
+}

@@ -116,6 +116,7 @@ class HierarchicalAuditReport:
     unchecked_residuals: dict[str, list[str]] = field(default_factory=dict)
     refinement_checks: list[dict[str, Any]] = field(default_factory=list)
     block_verdicts: list[dict[str, Any]] = field(default_factory=list)
+    resolution: dict[str, dict[str, Any] | None] | None = None
 
 
 @dataclass(frozen=True)
@@ -481,6 +482,7 @@ class HierarchicalAuditRunner:
         *,
         skip_unobserved: bool = False,
         _unit_factor_hints: bool = True,
+        _resolution: bool = True,
     ) -> HierarchicalAuditReport:
         """Evaluate external observed values directly and roll residuals up by block.
 
@@ -501,10 +503,16 @@ class HierarchicalAuditRunner:
         derived = {}
         skipped = {}
         provenance = {}
+        locations: list[tuple[Any, int]] | None = [] if _resolution else None
         if missing:
-            _known, missing, derived, records, skipped, provenance = _derive_unobserved(builder, registry, values)
+            if _resolution:
+                _known, missing, derived, records, skipped, provenance = _derive_unobserved(
+                    builder, registry, values, _checked_locations=locations,
+                )
+            else:
+                _known, missing, derived, records, skipped, provenance = _derive_unobserved(builder, registry, values)
         else:
-            records = builder.diagnostic_residual_records(registry.dict_to_vector(values))
+            records = builder.diagnostic_residual_records(registry.dict_to_vector(values), _locations=locations)
         if missing and not skip_unobserved:
             raise ValueError(
                 "observed values missing required registered variables: "
@@ -572,7 +580,12 @@ class HierarchicalAuditRunner:
             derived_variables=derived,
             unchecked_residuals=skipped,
         )
-        return _attach_signal_mapping_context(report, self.spec, observed, registry, builder, _unit_factor_hints)
+        report = _attach_signal_mapping_context(report, self.spec, observed, registry, builder, _unit_factor_hints)
+        if _resolution:
+            report = replace(report, resolution=_observed_resolution(
+                self.spec, builder, registry, observed, values, records, locations, report,
+            ))
+        return report
 
     def compare_observed(
         self,
@@ -787,6 +800,8 @@ class HierarchicalAuditRunner:
     def to_dict(self, report: Any) -> dict[str, Any]:
         data = asdict(report)
         audit = data.get("observed_hierarchy", data)
+        if audit.get("resolution") is None:
+            audit.pop("resolution", None)
         for row in audit.get("signal_mapping_ledger", []):
             if row["raw_conversion"] is None:
                 del row["raw_conversion"]
@@ -1120,7 +1135,7 @@ def _evaluate_record(builder, registry, prototype, location, vector) -> Residual
     return record
 
 
-def _derive_unobserved(builder, registry, values):
+def _derive_unobserved(builder, registry, values, *, _checked_locations=None):
     """Resolve structural sources, then consume deterministic one-unknown rules."""
     known = dict(values)
     initial = {record.name: known.get(record.name, record.initial_guess)
@@ -1161,6 +1176,8 @@ def _derive_unobserved(builder, registry, values):
     checked, checked_indices, unchecked, gaps = _checked_unconsumed(
         builder, registry, records, dependencies, locations, initial, known, used, missing,
     )
+    if _checked_locations is not None:
+        _checked_locations.extend(locations[index] for index in checked_indices)
     metadata = _dependency_metadata(records, dependencies, zero_reads, used, checked_indices, gaps)
     return known, missing, derived, checked, unchecked, metadata
 
@@ -1205,6 +1222,91 @@ def _dependency_metadata(records, dependencies, zero_reads, used, checked_indice
                 "checked_without_dependency_claim": [index for index in checked_indices if dependencies[index] is None],
                 "derivation_scope": "finite bounded scalar root search; not global nonlinear uniqueness"}
     return metadata
+
+
+def _observed_resolution(
+    spec: HierarchicalAuditSpec,
+    builder: ResidualBuilder,
+    registry: VariableRegistry,
+    observed: ObservedValuesSpec,
+    values: dict[str, float],
+    records: list[ResidualRecord],
+    locations: list[tuple[Any, int]],
+    report: HierarchicalAuditReport,
+) -> dict[str, dict[str, Any] | None]:
+    """Local first-order threshold-sized errors; never alter verdicts or observations."""
+    block_index = BlockIndex(spec.hierarchy, builder.system)
+    checked_blocks = {row["block_id"] for row in report.block_verdicts if row["checked_residual_count"]}
+    initial = {name: registry.get_record(name).initial_guess for name in registry.names()}
+    known = {**values, **{name: item["value"] for name, item in report.derived_variables.items()}}
+    baseline_vector = registry.dict_to_vector({**initial, **known})
+    observed_blocks = {block_index.block_for_variable(name) for name in observed.variables} & checked_blocks
+    scored_ids = {id(record) for record in BlockScorer().filter_scored(records, spec.hierarchy.scoring)}
+    candidates = [index for index, record in enumerate(records)
+                  if id(record) in scored_ids and block_index.block_for_residual(record) in observed_blocks]
+    flags = builder.residual_scale_defaults(
+        baseline_vector, [records[index] for index in candidates], [locations[index] for index in candidates],
+    )
+    defaults = dict(zip(candidates, flags))
+    by_block: dict[str, list[int]] = {}
+    for index in candidates:
+        by_block.setdefault(block_index.block_for_residual(records[index]), []).append(index)
+    rederive = bool(report.derived_variables or report.metadata.get("unobserved_variables"))
+
+    def location_key(location: tuple[Any, int]) -> tuple[Any, int]:
+        owner, index = location
+        return (owner if isinstance(owner, str) else id(owner), index)
+
+    all_checked = {location_key(location) for location in locations}
+    result: dict[str, dict[str, Any] | None] = {}
+    for name in observed.variables:
+        block = block_index.block_for_variable(name)
+        if block not in checked_blocks:
+            continue
+        result[name] = None
+        if name not in values or not by_block.get(block):
+            continue
+        value = values[name]
+        step = math.sqrt(np.finfo(float).eps) * max(abs(value), abs(registry.get_record(name).scale), 1.0)
+        trials = []
+        for changed in (value + step, value - step):
+            if not math.isfinite(changed) or changed == value:
+                continue
+            trial = {**values, name: changed}
+            try:
+                if rederive:
+                    trial_locations = []
+                    trial_known, _missing, _derived, _records, _skipped, _metadata = _derive_unobserved(
+                        builder, registry, trial, _checked_locations=trial_locations,
+                    )
+                    checked = {location_key(location) for location in trial_locations}
+                else:
+                    trial_known, checked = trial, all_checked
+                vector = registry.dict_to_vector({**initial, **trial_known})
+                trials.append((changed, vector, checked))
+            except (ValueError, KeyError, IndexError, OverflowError, ZeroDivisionError):
+                continue
+        for index in by_block.get(block, []):
+            samples = [(value, records[index].normalized_value)]
+            for changed, vector, checked in trials:
+                if location_key(locations[index]) not in checked:
+                    continue
+                try:
+                    current = _evaluate_record(builder, registry, records[index], locations[index], vector)
+                    samples.append((changed, current.normalized_value))
+                except (ValueError, KeyError, IndexError, OverflowError, ZeroDivisionError):
+                    continue
+            if len(samples) < 2:
+                continue
+            left, right = min(samples), max(samples)
+            sensitivity = (right[1] - left[1]) / (right[0] - left[0])
+            if not math.isfinite(sensitivity) or sensitivity == 0:
+                continue
+            amount = builder.system.solver.audit_threshold / abs(sensitivity)
+            if math.isfinite(amount) and (result[name] is None or amount < result[name]["value"]):
+                result[name] = {"value": float(amount), "unit": registry.get_record(name).unit or "",
+                                "residual": records[index].name, "default_scale": defaults[index]}
+    return result
 
 
 def _observed_values_for_registry(

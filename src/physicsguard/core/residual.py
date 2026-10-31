@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass, replace
 import math
 from typing import Any, Optional
@@ -11,7 +12,7 @@ import numpy as np
 from physicsguard.core.assumptions import AssumptionCard, AssumptionManager, AssumptionSummary
 from physicsguard.core._residual_dependencies import Dependencies, module_residual_dependencies
 from physicsguard.core.registry import VariableRecord, VariableRegistry
-from physicsguard.modules.registry import ModuleRegistry, default_module_registry
+from physicsguard.modules.registry import ModuleRegistry, instantiate_module_with_parameter_reads, default_module_registry
 from physicsguard.schema.system_spec import SystemSpec, VariableOverrideSpec
 
 
@@ -164,6 +165,104 @@ class ResidualBuilder:
         if values.ndim != 1 or not np.all(np.isfinite(values)):
             raise ValueError("residual vector contains NaN or inf")
         return values
+
+    def residual_scale_defaults(
+        self,
+        x: np.ndarray,
+        records: list[ResidualRecord],
+        locations: list[tuple[Any, int]],
+    ) -> list[bool | None]:
+        """Classify native module scales at this configuration; None is unsupported.
+
+        Records and locations are aligned diagnostic occurrences, including a
+        checked subset. Framework constraints are not module defaults. Each module is
+        reconstructed with its actual, post-assumption parameters, then numeric
+        constructor reads are varied independently while only scales are read.
+        """
+        if len(records) != len(locations):
+            return [None] * len(records)
+        registry = self.build_registry()
+        vector = self._validate_x(x, registry)
+        defaults: list[bool | None] = [False if isinstance(owner, str) else None for owner, _ in locations]
+        groups: dict[int, tuple[Any, list[tuple[int, int]]]] = {}
+        for position, (owner, index) in enumerate(locations):
+            if not isinstance(owner, str):
+                groups.setdefault(id(owner), (owner, []))[1].append((position, index))
+        components = {component.id: component for component in self.system.components}
+
+        def identities(rows: list[ResidualRecord]) -> list[tuple[str, str, str, str | None]]:
+            return [(row.name, row.source, row.role, row.diagnostic_key) for row in rows]
+
+        for module, positions in groups.values():
+            # Custom implementations keep a numeric estimate but do not inherit native scale provenance.
+            if not type(module).__module__.startswith("physicsguard.modules."):
+                continue
+            try:
+                component = components[module.component_id]
+                parameters = component.parameters
+                reads: dict[str, Any] = {}
+                native = instantiate_module_with_parameter_reads(
+                    self.module_registry, component.type, deepcopy(parameters), reads, component.id,
+                )
+                baseline = native.residuals(vector, registry)
+                if any(not isinstance(index, int) or index < 0 or index >= len(baseline) for _, index in positions):
+                    continue
+                actual = [records[position] for position, _ in positions]
+                expected = [baseline[index] for _, index in positions]
+                if (identities(actual) != identities(expected)
+                        or any(a.scale != b.scale for a, b in zip(actual, expected))):
+                    continue
+                contributors: list[set[str]] = [set() for _ in baseline]
+                supported = True
+                compound_reads = False
+                for key, default in reads.items():
+                    value = parameters.get(key, default)
+                    if isinstance(value, (dict, list, tuple)):
+                        compound_reads = True
+                        continue
+                    if isinstance(value, bool):
+                        continue
+                    numeric = value
+                    if isinstance(value, str):
+                        try:
+                            numeric = float(value)
+                        except ValueError:
+                            continue
+                    if not isinstance(numeric, (int, float)) or not math.isfinite(numeric):
+                        continue
+                    candidates = (numeric + 1, numeric - 1) if isinstance(numeric, int) else (
+                        (numeric * 2, numeric / 2) if numeric else (1.0, -1.0)
+                    )
+                    replayed = False
+                    for candidate in candidates:
+                        if candidate == numeric or not math.isfinite(candidate):
+                            continue
+                        trial = deepcopy(parameters)
+                        trial[key] = str(candidate) if isinstance(value, str) else candidate
+                        try:
+                            changed = self.module_registry.create(component.type, component.id, trial).residuals(vector, registry)
+                        except Exception:
+                            continue
+                        if identities(changed) != identities(baseline):
+                            supported = False
+                            break
+                        replayed = True
+                        for index, row in enumerate(changed):
+                            if row.scale != baseline[index].scale:
+                                contributors[index].add(key)
+                    if not supported or not replayed:
+                        supported = False
+                        break
+                if supported:
+                    for position, index in positions:
+                        if contributors[index]:
+                            defaults[position] = any(key not in parameters for key in contributors[index])
+                        elif not compound_reads:
+                            defaults[position] = True
+            except Exception:
+                # A custom constructor or residual replay cannot license a scale claim.
+                continue
+        return defaults
 
     def _module_from_component(self, component):
         return self.module_registry.create(component.type, component.id, component.parameters)

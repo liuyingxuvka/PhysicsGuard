@@ -100,7 +100,8 @@ def _report_head(description: dict[str, Any], report: dict[str, Any], comparison
     return head
 
 
-def _report_tail(report: dict[str, Any], comparison: dict[str, Any] | None) -> list[str]:
+def _report_tail(report: dict[str, Any], comparison: dict[str, Any] | None,
+                 ordered_blocks: list[dict[str, Any]]) -> list[str]:
     lines = []
     for check in report.get("refinement_checks", []):
         consistent = {True: "yes", False: "no", None: "not checked"}[check.get("consistent")]
@@ -118,6 +119,23 @@ def _report_tail(report: dict[str, Any], comparison: dict[str, Any] | None) -> l
             lines.append(f"hint: unit_conversion {variables} {hypothesis}")
         else:
             lines.append(f"hint: {followup['family']} {variables}: {action}")
+    resolution = report.get("resolution")
+    if resolution is not None:
+        checked = {row["block_id"] for row in report["block_verdicts"] if row["checked_residual_count"]}
+        for block in ordered_blocks:
+            if block["id"] not in checked:
+                continue
+            parts = []
+            for name, entry in resolution.items():
+                if name.split(".", 1)[0] not in block["component_ids"]:
+                    continue
+                if entry is None:
+                    parts.append(f"{name} unchecked")
+                else:
+                    text = f"{name} +-{entry['value']:.2g} {entry['unit']}".rstrip()
+                    mark = " (scale source unavailable)" if entry["default_scale"] is None else " (default scale)" if entry["default_scale"] else ""
+                    parts.append(text + mark)
+            lines.append("resolution: " + (", ".join(parts) if parts else f"{block['id']} no observed variables"))
     issues = [f"{row['physics_variable']} {','.join(row['issue_codes'])}" for row in report.get("signal_mapping_ledger", [])
               if row.get("issue_codes")]
     if issues:
@@ -180,8 +198,11 @@ def render_tree_view(description: dict[str, Any], report: dict[str, Any] | None 
                  f"{len(description['refinement_rules'])} refinement rules, {len(description['assumptions'])} assumptions"
                  + (f"; benign: {', '.join(benign)}" if benign else "")]
 
+    ordered_blocks = []
+
     def visit(identifier: str, depth: int) -> None:
         block = blocks[identifier]
+        ordered_blocks.append(block)
         parts = _structure_parts(block, depth, cards.get(identifier, []), full=show_structure)
         if audit is not None:
             parts.append(_verdict_part(verdicts[identifier]))
@@ -207,7 +228,7 @@ def render_tree_view(description: dict[str, Any], report: dict[str, Any] | None 
     if unplaced:
         lines.append("assumptions (no block): " + ", ".join(unplaced))
     if audit is not None:
-        lines.extend(_report_tail(audit, comparison))
+        lines.extend(_report_tail(audit, comparison, ordered_blocks))
     if variants is not None:
         lines.extend(_variants_tail(variants))
     return "\n".join(lines)

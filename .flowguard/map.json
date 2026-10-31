@@ -72,7 +72,7 @@
     {
       "id": "simulation",
       "layer": "engine",
-      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping Reuse dependency traces only inside one outer command, with complete constructor/registry input identity and exact observed reads; recompute residuals each time and retrace aliased observation tables. Verdict lines omit repeated structure; describe and --full retain it. The compact and full tree render every bug-family follow-up as one ordered hint line without changing observations or the report. Signal mapping projects accepted raw conversion evidence without recalculating values; report serialization omits absent raw conversion fields in audit and comparison ledgers.",
+      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping Reuse dependency traces only inside one outer command, with complete constructor/registry input identity and exact observed reads; recompute residuals each time and retrace aliased observation tables. Verdict lines omit repeated structure; describe and --full retain it. The compact and full tree render every bug-family follow-up as one ordered hint line without changing observations or the report. Signal mapping projects accepted raw conversion evidence without recalculating values; report serialization omits absent raw conversion fields in audit and comparison ledgers. Observed audits report local first-order threshold-sized resolution from independent checked occurrences and rederived values, without solving or changing verdicts; native scale provenance is reported separately, including explicit unknown sources.",
       "responsibilities": [
         "Use one evaluation engine for tree and single-system files through HierarchicalAuditRunner. Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API. For failed observed audits, probe at most 20 observed dependency ancestors for bounded unit factors/offsets, rederive affected native values, and emit hints without editing observations.",
         "Separate numerical optimization success, observed audit and diagnostic limits",
@@ -169,12 +169,12 @@
         ".flowguard/models/physicsguard_solver_audit_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:670388005f8dc8889f6618f1591d66f3eeb5954d817671f5188eefb2c364bd60"
+      "fingerprint": "sha256:11e4cbea070ec9f53e0e3c81c11e56ab14188e5801d2f14251fedccabaf067e6"
     },
     {
       "id": "validation",
       "layer": "workflows",
-      "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout Dataset sequences share one outer command trace scope; every report and verdict is recalculated.",
+      "summary": "Dataset validation, validation depth with adequacy warnings, and stateful predictive rollout Dataset sequences share one outer command trace scope; every report and verdict is recalculated. Internal fitting and series projections skip local resolution work that their result does not expose.",
       "responsibilities": [
         "Check the dataset files, contract fields and time coverage behind a validation and report them as a compact depth summary Group continuous failed series points by worst block into compact intervals; keep per-point details in full JSON and enforce only requested additional adequacy floors. Emit ordinary result dictionaries without re-validating generated output schemas. Batch fitting and series checks skip unit hints they do not expose. Apply parameter-stratum checks only when the policy declares strata; preserve count, gap and native-contribution guards.",
         "Block missing inputs, uncertain mappings, overlapping splits and pointwise prediction overclaims; report adequacy floors as warnings",
@@ -206,7 +206,7 @@
         ".flowguard/models/physicsguard_model_dataset_validation_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:aaf0523f1d2a8946ff8f705111ef9ee4c8e352381d3e5477a3f34d374e1a06b5"
+      "fingerprint": "sha256:6d7cf22498002b26ad54c1c6154605a8c59a410352c18fb160e52a8f5a959037"
     },
     {
       "id": "schema",
@@ -365,7 +365,7 @@
     {
       "id": "modules",
       "layer": "engine",
-      "summary": "Physical residual modules and registry declarations",
+      "summary": "Physical residual modules and registry declarations Descriptions and resolution share one public native-construction operation that collects actual parameter reads and restores the previous profiler.",
       "responsibilities": [
         "Define documented low-fidelity equations, SI units, assumptions and finite validity ranges",
         "Describe registered native variables, parameter reads, residual text and applicability using explicitly marked synthetic examples without solving",
@@ -379,7 +379,7 @@
       "entrypoints": [],
       "state": [],
       "side_effects": [
-        "Temporarily chain and restore the current-thread Python profiler only during description construction to record copied parameter reads"
+        "Temporarily chain and restore the current-thread Python profiler during native construction for description and scale-provenance parameter reads"
       ],
       "depends_on": [
         "schema",
@@ -424,7 +424,7 @@
         ".flowguard/models/physicsguard_module_descriptions_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:48647c7878c83ab06e3c82d60e667932af656b917519c90ee10dcedd7394a0d7"
+      "fingerprint": "sha256:9ffd88f8dcb0a5bdc66c4376506c74f00b0a712e2a3929e69399b960e9024b03"
     },
     {
       "id": "maintenance",
@@ -495,7 +495,7 @@
     {
       "id": "diagnosis",
       "layer": "workflows",
-      "summary": "Model-derived device variants, physical masking, pairwise separation and observed model misses Nested variant evaluations share the command-local dependency trace scope and discard it on exit.",
+      "summary": "Model-derived device variants, physical masking, pairwise separation and observed model misses Nested variant evaluations share the command-local dependency trace scope and discard it on exit. Variant signature projectors skip local resolution work that their public result does not expose.",
       "responsibilities": [
         "Copy alternate-device data, rederive requested signals, and audit against the unchanged nominal model while preserving input specifications and observations",
         "Classify evaluated fault compositions as complete, physically masked, undetected or outside expected blocks; preserve unavailable rows with reasons and null signatures",
@@ -519,7 +519,7 @@
         ".flowguard/models/physicsguard_fault_variants_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:24b948aa6aeb4dbf8d8a236bc5a922668c4cd58dd0f04424e59136a94c89401c"
+      "fingerprint": "sha256:92c37caa7fecc6c3e9b1ee617a9d33f8f82717effdddbc360f1de4cb853059cc"
     },
     {
       "id": "preflight",
@@ -655,11 +655,11 @@
     ".flowguard/models/physicsguard_heated_tank_generator_model.py": "4256f8e3dedce1b4aac25e36c663ab2a92476e521dcc076e24b9045a068b12e9",
     ".flowguard/models/physicsguard_model_dataset_validation_model.py": "f1df48307013f85d105bc5fd40c354ccc3ee853bed9503a78c77f0f9677f8928",
     ".flowguard/models/physicsguard_module_descriptions_model.py": "988284f37c833a5464ffb25ac8ff64d8f1a187e1eb1b4706028176f55de2c339",
-    ".flowguard/models/physicsguard_observed_derivation_model.py": "b9f4a5bcdaa02ca8a3e198273b784ca93a0d3dd180d0dcb5c06104be3b5dfbb2",
+    ".flowguard/models/physicsguard_observed_derivation_model.py": "4cd6a810c4b11b69a6988ac5f597ed70fb9bb931454c40a2381f43d81a391d6c",
     ".flowguard/models/physicsguard_skill_install_model.py": "57774267558b78cbfcada6ce2df14e12595051e868a4600902c9eb71ba82ae08",
     ".flowguard/models/physicsguard_solver_audit_model.py": "6889f1be825e7ce3e7a6f3b0ac2b6c65e29b5e4687492414b194fa6917b86e8f",
     ".flowguard/models/physicsguard_test_file_contract_model.py": "0128448d226ab9b7ab6d194100f468072384ceb975fad986a4745d14c94c14df",
-    ".flowguard/models/physicsguard_tree_verdicts_model.py": "6e353e6b6e7fcb7fa05df31063352793fee3ae95b01ea577a87d2d07462b5972"
+    ".flowguard/models/physicsguard_tree_verdicts_model.py": "6f6c54c3c40b999c972e2d1094fa2d8cd1b927e612c8573e56d2288c2d77a974"
   },
   "fingerprint_format": 2
 }

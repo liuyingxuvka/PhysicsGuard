@@ -254,7 +254,7 @@ def _load_validation_input(loader, path: Path, findings: list[ContractFinding]):
 
 
 def _evaluate(spec: HierarchicalAuditSpec, observed: ObservedValuesSpec) -> dict[str, Any]:
-    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, _unit_factor_hints=False)
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, _unit_factor_hints=False, _resolution=False)
     return {
         "audit_pass": report.audit_pass,
         "max_abs_normalized_residual": report.max_abs_normalized_residual,
