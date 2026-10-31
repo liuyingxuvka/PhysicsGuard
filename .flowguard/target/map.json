@@ -1,0 +1,13 @@
+{
+  "schema": "flowguard.target.v1",
+  "goal": "PG-604: every checked block prints the smallest error its residuals can see",
+  "components": [],
+  "flows": [],
+  "remove": [],
+  "requests": [
+    {
+      "id": "R1",
+      "part": true
+    }
+  ]
+}
