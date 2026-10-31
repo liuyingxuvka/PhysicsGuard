@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -14,7 +15,8 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
     modules_parser = subparsers.add_parser("modules", help="list and describe registered native module types")
     module_commands = modules_parser.add_subparsers(dest="modules_command", required=True)
-    module_commands.add_parser("list", help="list every module type and its purpose")
+    module_list = module_commands.add_parser("list", help="list every module type and its purpose")
+    module_list.add_argument("--find", nargs="+", metavar="WORDS", help="match all words in the name, native domain or summary (case-insensitive)")
     module_describe = module_commands.add_parser("describe", help="describe a native module contract using marked synthetic inputs")
     module_describe.add_argument("module_type")
     module_describe.add_argument("--pretty", action="store_true")
@@ -223,13 +225,28 @@ def hierarchy_run(path: Path, pretty: bool = False, full: bool = False, full_tre
     return 0 if report["audit_pass"] else 1
 
 
-def modules_command(module_type: str | None = None, pretty: bool = False) -> int:
+def modules_command(module_type: str | None = None, pretty: bool = False,
+                    find: Sequence[str] | None = None) -> int:
     from physicsguard.modules.registry import default_module_registry, describe_module_type
 
     registry = default_module_registry()
     if module_type is None:
+        terms = [word.casefold() for argument in find or () for word in argument.split()]
+        found = False
         for name in registry.registered_types():
-            print(f"{name}: {registry.type_summary(name)}")
+            summary = registry.type_summary(name)
+            if terms:
+                words = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", name)
+                text = f"{name} {words} {summary}".casefold()
+                if not all(term in text for term in terms):
+                    domain = describe_module_type(name, registry)["metadata"].get("domain") or ""
+                    text += " " + str(domain).casefold()
+                    if not all(term in text for term in terms):
+                        continue
+            print(f"{name}: {summary}")
+            found = True
+        if terms and not found:
+            print("no module matches: " + " ".join(find))
     else:
         _print_json(describe_module_type(module_type, registry), pretty)
     return 0
@@ -501,7 +518,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         if args.command == "modules":
             return modules_command(args.module_type if args.modules_command == "describe" else None,
-                                   getattr(args, "pretty", False))
+                                   getattr(args, "pretty", False), find=getattr(args, "find", None))
         if args.command == "hierarchy":
             if args.hierarchy_command == "describe":
                 return hierarchy_describe(args.audit, args.mermaid, args.pretty, args.json, args.observed)

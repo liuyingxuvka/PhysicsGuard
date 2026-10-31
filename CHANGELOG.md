@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The skill also covers physics and engineering calculations an AI makes itself, routes a simulation's code to flowguard, and has a six-step quick check; modules list --find filters modules by name, domain and summary.
+
 - Each checked block prints a resolution line: a local first-order estimate of the smallest error per observed variable a checked residual can see, marked "(default scale)" when it uses a module default; --json carries it as "resolution", preserving numeric estimates with an explicit unknown when scale provenance is unavailable.
 
 - Hand-written snapshots can give raw_value and raw_unit; the loader converts them with the unit table or the recorded factor and records the conversion in the mapping ledger. A row whose value contradicts its raw value and conversion now stops the run with exit 2 and observed_value_disagrees_with_conversion:<variable>.

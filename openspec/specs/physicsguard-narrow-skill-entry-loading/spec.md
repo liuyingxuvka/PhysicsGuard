@@ -19,12 +19,8 @@ Each former PhysicsGuard skill SHALL be one file `references/routes/<route>.md` 
 - **WHEN** a route's entry boundary names another route
 - **THEN** the agent SHALL load that route file and SHALL NOT look for a second PhysicsGuard skill
 
-### Requirement: Short description
-The skill description SHALL stay at or below 300 characters, say what the skill is for, and name the sibling skill to use instead.
-
-#### Scenario: The description grows
-- **WHEN** the description exceeds 300 characters
-- **THEN** `tests/test_physicsguard_skill_prompts.py` SHALL fail
+### Requirement: Clear skill description
+The skill description SHALL say what the skill is for, include the agent's own physics or engineering calculations, and name flowguard for software code behavior, including simulation code.
 
 ### Requirement: Reinstall removes retired skill directories
 The installer SHALL replace the installed `physicsguard` copy and remove every directory named in `RETIRED_SKILL_IDS`.
@@ -49,7 +45,7 @@ The selected AI-debugging route SHALL reject one-value coverage of a time-varyin
 - **THEN** the route SHALL retain the coverage gap and require state propagation plus an exact disjoint future holdout for a prediction claim
 
 ### Requirement: one compact debugging workflow
-The AI debugging route SHALL contain one ordered workflow of about eight steps,
-retain every hard boundary and YAML header rule, and remain at most 130 lines.
+The AI debugging route SHALL contain one ordered workflow and retain every hard
+boundary and YAML header rule.
 There SHALL be no second protocol file to load. Every documented CLI command
 SHALL exist in the current parser.

@@ -16,7 +16,7 @@
     {
       "id": "interface",
       "layer": "interface",
-      "summary": "CLI and lazy public API Validation defaults to a tree with native interval, input, snapshot, holdout and adequacy evidence; --json keeps the full report and --full restores text structure. Finding codes remain visible on the adequacy line.",
+      "summary": "CLI and lazy public API Validation defaults to a tree with native interval, input, snapshot, holdout and adequacy evidence; --json keeps the full report and --full restores text structure. Finding codes remain visible on the adequacy line. Module discovery AND-matches case-insensitive words across names, native domains and summaries; the unfiltered list keeps its full order and format.",
       "responsibilities": [
         "Dispatch native commands, list module contracts and render declared model trees or Mermaid without running unrelated owners Expose testfile manifest/check/inspect/diff/snapshot/series; retired dataset and coverage commands are absent. run --json exposes the full diagnostic report. Preflight reviews optionally accept --audit; mapping review is part of hierarchy evaluate. Describe a declared tree as text, full JSON or Mermaid and count observed mappings per block without solving or evaluating; expose mapping-summary counts in observed summaries",
         "hierarchy run, evaluate, compare and variants print the tree view by default and validation run a compact summary with check counts and assumption dispositions; each prints the full report with --json",
@@ -67,7 +67,7 @@
         ".flowguard/models/physicsguard_cli_exit_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:6c11a11fb4073fcd78b7f67d08abd00a6d93c658984dfc7ffa72e322dda83d1f"
+      "fingerprint": "sha256:113c18bbd2afe292d4214bae7b2025209263848c53eda5a8f5f09e50d7b88984"
     },
     {
       "id": "simulation",
@@ -365,7 +365,7 @@
     {
       "id": "modules",
       "layer": "engine",
-      "summary": "Physical residual modules and registry declarations Descriptions and resolution share one public native-construction operation that collects actual parameter reads and restores the previous profiler.",
+      "summary": "Physical residual modules and registry declarations Descriptions and resolution share one public native-construction operation that collects actual parameter reads and restores the previous profiler. Catalog summaries name the native relation, including a mixing tee for FlowMergeTemperatureModule.",
       "responsibilities": [
         "Define documented low-fidelity equations, SI units, assumptions and finite validity ranges",
         "Describe registered native variables, parameter reads, residual text and applicability using explicitly marked synthetic examples without solving",
@@ -424,7 +424,7 @@
         ".flowguard/models/physicsguard_module_descriptions_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:9ffd88f8dcb0a5bdc66c4376506c74f00b0a712e2a3929e69399b960e9024b03"
+      "fingerprint": "sha256:f9dffdb10a3ed484ea35281b4aa7c233fee46606d9df094b47b026afc024a2d0"
     },
     {
       "id": "maintenance",

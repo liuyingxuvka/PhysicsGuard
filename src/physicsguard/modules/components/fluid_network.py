@@ -190,7 +190,7 @@ class FlowSplitModule(BaseModule):
 
 
 class FlowMergeTemperatureModule(BaseModule):
-    """Low-fidelity two-stream merge mass and temperature audit."""
+    """Low-fidelity two-stream merge (mixing tee) mass and temperature audit."""
 
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "FlowMergeTemperatureModule", parameters)

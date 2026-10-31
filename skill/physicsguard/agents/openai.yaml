@@ -1,4 +1,4 @@
 interface:
   display_name: "PhysicsGuard"
-  short_description: "Audit engineering-simulation results with low-fidelity physics"
-  default_prompt: "Use $physicsguard to audit an engineering-simulation result or its test data: pick the route, run the PhysicsGuard command it names, and claim only what the output supports."
+  short_description: "Audit simulation results and physics or engineering calculations you make yourself"
+  default_prompt: "Use $physicsguard to audit an engineering-simulation result, its test data, or a physics or engineering calculation you make yourself: follow the quick check or selected route, run its commands, and claim only what the output supports. Use flowguard for software code behavior, including simulation code."

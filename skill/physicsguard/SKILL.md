@@ -1,6 +1,6 @@
 ---
 name: physicsguard
-description: "Use for engineering-simulation results and test data: low-fidelity physics residual audits that localize the faulty block, signal mapping, test-file contracts and model-vs-dataset validation. Not for software code behavior; use flowguard."
+description: "Use for engineering-simulation results and test data, and also for a physics or engineering calculation you make yourself (units, balances, conversions): low-fidelity physics residual audits that localize the faulty block, signal mapping, test-file contracts and model-vs-dataset validation. Not for software code behavior, including a simulation's code; use flowguard."
 ---
 
 # PhysicsGuard
@@ -12,6 +12,15 @@ description: "Use for engineering-simulation results and test data: low-fidelity
 3. After evaluating or comparing causes, read the verdicts on the same tree (the default output of `hierarchy evaluate|variants`).
 4. A refinement that is not built yet shows as `(planned)` on the tree: that is the target; once built it shows as `(block)`.
 5. When one block of the audit tree gets too big to localize a fault, refine it into a finer block tree (a child block names the coarse components it refines with refines; a refinement not built yet shows as (planned)), and keep the work on the blocks the request names.
+
+## Quick check of your own calculation
+
+1. Find coarse relations with `python -m physicsguard.cli modules list --find WORDS` (replace WORDS with terms from the question), inspect a candidate with `python -m physicsguard.cli modules describe TYPE`, and choose a self-contained component with nonempty declared `variables` for a standalone check; a reference-only balance needs those variables' owning components. Write `audit.yaml` from `references/templates/audit_model.yaml` with the requested blocks and tolerable residual scales.
+2. Write `observed.yaml` from `references/templates/observed_snapshot.yaml`: preserve given inputs in their original units as paired `raw_value` and `raw_unit`; if the answer also claims a converted input, retain it as `value` so the loader checks agreement. Preserve claimed answer outputs as raw quantities too. Use supported unit names (for example `degC` for Celsius), declare each target `unit`, and record an explicit factor for cross-dimension conversion. Inspect the supplied values with `cat observed.yaml`.
+3. Read back the audit and mappings without solving: `python -m physicsguard.cli hierarchy describe audit.yaml --observed observed.yaml`.
+4. Check the supplied answer with `python -m physicsguard.cli hierarchy evaluate audit.yaml observed.yaml > check.txt`. Exit 1 means a checked failure; keep its output for the next steps.
+5. Read `cat check.txt`: locate `own FAIL`, its hint and local resolution, and retain all non-pass states and mapping warnings.
+6. State only the conclusion supported by the saved result, name its checked boundary, and keep any unresolved parts visible.
 
 ## Choose a route
 

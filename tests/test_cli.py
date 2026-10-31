@@ -376,3 +376,31 @@ def test_cli_dummy_conflict_is_checked_and_not_passed() -> None:
     assert result.returncode == 1, result.stderr
     assert result.stdout.splitlines()[0].startswith("audit ") and "(reference solve): FAIL;" in result.stdout.splitlines()[0]
     assert "own FAIL" in result.stdout
+
+
+def test_modules_list_find_filters_by_name_domain_and_summary(capsys) -> None:
+    import re
+    from physicsguard.cli import main
+    from physicsguard.modules.registry import default_module_registry, describe_module_type
+
+    registry = default_module_registry()
+    assert main(["modules", "list", "--find", "mIx"]) == 0
+    lines = capsys.readouterr().out.splitlines()
+    assert any(line.startswith("FlowMergeTemperatureModule: ") for line in lines)
+    for line in lines:
+        name, summary = line.split(": ", 1)
+        domain = describe_module_type(name, registry)["metadata"].get("domain", "")
+        words = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", name)
+        assert "mix" in f"{words} {domain} {summary}".casefold()
+
+    assert main(["modules", "list", "--find", "FLUID_NETWORK", "mix"]) == 0
+    domains = capsys.readouterr().out.splitlines()
+    assert any(line.startswith("FlowMergeTemperatureModule: ") for line in domains)
+    assert not any(line.startswith("EGRMixingModule: ") for line in domains)
+    assert all(describe_module_type(line.split(": ", 1)[0], registry)["metadata"]["domain"] == "fluid_network" for line in domains)
+    assert main(["modules", "list", "--find", "TEMPERATURE merge flow"]) == 0
+    assert capsys.readouterr().out.startswith("FlowMergeTemperatureModule: ")
+    assert main(["modules", "list", "--find", "no_such_word"]) == 0
+    assert capsys.readouterr().out == "no module matches: no_such_word\n"
+    assert main(["modules", "list"]) == 0
+    assert len(capsys.readouterr().out.splitlines()) == len(registry.registered_types())
