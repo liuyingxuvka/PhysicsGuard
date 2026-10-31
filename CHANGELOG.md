@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.16.0 - 2026-10-31 - Hints, resolution and raw-unit snapshots on the tree
 
 - The compact tree prints one hint line per bug-family follow-up, for example "hint: unit_conversion heater.Q_dot_W multiply by 1000"; before, the hint existed only in --json.
 - Hand-written snapshots can give raw_value and raw_unit; the loader converts them with the unit table or the recorded factor and records the conversion in the mapping ledger. A row whose value contradicts its raw value and conversion now stops the run with exit 2 and observed_value_disagrees_with_conversion:<variable>.
