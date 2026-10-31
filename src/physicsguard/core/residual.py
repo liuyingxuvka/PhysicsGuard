@@ -230,9 +230,11 @@ class ResidualBuilder:
                             continue
                     if not isinstance(numeric, (int, float)) or not math.isfinite(numeric):
                         continue
-                    candidates = (numeric + 1, numeric - 1) if isinstance(numeric, int) else (
-                        (numeric * 2, numeric / 2) if numeric else (1.0, -1.0)
-                    )
+                    if isinstance(numeric, int):
+                        candidates = (numeric + 1, numeric - 1)
+                    else:
+                        step = max(abs(numeric) * 1e-4, math.ulp(numeric)) if numeric else 1e-4
+                        candidates = (numeric + step, numeric - step)
                     replayed = False
                     for candidate in candidates:
                         if candidate == numeric or not math.isfinite(candidate):

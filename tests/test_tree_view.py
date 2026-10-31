@@ -86,6 +86,9 @@ def test_resolution_line_names_default_scale(monkeypatch) -> None:
         assert entry["value"] == pytest.approx(expected, rel=1e-4)
         assert entry["unit"] == "K" and entry["default_scale"] is default_scale
         assert entry["residual"] == "mix.flow_merge_temperature_balance"
+        heater = report["resolution"]["heater.Q_dot_W"]
+        assert heater["default_scale"] is default_scale
+        assert heater["residual"] == "heater.coolant_heat_balance"
         assert observed.model_dump() == before
         if default_scale:
             flow = report["resolution"]["mix.m_dot_2_kg_s"]
