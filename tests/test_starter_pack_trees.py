@@ -115,7 +115,8 @@ def test_starter_pack_rules_resolve(pack) -> None:
 
 def test_every_starter_pack_is_one_tree() -> None:
     for directory in ROOT.iterdir():
-        if not directory.is_dir() or directory.name in {"heated_tank", "observed_debugging", "__pycache__"} or directory.name.startswith("."):
+        # Focused audit fixtures use their own model and snapshot names, outside the starter catalog.
+        if not directory.is_dir() or directory.name in {"heated_tank", "observed_debugging", "shower_mix", "__pycache__"} or directory.name.startswith("."):
             continue
         assert (directory / "tree.yaml").is_file(), directory
         assert (directory / "nominal_observed.yaml").is_file(), directory
