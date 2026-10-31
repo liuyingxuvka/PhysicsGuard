@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- README rewritten: the problem it solves for an AI user, a before/after example, a quick start and honest limits.
+
 - The skill also covers physics and engineering calculations an AI makes itself, routes a simulation's code to flowguard, and has a six-step quick check; modules list --find filters modules by name, domain and summary.
 
 - Each checked block prints a resolution line: a local first-order estimate of the smallest error per observed variable a checked residual can see, marked "(default scale)" when it uses a module default; --json carries it as "resolution", preserving numeric estimates with an explicit unknown when scale provenance is unavailable.
