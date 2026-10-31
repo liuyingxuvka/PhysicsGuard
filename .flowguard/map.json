@@ -158,7 +158,8 @@
         "tests/test_thermodynamic_conversion_helpers.py",
         "tests/test_variable_registry.py",
         "tests/test_residual_trace_reuse.py",
-        "tests/test_core.py"
+        "tests/test_core.py",
+        "tests/test_tree_view.py"
       ],
       "models": [
         ".flowguard/models/physicsguard_core_model.py",

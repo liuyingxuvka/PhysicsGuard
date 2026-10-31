@@ -1,0 +1,15 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: ai answer.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: ai_answer
+variables:
+  heater.m_dot_kg_s: {value: 6.0, unit: kg/s, external_signal: "6 L/min", mapping_confidence: high, mapping_status: clean, conversion_factor: 0.016667, conversion_note: "1 kg/L, /60 s"}
+  heater.T_in_K: {value: 288.15, unit: K, external_signal: "15 C", mapping_confidence: high, mapping_status: clean, conversion_offset: 273.15}
+  heater.T_out_K: {value: 333.15, unit: K, external_signal: "60 C", mapping_confidence: high, mapping_status: clean, conversion_offset: 273.15}
+  heater.Q_dot_W: {value: 1130220.0, unit: W, external_signal: "AI heater power", mapping_confidence: high, mapping_status: clean}
+  mix.m_dot_2_kg_s: {value: 9.0, unit: kg/s, external_signal: "9 L/min", mapping_confidence: high, mapping_status: clean, conversion_factor: 0.016667}
+  mix.T_2_K: {value: 288.15, unit: K, external_signal: "15 C", mapping_confidence: high, mapping_status: clean, conversion_offset: 273.15}
+  mix.m_dot_out_kg_s: {value: 15.0, unit: kg/s, external_signal: "AI outlet flow", mapping_confidence: high, mapping_status: clean}
+  mix.T_out_K: {value: 306.15, unit: K, external_signal: "AI outlet temperature 33 C", mapping_confidence: high, mapping_status: clean, conversion_offset: 273.15}
