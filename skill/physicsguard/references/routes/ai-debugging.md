@@ -23,8 +23,8 @@ Localize simulation faults on the requested blocks. Other owners are in SKILL.md
    A hand-written snapshot retains source signal, unit, confidence, factor/offset
    and review state. Mark a mapping stale when its declared reconfirmation condition occurs.
 5. Run `python -m physicsguard.cli hierarchy evaluate AUDIT.yaml OBSERVED.yaml`.
-   Read `own FAIL`, `not checked`, `no checks`, `refinement:`, `next:` and `mapping:`
-   on the tree. `--json` gives details; `--full` restores the declared structure.
+   Read `own FAIL`, `not checked`, `no checks`, `refinement:`, `next:`, `hint:` and
+   `mapping:` on the tree. `--json` gives details; `--full` restores the declared structure.
 6. Compare declared causes with
    `python -m physicsguard.cli hierarchy variants AUDIT.yaml NOMINAL.yaml --pairs --observed OBSERVED.yaml`.
    Read block signatures, `masked:`, `matches:`, `model miss:` and the next signal.

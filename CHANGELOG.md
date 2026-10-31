@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The compact tree prints one hint line per bug-family follow-up, for example "hint: unit_conversion heater.Q_dot_W multiply by 1000"; before, the hint existed only in --json.
+
 - Maintenance checks run on FlowGuard 0.71.0; the project rules name req add and PLAN changes lines, CLAUDE.md imports AGENTS.md, and every accepted debt has an expiry.
 
 ## v0.15.25 - 2026-10-28 - Declared replays and an owner for the unit-factor probe

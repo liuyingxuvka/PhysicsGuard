@@ -110,6 +110,14 @@ def _report_tail(report: dict[str, Any], comparison: dict[str, Any] | None) -> l
         targets = ", ".join(f"{name} ({rec['template_status'].get(name, 'planned')})" for name in rec["next_template_ids"]) or "no template"
         needs = _short(rec["next_required_variables"]) or "nothing declared"
         lines.append(f"next: {rec['rule_id']} -> {targets} needs {needs}")
+    for followup in report.get("bug_family_followups", []):
+        variables = ", ".join(followup["affected_variables"])
+        action = followup["recommended_action"]
+        if followup["family"] == "unit_conversion":
+            hypothesis = action.split("hypothesis: ", 1)[-1].split(" (", 1)[0]
+            lines.append(f"hint: unit_conversion {variables} {hypothesis}")
+        else:
+            lines.append(f"hint: {followup['family']} {variables}: {action}")
     issues = [f"{row['physics_variable']} {','.join(row['issue_codes'])}" for row in report.get("signal_mapping_ledger", [])
               if row.get("issue_codes")]
     if issues:

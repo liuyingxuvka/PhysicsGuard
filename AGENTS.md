@@ -6,7 +6,7 @@ Read these model contracts before changes:
 - Observed work: model `observed_derivation`, rules `observed_evaluation_does_not_solve`, `unobserved_variables_stay_listed`, `no_residual_from_unobserved_guess`, `derived_relations_are_not_checks`, `comparison_requires_reference_and_observed`, `hierarchy_run_requires_solve`, `diagnostics_after_solver_or_failure`.
 - Assumption cards: model `assumptions`, rules `assumptions_are_reported_in_diagnostics`, `assumption_overrides_are_warned`, `variable_assumptions_are_fixed_residuals`.
 - Solver/audit distinction: model `solver_audit`, rules `audit_pass_and_failure_are_disjoint`, `post_checks_never_block_valid_solver_selection`.
-- Refinement and readback: model `tree_verdicts`, rules `parent_fails_with_child`, `coarse_failure_with_passing_children_is_inconsistent`, `planned_template_is_reported_not_executed`, `tree_view_shows_every_block_verdict`, `verdict_lines_omit_structure`.
+- Refinement and readback: model `tree_verdicts`, rules `parent_fails_with_child`, `coarse_failure_with_passing_children_is_inconsistent`, `planned_template_is_reported_not_executed`, `tree_view_shows_every_block_verdict`, `verdict_lines_omit_structure`, `hint_shown_in_tree`.
 - CLI: model `cli_exit`, rules `exit_code_follows_audit_pass`, `default_view_is_the_tree`. Installation, generated CSV and native descriptions: models `skill_install`, `heated_tank_generator`, `module_descriptions`.
 
 Policies:
