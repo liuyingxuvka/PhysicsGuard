@@ -785,7 +785,12 @@ class HierarchicalAuditRunner:
         )
 
     def to_dict(self, report: Any) -> dict[str, Any]:
-        return asdict(report)
+        data = asdict(report)
+        audit = data.get("observed_hierarchy", data)
+        for row in audit.get("signal_mapping_ledger", []):
+            if row["raw_conversion"] is None:
+                del row["raw_conversion"]
+        return data
 
     def to_json(self, report: HierarchicalAuditReport, pretty: bool = False) -> str:
         return json.dumps(self.to_dict(report), indent=2 if pretty else None, sort_keys=True)

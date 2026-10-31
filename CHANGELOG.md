@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Hand-written snapshots can give raw_value and raw_unit; the loader converts them with the unit table or the recorded factor and records the conversion in the mapping ledger. A row whose value contradicts its raw value and conversion now stops the run with exit 2 and observed_value_disagrees_with_conversion:<variable>.
+
 - The compact tree prints one hint line per bug-family follow-up, for example "hint: unit_conversion heater.Q_dot_W multiply by 1000"; before, the hint existed only in --json.
 
 - Maintenance checks run on FlowGuard 0.71.0; the project rules name req add and PLAN changes lines, CLAUDE.md imports AGENTS.md, and every accepted debt has an expiry.

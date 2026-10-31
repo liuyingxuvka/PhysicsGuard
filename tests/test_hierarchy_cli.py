@@ -340,3 +340,16 @@ def test_describe_names_benign_variants_and_assumption_blocks() -> None:
     lines = _block_lines(result.stdout)
     assert "assumptions: heater_nameplate_efficiency" in lines["heater"]
     assert sum("assumptions:" in line for line in lines.values()) == 1
+
+
+
+def test_disagreeing_snapshot_exits_2_naming_the_variable(tmp_path) -> None:
+    import yaml
+    shower = ROOT / "examples/hierarchical/shower_mix"
+    data = yaml.safe_load((shower / "observed_unit_err.yaml").read_text())
+    data["variables"]["heater.m_dot_kg_s"].update(raw_value=6, raw_unit="L/min")
+    path = tmp_path / "raw_disagreement.yaml"
+    path.write_text(yaml.safe_dump(data))
+    result = run_cli("hierarchy", "evaluate", str(shower / "audit.yaml"), str(path))
+    assert result.returncode == 2
+    assert result.stderr.startswith("physicsguard error: observed_value_disagrees_with_conversion:heater.m_dot_kg_s")

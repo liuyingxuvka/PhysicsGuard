@@ -178,3 +178,15 @@ def test_a_thousandfold_flow_factor_slip_is_named_without_changing_observations(
     assert '0.001' in followup.recommended_action
     assert not report.audit_pass
     assert observed.model_dump()==before
+
+
+
+def test_no_raw_nested_comparison_omits_conversion_evidence() -> None:
+    spec = load_hierarchical_audit_spec(ROOT / "examples/physical_coolant_heat_balance.yaml")
+    observed = load_observed_values(ROOT / "examples/observed/physical_coolant_observed_clean.yaml")
+    runner = HierarchicalAuditRunner(spec)
+    comparison = runner.compare_observed(observed)
+    nested = runner.to_dict(comparison)["observed_hierarchy"]
+    assert nested["signal_mapping_ledger"]
+    assert all("raw_conversion" not in row for row in nested["signal_mapping_ledger"])
+    assert all("raw_conversion" not in row.to_dict() for row in comparison.observed_hierarchy.signal_mapping_ledger)

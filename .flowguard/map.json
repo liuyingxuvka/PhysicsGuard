@@ -72,7 +72,7 @@
     {
       "id": "simulation",
       "layer": "engine",
-      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping Reuse dependency traces only inside one outer command, with complete constructor/registry input identity and exact observed reads; recompute residuals each time and retrace aliased observation tables. Verdict lines omit repeated structure; describe and --full retain it. The compact and full tree render every bug-family follow-up as one ordered hint line without changing observations or the report.",
+      "summary": "One evaluation engine for tree and single-system files, bounded solve, residual assembly and signal mapping Reuse dependency traces only inside one outer command, with complete constructor/registry input identity and exact observed reads; recompute residuals each time and retrace aliased observation tables. Verdict lines omit repeated structure; describe and --full retain it. The compact and full tree render every bug-family follow-up as one ordered hint line without changing observations or the report. Signal mapping projects accepted raw conversion evidence without recalculating values; report serialization omits absent raw conversion fields in audit and comparison ledgers.",
       "responsibilities": [
         "Use one evaluation engine for tree and single-system files through HierarchicalAuditRunner. Validate inputs and finite solver bounds before residual evaluation Hierarchical run retains reference solving and diagnostics; generated mapping ledgers have no separate review API. For failed observed audits, probe at most 20 observed dependency ancestors for bounded unit factors/offsets, rederive affected native values, and emit hints without editing observations.",
         "Separate numerical optimization success, observed audit and diagnostic limits",
@@ -169,7 +169,7 @@
         ".flowguard/models/physicsguard_solver_audit_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:711ced5ba9361e7e3f75f3cf72308a5585ca913b0a2fd23e7f35d041326f2fb5"
+      "fingerprint": "sha256:670388005f8dc8889f6618f1591d66f3eeb5954d817671f5188eefb2c364bd60"
     },
     {
       "id": "validation",
@@ -211,7 +211,7 @@
     {
       "id": "schema",
       "layer": "foundation",
-      "summary": "Validated schemas, shared review records and pure contract coverage checks",
+      "summary": "Validated schemas, shared review records and pure contract coverage checks Paired finite raw snapshot fields are accepted only at loader ingestion; ordinary direct and series rows require resolved numeric observations or accepted loader provenance.",
       "responsibilities": [
         "Validate structured inputs before domain operations The documented units.py table and explicit factors/offsets govern conversions only at test-data ingestion. Accept minimal adequacy plans with optional additional floors while retaining explicit temporal classifications and native hard gates. Validate inputs only; producer_id is the only predictive producer identifier; mapping confidence uses named review levels.",
         "Preserve the explicit required-skip API as bounded partial work, without passed-scope authority",
@@ -293,12 +293,12 @@
         ".flowguard/models/physicsguard_test_file_contract_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:bacd81d1e9df09c0b7fbc310d9af5645dbee29c8cc6629fb6364b7ebd7e63444"
+      "fingerprint": "sha256:276a944f19b1082f66eb87e97a853a19784f6050db1e6b48a58255589f5fd632"
     },
     {
       "id": "loaders",
       "layer": "foundation",
-      "summary": "Native YAML/JSON and observation loaders",
+      "summary": "Native YAML/JSON and observation loaders Snapshot ingestion converts paired raw values with the unit table or recorded factor, refuses disagreements and nonfinite results, and retains the accepted conversion as input provenance.",
       "responsibilities": [
         "Read native files without silently changing observations Read the single-file contract format; reject old multi-file keys with a migration instruction."
       ],
@@ -360,7 +360,7 @@
         ".flowguard/models/physicsguard_core_model.py"
       ],
       "status": "confirmed",
-      "fingerprint": "sha256:006b5f0e84fe2bd5a6df150816950b2d12e8f4a899b4608500ad9a3e2f45c1af"
+      "fingerprint": "sha256:5e1bc2198e4e0e807e66dc806d8c71723ef0662e1502cc59cad3458c5165c9b7"
     },
     {
       "id": "modules",

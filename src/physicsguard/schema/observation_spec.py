@@ -6,7 +6,7 @@ import json
 import math
 from typing import Any, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, ValidationInfo, field_validator, model_validator
 
 from physicsguard.schema.parameter_coverage import MappingConfidence
 from physicsguard.schema.variable import is_qualified_variable_name
@@ -28,7 +28,11 @@ class SourceModelSpec(BaseModel):
 class ObservedValueSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    value: float
+    value: Optional[float] = None
+    raw_value: Optional[float] = None
+    raw_unit: Optional[str] = None
+    # Accepted input evidence survives counterfactual model_copy without recomputation.
+    _raw_conversion: Optional[str] = PrivateAttr(default=None)
     unit: Optional[str] = None
     source: Optional[str] = None
     description: Optional[str] = None
@@ -42,12 +46,29 @@ class ObservedValueSpec(BaseModel):
     mapped_at: Optional[str] = None
     stale_when: list[str] = Field(default_factory=list)
 
-    @field_validator("value")
+    @field_validator("value", "raw_value")
     @classmethod
-    def _value_finite(cls, value: float) -> float:
-        if not math.isfinite(value):
+    def _value_finite(cls, value: Optional[float]) -> Optional[float]:
+        if value is not None and not math.isfinite(value):
             raise ValueError("observed value must be finite")
         return value
+
+    @field_validator("raw_unit")
+    @classmethod
+    def _raw_unit_valid(cls, value: Optional[str]) -> Optional[str]:
+        if value is not None and not value.strip():
+            raise ValueError("raw_unit cannot be blank")
+        return value
+
+    @model_validator(mode="after")
+    def _raw_value_valid(self, info: ValidationInfo) -> "ObservedValueSpec":
+        if (self.raw_value is None) != (self.raw_unit is None):
+            raise ValueError("raw_value and raw_unit must be supplied together")
+        if self.value is None and self.raw_value is None:
+            raise ValueError("value is required without raw_value and raw_unit")
+        if self.raw_value is not None and self._raw_conversion is None and not (info.context or {}).get("raw_snapshot_ingestion"):
+            raise ValueError("raw_snapshot_requires_load: read raw snapshots through load_observed_values before use")
+        return self
 
     @field_validator("external_signal", "mapping_status", "conversion_note", "mapped_at")
     @classmethod

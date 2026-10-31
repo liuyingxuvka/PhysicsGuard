@@ -33,9 +33,10 @@ class SignalMappingRecord:
     block_id: str = ""
     issue_codes: tuple[str, ...] = ()
     recommended_action: str = ""
+    raw_conversion: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "physics_variable": self.physics_variable,
             "expected_unit": self.expected_unit,
             "observed_unit": self.observed_unit,
@@ -53,6 +54,9 @@ class SignalMappingRecord:
             "issue_codes": list(self.issue_codes),
             "recommended_action": self.recommended_action,
         }
+        if self.raw_conversion is not None:
+            result["raw_conversion"] = self.raw_conversion
+        return result
 
 
 @dataclass(frozen=True)
@@ -124,6 +128,7 @@ def build_signal_mapping_ledger(
                 block_id=block_id,
                 issue_codes=issue_codes,
                 recommended_action=_mapping_recommendation(issue_codes, variable),
+                raw_conversion=observed_value._raw_conversion,
             )
         )
     return tuple(rows)

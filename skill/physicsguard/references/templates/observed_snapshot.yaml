@@ -23,7 +23,8 @@ variables:
     mapping_confidence: high
     mapping_status: clean
   power.P_W:
-    value: 48.0
+    raw_value: 0.048
+    raw_unit: kW
     unit: W
     source: example power measurement
     external_signal: bench/power

@@ -127,7 +127,25 @@ variables:
     stale_when: [flow sensor replaced]
 ```
 
-`value` is already the SI value to check. Conversion fields record evidence and never transform it. Record mapping uncertainty and `review_required` honestly.
+Without raw fields, `value` is already the SI value to check; conversion fields only record evidence.
+For a hand-written snapshot, give both finite `raw_value` and nonblank `raw_unit`, plus the target `unit`,
+and omit `value` rather than hand-calculating it. `load_observed_values` converts once at ingestion
+using the existing unit table or the recorded `conversion_factor`/`conversion_offset`; it never guesses
+units from `external_signal`. Cross-dimension conversion such as L/min to kg/s requires an explicit
+factor (for example 1 kg/L divided by 60 seconds); an offset alone is insufficient.
+If `value` is also present, it must agree with the converted value within `RAW_VALUE_REL_TOL = 5e-5`
+relative tolerance. This admits the rounded factor 0.016667 for 6 L/min and rejects a 60-fold error.
+Contradicting the unit table's conversion remains an error under its existing stricter comparison.
+A disagreement refuses the run with exit 2 and `observed_value_disagrees_with_conversion:<variable>`;
+a pair that cannot be converted uses `unit_not_convertible:<variable>`. Incomplete pairs remain input
+validation errors. Conversion results must be finite.
+
+The mapping ledger adds `raw_conversion`, for example `6 L/min x 0.0166667 -> 0.1 kg/s`.
+It records the accepted original input conversion; intentional counterfactual variants retain that
+provenance alongside their counterfactual source, rather than claiming a new measured conversion.
+Evaluation never converts. Direct Python or series construction needs numeric SI rows without raw
+fields, or normalized snapshot rows returned by the loader; unresolved raw rows are refused before use.
+Record mapping uncertainty and `review_required` honestly.
 `stale_when` declares reconfirmation conditions; when one occurs, set `mapping_status: stale`. Do not present old mappings as current evidence.
 
 ## Derivation order and fault variants
