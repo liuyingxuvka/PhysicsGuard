@@ -1453,8 +1453,8 @@ def _unit_factor_followups(report, observed, builder, registry, threshold):
                     _known,_missing,_derived,records,_skipped,_provenance = _derive_unobserved(builder,registry,trial)
                 else:
                     records = builder.diagnostic_residual_records(registry.dict_to_vector(trial))
-            except Exception:
-                # A counterfactual outside a relation's domain is not evidence for a hint.
+            except (ValueError, KeyError, IndexError, ArithmeticError):
+                # A counterfactual outside a relation's domain is not evidence for a hint; any other error is a fault.
                 continue
             current = {record.name:record for record in records if record.name in checked}
             if checked <= current.keys() and all(current[name].abs_normalized_value <= threshold for name in checked):

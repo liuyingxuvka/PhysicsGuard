@@ -243,7 +243,8 @@ class ResidualBuilder:
                         trial[key] = str(candidate) if isinstance(value, str) else candidate
                         try:
                             changed = self.module_registry.create(component.type, component.id, trial).residuals(vector, registry)
-                        except Exception:
+                        except (ValueError, KeyError, IndexError, ArithmeticError):
+                            # The module refuses this perturbed parameter; other errors are faults and propagate.
                             continue
                         if identities(changed) != identities(baseline):
                             supported = False
@@ -261,8 +262,8 @@ class ResidualBuilder:
                             defaults[position] = any(key not in parameters for key in contributors[index])
                         elif not compound_reads:
                             defaults[position] = True
-            except Exception:
-                # A custom constructor or residual replay cannot license a scale claim.
+            except (ValueError, KeyError, IndexError, ArithmeticError):
+                # A replay the native module refuses cannot license a scale claim; other errors propagate.
                 continue
         return defaults
 

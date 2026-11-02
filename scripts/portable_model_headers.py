@@ -29,8 +29,9 @@ def tracked_example_yaml_files(root: Path) -> list[Path]:
             capture_output=True,
             text=True,
         )
-    except (OSError, subprocess.CalledProcessError):
-        return sorted((root / "examples").rglob("*.yaml"))
+    except (OSError, subprocess.CalledProcessError) as exc:
+        # One route: without git the tracked set is unknown, and a directory walk would add untracked files.
+        raise RuntimeError(f"cannot list the tracked example files with git ls-files: {exc}") from exc
     return [root / line for line in result.stdout.splitlines() if line.strip() and (root / line).exists()]
 
 

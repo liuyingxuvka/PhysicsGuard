@@ -18,6 +18,7 @@ Policies:
 - Do not invent or silently apply assumptions, mappings, units or parameters. Record uncertainty explicitly; confidence and block scores are heuristics, not probability or proof. Never present a solved reference as an external observation.
 - No commercial reverse engineering or external simulation-tool dependencies. Use documented, official or user-provided interfaces; keep adapters future work unless explicitly requested.
 - Lookup/map modules document axes, units and extrapolation. Piecewise diagnostic checks default to post_check unless they intentionally define the solved reference; rate limits remain single-step without an explicit series request.
+- One route per function: when a step fails, the error reaches the caller. An exception handler that does not re-raise is listed with its reason in `tests/test_error_handlers.py`, and a test may never end skipped (`tests/no_skips.py` turns a skip into a failure).
 - Proceed coarse-to-fine from a visible symptom to the next discriminating signals. Recommend refinement; no silent template execution/auto-refinement, universal bug-finding or commercial equivalence claims.
 
 Releases:
