@@ -30,10 +30,12 @@ One contract stores field roles, units, variable mappings, conversion, confidenc
    parameter mappings, operating modes and holdout boundaries in the validation plan.
 
 ## Units and evidence
-The only automatic table is `src/physicsguard/core/units.py`: K/degC;
-W/kW/MW; m³/s/L/s/L/min/m³/h; Pa/kPa/bar/MPa; rad/s/rpm;
-kg/s/g/s/kg/min/kg/h; m/mm; s/min/h; kg/m³/kg/L/g/cm³. Identical unit labels are unchanged.
-Units outside the table require explicit `conversion: {factor: ..., offset: ...}`.
+The only automatic table is `src/physicsguard/core/units.py`. It reads units written with its
+symbols (kg, g; m, mm, cm, km; L, mL; s, min, h; W, kW, MW; Pa, kPa, MPa, bar; K, degC, degF;
+rad, rev, rpm) joined by `/` or `*` with `^n` powers, and other spellings of them (l/min, LPM,
+kg/sec, m3/h, °C). Identical unit labels are unchanged. A field in a unit the tool cannot read is
+`unit_not_convertible`, whatever factor it records; only a transducer output (V, mV, A, mA, ohm)
+takes an explicit calibration `conversion: {factor: ..., offset: ...}`, applied unchecked.
 An explicit conversion that contradicts a known pair fails, and a field cannot change
 quantity (a kg/s field mapped to an m³/s variable) with a bare factor: `unit_not_convertible`.
 To change quantity, declare the linking property once under the contract's `properties`
@@ -42,7 +44,7 @@ To change quantity, declare the linking property once under the contract's `prop
 (`conversion_disagrees_with_property`), and a property that cannot link the two units is
 `unit_not_convertible`. Snapshots and series carry each reading as `raw_value`/`raw_unit` (and the
 contract's properties) beside the converted value, so loading them checks the conversion again; a
-series row in a unit outside the table is marked `conversion_unchecked`. Each output value
+series row from a transducer output is marked `conversion_unchecked`. Each output value
 records the unit of the variable named by `target`, factor, offset, field@row, confidence and source.
 Audit evaluation never performs a hidden conversion or moves observed values.
 Mapping confidence accepts high, medium, low or proposed; the default minimum is medium.

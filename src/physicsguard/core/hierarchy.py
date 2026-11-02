@@ -501,6 +501,7 @@ class HierarchicalAuditRunner:
         builder = ResidualBuilder(self.spec.system)
         registry = builder.build_registry()
         values, missing, unknown = _observed_values_for_registry(observed, registry)
+        unit_warnings = _unit_warnings(observed, registry)
         derived = {}
         skipped = {}
         provenance = {}
@@ -529,7 +530,6 @@ class HierarchicalAuditRunner:
             )
         residual_norm, max_abs = _active_residual_metrics(solver_records)
         audit_pass = max_abs <= self.spec.system.solver.audit_threshold
-        unit_warnings = _unit_warnings(observed, registry)
         warnings: list[str] = []
         if unknown:
             warnings.append("unknown observed variables ignored: " + ", ".join(unknown))
@@ -1338,11 +1338,31 @@ def _unit_warnings(observed: ObservedValuesSpec, registry: VariableRegistry) -> 
         expected_unit = registry.get_record(name).unit
         observed_unit = observed.variables[name].unit
         if expected_unit and observed_unit and expected_unit != observed_unit:
+            _refuse_a_unit_the_value_is_not_in(name, observed_unit, expected_unit)
             warnings.append(
                 f"{name}: observed unit '{observed_unit}' differs from registry unit "
                 f"'{expected_unit}'; numeric value was used as SI"
             )
     return warnings
+
+
+def _refuse_a_unit_the_value_is_not_in(name: str, observed_unit: str, expected_unit: str) -> None:
+    """Stop when both units are readable and the value is not in the model's unit: evaluation never converts."""
+    from physicsguard.core.units import describe_quantity, known_conversion, read_unit
+
+    if read_unit(observed_unit) is None or read_unit(expected_unit) is None:
+        return
+    known = known_conversion(observed_unit, expected_unit)
+    if known is not None and math.isclose(known[0], 1.0, rel_tol=1e-12) and abs(known[1]) <= 1e-12:
+        return
+    relation = (f"1 {observed_unit} = {known[0]:g} {expected_unit}" + (f" + {known[1]:g}" if known[1] else "")
+                if known is not None else
+                f"{describe_quantity(observed_unit)}, not {describe_quantity(expected_unit)}")
+    raise ValueError(
+        f"observed_unit_not_model_unit:{name}: the value is in {observed_unit} ({relation}) but the model reads it "
+        f"in {expected_unit}, and evaluation never converts; give it as raw_value and raw_unit with unit: "
+        f"{expected_unit} so the tool converts it when loading"
+    )
 
 
 def _active_residual_metrics(records: list[ResidualRecord]) -> tuple[float, float]:

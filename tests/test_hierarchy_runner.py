@@ -604,20 +604,28 @@ def test_unknown_observed_variable_is_reported() -> None:
 
 
 def test_unit_mismatch_is_reported_as_warning() -> None:
-    observed = ObservedValuesSpec.model_validate(
-        {
-            "variables": {
-                "coolant.m_dot_kg_s": {"value": 0.1, "unit": "kg/s"},
-                "coolant.T_in_K": {"value": 300.0, "unit": "K"},
-                "coolant.T_out_K": {"value": 310.0, "unit": "K"},
-                "coolant.Q_dot_W": {"value": 4180.0, "unit": "kW"},
+    def snapshot(power_unit: str) -> ObservedValuesSpec:
+        return ObservedValuesSpec.model_validate(
+            {
+                "variables": {
+                    "coolant.m_dot_kg_s": {"value": 0.1, "unit": "kg/s"},
+                    "coolant.T_in_K": {"value": 300.0, "unit": "K"},
+                    "coolant.T_out_K": {"value": 310.0, "unit": "K"},
+                    "coolant.Q_dot_W": {"value": 4180.0, "unit": power_unit},
+                }
             }
-        }
-    )
+        )
+
+    # The model unit spelled another way: the value is in W, used as is, and the label difference is warned.
+    observed = snapshot("watts")
     result = HierarchicalAuditRunner(coolant_system()).evaluate_observed(observed)
     assert result.audit_pass
     assert result.metadata["unit_warnings"]
     assert "coolant.Q_dot_W" in result.metadata["unit_warnings"][0]
+    # A unit the tool can tell is not the model unit stops the evaluation, which never converts:
+    # 4180 kW used as 4180 W would pass the balance while being a thousand times off.
+    with pytest.raises(ValueError, match=r"observed_unit_not_model_unit:coolant\.Q_dot_W: the value is in kW \(1 kW = 1000 W\)"):
+        HierarchicalAuditRunner(coolant_system()).evaluate_observed(snapshot("kW"))
     data = observed.model_dump(mode="json")
     del data["variables"]["coolant.T_in_K"]["unit"]
     unitless = HierarchicalAuditRunner(coolant_system()).evaluate_observed(ObservedValuesSpec.model_validate(data))

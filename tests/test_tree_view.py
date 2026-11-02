@@ -26,9 +26,11 @@ def test_unit_hint_line() -> None:
     for full in (False, True):
         lines = render_tree_view(description, report=report, full=full).splitlines()
         hints = [line for line in lines if line.startswith("hint:")]
-        assert len(hints) == len(report["bug_family_followups"]) == 2
+        assert len(hints) == len(report["bug_family_followups"]) == 3
         assert hints[-1] == expected
-        assert hints[0].startswith("hint: conservation_balance ")
+        # "AI heater power 18.837 kW" beside 18.837 W: the tool reads the kW and reports the contradiction.
+        assert hints[0].startswith("hint: signal_mapping heater.Q_dot_W: ")
+        assert hints[1].startswith("hint: conservation_balance ")
     assert report == before
 
     # The report can also carry refinement and mapping advice around its hints.

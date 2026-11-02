@@ -70,7 +70,8 @@ class ObservedValueSpec(BaseModel):
     # table, or unit table plus a declared property) or checked the value against a reading in
     # external_signal, False when a conversion was applied or recorded that the tool could not
     # check, None when nothing was converted. _conversion_check says why in one sentence, and
-    # _signal_disagrees marks a value that contradicts the reading in its external_signal.
+    # _signal_disagrees marks a value that contradicts a reading found inside a longer external_signal
+    # (when the whole external_signal is the reading, a contradiction stops the load instead).
     _conversion_checked: Optional[bool] = PrivateAttr(default=None)
     _conversion_check: Optional[str] = PrivateAttr(default=None)
     _signal_disagrees: bool = PrivateAttr(default=False)

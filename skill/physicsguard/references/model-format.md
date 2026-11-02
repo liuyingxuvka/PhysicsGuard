@@ -130,25 +130,46 @@ variables:
 Without raw fields, `value` is already the SI value to check; conversion fields only record evidence.
 Any recorded `conversion_factor`, `conversion_offset` or `conversion_note` (a factor of 1 and an offset of 0
 included) is a conversion done outside the tool: the mapping ledger marks that row `conversion_unchecked`
-(a warning; the run continues). When `external_signal` is exactly a number and a unit from the table
-(`6 L/min`, `15 degC`), the tool reads it and checks the value against it: agreement through the unit table
-counts as checked, a disagreement is marked `signal_reading_disagrees`, and a reading of another quantity
-(`6 L/min` beside a kg/s value) is marked `conversion_unchecked`. A row that records nothing and names its
-signal only by a label (`AI heater power`) cannot be checked and is not flagged. The ledger's
-`conversion_check` says why, in one sentence.
+(a warning; the run continues) unless the tool can check it against a reading in `external_signal`.
+The tool looks for a reading, a number followed by a unit it reads (`6 L/min`, `15 C`), anywhere in
+`external_signal`, and checks the value against it through the unit table:
+
+- the reading is the whole `external_signal` (`6 kg/min`, `15 degC`): agreement counts as checked, and a
+  value or recorded factor/offset that disagrees stops the run with
+  `signal_reading_disagrees:<variable>` (exit 2), the same as a raw-value disagreement;
+- the reading sits inside a longer text (`AI outlet temperature 33 C`): agreement counts as checked; a
+  disagreement is marked `signal_reading_disagrees` and the run continues, because a label can name other
+  numbers. Write the reading alone, or as `raw_value` and `raw_unit`, to have it enforced;
+- a reading of another quantity that a property could link (`6 L/min` beside a kg/s value), or several
+  readings in one text: marked `conversion_unchecked`.
+
+A row that records nothing and names its signal only by a label (`AI heater power`) cannot be checked and is
+not flagged. The ledger's `conversion_check` says why, in one sentence.
+
+The tool reads a unit written with the table's symbols, joined by `/` or `*` with `^n` powers, in the
+spellings it lists: `l`, `liter`, `litre` for `L`; `sec` for `s`; `minute` for `min`; `hr` for `h`; `m3` for
+`m^3`; `per` for `/`; `LPM`, `rpm`; `degC`, `°C`, `deg C` or `C` for Celsius; `degF`. So `l/min`, `LPM`,
+`litres per minute` and `kg/sec` are read as `L/min` and `kg/s`. A row whose value is in a unit the tool
+reads but that is not the model's unit (`kW` for a W variable, `L/s` for a kg/s variable) stops the
+evaluation with `observed_unit_not_model_unit:<variable>`: evaluation never converts.
+
 For a hand-written snapshot, give both finite `raw_value` and nonblank `raw_unit`, plus the target `unit`,
 and omit `value` rather than hand-calculating it. The loader converts once at ingestion, for snapshots and
 series points alike; it never converts from `external_signal`:
 
-- two units of one quantity in the unit table (degC and K, kW and W, kg/min and kg/s): the table converts;
+- two units of one quantity (degC and K, kW and W, kg/min and kg/s, l/min and m^3/s): the table converts;
   a recorded factor or offset must agree with it exactly;
-- two different quantities in the table (L/min to kg/s): declare the property that links them once under
+- two different quantities (L/min to kg/s): declare the property that links them once under
   `properties` and name it on the row with `conversion_property`. The tool multiplies or divides by it,
   whichever turns one quantity into the other, and refuses a pair the property cannot link. A row
   without `conversion_property` is refused with `unit_not_convertible:<variable>`, even when it records
   a factor: a cross-quantity factor written by hand is not checked and not used;
-- a unit outside the table (a sensor's V, counts): the recorded `conversion_factor`/`conversion_offset`
-  is applied and the row is marked `conversion_unchecked`.
+- a unit the tool cannot read (`lit/min`, `kmol/h`, `gallons/min`): refused with
+  `unit_not_convertible:<variable>: the tool cannot read the unit ...`, because a recorded factor for it
+  could not be checked; write the unit as the table does;
+- a transducer output (`V`, `mV`, `A`, `mA`, `ohm`) mapped to a physical quantity: its calibration
+  `conversion_factor`/`conversion_offset` is applied and the row is marked `conversion_unchecked`, since no
+  table can know a sensor's calibration.
 
 ```yaml
 properties:

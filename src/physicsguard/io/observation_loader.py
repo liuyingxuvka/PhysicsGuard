@@ -1,7 +1,8 @@
 """YAML loader for observed value files.
 
 A raw reading becomes a value in one place, convert_observed_rows, for snapshots and series
-points alike; a row already given in its model unit is checked as far as the tool can check it.
+points alike; a row already given in its model unit is checked against the reading its
+external_signal names, as far as the tool can read it.
 """
 
 from __future__ import annotations
@@ -10,19 +11,32 @@ import math
 from pathlib import Path
 import re
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, NamedTuple
 
 from pydantic import ValidationError
 import yaml
 
-from physicsguard.core.units import known_conversion, property_conversion, unit_conversion, unit_quantity
+from physicsguard.core.units import (
+    READABLE_HINT, describe_quantity, is_transducer_output, known_conversion, linking_quantity, property_conversion,
+    read_unit, unit_conversion,
+)
 from physicsguard.schema.observation_spec import ObservedValueSpec, ObservedValuesSpec, PhysicalPropertySpec
 
 
 # Admit rounded recorded factors such as 0.016667, but reject physical value disagreement.
 RAW_VALUE_REL_TOL = 5e-5
-# An external_signal that is exactly a number and a unit from the table, such as "6 L/min", is a reading.
-_READING = re.compile(r"\s*([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)\s*(\S+)\s*")
+# A number in external_signal, not glued to a name before it (T_tank_C@70 holds no reading).
+_NUMBER = re.compile(r"(?<![\w.^])([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)")
+# Units are read from up to this many words after the number ("litres per minute").
+_UNIT_WORDS = 3
+
+
+class _Reading(NamedTuple):
+    number: float
+    unit: str
+
+    def __str__(self) -> str:
+        return f"{self.number:g} {self.unit}"
 
 
 def load_observed_values(path: str | Path) -> ObservedValuesSpec:
@@ -54,7 +68,7 @@ def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: d
     """Convert each raw reading once with the unit table (and a declared property), or check a converted row."""
     for variable, row in variables.items():
         if row.raw_value is None:
-            _check_converted_row(row)
+            _check_converted_row(variable, row)
             continue
         if not row.unit or not row.unit.strip():
             raise ValueError(f"unit_not_convertible:{variable}: raw input needs a target unit")
@@ -62,7 +76,7 @@ def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: d
             factor, offset, evidence = _property_conversion(variable, row, properties)
             checked = True
         else:
-            factor, offset, checked = _table_or_recorded_conversion(variable, row)
+            factor, offset, checked = _table_or_calibration(variable, row)
             evidence = ""
         converted = row.raw_value * factor + offset
         if not math.isfinite(converted):
@@ -74,48 +88,81 @@ def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: d
         row._raw_conversion = f"{row.raw_value:g} {row.raw_unit} x {factor:g}{adjustment}{evidence} -> {converted:g} {row.unit}"
         row._conversion_checked = checked
         row._conversion_check = (f"converted by the tool: {row._raw_conversion}" if checked else
-                                 f"{row.raw_unit} is outside the unit table, so the recorded conversion was applied unchecked")
+                                 f"{row.raw_unit} is a transducer output, so its recorded calibration was applied unchecked")
 
 
-def _signal_reading(text: str | None) -> tuple[float, str] | None:
-    """An external_signal that is exactly '<number> <unit from the table>', else None."""
-    match = _READING.fullmatch(text or "")
-    if match is None or unit_quantity(match.group(2)) is None:
-        return None
-    return float(match.group(1)), match.group(2)
+def _signal_readings(text: str | None) -> tuple[list[_Reading], bool]:
+    """Every '<number> <unit the tool reads>' in external_signal, and whether the whole text is one such reading."""
+    readings: list[_Reading] = []
+    whole = False
+    for match in _NUMBER.finditer(text or ""):
+        rest = text[match.end():]
+        words = rest.split()
+        if not words:
+            continue
+        for count in range(min(_UNIT_WORDS, len(words)), 0, -1):
+            unit = " ".join(words[:count]).rstrip(",;:.)]")
+            if read_unit(unit) is not None:
+                readings.append(_Reading(float(match.group(1)), unit))
+                whole = not text[:match.start()].strip() and unit == " ".join(words)
+                break
+    return readings, whole and len(readings) == 1
 
 
-def _check_converted_row(row: ObservedValueSpec) -> None:
-    """A row given in its model unit: check it against a reading in external_signal, or say it is unchecked."""
+def _check_converted_row(variable: str, row: ObservedValueSpec) -> None:
+    """A row given in its model unit: check it against the reading its external_signal names, or say it is unchecked.
+
+    A reading of the value's own quantity is converted with the unit table and compared. When the whole
+    external_signal is that reading, a disagreement stops the run like a raw_value disagreement; a reading
+    found inside a longer text is reported, because such a text can name other numbers.
+    """
     recorded = [name for name in ("conversion_factor", "conversion_offset", "conversion_note") if getattr(row, name) is not None]
-    reading = _signal_reading(row.external_signal)
-    if reading is not None:
-        number, unit = reading
-        known = known_conversion(unit, row.unit) if row.unit else None
-        if known is None:
+    readings, whole = _signal_readings(row.external_signal)
+    about = [reading for reading in readings
+             if known_conversion(reading.unit, row.unit) is not None or linking_quantity(reading.unit, row.unit)]
+    if not about:
+        if recorded:
             row._conversion_checked = False
-            row._conversion_check = (f"external_signal reads {number:g} {unit} ({unit_quantity(unit)}), but the value is given "
-                                     f"in {row.unit or 'no unit'} without raw_value, so the tool cannot check the conversion")
-            return
-        converted = number * known[0] + known[1]
-        factor_ok = row.conversion_factor is None or math.isclose(row.conversion_factor, known[0], rel_tol=RAW_VALUE_REL_TOL)
-        offset_ok = row.conversion_offset is None or math.isclose(row.conversion_offset, known[1], rel_tol=RAW_VALUE_REL_TOL,
-                                                                  abs_tol=1e-9)
-        if math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0) and factor_ok and offset_ok:
-            row._conversion_checked = True
-            row._conversion_check = f"value agrees with external_signal {number:g} {unit} through the unit table"
-            return
-        row._conversion_checked = False
-        row._signal_disagrees = True
-        recorded_text = "".join(f"; recorded {name} {getattr(row, name):g}" for name in ("conversion_factor", "conversion_offset")
-                                if getattr(row, name) is not None)
-        row._conversion_check = (f"external_signal reads {number:g} {unit} = {converted:g} {row.unit} through the unit table "
-                                 f"(x {known[0]:g} + {known[1]:g}), but the value is {row.value:g} {row.unit}{recorded_text}")
+            row._conversion_check = (f"{', '.join(recorded)} recorded without raw_value: a conversion done outside the tool, "
+                                     "which it cannot check")
         return
-    if recorded:
+    if len(about) > 1:
         row._conversion_checked = False
-        row._conversion_check = (f"{', '.join(recorded)} recorded without raw_value: a conversion done outside the tool, "
-                                 "which it cannot check")
+        row._conversion_check = (f"external_signal names {len(about)} readings ({', '.join(map(str, about))}); the tool "
+                                 "cannot tell which one the value came from, so it cannot check the conversion")
+        return
+    reading = about[0]
+    known = known_conversion(reading.unit, row.unit)
+    if known is None:
+        row._conversion_checked = False
+        row._conversion_check = (f"external_signal reads {reading} ({describe_quantity(reading.unit)}), but the value is "
+                                 f"given in {row.unit} ({describe_quantity(row.unit)}) without raw_value, so the tool cannot "
+                                 f"check the conversion; a {linking_quantity(reading.unit, row.unit)} links them")
+        return
+    factor, offset = known
+    converted = reading.number * factor + offset
+    problems = []
+    if not math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0):
+        problems.append(f"the value is {row.value:g} {row.unit}")
+    if row.conversion_factor is not None and not math.isclose(row.conversion_factor, factor, rel_tol=RAW_VALUE_REL_TOL):
+        problems.append(f"the recorded conversion_factor is {row.conversion_factor:g}")
+    if row.conversion_offset is not None and not math.isclose(row.conversion_offset, offset, rel_tol=RAW_VALUE_REL_TOL,
+                                                              abs_tol=1e-9):
+        problems.append(f"the recorded conversion_offset is {row.conversion_offset:g}")
+    if not problems:
+        row._conversion_checked = True
+        row._conversion_check = f"value agrees with external_signal {reading} through the unit table"
+        return
+    adjustment = f" + {offset:g}" if offset else ""
+    sentence = (f"external_signal reads {reading} = {converted:g} {row.unit} through the unit table "
+                f"(x {factor:g}{adjustment}), but {' and '.join(problems)}")
+    if whole:
+        raise ValueError(f"signal_reading_disagrees:{variable}: {sentence}; correct the value or the external_signal, "
+                         "or give the reading as raw_value and raw_unit so the tool converts it")
+    row._conversion_checked = False
+    row._signal_disagrees = True
+    row._conversion_check = (f"{sentence} (a reading inside a longer external_signal is reported, not enforced; "
+                             "write the reading alone, or as raw_value and raw_unit, to have it enforced)")
 
 
 def _property_conversion(variable: str, row: ObservedValueSpec,
@@ -141,24 +188,33 @@ def _property_conversion(variable: str, row: ObservedValueSpec,
     return factor, offset, evidence
 
 
-def _table_or_recorded_conversion(variable: str, row: ObservedValueSpec) -> tuple[float, float, bool]:
-    """The unit table's conversion (checked), or the recorded one for units the table does not know (unchecked)."""
-    source, target = unit_quantity(row.raw_unit), unit_quantity(row.unit)
-    if source is not None and target is not None and source != target:
-        raise ValueError(
-            f"unit_not_convertible:{variable}: {row.raw_unit} ({source}) -> {row.unit} ({target}) are different quantities; "
-            "declare the property that links them under properties (for example a density) and name it with "
-            "conversion_property, so the tool computes the factor; a recorded conversion_factor is not checked and not used"
-        )
+def _table_or_calibration(variable: str, row: ObservedValueSpec) -> tuple[float, float, bool]:
+    """The unit table's conversion (checked), or a transducer output's recorded calibration (unchecked); else refused."""
+    source, target = read_unit(row.raw_unit), read_unit(row.unit)
     known = known_conversion(row.raw_unit, row.unit)
-    if known is None and row.conversion_factor is None:
-        raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} -> {row.unit} requires an explicit conversion_factor")
+    if known is None and source is not None and target is not None:
+        raise ValueError(
+            f"unit_not_convertible:{variable}: {row.raw_unit} ({describe_quantity(row.raw_unit)}) -> {row.unit} "
+            f"({describe_quantity(row.unit)}) are different quantities; declare the property that links them under "
+            "properties (for example a density) and name it with conversion_property, so the tool computes the factor; "
+            "a recorded conversion_factor is not checked and not used"
+        )
+    if known is None and not is_transducer_output(row.raw_unit):
+        unreadable = row.raw_unit if source is None else row.unit
+        raise ValueError(
+            f"unit_not_convertible:{variable}: the tool cannot read the unit '{unreadable}', so it cannot check a conversion "
+            f"from {row.raw_unit} to {row.unit} and does not apply a recorded one; write it as the unit table does "
+            f"({READABLE_HINT}), or give a transducer output in V, mV, A, mA or ohm with its calibration factor"
+        )
+    if known is None:
+        if row.conversion_factor is None:
+            raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} is a transducer output; {row.raw_unit} -> "
+                             f"{row.unit} needs its calibration as conversion_factor (and conversion_offset)")
+        return row.conversion_factor, row.conversion_offset or 0.0, False
     if row.conversion_factor is None and row.conversion_offset is None:
         return known[0], known[1], True
     factor = row.conversion_factor if row.conversion_factor is not None else known[0]
-    offset = row.conversion_offset if row.conversion_offset is not None else known[1] if known is not None else 0.0
-    if known is None:
-        return factor, offset, False
+    offset = row.conversion_offset if row.conversion_offset is not None else known[1]
     try:
         unit_conversion(row.raw_unit, row.unit, SimpleNamespace(factor=factor, offset=offset))
     except ValueError as exc:
@@ -170,9 +226,10 @@ def _table_or_recorded_conversion(variable: str, row: ObservedValueSpec) -> tupl
 def _conversion_disagreement(
     variable: str, row: ObservedValueSpec, converted: float, reason: str
 ) -> ValueError:
+    given = f"value={row.value!r} {row.unit}" if row.value is not None else "no value given"
     return ValueError(
         f"observed_value_disagrees_with_conversion:{variable}: "
-        f"value={row.value!r} {row.unit}; raw_value={row.raw_value:g} {row.raw_unit}; "
+        f"{given}; raw_value={row.raw_value:g} {row.raw_unit}; "
         f"converted={converted:g} {row.unit}; {reason}"
     )
 
