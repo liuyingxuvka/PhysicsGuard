@@ -280,7 +280,6 @@ def test_no_picture_folds_everything_into_one_box(audit) -> None:
         assert shown > 1 or len(components) + folded <= 1 and not any(row.get("folds") for row in flow["nodes"]), kwargs
 
 
-
 def _dense_audit(tmp_path, mass_chain=False):
     """Ten blocks of one heater each, every heater's outlet temperature read by every later heater: 45 arrows."""
     blocks = [{"id": f"b{i}", "name": f"b{i}", "level": 0, "components": [f"h{i}"]} for i in range(10)]
