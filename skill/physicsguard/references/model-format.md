@@ -131,14 +131,15 @@ Without raw fields, `value` is already the SI value to check; conversion fields 
 Any recorded `conversion_factor`, `conversion_offset` or `conversion_note` (a factor of 1 and an offset of 0
 included) is a conversion done outside the tool: the mapping ledger marks that row `conversion_unchecked`
 (a warning; the run continues) unless the tool can check it against a reading in `external_signal`.
-For every row, with or without raw fields, the tool looks for every reading, a number followed by a unit it
-reads (`6 L/min`, `15 C`, or a transducer output such as `7.5 V`), anywhere in `external_signal`, converts
+For every row, with or without raw fields, the tool looks for every reading, a number (not glued to a name or
+a power before it) followed by a unit it reads (`6 L/min`, `15 C`, or a transducer output such as `7.5 V`),
+anywhere in `external_signal`, converts
 each to the model unit and compares it with the row's value, and several readings with each other. A reading of the model unit's quantity goes
 through the unit table; on a row with `raw_value`, a reading of the raw unit's quantity is converted the
 way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `6 L/min` disagrees):
 
 - the readings are the whole `external_signal` (`6 kg/min`, `15 degC`, `6 L/min (0.1 kg/s)`, with only
-  brackets, commas, `;`, `:` or `=` between them): agreement counts as checked, and a value, a recorded
+  brackets, commas, `;`, `:`, `.` or `=` between them): agreement counts as checked, and a value, a recorded
   factor/offset or another reading that disagrees stops the run with
   `signal_reading_disagrees:<variable>` (exit 2), the same as a raw-value disagreement;
 - the reading sits inside a longer text (`AI outlet temperature 33 C`): agreement counts as checked; a
@@ -161,8 +162,9 @@ way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `
   disagrees with itself); a recorded factor/offset must match the conversion of one of them.
   An agreeing reading leaves a transducer calibration unchecked.
 
-A row that records nothing and names its signal only by a label (`AI heater power`) cannot be checked and is
-not flagged. The ledger's `conversion_check` says why, in one sentence.
+A row whose `external_signal` holds no number followed by a unit (`AI heater power`, `valve 2 open`,
+`T_tank_C@70`) and that records no conversion cannot be checked and is not flagged. The ledger's
+`conversion_check` says why, in one sentence.
 
 The tool reads a unit written with the table's symbols, joined by `/` or `*` (or `·`, `⋅`, or `.` between
 two symbols) with `^n` powers, in the spellings it lists: `l`, `liter`, `litre` for `L`; `sec` for `s`;

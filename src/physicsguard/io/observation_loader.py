@@ -36,6 +36,8 @@ _UNIT_WORDS = 3
 _MARK_CHARACTERS = "/^·⋅*⁻⁰¹²³⁴⁵⁶⁷⁸⁹"
 _UNIT_MARK = re.compile(r"[/^·⋅*⁻⁰¹²³⁴⁵⁶⁷⁸⁹]|[A-Za-z]-\d+$")
 _NEGATIVE_POWER = re.compile(r"[A-Za-z]+(?:\^?-\d+|⁻[⁰¹²³⁴⁵⁶⁷⁸⁹]+)")
+# An external_signal that is nothing but its readings, with only these (and spaces) between them, is enforced.
+WHOLE_SIGNAL_SEPARATORS = "()[],;:.="
 
 
 class _Reading(NamedTuple):
@@ -147,7 +149,8 @@ def _continues_unit(word: str) -> bool:
     """A word that carries on the unit before it: it starts with a separator or a power, it is a symbol with a
     negative power (min^-1, min-1, min⁻¹), or it is 'per'."""
     word = word.strip("()[],;:.")
-    return word[:1] in _MARK_CHARACTERS or _NEGATIVE_POWER.fullmatch(word) is not None or word.lower() == "per"
+    return bool(word) and (word[0] in _MARK_CHARACTERS or _NEGATIVE_POWER.fullmatch(word) is not None
+                           or word.lower() == "per")
 
 
 def _signal_readings(text: str | None) -> _SignalText:
@@ -189,7 +192,8 @@ def _signal_readings(text: str | None) -> _SignalText:
         rest.append(text[position:start])
         position = stop
     rest.append(text[position:])
-    whole = bool(readings) and not unreadable and re.fullmatch(r"[\s()\[\],;:.=]*", "".join(rest)) is not None
+    whole = bool(readings) and not unreadable and all(
+        character.isspace() or character in WHOLE_SIGNAL_SEPARATORS for character in "".join(rest))
     return _SignalText(readings, unreadable, whole)
 
 
@@ -493,5 +497,5 @@ def observed_series_from_mapping(data: dict[str, Any]) -> ObservedSeriesSpec:
         raise
 
 
-__all__ = ["ObservedConversionError", "convert_observed_rows", "load_observed_series", "load_observed_values",
+__all__ = ["ObservedConversionError", "WHOLE_SIGNAL_SEPARATORS", "convert_observed_rows", "load_observed_series", "load_observed_values",
            "observed_series_from_mapping"]

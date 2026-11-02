@@ -244,8 +244,8 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   the reading to the model unit. A number followed by what looks like a unit the tool cannot read (`6 gallons/min`) is flagged
   `signal_reading_unreadable`, never dropped. A row is also marked `conversion_unchecked` when the snapshot records a
   conversion with no reading to check it against (any `conversion_factor`, `conversion_offset` or
-  `conversion_note`, a factor of 1.0 included). A row that records nothing and names its signal only by a label
-  cannot be checked and is not flagged. A declared density denser than any material
+  `conversion_note`, a factor of 1.0 included). A row whose `external_signal` holds no number followed by a unit (a label such as
+  `AI heater power`) and that records no conversion cannot be checked and is not flagged. A declared density denser than any material
   (60 kg/L) is refused; a wrong but possible property (2 kg/L for water) is still the AI's number, visible in the
   snapshot and the ledger.
 
