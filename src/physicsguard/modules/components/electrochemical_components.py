@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bounded_record,
     component_metadata,
@@ -41,7 +41,7 @@ class FuelCellStackBalanceModule(BaseModule):
             "faradaic_efficiency",
         )
         if self.faradaic_efficiency > 1.0:
-            raise ValueError("faradaic_efficiency must be <= 1")
+            raise DomainRefusal("faradaic_efficiency must be <= 1")
         self.residual_scale_mol_s = positive_float(
             parameters.get("residual_scale_mol_s", 1e-3),
             "residual_scale_mol_s",
@@ -157,7 +157,7 @@ class ElectrolyzerStackBalanceModule(BaseModule):
             "faradaic_efficiency",
         )
         if self.faradaic_efficiency > 1.0:
-            raise ValueError("faradaic_efficiency must be <= 1")
+            raise DomainRefusal("faradaic_efficiency must be <= 1")
         self.residual_scale_mol_s = positive_float(
             parameters.get("residual_scale_mol_s", 1e-3),
             "residual_scale_mol_s",

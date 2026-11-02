@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bounded_record,
     component_metadata,
@@ -98,7 +98,7 @@ class ThermostatValveModule(BaseModule):
         self.begin = positive_float(parameters.get("T_begin_open_K"), "T_begin_open_K") if "T_begin_open_K" in parameters else required_positive(parameters, "T_begin_open_K")
         self.full = positive_float(parameters.get("T_full_open_K"), "T_full_open_K") if "T_full_open_K" in parameters else required_positive(parameters, "T_full_open_K")
         if self.begin >= self.full:
-            raise ValueError("T_begin_open_K must be less than T_full_open_K")
+            raise DomainRefusal("T_begin_open_K must be less than T_full_open_K")
         self.scale = positive_float(parameters.get("residual_scale", 0.01), "residual_scale")
         self.role = role(parameters.get("role_override"))
         self.records = [

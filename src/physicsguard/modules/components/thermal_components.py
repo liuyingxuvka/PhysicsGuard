@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bounded_record,
     component_metadata,
@@ -160,7 +160,7 @@ class HumidifierEffectivenessModule(BaseModule):
         super().__init__(component_id, "HumidifierEffectivenessModule", parameters)
         self.effectiveness = finite_float(required(parameters, "effectiveness"), "effectiveness")
         if not 0.0 <= self.effectiveness <= 1.0:
-            raise ValueError("effectiveness must be between 0 and 1")
+            raise DomainRefusal("effectiveness must be between 0 and 1")
         self.residual_scale_humidity_ratio = positive_float(
             parameters.get("residual_scale_humidity_ratio", 0.001),
             "residual_scale_humidity_ratio",

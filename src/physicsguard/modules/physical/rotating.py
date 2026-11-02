@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.physical._common import (
     finite_float,
     metadata,
@@ -28,10 +28,10 @@ class CompressibleIsentropicCompressorPowerModule(BaseModule):
         self.cp_J_kgK = positive_float(parameters.get("cp_J_kgK", 1005.0), "cp_J_kgK")
         self.gamma = positive_float(parameters.get("gamma", 1.4), "gamma")
         if self.gamma <= 1.0:
-            raise ValueError("gamma must be > 1")
+            raise DomainRefusal("gamma must be > 1")
         self.efficiency = positive_float(parameters.get("efficiency", 0.7), "efficiency")
         if self.efficiency > 1.0:
-            raise ValueError("efficiency must be <= 1")
+            raise DomainRefusal("efficiency must be <= 1")
         self.denominator_min_abs = positive_float(
             parameters.get("denominator_min_abs", 1e-12),
             "denominator_min_abs",
@@ -54,11 +54,11 @@ class CompressibleIsentropicCompressorPowerModule(BaseModule):
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
         p_in = value(x, registry, self.component_id, "p_in_Pa")
         if abs(p_in) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: p_in_Pa is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: p_in_Pa is below denominator_min_abs")
         p_out = value(x, registry, self.component_id, "p_out_Pa")
         pressure_ratio = p_out / p_in
         if pressure_ratio <= 0:
-            raise ValueError(f"{self.component_id}: pressure_ratio must be positive")
+            raise DomainRefusal(f"{self.component_id}: pressure_ratio must be positive")
         t_in = value(x, registry, self.component_id, "T_in_K")
         m_dot = value(x, registry, self.component_id, "m_dot_kg_s")
         p_shaft = value(x, registry, self.component_id, "P_shaft_W")
@@ -105,10 +105,10 @@ class IsentropicGasTemperatureRiseModule(BaseModule):
         super().__init__(component_id, "IsentropicGasTemperatureRiseModule", parameters)
         self.gamma = positive_float(parameters.get("gamma", 1.4), "gamma")
         if self.gamma <= 1.0:
-            raise ValueError("gamma must be > 1")
+            raise DomainRefusal("gamma must be > 1")
         self.efficiency = positive_float(parameters.get("efficiency", 0.7), "efficiency")
         if self.efficiency > 1.0:
-            raise ValueError("efficiency must be <= 1")
+            raise DomainRefusal("efficiency must be <= 1")
         self.denominator_min_abs = positive_float(
             parameters.get("denominator_min_abs", 1e-12),
             "denominator_min_abs",
@@ -130,11 +130,11 @@ class IsentropicGasTemperatureRiseModule(BaseModule):
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
         p_in = value(x, registry, self.component_id, "p_in_Pa")
         if abs(p_in) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: p_in_Pa is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: p_in_Pa is below denominator_min_abs")
         p_out = value(x, registry, self.component_id, "p_out_Pa")
         pressure_ratio = p_out / p_in
         if pressure_ratio <= 0:
-            raise ValueError(f"{self.component_id}: pressure_ratio must be positive")
+            raise DomainRefusal(f"{self.component_id}: pressure_ratio must be positive")
         t_in = value(x, registry, self.component_id, "T_in_K")
         t_out = value(x, registry, self.component_id, "T_out_K")
         exponent = (self.gamma - 1.0) / self.gamma

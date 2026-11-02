@@ -15,7 +15,7 @@ from physicsguard.schema.system_spec import SystemSpec
 
 
 # A test that ends skipped fails the run (tests/no_skips.py).
-from no_skips import pytest_runtest_makereport  # noqa: E402,F401
+from no_skips import pytest_make_collect_report, pytest_runtest_makereport  # noqa: E402,F401
 
 
 ROOT = Path(__file__).resolve().parents[1]

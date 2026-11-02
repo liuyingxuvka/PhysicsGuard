@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import finite_list
 from physicsguard.modules.physical._common import (
     finite_float,
@@ -180,7 +180,7 @@ class HysteresisStateCheckModule(BaseModule):
         self.low_threshold = finite_float(required(parameters, "low_threshold"), "low_threshold")
         self.high_threshold = finite_float(required(parameters, "high_threshold"), "high_threshold")
         if self.low_threshold >= self.high_threshold:
-            raise ValueError("low_threshold must be less than high_threshold")
+            raise DomainRefusal("low_threshold must be less than high_threshold")
         self.state_on_value = finite_float(parameters.get("state_on_value", 1.0), "state_on_value")
         self.state_off_value = finite_float(parameters.get("state_off_value", 0.0), "state_off_value")
         self.state_tolerance = positive_float(parameters.get("state_tolerance", 0.25), "state_tolerance")
@@ -355,7 +355,7 @@ class SaturationModule(BaseModule):
         self.lower = finite_float(parameters["lower"], "lower")
         self.upper = finite_float(parameters["upper"], "upper")
         if self.lower >= self.upper:
-            raise ValueError("lower must be less than upper")
+            raise DomainRefusal("lower must be less than upper")
         self.role = _role(parameters.get("role_override", "equation"))
         self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
@@ -404,13 +404,13 @@ class RateLimiterModule(BaseModule):
             "rising_rate_limit",
         )
         if self.rising_rate_limit < 0:
-            raise ValueError("rising_rate_limit must be >= 0")
+            raise DomainRefusal("rising_rate_limit must be >= 0")
         self.falling_rate_limit = finite_float(
             required(parameters, "falling_rate_limit"),
             "falling_rate_limit",
         )
         if self.falling_rate_limit > 0:
-            raise ValueError("falling_rate_limit must be <= 0")
+            raise DomainRefusal("falling_rate_limit must be <= 0")
         self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
@@ -570,7 +570,7 @@ class LookupTable1DModule(BaseModule):
         if x_values[0] <= value <= x_values[-1]:
             return float(np.interp(value, x_values, y_values))
         if self.extrapolation == "error":
-            raise ValueError(f"{self.component_id}: lookup x is outside table range")
+            raise DomainRefusal(f"{self.component_id}: lookup x is outside table range")
         if self.extrapolation == "hold":
             return y_values[0] if value < x_values[0] else y_values[-1]
         if value < x_values[0]:
@@ -592,7 +592,7 @@ class MapBoundsCheckModule(BaseModule):
         self.lower = finite_float(required(parameters, "lower"), "lower")
         self.upper = finite_float(required(parameters, "upper"), "upper")
         if self.lower >= self.upper:
-            raise ValueError("lower must be less than upper")
+            raise DomainRefusal("lower must be less than upper")
         self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",

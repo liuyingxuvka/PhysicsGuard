@@ -9,7 +9,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.schema.variable import is_qualified_variable_name
 
 
@@ -154,7 +154,7 @@ class RangeCheckModule(BaseModule):
             and self.upper_bound is not None
             and self.lower_bound > self.upper_bound
         ):
-            raise ValueError(f"{component_id}: lower_bound must be <= upper_bound")
+            raise DomainRefusal(f"{component_id}: lower_bound must be <= upper_bound")
         self.residual_scale = _positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",
@@ -233,7 +233,7 @@ def _optional_finite_float(value: Any, name: str) -> Optional[float]:
 def _positive_float(value: Any, name: str) -> float:
     parsed = _finite_float(value, name)
     if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
+        raise DomainRefusal(f"{name} must be positive")
     return parsed
 
 

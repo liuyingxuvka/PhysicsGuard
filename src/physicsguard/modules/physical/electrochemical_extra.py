@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.physical._common import (
     finite_float,
     metadata,
@@ -119,7 +119,7 @@ class StackChemicalEfficiencyModule(BaseModule):
         p_stack = value(x, registry, self.component_id, "P_stack_W")
         p_chemical = value(x, registry, self.component_id, "P_chemical_W")
         if abs(p_chemical) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: P_chemical_W is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: P_chemical_W is below denominator_min_abs")
         efficiency = value(x, registry, self.component_id, "efficiency")
         return [
             ResidualRecord(
@@ -156,7 +156,7 @@ class AirOxygenMolarFlowModule(BaseModule):
             "oxygen_mole_fraction",
         )
         if self.oxygen_mole_fraction > 1.0:
-            raise ValueError("oxygen_mole_fraction must be <= 1")
+            raise DomainRefusal("oxygen_mole_fraction must be <= 1")
         self.molar_mass_air_kg_mol = positive_float(
             parameters.get("molar_mass_air_kg_mol", 0.0289652),
             "molar_mass_air_kg_mol",
@@ -240,7 +240,7 @@ class WaterProductionFaradayModule(BaseModule):
             "faradaic_efficiency",
         )
         if self.faradaic_efficiency > 1.0:
-            raise ValueError("faradaic_efficiency must be <= 1")
+            raise DomainRefusal("faradaic_efficiency must be <= 1")
         self.residual_scale_mol_s = positive_float(
             parameters.get("residual_scale_mol_s", 1e-3),
             "residual_scale_mol_s",

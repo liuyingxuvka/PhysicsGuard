@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bounded_record,
     component_metadata,
@@ -33,7 +33,7 @@ class PIDControllerStepModule(BaseModule):
         self.output_lower = _optional_float(parameters.get("output_lower"), "output_lower")
         self.output_upper = _optional_float(parameters.get("output_upper"), "output_upper")
         if self.output_lower is not None and self.output_upper is not None and self.output_lower >= self.output_upper:
-            raise ValueError("output_lower must be less than output_upper")
+            raise DomainRefusal("output_lower must be less than output_upper")
         self.residual_scale_error = positive_float(
             parameters.get("residual_scale_error", 1.0),
             "residual_scale_error",
@@ -158,7 +158,7 @@ class ActuatorFirstOrderSaturationModule(BaseModule):
         self.lower = finite_float(required(parameters, "lower"), "lower")
         self.upper = finite_float(required(parameters, "upper"), "upper")
         if self.lower >= self.upper:
-            raise ValueError("lower must be less than upper")
+            raise DomainRefusal("lower must be less than upper")
         self.residual_scale = positive_float(
             parameters.get("residual_scale", 1.0),
             "residual_scale",

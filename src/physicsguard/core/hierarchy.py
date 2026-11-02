@@ -23,6 +23,7 @@ from physicsguard.core.signal_mapping import (
     mapping_warnings,
 )
 from physicsguard.core.solver import BoundedSolver
+from physicsguard.core.refusal import DomainRefusal
 from physicsguard.schema.hierarchy_spec import (
     AuditBlockSpec,
     BlockScoringSpec,
@@ -1093,7 +1094,9 @@ def _bounded_root(function, variable) -> float | None:
         if not variable.lower_bound <= root <= variable.upper_bound:
             return None
         return root if abs(function(root)) <= 1e-6 else None
-    except (ValueError, KeyError, ArithmeticError, IndexError):
+    except (DomainRefusal, ArithmeticError):
+        # Samples across the whole window meet refusals and divisions by zero: no unique root is
+        # claimed and the variable stays unobserved. Any other error is a fault and reaches the caller.
         return None
 
 
@@ -1131,7 +1134,8 @@ def _evaluate_record(builder, registry, prototype, location, vector) -> Residual
     record = candidates[offset]
     identity = lambda item: (item.name, item.source, item.role, item.diagnostic_key)
     if identity(record) != identity(prototype):
-        raise ValueError("residual occurrence changed during bounded derivation")
+        # This relation is not the same occurrence at this value: the value is outside its domain.
+        raise DomainRefusal("residual occurrence changed during bounded derivation")
     return record
 
 
@@ -1284,7 +1288,8 @@ def _observed_resolution(
                     trial_known, checked = trial, all_checked
                 vector = registry.dict_to_vector({**initial, **trial_known})
                 trials.append((changed, vector, checked))
-            except (ValueError, KeyError, IndexError, OverflowError, ZeroDivisionError):
+            except DomainRefusal:
+                # The step is outside a relation's domain: no sample. Any other error reaches the caller.
                 continue
         for index in by_block.get(block, []):
             samples = [(value, records[index].normalized_value)]
@@ -1294,7 +1299,7 @@ def _observed_resolution(
                 try:
                     current = _evaluate_record(builder, registry, records[index], locations[index], vector)
                     samples.append((changed, current.normalized_value))
-                except (ValueError, KeyError, IndexError, OverflowError, ZeroDivisionError):
+                except DomainRefusal:
                     continue
             if len(samples) < 2:
                 continue
@@ -1449,12 +1454,11 @@ def _unit_factor_followups(report, observed, builder, registry, threshold):
                 continue
             trial = {**seed, variable:value}
             try:
-                if affected:
-                    _known,_missing,_derived,records,_skipped,_provenance = _derive_unobserved(builder,registry,trial)
-                else:
-                    records = builder.diagnostic_residual_records(registry.dict_to_vector(trial))
-            except (ValueError, KeyError, IndexError, ArithmeticError):
-                # A counterfactual outside a relation's domain is not evidence for a hint; any other error is a fault.
+                # One route: the derivation re-derives what depends on the trial value and evaluates
+                # only the residuals whose inputs are known, so a partial snapshot is handled too.
+                _known,_missing,_derived,records,_skipped,_provenance = _derive_unobserved(builder,registry,trial)
+            except DomainRefusal:
+                # A counterfactual the relation refuses is not evidence for a hint; any other error is a fault.
                 continue
             current = {record.name:record for record in records if record.name in checked}
             if checked <= current.keys() and all(current[name].abs_normalized_value <= threshold for name in checked):

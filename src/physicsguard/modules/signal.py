@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.physical._common import (
     finite_float,
     owned_record,
@@ -176,7 +176,7 @@ class RatioModule(BaseModule):
         except KeyError as exc:
             raise KeyError(f"{self.component_id}: RatioModule references unknown variable: {exc}") from exc
         if abs(denominator) < self.denominator_min_abs:
-            raise ValueError(
+            raise DomainRefusal(
                 f"{self.component_id}: denominator magnitude is below denominator_min_abs"
             )
         return [
@@ -299,9 +299,9 @@ class MappedSignalModule(BaseModule):
         self.initial_guess = finite_float(parameters.get("initial_guess", 0.0), "initial_guess")
         self.scale = positive_float(parameters.get("scale", 1.0), "scale")
         if self.lower_bound >= self.upper_bound:
-            raise ValueError(f"{component_id}: lower_bound must be less than upper_bound")
+            raise DomainRefusal(f"{component_id}: lower_bound must be less than upper_bound")
         if not self.lower_bound <= self.initial_guess <= self.upper_bound:
-            raise ValueError(f"{component_id}: initial_guess must be inside bounds")
+            raise DomainRefusal(f"{component_id}: initial_guess must be inside bounds")
         self.external_signal: Optional[str] = parameters.get("external_signal")
         self.mapping_confidence: Optional[str] = parameters.get("mapping_confidence")
         self.description: Optional[str] = parameters.get("description")

@@ -195,6 +195,15 @@ using two significant digits. A checked block without its own observed variables
 module defaults, observations or verdict. Choose scales as tolerable errors in each residual's
 unit and read this estimate before calling a numerical answer checked.
 
+A relation refuses a value outside its domain by raising `DomainRefusal` (from
+`physicsguard.modules`, a kind of `ValueError`); every native range check does, and so do the
+bounds checks of a variable declaration. The hint search, the scale-source replay and the resolution
+samples skip exactly that refusal: a refused trial gives no hint, no scale claim or no sample. Any
+other error inside them, a `KeyError`, a `ZeroDivisionError` or a plain `ValueError` from custom code
+included, stops the command with exit 2 and its text. The bounded root search below also treats a
+division by zero or an overflow at one of its sample points as no unique root. A custom module that
+refuses values raises `DomainRefusal`.
+
 ## Derivation order and fault variants
 
 Connections propagate known values within variable bounds without overwriting measurements or already derived values; propagating around a cycle creates no independent observation. Supported per-residual value/control dependencies permit bounded one-unknown derivation for equation/connection/boundary/assumption relations. Ambiguous, flat or unsupported cases remain unknown; this is not general nonlinear uniqueness.

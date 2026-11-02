@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.schema.variable import is_qualified_variable_name
 from physicsguard.modules.physical._common import finite_float, positive_float
 
@@ -165,7 +165,7 @@ class AggregateEfficiencyModule(BaseModule):
         useful = _variable_value(x, registry, self.useful_output, self.component_id)
         input_power = _variable_value(x, registry, self.input_power, self.component_id)
         if abs(input_power) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: input_power magnitude is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: input_power magnitude is below denominator_min_abs")
         efficiency = _variable_value(x, registry, self.efficiency, self.component_id)
         residual = efficiency - useful / input_power
         return [_record(self, "aggregate_efficiency", residual, self.scale, "aggregate_efficiency_mismatch", "Coarse algebraic efficiency residual.")]

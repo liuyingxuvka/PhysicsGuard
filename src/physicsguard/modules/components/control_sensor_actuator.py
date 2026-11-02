@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bounded_record,
     component_metadata,
@@ -90,9 +90,9 @@ class AntiWindupClampModule(BaseModule):
         self.output_lower = finite_float(parameters.get("output_lower"), "output_lower")
         self.output_upper = finite_float(parameters.get("output_upper"), "output_upper")
         if self.integral_lower >= self.integral_upper:
-            raise ValueError("integral_lower must be less than integral_upper")
+            raise DomainRefusal("integral_lower must be less than integral_upper")
         if self.output_lower >= self.output_upper:
-            raise ValueError("output_lower must be less than output_upper")
+            raise DomainRefusal("output_lower must be less than output_upper")
         self.scale = positive_float(parameters.get("residual_scale", 1.0), "residual_scale")
         self.records = [
             xy_record(component_id, parameters, "integral_state", "integral_state"),
@@ -129,7 +129,7 @@ class MapAxisBoundsCheckModule(BaseModule):
         same_length(self.upper_bounds, len(self.variables), "upper_bounds")
         for lower, upper in zip(self.lower_bounds, self.upper_bounds):
             if lower >= upper:
-                raise ValueError("each lower bound must be less than upper bound")
+                raise DomainRefusal("each lower bound must be less than upper bound")
         self.scale = positive_float(parameters.get("residual_scale", 1.0), "residual_scale")
 
     def declare_variables(self) -> list[VariableRecord]:
@@ -213,7 +213,7 @@ class ActuatorDeadZoneModule(BaseModule):
         super().__init__(component_id, "ActuatorDeadZoneModule", parameters)
         self.dead_zone = finite_float(parameters.get("dead_zone"), "dead_zone")
         if self.dead_zone < 0:
-            raise ValueError("dead_zone must be nonnegative")
+            raise DomainRefusal("dead_zone must be nonnegative")
         self.gain = finite_float(parameters.get("gain", 1.0), "gain")
         self.scale = positive_float(parameters.get("residual_scale", 1.0), "residual_scale")
         self.role = role(parameters.get("role_override"))

@@ -8,7 +8,7 @@ from typing import Any
 import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.schema.variable import is_qualified_variable_name
 
 
@@ -25,14 +25,14 @@ def finite_float(value: Any, name: str) -> float:
 def positive_float(value: Any, name: str) -> float:
     parsed = finite_float(value, name)
     if parsed <= 0:
-        raise ValueError(f"{name} must be positive")
+        raise DomainRefusal(f"{name} must be positive")
     return parsed
 
 
 def nonnegative_float(value: Any, name: str) -> float:
     parsed = finite_float(value, name)
     if parsed < 0:
-        raise ValueError(f"{name} must be nonnegative")
+        raise DomainRefusal(f"{name} must be nonnegative")
     return parsed
 
 

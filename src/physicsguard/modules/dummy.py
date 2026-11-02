@@ -9,7 +9,7 @@ import numpy as np
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.physical._common import finite_float
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 
 
 class DummyResidualModule(BaseModule):
@@ -29,11 +29,11 @@ class DummyResidualModule(BaseModule):
         self.scale = self._finite_float(parameters.get("scale", 1.0), "scale")
         self.unit: Optional[str] = parameters.get("unit")
         if self.lower_bound >= self.upper_bound:
-            raise ValueError(f"{component_id}: lower_bound must be less than upper_bound")
+            raise DomainRefusal(f"{component_id}: lower_bound must be less than upper_bound")
         if not self.lower_bound <= self.initial_guess <= self.upper_bound:
-            raise ValueError(f"{component_id}: initial_guess must be inside bounds")
+            raise DomainRefusal(f"{component_id}: initial_guess must be inside bounds")
         if self.scale <= 0:
-            raise ValueError(f"{component_id}: scale must be positive")
+            raise DomainRefusal(f"{component_id}: scale must be positive")
 
     @staticmethod
     def _finite_float(value: Any, name: str) -> float:

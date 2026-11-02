@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.physical._common import (
     metadata,
     owned_record,
@@ -62,7 +62,7 @@ class RelativeHumidityFromPartialPressureModule(BaseModule):
         p_vapor = value(x, registry, self.component_id, "p_vapor_Pa")
         p_sat = value(x, registry, self.component_id, "p_saturation_Pa")
         if abs(p_sat) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: p_saturation_Pa is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: p_saturation_Pa is below denominator_min_abs")
         rh = value(x, registry, self.component_id, "relative_humidity")
         return [
             ResidualRecord(
@@ -129,7 +129,7 @@ class HumidityRatioFromPartialPressureModule(BaseModule):
         p_vapor = value(x, registry, self.component_id, "p_vapor_Pa")
         denominator = p_total - p_vapor
         if denominator <= self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: p_total_Pa - p_vapor_Pa is not safely positive")
+            raise DomainRefusal(f"{self.component_id}: p_total_Pa - p_vapor_Pa is not safely positive")
         humidity_ratio = value(x, registry, self.component_id, "humidity_ratio_kg_kg")
         expected = 0.62198 * p_vapor / denominator
         return [
@@ -195,7 +195,7 @@ class WaterVaporMoleFractionModule(BaseModule):
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
         p_total = value(x, registry, self.component_id, "p_total_Pa")
         if abs(p_total) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: p_total_Pa is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: p_total_Pa is below denominator_min_abs")
         p_vapor = value(x, registry, self.component_id, "p_vapor_Pa")
         x_vapor = value(x, registry, self.component_id, "x_vapor")
         return [

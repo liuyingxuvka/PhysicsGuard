@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bilinear_interp,
     bounded_record,
@@ -35,7 +35,7 @@ class CompressorSimpleModule(BaseModule):
         self.cp_J_kgK = positive_float(parameters.get("cp_J_kgK", 1005.0), "cp_J_kgK")
         self.gamma = positive_float(parameters.get("gamma", 1.4), "gamma")
         if self.gamma <= 1.0:
-            raise ValueError("gamma must be > 1")
+            raise DomainRefusal("gamma must be > 1")
         self.denominator_min_abs = positive_float(
             parameters.get("denominator_min_abs", 1e-12),
             "denominator_min_abs",
@@ -140,7 +140,7 @@ class CompressorMapSimpleModule(BaseModule):
         self.cp_J_kgK = positive_float(parameters.get("cp_J_kgK", 1005.0), "cp_J_kgK")
         self.gamma = positive_float(parameters.get("gamma", 1.4), "gamma")
         if self.gamma <= 1.0:
-            raise ValueError("gamma must be > 1")
+            raise DomainRefusal("gamma must be > 1")
         self.denominator_min_abs = positive_float(
             parameters.get("denominator_min_abs", 1e-12),
             "denominator_min_abs",
@@ -460,16 +460,16 @@ def _compressor_values(x: np.ndarray, registry: VariableRegistry, component_id: 
 
 def _safe_pressure_ratio(p_in: float, p_out: float, minimum: float, component_id: str) -> float:
     if abs(p_in) < minimum:
-        raise ValueError(f"{component_id}: p_in_Pa is below denominator_min_abs")
+        raise DomainRefusal(f"{component_id}: p_in_Pa is below denominator_min_abs")
     pressure_ratio = p_out / p_in
     if pressure_ratio <= 0:
-        raise ValueError(f"{component_id}: pressure_ratio must be positive")
+        raise DomainRefusal(f"{component_id}: pressure_ratio must be positive")
     return pressure_ratio
 
 
 def _safe_efficiency(efficiency: float, component_id: str) -> float:
     if efficiency <= 0.0:
-        raise ValueError(f"{component_id}: efficiency must be positive")
+        raise DomainRefusal(f"{component_id}: efficiency must be positive")
     return efficiency
 
 

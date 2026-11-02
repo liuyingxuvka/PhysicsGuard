@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.physical._common import (
     finite_float,
     metadata,
@@ -72,7 +72,7 @@ def one_d_interp(
     if x_points[0] <= x <= x_points[-1]:
         return float(np.interp(x, x_points, y_points))
     if extrapolation == "error":
-        raise ValueError(f"{component_id}: map input is outside table range")
+        raise DomainRefusal(f"{component_id}: map input is outside table range")
     if extrapolation == "hold":
         return y_points[0] if x < x_points[0] else y_points[-1]
     raise ValueError("extrapolation must be 'error' or 'hold'")
@@ -91,7 +91,7 @@ def bilinear_interp(
         raise ValueError("extrapolation must be 'error' or 'hold'")
     if x < x_points[0] or x > x_points[-1] or y < y_points[0] or y > y_points[-1]:
         if extrapolation == "error":
-            raise ValueError(f"{component_id}: lookup input is outside table range")
+            raise DomainRefusal(f"{component_id}: lookup input is outside table range")
         x = min(max(x, x_points[0]), x_points[-1])
         y = min(max(y, y_points[0]), y_points[-1])
 
@@ -326,7 +326,7 @@ def residual_record(
 def validate_efficiency(value_obj: Any, name: str) -> float:
     parsed = positive_float(value_obj, name)
     if parsed > 1.0:
-        raise ValueError(f"{name} must be <= 1")
+        raise DomainRefusal(f"{name} must be <= 1")
     return parsed
 
 
@@ -335,13 +335,13 @@ def validate_fraction_value(value_obj: Any, name: str, *, allow_zero: bool = Tru
     lower_ok = parsed >= 0.0 if allow_zero else parsed > 0.0
     if not lower_ok or parsed > 1.0:
         bound = "0 <= value <= 1" if allow_zero else "0 < value <= 1"
-        raise ValueError(f"{name} must satisfy {bound}")
+        raise DomainRefusal(f"{name} must satisfy {bound}")
     return parsed
 
 
 def check_denominator(value_obj: float, min_abs: float, name: str) -> None:
     if abs(value_obj) < min_abs:
-        raise ValueError(f"{name} magnitude must be at least {min_abs}")
+        raise DomainRefusal(f"{name} magnitude must be at least {min_abs}")
 
 
 __all__ = [

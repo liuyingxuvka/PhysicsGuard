@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.schema.variable import is_qualified_variable_name
 from physicsguard.modules.physical._common import (
     finite_float,
@@ -373,7 +373,7 @@ class PumpHydraulicPowerModule(BaseModule):
         self.rho_kg_m3 = _required_positive(parameters, "rho_kg_m3")
         self.efficiency = positive_float(parameters.get("efficiency", 1.0), "efficiency")
         if self.efficiency > 1:
-            raise ValueError("efficiency must be <= 1")
+            raise DomainRefusal("efficiency must be <= 1")
         self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",

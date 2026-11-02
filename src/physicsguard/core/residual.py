@@ -12,6 +12,7 @@ import numpy as np
 from physicsguard.core.assumptions import AssumptionCard, AssumptionManager, AssumptionSummary
 from physicsguard.core._residual_dependencies import Dependencies, module_residual_dependencies
 from physicsguard.core.registry import VariableRecord, VariableRegistry
+from physicsguard.core.refusal import DomainRefusal
 from physicsguard.modules.registry import ModuleRegistry, instantiate_module_with_parameter_reads, default_module_registry
 from physicsguard.schema.system_spec import SystemSpec, VariableOverrideSpec
 
@@ -197,74 +198,71 @@ class ResidualBuilder:
             # Custom implementations keep a numeric estimate but do not inherit native scale provenance.
             if not type(module).__module__.startswith("physicsguard.modules."):
                 continue
-            try:
-                component = components[module.component_id]
-                parameters = component.parameters
-                reads: dict[str, Any] = {}
-                native = instantiate_module_with_parameter_reads(
-                    self.module_registry, component.type, deepcopy(parameters), reads, component.id,
-                )
-                baseline = native.residuals(vector, registry)
-                if any(not isinstance(index, int) or index < 0 or index >= len(baseline) for _, index in positions):
+            # The baseline replay repeats the builder's own construction and evaluation, so any error here is a fault.
+            component = components[module.component_id]
+            parameters = component.parameters
+            reads: dict[str, Any] = {}
+            native = instantiate_module_with_parameter_reads(
+                self.module_registry, component.type, deepcopy(parameters), reads, component.id,
+            )
+            baseline = native.residuals(vector, registry)
+            if any(not isinstance(index, int) or index < 0 or index >= len(baseline) for _, index in positions):
+                continue
+            actual = [records[position] for position, _ in positions]
+            expected = [baseline[index] for _, index in positions]
+            if (identities(actual) != identities(expected)
+                    or any(a.scale != b.scale for a, b in zip(actual, expected))):
+                continue
+            contributors: list[set[str]] = [set() for _ in baseline]
+            supported = True
+            compound_reads = False
+            for key, default in reads.items():
+                value = parameters.get(key, default)
+                if isinstance(value, (dict, list, tuple)):
+                    compound_reads = True
                     continue
-                actual = [records[position] for position, _ in positions]
-                expected = [baseline[index] for _, index in positions]
-                if (identities(actual) != identities(expected)
-                        or any(a.scale != b.scale for a, b in zip(actual, expected))):
+                if isinstance(value, bool):
                     continue
-                contributors: list[set[str]] = [set() for _ in baseline]
-                supported = True
-                compound_reads = False
-                for key, default in reads.items():
-                    value = parameters.get(key, default)
-                    if isinstance(value, (dict, list, tuple)):
-                        compound_reads = True
+                numeric = value
+                if isinstance(value, str):
+                    try:
+                        numeric = float(value)
+                    except ValueError:
                         continue
-                    if isinstance(value, bool):
+                if not isinstance(numeric, (int, float)) or not math.isfinite(numeric):
+                    continue
+                if isinstance(numeric, int):
+                    candidates = (numeric + 1, numeric - 1)
+                else:
+                    step = max(abs(numeric) * 1e-4, math.ulp(numeric)) if numeric else 1e-4
+                    candidates = (numeric + step, numeric - step)
+                replayed = False
+                for candidate in candidates:
+                    if candidate == numeric or not math.isfinite(candidate):
                         continue
-                    numeric = value
-                    if isinstance(value, str):
-                        try:
-                            numeric = float(value)
-                        except ValueError:
-                            continue
-                    if not isinstance(numeric, (int, float)) or not math.isfinite(numeric):
+                    trial = deepcopy(parameters)
+                    trial[key] = str(candidate) if isinstance(value, str) else candidate
+                    try:
+                        changed = self.module_registry.create(component.type, component.id, trial).residuals(vector, registry)
+                    except DomainRefusal:
+                        # The module refuses this perturbed parameter; other errors are faults and propagate.
                         continue
-                    if isinstance(numeric, int):
-                        candidates = (numeric + 1, numeric - 1)
-                    else:
-                        step = max(abs(numeric) * 1e-4, math.ulp(numeric)) if numeric else 1e-4
-                        candidates = (numeric + step, numeric - step)
-                    replayed = False
-                    for candidate in candidates:
-                        if candidate == numeric or not math.isfinite(candidate):
-                            continue
-                        trial = deepcopy(parameters)
-                        trial[key] = str(candidate) if isinstance(value, str) else candidate
-                        try:
-                            changed = self.module_registry.create(component.type, component.id, trial).residuals(vector, registry)
-                        except (ValueError, KeyError, IndexError, ArithmeticError):
-                            # The module refuses this perturbed parameter; other errors are faults and propagate.
-                            continue
-                        if identities(changed) != identities(baseline):
-                            supported = False
-                            break
-                        replayed = True
-                        for index, row in enumerate(changed):
-                            if row.scale != baseline[index].scale:
-                                contributors[index].add(key)
-                    if not supported or not replayed:
+                    if identities(changed) != identities(baseline):
                         supported = False
                         break
-                if supported:
-                    for position, index in positions:
-                        if contributors[index]:
-                            defaults[position] = any(key not in parameters for key in contributors[index])
-                        elif not compound_reads:
-                            defaults[position] = True
-            except (ValueError, KeyError, IndexError, ArithmeticError):
-                # A replay the native module refuses cannot license a scale claim; other errors propagate.
-                continue
+                    replayed = True
+                    for index, row in enumerate(changed):
+                        if row.scale != baseline[index].scale:
+                            contributors[index].add(key)
+                if not supported or not replayed:
+                    supported = False
+                    break
+            if supported:
+                for position, index in positions:
+                    if contributors[index]:
+                        defaults[position] = any(key not in parameters for key in contributors[index])
+                    elif not compound_reads:
+                        defaults[position] = True
         return defaults
 
     def _module_from_component(self, component):

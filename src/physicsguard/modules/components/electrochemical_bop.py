@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bounded_record,
     component_metadata,
@@ -187,7 +187,7 @@ class FuelCellSystemEfficiencyModule(BaseModule):
         eff = value(x, registry, self.component_id, "efficiency")
         denom = h2 * lhv
         if abs(denom) < self.den_min:
-            raise ValueError(f"{self.component_id}: fuel-cell efficiency denominator is too small")
+            raise DomainRefusal(f"{self.component_id}: fuel-cell efficiency denominator is too small")
         return [
             residual_record(self, "fc_system_net_power", net - (stack - aux), self.power_scale, "fc_system_net_power_mismatch", "Fuel-cell system net power residual."),
             residual_record(self, "fc_system_efficiency", eff - net / denom, self.eff_scale, "fc_system_efficiency_mismatch", "Fuel-cell system efficiency residual."),

@@ -7,6 +7,7 @@ from typing import Any
 
 import numpy as np
 
+from physicsguard.core.refusal import DomainRefusal
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 
 
@@ -36,3 +37,6 @@ class BaseModule(ABC):
     @abstractmethod
     def metadata(self) -> dict[str, Any]:
         """Return JSON-serializable module metadata."""
+
+
+__all__ = ["BaseModule", "DomainRefusal"]

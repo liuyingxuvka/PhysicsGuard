@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.physical._common import (
     finite_float,
     metadata,
@@ -301,7 +301,7 @@ class IdealGasDensityModule(BaseModule):
         pressure = value(x, registry, self.component_id, "p_Pa")
         temperature = value(x, registry, self.component_id, "T_K")
         if abs(temperature) < self.temperature_min_abs:
-            raise ValueError(f"{self.component_id}: T_K is below temperature_min_abs")
+            raise DomainRefusal(f"{self.component_id}: T_K is below temperature_min_abs")
         density = value(x, registry, self.component_id, "rho_kg_m3")
         expected = pressure * self.molar_mass_kg_mol / (UNIVERSAL_GAS_CONSTANT * temperature)
         return [
@@ -383,7 +383,7 @@ class HeatExchangerEffectivenessModule(BaseModule):
         self.cp_cold_J_kgK = positive_float(parameters.get("cp_cold_J_kgK", 1005.0), "cp_cold_J_kgK")
         self.effectiveness = finite_float(required(parameters, "effectiveness"), "effectiveness")
         if not 0.0 <= self.effectiveness <= 1.0:
-            raise ValueError("effectiveness must be between 0 and 1")
+            raise DomainRefusal("effectiveness must be between 0 and 1")
         self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),
             "residual_scale_W",
@@ -464,7 +464,7 @@ class RadiativeHeatTransferModule(BaseModule):
         super().__init__(component_id, "RadiativeHeatTransferModule", parameters)
         self.emissivity = finite_float(required(parameters, "emissivity"), "emissivity")
         if not 0.0 <= self.emissivity <= 1.0:
-            raise ValueError("emissivity must be between 0 and 1")
+            raise DomainRefusal("emissivity must be between 0 and 1")
         self.area_m2 = required_positive(parameters, "area_m2")
         self.residual_scale_W = positive_float(
             parameters.get("residual_scale_W", 1000.0),

@@ -8,6 +8,8 @@ from typing import Optional
 
 import numpy as np
 
+from physicsguard.core.refusal import DomainRefusal
+
 
 @dataclass(frozen=True)
 class VariableRecord:
@@ -40,11 +42,11 @@ class VariableRecord:
             if not math.isfinite(value):
                 raise ValueError(f"{self.name}: {field_name} must be finite")
         if self.lower_bound >= self.upper_bound:
-            raise ValueError(f"{self.name}: lower_bound must be less than upper_bound")
+            raise DomainRefusal(f"{self.name}: lower_bound must be less than upper_bound")
         if not self.lower_bound <= self.initial_guess <= self.upper_bound:
-            raise ValueError(f"{self.name}: initial_guess must be inside bounds")
+            raise DomainRefusal(f"{self.name}: initial_guess must be inside bounds")
         if self.scale <= 0:
-            raise ValueError(f"{self.name}: scale must be positive")
+            raise DomainRefusal(f"{self.name}: scale must be positive")
 
 
 class VariableRegistry:

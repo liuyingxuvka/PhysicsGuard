@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.physical._common import (
     finite_float,
     metadata,
@@ -82,7 +82,7 @@ class PressureRatioModule(BaseModule):
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
         p_in = value(x, registry, self.component_id, "p_in_Pa")
         if abs(p_in) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: p_in_Pa is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: p_in_Pa is below denominator_min_abs")
         p_out = value(x, registry, self.component_id, "p_out_Pa")
         ratio = value(x, registry, self.component_id, "pressure_ratio")
         return [
@@ -173,7 +173,7 @@ class EfficiencyModule(BaseModule):
     def residuals(self, x: np.ndarray, registry: VariableRegistry) -> list[ResidualRecord]:
         input_power = value(x, registry, self.component_id, "input_power_W")
         if abs(input_power) < self.denominator_min_abs:
-            raise ValueError(f"{self.component_id}: input_power_W is below denominator_min_abs")
+            raise DomainRefusal(f"{self.component_id}: input_power_W is below denominator_min_abs")
         useful_output = value(x, registry, self.component_id, "useful_output_power_W")
         efficiency = value(x, registry, self.component_id, "efficiency")
         return [

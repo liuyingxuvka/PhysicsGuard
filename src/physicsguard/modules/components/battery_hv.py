@@ -8,7 +8,7 @@ import numpy as np
 
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
     bounded_record,
     check_denominator,
@@ -43,7 +43,7 @@ class BatterySOCStepModule(BaseModule):
         self.dt = required_positive(parameters, "dt_s")
         self.eta = positive_float(parameters.get("coulombic_efficiency", 1.0), "coulombic_efficiency")
         if self.eta > 1.0:
-            raise ValueError("coulombic_efficiency must be <= 1")
+            raise DomainRefusal("coulombic_efficiency must be <= 1")
         self.sign = parameters.get("sign_convention", "discharge_positive")
         if self.sign not in {"discharge_positive", "charge_positive"}:
             raise ValueError("sign_convention must be 'discharge_positive' or 'charge_positive'")
@@ -196,11 +196,11 @@ class BatteryPowerLimitCheckModule(BaseModule):
         self.soc_min = float(parameters.get("SOC_min", 0.0))
         self.soc_max = float(parameters.get("SOC_max", 1.0))
         if self.soc_min >= self.soc_max:
-            raise ValueError("SOC_min must be less than SOC_max")
+            raise DomainRefusal("SOC_min must be less than SOC_max")
         self.t_min = float(parameters.get("T_min_K", 250.0))
         self.t_max = float(parameters.get("T_max_K", 350.0))
         if self.t_min >= self.t_max:
-            raise ValueError("T_min_K must be less than T_max_K")
+            raise DomainRefusal("T_min_K must be less than T_max_K")
         self.scale = positive_float(parameters.get("residual_scale_W", 1000.0), "residual_scale_W")
         self.records = [
             power_record(component_id, parameters, "power_W", "power", 1000.0),

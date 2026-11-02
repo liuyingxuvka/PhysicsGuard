@@ -1,11 +1,12 @@
 """PhysicsGuard module implementations and registry."""
 
-from physicsguard.modules.base import BaseModule
+from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.registry import ModuleRegistry, default_module_registry
 
 __all__ = [
     "BaseModule",
     "ConservationSumModule",
+    "DomainRefusal",
     "DummyResidualModule",
     "LinearRelationModule",
     "MappedSignalModule",
