@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Maintenance checks run on FlowGuard 0.72.0. The project rules for the coding agent are FlowGuard's four plain rules (status first, store only the owner's own words, find code with where, run the tests and commit in your own words); the round-11 action list that had been stored as if the owner wrote it is marked as not the owner's words, so status no longer shows it as an open request. A new file that FlowGuard's map does not list, or a file whose map description may be out of date, is now reported as information and no longer fails the checks.
+
 ## v0.16.0 - 2026-10-31 - Hints, resolution and raw-unit snapshots on the tree
 
 - The compact tree prints one hint line per bug-family follow-up, for example "hint: unit_conversion heater.Q_dot_W multiply by 1000"; before, the hint existed only in --json.
