@@ -284,3 +284,50 @@ def test_a_number_without_a_unit_is_not_a_reading(tmp_path, signal) -> None:
     edits = {**MIX_LABEL, "heater.m_dot_kg_s": {"external_signal": signal, "conversion_factor": None, "conversion_note": None}}
     _report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits)))
     assert list(ledger["heater.m_dot_kg_s"]["issue_codes"]) == []
+
+
+# Several readings in one external_signal are each compared with the row's value and with each other.
+
+def test_two_readings_are_both_compared_with_the_raw_value(tmp_path) -> None:
+    """The review's case: raw 6 L/s through the density (6 kg/s) beside "6 L/min (0.1 kg/s)", two readings that agree."""
+    edits = {**MIX_LABEL, "heater.m_dot_kg_s": {**RAW_B["heater.m_dot_kg_s"], "external_signal": "6 L/min (0.1 kg/s)"}}
+    path = _trial(tmp_path, edits, WATER_M3)
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s: external_signal reads 6 L/min = 0\.1 kg/s "
+                                         r".* and 0\.1 kg/s = 0\.1 kg/s .*but raw_value 6 L/s converts to 6 kg/s"):
+        _load(path)
+    result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
+    assert result.returncode == 2 and "signal_reading_disagrees:heater.m_dot_kg_s" in result.stderr
+
+
+def test_two_readings_that_disagree_with_each_other_stop_the_run(tmp_path) -> None:
+    """A second reading that matches the slip (6 kg/s) does not hide the first one (6 L/min = 0.1 kg/s)."""
+    path = _write(tmp_path, {"heater.m_dot_kg_s": {"value": 6.0, "unit": "kg/s", "external_signal": "6 L/min = 6 kg/s"}}, WATER)
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s: .*the readings disagree with each other "
+                                         r"\(6 L/min = 0\.1 kg/s, 6 kg/s = 6 kg/s\)"):
+        _load(path)
+
+
+def test_two_readings_that_agree_with_the_value_check_the_row(tmp_path) -> None:
+    path = _write(tmp_path, {"heater.m_dot_kg_s": {"raw_value": 6, "raw_unit": "L/min", "unit": "kg/s",
+                                                   "conversion_property": "water_density",
+                                                   "external_signal": "6 L/min (0.1 kg/s)"}}, WATER)
+    row = _load(path).variables["heater.m_dot_kg_s"]
+    assert row._conversion_checked is True and not row._signal_disagrees
+    assert "agrees with external_signal 6 L/min" in row._conversion_check and "0.1 kg/s through the unit table" in row._conversion_check
+
+
+def test_two_readings_inside_a_longer_label_are_reported_when_one_disagrees(tmp_path) -> None:
+    path = _write(tmp_path, {"heater.m_dot_kg_s": {"value": 0.1, "unit": "kg/s",
+                                                   "external_signal": "pump flow 6 L/min, about 6 kg/s"}}, WATER)
+    row = _load(path).variables["heater.m_dot_kg_s"]
+    assert row._signal_disagrees is True and "reported, not enforced" in row._conversion_check
+    assert "6 kg/s = 6 kg/s" in row._conversion_check
+
+
+def test_a_second_reading_that_needs_an_undeclared_property_leaves_the_row_unchecked(tmp_path) -> None:
+    edits = {**MIX_LABEL, "heater.m_dot_kg_s": {"value": 0.1, "external_signal": "6 L/min (0.1 kg/s)",
+                                                 "conversion_factor": None, "conversion_note": None}}
+    _report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits)))
+    row = ledger["heater.m_dot_kg_s"]
+    assert list(row["issue_codes"]) == ["conversion_unchecked"] and row["missing_property"] == "density"
+    assert "agrees with external_signal 0.1 kg/s" in row["conversion_check"]

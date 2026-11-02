@@ -145,9 +145,12 @@ def _signal_readings(text: str | None) -> _SignalText:
         tokens = [word.group() for word in words]
         if not tokens:
             continue
-        read = next(((count, _unit_text(tokens[:count])) for count in range(min(_UNIT_WORDS, len(tokens)), 0, -1)
-                     if read_unit(_unit_text(tokens[:count])) is not None
-                     or is_transducer_output(_unit_text(tokens[:count]))), None)
+        read = None
+        for count in range(min(_UNIT_WORDS, len(tokens)), 0, -1):
+            unit = _unit_text(tokens[:count])
+            if read_unit(unit) is not None or is_transducer_output(unit):
+                read = count, unit
+                break
         if read is not None and not (read[0] < len(tokens) and _continues_unit(tokens[read[0]])):
             used = read[0]
             readings.append(_Reading(float(match.group(1)), read[1]))
@@ -157,8 +160,12 @@ def _signal_readings(text: str | None) -> _SignalText:
         else:
             continue
         spans.append((match.start(), match.end() + words[used - 1].end()))
-    rest = "".join(text[stop:start] for (_, stop), (start, _) in zip([(0, 0)] + spans, spans + [(len(text), 0)]))
-    whole = bool(readings) and not unreadable and re.fullmatch(r"[\s()\[\],;:.=]*", rest) is not None
+    rest, position = [], 0
+    for start, stop in spans:
+        rest.append(text[position:start])
+        position = stop
+    rest.append(text[position:])
+    whole = bool(readings) and not unreadable and re.fullmatch(r"[\s()\[\],;:.=]*", "".join(rest)) is not None
     return _SignalText(readings, unreadable, whole)
 
 
@@ -199,21 +206,6 @@ def _reading_routes(reading: _Reading, row: ObservedValueSpec, raw_conversion: t
     return routes
 
 
-def _route_problems(row: ObservedValueSpec, converted: float, factor: float, offset: float, raw: bool,
-                    origin: str) -> list[str]:
-    """What disagrees with a reading converted on one route: the row's value, or a recorded factor/offset."""
-    problems = []
-    if not math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0):
-        problems.append(f"{origin} converts to {row.value:g} {row.unit}" if raw else f"the value is {row.value:g} {row.unit}")
-    if row.conversion_factor is not None and not raw and not math.isclose(row.conversion_factor, factor,
-                                                                           rel_tol=RAW_VALUE_REL_TOL):
-        problems.append(f"the recorded conversion_factor is {row.conversion_factor:g}")
-    if row.conversion_offset is not None and not raw and not math.isclose(row.conversion_offset, offset,
-                                                                           rel_tol=RAW_VALUE_REL_TOL, abs_tol=1e-9):
-        problems.append(f"the recorded conversion_offset is {row.conversion_offset:g}")
-    return problems
-
-
 def _missing_property_sentence(reading: _Reading, row: ObservedValueSpec, linking: str,
                                properties: dict[str, PhysicalPropertySpec]) -> str:
     """Which property the reading needs and what the file declares instead."""
@@ -233,16 +225,16 @@ def _quantity_words(unit: str) -> str:
 
 def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None,
                           properties: dict[str, PhysicalPropertySpec]) -> None:
-    """Every row: compare the reading its external_signal names with the row's value, both in the model unit.
+    """Every row: compare every reading its external_signal names with the row's value, and with each other,
+    all in the model unit.
 
     raw_conversion is the factor and offset the tool applied to raw_value, or None for a row given in its
     model unit (a conversion done outside the tool, whose recorded factor/offset is compared too). A reading
-    of another quantity is converted through a declared property (see _reading_routes); when the file
-    declares no property that links them, or no single property can, the row is left unchecked with why. A
-    number followed by a unit the tool cannot read is flagged signal_reading_unreadable. When the whole
-    external_signal is the reading, a disagreement stops the run like a raw_value disagreement; a reading
-    found inside a longer text is reported, because such a text can name other numbers. Several readings
-    leave the row unchecked.
+    of another quantity is converted through a declared property (see _reading_routes); a reading the tool
+    cannot convert (no declared property links it, or no single property can) leaves the row unchecked with
+    why. A number followed by a unit the tool cannot read is flagged signal_reading_unreadable. When the
+    whole external_signal is its readings, a disagreement stops the run like a raw_value disagreement; a
+    reading found inside a longer text is reported, because such a text can name other numbers.
     """
     raw = raw_conversion is not None
     recorded = [] if raw else [name for name in ("conversion_factor", "conversion_offset", "conversion_note")
@@ -255,60 +247,117 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
         note = (f"signal_reading_unreadable:{variable}: {', '.join(f'{chr(34)}{text}{chr(34)}' for text in signal.unreadable)} "
                 f"in external_signal is a number followed by a unit the tool cannot read, so it is not compared with "
                 f"{origin}; write the unit as the unit table does ({READABLE_HINT})")
+    tail = f"; {note}" if note else ""
     if not signal.readings:
         if recorded:
             _mark_unchecked(row, f"{', '.join(recorded)} recorded without raw_value: a conversion done outside the tool, "
-                                 "which it cannot check" + (f"; {note}" if note else ""))
+                                 "which it cannot check" + tail)
         elif note:
             row._conversion_check = f"{row._conversion_check}; {note}" if raw else note
         return
-    if len(signal.readings) > 1:
-        _mark_unchecked(row, f"external_signal names {len(signal.readings)} readings ({', '.join(map(str, signal.readings))}); "
-                             f"the tool cannot tell which one {origin} came from, so it cannot check the conversion"
-                             + (f"; {note}" if note else ""))
+    compared: list[tuple[_Reading, list[tuple[float, float, float, str]]]] = []
+    unusable: list[tuple[_Reading, str | None]] = []
+    for reading in signal.readings:
+        routes = _reading_routes(reading, row, raw_conversion, properties)
+        if routes:
+            compared.append((reading, [(reading.number * factor + offset, factor, offset, how) for factor, offset, how in routes]))
+        else:
+            unusable.append((reading, linking_quantity(reading.unit, row.unit)))
+    problems = _reading_problems(row, compared, raw, origin)
+    if problems:
+        sentence = (f"external_signal reads {' and '.join(_converted_words(reading, routes, row.unit) for reading, routes in compared)}, "
+                    f"but {('; ' if len(compared) > 1 else ' and ').join(problems)}")
+        if signal.whole:
+            remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
+                      "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
+                      "converts it")
+            raise ValueError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
+        unused = f"; external_signal also reads {_unusable_words(row, unusable, properties, origin, raw)}" if unusable else ""
+        _mark_unchecked(row, f"{sentence} (a reading inside a longer external_signal is reported, not enforced; write the "
+                             f"reading alone{'' if raw else ', or as raw_value and raw_unit,'} to have it enforced)"
+                             + unused + tail)
+        row._signal_disagrees = True
         return
-    reading = signal.readings[0]
-    routes = _reading_routes(reading, row, raw_conversion, properties)
-    given = f" ({row.raw_value:g} {row.raw_unit} as given)" if raw else f" ({row.value:g} {row.unit} as given)"
-    if not routes:
-        linking = linking_quantity(reading.unit, row.unit)
-        if linking is None:
-            _mark_unchecked(row, f"external_signal reads {reading} ({_quantity_words(reading.unit)}): neither the unit table "
-                                 f"nor one declared property turns it into {row.unit} ({describe_quantity(row.unit)}), so "
-                                 f"the tool cannot compare it with {origin}{given}" + (f"; {note}" if note else ""))
-            return
-        row._missing_property = linking
-        _mark_unchecked(row, f"external_signal reads {reading}: {_missing_property_sentence(reading, row, linking, properties)}; "
-                             f"declare the {linking} under properties so the tool converts the reading and compares it "
-                             f"with {origin}{given}" + (f"; {note}" if note else ""))
+    agreed = " and ".join(f"{reading} {_agreeing_route(row, routes)}" for reading, routes in compared)
+    if raw:
+        # The raw conversion keeps its own status: an agreeing reading does not check a transducer calibration.
+        check = f"{row._conversion_check}; agrees with external_signal {agreed}" if compared else row._conversion_check
+    else:
+        check = f"value agrees with external_signal {agreed}" if compared else ""
+    if unusable:
+        linking = sorted({quantity for _reading, quantity in unusable if quantity is not None})
+        row._missing_property = ", ".join(linking) if linking else None
+        unused = f"external_signal {'also ' if compared else ''}reads {_unusable_words(row, unusable, properties, origin, raw)}"
+        _mark_unchecked(row, (f"{check}; but {unused}" if check else unused) + tail)
         return
-    converted = [(reading.number * factor + offset, factor, offset, how) for factor, offset, how in routes]
-    for value, factor, offset, how in converted:
-        if not _route_problems(row, value, factor, offset, raw, origin):
-            if raw:
-                # The raw conversion keeps its own status: an agreeing reading does not check a transducer calibration.
-                row._conversion_check += f"; agrees with external_signal {reading} {how}"
-            else:
-                row._conversion_checked = True
-                row._conversion_check = f"value agrees with external_signal {reading} {how}"
-            if note:
-                row._conversion_check += f"; {note}"
-            return
-    value, factor, offset, how = converted[0]
-    problems = _route_problems(row, value, factor, offset, raw, origin)
-    alternatives = "".join(f", or {other:g} {row.unit} {other_how}" for other, _f, _o, other_how in converted[1:])
+    if not raw:
+        row._conversion_checked = True
+    row._conversion_check = check + tail
+
+
+def _converted_words(reading: _Reading, routes: list[tuple[float, float, float, str]], unit: str) -> str:
+    value, factor, offset, how = routes[0]
     adjustment = f" + {offset:g}" if offset else ""
-    sentence = (f"external_signal reads {reading} = {value:g} {row.unit} {how} "
-                f"(x {factor:g}{adjustment}){alternatives}, but {' and '.join(problems)}")
-    if signal.whole:
-        remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
-                  "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
-                  "converts it")
-        raise ValueError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
-    _mark_unchecked(row, f"{sentence} (a reading inside a longer external_signal is reported, not enforced; write the "
-                         f"reading alone{'' if raw else ', or as raw_value and raw_unit,'} to have it enforced)"
-                         + (f"; {note}" if note else ""))
-    row._signal_disagrees = True
+    alternatives = "".join(f", or {other:g} {unit} {other_how}" for other, _f, _o, other_how in routes[1:])
+    return f"{reading} = {value:g} {unit} {how} (x {factor:g}{adjustment}){alternatives}"
+
+
+def _close(a: float, b: float) -> bool:
+    return math.isclose(a, b, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0)
+
+
+def _agreeing_route(row: ObservedValueSpec, routes: list[tuple[float, float, float, str]]) -> str:
+    return next(how for value, _factor, _offset, how in routes if _close(row.value, value))
+
+
+def _reading_problems(row: ObservedValueSpec, compared: list[tuple[_Reading, list[tuple[float, float, float, str]]]],
+                      raw: bool, origin: str) -> list[str]:
+    """What disagrees: the row's value with a reading, a recorded factor/offset with every route that matches the
+    value, or two readings with each other."""
+    if not compared:
+        return []
+    problems = []
+    off = [reading for reading, routes in compared if not any(_close(row.value, value) for value, *_rest in routes)]
+    if off:
+        text = f"{origin} converts to {row.value:g} {row.unit}" if raw else f"the value is {row.value:g} {row.unit}"
+        if len(off) < len(compared):
+            text += f", which {', '.join(map(str, off))} disagree{'s' if len(off) == 1 else ''} with"
+        problems.append(text)
+    if not raw and (row.conversion_factor is not None or row.conversion_offset is not None):
+        routes = [route for _reading, readings in compared for route in readings]
+        candidates = [route for route in routes if _close(row.value, route[0])] or routes
+        factor_ok = lambda factor: row.conversion_factor is None or math.isclose(row.conversion_factor, factor,
+                                                                                 rel_tol=RAW_VALUE_REL_TOL)
+        offset_ok = lambda offset: row.conversion_offset is None or math.isclose(row.conversion_offset, offset,
+                                                                                 rel_tol=RAW_VALUE_REL_TOL, abs_tol=1e-9)
+        if not any(factor_ok(factor) and offset_ok(offset) for _value, factor, offset, _how in candidates):
+            _value, factor, offset, _how = candidates[0]
+            if not factor_ok(factor):
+                problems.append(f"the recorded conversion_factor is {row.conversion_factor:g}")
+            if not offset_ok(offset):
+                problems.append(f"the recorded conversion_offset is {row.conversion_offset:g}")
+    for position, (first, first_routes) in enumerate(compared):
+        for second, second_routes in compared[position + 1:]:
+            if not any(_close(a[0], b[0]) for a in first_routes for b in second_routes):
+                problems.append(f"the readings disagree with each other ({first} = {first_routes[0][0]:g} {row.unit}, "
+                                f"{second} = {second_routes[0][0]:g} {row.unit})")
+    return problems
+
+
+def _unusable_words(row: ObservedValueSpec, unusable: list[tuple[_Reading, str | None]],
+                    properties: dict[str, PhysicalPropertySpec], origin: str, raw: bool) -> str:
+    """Each reading the tool cannot convert to the model unit, and why it was not compared."""
+    given = f" ({row.raw_value:g} {row.raw_unit} as given)" if raw else f" ({row.value:g} {row.unit} as given)"
+    parts = []
+    for reading, linking in unusable:
+        if linking is None:
+            parts.append(f"{reading} ({_quantity_words(reading.unit)}): neither the unit table nor one declared property "
+                         f"turns it into {row.unit} ({describe_quantity(row.unit)}), so the tool cannot compare it with "
+                         f"{origin}{given}")
+        else:
+            parts.append(f"{reading}: {_missing_property_sentence(reading, row, linking, properties)}; declare the {linking} "
+                         f"under properties so the tool converts the reading and compares it with {origin}{given}")
+    return "; and ".join(parts)
 
 
 def _mark_unchecked(row: ObservedValueSpec, reason: str) -> None:
