@@ -18,7 +18,7 @@ import yaml
 
 from physicsguard.core.units import (
     READABLE_HINT, describe_quantity, is_transducer_output, known_conversion, linking_quantity, property_conversion,
-    read_unit, unit_conversion,
+    property_link, read_unit, unit_conversion,
 )
 from physicsguard.schema.observation_spec import ObservedValueSpec, ObservedValuesSpec, PhysicalPropertySpec
 
@@ -68,7 +68,7 @@ def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: d
     """Convert each raw reading once, then check every row against the reading its external_signal names."""
     for variable, row in variables.items():
         raw_conversion = _convert_raw_row(variable, row, properties) if row.raw_value is not None else None
-        _check_signal_reading(variable, row, raw_conversion)
+        _check_signal_reading(variable, row, raw_conversion, properties)
 
 
 def _convert_raw_row(variable: str, row: ObservedValueSpec,
@@ -128,41 +128,81 @@ def _unit_text(words: list[str]) -> str:
     return unit
 
 
-def _reading_route(reading: _Reading, row: ObservedValueSpec,
-                   raw_conversion: tuple[float, float] | None) -> tuple[float, float, str] | None:
-    """Factor, offset and wording that turn a signal reading into the model unit, or None when the tool has none.
+def _reading_routes(reading: _Reading, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None,
+                    properties: dict[str, PhysicalPropertySpec]) -> list[tuple[float, float, str]]:
+    """Each factor, offset and wording that turn a signal reading into the model unit; empty when the tool has none.
 
     A reading of the model unit's quantity goes through the unit table. On a row the tool converted from
     raw_value, a reading of the raw unit's quantity goes through the table to raw_unit and then through the
-    row's own conversion (its declared property or transducer calibration), the same way as raw_value.
+    row's own conversion (its declared property or transducer calibration), the same way as raw_value. A
+    reading of another quantity goes through a declared property that links it to the model unit: the row's
+    conversion_property, or, when the row names none, each declared property that links them.
     """
     known = known_conversion(reading.unit, row.unit)
     if known is not None:
-        return known[0], known[1], "through the unit table"
+        return [(known[0], known[1], "through the unit table")]
     if raw_conversion is not None:
         to_raw = known_conversion(reading.unit, row.raw_unit)
         if to_raw is not None:
             factor, offset = raw_conversion
-            return (to_raw[0] * factor, to_raw[1] * factor + offset,
-                    f"through the unit table to {row.raw_unit}, then as raw_value")
-    return None
+            return [(to_raw[0] * factor, to_raw[1] * factor + offset,
+                     f"through the unit table to {row.raw_unit}, then as raw_value")]
+    names = [row.conversion_property] if row.conversion_property is not None else sorted(properties)
+    routes = []
+    for name in names:
+        prop = properties[name]
+        factor = property_link(reading.unit, row.unit, prop.value, prop.unit)
+        if factor is not None:
+            routes.append((factor, 0.0, f"through {name} ({prop.value:g} {prop.unit})"))
+    return routes
 
 
-def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None) -> None:
+def _route_problems(row: ObservedValueSpec, converted: float, factor: float, offset: float, raw: bool,
+                    origin: str) -> list[str]:
+    """What disagrees with a reading converted on one route: the row's value, or a recorded factor/offset."""
+    problems = []
+    if not math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0):
+        problems.append(f"{origin} converts to {row.value:g} {row.unit}" if raw else f"the value is {row.value:g} {row.unit}")
+    if row.conversion_factor is not None and not raw and not math.isclose(row.conversion_factor, factor,
+                                                                           rel_tol=RAW_VALUE_REL_TOL):
+        problems.append(f"the recorded conversion_factor is {row.conversion_factor:g}")
+    if row.conversion_offset is not None and not raw and not math.isclose(row.conversion_offset, offset,
+                                                                           rel_tol=RAW_VALUE_REL_TOL, abs_tol=1e-9):
+        problems.append(f"the recorded conversion_offset is {row.conversion_offset:g}")
+    return problems
+
+
+def _missing_property_sentence(reading: _Reading, row: ObservedValueSpec, linking: str,
+                               properties: dict[str, PhysicalPropertySpec]) -> str:
+    """Which property the reading needs and what the file declares instead."""
+    if row.conversion_property is not None:
+        declared = f"the row's conversion_property {row.conversion_property} is not one"
+    elif properties:
+        declared = f"the file declares {', '.join(sorted(properties))} under properties, none of them a {linking} that links them"
+    else:
+        declared = "the file declares no property under properties"
+    return (f"converting {reading} ({describe_quantity(reading.unit)}) to {row.unit} ({describe_quantity(row.unit)}) "
+            f"needs a {linking}, and {declared}")
+
+
+def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None,
+                          properties: dict[str, PhysicalPropertySpec]) -> None:
     """Every row: compare the reading its external_signal names with the row's value, both in the model unit.
 
     raw_conversion is the factor and offset the tool applied to raw_value, or None for a row given in its
-    model unit (a conversion done outside the tool, whose recorded factor/offset is compared too). When the
+    model unit (a conversion done outside the tool, whose recorded factor/offset is compared too). A reading
+    of another quantity is converted through a declared property (see _reading_routes); only when the file
+    declares no property that links them is the row left unchecked, naming the property it needs. When the
     whole external_signal is the reading, a disagreement stops the run like a raw_value disagreement; a
-    reading found inside a longer text is reported, because such a text can name other numbers. A reading
-    of another quantity that the tool cannot convert, or several readings, leave the row unchecked.
+    reading found inside a longer text is reported, because such a text can name other numbers. Several
+    readings leave the row unchecked.
     """
     raw = raw_conversion is not None
     recorded = [] if raw else [name for name in ("conversion_factor", "conversion_offset", "conversion_note")
                                if getattr(row, name) is not None]
     readings, whole = _signal_readings(row.external_signal)
-    about = [reading for reading in readings
-             if _reading_route(reading, row, raw_conversion) is not None or linking_quantity(reading.unit, row.unit)]
+    about = [reading for reading in readings if _reading_routes(reading, row, raw_conversion, properties)
+             or linking_quantity(reading.unit, row.unit)]
     if not about:
         if recorded:
             _mark_unchecked(row, f"{', '.join(recorded)} recorded without raw_value: a conversion done outside the tool, "
@@ -174,41 +214,31 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
                              f"cannot tell which one {origin} came from, so it cannot check the conversion")
         return
     reading = about[0]
-    route = _reading_route(reading, row, raw_conversion)
-    if route is None:
+    routes = _reading_routes(reading, row, raw_conversion, properties)
+    if not routes:
         linking = linking_quantity(reading.unit, row.unit)
-        if raw:
-            _mark_unchecked(row, f"external_signal reads {reading} ({describe_quantity(reading.unit)}), but raw_unit is "
-                                 f"{row.raw_unit} ({describe_quantity(row.raw_unit)}), so {origin} is not that reading and "
-                                 f"the tool cannot check it; give the reading itself as raw_value and raw_unit, with the "
-                                 f"{linking} that links it to {row.unit} declared and named as conversion_property")
-        else:
-            _mark_unchecked(row, f"external_signal reads {reading} ({describe_quantity(reading.unit)}), but the value is "
-                                 f"given in {row.unit} ({describe_quantity(row.unit)}) without raw_value, so the tool cannot "
-                                 f"check the conversion; a {linking} links them")
+        row._missing_property = linking
+        _mark_unchecked(row, f"external_signal reads {reading}: {_missing_property_sentence(reading, row, linking, properties)}; "
+                             f"declare the {linking} under properties so the tool converts the reading and compares it "
+                             f"with {origin}" + (f" ({row.raw_value:g} {row.raw_unit} as given)" if raw else
+                                                 f" ({row.value:g} {row.unit} as given)"))
         return
-    factor, offset, how = route
-    converted = reading.number * factor + offset
-    problems = []
-    if not math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0):
-        problems.append(f"{origin} converts to {row.value:g} {row.unit}" if raw else f"the value is {row.value:g} {row.unit}")
-    if row.conversion_factor is not None and not raw and not math.isclose(row.conversion_factor, factor,
-                                                                           rel_tol=RAW_VALUE_REL_TOL):
-        problems.append(f"the recorded conversion_factor is {row.conversion_factor:g}")
-    if row.conversion_offset is not None and not raw and not math.isclose(row.conversion_offset, offset,
-                                                                           rel_tol=RAW_VALUE_REL_TOL, abs_tol=1e-9):
-        problems.append(f"the recorded conversion_offset is {row.conversion_offset:g}")
-    if not problems:
-        if raw:
-            # The raw conversion keeps its own status: an agreeing reading does not check a transducer calibration.
-            row._conversion_check += f"; agrees with external_signal {reading}"
-        else:
-            row._conversion_checked = True
-            row._conversion_check = f"value agrees with external_signal {reading} through the unit table"
-        return
+    converted = [(reading.number * factor + offset, factor, offset, how) for factor, offset, how in routes]
+    for value, factor, offset, how in converted:
+        if not _route_problems(row, value, factor, offset, raw, origin):
+            if raw:
+                # The raw conversion keeps its own status: an agreeing reading does not check a transducer calibration.
+                row._conversion_check += f"; agrees with external_signal {reading} {how}"
+            else:
+                row._conversion_checked = True
+                row._conversion_check = f"value agrees with external_signal {reading} {how}"
+            return
+    value, factor, offset, how = converted[0]
+    problems = _route_problems(row, value, factor, offset, raw, origin)
+    alternatives = "".join(f", or {other:g} {row.unit} {other_how}" for other, _f, _o, other_how in converted[1:])
     adjustment = f" + {offset:g}" if offset else ""
-    sentence = (f"external_signal reads {reading} = {converted:g} {row.unit} {how} "
-                f"(x {factor:g}{adjustment}), but {' and '.join(problems)}")
+    sentence = (f"external_signal reads {reading} = {value:g} {row.unit} {how} "
+                f"(x {factor:g}{adjustment}){alternatives}, but {' and '.join(problems)}")
     if whole:
         remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
                   "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "

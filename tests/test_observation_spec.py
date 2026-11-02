@@ -86,6 +86,12 @@ def test_raw_value_and_unit_are_converted_at_load(tmp_path) -> None:
     for key in ("value", "conversion_factor", "conversion_note"):
         flow.pop(key)
     flow.update(raw_value=6, raw_unit="L/min", conversion_property="water_density")
+    # With the density declared, the file's other flow row (the AI's 9.0 kg/s beside "9 L/min") is compared through
+    # it and refused, so it is given as its raw reading too.
+    other = data["variables"]["mix.m_dot_2_kg_s"]
+    for key in ("value", "conversion_factor"):
+        other.pop(key)
+    other.update(raw_value=9, raw_unit="L/min", conversion_property="water_density")
     temperature = data["variables"]["heater.T_in_K"]
     temperature.pop("value")
     temperature.pop("conversion_offset")

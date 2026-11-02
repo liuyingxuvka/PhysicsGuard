@@ -136,8 +136,9 @@ def _report_tail(report: dict[str, Any], comparison: dict[str, Any] | None,
                     mark = " (scale source unavailable)" if entry["default_scale"] is None else " (default scale)" if entry["default_scale"] else ""
                     parts.append(text + mark)
             lines.append("resolution: " + (", ".join(parts) if parts else f"{block['id']} no observed variables"))
-    issues = [f"{row['physics_variable']} {','.join(row['issue_codes'])}" for row in report.get("signal_mapping_ledger", [])
-              if row.get("issue_codes")]
+    issues = [f"{row['physics_variable']} {','.join(row['issue_codes'])}"
+              + (f" (needs a {row['missing_property']} under properties)" if "missing_property" in row else "")
+              for row in report.get("signal_mapping_ledger", []) if row.get("issue_codes")]
     if issues:
         lines.append("mapping: " + _short(issues))
     if report.get("warnings"):

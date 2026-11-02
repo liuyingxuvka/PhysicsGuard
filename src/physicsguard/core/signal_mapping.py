@@ -35,6 +35,7 @@ class SignalMappingRecord:
     recommended_action: str = ""
     raw_conversion: str | None = None
     conversion_check: str | None = None
+    missing_property: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -59,6 +60,8 @@ class SignalMappingRecord:
             result["raw_conversion"] = self.raw_conversion
         if self.conversion_check is not None:
             result["conversion_check"] = self.conversion_check
+        if self.missing_property is not None:
+            result["missing_property"] = self.missing_property
         return result
 
 
@@ -133,6 +136,7 @@ def build_signal_mapping_ledger(
                 recommended_action=_mapping_recommendation(issue_codes, variable, observed_value._conversion_check),
                 raw_conversion=observed_value._raw_conversion,
                 conversion_check=observed_value._conversion_check,
+                missing_property=observed_value._missing_property,
             )
         )
     return tuple(rows)

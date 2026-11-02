@@ -237,8 +237,10 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   `external_signal` (`6 kg/min`, or `outlet temperature 33 C`), both converted to the model unit; so `raw_value: 6,
   raw_unit: L/s` beside `external_signal: "6 L/min"` stops the run. When the whole `external_signal` is the reading,
   a disagreement stops the run (`signal_reading_disagrees`); a reading inside a longer label is reported with the
-  same mark and the run continues. The row is marked `conversion_unchecked` when the reading is of another
-  quantity, such as `6 L/min` beside a kg/s value or a `raw_unit` of kg/s, or when the snapshot records a
+  same mark and the run continues. A reading of another quantity, such as `6 L/min` beside a kg/s value or a
+  `raw_unit` of kg/s, is converted through a property the snapshot declares (a density) and compared the same
+  way. The row is marked `conversion_unchecked`, naming the property it needs, when no declared property links
+  the reading to the model unit, or when the snapshot records a
   conversion with no reading to check it against (any `conversion_factor`, `conversion_offset` or
   `conversion_note`, a factor of 1.0 included). A row that records nothing and names its signal only by a label
   cannot be checked and is not flagged. A declared density denser than any material

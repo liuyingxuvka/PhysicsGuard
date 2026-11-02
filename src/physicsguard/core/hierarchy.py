@@ -806,6 +806,8 @@ class HierarchicalAuditRunner:
         for row in audit.get("signal_mapping_ledger", []):
             if row["raw_conversion"] is None:
                 del row["raw_conversion"]
+            if row["missing_property"] is None:
+                del row["missing_property"]
         return data
 
     def to_json(self, report: HierarchicalAuditReport, pretty: bool = False) -> str:

@@ -73,9 +73,12 @@ class ObservedValueSpec(BaseModel):
     # included), None when nothing was converted. _conversion_check says why in one sentence, and
     # _signal_disagrees marks a value that contradicts a reading found inside a longer external_signal
     # (when the whole external_signal is the reading, a contradiction stops the load instead).
+    # _missing_property names the quantity (for example density) of the property a reading in
+    # external_signal needs before the tool can compare it, when the snapshot declares none.
     _conversion_checked: Optional[bool] = PrivateAttr(default=None)
     _conversion_check: Optional[str] = PrivateAttr(default=None)
     _signal_disagrees: bool = PrivateAttr(default=False)
+    _missing_property: Optional[str] = PrivateAttr(default=None)
     conversion_property: Optional[str] = None
     unit: Optional[str] = None
     source: Optional[str] = None

@@ -209,24 +209,33 @@ def unit_conversion(source, target, explicit=None):
     return known
 
 
+def property_link(source, target, property_value, property_unit):
+    """The factor that turns source into target through the property (times or divided by it), or None when one of
+    the three units is unreadable or has an offset, or the property's quantity does not link the two."""
+    a, b, p = read_unit(source), read_unit(target), read_unit(property_unit)
+    if a is None or b is None or p is None or a.offset or b.offset or p.offset:
+        return None
+    value = property_value * p.factor
+    if tuple(x + y for x, y in zip(a.exponents, p.exponents)) == b.exponents:
+        return a.factor * value / b.factor
+    if tuple(x - y for x, y in zip(a.exponents, p.exponents)) == b.exponents:
+        return a.factor / value / b.factor
+    return None
+
+
 def property_conversion(source, target, property_value, property_unit):
     """Factor/offset that turn source into target through one declared property (times or divided by it).
 
     Raises ValueError with a sentence naming why the property cannot link the two units.
     """
-    units = {}
     for unit in (source, target, property_unit):
         read = read_unit(unit)
         if read is None:
             raise ValueError(f'{unit} is not a unit the tool can read')
         if read.offset:
             raise ValueError(f'{unit} has an offset from SI, so no property can scale it')
-        units[unit] = read
-    a, b, p = units[source], units[target], units[property_unit]
-    value = property_value * p.factor
-    if tuple(x + y for x, y in zip(a.exponents, p.exponents)) == b.exponents:
-        return a.factor * value / b.factor, 0.0
-    if tuple(x - y for x, y in zip(a.exponents, p.exponents)) == b.exponents:
-        return a.factor / value / b.factor, 0.0
-    raise ValueError(f'a {describe_quantity(property_unit)} ({property_unit}) does not turn '
-                     f'{describe_quantity(source)} ({source}) into {describe_quantity(target)} ({target})')
+    factor = property_link(source, target, property_value, property_unit)
+    if factor is None:
+        raise ValueError(f'a {describe_quantity(property_unit)} ({property_unit}) does not turn '
+                         f'{describe_quantity(source)} ({source}) into {describe_quantity(target)} ({target})')
+    return factor, 0.0

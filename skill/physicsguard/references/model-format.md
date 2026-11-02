@@ -143,8 +143,12 @@ way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `
 - the reading sits inside a longer text (`AI outlet temperature 33 C`): agreement counts as checked; a
   disagreement is marked `signal_reading_disagrees` and the run continues, because a label can name other
   numbers. Write the reading alone, or as `raw_value` and `raw_unit`, to have it enforced;
-- a reading of another quantity that a property could link (`6 L/min` beside a kg/s value, or beside
-  `raw_value: 6, raw_unit: kg/s`), or several readings in one text: marked `conversion_unchecked`.
+- a reading of another quantity (`6 L/min` beside a kg/s value, or beside `raw_value: 6, raw_unit: kg/s`)
+  goes through a declared property: the row's `conversion_property`, or else each property under
+  `properties` that links it to the model unit, and is then compared as above, whichever side the model
+  unit is on; when no declared property links them the row is marked `conversion_unchecked` and the
+  ledger's `missing_property` (and the tree's mapping line) names the property it needs;
+- several readings in one text: marked `conversion_unchecked`.
   An agreeing reading leaves a transducer calibration unchecked.
 
 A row that records nothing and names its signal only by a label (`AI heater power`) cannot be checked and is

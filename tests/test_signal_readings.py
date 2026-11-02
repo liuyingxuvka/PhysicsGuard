@@ -92,17 +92,51 @@ RAW_B = {variable: {**row, "raw_unit": "L/s", "conversion_property": "water_dens
 WATER_M3 = {"water_density": {"value": 1000.0, "unit": "kg/m^3"}}
 
 
-def test_bypass_a_a_raw_reading_of_another_quantity_than_its_signal_is_flagged(tmp_path) -> None:
+def test_bypass_a_without_a_declared_density_is_flagged_and_names_the_missing_property(tmp_path) -> None:
     """v0 with the AI's factor replaced by raw_value 6 raw_unit kg/s; external_signal still says '6 L/min'."""
     path = _trial(tmp_path, RAW_A)
     _report, ledger = _ledger(SHOWER / "audit.yaml", _load(path))
     for variable, reading in (("heater.m_dot_kg_s", "6 L/min"), ("mix.m_dot_2_kg_s", "9 L/min")):
-        assert "conversion_unchecked" in ledger[variable]["issue_codes"], ledger[variable]
-        assert reading in ledger[variable]["conversion_check"] and "raw_unit is kg/s" in ledger[variable]["conversion_check"]
+        row = ledger[variable]
+        assert "conversion_unchecked" in row["issue_codes"], row
+        assert reading in row["conversion_check"] and "needs a density" in row["conversion_check"], row["conversion_check"]
+        assert row["missing_property"] == "density"
     result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
     assert result.stdout.splitlines()[0].endswith("mapping 8 rows, 2 with issues"), result.stdout
     mapping = next(line for line in result.stdout.splitlines() if line.startswith("mapping:"))
-    assert "heater.m_dot_kg_s conversion_unchecked" in mapping
+    assert "heater.m_dot_kg_s conversion_unchecked (needs a density under properties)" in mapping
+
+
+@pytest.mark.parametrize("density", [WATER["water_density"], WATER_M3["water_density"]], ids=["kg_per_L", "kg_per_m3"])
+def test_bypass_a_with_the_density_declared_stops_the_run(tmp_path, density) -> None:
+    """The same raw 6 kg/s beside '6 L/min', with water_density in the file: 6 L/min is 0.1 kg/s, not 6."""
+    path = _trial(tmp_path, RAW_A, {"water_density": density})
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s: external_signal reads 6 L/min = "
+                                         r"0\.1 kg/s through water_density .*but raw_value 6 kg/s converts to 6 kg/s"):
+        _load(path)
+    result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
+    assert result.returncode == 2 and result.stderr.startswith("physicsguard error: signal_reading_disagrees:heater.m_dot_kg_s")
+
+
+@pytest.mark.parametrize("row", [
+    {"raw_value": 6, "raw_unit": "kg/s", "unit": "kg/s"},                                         # model unit kg/s
+    {"raw_value": 6, "raw_unit": "kg/s", "unit": "m^3/s", "conversion_property": "water_density"},  # model unit m^3/s
+    {"value": 6.0, "unit": "kg/s"},                                                               # no raw value
+], ids=["model_unit_mass_flow", "model_unit_volume_flow", "value_only"])
+def test_a_reading_of_another_quantity_is_compared_through_the_declared_property_on_either_side(tmp_path, row) -> None:
+    variable = "pump.V_dot_m3_s" if row["unit"] == "m^3/s" else "heater.m_dot_kg_s"
+    path = _write(tmp_path, {variable: {**row, "external_signal": "6 L/min"}}, WATER)
+    with pytest.raises(ValueError, match=rf"signal_reading_disagrees:{re.escape(variable)}: external_signal reads 6 L/min"):
+        _load(path)
+
+
+@pytest.mark.parametrize("row", [{"raw_value": 0.1, "raw_unit": "kg/s", "unit": "kg/s"}, {"value": 0.1, "unit": "kg/s"}],
+                         ids=["raw", "value_only"])
+def test_a_reading_that_agrees_through_the_declared_property_is_checked(tmp_path, row) -> None:
+    loaded = _load(_write(tmp_path, {"heater.m_dot_kg_s": {**row, "external_signal": "6 L/min"}}, WATER))
+    checked = loaded.variables["heater.m_dot_kg_s"]
+    assert checked._conversion_checked is True and not checked._signal_disagrees
+    assert "agrees with external_signal 6 L/min through water_density (1 kg/L)" in checked._conversion_check
 
 
 def test_bypass_b_the_forgotten_sixty_moved_into_raw_unit_stops_the_run(tmp_path) -> None:
