@@ -236,3 +236,51 @@ def test_bypass_b_written_in_exponent_or_bracket_spelling_stops_the_run(tmp_path
         _load(path)
     result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
     assert result.returncode == 2 and "signal_reading_disagrees:heater.m_dot_kg_s" in result.stderr
+
+
+# A number followed by a unit is never dropped: a reading the tool cannot compare is marked with why, and a unit it
+# cannot read is flagged signal_reading_unreadable. The other flow row is given a plain label so only this row counts.
+
+MIX_LABEL = {"mix.m_dot_2_kg_s": {"external_signal": "cold flow", "conversion_factor": None}}
+
+
+def _mapping_line(path) -> tuple[str, str]:
+    result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
+    assert result.returncode in (0, 1), result.stderr  # the audit's own verdict; a refusal would be 2
+    lines = result.stdout.splitlines()
+    return lines[0], next((line for line in lines if line.startswith("mapping:")), "")
+
+
+@pytest.mark.parametrize("signal, fragment", [
+    ("6 gallons/min", "6 gallons/min"), ("6 L fortnight^-1", "6 L fortnight^-1"), ("pump 6 lit/min", "6 lit/min"),
+])
+def test_a_number_followed_by_a_unit_the_tool_cannot_read_is_flagged(tmp_path, signal, fragment) -> None:
+    edits = {**MIX_LABEL, "heater.m_dot_kg_s": {**RAW_B["heater.m_dot_kg_s"], "external_signal": signal}}
+    path = _trial(tmp_path, edits, WATER_M3)
+    _report, ledger = _ledger(SHOWER / "audit.yaml", _load(path))
+    row = ledger["heater.m_dot_kg_s"]
+    assert "signal_reading_unreadable" in row["issue_codes"], row
+    assert f'signal_reading_unreadable:heater.m_dot_kg_s: "{fragment}"' in row["conversion_check"]
+    head, mapping = _mapping_line(path)
+    assert head.endswith("mapping 8 rows, 1 with issues") and "heater.m_dot_kg_s signal_reading_unreadable" in mapping
+
+
+@pytest.mark.parametrize("signal", ["6 L", "inlet 3 m upstream"])
+def test_a_reading_no_declared_property_relates_to_the_model_unit_is_reported(tmp_path, signal) -> None:
+    """A volume (or a length) beside a mass flow: neither the table nor one property turns it into kg/s."""
+    edits = {**MIX_LABEL, "heater.m_dot_kg_s": {"external_signal": signal, "conversion_factor": None, "conversion_note": None,
+                                                 "value": 0.1}}
+    path = _trial(tmp_path, edits, WATER)
+    _report, ledger = _ledger(SHOWER / "audit.yaml", _load(path))
+    row = ledger["heater.m_dot_kg_s"]
+    assert list(row["issue_codes"]) == ["conversion_unchecked"], row
+    assert "neither the unit table nor one declared property turns it into kg/s" in row["conversion_check"]
+    head, _mapping = _mapping_line(path)
+    assert head.endswith("mapping 8 rows, 1 with issues")
+
+
+@pytest.mark.parametrize("signal", ["valve 2 open", "T_tank_C@70", "pump 2 at full speed"])
+def test_a_number_without_a_unit_is_not_a_reading(tmp_path, signal) -> None:
+    edits = {**MIX_LABEL, "heater.m_dot_kg_s": {"external_signal": signal, "conversion_factor": None, "conversion_note": None}}
+    _report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits)))
+    assert list(ledger["heater.m_dot_kg_s"]["issue_codes"]) == []

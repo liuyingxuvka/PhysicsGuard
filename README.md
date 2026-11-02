@@ -240,7 +240,8 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   same mark and the run continues. A reading of another quantity, such as `6 L/min` beside a kg/s value or a
   `raw_unit` of kg/s, is converted through a property the snapshot declares (a density) and compared the same
   way. The row is marked `conversion_unchecked`, naming the property it needs, when no declared property links
-  the reading to the model unit, or when the snapshot records a
+  the reading to the model unit. A number followed by what looks like a unit the tool cannot read (`6 gallons/min`) is flagged
+  `signal_reading_unreadable`, never dropped. A row is also marked `conversion_unchecked` when the snapshot records a
   conversion with no reading to check it against (any `conversion_factor`, `conversion_offset` or
   `conversion_note`, a factor of 1.0 included). A row that records nothing and names its signal only by a label
   cannot be checked and is not flagged. A declared density denser than any material

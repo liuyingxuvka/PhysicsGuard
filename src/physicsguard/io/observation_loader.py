@@ -29,6 +29,10 @@ RAW_VALUE_REL_TOL = 5e-5
 _NUMBER = re.compile(r"(?<![\w.^])([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)")
 # Units are read from up to this many words after the number ("litres per minute").
 _UNIT_WORDS = 3
+# What makes a word after a number look like a unit, so the tool flags it when it cannot read it.
+_MARK_CHARACTERS = "/^·⋅*⁻⁰¹²³⁴⁵⁶⁷⁸⁹"
+_UNIT_MARK = re.compile(r"[/^·⋅*⁻⁰¹²³⁴⁵⁶⁷⁸⁹]|[A-Za-z]-\d+$")
+_NEGATIVE_POWER = re.compile(r"[A-Za-z]+(?:\^?-\d+|⁻[⁰¹²³⁴⁵⁶⁷⁸⁹]+)")
 
 
 class _Reading(NamedTuple):
@@ -99,25 +103,63 @@ def _convert_raw_row(variable: str, row: ObservedValueSpec,
     return factor, offset
 
 
-def _signal_readings(text: str | None) -> tuple[list[_Reading], bool]:
-    """Every '<number> <unit>' in external_signal, and whether the whole text is one such reading.
+class _SignalText(NamedTuple):
+    """What external_signal holds: its readings, each '<number> <unit>' whose unit the tool cannot read, and
+    whether the text is nothing but its readings (with brackets, commas or '=' between them)."""
 
-    A unit counts when the unit table reads it or it is a transducer output (V, mV, A, mA, ohm).
+    readings: list[_Reading]
+    unreadable: list[str]
+    whole: bool
+
+
+def _looks_like_unit(word: str) -> bool:
+    """A word that starts with a letter and carries a unit mark: '/', '^', '·', '⋅', '*', a superscript, or a
+    trailing negative power such as min-1."""
+    word = word.strip("()[],;:.")
+    return word[:1].isalpha() and _UNIT_MARK.search(word) is not None
+
+
+def _continues_unit(word: str) -> bool:
+    """A word that carries on the unit before it: it starts with a separator or a power, it is a symbol with a
+    negative power (min^-1, min-1, min⁻¹), or it is 'per'."""
+    word = word.strip("()[],;:.")
+    return word[:1] in _MARK_CHARACTERS or _NEGATIVE_POWER.fullmatch(word) is not None or word.lower() == "per"
+
+
+def _signal_readings(text: str | None) -> _SignalText:
+    """Every '<number> <unit>' in external_signal; none is dropped.
+
+    A unit counts when the unit table reads it or it is a transducer output (V, mV, A, mA, ohm). A number
+    followed by a word that looks like a unit (_looks_like_unit) the table cannot read, or by a unit the table
+    reads only in part because the next word carries it on (_continues_unit, as in '6 L fortnight^-1'), is
+    listed as unreadable instead of being read as a shorter unit.
     """
+    text = text or ""
     readings: list[_Reading] = []
-    whole = False
-    for match in _NUMBER.finditer(text or ""):
-        rest = text[match.end():]
-        words = rest.split()
-        if not words:
+    unreadable: list[str] = []
+    spans: list[tuple[int, int]] = []
+    for match in _NUMBER.finditer(text):
+        if spans and match.start() < spans[-1][1]:
+            continue  # a power inside a unit already read, such as the 1 of min-1
+        words = list(re.finditer(r"\S+", text[match.end():]))
+        tokens = [word.group() for word in words]
+        if not tokens:
             continue
-        for count in range(min(_UNIT_WORDS, len(words)), 0, -1):
-            unit = _unit_text(words[:count])
-            if read_unit(unit) is not None or is_transducer_output(unit):
-                readings.append(_Reading(float(match.group(1)), unit))
-                whole = not text[:match.start()].strip() and unit == " ".join(words)
-                break
-    return readings, whole and len(readings) == 1
+        read = next(((count, _unit_text(tokens[:count])) for count in range(min(_UNIT_WORDS, len(tokens)), 0, -1)
+                     if read_unit(_unit_text(tokens[:count])) is not None
+                     or is_transducer_output(_unit_text(tokens[:count]))), None)
+        if read is not None and not (read[0] < len(tokens) and _continues_unit(tokens[read[0]])):
+            used = read[0]
+            readings.append(_Reading(float(match.group(1)), read[1]))
+        elif read is not None or _looks_like_unit(tokens[0]):
+            used = read[0] + 1 if read is not None else 1
+            unreadable.append(f"{match.group(1)} {_unit_text(tokens[:used])}")
+        else:
+            continue
+        spans.append((match.start(), match.end() + words[used - 1].end()))
+    rest = "".join(text[stop:start] for (_, stop), (start, _) in zip([(0, 0)] + spans, spans + [(len(text), 0)]))
+    whole = bool(readings) and not unreadable and re.fullmatch(r"[\s()\[\],;:.=]*", rest) is not None
+    return _SignalText(readings, unreadable, whole)
 
 
 def _unit_text(words: list[str]) -> str:
@@ -185,43 +227,60 @@ def _missing_property_sentence(reading: _Reading, row: ObservedValueSpec, linkin
             f"needs a {linking}, and {declared}")
 
 
+def _quantity_words(unit: str) -> str:
+    return "a transducer output" if is_transducer_output(unit) else describe_quantity(unit)
+
+
 def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None,
                           properties: dict[str, PhysicalPropertySpec]) -> None:
     """Every row: compare the reading its external_signal names with the row's value, both in the model unit.
 
     raw_conversion is the factor and offset the tool applied to raw_value, or None for a row given in its
     model unit (a conversion done outside the tool, whose recorded factor/offset is compared too). A reading
-    of another quantity is converted through a declared property (see _reading_routes); only when the file
-    declares no property that links them is the row left unchecked, naming the property it needs. When the
-    whole external_signal is the reading, a disagreement stops the run like a raw_value disagreement; a
-    reading found inside a longer text is reported, because such a text can name other numbers. Several
-    readings leave the row unchecked.
+    of another quantity is converted through a declared property (see _reading_routes); when the file
+    declares no property that links them, or no single property can, the row is left unchecked with why. A
+    number followed by a unit the tool cannot read is flagged signal_reading_unreadable. When the whole
+    external_signal is the reading, a disagreement stops the run like a raw_value disagreement; a reading
+    found inside a longer text is reported, because such a text can name other numbers. Several readings
+    leave the row unchecked.
     """
     raw = raw_conversion is not None
     recorded = [] if raw else [name for name in ("conversion_factor", "conversion_offset", "conversion_note")
                                if getattr(row, name) is not None]
-    readings, whole = _signal_readings(row.external_signal)
-    about = [reading for reading in readings if _reading_routes(reading, row, raw_conversion, properties)
-             or linking_quantity(reading.unit, row.unit)]
-    if not about:
+    signal = _signal_readings(row.external_signal)
+    origin = f"raw_value {row.raw_value:g} {row.raw_unit}" if raw else "the value"
+    note = ""
+    if signal.unreadable:
+        row._signal_unreadable = True
+        note = (f"signal_reading_unreadable:{variable}: {', '.join(f'{chr(34)}{text}{chr(34)}' for text in signal.unreadable)} "
+                f"in external_signal is a number followed by a unit the tool cannot read, so it is not compared with "
+                f"{origin}; write the unit as the unit table does ({READABLE_HINT})")
+    if not signal.readings:
         if recorded:
             _mark_unchecked(row, f"{', '.join(recorded)} recorded without raw_value: a conversion done outside the tool, "
-                                 "which it cannot check")
+                                 "which it cannot check" + (f"; {note}" if note else ""))
+        elif note:
+            row._conversion_check = f"{row._conversion_check}; {note}" if raw else note
         return
-    origin = f"raw_value {row.raw_value:g} {row.raw_unit}" if raw else "the value"
-    if len(about) > 1:
-        _mark_unchecked(row, f"external_signal names {len(about)} readings ({', '.join(map(str, about))}); the tool "
-                             f"cannot tell which one {origin} came from, so it cannot check the conversion")
+    if len(signal.readings) > 1:
+        _mark_unchecked(row, f"external_signal names {len(signal.readings)} readings ({', '.join(map(str, signal.readings))}); "
+                             f"the tool cannot tell which one {origin} came from, so it cannot check the conversion"
+                             + (f"; {note}" if note else ""))
         return
-    reading = about[0]
+    reading = signal.readings[0]
     routes = _reading_routes(reading, row, raw_conversion, properties)
+    given = f" ({row.raw_value:g} {row.raw_unit} as given)" if raw else f" ({row.value:g} {row.unit} as given)"
     if not routes:
         linking = linking_quantity(reading.unit, row.unit)
+        if linking is None:
+            _mark_unchecked(row, f"external_signal reads {reading} ({_quantity_words(reading.unit)}): neither the unit table "
+                                 f"nor one declared property turns it into {row.unit} ({describe_quantity(row.unit)}), so "
+                                 f"the tool cannot compare it with {origin}{given}" + (f"; {note}" if note else ""))
+            return
         row._missing_property = linking
         _mark_unchecked(row, f"external_signal reads {reading}: {_missing_property_sentence(reading, row, linking, properties)}; "
                              f"declare the {linking} under properties so the tool converts the reading and compares it "
-                             f"with {origin}" + (f" ({row.raw_value:g} {row.raw_unit} as given)" if raw else
-                                                 f" ({row.value:g} {row.unit} as given)"))
+                             f"with {origin}{given}" + (f"; {note}" if note else ""))
         return
     converted = [(reading.number * factor + offset, factor, offset, how) for factor, offset, how in routes]
     for value, factor, offset, how in converted:
@@ -232,6 +291,8 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
             else:
                 row._conversion_checked = True
                 row._conversion_check = f"value agrees with external_signal {reading} {how}"
+            if note:
+                row._conversion_check += f"; {note}"
             return
     value, factor, offset, how = converted[0]
     problems = _route_problems(row, value, factor, offset, raw, origin)
@@ -239,13 +300,14 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
     adjustment = f" + {offset:g}" if offset else ""
     sentence = (f"external_signal reads {reading} = {value:g} {row.unit} {how} "
                 f"(x {factor:g}{adjustment}){alternatives}, but {' and '.join(problems)}")
-    if whole:
+    if signal.whole:
         remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
                   "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
                   "converts it")
         raise ValueError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
     _mark_unchecked(row, f"{sentence} (a reading inside a longer external_signal is reported, not enforced; write the "
-                         f"reading alone{'' if raw else ', or as raw_value and raw_unit,'} to have it enforced)")
+                         f"reading alone{'' if raw else ', or as raw_value and raw_unit,'} to have it enforced)"
+                         + (f"; {note}" if note else ""))
     row._signal_disagrees = True
 
 

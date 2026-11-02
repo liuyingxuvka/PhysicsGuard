@@ -79,6 +79,8 @@ class ObservedValueSpec(BaseModel):
     _conversion_check: Optional[str] = PrivateAttr(default=None)
     _signal_disagrees: bool = PrivateAttr(default=False)
     _missing_property: Optional[str] = PrivateAttr(default=None)
+    # _signal_unreadable marks an external_signal holding a number followed by a unit the tool cannot read.
+    _signal_unreadable: bool = PrivateAttr(default=False)
     conversion_property: Optional[str] = None
     unit: Optional[str] = None
     source: Optional[str] = None

@@ -148,6 +148,14 @@ way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `
   `properties` that links it to the model unit, and is then compared as above, whichever side the model
   unit is on; when no declared property links them the row is marked `conversion_unchecked` and the
   ledger's `missing_property` (and the tree's mapping line) names the property it needs;
+- a reading that neither the unit table nor one declared property turns into the model unit (`6 L`, a
+  volume, beside a kg/s value): marked `conversion_unchecked`, with why;
+- a number followed by a word that looks like a unit (it starts with a letter and holds `/`, `^`, `·`, `⋅`,
+  `*` or a superscript, or ends in a power such as `min-1`) that the table cannot read (`6 gallons/min`), or
+  by a unit the table reads only in part because the next word carries it on (a word that starts with a
+  separator or power, a symbol with a negative power, or `per`: `6 L fortnight^-1`): flagged
+  `signal_reading_unreadable`, and the ledger's `conversion_check` quotes it
+  (`signal_reading_unreadable:<variable>: "6 gallons/min"`); it is not read as a shorter unit;
 - several readings in one text: marked `conversion_unchecked`.
   An agreeing reading leaves a transducer calibration unchecked.
 

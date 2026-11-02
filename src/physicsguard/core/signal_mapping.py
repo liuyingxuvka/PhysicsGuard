@@ -236,6 +236,8 @@ def _mapping_issue_codes(expected_unit: str, observed_unit: str, observed_value:
         issues.append("signal_reading_disagrees")
     elif observed_value._conversion_checked is False:
         issues.append("conversion_unchecked")
+    if observed_value._signal_unreadable:
+        issues.append("signal_reading_unreadable")
     if _label(observed_value.mapping_status) == "stale":
         issues.append("stale_mapping")
     return _dedupe(issues)
@@ -245,6 +247,9 @@ def _mapping_recommendation(issue_codes: tuple[str, ...], variable: str, convers
     if "signal_reading_disagrees" in issue_codes:
         return (f"{variable}: {conversion_check}. Give the reading as raw_value and raw_unit so the tool converts it, "
                 "or correct the value or external_signal.")
+    if "signal_reading_unreadable" in issue_codes:
+        return (f"{variable}: {conversion_check}. Write the reading's unit in external_signal as the unit table does, "
+                "so the tool compares it.")
     if not issue_codes:
         return "Mapping evidence is present; still verify it if this variable drives a top residual."
     if "missing_conversion" in issue_codes:
