@@ -1,10 +1,14 @@
 """The only automatic test-data unit table (conversion occurs only at ingestion).
 
 The table is a list of symbols, each with its exponents of kg, m, s, K and rad and its
-factor to SI. read_unit reads a unit written with them, joined by '/' or '*' with '^n'
-powers (kg/s, L/min, m^3/h, kg/m^3, g/cm^3), in the spellings listed in SPELLINGS
-(l or litre for L, sec for s, minute for min, hr for h, m3 for m^3, 'per' for '/') and the
-shorthands in SHORTHANDS (rpm, LPM), and computes its quantity, factor and offset.
+factor to SI. read_unit reads a unit written with them, joined by '/' or '*' (also '·', '⋅',
+or '.' between two symbols) with '^n' powers (kg/s, L/min, m^3/h, kg/m^3, g/cm^3), in the
+spellings listed in SPELLINGS (l or litre for L, sec for s, minute for min, hr for h, m3 for
+m^3, 'per', 'a' or 'an' between words for '/') and the shorthands in SHORTHANDS (rpm, LPM),
+and computes its quantity, factor and offset. A power can be written min-1 or with
+superscripts (min⁻¹), a space joins two symbols only when the second carries a power
+(L min^-1, kg m^-3; 'L min' is not read), and a unit inside one pair of brackets, (L/min) or
+[L/min], is the unit itself.
 Temperature uses K = degC + 273.15 (written degC, °C, deg C or C) and degF; a unit with
 an offset stands alone. Two units of one quantity convert through the table.
 
@@ -26,7 +30,7 @@ from typing import NamedTuple
 SYMBOLS = {
     'kg': ((1, 0, 0, 0, 0), 1.0), 'g': ((1, 0, 0, 0, 0), 1e-3),
     'm': ((0, 1, 0, 0, 0), 1.0), 'mm': ((0, 1, 0, 0, 0), 1e-3), 'cm': ((0, 1, 0, 0, 0), 1e-2),
-    'km': ((0, 1, 0, 0, 0), 1e3),
+    'dm': ((0, 1, 0, 0, 0), 1e-1), 'km': ((0, 1, 0, 0, 0), 1e3),
     'L': ((0, 3, 0, 0, 0), 1e-3), 'mL': ((0, 3, 0, 0, 0), 1e-6),
     's': ((0, 0, 1, 0, 0), 1.0), 'min': ((0, 0, 1, 0, 0), 60.0), 'h': ((0, 0, 1, 0, 0), 3600.0),
     'W': ((1, 2, -3, 0, 0), 1.0), 'kW': ((1, 2, -3, 0, 0), 1e3), 'MW': ((1, 2, -3, 0, 0), 1e6),
@@ -65,7 +69,7 @@ _QUANTITY_NAMES = {exponents: name for name, exponents in QUANTITY_EXPONENTS.ite
 _BASE_NAMES = ('kg', 'm', 's', 'K', 'rad')
 
 # The spellings the refusal messages name, so the reader can rewrite a unit the tool did not read.
-READABLE_HINT = ("kg/s, g/s, kg/min, kg/h, L/s, L/min (l/min, LPM, litres per minute), m^3/s, m^3/h, W, kW, MW, "
+READABLE_HINT = ("kg/s, g/s, kg/min, kg/h, L/s, L/min (l/min, LPM, litres per minute, L min^-1), m^3/s, m^3/h, W, kW, MW, "
                  "Pa, kPa, MPa, bar, degC (°C, C), degF, K, rad/s, rpm, m, mm, s, min, h, kg/m^3, kg/L, g/cm^3")
 
 
@@ -78,10 +82,20 @@ class Unit(NamedTuple):
 
 
 _TERM = re.compile(r"([A-Za-z]+)(?:\^?([-+]?\d+))?")
+# A symbol with an explicit power (min^-1, min-1, m3): only such a term may follow another after a space.
+_POWERED_TERM = re.compile(r"[A-Za-z]+\^?[-+]?\d+")
+_SUPERSCRIPT_POWER = re.compile(r"[⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+")
+_SUPERSCRIPT_DIGITS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺", "0123456789-+")
+_BRACKETED = re.compile(r"\((.*)\)|\[(.*)\]")
 
 
 def _label(unit):
-    return unit.strip().replace('³', '^3').replace('²', '^2') if isinstance(unit, str) else unit
+    """The unit as written, stripped, with superscript powers as ^n and one pair of enclosing brackets removed."""
+    if not isinstance(unit, str):
+        return unit
+    label = _SUPERSCRIPT_POWER.sub(lambda power: "^" + power.group().translate(_SUPERSCRIPT_DIGITS), unit.strip())
+    bracketed = _BRACKETED.fullmatch(label)
+    return (bracketed.group(1) if bracketed.group(1) is not None else bracketed.group(2)).strip() if bracketed else label
 
 
 def read_unit(unit) -> Unit | None:
@@ -94,12 +108,16 @@ def read_unit(unit) -> Unit | None:
         factor, offset = OFFSET_UNITS[label]
         return Unit(QUANTITY_EXPONENTS['temperature'], factor, offset)
     label = SHORTHANDS.get(label, label)
-    label = re.sub(r"\s+per\s+", "/", label)
-    label = re.sub(r"\s*([/*·])\s*", r"\1", label)
+    label = re.sub(r"\s+(?:per|an?)\s+", "/", label)
+    label = re.sub(r"(?<=[A-Za-z0-9])\.(?=[A-Za-z])", "*", label)
+    label = re.sub(r"\s*([/*·⋅])\s*", r"\1", label)
     if re.search(r"\s", label):
-        return None
+        terms = label.split()
+        if not all(_POWERED_TERM.fullmatch(term) for term in terms[1:]):
+            return None
+        label = "*".join(terms)
     exponents, factor, power_sign = [0] * len(_BASE_NAMES), 1.0, 1
-    for position, part in enumerate(re.split(r"([/*·])", label)):
+    for position, part in enumerate(re.split(r"([/*·⋅])", label)):
         if position % 2:
             power_sign = -1 if part == '/' else 1
             continue

@@ -18,7 +18,7 @@ from test_derived_unit_conversions import SHOWER, WATER, _ledger, _load, _trial,
     ("6 kg/min", 0.1, []),
     ("0.1 kg/s", 0.1, []),
     ("6 L/min", 0.1, ["conversion_unchecked"]),
-    ("6 litres a minute", 6.0, []),
+    ("6 litres a minute", 6.0, ["conversion_unchecked"]),  # read as 6 L/min, a volume flow beside a kg/s value
     # A reading inside a longer label is checked and reported; the whole-reading disagreement stops (below).
     ("pump 6 kg/min", 6.0, ["signal_reading_disagrees"]),
     ("pump 6 kg/min", 0.1, []),
@@ -170,3 +170,35 @@ def test_a_series_point_with_a_raw_reading_is_checked_against_its_signal_too() -
               "points": [{"point_id": "p0", "timestamp": 0.0, "variables": point}]}
     with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s"):
         observed_series_from_mapping(series)
+
+
+# Review round 4: a reading written with SI exponents, brackets or "a minute" is read whole, so the forgotten "/60"
+# cannot hide behind a spelling the unit table does not know.
+
+EXPONENT_SPELLINGS = ["L min^-1", "L min-1", "L·min⁻¹", "dm^3/min", "(L/min)", "[L/min]", "l.min-1", "litres a minute"]
+
+
+@pytest.mark.parametrize("spelling", EXPONENT_SPELLINGS)
+def test_the_unit_table_reads_exponent_bracket_and_word_spellings(spelling) -> None:
+    from physicsguard.core.units import known_conversion, unit_quantity
+
+    assert known_conversion(spelling, "L/min") == pytest.approx((1.0, 0.0))
+    assert unit_quantity(spelling) == "volume_flow"
+
+
+@pytest.mark.parametrize("spelling", ["L min", "kg/s m", "L min^-1 pump", "(L/min"])
+def test_a_space_joins_units_only_before_an_explicit_power(spelling) -> None:
+    """'L min' is not read as L/min (nor as L*min): only a power such as min^-1 makes a space a product."""
+    from physicsguard.core.units import read_unit
+
+    assert read_unit(spelling) is None
+
+
+@pytest.mark.parametrize("spelling", EXPONENT_SPELLINGS)
+def test_bypass_b_written_in_exponent_or_bracket_spelling_stops_the_run(tmp_path, spelling) -> None:
+    edits = {"heater.m_dot_kg_s": {**RAW_B["heater.m_dot_kg_s"], "external_signal": f"6 {spelling}"}}
+    path = _trial(tmp_path, edits, WATER_M3)
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s: external_signal reads 6 .* = 0\.1 kg/s"):
+        _load(path)
+    result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
+    assert result.returncode == 2 and "signal_reading_disagrees:heater.m_dot_kg_s" in result.stderr

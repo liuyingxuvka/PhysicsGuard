@@ -150,10 +150,13 @@ way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `
 A row that records nothing and names its signal only by a label (`AI heater power`) cannot be checked and is
 not flagged. The ledger's `conversion_check` says why, in one sentence.
 
-The tool reads a unit written with the table's symbols, joined by `/` or `*` with `^n` powers, in the
-spellings it lists: `l`, `liter`, `litre` for `L`; `sec` for `s`; `minute` for `min`; `hr` for `h`; `m3` for
-`m^3`; `per` for `/`; `LPM`, `rpm`; `degC`, `°C`, `deg C` or `C` for Celsius; `degF`. So `l/min`, `LPM`,
-`litres per minute` and `kg/sec` are read as `L/min` and `kg/s`. A row whose value is in a unit the tool
+The tool reads a unit written with the table's symbols, joined by `/` or `*` (or `·`, `⋅`, or `.` between
+two symbols) with `^n` powers, in the spellings it lists: `l`, `liter`, `litre` for `L`; `sec` for `s`;
+`minute` for `min`; `hr` for `h`; `m3` for `m^3`; `per`, `a` or `an` between words for `/`; `LPM`, `rpm`;
+`degC`, `°C`, `deg C` or `C` for Celsius; `degF`. A power may be written `min-1` or `min⁻¹`; a space joins two
+symbols only when the second has a power (`L min^-1`; `L min` is not read); a unit in one pair of brackets
+(`(L/min)`, `[L/min]`) is that unit. So `l/min`, `LPM`, `litres per minute`, `litres a minute`, `L min^-1`,
+`L·min⁻¹`, `l.min-1`, `dm^3/min` and `kg/sec` are read as `L/min` and `kg/s`. A row whose value is in a unit the tool
 reads but that is not the model's unit (`kW` for a W variable, `L/s` for a kg/s variable) stops the
 evaluation with `observed_unit_not_model_unit:<variable>`: evaluation never converts.
 

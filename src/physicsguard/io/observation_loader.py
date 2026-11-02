@@ -112,12 +112,20 @@ def _signal_readings(text: str | None) -> tuple[list[_Reading], bool]:
         if not words:
             continue
         for count in range(min(_UNIT_WORDS, len(words)), 0, -1):
-            unit = " ".join(words[:count]).rstrip(",;:.)]")
+            unit = _unit_text(words[:count])
             if read_unit(unit) is not None or is_transducer_output(unit):
                 readings.append(_Reading(float(match.group(1)), unit))
                 whole = not text[:match.start()].strip() and unit == " ".join(words)
                 break
     return readings, whole and len(readings) == 1
+
+
+def _unit_text(words: list[str]) -> str:
+    """The words after a number as a unit: without trailing punctuation or a closing bracket opened before it."""
+    unit = " ".join(words).rstrip(",;:.")
+    while unit[-1:] in (")", "]") and unit.count(unit[-1]) > unit.count("(" if unit[-1] == ")" else "["):
+        unit = unit[:-1].rstrip(",;:.")
+    return unit
 
 
 def _reading_route(reading: _Reading, row: ObservedValueSpec,

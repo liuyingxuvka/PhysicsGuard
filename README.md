@@ -231,7 +231,7 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   number checked.
 - If the AI converts units itself and carries a slip through consistently (6 L/min written as 6 kg/s), every balance
   closes and the audit passes. From `v0.16.0` you can give `raw_value` and `raw_unit` and let the tool convert; a
-  contradicting value stops the run. The tool reads other spellings of its units (`l/min`, `LPM`, `kg/sec`, `15 C`)
+  contradicting value stops the run. The tool reads other spellings of its units (`l/min`, `LPM`, `L min^-1`, `kg/sec`, `15 C`)
   and refuses a unit it cannot read rather than apply a factor the AI wrote for it. A number the AI converts by hand
   is still the AI's number. The tool checks every row, with or without `raw_value`, against a reading it finds in
   `external_signal` (`6 kg/min`, or `outlet temperature 33 C`), both converted to the model unit; so `raw_value: 6,
