@@ -199,7 +199,7 @@ def test_no_example_draws_a_silent_large_picture(audit) -> None:
         assert _readable(flow) or flow["too_large"] is not None, (kwargs, len(flow["nodes"]), len(flow["links"]))
 
 
-def test_a_one_component_focus_with_too_many_neighbours_says_to_keep_one_quantity(tmp_path) -> None:
+def test_a_one_component_focus_with_too_many_neighbours_says_nothing_fits(tmp_path) -> None:
     path, count = _chain_audit(tmp_path, None)
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     # A hub: h0's outlet feeds every other heater, so focusing on h0 draws 30 boxes even at block level.
@@ -208,9 +208,11 @@ def test_a_one_component_focus_with_too_many_neighbours_says_to_keep_one_quantit
     path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
     flow = _flow(path, focus="h0")
     assert flow["too_large"] is not None and flow["too_large"]["focus_choices"] == []
-    result = run_cli("hierarchy", "flow", str(path), "--focus", "h0")
-    note = next(line for line in result.stdout.splitlines() if line.strip().startswith("n_too_large["))
-    assert "its one component has many neighbours: keep one quantity with --quantity" in note
+    assert [(row["option"], row["readable"]) for row in flow["too_large"]["quantity_choices"]] == [("--quantity temperature", False)]
+    note = _note(path, "--focus", "h0")
+    # Keeping one quantity does not help here (every link is a temperature), so the note no longer suggests it.
+    assert "no --focus or --quantity choice fits, alone or together (the smallest, --quantity temperature, draws 30 boxes, " \
+           "29 arrows); read every link with --json" in note
 
 
 # Review round 4: a single-root tree must not fold into one empty box, and a picture that still does not fit names
@@ -276,3 +278,46 @@ def test_no_picture_folds_everything_into_one_box(audit) -> None:
         components = {row["id"] for row in flow["nodes"] if row["kind"] == "component"}
         folded = sum(1 for row in flow["nodes"] if row["kind"] == "block")
         assert shown > 1 or len(components) + folded <= 1 and not any(row.get("folds") for row in flow["nodes"]), kwargs
+
+
+
+def _dense_audit(tmp_path, mass_chain=False):
+    """Ten blocks of one heater each, every heater's outlet temperature read by every later heater: 45 arrows."""
+    blocks = [{"id": f"b{i}", "name": f"b{i}", "level": 0, "components": [f"h{i}"]} for i in range(10)]
+    components = [{"id": f"h{i}", "type": "CoolantHeatBalanceModule",
+                   "parameters": {"cp_J_kgK": 4180.0, "residual_scale_W": 10.0}} for i in range(10)]
+    connections = [{"from_variable": f"h{i}.T_out_K", "to_variable": f"h{j}.T_in_K"} for i in range(10) for j in range(i + 1, 10)]
+    if mass_chain:
+        connections += [{"from_variable": f"h{i}.m_dot_kg_s", "to_variable": f"h{i + 1}.m_dot_kg_s"} for i in range(9)]
+    data = {"audit_name": "dense", "system": {"system_name": "dense", "components": components, "connections": connections,
+                                              "boundaries": [], "assumptions": []}, "hierarchy": {"blocks": blocks}}
+    path = tmp_path / "dense.yaml"
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+    return path
+
+
+def test_when_no_focus_choice_fits_the_note_offers_none_of_them(tmp_path) -> None:
+    """10 blocks, 45 arrows: every --focus picture is the whole picture, and so is --quantity temperature."""
+    path = _dense_audit(tmp_path)
+    flow = _flow(path)
+    too_large = flow["too_large"]
+    assert (too_large["boxes"], too_large["arrows"]) == (10, 45)
+    assert too_large["focus_choices"] and not any(row["readable"] for row in too_large["focus_choices"])
+    assert [(row["option"], row["boxes"], row["arrows"]) for row in too_large["quantity_choices"]] == [
+        ("--quantity temperature", 10, 45)]
+    note = _note(path)
+    assert "--focus b0 (10 boxes, 45 arrows)" not in note and "draw one part instead" not in note
+    assert "no --focus or --quantity choice fits, alone or together" in note and "read every link with --json" in note
+
+
+def test_when_no_focus_choice_fits_the_note_names_the_quantity_that_does(tmp_path) -> None:
+    path = _dense_audit(tmp_path, mass_chain=True)
+    flow = _flow(path)
+    assert not any(row["readable"] for row in flow["too_large"]["focus_choices"])
+    readable = [row for row in flow["too_large"]["quantity_choices"] if row["readable"]]
+    assert [(row["option"], row["boxes"], row["arrows"]) for row in readable] == [("--quantity mass_flow", 10, 9)]
+    focused = _flow(path, quantity="mass_flow")
+    assert (len(focused["nodes"]), len(focused["links"])) == (10, 9) and focused["too_large"] is None
+    note = _note(path)
+    assert "no --focus choice fits (the smallest, --focus b0, draws 10 boxes, 45 arrows)" in note
+    assert "keep one quantity instead: --quantity mass_flow (10 boxes, 9 arrows)" in note
