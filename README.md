@@ -103,8 +103,10 @@ flowchart LR
 
 The heater chain (command, electrical power, efficiency) fails; the thermal block that receives its heat passes. Use
 `--focus BLOCK` to draw one block and its neighbours, `--quantity mass_flow` (or a unit) to follow one quantity, and
-`--json` for the nodes, links and omissions. Without a snapshot or focus, an audit with more than 12 components is
-drawn block by block.
+`--json` for the nodes, links and omissions. A picture holds about 12 boxes and 20 arrows: above that the tool draws
+blocks instead of components and folds sub-blocks into their parent blocks. When even the top blocks are more, a note
+in the picture says how many boxes and arrows it holds and names the blocks to draw with `--focus`, each with the size
+of its picture.
 
 ## Quick start
 

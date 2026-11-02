@@ -5,7 +5,9 @@ declared connection (A.x = B.y) or a relation of B that reads A's variable. The 
 come from tracing each native relation once at the registry's declared initial
 guesses; nothing is solved and no observed value is used unless a snapshot is given
 to colour the verdicts. The picture shows the part under discussion and names what it
-leaves out.
+leaves out. Above the readable size it folds sub-blocks into their parent blocks, one
+level at a time; when even the top blocks are too many, it says so in the picture and
+names the blocks to focus on, with the size of each focused picture.
 """
 
 from __future__ import annotations
@@ -18,9 +20,13 @@ from typing import Any
 from physicsguard.core.residual import ResidualBuilder
 from physicsguard.core.units import QUANTITY_EXPONENTS, unit_quantity
 
-# About as many boxes as a person reads at once; beyond it the tool draws blocks, not components.
+# About as many boxes and arrows as a person reads at once; beyond it the tool draws blocks, not components,
+# and folds sub-blocks into their parents until the picture fits.
 READABLE_BOXES = 12
+READABLE_ARROWS = 20
 LABELS_PER_ARROW = 3
+# Focus choices named in the picture's note when it is still too large; --json lists them all.
+FOCUS_CHOICES_SHOWN = 8
 
 
 @dataclass
@@ -28,6 +34,18 @@ class _Link:
     source: str
     target: str
     labels: list[str] = field(default_factory=list)
+
+
+@dataclass
+class _Drawing:
+    level: str
+    nodes: list[str]
+    links: dict[tuple[str, str], _Link]
+    hidden_links: int
+    members: dict[str, list[str]]
+
+    def fits(self) -> bool:
+        return len(self.nodes) <= READABLE_BOXES and len(self.links) <= READABLE_ARROWS
 
 
 def quantity_flow(spec: Any, *, focus: str | None = None, quantity: str | None = None,
@@ -38,6 +56,9 @@ def quantity_flow(spec: Any, *, focus: str | None = None, quantity: str | None =
     index = BlockIndex(spec.hierarchy, spec.system)
     components = [component.id for component in spec.system.components]
     block_of = {name: index.component_block(name) or "(unassigned)" for name in components}
+    # Each component's blocks from the top of the tree down to its own block.
+    chains = {name: ([block.id for block in reversed(index.ancestors(block_of[name]))] + [block_of[name]]
+                     if block_of[name] in index.block_ids() else [block_of[name]]) for name in components}
     if quantity is not None and quantity not in QUANTITY_EXPONENTS and unit_quantity(quantity) is None:
         raise ValueError(f"unknown quantity {quantity!r}: use one of {', '.join(sorted(QUANTITY_EXPONENTS))} or a unit from the unit table")
 
@@ -80,63 +101,107 @@ def quantity_flow(spec: Any, *, focus: str | None = None, quantity: str | None =
 
     verdicts = _block_verdicts(spec, observed) if observed is not None else {}
     focus_components = _focus_components(focus, verdicts, components, block_of, index)
-    neighbours: set[str] = set()
     if focus_components is not None:
-        for link in links.values():
-            if link.source in focus_components:
-                neighbours.add(link.target)
-            if link.target in focus_components:
-                neighbours.add(link.source)
-        neighbours -= focus_components
-        shown = focus_components | neighbours
+        shown = _neighbourhood(links, focus_components)
     elif quantity is not None:
         # Only the components a link of this quantity touches; the rest are listed as not shown.
         shown = {name for link in links.values() for name in (link.source, link.target)}
     else:
         shown = set(components)
-    level = "component" if len(shown) <= READABLE_BOXES else "block"
-    if focus_components is not None and level == "block":
-        # The focus stays expanded; its neighbours fold into their blocks.
-        level = "focus"
-
-    def node(component: str) -> str:
-        if level == "component" or (level == "focus" and component in focus_components):
-            return component
-        return "block:" + block_of[component]
-
-    drawn: dict[tuple[str, str], _Link] = {}
-    hidden_links = 0
-    for link in links.values():
-        if link.source not in shown or link.target not in shown:
-            hidden_links += 1
-            continue
-        source, target = node(link.source), node(link.target)
-        if source == target:
-            continue
-        merged = drawn.setdefault((source, target), _Link(source, target))
-        merged.labels.extend(label for label in link.labels if label not in merged.labels)
-    nodes = sorted({node(name) for name in shown}, key=lambda item: (item.startswith("block:"), item))
+    drawing = _fold(links, shown, focus_components or set(), chains)
+    too_large = None
+    if not drawing.fits():
+        too_large = {"boxes": len(drawing.nodes), "arrows": len(drawing.links), "readable_boxes": READABLE_BOXES,
+                     "readable_arrows": READABLE_ARROWS,
+                     "focus_choices": _focus_choices(links, shown, focus_components, chains, components, block_of, index)}
     omitted_components = sorted(set(components) - shown)
     failing = sorted(block for block, verdict in verdicts.items() if verdict == "fail")
     return {
         "audit_name": spec.audit_name,
-        "level": level,
+        "level": drawing.level,
         "focus": sorted(focus_components) if focus_components is not None else None,
         "focus_reason": "named" if focus is not None else ("failing blocks " + ", ".join(failing)) if failing and focus_components else None,
         "quantity": quantity,
-        "nodes": [_node_row(name, spec, block_of, verdicts) for name in nodes],
-        "links": [{"from": link.source, "to": link.target, "quantities": link.labels} for link in drawn.values()],
+        "nodes": [_node_row(name, spec, block_of, verdicts, drawing, chains) for name in drawing.nodes],
+        "links": [{"from": link.source, "to": link.target, "quantities": link.labels} for link in drawing.links.values()],
         "omitted": {
             "components": omitted_components,
             "blocks": sorted({block_of[name] for name in omitted_components}),
-            "links": hidden_links,
+            "links": drawing.hidden_links,
             "links_of_other_quantities": filtered,
             "boundary_and_assumption_values": external,
             "untraced_relations": untraced,
         },
+        "too_large": too_large,
         "basis": ("arrow A -> B: a relation of B uses a quantity of A, or a connection A.x = B.y; "
                   "relations traced once at the declared initial guesses; no solve"),
     }
+
+
+def _neighbourhood(links: dict[tuple[str, str], _Link], focus_components: set[str]) -> set[str]:
+    """The focus components and every component one link away from them."""
+    shown = set(focus_components)
+    for link in links.values():
+        if link.source in focus_components:
+            shown.add(link.target)
+        if link.target in focus_components:
+            shown.add(link.source)
+    return shown
+
+
+def _draw(links: dict[tuple[str, str], _Link], shown: set[str], box: Any, level: str) -> _Drawing:
+    """Boxes and merged arrows when each shown component is drawn as box(component)."""
+    drawn: dict[tuple[str, str], _Link] = {}
+    hidden = 0
+    for link in links.values():
+        if link.source not in shown or link.target not in shown:
+            hidden += 1
+            continue
+        source, target = box(link.source), box(link.target)
+        if source == target:
+            continue
+        merged = drawn.setdefault((source, target), _Link(source, target))
+        merged.labels.extend(label for label in link.labels if label not in merged.labels)
+    members: dict[str, list[str]] = defaultdict(list)
+    for name in sorted(shown):
+        members[box(name)].append(name)
+    nodes = sorted(members, key=lambda item: (item.startswith("block:"), item))
+    return _Drawing(level, nodes, drawn, hidden, dict(members))
+
+
+def _fold(links: dict[tuple[str, str], _Link], shown: set[str], keep: set[str],
+          chains: dict[str, list[str]]) -> _Drawing:
+    """The finest drawing within the readable size: components, then blocks, folding sub-blocks into their parents
+    one level at a time. The components in keep (a focus) stay expanded. When even the top blocks are above the
+    size, the coarsest drawing is returned and the caller says so."""
+    drawing = _draw(links, shown, lambda name: name, "component")
+    if drawing.fits():
+        return drawing
+    for depth in range(max(len(chains[name]) for name in shown) - 1, -1, -1):
+        def box(name: str, depth: int = depth) -> str:
+            return name if name in keep else "block:" + chains[name][min(depth, len(chains[name]) - 1)]
+
+        drawing = _draw(links, shown, box, "focus" if keep else "block")
+        if drawing.fits():
+            break
+    return drawing
+
+
+def _focus_choices(links, shown, focus_components, chains, components, block_of, index) -> list[dict[str, Any]]:
+    """Each block that draws a narrower part of this picture, with the boxes and arrows its focused picture holds;
+    readable ones first, larger parts first."""
+    current = focus_components or set()
+    choices = []
+    for block in index.block_ids():
+        inside = {block} | {child.id for child in index.descendants(block)}
+        part = {name for name in components if block_of[name] in inside}
+        narrower = part < current if focus_components is not None else bool(part & shown) and not shown <= part
+        if not part or not narrower:
+            continue
+        drawing = _fold(links, _neighbourhood(links, part), part, chains)
+        choices.append({"focus": block, "components": len(part), "boxes": len(drawing.nodes),
+                        "arrows": len(drawing.links), "readable": drawing.fits()})
+    return sorted(choices, key=lambda row: (not row["readable"], -row["components"], row["focus"]))
 
 
 def _block_verdicts(spec: Any, observed: Any) -> dict[str, str]:
@@ -165,11 +230,17 @@ def _focus_components(focus, verdicts, components, block_of, index) -> set[str] 
     return None
 
 
-def _node_row(name: str, spec: Any, block_of: dict[str, str], verdicts: dict[str, str]) -> dict[str, Any]:
+def _node_row(name: str, spec: Any, block_of: dict[str, str], verdicts: dict[str, str], drawing: _Drawing,
+              chains: dict[str, list[str]]) -> dict[str, Any]:
     if name.startswith("block:"):
         block = name.removeprefix("block:")
         names = {item.id: item.name for item in spec.hierarchy.blocks}
-        return {"id": name, "kind": "block", "block": block, "name": names.get(block), "verdict": verdicts.get(block)}
+        members = drawing.members[name]
+        # Sub-blocks folded into this box, and the worst verdict of the blocks whose components it draws.
+        folds = sorted({sub for member in members for sub in chains[member][chains[member].index(block) + 1:]})
+        drawn = [verdicts.get(chains[member][-1]) for member in members]
+        verdict = "fail" if "fail" in drawn else "pass" if "pass" in drawn else None
+        return {"id": name, "kind": "block", "block": block, "name": names.get(block), "folds": folds, "verdict": verdict}
     types = {component.id: component.type for component in spec.system.components}
     return {"id": name, "kind": "component", "type": types[name], "block": block_of[name],
             "verdict": verdicts.get(block_of[name])}
@@ -195,6 +266,8 @@ def render_quantity_flow_mermaid(flow: dict[str, Any]) -> str:
         for row in rows:
             if row["kind"] == "block":
                 text = f"block {block}" + (f": {row['name']}" if row.get("name") else "")
+                if row["folds"]:
+                    text += f" (+{_count(len(row['folds']), 'sub-block')})"
                 lines.append(f'  {ids[row["id"]]}["{label(text)}"]')
         if components:
             lines.append(f'  subgraph b{number}["{label(block)}"]')
@@ -207,17 +280,45 @@ def render_quantity_flow_mermaid(flow: dict[str, Any]) -> str:
         text = "; ".join(names) + (f"; +{extra} more" if extra else "")
         lines.append(f'  {ids[link["from"]]} -->|"{label(text)}"| {ids[link["to"]]}')
     omitted = _omitted_sentence(flow["omitted"])
-    lines.append(f"  %% shown: {len(flow['nodes'])} boxes ({flow['level']} level), {len(flow['links'])} arrows")
+    folded = ", sub-blocks folded into their parents" if any(row.get("folds") for row in flow["nodes"]) else ""
+    lines.append(f"  %% shown: {len(flow['nodes'])} boxes ({flow['level']} level{folded}), {len(flow['links'])} arrows")
+    notes = []
     if omitted:
         lines.append(f'  n_omitted["not shown: {label(omitted)}"]')
+        notes.append("n_omitted")
+    if flow["too_large"]:
+        lines.append(f'  n_too_large["{label(_too_large_sentence(flow["too_large"], flow["focus"]))}"]')
+        notes.append("n_too_large")
+    if notes:
         lines.append("  classDef omitted stroke-dasharray: 4 3,fill:none")
-        lines.append("  class n_omitted omitted")
+        lines.append(f"  class {','.join(notes)} omitted")
     for verdict, style in (("fail", "fill:#f8d7da,stroke:#b02a37"), ("pass", "fill:#d1e7dd,stroke:#146c43")):
         marked = [ids[row["id"]] for row in flow["nodes"] if row["verdict"] == verdict]
         if marked:
             lines.append(f"  classDef {verdict} {style}")
             lines.append(f"  class {','.join(marked)} {verdict}")
     return "\n".join(lines)
+
+
+def _count(number: int, noun: str) -> str:
+    return f"{number} {noun}" + ("" if number == 1 else "es" if noun.endswith("x") else "s")
+
+
+def _too_large_sentence(too_large: dict[str, Any], focus: list[str] | None) -> str:
+    """Plain words: the picture's size, the readable size, and what to focus on with each focused picture's size."""
+    sentence = (f"too large to read at once: {_count(too_large['boxes'], 'box')}, {_count(too_large['arrows'], 'arrow')} "
+                f"(about {too_large['readable_boxes']} boxes and {too_large['readable_arrows']} arrows read well); ")
+    choices = too_large["focus_choices"]
+    if not choices and len(focus or []) == 1:
+        return sentence + "its one component has many neighbours: keep one quantity with --quantity"
+    if not choices:
+        return sentence + ("no block inside it is smaller: focus on one component with --focus COMPONENT, "
+                           "or keep one quantity with --quantity")
+    named = [f"--focus {row['focus']} ({_count(row['boxes'], 'box')}, {_count(row['arrows'], 'arrow')})"
+             for row in choices[:FOCUS_CHOICES_SHOWN]]
+    more = len(choices) - len(named)
+    return (sentence + "draw one part instead: " + ", ".join(named) + (f", and {more} more (--json lists them)" if more else "")
+            + ", or keep one quantity with --quantity")
 
 
 def _omitted_sentence(omitted: dict[str, Any]) -> str:

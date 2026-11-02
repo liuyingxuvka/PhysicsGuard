@@ -100,3 +100,114 @@ def test_readme_discussion_example_is_the_command_output() -> None:
                      "--observed", "examples/hierarchical/heated_tank/measured_k70.yaml")
     assert result.returncode == 0, result.stderr
     assert shown == result.stdout.rstrip("\n")
+
+
+# Review round 3: a picture above the readable size is folded further, or says plainly what to focus on.
+
+EXAMPLE_AUDITS = sorted(path for path in (ROOT / "examples" / "hierarchical").glob("*/*.yaml")
+                        if "hierarchy" in (yaml.safe_load(path.read_text(encoding="utf-8")) or {}))
+
+
+def _chain_audit(tmp_path, groups, name="chain"):
+    """Heaters h0 -> h1 -> ... (T_out = next T_in), one per leaf block; groups maps a parent block to its child count,
+    or None to make every leaf block a root."""
+    sizes = groups if groups is not None else {None: 30}
+    blocks, components, connections, index = [], [], [], 0
+    for parent, count in sizes.items():
+        if parent is not None:
+            blocks.append({"id": parent, "name": f"group {parent}", "level": 0, "components": []})
+        for child in range(count):
+            block = f"{parent or 'b'}c{child:02d}"
+            blocks.append({"id": block, "name": block, "level": 1 if parent else 0, "components": [f"h{index}"],
+                           **({"parent_id": parent} if parent else {})})
+            components.append({"id": f"h{index}", "type": "CoolantHeatBalanceModule",
+                               "parameters": {"cp_J_kgK": 4180.0, "residual_scale_W": 10.0}})
+            if index:
+                connections.append({"from_variable": f"h{index - 1}.T_out_K", "to_variable": f"h{index}.T_in_K"})
+            index += 1
+    data = {"audit_name": name, "system": {"system_name": name, "components": components, "connections": connections,
+                                           "boundaries": [], "assumptions": []}, "hierarchy": {"blocks": blocks}}
+    path = tmp_path / f"{name}.yaml"
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+    return path, index
+
+
+def _readable(flow):
+    from physicsguard.core.quantity_flow import READABLE_ARROWS, READABLE_BOXES
+
+    return len(flow["nodes"]) <= READABLE_BOXES and len(flow["links"]) <= READABLE_ARROWS
+
+
+def test_a_block_level_picture_above_the_readable_size_folds_sub_blocks_into_their_parents() -> None:
+    """fuel_cell_system drew 15 leaf blocks; its sub-blocks fold into cathode_air_path and coolant_loop."""
+    flow = _flow(ROOT / "examples" / "hierarchical" / "fuel_cell_system" / "tree.yaml")
+    assert _readable(flow) and flow["too_large"] is None, (len(flow["nodes"]), len(flow["links"]))
+    boxes = {row["id"]: row for row in flow["nodes"]}
+    assert boxes["block:cathode_air_path"]["folds"] == ["compressor", "exhaust_valve", "humidifier", "intercooler"]
+    assert boxes["block:coolant_loop"]["folds"] == ["bypass_or_valve", "coolant_pump", "radiator", "thermal_mass"]
+    assert "block:compressor" not in boxes and "block:stack" in boxes
+    text = run_cli("hierarchy", "flow", str(ROOT / "examples" / "hierarchical" / "fuel_cell_system" / "tree.yaml")).stdout
+    assert '"block cathode_air_path (+4 sub-blocks)"' in text
+
+
+def test_a_picture_that_cannot_fold_enough_says_what_to_focus_on_and_how_many_boxes_it_holds(tmp_path) -> None:
+    path, count = _chain_audit(tmp_path, None)
+    flow = _flow(path)
+    assert len(flow["nodes"]) == count == 30 and not _readable(flow)
+    too_large = flow["too_large"]
+    assert (too_large["boxes"], too_large["arrows"]) == (30, 29)
+    choices = too_large["focus_choices"]
+    assert len(choices) == 30
+    for choice in choices[:5]:
+        focused = _flow(path, focus=choice["focus"])
+        assert (choice["boxes"], choice["arrows"]) == (len(focused["nodes"]), len(focused["links"]))
+        assert _readable(focused)
+    result = run_cli("hierarchy", "flow", str(path))
+    assert result.returncode == 0, result.stderr
+    note = next(line for line in result.stdout.splitlines() if line.strip().startswith("n_too_large["))
+    assert "too large to read at once: 30 boxes, 29 arrows" in note
+    first = choices[0]
+    count = lambda number, noun: f"{number} {noun}" + ("" if number == 1 else "es" if noun == "box" else "s")
+    assert f"--focus {first['focus']} ({count(first['boxes'], 'box')}, {count(first['arrows'], 'arrow')})" in note
+    assert json.loads(run_cli("hierarchy", "flow", str(path), "--json").stdout)["too_large"]["boxes"] == 30
+
+
+def test_a_folded_box_takes_the_worst_verdict_of_the_blocks_it_draws(tmp_path) -> None:
+    from physicsguard.io.observation_loader import load_observed_values
+
+    path, count = _chain_audit(tmp_path, {"p0": 12, "p1": 12})
+    variables = {}
+    for index in range(count):
+        t_in = 300.0 + 10.0 * index
+        q = 4180.0 * 2 if index == 12 else 4180.0  # h12, the first heater of p1, is wrong
+        variables.update({f"h{index}.m_dot_kg_s": {"value": 0.1, "unit": "kg/s", "external_signal": "flow"},
+                          f"h{index}.T_in_K": {"value": t_in, "unit": "K", "external_signal": "inlet"},
+                          f"h{index}.T_out_K": {"value": t_in + 10.0, "unit": "K", "external_signal": "outlet"},
+                          f"h{index}.Q_dot_W": {"value": q, "unit": "W", "external_signal": "power"}})
+    snapshot = tmp_path / "observed.yaml"
+    snapshot.write_text(yaml.safe_dump({"observation_name": "chain", "variables": variables}), encoding="utf-8")
+    flow = _flow(path, focus="p0", observed=load_observed_values(snapshot))
+    boxes = {row["id"]: row for row in flow["nodes"]}
+    assert boxes["block:p1"]["verdict"] == "fail" and boxes["block:p1"]["folds"] == ["p1c00"]
+    assert flow["too_large"] is not None  # 12 focus boxes and one neighbour: still above the size, and said so
+
+
+@pytest.mark.parametrize("audit", EXAMPLE_AUDITS, ids=lambda path: path.parent.name + "/" + path.stem)
+def test_no_example_draws_a_silent_large_picture(audit) -> None:
+    for kwargs in ({}, {"quantity": "mass_flow"}, {"quantity": "power"}):
+        flow = _flow(audit, **kwargs)
+        assert _readable(flow) or flow["too_large"] is not None, (kwargs, len(flow["nodes"]), len(flow["links"]))
+
+
+def test_a_one_component_focus_with_too_many_neighbours_says_to_keep_one_quantity(tmp_path) -> None:
+    path, count = _chain_audit(tmp_path, None)
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    # A hub: h0's outlet feeds every other heater, so focusing on h0 draws 30 boxes even at block level.
+    data["system"]["connections"] = [{"from_variable": "h0.T_out_K", "to_variable": f"h{index}.T_in_K"}
+                                     for index in range(1, count)]
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+    flow = _flow(path, focus="h0")
+    assert flow["too_large"] is not None and flow["too_large"]["focus_choices"] == []
+    result = run_cli("hierarchy", "flow", str(path), "--focus", "h0")
+    note = next(line for line in result.stdout.splitlines() if line.strip().startswith("n_too_large["))
+    assert "its one component has many neighbours: keep one quantity with --quantity" in note
