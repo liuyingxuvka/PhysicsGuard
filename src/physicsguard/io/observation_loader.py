@@ -1,8 +1,11 @@
-"""YAML loader for observed value files.
+"""YAML loader for observed value files, and the one conversion and reading check of observed rows.
 
 A raw reading becomes a value in one place, convert_observed_rows, for snapshots and series
 points alike. Every row, converted there or given in its model unit, is then checked the same
-way against the reading its external_signal names, as far as the tool can read it.
+way against every reading its external_signal names. ObservedValuesSpec and ObservedSeriesSpec
+call convert_observed_rows when they are validated, so a spec loaded from a file and one built
+in Python take the same route; the loaders only unwrap a refusal from pydantic's ValidationError
+so its code leads the message.
 """
 
 from __future__ import annotations
@@ -60,17 +63,38 @@ def load_observed_values(path: str | Path) -> ObservedValuesSpec:
     if "variables" not in data:
         raise ValueError(f"observed values YAML missing variables: {yaml_path}")
     try:
-        observed = ObservedValuesSpec.model_validate(data, context={"raw_snapshot_ingestion": True})
+        return ObservedValuesSpec.model_validate(data, context={"raw_snapshot_ingestion": True})
     except ValidationError as exc:
+        refusal = _conversion_refusal(exc)
+        if refusal is not None:
+            raise refusal from exc
         raise ValueError(f"invalid ObservedValuesSpec in '{yaml_path}': {exc}") from exc
 
-    convert_observed_rows(observed.variables, observed.properties)
-    return observed
+
+class ObservedConversionError(ValueError):
+    """A raw reading, or a reading in external_signal, that the tool refuses while an observed spec is validated."""
+
+
+def _conversion_refusal(exc: ValidationError) -> ObservedConversionError | None:
+    """The tool's own refusal inside a ValidationError (raised by convert_observed_rows in a spec validator)."""
+    for detail in exc.errors():
+        if "ctx" in detail and isinstance(detail["ctx"].get("error"), ObservedConversionError):
+            return detail["ctx"]["error"]
+    return None
 
 
 def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: dict[str, PhysicalPropertySpec]) -> None:
-    """Convert each raw reading once, then check every row against the reading its external_signal names."""
+    """Convert each raw reading once, then check every row against every reading its external_signal names.
+
+    Called by the ObservedValuesSpec and ObservedSeriesSpec validators, so every route to a spec runs it; a
+    spec built again from rows already checked checks them again, from a cleared state, with the same result.
+    """
     for variable, row in variables.items():
+        row._conversion_checked = None
+        row._conversion_check = None
+        row._signal_disagrees = False
+        row._missing_property = None
+        row._signal_unreadable = False
         raw_conversion = _convert_raw_row(variable, row, properties) if row.raw_value is not None else None
         _check_signal_reading(variable, row, raw_conversion, properties)
 
@@ -82,7 +106,7 @@ def _convert_raw_row(variable: str, row: ObservedValueSpec,
     Returns the factor and offset applied, so the signal check converts a reading of the raw unit the same way.
     """
     if not row.unit or not row.unit.strip():
-        raise ValueError(f"unit_not_convertible:{variable}: raw input needs a target unit")
+        raise ObservedConversionError(f"unit_not_convertible:{variable}: raw input needs a target unit")
     if row.conversion_property is not None:
         factor, offset, evidence = _property_conversion(variable, row, properties)
         checked = True
@@ -271,7 +295,7 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
             remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
                       "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
                       "converts it")
-            raise ValueError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
+            raise ObservedConversionError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
         unused = f"; external_signal also reads {_unusable_words(row, unusable, properties, origin, raw)}" if unusable else ""
         _mark_unchecked(row, f"{sentence} (a reading inside a longer external_signal is reported, not enforced; write the "
                              f"reading alone{'' if raw else ', or as raw_value and raw_unit,'} to have it enforced)"
@@ -370,12 +394,12 @@ def _property_conversion(variable: str, row: ObservedValueSpec,
     """Compose the factor from the unit table and the declared property; a recorded factor is only compared."""
     name = row.conversion_property
     if name not in properties:
-        raise ValueError(f"{variable}: conversion_property {name} is not declared under properties")
+        raise ObservedConversionError(f"{variable}: conversion_property {name} is not declared under properties")
     prop = properties[name]
     try:
         factor, offset = property_conversion(row.raw_unit, row.unit, prop.value, prop.unit)
     except ValueError as exc:
-        raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} -> {row.unit} through {name} ({prop.value:g} {prop.unit}): {exc}") from exc
+        raise ObservedConversionError(f"unit_not_convertible:{variable}: {row.raw_unit} -> {row.unit} through {name} ({prop.value:g} {prop.unit}): {exc}") from exc
     evidence = f" ({name} {prop.value:g} {prop.unit})"
     recorded_factor = row.conversion_factor if row.conversion_factor is not None else factor
     recorded_offset = row.conversion_offset if row.conversion_offset is not None else offset
@@ -393,7 +417,7 @@ def _table_or_calibration(variable: str, row: ObservedValueSpec) -> tuple[float,
     source, target = read_unit(row.raw_unit), read_unit(row.unit)
     known = known_conversion(row.raw_unit, row.unit)
     if known is None and source is not None and target is not None:
-        raise ValueError(
+        raise ObservedConversionError(
             f"unit_not_convertible:{variable}: {row.raw_unit} ({describe_quantity(row.raw_unit)}) -> {row.unit} "
             f"({describe_quantity(row.unit)}) are different quantities; declare the property that links them under "
             "properties (for example a density) and name it with conversion_property, so the tool computes the factor; "
@@ -401,14 +425,14 @@ def _table_or_calibration(variable: str, row: ObservedValueSpec) -> tuple[float,
         )
     if known is None and not is_transducer_output(row.raw_unit):
         unreadable = row.raw_unit if source is None else row.unit
-        raise ValueError(
+        raise ObservedConversionError(
             f"unit_not_convertible:{variable}: the tool cannot read the unit '{unreadable}', so it cannot check a conversion "
             f"from {row.raw_unit} to {row.unit} and does not apply a recorded one; write it as the unit table does "
             f"({READABLE_HINT}), or give a transducer output in V, mV, A, mA or ohm with its calibration factor"
         )
     if known is None:
         if row.conversion_factor is None:
-            raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} is a transducer output; {row.raw_unit} -> "
+            raise ObservedConversionError(f"unit_not_convertible:{variable}: {row.raw_unit} is a transducer output; {row.raw_unit} -> "
                              f"{row.unit} needs its calibration as conversion_factor (and conversion_offset)")
         return row.conversion_factor, row.conversion_offset or 0.0, False
     if row.conversion_factor is None and row.conversion_offset is None:
@@ -425,9 +449,9 @@ def _table_or_calibration(variable: str, row: ObservedValueSpec) -> tuple[float,
 
 def _conversion_disagreement(
     variable: str, row: ObservedValueSpec, converted: float, reason: str
-) -> ValueError:
+) -> ObservedConversionError:
     given = f"value={row.value!r} {row.unit}" if row.value is not None else "no value given"
-    return ValueError(
+    return ObservedConversionError(
         f"observed_value_disagrees_with_conversion:{variable}: "
         f"{given}; raw_value={row.raw_value:g} {row.raw_unit}; "
         f"converted={converted:g} {row.unit}; {reason}"
@@ -456,13 +480,18 @@ def load_observed_series(path: str | Path) -> ObservedSeriesSpec:
 
 
 def observed_series_from_mapping(data: dict[str, Any]) -> ObservedSeriesSpec:
-    """Validate a series (from a file or testfile series) and convert each point's raw readings like a snapshot."""
+    """Validate a series (from a file or testfile series); its validator converts and checks each point like a
+    snapshot, and the tool's refusal comes out unwrapped."""
     from physicsguard.schema.validation_depth import ObservedSeriesSpec
 
-    series = ObservedSeriesSpec.model_validate(data, context={"raw_snapshot_ingestion": True})
-    for point in series.points:
-        convert_observed_rows(point.variables, series.properties)
-    return series
+    try:
+        return ObservedSeriesSpec.model_validate(data, context={"raw_snapshot_ingestion": True})
+    except ValidationError as exc:
+        refusal = _conversion_refusal(exc)
+        if refusal is not None:
+            raise refusal from exc
+        raise
 
 
-__all__ = ["convert_observed_rows", "load_observed_series", "load_observed_values", "observed_series_from_mapping"]
+__all__ = ["ObservedConversionError", "convert_observed_rows", "load_observed_series", "load_observed_values",
+           "observed_series_from_mapping"]

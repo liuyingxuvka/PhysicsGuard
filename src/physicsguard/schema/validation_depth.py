@@ -319,6 +319,11 @@ class ObservedSeriesSpec(BaseModel):
                 if row.conversion_property is not None and row.conversion_property not in self.properties:
                     raise ValueError(f"{point.point_id}: {name}: conversion_property {row.conversion_property} "
                                      "is not declared under properties")
+        # One route: every point is converted and checked like a snapshot, from a file or built in Python.
+        from physicsguard.io.observation_loader import convert_observed_rows
+
+        for point in self.points:
+            convert_observed_rows(point.variables, self.properties)
         _json_serializable(self.metadata, "observed-series metadata")
         return self
 

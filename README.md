@@ -233,7 +233,7 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   closes and the audit passes. From `v0.16.0` you can give `raw_value` and `raw_unit` and let the tool convert; a
   contradicting value stops the run. The tool reads other spellings of its units (`l/min`, `LPM`, `L min^-1`, `kg/sec`, `15 C`)
   and refuses a unit it cannot read rather than apply a factor the AI wrote for it. A number the AI converts by hand
-  is still the AI's number. The tool checks every row, with or without `raw_value`, against every reading it finds in
+  is still the AI's number. The tool checks every row, with or without `raw_value`, from a file or built in Python, against every reading it finds in
   `external_signal` (`6 kg/min`, or `outlet temperature 33 C`), all converted to the model unit; so `raw_value: 6,
   raw_unit: L/s` beside `external_signal: "6 L/min"` stops the run, and so does `"6 L/min (0.1 kg/s)"`: two
   readings are each compared, and with each other. When the whole `external_signal` is its readings,

@@ -173,4 +173,8 @@ class ObservedValuesSpec(BaseModel):
             json.dumps(self.metadata)
         except (TypeError, ValueError) as exc:
             raise ValueError("metadata must be JSON-serializable") from exc
+        # One route: a snapshot built in Python is converted and checked exactly like one loaded from a file.
+        from physicsguard.io.observation_loader import convert_observed_rows
+
+        convert_observed_rows(self.variables, self.properties)
         return self

@@ -213,9 +213,13 @@ The mapping ledger adds `raw_conversion`, for example `6 L/min x 0.0166667 (wate
 It records the accepted original input conversion; intentional counterfactual variants retain that
 provenance alongside their counterfactual source, rather than claiming a new measured conversion.
 Evaluation never converts. A series file (and `testfile series` output) may carry raw rows and a
-series-level `properties`; `load_observed_series` converts each point with the same rules. Direct Python
-construction needs numeric SI rows without raw fields, or rows returned by the loader; unresolved raw rows
-are refused before use.
+series-level `properties`; `load_observed_series` converts each point with the same rules. A snapshot or
+series built directly in Python (`ObservedValuesSpec(...)`, `ObservedValuesSpec.model_validate(...)`,
+`ObservedSeriesSpec.model_validate(...)`) runs the same conversion and `external_signal` check when it is
+validated, so a value-only row such as `6 kg/s` beside `6 kg/min` is refused there too; its rows must be
+numeric SI rows without raw fields, or rows returned by the loader, and unresolved raw rows are refused
+before use. The variants of `hierarchy variants` copy checked rows and change their values on purpose, so
+they are not checked again.
 Record mapping uncertainty and `review_required` honestly.
 `stale_when` declares reconfirmation conditions; when one occurs, set `mapping_status: stale`. Do not present old mappings as current evidence.
 

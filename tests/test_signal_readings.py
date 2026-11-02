@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 
 import pytest
+import yaml
 
 from conftest import run_cli
 from test_derived_unit_conversions import SHOWER, WATER, _ledger, _load, _trial, _write
@@ -331,3 +332,34 @@ def test_a_second_reading_that_needs_an_undeclared_property_leaves_the_row_unche
     row = ledger["heater.m_dot_kg_s"]
     assert list(row["issue_codes"]) == ["conversion_unchecked"] and row["missing_property"] == "density"
     assert "agrees with external_signal 0.1 kg/s" in row["conversion_check"]
+
+
+# One route: a snapshot or series built in Python (ObservedValuesSpec, ObservedSeriesSpec) is checked exactly like one
+# loaded from a file; only the file loader's message wrapping differs.
+
+def test_a_snapshot_built_in_python_is_checked_like_a_loaded_one() -> None:
+    from physicsguard.schema.observation_spec import ObservedValuesSpec
+
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s: external_signal reads 6 kg/min"):
+        ObservedValuesSpec(variables={"heater.m_dot_kg_s": {"value": 6.0, "unit": "kg/s", "external_signal": "6 kg/min"}})
+    trial = yaml.safe_load((SHOWER / "observed_unit_err.yaml").read_text(encoding="utf-8"))
+    trial["variables"]["heater.m_dot_kg_s"] = {"value": 6.0, "unit": "kg/s", "external_signal": "pump 6 kg/min"}
+    _report, ledger = _ledger(SHOWER / "audit.yaml", ObservedValuesSpec.model_validate(trial))
+    assert "signal_reading_disagrees" in ledger["heater.m_dot_kg_s"]["issue_codes"]
+    assert "conversion_unchecked" in ledger["mix.m_dot_2_kg_s"]["issue_codes"]  # 9 L/min beside 9 kg/s, no density
+
+
+def test_a_series_built_in_python_is_checked_like_a_loaded_one() -> None:
+    from physicsguard.schema.validation_depth import ObservedSeriesSpec
+
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s"):
+        ObservedSeriesSpec.model_validate({"series_id": "py", "points": [{"point_id": "p0", "variables": {
+            "heater.m_dot_kg_s": {"value": 6.0, "unit": "kg/s", "external_signal": "6 kg/min"}}}]})
+
+
+def test_a_loaded_refusal_keeps_its_code_first(tmp_path) -> None:
+    """The check runs while the spec is validated; the loader still raises the refusal itself, not pydantic's wrapper."""
+    path = _write(tmp_path, {"heater.m_dot_kg_s": {"value": 6.0, "unit": "kg/s", "external_signal": "6 kg/min"}})
+    with pytest.raises(ValueError) as caught:
+        _load(path)
+    assert str(caught.value).startswith("signal_reading_disagrees:heater.m_dot_kg_s: external_signal reads 6 kg/min")
