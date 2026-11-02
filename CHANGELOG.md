@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `hierarchy flow AUDIT.yaml` draws how physical quantities flow between components as a Mermaid picture, computed from the audit's own relations and connections. It draws only the part under discussion (`--focus BLOCK`, `--quantity mass_flow`, or, with `--observed SNAPSHOT.yaml`, the failing blocks with their verdicts coloured), draws a large audit block by block, and lists in a dashed box what it left out. The skill asks the AI to use it when it discusses a set-up with the owner; the README has a worked example.
 - A conversion that changes the physical quantity, such as L/min of water to kg/s, is computed by the tool from its unit table and a property declared once in the snapshot under `properties` (for example `water_density: {value: 1.0, unit: kg/L}`) and named on the row with `conversion_property`. A row that gives such a conversion only as a factor the AI wrote is refused with exit 2 (`unit_not_convertible`), and a recorded factor that disagrees with the computed one stops the run (`observed_value_disagrees_with_conversion`). This catches the forgotten "/60" in an L/min-to-kg/s factor.
 - A snapshot row whose value was converted outside the tool (a conversion factor or offset is recorded but there is no raw value), or whose raw unit is outside the unit table, is marked `conversion_unchecked` in the mapping warnings; the audit still runs.
 - The unit table adds kg/min and the densities kg/m^3, kg/L and g/cm^3.

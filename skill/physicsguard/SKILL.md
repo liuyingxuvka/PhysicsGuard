@@ -42,6 +42,7 @@ Pick one route, then load only its file.
 - Real binding: observed snapshots and series written by `testfile snapshot|series` from one test-file contract.
 - Test binding: `validation run` checks the audit against a contracted dataset (holdout, depth, adequacy).
 - Readback: `hierarchy describe` (text; `--observed`, `--json`, `--mermaid`); `hierarchy run|evaluate|compare|variants` print the same tree with verdicts, the `hint:` lines and the `resolution:` lines (`--json` for the full report).
+- Discussion: when you analyse or discuss a set-up with the owner (a failing block, how a quantity reaches a balance, a design option), put the picture from `python -m physicsguard.cli hierarchy flow AUDIT.yaml` (with `--observed SNAPSHOT.yaml`, `--focus BLOCK` or `--quantity mass_flow`) in your reply as a Mermaid block; it is computed from the audit, draws only that part and names what it left out. Routine edits need no picture.
 - Current vs target: the audit file is the current model; a refinement whose next template is not built yet is `planned`, the target, and once built the refined tree replaces the coarse one in the same file.
 
 Choose a residual scale as the error you can tolerate in the residual's unit; read the resolution line before you state a number as checked.

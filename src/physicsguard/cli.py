@@ -33,6 +33,14 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_description.add_argument("--observed", type=Path, help="count mapped snapshot signals without evaluation")
     hierarchy_description.add_argument("--pretty", action="store_true")
 
+    hierarchy_flow = hierarchy_subparsers.add_parser(
+        "flow", help="draw how quantities flow between components (Mermaid), only the part under discussion")
+    hierarchy_flow.add_argument("audit", type=Path)
+    hierarchy_flow.add_argument("--focus", help="a block or component to draw with its neighbours")
+    hierarchy_flow.add_argument("--quantity", help="keep only links of one quantity (for example mass_flow) or unit")
+    hierarchy_flow.add_argument("--observed", type=Path, help="colour block verdicts; without --focus, draw around failing blocks")
+    hierarchy_flow.add_argument("--json", action="store_true", help="print nodes, links and omissions")
+
     hierarchy_run = hierarchy_subparsers.add_parser("run", help="run a hierarchical audit")
     hierarchy_run.add_argument("audit", type=Path, help="path to a YAML HierarchicalAuditSpec")
     hierarchy_run.add_argument("--pretty", action="store_true", help="pretty-print JSON output")
@@ -268,6 +276,20 @@ def hierarchy_describe(path: Path, mermaid: bool = False, pretty: bool = False,
         _print_json(description, pretty)
     else:
         print(render_tree_view(description))
+    return 0
+
+
+def hierarchy_flow(path: Path, focus: str | None, quantity: str | None, observed_path: Path | None, as_json: bool) -> int:
+    from physicsguard.core.quantity_flow import quantity_flow, render_quantity_flow_mermaid
+    from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
+    from physicsguard.io.observation_loader import load_observed_values
+
+    observed = load_observed_values(observed_path) if observed_path is not None else None
+    flow = quantity_flow(load_hierarchical_audit_spec(path), focus=focus, quantity=quantity, observed=observed)
+    if as_json:
+        _print_json(flow, True)
+    else:
+        print(render_quantity_flow_mermaid(flow))
     return 0
 
 
@@ -522,6 +544,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "hierarchy":
             if args.hierarchy_command == "describe":
                 return hierarchy_describe(args.audit, args.mermaid, args.pretty, args.json, args.observed)
+            if args.hierarchy_command == "flow":
+                return hierarchy_flow(args.audit, args.focus, args.quantity, args.observed, args.json)
             if args.hierarchy_command == "run":
                 return hierarchy_run(args.audit, args.pretty, args.json, args.full)
             if args.hierarchy_command == "evaluate":

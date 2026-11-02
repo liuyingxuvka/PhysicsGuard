@@ -55,6 +55,42 @@ resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_k
 
 退出码：0 通过，1 检查了但没通过，2 没法运行。
 
+## 讨论时看图
+
+和 AI 讨论一个系统时，可以要一张“物理量怎么流动”的图。这张图是从审计文件自己的关系算出来的，不是 AI 的描述：箭头 A -> B 表示 B 的某个关系用到了 A 的一个量，或者审计把 A.x 和 B.y 连在一起。给了快照时，工具只画不通过的那几块周围，标出结论颜色，并在虚线框里写明省略了什么。例子：*加热水箱在第 70 步为什么变凉？*
+
+```console
+$ python -m physicsguard.cli hierarchy flow examples/hierarchical/heated_tank/heated_tank.yaml --observed examples/hierarchical/heated_tank/measured_k70.yaml
+```
+
+```mermaid
+flowchart LR
+  %% quantity flow of heated_tank, around heater_cmd, heater_eff, heater_el, heater_nameplate (failing blocks heater); arrow A -> B: a relation of B uses a quantity of A, or a connection A.x = B.y; relations traced once at the declared initial guesses; no solve
+  subgraph b0["thermal"]
+    n0["heat: ThermalMassStepModule"]
+  end
+  subgraph b1["heater"]
+    n1["heater_cmd: LinearRelationModule"]
+    n2["heater_eff: EfficiencyModule"]
+    n3["heater_el: ElectricalPowerModule"]
+    n4["heater_nameplate: SumModule"]
+  end
+  n2 -->|"efficiency [-]"| n4
+  n1 -->|"y = P_W [W]"| n3
+  n3 -->|"P_W = input_power_W [W]"| n2
+  n2 -->|"useful_output_power_W = Q_in_W [W]"| n0
+  %% shown: 5 boxes (component level), 4 arrows
+  n_omitted["not shown: 9 components (blocks envelope, hydraulics, tank, thermal, throughflow); 11 links to them; 1 boundary/assumption values"]
+  classDef omitted stroke-dasharray: 4 3,fill:none
+  class n_omitted omitted
+  classDef fail fill:#f8d7da,stroke:#b02a37
+  class n1,n2,n3,n4 fail
+  classDef pass fill:#d1e7dd,stroke:#146c43
+  class n0 pass
+```
+
+加热链（指令、电功率、效率）不通过；接收它的热量的热平衡那一块通过。`--focus 块名` 只画一块和它的邻居，`--quantity mass_flow`（或一个单位）只看一种量，`--json` 输出节点、连线和省略清单。没有快照也没有指定焦点时，超过 12 个组件的审计按块来画。
+
 ## 快速开始
 
 **第一步：从发布的 tag 安装工具。**

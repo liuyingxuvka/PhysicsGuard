@@ -64,6 +64,48 @@ resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_k
 
 Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
 
+## Discuss it with a picture
+
+When you and the AI talk about a set-up, ask for the picture of how its quantities flow. It is drawn from the
+audit's own relations, not from the AI's description: an arrow A -> B means a relation of B uses a quantity of A, or
+the audit connects A.x to B.y. With a snapshot, the tool draws only the part around the failing blocks, colours the
+verdicts and lists in a dashed box what it left out. Here: *why does the heated tank cool at step 70?*
+
+```console
+$ python -m physicsguard.cli hierarchy flow examples/hierarchical/heated_tank/heated_tank.yaml --observed examples/hierarchical/heated_tank/measured_k70.yaml
+```
+
+```mermaid
+flowchart LR
+  %% quantity flow of heated_tank, around heater_cmd, heater_eff, heater_el, heater_nameplate (failing blocks heater); arrow A -> B: a relation of B uses a quantity of A, or a connection A.x = B.y; relations traced once at the declared initial guesses; no solve
+  subgraph b0["thermal"]
+    n0["heat: ThermalMassStepModule"]
+  end
+  subgraph b1["heater"]
+    n1["heater_cmd: LinearRelationModule"]
+    n2["heater_eff: EfficiencyModule"]
+    n3["heater_el: ElectricalPowerModule"]
+    n4["heater_nameplate: SumModule"]
+  end
+  n2 -->|"efficiency [-]"| n4
+  n1 -->|"y = P_W [W]"| n3
+  n3 -->|"P_W = input_power_W [W]"| n2
+  n2 -->|"useful_output_power_W = Q_in_W [W]"| n0
+  %% shown: 5 boxes (component level), 4 arrows
+  n_omitted["not shown: 9 components (blocks envelope, hydraulics, tank, thermal, throughflow); 11 links to them; 1 boundary/assumption values"]
+  classDef omitted stroke-dasharray: 4 3,fill:none
+  class n_omitted omitted
+  classDef fail fill:#f8d7da,stroke:#b02a37
+  class n1,n2,n3,n4 fail
+  classDef pass fill:#d1e7dd,stroke:#146c43
+  class n0 pass
+```
+
+The heater chain (command, electrical power, efficiency) fails; the thermal block that receives its heat passes. Use
+`--focus BLOCK` to draw one block and its neighbours, `--quantity mass_flow` (or a unit) to follow one quantity, and
+`--json` for the nodes, links and omissions. Without a snapshot or focus, an audit with more than 12 components is
+drawn block by block.
+
 ## Quick start
 
 **1. Install the tool, from the release tag.**
