@@ -32,9 +32,12 @@ One contract stores field roles, units, variable mappings, conversion, confidenc
 ## Units and evidence
 The only automatic table is `src/physicsguard/core/units.py`: K/degC;
 W/kW/MW; m³/s/L/s/L/min/m³/h; Pa/kPa/bar/MPa; rad/s/rpm;
-kg/s/g/s/kg/h; m/mm; s/min/h. Identical unit labels are unchanged.
-Other pairs require explicit `conversion: {factor: ..., offset: ...}`.
-An explicit conversion that contradicts a known pair fails. Each output value
+kg/s/g/s/kg/min/kg/h; m/mm; s/min/h; kg/m³/kg/L/g/cm³. Identical unit labels are unchanged.
+Units outside the table require explicit `conversion: {factor: ..., offset: ...}`.
+An explicit conversion that contradicts a known pair fails, and a field cannot change
+quantity (a kg/s field mapped to an m³/s variable) with a bare factor: `unit_not_convertible`.
+Snapshots carry each reading as `raw_value`/`raw_unit` beside the converted value, so loading
+the snapshot checks the conversion again. Each output value
 records the unit of the variable named by `target`, factor, offset, field@row, confidence and source.
 Audit evaluation never performs a hidden conversion or moves observed values.
 Mapping confidence accepts high, medium, low or proposed; the default minimum is medium.

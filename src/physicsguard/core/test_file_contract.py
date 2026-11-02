@@ -176,7 +176,9 @@ def _snapshot(resolved, rows, units, row):
                 raise ValueError(f'{name}@{index}: expected a numeric observation') from exc
             if not math.isfinite(number):
                 raise ValueError(f'{name}@{index}: observation must be finite')
-            variables[target] = dict(value=number, unit=units[target], source=resolved.contract.data_file,
+            # The raw reading travels with the converted value so load_observed_values re-checks the conversion.
+            variables[target] = dict(value=number, raw_value=float(rows[index][name]), raw_unit=field.unit,
+                unit=units[target], source=resolved.contract.data_file,
                 external_signal=f'{name}@{index}', conversion_factor=factor, conversion_offset=offset,
                 mapping_confidence=field.confidence, description=field.evidence)
     snapshot = dict(observation_name=f'{resolved.contract.contract_id}_step_{row}', variables=variables)
@@ -204,7 +206,10 @@ def testfile_series(path, row_range=None):
         raise ValueError('invalid or empty row range')
     points = []
     for row in range(start, stop):
-        point = dict(point_id=f'step_{row}', source_identity_id=resolved.contract.contract_id, source_row_index=row, variables=_snapshot(resolved, rows, units, row)['variables'])
+        # Series rows are SI rows built here in process (the series schema refuses raw rows), so the raw reading is dropped.
+        variables = {target: {key: value for key, value in item.items() if key not in ('raw_value', 'raw_unit')}
+                     for target, item in _snapshot(resolved, rows, units, row)['variables'].items()}
+        point = dict(point_id=f'step_{row}', source_identity_id=resolved.contract.contract_id, source_row_index=row, variables=variables)
         column = resolved.contract.time_column
         if column:
             raw = float(rows[row][column])

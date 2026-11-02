@@ -346,7 +346,8 @@ def test_disagreeing_snapshot_exits_2_naming_the_variable(tmp_path) -> None:
     import yaml
     shower = ROOT / "examples/hierarchical/shower_mix"
     data = yaml.safe_load((shower / "observed_unit_err.yaml").read_text())
-    data["variables"]["heater.m_dot_kg_s"].update(raw_value=6, raw_unit="L/min")
+    data["properties"] = {"water_density": {"value": 1.0, "unit": "kg/L"}}
+    data["variables"]["heater.m_dot_kg_s"].update(raw_value=6, raw_unit="L/min", conversion_property="water_density")
     path = tmp_path / "raw_disagreement.yaml"
     path.write_text(yaml.safe_dump(data))
     result = run_cli("hierarchy", "evaluate", str(shower / "audit.yaml"), str(path))

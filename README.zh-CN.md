@@ -40,7 +40,7 @@ resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_k
 warnings: observed audit did not pass; max observed normalized residual exceeds audit threshold; max observed normalized residual exceeds 10
 ```
 
-加热器这一块通过，混水这一块不通过：它的能量平衡偏离了审计里写的容差的 22.5 倍，也就是差了 4.5 K，而审计只允许 0.2 K。`resolution:` 这一行给出这些数值处的局部一阶误差分辨率估计，解释“通过”时要一起看。把按流量加权算出的 33.0 °C（306.15 K）填进 `observed_ai.yaml` 的 `mix.T_out_K`，再跑一次同样的命令：
+加热器这一块通过，混水这一块不通过：它的能量平衡偏离了审计里写的容差的 22.5 倍，也就是差了 4.5 K，而审计只允许 0.2 K。`resolution:` 这一行给出这些数值处的局部一阶误差分辨率估计，解释“通过”时要一起看。把 `observed_ai.yaml` 里 `mix.T_out_K` 的 `raw_value` 改成按流量加权算出的 33.0（°C），再跑一次同样的命令：
 
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
@@ -90,15 +90,17 @@ python -m physicsguard.cli modules list --find mix
 技能里有一条六步的快速路线（[`SKILL.md`](./skill/physicsguard/SKILL.md) 里的 `## Quick check of your own calculation`），大意是：
 
 1. 照 [`audit_model.yaml`](./skill/physicsguard/references/templates/audit_model.yaml) 写一份粗的审计；用 `modules list --find <词>` 找模块，用 `modules describe TYPE` 看说明。独立检查要选原生、自含、声明了非空变量表的组件；只引用变量的平衡关系还需要拥有那些变量的组件。
-2. 把给定输入按原始数值和单位写进快照，让工具去换算；AI 若还声称了换算后的输入值，也保留为 `value` 供读入时核对，声称的输出同样保留原始量。单位使用工具支持的名字，例如 `degC`。下面 L/min 到 kg/s 的显式系数假设水的密度为 1 kg/L：
+2. 把给定输入按原始数值和单位写进快照，让工具去换算；AI 若还声称了换算后的输入值，也保留为 `value` 供读入时核对，声称的输出同样保留原始量。单位使用工具支持的名字，例如 `degC`。从 L/min 到 kg/s 换了物理量，所以要声明把两者连起来的密度，换算系数由工具用单位表算：
 
    ```yaml
+   properties:
+     water_density: {value: 1.0, unit: kg/L, source: "题目给的"}
    variables:
      heater.T_in_K: {raw_value: 15, raw_unit: degC, unit: K}
-     heater.m_dot_kg_s: {value: 0.1, raw_value: 6, raw_unit: L/min, unit: kg/s, conversion_factor: 0.0166667}
+     heater.m_dot_kg_s: {value: 0.1, raw_value: 6, raw_unit: L/min, unit: kg/s, conversion_property: water_density}
    ```
 
-   没有声称换算后的值时，省略 `value`。如果某一行写的 `value` 和它的原始值、记下的换算系数对不上，命令以退出码 2 停下，并点名 `observed_value_disagrees_with_conversion:<变量>`。
+   没有声称换算后的值时，省略 `value`。如果某一行写的 `value` 和工具的换算对不上，命令以退出码 2 停下，并点名 `observed_value_disagrees_with_conversion:<变量>`；L/min 到 kg/s 只写了 AI 自己的系数的一行，会以 `unit_not_convertible:<变量>` 被拒绝。
 3. 用 `hierarchy describe AUDIT --observed SNAPSHOT` 读回审计和映射，不求解。
 4. 跑 `hierarchy evaluate AUDIT SNAPSHOT > check.txt`；退出 1 是检查不通过，也要保留输出。
 5. 读这份保存的结果一次：`own FAIL`、`hint:` 行、局部 `resolution:` 估计和映射警告。
@@ -154,7 +156,7 @@ flowchart LR
 
 **它仍然可能漏掉的地方。** 下面是上一个版本 `v0.15.25` 在淋浴例子上的真实输出：
 - 检查有多细，取决于残差的尺度。用模块默认的尺度、流量减半时，同样 4.5 K 的错误会通过（`mixer [L1] | own PASS 0.56`）。从 `v0.16.0` 起，`resolution:` 行会写出每项检查的局部一阶误差分辨率估计，用的是默认尺度时标上 `(default scale)`；它不改变结论，所以说一个数“检查过了”之前，先看这一行。
-- 如果 AI 自己换算单位，并把错误一路带下去（把 6 L/min 写成 6 kg/s），所有守恒都闭合，审计照样通过。从 `v0.16.0` 起，可以写 `raw_value` 和 `raw_unit`，让工具去换算；写的值和原始值对不上，命令就停下。AI 手算换好的数，仍然是 AI 的数。
+- 如果 AI 自己换算单位，并把错误一路带下去（把 6 L/min 写成 6 kg/s），所有守恒都闭合，审计照样通过。从 `v0.16.0` 起，可以写 `raw_value` 和 `raw_unit`，让工具去换算；写的值和原始值对不上，命令就停下。AI 手算换好的数，仍然是 AI 的数：审计照样通过，但这样的每一行现在都会在映射警告里标成 `conversion_unchecked`。声明错的物理性质（比如密度写成 60 kg/L）也仍然是 AI 的数，只是它写在快照和映射记录里，看得见。
 
 
 **量过什么，没量过什么。**

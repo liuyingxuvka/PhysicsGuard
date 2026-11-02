@@ -163,7 +163,7 @@ def derive_bug_family_followups(
                 followup_id="signal_mapping_review",
                 family="signal_mapping",
                 severity="warning",
-                trigger="one or more observed variables have low-confidence, stale, review-required, unit-less or unit-mismatch mapping evidence",
+                trigger="one or more observed variables have low-confidence, stale, review-required, unit-less, unit-mismatch or unchecked-conversion mapping evidence",
                 affected_blocks=tuple(_dedupe(record.block_id for record in mapping_issue_records if record.block_id)),
                 affected_variables=tuple(record.physics_variable for record in mapping_issue_records),
                 evidence_residuals=tuple(residual.name for residual in residuals[:5]),
@@ -224,6 +224,8 @@ def _mapping_issue_codes(expected_unit: str, observed_unit: str, observed_value:
         issues.append("missing_unit")
     if expected_unit and observed_unit and expected_unit != observed_unit and observed_value.conversion_factor is None:
         issues.append("missing_conversion")
+    if observed_value._conversion_checked is False:
+        issues.append("conversion_unchecked")
     if _label(observed_value.mapping_status) == "stale":
         issues.append("stale_mapping")
     return _dedupe(issues)
@@ -236,6 +238,9 @@ def _mapping_recommendation(issue_codes: tuple[str, ...], variable: str) -> str:
         return f"Add an explicit conversion record or remap {variable} to an SI-valued signal."
     if "missing_unit" in issue_codes:
         return f"Record the unit of {variable}'s source signal so it can be checked against the model unit."
+    if "conversion_unchecked" in issue_codes:
+        return (f"Give {variable} as raw_value and raw_unit so the tool converts it with the unit table "
+                "(and a declared property when the quantity changes); a recorded conversion is not checked.")
     if "review_required" in issue_codes or "low_confidence" in issue_codes:
         return f"Confirm {variable}'s source signal, sign convention, and unit before treating the block score as localized."
     if "stale_mapping" in issue_codes:

@@ -168,6 +168,9 @@ def test_a_thousandfold_flow_factor_slip_is_named_without_changing_observations(
     from physicsguard.schema.observation_spec import ObservedValuesSpec
     tank=ROOT/'examples/hierarchical/heated_tank'
     data=yaml.safe_load((tank/'measured_k30.yaml').read_text())
+    # An SI-only snapshot (no raw readings), so the slipped value is not re-checked at load.
+    for row in data['variables'].values():
+        row.pop('raw_value'); row.pop('raw_unit')
     variable='inflow_mass.V_dot_m3_s'
     data['variables'][variable]['value']*=1000
     observed=ObservedValuesSpec.model_validate(data)

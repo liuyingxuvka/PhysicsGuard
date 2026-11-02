@@ -80,27 +80,29 @@ def test_raw_value_and_unit_are_converted_at_load(tmp_path) -> None:
     from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
 
-    shower, data, path = _raw_snapshot(tmp_path)
+    shower, data, path = _raw_snapshot(tmp_path, "observed_unit_err.yaml")
+    data["properties"] = {"water_density": {"value": 1.0, "unit": "kg/L"}}
     flow = data["variables"]["heater.m_dot_kg_s"]
-    flow.pop("value")
-    flow.update(raw_value=6, raw_unit="L/min", conversion_factor=0.0166667)
+    for key in ("value", "conversion_factor", "conversion_note"):
+        flow.pop(key)
+    flow.update(raw_value=6, raw_unit="L/min", conversion_property="water_density")
     temperature = data["variables"]["heater.T_in_K"]
     temperature.pop("value")
     temperature.pop("conversion_offset")
     temperature.update(raw_value=15, raw_unit="degC")
     path.write_text(yaml.safe_dump(data))
     observed = load_observed_values(path)
-    assert observed.variables["heater.m_dot_kg_s"].value == pytest.approx(0.1, rel=1e-5)
+    assert observed.variables["heater.m_dot_kg_s"].value == pytest.approx(0.1, rel=1e-12)
     assert observed.variables["heater.T_in_K"].value == pytest.approx(288.15)
     runner = HierarchicalAuditRunner(load_hierarchical_audit_spec(shower / "audit.yaml"), shower)
     report = runner.to_dict(runner.evaluate_observed(observed))
     ledger = {row["physics_variable"]: row for row in report["signal_mapping_ledger"]}
-    assert ledger["heater.m_dot_kg_s"]["raw_conversion"] == "6 L/min x 0.0166667 -> 0.1 kg/s"
+    assert ledger["heater.m_dot_kg_s"]["raw_conversion"] == "6 L/min x 0.0166667 (water_density 1 kg/L) -> 0.1 kg/s"
     assert ledger["heater.T_in_K"]["raw_conversion"] == "15 degC x 1 + 273.15 -> 288.15 K"
-    # The separately documented raw/value tolerance accepts the existing rounded factor.
+    # The documented raw/value tolerance accepts a rounded recorded factor; the tool's own factor is applied.
     flow.update(value=0.1, conversion_factor=0.016667)
     path.write_text(yaml.safe_dump(data))
-    assert load_observed_values(path).variables["heater.m_dot_kg_s"].value == pytest.approx(0.100002)
+    assert load_observed_values(path).variables["heater.m_dot_kg_s"].value == pytest.approx(0.1, rel=1e-12)
 
 
 def test_disagreeing_value_and_raw_conversion_is_refused(tmp_path) -> None:
@@ -108,7 +110,8 @@ def test_disagreeing_value_and_raw_conversion_is_refused(tmp_path) -> None:
     from physicsguard.io.observation_loader import load_observed_values
 
     _shower, data, path = _raw_snapshot(tmp_path, "observed_unit_err.yaml")
-    data["variables"]["heater.m_dot_kg_s"].update(raw_value=6, raw_unit="L/min")
+    data["properties"] = {"water_density": {"value": 1.0, "unit": "kg/L"}}
+    data["variables"]["heater.m_dot_kg_s"].update(raw_value=6, raw_unit="L/min", conversion_property="water_density")
     path.write_text(yaml.safe_dump(data))
     with pytest.raises(ValueError, match="observed_value_disagrees_with_conversion:heater.m_dot_kg_s"):
         load_observed_values(path)
@@ -172,7 +175,8 @@ def test_computed_raw_conversion_must_be_finite(tmp_path) -> None:
     from physicsguard.io.observation_loader import load_observed_values
 
     path = tmp_path / "overflow.yaml"
-    row = {"raw_value": 1e308, "raw_unit": "L/min", "unit": "kg/s", "conversion_factor": 1e308}
+    # Units outside the table, so the recorded factor is the one applied.
+    row = {"raw_value": 1e308, "raw_unit": "V", "unit": "Pa", "conversion_factor": 1e308}
     path.write_text(yaml.safe_dump({"variables": {"a.x": row}}))
     with pytest.raises(ValueError, match="observed_value_disagrees_with_conversion:a.x.*finite"):
         load_observed_values(path)

@@ -127,20 +127,39 @@ variables:
     stale_when: [flow sensor replaced]
 ```
 
-Without raw fields, `value` is already the SI value to check; conversion fields only record evidence.
+Without raw fields, `value` is already the SI value to check; conversion fields only record evidence,
+and a recorded factor or offset other than 1 and 0 is a conversion done outside the tool: the mapping
+ledger marks that row `conversion_unchecked` (a warning; the run continues).
 For a hand-written snapshot, give both finite `raw_value` and nonblank `raw_unit`, plus the target `unit`,
-and omit `value` rather than hand-calculating it. `load_observed_values` converts once at ingestion
-using the existing unit table or the recorded `conversion_factor`/`conversion_offset`; it never guesses
-units from `external_signal`. Cross-dimension conversion such as L/min to kg/s requires an explicit
-factor (for example 1 kg/L divided by 60 seconds); an offset alone is insufficient.
-If `value` is also present, it must agree with the converted value within `RAW_VALUE_REL_TOL = 5e-5`
-relative tolerance. This admits the rounded factor 0.016667 for 6 L/min and rejects a 60-fold error.
-Contradicting the unit table's conversion remains an error under its existing stricter comparison.
+and omit `value` rather than hand-calculating it. `load_observed_values` converts once at ingestion;
+it never guesses units from `external_signal`:
+
+- two units of one quantity in the unit table (degC and K, kW and W, kg/min and kg/s): the table converts;
+  a recorded factor or offset must agree with it exactly;
+- two different quantities in the table (L/min to kg/s): declare the property that links them once under
+  `properties` and name it on the row with `conversion_property`. The tool multiplies or divides by it,
+  whichever turns one quantity into the other, and refuses a pair the property cannot link. A row
+  without `conversion_property` is refused with `unit_not_convertible:<variable>`, even when it records
+  a factor: a cross-quantity factor written by hand is not checked and not used;
+- a unit outside the table (a sensor's V, counts): the recorded `conversion_factor`/`conversion_offset`
+  is applied and the row is marked `conversion_unchecked`.
+
+```yaml
+properties:
+  water_density: {value: 1.0, unit: kg/L, source: "given in the question"}
+variables:
+  heater.m_dot_kg_s: {raw_value: 6, raw_unit: L/min, unit: kg/s, conversion_property: water_density}
+```
+
+If `value` or a `conversion_factor` is also present on a computed row, it must agree with the
+tool's conversion within `RAW_VALUE_REL_TOL = 5e-5` relative tolerance. This admits the rounded factor
+0.016667 for 6 L/min and rejects a 60-fold error; the tool's own factor is the one applied.
 A disagreement refuses the run with exit 2 and `observed_value_disagrees_with_conversion:<variable>`;
 a pair that cannot be converted uses `unit_not_convertible:<variable>`. Incomplete pairs remain input
-validation errors. Conversion results must be finite.
+validation errors. Conversion results must be finite. A declared property needs a finite positive
+value and a unit from the table.
 
-The mapping ledger adds `raw_conversion`, for example `6 L/min x 0.0166667 -> 0.1 kg/s`.
+The mapping ledger adds `raw_conversion`, for example `6 L/min x 0.0166667 (water_density 1 kg/L) -> 0.1 kg/s`.
 It records the accepted original input conversion; intentional counterfactual variants retain that
 provenance alongside their counterfactual source, rather than claiming a new measured conversion.
 Evaluation never converts. Direct Python or series construction needs numeric SI rows without raw

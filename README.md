@@ -48,8 +48,8 @@ warnings: observed audit did not pass; max observed normalized residual exceeds 
 
 The heater block passes; the mixing block fails. Its energy balance is off by 22.5 times the tolerance written in the
 audit: 4.5 K, where the audit allows 0.2 K. The `resolution:` line estimates the local first-order error this check could see at these values,
-so read it when interpreting a pass. Put the flow-weighted answer, 33.0 °C (306.15 K), into `mix.T_out_K` in
-`observed_ai.yaml` and run the same command again:
+so read it when interpreting a pass. Change the `raw_value` of `mix.T_out_K` in
+`observed_ai.yaml` to the flow-weighted answer, 33.0 (°C), and run the same command again:
 
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
@@ -108,16 +108,20 @@ The skill has a six-step quick check (`## Quick check of your own calculation` i
    the components that own its variables.
 2. Write the given numbers into a snapshot in their original units and let the tool convert them. Retain any
    AI-claimed converted input as `value`, so the loader can check it; preserve claimed outputs as raw quantities too.
-   Use supported unit names such as `degC`. The explicit L/min-to-kg/s factor below assumes water at 1 kg/L:
+   Use supported unit names such as `degC`. Going from L/min to kg/s changes the quantity, so declare the density
+   that links them; the tool computes the factor from its unit table:
 
    ```yaml
+   properties:
+     water_density: {value: 1.0, unit: kg/L, source: "given in the question"}
    variables:
      heater.T_in_K: {raw_value: 15, raw_unit: degC, unit: K}
-     heater.m_dot_kg_s: {value: 0.1, raw_value: 6, raw_unit: L/min, unit: kg/s, conversion_factor: 0.0166667}
+     heater.m_dot_kg_s: {value: 0.1, raw_value: 6, raw_unit: L/min, unit: kg/s, conversion_property: water_density}
    ```
 
-   Omit `value` when no converted claim was supplied. A row whose `value` disagrees with its raw value and recorded factor stops the run with exit 2 and
-   `observed_value_disagrees_with_conversion:<variable>`.
+   Omit `value` when no converted claim was supplied. A row whose `value` disagrees with the tool's conversion stops
+   the run with exit 2 and `observed_value_disagrees_with_conversion:<variable>`; an L/min-to-kg/s row with only a
+   factor the AI wrote is refused with `unit_not_convertible:<variable>`.
 3. `hierarchy describe AUDIT --observed SNAPSHOT` to read the audit and mappings back without solving.
 4. Run `hierarchy evaluate AUDIT SNAPSHOT > check.txt` and keep the checked-failure output when it exits 1.
 5. Read the saved result once: `own FAIL`, the `hint:` lines, the local `resolution:` estimates and mapping warnings.
@@ -183,7 +187,9 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   number checked.
 - If the AI converts units itself and carries a slip through consistently (6 L/min written as 6 kg/s), every balance
   closes and the audit passes. From `v0.16.0` you can give `raw_value` and `raw_unit` and let the tool convert; a
-  contradicting value stops the run. A number the AI converts by hand is still the AI's number.
+  contradicting value stops the run. A number the AI converts by hand is still the AI's number: the audit still
+  passes, but each such row is now marked `conversion_unchecked` in the mapping warnings. A wrong declared property
+  (a density of 60 kg/L) is still the AI's number too; it is visible in the snapshot and the ledger.
 
 
 **What has been measured, and what has not.**

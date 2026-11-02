@@ -71,6 +71,9 @@ def test_series_required_variables_are_checked_after_native_derivation(drop_temp
               for block in spec.hierarchy.blocks]
     spec = spec.model_copy(update={"hierarchy": spec.hierarchy.model_copy(update={"blocks": blocks})})
     variables = load_observed_values(example / "measured_k30.yaml").model_dump(mode="json")["variables"]
+    # Series points are SI rows: the snapshot's raw readings were checked at load and are not series fields.
+    variables = {name: {key: value for key, value in row.items() if key not in ("raw_value", "raw_unit")}
+                 for name, row in variables.items()}
     if drop_temperatures:
         del variables["heat.T_previous_K"]
         del variables["heat.T_current_K"]

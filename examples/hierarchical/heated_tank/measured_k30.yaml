@@ -7,6 +7,8 @@ observation_name: tank_run_step_30
 variables:
   lvl_prev.level_m:
     value: 1.0
+    raw_value: 1.0
+    raw_unit: m
     unit: m
     source: tank_run.csv
     external_signal: level_m@30
@@ -16,6 +18,8 @@ variables:
     description: Tank level sensor
   lvl_cur.level_m:
     value: 1.0
+    raw_value: 1.0
+    raw_unit: m
     unit: m
     source: tank_run.csv
     external_signal: level_m@31
@@ -25,6 +29,8 @@ variables:
     description: Tank level sensor
   inflow_mass.V_dot_m3_s:
     value: 0.001
+    raw_value: 1.0
+    raw_unit: L/s
     unit: m^3/s
     source: tank_run.csv
     external_signal: inflow_Lps@30
@@ -34,6 +40,8 @@ variables:
     description: Inflow measurement
   vol.V_dot_out_m3_s:
     value: 0.001
+    raw_value: 0.001
+    raw_unit: m^3/s
     unit: m^3/s
     source: tank_run.csv
     external_signal: outflow_m3s@30
@@ -43,6 +51,8 @@ variables:
     description: Outflow measurement
   through.T_in_K:
     value: 288.15
+    raw_value: 15.0
+    raw_unit: degC
     unit: K
     source: tank_run.csv
     external_signal: T_in_C@30
@@ -52,6 +62,8 @@ variables:
     description: Inlet temperature sensor
   heat.T_previous_K:
     value: 296.73141999999996
+    raw_value: 23.58142
+    raw_unit: degC
     unit: K
     source: tank_run.csv
     external_signal: T_tank_C@30
@@ -61,6 +73,8 @@ variables:
     description: Tank temperature sensor
   heat.T_current_K:
     value: 296.6531
+    raw_value: 23.5031
+    raw_unit: degC
     unit: K
     source: tank_run.csv
     external_signal: T_tank_C@31
@@ -70,6 +84,8 @@ variables:
     description: Tank temperature sensor
   loss.T_ambient_K:
     value: 293.15
+    raw_value: 20.0
+    raw_unit: degC
     unit: K
     source: tank_run.csv
     external_signal: T_amb_C@30
@@ -79,6 +95,8 @@ variables:
     description: Ambient temperature sensor
   heater_cmd.x:
     value: 20000.0
+    raw_value: 20.0
+    raw_unit: kW
     unit: W
     source: tank_run.csv
     external_signal: P_heater_cmd_kW@30
@@ -88,6 +106,8 @@ variables:
     description: Recorded command, not delivered heat
   heater_el.current_A:
     value: 50.0
+    raw_value: 50.0
+    raw_unit: A
     unit: A
     source: tank_run.csv
     external_signal: I_heater_A@30
@@ -97,6 +117,8 @@ variables:
     description: Heater ammeter
   heater_el.V_V:
     value: 400.0
+    raw_value: 400.0
+    raw_unit: V
     unit: V
     source: tank_run.csv
     external_signal: U_heater_V@30

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- A conversion that changes the physical quantity, such as L/min of water to kg/s, is computed by the tool from its unit table and a property declared once in the snapshot under `properties` (for example `water_density: {value: 1.0, unit: kg/L}`) and named on the row with `conversion_property`. A row that gives such a conversion only as a factor the AI wrote is refused with exit 2 (`unit_not_convertible`), and a recorded factor that disagrees with the computed one stops the run (`observed_value_disagrees_with_conversion`). This catches the forgotten "/60" in an L/min-to-kg/s factor.
+- A snapshot row whose value was converted outside the tool (a conversion factor or offset is recorded but there is no raw value), or whose raw unit is outside the unit table, is marked `conversion_unchecked` in the mapping warnings; the audit still runs.
+- The unit table adds kg/min and the densities kg/m^3, kg/L and g/cm^3.
+- `testfile snapshot` writes each reading's raw value and unit beside the converted value, so loading the snapshot checks the conversion again. A test-file contract can no longer map a field to a variable of another quantity with a bare factor. The shower and heated-tank example snapshots use the checked form; `observed_unit_err.yaml` and `observed_ai_half.yaml` keep the AI's own conversions and now show the warning.
 - Maintenance checks run on FlowGuard 0.72.0. The project rules for the coding agent are FlowGuard's four plain rules (status first, store only the owner's own words, find code with where, run the tests and commit in your own words); the round-11 action list that had been stored as if the owner wrote it is marked as not the owner's words, so status no longer shows it as an open request. A new file that FlowGuard's map does not list, or a file whose map description may be out of date, is now reported as information and no longer fails the checks.
 
 ## v0.16.0 - 2026-10-31 - Hints, resolution and raw-unit snapshots on the tree

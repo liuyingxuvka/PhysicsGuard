@@ -9,7 +9,7 @@ from types import SimpleNamespace
 from pydantic import ValidationError
 import yaml
 
-from physicsguard.core.units import unit_conversion
+from physicsguard.core.units import known_conversion, property_conversion, unit_conversion, unit_quantity
 from physicsguard.schema.observation_spec import ObservedValueSpec, ObservedValuesSpec
 
 
@@ -40,28 +40,16 @@ def load_observed_values(path: str | Path) -> ObservedValuesSpec:
 
     for variable, row in observed.variables.items():
         if row.raw_value is None:
+            row._conversion_checked = False if _records_a_conversion(row) else None
             continue
         if not row.unit or not row.unit.strip():
             raise ValueError(f"unit_not_convertible:{variable}: raw input needs a target unit")
-        try:
-            known = unit_conversion(row.raw_unit, row.unit)
-        except ValueError:
-            known = None
-        if known is None and row.conversion_factor is None:
-            raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} -> {row.unit} requires an explicit conversion_factor")
-        explicit = None
-        if row.conversion_factor is not None or row.conversion_offset is not None:
-            explicit = SimpleNamespace(
-                factor=row.conversion_factor if row.conversion_factor is not None else known[0],
-                offset=row.conversion_offset if row.conversion_offset is not None else known[1] if known is not None else 0.0,
-            )
-        try:
-            factor, offset = unit_conversion(row.raw_unit, row.unit, explicit)
-        except ValueError as exc:
-            if str(exc) == "conversion_disagrees_with_unit_table":
-                converted = row.raw_value * known[0] + known[1]
-                raise _conversion_disagreement(variable, row, converted, "recorded factor/offset disagrees with the unit table") from exc
-            raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} -> {row.unit}") from exc
+        if row.conversion_property is not None:
+            factor, offset, evidence = _property_conversion(variable, row, observed)
+            checked = True
+        else:
+            factor, offset, checked = _table_or_recorded_conversion(variable, row)
+            evidence = ""
         converted = row.raw_value * factor + offset
         if not math.isfinite(converted):
             raise _conversion_disagreement(variable, row, converted, "converted value must be finite")
@@ -69,8 +57,60 @@ def load_observed_values(path: str | Path) -> ObservedValuesSpec:
             raise _conversion_disagreement(variable, row, converted, "supplied value disagrees with the raw conversion")
         row.value = converted
         adjustment = f" + {offset:g}" if offset else ""
-        row._raw_conversion = f"{row.raw_value:g} {row.raw_unit} x {factor:g}{adjustment} -> {converted:g} {row.unit}"
+        row._raw_conversion = f"{row.raw_value:g} {row.raw_unit} x {factor:g}{adjustment}{evidence} -> {converted:g} {row.unit}"
+        row._conversion_checked = checked
     return observed
+
+
+def _records_a_conversion(row: ObservedValueSpec) -> bool:
+    """A recorded factor or offset other than the identity: the conversion happened outside the tool."""
+    return (row.conversion_factor not in (None, 1.0)) or (row.conversion_offset not in (None, 0.0))
+
+
+def _property_conversion(variable: str, row: ObservedValueSpec, observed: ObservedValuesSpec) -> tuple[float, float, str]:
+    """Compose the factor from the unit table and the declared property; a recorded factor is only compared."""
+    name = row.conversion_property
+    prop = observed.properties[name]
+    try:
+        factor, offset = property_conversion(row.raw_unit, row.unit, prop.value, prop.unit)
+    except ValueError as exc:
+        raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} -> {row.unit} through {name} ({prop.value:g} {prop.unit}): {exc}") from exc
+    evidence = f" ({name} {prop.value:g} {prop.unit})"
+    recorded_factor = row.conversion_factor if row.conversion_factor is not None else factor
+    recorded_offset = row.conversion_offset if row.conversion_offset is not None else offset
+    if not math.isclose(recorded_factor, factor, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0) or recorded_offset != offset:
+        recorded = f"{recorded_factor:g}" + (f" + {recorded_offset:g}" if recorded_offset else "")
+        raise _conversion_disagreement(
+            variable, row, row.raw_value * factor + offset,
+            f"recorded conversion {recorded} disagrees with {factor:g} computed from {name} = {prop.value:g} {prop.unit}",
+        )
+    return factor, offset, evidence
+
+
+def _table_or_recorded_conversion(variable: str, row: ObservedValueSpec) -> tuple[float, float, bool]:
+    """The unit table's conversion (checked), or the recorded one for units the table does not know (unchecked)."""
+    source, target = unit_quantity(row.raw_unit), unit_quantity(row.unit)
+    if source is not None and target is not None and source != target:
+        raise ValueError(
+            f"unit_not_convertible:{variable}: {row.raw_unit} ({source}) -> {row.unit} ({target}) are different quantities; "
+            "declare the property that links them under properties (for example a density) and name it with "
+            "conversion_property, so the tool computes the factor; a recorded conversion_factor is not checked and not used"
+        )
+    known = known_conversion(row.raw_unit, row.unit)
+    if known is None and row.conversion_factor is None:
+        raise ValueError(f"unit_not_convertible:{variable}: {row.raw_unit} -> {row.unit} requires an explicit conversion_factor")
+    if row.conversion_factor is None and row.conversion_offset is None:
+        return known[0], known[1], True
+    factor = row.conversion_factor if row.conversion_factor is not None else known[0]
+    offset = row.conversion_offset if row.conversion_offset is not None else known[1] if known is not None else 0.0
+    if known is None:
+        return factor, offset, False
+    try:
+        unit_conversion(row.raw_unit, row.unit, SimpleNamespace(factor=factor, offset=offset))
+    except ValueError as exc:
+        raise _conversion_disagreement(variable, row, row.raw_value * known[0] + known[1],
+                                       "recorded factor/offset disagrees with the unit table") from exc
+    return known[0], known[1], True
 
 
 def _conversion_disagreement(

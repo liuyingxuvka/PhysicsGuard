@@ -25,6 +25,30 @@ class SourceModelSpec(BaseModel):
     export_time: Optional[str] = None
 
 
+class PhysicalPropertySpec(BaseModel):
+    """A declared physical property (for example a density) that links two quantities in a conversion."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    value: float
+    unit: str
+    source: Optional[str] = None
+
+    @field_validator("value")
+    @classmethod
+    def _value_positive(cls, value: float) -> float:
+        if not math.isfinite(value) or value <= 0:
+            raise ValueError("a declared property needs a finite positive value")
+        return value
+
+    @field_validator("unit")
+    @classmethod
+    def _unit_nonblank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("a declared property needs a unit")
+        return value
+
+
 class ObservedValueSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -33,6 +57,11 @@ class ObservedValueSpec(BaseModel):
     raw_unit: Optional[str] = None
     # Accepted input evidence survives counterfactual model_copy without recomputation.
     _raw_conversion: Optional[str] = PrivateAttr(default=None)
+    # Set by load_observed_values: True when the tool converted the raw value itself (unit
+    # table, or unit table plus a declared property), False when a recorded conversion was
+    # applied or claimed that the tool could not check, None when nothing was converted.
+    _conversion_checked: Optional[bool] = PrivateAttr(default=None)
+    conversion_property: Optional[str] = None
     unit: Optional[str] = None
     source: Optional[str] = None
     description: Optional[str] = None
@@ -66,11 +95,13 @@ class ObservedValueSpec(BaseModel):
             raise ValueError("raw_value and raw_unit must be supplied together")
         if self.value is None and self.raw_value is None:
             raise ValueError("value is required without raw_value and raw_unit")
+        if self.conversion_property is not None and self.raw_value is None:
+            raise ValueError("conversion_property needs raw_value and raw_unit: the tool converts the raw value with it")
         if self.raw_value is not None and self._raw_conversion is None and not (info.context or {}).get("raw_snapshot_ingestion"):
             raise ValueError("raw_snapshot_requires_load: read raw snapshots through load_observed_values before use")
         return self
 
-    @field_validator("external_signal", "mapping_status", "conversion_note", "mapped_at")
+    @field_validator("external_signal", "mapping_status", "conversion_note", "mapped_at", "conversion_property")
     @classmethod
     def _optional_text_valid(cls, value: Optional[str]) -> Optional[str]:
         if value is not None and not value.strip():
@@ -101,6 +132,7 @@ class ObservedValuesSpec(BaseModel):
     observation_name: Optional[str] = None
     source_model: Optional[SourceModelSpec] = None
     description: Optional[str] = None
+    properties: dict[str, PhysicalPropertySpec] = Field(default_factory=dict)
     variables: dict[str, ObservedValueSpec]
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -108,10 +140,14 @@ class ObservedValuesSpec(BaseModel):
     def _validate_observation(self) -> "ObservedValuesSpec":
         if not self.variables:
             raise ValueError("observed variables cannot be empty")
-        for name in self.variables:
+        for name, row in self.variables.items():
             if not is_qualified_variable_name(name):
                 raise ValueError(
                     f"observed variable '{name}' must use component.variable format"
+                )
+            if row.conversion_property is not None and row.conversion_property not in self.properties:
+                raise ValueError(
+                    f"{name}: conversion_property {row.conversion_property} is not declared under properties"
                 )
         try:
             json.dumps(self.metadata)
