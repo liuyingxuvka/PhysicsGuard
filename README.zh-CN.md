@@ -57,7 +57,7 @@ resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_k
 
 ## 讨论时看图
 
-和 AI 讨论一个系统时，可以要一张“物理量怎么流动”的图。这张图是从审计文件自己的关系算出来的，不是 AI 的描述：箭头 A -> B 表示 B 的某个关系用到了 A 的一个量，或者审计把 A.x 和 B.y 连在一起。给了快照时，工具只画不通过的那几块周围，标出结论颜色，并在虚线框里写明省略了什么。例子：*加热水箱在第 70 步为什么变凉？*
+和 AI 讨论一个系统时，可以要一张“物理量怎么流动”的图。这张图是从审计文件自己的关系算出来的，不是 AI 的描述：箭头 A -> B 表示 B 的某个关系用到了 A 的一个量，或者审计把 A.x 和 B.y 连在一起。给了快照时，工具只画不通过的那几块周围，标出结论颜色（红色不通过，灰色未检查，绿色通过；一个框里并了几块时，取其中最差的那个），并在虚线框里写明省略了什么。例子：*加热水箱在第 70 步为什么变凉？*
 
 ```console
 $ python -m physicsguard.cli hierarchy flow examples/hierarchical/heated_tank/heated_tank.yaml --observed examples/hierarchical/heated_tank/measured_k70.yaml

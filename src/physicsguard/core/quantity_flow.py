@@ -252,15 +252,25 @@ def _focus_choices(links, shown, focus_components, chains, components, block_of,
     return sorted(choices, key=lambda choice: (not choice["readable"], -choice["components"], choice["focus"]))
 
 
+# A box holding several blocks takes the worst state among them.
+VERDICT_ORDER = ("fail", "unchecked", "pass")
+
+
 def _block_verdicts(spec: Any, observed: Any) -> dict[str, str]:
+    """pass or fail for a block with checked residuals; unchecked for a block that owns components or relations none of
+    which was checked (all derived, unchecked or missing inputs); no entry for a block with nothing to check."""
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
 
     report = HierarchicalAuditRunner(spec).evaluate_observed(
         observed, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False, _resolution=False)
+    owners = {block.id for block in spec.hierarchy.blocks if block.components}
     verdicts = {}
     for block in report.top_blocks:
         if block.checked_residuals:
             verdicts[block.block_id] = "pass" if block.own_audit_pass else "fail"
+        elif (block.block_id in owners or block.derived_variables or block.unchecked_residuals
+              or block.missing_required_variables):
+            verdicts[block.block_id] = "unchecked"
     return verdicts
 
 
@@ -284,10 +294,12 @@ def _node_row(name: str, spec: Any, block_of: dict[str, str], verdicts: dict[str
         block = name.removeprefix("block:")
         names = {item.id: item.name for item in spec.hierarchy.blocks}
         members = drawing.members[name]
-        # Sub-blocks folded into this box, and the worst verdict of the blocks whose components it draws.
-        folds = sorted({sub for member in members for sub in chains[member][chains[member].index(block) + 1:]})
-        drawn = [verdicts.get(chains[member][-1]) for member in members]
-        verdict = "fail" if "fail" in drawn else "pass" if "pass" in drawn else None
+        # Sub-blocks folded into this box, and the worst state of every block it holds, from this block down to each
+        # drawn component's own block: fail, then unchecked, then pass.
+        held = {sub for member in members for sub in chains[member][chains[member].index(block):]}
+        folds = sorted(held - {block})
+        drawn = {verdicts[name] for name in held if name in verdicts}
+        verdict = next((state for state in VERDICT_ORDER if state in drawn), None)
         return {"id": name, "kind": "block", "block": block, "name": names.get(block), "folds": folds, "verdict": verdict}
     types = {component.id: component.type for component in spec.system.components}
     return {"id": name, "kind": "component", "type": types[name], "block": block_of[name],
@@ -340,7 +352,8 @@ def render_quantity_flow_mermaid(flow: dict[str, Any]) -> str:
     if notes:
         lines.append("  classDef omitted stroke-dasharray: 4 3,fill:none")
         lines.append(f"  class {','.join(notes)} omitted")
-    for verdict, style in (("fail", "fill:#f8d7da,stroke:#b02a37"), ("pass", "fill:#d1e7dd,stroke:#146c43")):
+    for verdict, style in (("fail", "fill:#f8d7da,stroke:#b02a37"), ("unchecked", "fill:#e2e3e5,stroke:#6c757d"),
+                           ("pass", "fill:#d1e7dd,stroke:#146c43")):
         marked = [ids[row["id"]] for row in flow["nodes"] if row["verdict"] == verdict]
         if marked:
             lines.append(f"  classDef {verdict} {style}")

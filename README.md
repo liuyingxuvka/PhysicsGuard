@@ -69,7 +69,8 @@ Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
 When you and the AI talk about a set-up, ask for the picture of how its quantities flow. It is drawn from the
 audit's own relations, not from the AI's description: an arrow A -> B means a relation of B uses a quantity of A, or
 the audit connects A.x to B.y. With a snapshot, the tool draws only the part around the failing blocks, colours the
-verdicts and lists in a dashed box what it left out. Here: *why does the heated tank cool at step 70?*
+verdicts (red fail, grey unchecked, green pass; a box that folds several blocks takes the worst of them) and lists in a
+dashed box what it left out. Here: *why does the heated tank cool at step 70?*
 
 ```console
 $ python -m physicsguard.cli hierarchy flow examples/hierarchical/heated_tank/heated_tank.yaml --observed examples/hierarchical/heated_tank/measured_k70.yaml

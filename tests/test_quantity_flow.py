@@ -321,3 +321,31 @@ def test_when_no_focus_choice_fits_the_note_names_the_quantity_that_does(tmp_pat
     note = _note(path)
     assert "no --focus choice fits (the smallest, --focus b0, draws 10 boxes, 45 arrows)" in note
     assert "keep one quantity instead: --quantity mass_flow (10 boxes, 9 arrows)" in note
+
+
+def test_a_folded_box_with_a_passing_and_an_unchecked_block_shows_unchecked(tmp_path) -> None:
+    """p1 folds p1c00 (checked, passes) and p1c01, whose only relation derives h13.Q_dot_W, so nothing there is checked."""
+    from physicsguard.io.observation_loader import load_observed_values
+
+    path, count = _chain_audit(tmp_path, {"p0": 12, "p1": 12})
+    variables = {}
+    for index in range(count):
+        t_in = 300.0 + 10.0 * index
+        variables.update({f"h{index}.m_dot_kg_s": {"value": 0.1, "unit": "kg/s", "external_signal": "flow"},
+                          f"h{index}.T_in_K": {"value": t_in, "unit": "K", "external_signal": "inlet"},
+                          f"h{index}.T_out_K": {"value": t_in + 10.0, "unit": "K", "external_signal": "outlet"}})
+        if index != 13:
+            variables[f"h{index}.Q_dot_W"] = {"value": 4180.0, "unit": "W", "external_signal": "power"}
+    snapshot = tmp_path / "observed.yaml"
+    snapshot.write_text(yaml.safe_dump({"observation_name": "chain", "variables": variables}), encoding="utf-8")
+    observed = load_observed_values(snapshot)
+    flow = _flow(path, observed=observed)
+    boxes = {row["id"]: row for row in flow["nodes"]}
+    assert set(boxes) == {"block:p0", "block:p1"}
+    assert boxes["block:p0"]["verdict"] == "pass" and boxes["block:p1"]["verdict"] == "unchecked"
+    focused = _flow(path, focus="p1c01", observed=observed)
+    assert {row["id"]: row["verdict"] for row in focused["nodes"]}["h13"] == "unchecked"
+    text = run_cli("hierarchy", "flow", str(path), "--observed", str(snapshot)).stdout
+    ids = {row["id"]: f"n{position}" for position, row in enumerate(flow["nodes"])}
+    assert f"  class {ids['block:p1']} unchecked" in text.splitlines()
+    assert any(line.startswith("  classDef unchecked ") for line in text.splitlines())
