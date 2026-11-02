@@ -1,8 +1,8 @@
 """YAML loader for observed value files.
 
 A raw reading becomes a value in one place, convert_observed_rows, for snapshots and series
-points alike; a row already given in its model unit is checked against the reading its
-external_signal names, as far as the tool can read it.
+points alike. Every row, converted there or given in its model unit, is then checked the same
+way against the reading its external_signal names, as far as the tool can read it.
 """
 
 from __future__ import annotations
@@ -65,34 +65,45 @@ def load_observed_values(path: str | Path) -> ObservedValuesSpec:
 
 
 def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: dict[str, PhysicalPropertySpec]) -> None:
-    """Convert each raw reading once with the unit table (and a declared property), or check a converted row."""
+    """Convert each raw reading once, then check every row against the reading its external_signal names."""
     for variable, row in variables.items():
-        if row.raw_value is None:
-            _check_converted_row(variable, row)
-            continue
-        if not row.unit or not row.unit.strip():
-            raise ValueError(f"unit_not_convertible:{variable}: raw input needs a target unit")
-        if row.conversion_property is not None:
-            factor, offset, evidence = _property_conversion(variable, row, properties)
-            checked = True
-        else:
-            factor, offset, checked = _table_or_calibration(variable, row)
-            evidence = ""
-        converted = row.raw_value * factor + offset
-        if not math.isfinite(converted):
-            raise _conversion_disagreement(variable, row, converted, "converted value must be finite")
-        if row.value is not None and not math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0):
-            raise _conversion_disagreement(variable, row, converted, "supplied value disagrees with the raw conversion")
-        row.value = converted
-        adjustment = f" + {offset:g}" if offset else ""
-        row._raw_conversion = f"{row.raw_value:g} {row.raw_unit} x {factor:g}{adjustment}{evidence} -> {converted:g} {row.unit}"
-        row._conversion_checked = checked
-        row._conversion_check = (f"converted by the tool: {row._raw_conversion}" if checked else
-                                 f"{row.raw_unit} is a transducer output, so its recorded calibration was applied unchecked")
+        raw_conversion = _convert_raw_row(variable, row, properties) if row.raw_value is not None else None
+        _check_signal_reading(variable, row, raw_conversion)
+
+
+def _convert_raw_row(variable: str, row: ObservedValueSpec,
+                     properties: dict[str, PhysicalPropertySpec]) -> tuple[float, float]:
+    """raw_value in the model unit through the unit table (and a declared property), or a transducer calibration.
+
+    Returns the factor and offset applied, so the signal check converts a reading of the raw unit the same way.
+    """
+    if not row.unit or not row.unit.strip():
+        raise ValueError(f"unit_not_convertible:{variable}: raw input needs a target unit")
+    if row.conversion_property is not None:
+        factor, offset, evidence = _property_conversion(variable, row, properties)
+        checked = True
+    else:
+        factor, offset, checked = _table_or_calibration(variable, row)
+        evidence = ""
+    converted = row.raw_value * factor + offset
+    if not math.isfinite(converted):
+        raise _conversion_disagreement(variable, row, converted, "converted value must be finite")
+    if row.value is not None and not math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0):
+        raise _conversion_disagreement(variable, row, converted, "supplied value disagrees with the raw conversion")
+    row.value = converted
+    adjustment = f" + {offset:g}" if offset else ""
+    row._raw_conversion = f"{row.raw_value:g} {row.raw_unit} x {factor:g}{adjustment}{evidence} -> {converted:g} {row.unit}"
+    row._conversion_checked = checked
+    row._conversion_check = (f"converted by the tool: {row._raw_conversion}" if checked else
+                             f"{row.raw_unit} is a transducer output, so its recorded calibration was applied unchecked")
+    return factor, offset
 
 
 def _signal_readings(text: str | None) -> tuple[list[_Reading], bool]:
-    """Every '<number> <unit the tool reads>' in external_signal, and whether the whole text is one such reading."""
+    """Every '<number> <unit>' in external_signal, and whether the whole text is one such reading.
+
+    A unit counts when the unit table reads it or it is a transducer output (V, mV, A, mA, ohm).
+    """
     readings: list[_Reading] = []
     whole = False
     for match in _NUMBER.finditer(text or ""):
@@ -102,67 +113,107 @@ def _signal_readings(text: str | None) -> tuple[list[_Reading], bool]:
             continue
         for count in range(min(_UNIT_WORDS, len(words)), 0, -1):
             unit = " ".join(words[:count]).rstrip(",;:.)]")
-            if read_unit(unit) is not None:
+            if read_unit(unit) is not None or is_transducer_output(unit):
                 readings.append(_Reading(float(match.group(1)), unit))
                 whole = not text[:match.start()].strip() and unit == " ".join(words)
                 break
     return readings, whole and len(readings) == 1
 
 
-def _check_converted_row(variable: str, row: ObservedValueSpec) -> None:
-    """A row given in its model unit: check it against the reading its external_signal names, or say it is unchecked.
+def _reading_route(reading: _Reading, row: ObservedValueSpec,
+                   raw_conversion: tuple[float, float] | None) -> tuple[float, float, str] | None:
+    """Factor, offset and wording that turn a signal reading into the model unit, or None when the tool has none.
 
-    A reading of the value's own quantity is converted with the unit table and compared. When the whole
-    external_signal is that reading, a disagreement stops the run like a raw_value disagreement; a reading
-    found inside a longer text is reported, because such a text can name other numbers.
+    A reading of the model unit's quantity goes through the unit table. On a row the tool converted from
+    raw_value, a reading of the raw unit's quantity goes through the table to raw_unit and then through the
+    row's own conversion (its declared property or transducer calibration), the same way as raw_value.
     """
-    recorded = [name for name in ("conversion_factor", "conversion_offset", "conversion_note") if getattr(row, name) is not None]
+    known = known_conversion(reading.unit, row.unit)
+    if known is not None:
+        return known[0], known[1], "through the unit table"
+    if raw_conversion is not None:
+        to_raw = known_conversion(reading.unit, row.raw_unit)
+        if to_raw is not None:
+            factor, offset = raw_conversion
+            return (to_raw[0] * factor, to_raw[1] * factor + offset,
+                    f"through the unit table to {row.raw_unit}, then as raw_value")
+    return None
+
+
+def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None) -> None:
+    """Every row: compare the reading its external_signal names with the row's value, both in the model unit.
+
+    raw_conversion is the factor and offset the tool applied to raw_value, or None for a row given in its
+    model unit (a conversion done outside the tool, whose recorded factor/offset is compared too). When the
+    whole external_signal is the reading, a disagreement stops the run like a raw_value disagreement; a
+    reading found inside a longer text is reported, because such a text can name other numbers. A reading
+    of another quantity that the tool cannot convert, or several readings, leave the row unchecked.
+    """
+    raw = raw_conversion is not None
+    recorded = [] if raw else [name for name in ("conversion_factor", "conversion_offset", "conversion_note")
+                               if getattr(row, name) is not None]
     readings, whole = _signal_readings(row.external_signal)
     about = [reading for reading in readings
-             if known_conversion(reading.unit, row.unit) is not None or linking_quantity(reading.unit, row.unit)]
+             if _reading_route(reading, row, raw_conversion) is not None or linking_quantity(reading.unit, row.unit)]
     if not about:
         if recorded:
-            row._conversion_checked = False
-            row._conversion_check = (f"{', '.join(recorded)} recorded without raw_value: a conversion done outside the tool, "
-                                     "which it cannot check")
+            _mark_unchecked(row, f"{', '.join(recorded)} recorded without raw_value: a conversion done outside the tool, "
+                                 "which it cannot check")
         return
+    origin = f"raw_value {row.raw_value:g} {row.raw_unit}" if raw else "the value"
     if len(about) > 1:
-        row._conversion_checked = False
-        row._conversion_check = (f"external_signal names {len(about)} readings ({', '.join(map(str, about))}); the tool "
-                                 "cannot tell which one the value came from, so it cannot check the conversion")
+        _mark_unchecked(row, f"external_signal names {len(about)} readings ({', '.join(map(str, about))}); the tool "
+                             f"cannot tell which one {origin} came from, so it cannot check the conversion")
         return
     reading = about[0]
-    known = known_conversion(reading.unit, row.unit)
-    if known is None:
-        row._conversion_checked = False
-        row._conversion_check = (f"external_signal reads {reading} ({describe_quantity(reading.unit)}), but the value is "
+    route = _reading_route(reading, row, raw_conversion)
+    if route is None:
+        linking = linking_quantity(reading.unit, row.unit)
+        if raw:
+            _mark_unchecked(row, f"external_signal reads {reading} ({describe_quantity(reading.unit)}), but raw_unit is "
+                                 f"{row.raw_unit} ({describe_quantity(row.raw_unit)}), so {origin} is not that reading and "
+                                 f"the tool cannot check it; give the reading itself as raw_value and raw_unit, with the "
+                                 f"{linking} that links it to {row.unit} declared and named as conversion_property")
+        else:
+            _mark_unchecked(row, f"external_signal reads {reading} ({describe_quantity(reading.unit)}), but the value is "
                                  f"given in {row.unit} ({describe_quantity(row.unit)}) without raw_value, so the tool cannot "
-                                 f"check the conversion; a {linking_quantity(reading.unit, row.unit)} links them")
+                                 f"check the conversion; a {linking} links them")
         return
-    factor, offset = known
+    factor, offset, how = route
     converted = reading.number * factor + offset
     problems = []
     if not math.isclose(row.value, converted, rel_tol=RAW_VALUE_REL_TOL, abs_tol=0.0):
-        problems.append(f"the value is {row.value:g} {row.unit}")
-    if row.conversion_factor is not None and not math.isclose(row.conversion_factor, factor, rel_tol=RAW_VALUE_REL_TOL):
+        problems.append(f"{origin} converts to {row.value:g} {row.unit}" if raw else f"the value is {row.value:g} {row.unit}")
+    if row.conversion_factor is not None and not raw and not math.isclose(row.conversion_factor, factor,
+                                                                           rel_tol=RAW_VALUE_REL_TOL):
         problems.append(f"the recorded conversion_factor is {row.conversion_factor:g}")
-    if row.conversion_offset is not None and not math.isclose(row.conversion_offset, offset, rel_tol=RAW_VALUE_REL_TOL,
-                                                              abs_tol=1e-9):
+    if row.conversion_offset is not None and not raw and not math.isclose(row.conversion_offset, offset,
+                                                                           rel_tol=RAW_VALUE_REL_TOL, abs_tol=1e-9):
         problems.append(f"the recorded conversion_offset is {row.conversion_offset:g}")
     if not problems:
-        row._conversion_checked = True
-        row._conversion_check = f"value agrees with external_signal {reading} through the unit table"
+        if raw:
+            # The raw conversion keeps its own status: an agreeing reading does not check a transducer calibration.
+            row._conversion_check += f"; agrees with external_signal {reading}"
+        else:
+            row._conversion_checked = True
+            row._conversion_check = f"value agrees with external_signal {reading} through the unit table"
         return
     adjustment = f" + {offset:g}" if offset else ""
-    sentence = (f"external_signal reads {reading} = {converted:g} {row.unit} through the unit table "
+    sentence = (f"external_signal reads {reading} = {converted:g} {row.unit} {how} "
                 f"(x {factor:g}{adjustment}), but {' and '.join(problems)}")
     if whole:
-        raise ValueError(f"signal_reading_disagrees:{variable}: {sentence}; correct the value or the external_signal, "
-                         "or give the reading as raw_value and raw_unit so the tool converts it")
-    row._conversion_checked = False
+        remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
+                  "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
+                  "converts it")
+        raise ValueError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
+    _mark_unchecked(row, f"{sentence} (a reading inside a longer external_signal is reported, not enforced; write the "
+                         f"reading alone{'' if raw else ', or as raw_value and raw_unit,'} to have it enforced)")
     row._signal_disagrees = True
-    row._conversion_check = (f"{sentence} (a reading inside a longer external_signal is reported, not enforced; "
-                             "write the reading alone, or as raw_value and raw_unit, to have it enforced)")
+
+
+def _mark_unchecked(row: ObservedValueSpec, reason: str) -> None:
+    row._conversion_checked = False
+    row._conversion_check = reason
 
 
 def _property_conversion(variable: str, row: ObservedValueSpec,

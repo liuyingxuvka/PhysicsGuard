@@ -69,7 +69,8 @@ class ObservedValueSpec(BaseModel):
     # Set by convert_observed_rows: True when the tool converted the raw value itself (unit
     # table, or unit table plus a declared property) or checked the value against a reading in
     # external_signal, False when a conversion was applied or recorded that the tool could not
-    # check, None when nothing was converted. _conversion_check says why in one sentence, and
+    # check (on a row with or without raw_value, a reading of another quantity in external_signal
+    # included), None when nothing was converted. _conversion_check says why in one sentence, and
     # _signal_disagrees marks a value that contradicts a reading found inside a longer external_signal
     # (when the whole external_signal is the reading, a contradiction stops the load instead).
     _conversion_checked: Optional[bool] = PrivateAttr(default=None)

@@ -231,13 +231,15 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   closes and the audit passes. From `v0.16.0` you can give `raw_value` and `raw_unit` and let the tool convert; a
   contradicting value stops the run. The tool reads other spellings of its units (`l/min`, `LPM`, `kg/sec`, `15 C`)
   and refuses a unit it cannot read rather than apply a factor the AI wrote for it. A number the AI converts by hand
-  is still the AI's number. The tool checks it against a reading it finds in `external_signal` (`6 kg/min`, or
-  `outlet temperature 33 C`): when the whole `external_signal` is the reading, a disagreement stops the run
-  (`signal_reading_disagrees`); a reading inside a longer label is reported with the same mark and the run continues.
-  The row is marked `conversion_unchecked` when the reading is of another quantity, such as `6 L/min` beside a kg/s
-  value, or when the snapshot records a conversion with no reading to check it against (any `conversion_factor`,
-  `conversion_offset` or `conversion_note`, a factor of 1.0 included). A row that records nothing and names its
-  signal only by a label cannot be checked and is not flagged. A declared density denser than any material
+  is still the AI's number. The tool checks every row, with or without `raw_value`, against a reading it finds in
+  `external_signal` (`6 kg/min`, or `outlet temperature 33 C`), both converted to the model unit; so `raw_value: 6,
+  raw_unit: L/s` beside `external_signal: "6 L/min"` stops the run. When the whole `external_signal` is the reading,
+  a disagreement stops the run (`signal_reading_disagrees`); a reading inside a longer label is reported with the
+  same mark and the run continues. The row is marked `conversion_unchecked` when the reading is of another
+  quantity, such as `6 L/min` beside a kg/s value or a `raw_unit` of kg/s, or when the snapshot records a
+  conversion with no reading to check it against (any `conversion_factor`, `conversion_offset` or
+  `conversion_note`, a factor of 1.0 included). A row that records nothing and names its signal only by a label
+  cannot be checked and is not flagged. A declared density denser than any material
   (60 kg/L) is refused; a wrong but possible property (2 kg/L for water) is still the AI's number, visible in the
   snapshot and the ledger.
 

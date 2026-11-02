@@ -131,8 +131,11 @@ Without raw fields, `value` is already the SI value to check; conversion fields 
 Any recorded `conversion_factor`, `conversion_offset` or `conversion_note` (a factor of 1 and an offset of 0
 included) is a conversion done outside the tool: the mapping ledger marks that row `conversion_unchecked`
 (a warning; the run continues) unless the tool can check it against a reading in `external_signal`.
-The tool looks for a reading, a number followed by a unit it reads (`6 L/min`, `15 C`), anywhere in
-`external_signal`, and checks the value against it through the unit table:
+For every row, with or without raw fields, the tool looks for a reading, a number followed by a unit it
+reads (`6 L/min`, `15 C`, or a transducer output such as `7.5 V`), anywhere in `external_signal`, converts
+it to the model unit and compares it with the row's value. A reading of the model unit's quantity goes
+through the unit table; on a row with `raw_value`, a reading of the raw unit's quantity is converted the
+way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `6 L/min` disagrees):
 
 - the reading is the whole `external_signal` (`6 kg/min`, `15 degC`): agreement counts as checked, and a
   value or recorded factor/offset that disagrees stops the run with
@@ -140,8 +143,9 @@ The tool looks for a reading, a number followed by a unit it reads (`6 L/min`, `
 - the reading sits inside a longer text (`AI outlet temperature 33 C`): agreement counts as checked; a
   disagreement is marked `signal_reading_disagrees` and the run continues, because a label can name other
   numbers. Write the reading alone, or as `raw_value` and `raw_unit`, to have it enforced;
-- a reading of another quantity that a property could link (`6 L/min` beside a kg/s value), or several
-  readings in one text: marked `conversion_unchecked`.
+- a reading of another quantity that a property could link (`6 L/min` beside a kg/s value, or beside
+  `raw_value: 6, raw_unit: kg/s`), or several readings in one text: marked `conversion_unchecked`.
+  An agreeing reading leaves a transducer calibration unchecked.
 
 A row that records nothing and names its signal only by a label (`AI heater power`) cannot be checked and is
 not flagged. The ledger's `conversion_check` says why, in one sentence.
