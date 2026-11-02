@@ -175,17 +175,83 @@ def test_trial_v0_warning_is_visible_in_the_tree(tmp_path) -> None:
     assert "heater.m_dot_kg_s: signal mapping needs review (conversion_unchecked)" in warnings
 
 
-def test_identity_records_and_tool_checked_conversions_are_not_flagged(tmp_path) -> None:
+def test_tool_checked_conversions_are_not_flagged(tmp_path) -> None:
     path = _write(tmp_path, {
         "heater.m_dot_kg_s": {"raw_value": 6, "raw_unit": "L/min", "unit": "kg/s", "conversion_property": "water_density",
                               "external_signal": "given 6 L/min"},
         "heater.T_in_K": {"raw_value": 15, "raw_unit": "degC", "unit": "K", "external_signal": "given 15 C"},
         "heater.T_out_K": {"raw_value": 60, "raw_unit": "degC", "unit": "K", "external_signal": "given 60 C"},
-        "heater.Q_dot_W": {"value": 18837.0, "unit": "W", "conversion_factor": 1.0, "conversion_offset": 0.0,
-                           "external_signal": "AI heater power"},
+        "heater.Q_dot_W": {"value": 18837.0, "unit": "W", "external_signal": "AI heater power"},
     }, WATER)
     _report, ledger = _ledger(SHOWER / "audit.yaml", _load(path))
     assert all("conversion_unchecked" not in row["issue_codes"] for row in ledger.values())
+
+
+@pytest.mark.parametrize("record", [{"conversion_factor": 1.0}, {"conversion_offset": 0.0},
+                                    {"conversion_factor": 1.0, "conversion_offset": 0.0},
+                                    {"conversion_note": "1 kg/L"}])
+def test_any_recorded_conversion_without_a_raw_value_is_unchecked(tmp_path, record) -> None:
+    """A factor of 1.0 is what the AI wrote for L/min to kg/s when it forgot the /60: it is not an identity."""
+    path = _write(tmp_path, {"heater.Q_dot_W": {"value": 18837.0, "unit": "W", "external_signal": "AI heater power", **record}})
+    row = _load(path).variables["heater.Q_dot_W"]
+    assert row._conversion_checked is False
+    assert "without raw_value" in row._conversion_check
+
+
+# Round-12 trial v1 written in v0's SI-only form: the AI's value 6.0 kg/s with the reading in external_signal.
+V1_SI = {"heater.m_dot_kg_s": {"conversion_factor": 1.0, "conversion_note": "1 kg/L"},
+         "mix.m_dot_2_kg_s": {"conversion_factor": 1.0}}
+V1_SI_BARE = {variable: {"conversion_factor": None, "conversion_note": None} for variable in V1_SI}
+
+
+@pytest.mark.parametrize("edits", [V1_SI, V1_SI_BARE], ids=["factor_1_recorded", "no_factor"])
+def test_trial_v1_in_si_form_is_reported_unchecked(tmp_path, edits) -> None:
+    report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits)))
+    for variable in V1_SI:
+        assert "conversion_unchecked" in ledger[variable]["issue_codes"], ledger[variable]
+        assert "L/min" in ledger[variable]["conversion_check"]
+    result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(_trial(tmp_path, edits)))
+    warnings = next(line for line in result.stdout.splitlines() if line.startswith("warnings:"))
+    assert "heater.m_dot_kg_s: signal mapping needs review (conversion_unchecked)" in warnings
+    mapping = next(line for line in result.stdout.splitlines() if line.startswith("mapping:"))
+    assert "heater.m_dot_kg_s conversion_unchecked" in mapping
+
+
+@pytest.mark.parametrize("signal, value, codes", [
+    ("6 kg/min", 0.1, []),
+    ("6 kg/min", 6.0, ["signal_reading_disagrees"]),
+    ("0.1 kg/s", 0.1, []),
+    ("6 L/min", 0.1, ["conversion_unchecked"]),
+    ("6 litres a minute", 6.0, []),
+])
+def test_an_external_signal_that_is_a_reading_is_checked_against_the_value(tmp_path, signal, value, codes) -> None:
+    path = _trial(tmp_path, {"heater.m_dot_kg_s": {"value": value, "external_signal": signal,
+                                                   "conversion_factor": None, "conversion_note": None}})
+    _report, ledger = _ledger(SHOWER / "audit.yaml", _load(path))
+    assert [code for code in ledger["heater.m_dot_kg_s"]["issue_codes"]
+            if code in {"conversion_unchecked", "signal_reading_disagrees"}] == codes
+
+
+@pytest.mark.parametrize("offset, codes", [(273.15, []), (273.0, ["signal_reading_disagrees"]), (None, [])])
+def test_a_temperature_reading_in_degc_checks_the_recorded_offset(tmp_path, offset, codes) -> None:
+    edits = {"heater.T_in_K": {"value": 288.15, "external_signal": "15 degC", "conversion_offset": offset}}
+    _report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits)))
+    assert [code for code in ledger["heater.T_in_K"]["issue_codes"]
+            if code in {"conversion_unchecked", "signal_reading_disagrees"}] == codes
+
+
+@pytest.mark.parametrize("prop, accepted", [({"value": 1.0, "unit": "kg/L"}, True), ({"value": 19.3, "unit": "g/cm^3"}, True),
+                                            ({"value": 60.0, "unit": "kg/L"}, False),
+                                            ({"value": 60000.0, "unit": "kg/m^3"}, False)])
+def test_a_declared_density_denser_than_any_material_is_refused(tmp_path, prop, accepted) -> None:
+    path = _write(tmp_path, {"heater.m_dot_kg_s": {
+        "raw_value": 6, "raw_unit": "L/min", "unit": "kg/s", "conversion_property": "water_density"}},
+        {"water_density": prop})
+    if accepted:
+        assert _load(path).variables["heater.m_dot_kg_s"].value > 0
+    else:
+        with pytest.raises(ValueError, match=r"implausible_property: .*denser than any material"):
+            _load(path)
 
 
 def test_a_factor_for_units_outside_the_table_is_used_but_reported_unchecked(tmp_path) -> None:
@@ -195,6 +261,79 @@ def test_a_factor_for_units_outside_the_table_is_used_but_reported_unchecked(tmp
     assert observed.variables["heater.Q_dot_W"].value == pytest.approx(18837.0)
     _report, ledger = _ledger(SHOWER / "audit.yaml", observed)
     assert "conversion_unchecked" in ledger["heater.Q_dot_W"]["issue_codes"]
+
+
+def _contract_with(tmp_path, change):
+    from test_test_file_contract_core import TANK, changed_contract
+
+    return changed_contract(tmp_path, change, TANK / "tank_run_contract.yaml")
+
+
+def _mass_flow_column(data, conversion=None, prop=WATER["water_density"]):
+    field = data["fields"]["inflow_Lps"]  # mapped to inflow_mass.V_dot_m3_s, a volume flow
+    field["unit"] = "kg/s"
+    field["conversion_property"] = "water_density"
+    if conversion is not None:
+        field["conversion"] = conversion
+    data["properties"] = {"water_density": prop}
+
+
+def test_a_contract_crosses_quantities_through_a_declared_property(tmp_path) -> None:
+    from physicsguard.core.test_file_contract import check_test_file_contract, testfile_snapshot
+
+    path = _contract_with(tmp_path, _mass_flow_column)
+    review = check_test_file_contract(path)
+    assert review.ok, [finding.type for finding in review.findings]
+    snapshot = testfile_snapshot(path, 70)
+    inflow = snapshot["variables"]["inflow_mass.V_dot_m3_s"]
+    assert (inflow["raw_value"], inflow["raw_unit"], inflow["conversion_property"]) == (1.0, "kg/s", "water_density")
+    assert inflow["value"] == pytest.approx(0.001)
+    assert snapshot["properties"]["water_density"] == {"value": 1.0, "unit": "kg/L", "source": "given: water 1 kg/L"}
+    written = tmp_path / "snapshot.yaml"
+    written.write_text(yaml.safe_dump(snapshot, sort_keys=False), encoding="utf-8")
+    row = _load(written).variables["inflow_mass.V_dot_m3_s"]
+    assert row._raw_conversion == "1 kg/s x 0.001 (water_density 1 kg/L) -> 0.001 m^3/s"
+
+
+@pytest.mark.parametrize("change, code", [
+    (lambda data: _mass_flow_column(data, {"factor": 1.0}), "conversion_disagrees_with_property"),
+    (lambda data: _mass_flow_column(data, prop={"value": 1.0, "unit": "kg/s"}), "unit_not_convertible"),
+])
+def test_a_contract_property_conversion_is_checked(tmp_path, change, code) -> None:
+    from physicsguard.core.test_file_contract import check_test_file_contract
+
+    assert code in {finding.type for finding in check_test_file_contract(_contract_with(tmp_path, change)).findings}
+
+
+def test_a_contract_property_must_be_declared(tmp_path) -> None:
+    from physicsguard.core.test_file_contract import check_test_file_contract
+
+    def change(data):
+        _mass_flow_column(data)
+        del data["properties"]
+
+    with pytest.raises(ValueError, match="conversion_property water_density is not declared under properties"):
+        check_test_file_contract(_contract_with(tmp_path, change))
+
+
+def test_contract_series_keep_the_raw_reading_and_mark_unchecked_conversions(tmp_path) -> None:
+    from physicsguard.core.test_file_contract import testfile_series
+    from physicsguard.io.observation_loader import observed_series_from_mapping
+
+    def change(data):
+        _mass_flow_column(data)
+        data["fields"]["T_amb_C"].update(unit="mV", conversion={"factor": 0.1, "offset": 273.15})
+
+    path = _contract_with(tmp_path, change)
+    native = testfile_series(path, "70:72")
+    assert native["properties"] == {"water_density": WATER["water_density"]}
+    point = native["points"][0]["variables"]
+    assert point["loss.T_ambient_K"]["raw_unit"] == "mV" and point["inflow_mass.V_dot_m3_s"]["raw_unit"] == "kg/s"
+    series = observed_series_from_mapping(native)
+    rows = series.points[0].variables
+    assert rows["inflow_mass.V_dot_m3_s"].value == pytest.approx(0.001) and rows["inflow_mass.V_dot_m3_s"]._conversion_checked
+    assert rows["loss.T_ambient_K"]._conversion_checked is False
+    assert rows["through.T_in_K"]._conversion_checked is True
 
 
 def test_a_contract_cannot_cross_quantities_with_a_bare_factor(tmp_path) -> None:

@@ -36,8 +36,13 @@ kg/s/g/s/kg/min/kg/h; m/mm; s/min/h; kg/m³/kg/L/g/cm³. Identical unit labels a
 Units outside the table require explicit `conversion: {factor: ..., offset: ...}`.
 An explicit conversion that contradicts a known pair fails, and a field cannot change
 quantity (a kg/s field mapped to an m³/s variable) with a bare factor: `unit_not_convertible`.
-Snapshots carry each reading as `raw_value`/`raw_unit` beside the converted value, so loading
-the snapshot checks the conversion again. Each output value
+To change quantity, declare the linking property once under the contract's `properties`
+(`water_density: {value: 1.0, unit: kg/L, source: ...}`) and name it on the field with
+`conversion_property`; the tool computes the factor, a recorded `conversion` must agree with it
+(`conversion_disagrees_with_property`), and a property that cannot link the two units is
+`unit_not_convertible`. Snapshots and series carry each reading as `raw_value`/`raw_unit` (and the
+contract's properties) beside the converted value, so loading them checks the conversion again; a
+series row in a unit outside the table is marked `conversion_unchecked`. Each output value
 records the unit of the variable named by `target`, factor, offset, field@row, confidence and source.
 Audit evaluation never performs a hidden conversion or moves observed values.
 Mapping confidence accepts high, medium, low or proposed; the default minimum is medium.

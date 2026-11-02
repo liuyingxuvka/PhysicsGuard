@@ -8,7 +8,7 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from physicsguard.schema.observation_spec import ObservedValueSpec, SourceModelSpec
+from physicsguard.schema.observation_spec import ObservedValueSpec, PhysicalPropertySpec, SourceModelSpec
 from physicsguard.schema.parameter_coverage import MappingConfidence
 from physicsguard.schema.predictive_rollout import ModelSemantics, PredictiveRolloutPlanSpec
 from physicsguard.schema.validation_adequacy import ValidationAdequacyPlanSpec, unique_non_empty_texts
@@ -297,6 +297,8 @@ class ObservedSeriesSpec(BaseModel):
 
     series_id: str
     time_unit: str = "s"
+    # Declared once for the series; a point row names one with conversion_property.
+    properties: dict[str, PhysicalPropertySpec] = Field(default_factory=dict)
     points: list[ObservedSeriesPointSpec]
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -312,6 +314,11 @@ class ObservedSeriesSpec(BaseModel):
         ids = [item.point_id for item in self.points]
         if len(ids) != len(set(ids)):
             raise ValueError("observed-series point_ids must be unique")
+        for point in self.points:
+            for name, row in point.variables.items():
+                if row.conversion_property is not None and row.conversion_property not in self.properties:
+                    raise ValueError(f"{point.point_id}: {name}: conversion_property {row.conversion_property} "
+                                     "is not declared under properties")
         _json_serializable(self.metadata, "observed-series metadata")
         return self
 

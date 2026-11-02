@@ -51,7 +51,7 @@ NON_RAISING_HANDLERS = {
         "a unit-factor hypothesis the relation refuses is not evidence for a hint; any other error reaches the caller"),
     "src/physicsguard/core/model_dataset_validation.py:_contract_findings:Exception": (1, VISIBLE),
     "src/physicsguard/core/model_dataset_validation.py:_load_validation_input:Exception": (1, VISIBLE),
-    "src/physicsguard/core/parameter_coverage.py:check_field_mappings:ValueError": (1, VISIBLE),
+    "src/physicsguard/core/parameter_coverage.py:check_field_mappings:ValueError": (2, VISIBLE),
     "src/physicsguard/core/predictive_rollout.py:_load_series:Exception": (1, VISIBLE),
     "src/physicsguard/core/residual.py:ResidualBuilder.residual_scale_defaults:ValueError": (1,
         "a text parameter that is not a number is not perturbed; its scale contribution stays unclaimed"),

@@ -8,7 +8,7 @@ from physicsguard.core.data_file_manifest import sha256_file, field_signature_ha
 from physicsguard.core.parameter_coverage import (ContractFinding, ContractReview, contract_status, contract_next_actions,
                                                 check_field_mappings, confidence_value, field_targets)
 from physicsguard.core.residual import ResidualBuilder
-from physicsguard.core.units import unit_conversion
+from physicsguard.core.units import property_conversion, unit_conversion
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.test_file_contract_loader import load_test_file_contract, load_data_file_manifest
 from physicsguard.schema.parameter_coverage import ParameterRoleMatrixSpec, RoleAssignmentSpec, MappingEdgeSpec
@@ -169,22 +169,35 @@ def _snapshot(resolved, rows, units, row):
             index = row + (phase == 'next_row')
             if index >= len(rows):
                 raise ValueError(f'{name}: row {row} needs next_row, which is outside the data file')
-            factor, offset = unit_conversion(field.unit, units[target], field.conversion)
+            if field.conversion_property is not None:
+                prop = resolved.contract.properties[field.conversion_property]
+                factor, offset = property_conversion(field.unit, units[target], prop.value, prop.unit)
+            else:
+                factor, offset = unit_conversion(field.unit, units[target], field.conversion)
             try:
-                number = float(rows[index][name]) * factor + offset
+                raw = float(rows[index][name])
             except (ValueError, TypeError, KeyError) as exc:
                 raise ValueError(f'{name}@{index}: expected a numeric observation') from exc
+            number = raw * factor + offset
             if not math.isfinite(number):
                 raise ValueError(f'{name}@{index}: observation must be finite')
-            # The raw reading travels with the converted value so load_observed_values re-checks the conversion.
-            variables[target] = dict(value=number, raw_value=float(rows[index][name]), raw_unit=field.unit,
+            # The raw reading travels with the converted value so the loader converts and checks it again.
+            variables[target] = dict(value=number, raw_value=raw, raw_unit=field.unit,
                 unit=units[target], source=resolved.contract.data_file,
                 external_signal=f'{name}@{index}', conversion_factor=factor, conversion_offset=offset,
                 mapping_confidence=field.confidence, description=field.evidence)
+            if field.conversion_property is not None:
+                variables[target]['conversion_property'] = field.conversion_property
     snapshot = dict(observation_name=f'{resolved.contract.contract_id}_step_{row}', variables=variables)
+    if resolved.contract.properties:
+        snapshot['properties'] = _declared_properties(resolved.contract)
     if resolved.contract.source_model is not None:
         snapshot['source_model'] = resolved.contract.source_model.model_dump(mode='json', exclude_unset=True)
     return snapshot
+
+
+def _declared_properties(contract):
+    return {name: prop.model_dump(mode='json', exclude_none=True) for name, prop in contract.properties.items()}
 
 
 def testfile_snapshot(path, row):
@@ -206,9 +219,8 @@ def testfile_series(path, row_range=None):
         raise ValueError('invalid or empty row range')
     points = []
     for row in range(start, stop):
-        # Series rows are SI rows built here in process (the series schema refuses raw rows), so the raw reading is dropped.
-        variables = {target: {key: value for key, value in item.items() if key not in ('raw_value', 'raw_unit')}
-                     for target, item in _snapshot(resolved, rows, units, row)['variables'].items()}
+        # Series rows keep the raw reading like snapshots; observed_series_from_mapping converts and checks each point.
+        variables = _snapshot(resolved, rows, units, row)['variables']
         point = dict(point_id=f'step_{row}', source_identity_id=resolved.contract.contract_id, source_row_index=row, variables=variables)
         column = resolved.contract.time_column
         if column:
@@ -221,6 +233,8 @@ def testfile_series(path, row_range=None):
             point['timestamp'] = timestamp
         points.append(point)
     result = dict(series_id=resolved.contract.contract_id, time_unit='s', points=points)
+    if resolved.contract.properties:
+        result['properties'] = _declared_properties(resolved.contract)
     if resolved.contract.source_model is not None:
         result['source_model'] = resolved.contract.source_model.model_dump(mode='json', exclude_unset=True)
     return result

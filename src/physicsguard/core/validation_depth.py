@@ -21,7 +21,7 @@ from physicsguard.core.validation_adequacy import (
     findings_status,
 )
 from physicsguard.core.test_file_contract import testfile_series
-from physicsguard.io.observation_loader import load_observed_series
+from physicsguard.io.observation_loader import load_observed_series, observed_series_from_mapping
 from physicsguard.io.test_file_contract_loader import load_test_file_contract
 from physicsguard.schema.hierarchy_spec import HierarchicalAuditSpec
 from physicsguard.schema.model_dataset_validation import ModelValidationPlanSpec
@@ -199,10 +199,17 @@ def _contract_series(plan, base_dir, findings, unavailable_contracts) -> Observe
         _add_finding(findings, "error", "observed_series_missing", "no observed series file or readable contract series was declared", plan.validation_id)
         return None
     if len(plan.contracts) == 1:
-        return ObservedSeriesSpec.model_validate(native)
+        return observed_series_from_mapping(native)
+    properties: dict[str, Any] = {}
+    for item in headers:
+        for name, declared in item.get("properties", {}).items():
+            if properties.setdefault(name, declared) != declared:
+                raise ValueError(f"contracts declare the property {name} differently: {properties[name]} and {declared}")
     header = {key: value for key, value in headers[0].items()
-              if all(other.get(key) == value for other in headers)}
-    return ObservedSeriesSpec.model_validate({**header, "series_id": plan.validation_id, "points": points})
+              if key != "properties" and all(other.get(key) == value for other in headers)}
+    if properties:
+        header["properties"] = properties
+    return observed_series_from_mapping({**header, "series_id": plan.validation_id, "points": points})
 
 
 def summarize_validation_depth(payload: dict[str, Any]) -> dict[str, Any]:
@@ -946,6 +953,7 @@ def _residual_series_result(
         observed = ObservedValuesSpec(
             observation_name=point.point_id,
             source_model=series.source_model.model_copy(deep=True) if series.source_model is not None else None,
+            properties=series.properties,
             variables={
                 name: value
                 for name, value in point.variables.items()

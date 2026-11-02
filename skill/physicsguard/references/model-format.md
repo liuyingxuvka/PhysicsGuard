@@ -127,12 +127,18 @@ variables:
     stale_when: [flow sensor replaced]
 ```
 
-Without raw fields, `value` is already the SI value to check; conversion fields only record evidence,
-and a recorded factor or offset other than 1 and 0 is a conversion done outside the tool: the mapping
-ledger marks that row `conversion_unchecked` (a warning; the run continues).
+Without raw fields, `value` is already the SI value to check; conversion fields only record evidence.
+Any recorded `conversion_factor`, `conversion_offset` or `conversion_note` (a factor of 1 and an offset of 0
+included) is a conversion done outside the tool: the mapping ledger marks that row `conversion_unchecked`
+(a warning; the run continues). When `external_signal` is exactly a number and a unit from the table
+(`6 L/min`, `15 degC`), the tool reads it and checks the value against it: agreement through the unit table
+counts as checked, a disagreement is marked `signal_reading_disagrees`, and a reading of another quantity
+(`6 L/min` beside a kg/s value) is marked `conversion_unchecked`. A row that records nothing and names its
+signal only by a label (`AI heater power`) cannot be checked and is not flagged. The ledger's
+`conversion_check` says why, in one sentence.
 For a hand-written snapshot, give both finite `raw_value` and nonblank `raw_unit`, plus the target `unit`,
-and omit `value` rather than hand-calculating it. `load_observed_values` converts once at ingestion;
-it never guesses units from `external_signal`:
+and omit `value` rather than hand-calculating it. The loader converts once at ingestion, for snapshots and
+series points alike; it never converts from `external_signal`:
 
 - two units of one quantity in the unit table (degC and K, kW and W, kg/min and kg/s): the table converts;
   a recorded factor or offset must agree with it exactly;
@@ -157,13 +163,17 @@ tool's conversion within `RAW_VALUE_REL_TOL = 5e-5` relative tolerance. This adm
 A disagreement refuses the run with exit 2 and `observed_value_disagrees_with_conversion:<variable>`;
 a pair that cannot be converted uses `unit_not_convertible:<variable>`. Incomplete pairs remain input
 validation errors. Conversion results must be finite. A declared property needs a finite positive
-value and a unit from the table.
+value and a unit from the table; a density above that of the densest material (osmium, 22.59 g/cm^3) is
+refused with `implausible_property`, so a 60 kg/L water density stops the run. A wrong but possible
+property (2 kg/L for water) is still the AI's number, visible in the snapshot and the ledger.
 
 The mapping ledger adds `raw_conversion`, for example `6 L/min x 0.0166667 (water_density 1 kg/L) -> 0.1 kg/s`.
 It records the accepted original input conversion; intentional counterfactual variants retain that
 provenance alongside their counterfactual source, rather than claiming a new measured conversion.
-Evaluation never converts. Direct Python or series construction needs numeric SI rows without raw
-fields, or normalized snapshot rows returned by the loader; unresolved raw rows are refused before use.
+Evaluation never converts. A series file (and `testfile series` output) may carry raw rows and a
+series-level `properties`; `load_observed_series` converts each point with the same rules. Direct Python
+construction needs numeric SI rows without raw fields, or rows returned by the loader; unresolved raw rows
+are refused before use.
 Record mapping uncertainty and `review_required` honestly.
 `stale_when` declares reconfirmation conditions; when one occurs, set `mapping_status: stale`. Do not present old mappings as current evidence.
 

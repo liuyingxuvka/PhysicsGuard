@@ -230,8 +230,13 @@ Five skills, one idea: make structure, relationships and constraints explicit in
 - If the AI converts units itself and carries a slip through consistently (6 L/min written as 6 kg/s), every balance
   closes and the audit passes. From `v0.16.0` you can give `raw_value` and `raw_unit` and let the tool convert; a
   contradicting value stops the run. A number the AI converts by hand is still the AI's number: the audit still
-  passes, but each such row is now marked `conversion_unchecked` in the mapping warnings. A wrong declared property
-  (a density of 60 kg/L) is still the AI's number too; it is visible in the snapshot and the ledger.
+  passes, but the row is marked `conversion_unchecked` in the mapping warnings when the snapshot records a conversion
+  (any `conversion_factor`, `conversion_offset` or `conversion_note`, a factor of 1.0 included) or when its
+  `external_signal` is a reading in another quantity, such as `6 L/min` beside a kg/s value; a reading the unit table
+  can convert and that disagrees with the value is marked `signal_reading_disagrees`. A row that records nothing and
+  names its signal only by a label cannot be checked and is not flagged. A declared density denser than any material
+  (60 kg/L) is refused; a wrong but possible property (2 kg/L for water) is still the AI's number, visible in the
+  snapshot and the ledger.
 
 
 **What has been measured, and what has not.**

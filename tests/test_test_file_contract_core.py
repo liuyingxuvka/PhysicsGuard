@@ -95,9 +95,9 @@ def test_units_fail_closed(tmp_path,unit,conversion,code):
 
 
 def test_series_has_120_single_step_points_and_preserves_si_values():
-    from physicsguard.schema.validation_depth import ObservedSeriesSpec
+    from physicsguard.io.observation_loader import observed_series_from_mapping
     result=series(TANK/'tank_run_contract.yaml')
-    parsed=ObservedSeriesSpec.model_validate(result)
+    parsed=observed_series_from_mapping(result)
     assert len(parsed.points)==120
     assert parsed.points[60].timestamp==600
     assert parsed.points[70].variables['heat.T_previous_K'].value == snapshot(TANK/'tank_run_contract.yaml',70)['variables']['heat.T_previous_K']['value']
@@ -119,7 +119,7 @@ def test_documented_unit_table(source,target,factor,offset):
 
 
 def test_snapshot_copies_the_contract_source_model(tmp_path):
-    from physicsguard.schema.validation_depth import ObservedSeriesSpec
+    from physicsguard.io.observation_loader import observed_series_from_mapping
 
     header = {"model_name": " model A ", "tool": "exporter", "scenario": "run A"}
     path = changed_contract(tmp_path, lambda data: None)
@@ -132,5 +132,5 @@ def test_snapshot_copies_the_contract_source_model(tmp_path):
     copied = snapshot(path, 0)
     sequence = series(path, '0:2')
     assert copied['source_model'] == sequence['source_model'] == header
-    assert ObservedSeriesSpec.model_validate(sequence).source_model.model_dump(exclude_unset=True) == header
+    assert observed_series_from_mapping(sequence).source_model.model_dump(exclude_unset=True) == header
     assert copied['variables'] == baseline['variables']

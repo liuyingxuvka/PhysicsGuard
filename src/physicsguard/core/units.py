@@ -38,6 +38,19 @@ QUANTITY_EXPONENTS = {
 }
 
 
+# The densest material at ordinary conditions is osmium, 22.59 g/cm^3 (22,590 kg/m^3).
+DENSEST_MATERIAL_KG_M3 = 22590.0
+
+
+def implausible_property(value, unit):
+    """A sentence when a declared property is physically impossible at ordinary conditions, else None."""
+    entry = UNIT_TABLE.get(_label(unit))
+    if entry and entry[0] == 'density' and value * entry[1] > DENSEST_MATERIAL_KG_M3:
+        return (f'{value:g} {unit} is {value * entry[1]:g} kg/m^3, denser than any material at ordinary '
+                f'conditions (osmium, {DENSEST_MATERIAL_KG_M3:g} kg/m^3)')
+    return None
+
+
 def _label(unit):
     return unit.replace('³', '^3') if isinstance(unit, str) else unit
 

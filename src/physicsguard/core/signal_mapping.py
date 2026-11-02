@@ -34,6 +34,7 @@ class SignalMappingRecord:
     issue_codes: tuple[str, ...] = ()
     recommended_action: str = ""
     raw_conversion: str | None = None
+    conversion_check: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -56,6 +57,8 @@ class SignalMappingRecord:
         }
         if self.raw_conversion is not None:
             result["raw_conversion"] = self.raw_conversion
+        if self.conversion_check is not None:
+            result["conversion_check"] = self.conversion_check
         return result
 
 
@@ -127,8 +130,9 @@ def build_signal_mapping_ledger(
                 stale_when=tuple(observed_value.stale_when),
                 block_id=block_id,
                 issue_codes=issue_codes,
-                recommended_action=_mapping_recommendation(issue_codes, variable),
+                recommended_action=_mapping_recommendation(issue_codes, variable, observed_value._conversion_check),
                 raw_conversion=observed_value._raw_conversion,
+                conversion_check=observed_value._conversion_check,
             )
         )
     return tuple(rows)
@@ -163,7 +167,7 @@ def derive_bug_family_followups(
                 followup_id="signal_mapping_review",
                 family="signal_mapping",
                 severity="warning",
-                trigger="one or more observed variables have low-confidence, stale, review-required, unit-less, unit-mismatch or unchecked-conversion mapping evidence",
+                trigger="one or more observed variables have low-confidence, stale, review-required, unit-less, unit-mismatch, unchecked-conversion or reading-contradicting mapping evidence",
                 affected_blocks=tuple(_dedupe(record.block_id for record in mapping_issue_records if record.block_id)),
                 affected_variables=tuple(record.physics_variable for record in mapping_issue_records),
                 evidence_residuals=tuple(residual.name for residual in residuals[:5]),
@@ -224,14 +228,19 @@ def _mapping_issue_codes(expected_unit: str, observed_unit: str, observed_value:
         issues.append("missing_unit")
     if expected_unit and observed_unit and expected_unit != observed_unit and observed_value.conversion_factor is None:
         issues.append("missing_conversion")
-    if observed_value._conversion_checked is False:
+    if observed_value._signal_disagrees:
+        issues.append("signal_reading_disagrees")
+    elif observed_value._conversion_checked is False:
         issues.append("conversion_unchecked")
     if _label(observed_value.mapping_status) == "stale":
         issues.append("stale_mapping")
     return _dedupe(issues)
 
 
-def _mapping_recommendation(issue_codes: tuple[str, ...], variable: str) -> str:
+def _mapping_recommendation(issue_codes: tuple[str, ...], variable: str, conversion_check: str | None = None) -> str:
+    if "signal_reading_disagrees" in issue_codes:
+        return (f"{variable}: {conversion_check}. Give the reading as raw_value and raw_unit so the tool converts it, "
+                "or correct the value or external_signal.")
     if not issue_codes:
         return "Mapping evidence is present; still verify it if this variable drives a top residual."
     if "missing_conversion" in issue_codes:
@@ -239,8 +248,8 @@ def _mapping_recommendation(issue_codes: tuple[str, ...], variable: str) -> str:
     if "missing_unit" in issue_codes:
         return f"Record the unit of {variable}'s source signal so it can be checked against the model unit."
     if "conversion_unchecked" in issue_codes:
-        return (f"Give {variable} as raw_value and raw_unit so the tool converts it with the unit table "
-                "(and a declared property when the quantity changes); a recorded conversion is not checked.")
+        return (f"{variable}: {conversion_check}. Give it as raw_value and raw_unit so the tool converts it with the unit "
+                "table (and a declared property when the quantity changes).")
     if "review_required" in issue_codes or "low_confidence" in issue_codes:
         return f"Confirm {variable}'s source signal, sign convention, and unit before treating the block score as localized."
     if "stale_mapping" in issue_codes:

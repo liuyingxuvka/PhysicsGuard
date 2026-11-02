@@ -8,7 +8,7 @@ from typing import Any, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from physicsguard.schema.data_file_manifest import DataFileManifestSpec
-from physicsguard.schema.observation_spec import SourceModelSpec
+from physicsguard.schema.observation_spec import PhysicalPropertySpec, SourceModelSpec
 from physicsguard.schema.parameter_coverage import (
     CoveragePolicySpec, MappingConfidence,
 )
@@ -174,6 +174,8 @@ class FieldSpec(BaseModel):
     evidence: str | None = None
     reason: str | None = None
     conversion: ConversionSpec | None = None
+    # Names a property under the contract's properties; the tool computes a cross-quantity factor from it.
+    conversion_property: str | None = None
     planned_child_model: dict[str, Any] | None = None
     review_required: bool = False
 
@@ -197,6 +199,8 @@ class TestFileContractSpec(BaseModel):
     model_hash: str | None = None
     extractor: ExtractorProfileSpec | None = None
     time_column: str | None = None
+    # Physical properties (for example a density) declared once and named by fields with conversion_property.
+    properties: dict[str, PhysicalPropertySpec] = Field(default_factory=dict)
     fields: dict[str, FieldSpec]
     coverage: ContractCoverageSpec = Field(default_factory=ContractCoverageSpec)
     segments: list[DatasetSegmentSpec] = Field(default_factory=list)
@@ -215,6 +219,13 @@ class TestFileContractSpec(BaseModel):
     @classmethod
     def _required(cls, value, info):
         return ensure_non_empty(value, info.field_name)
+
+    @model_validator(mode="after")
+    def _declared_properties(self):
+        for name, field in self.fields.items():
+            if field.conversion_property is not None and field.conversion_property not in self.properties:
+                raise ValueError(f"{name}: conversion_property {field.conversion_property} is not declared under properties")
+        return self
 
     @model_validator(mode="after")
     def _unique_rows(self):

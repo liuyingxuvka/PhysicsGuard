@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 from dataclasses import asdict, dataclass, field
 from typing import Any, Mapping, Optional
 
@@ -42,7 +44,7 @@ def field_targets(field):
 
 def check_field_mappings(contract, manifest, target_units):
     """Check the single field declaration against current headers and registry units."""
-    from physicsguard.core.units import unit_conversion
+    from physicsguard.core.units import property_conversion, unit_conversion, unit_quantity
     findings = []
     def add(code, name, message, target=None, severity="error"):
         findings.append(ContractFinding(severity, code, message, source_id=f"field:{name}", field_name=name, target=target))
@@ -85,10 +87,26 @@ def check_field_mappings(contract, manifest, target_units):
             if not field.unit:
                 add("mapping_missing_unit", name, "mapped field requires a unit", target)
                 continue
+            if field.conversion_property is not None:
+                prop = contract.properties[field.conversion_property]
+                try:
+                    factor, offset = property_conversion(field.unit, target_units[target], prop.value, prop.unit)
+                except ValueError as exc:
+                    add("unit_not_convertible", name, f"cannot convert {field.unit} to {target_units[target]} through "
+                        f"{field.conversion_property} ({prop.value:g} {prop.unit}): {exc}", target)
+                    continue
+                recorded = field.conversion
+                if recorded is not None and (not math.isclose(recorded.factor, factor, rel_tol=5e-5) or recorded.offset != offset):
+                    add("conversion_disagrees_with_property", name, f"recorded conversion {recorded.factor:g} + {recorded.offset:g} "
+                        f"disagrees with {factor:g} + {offset:g} computed from {field.conversion_property}", target)
+                continue
             try:
                 unit_conversion(field.unit, target_units[target], field.conversion)
             except ValueError as exc:
-                add(str(exc), name, f"cannot convert {field.unit} to {target_units[target]}", target)
+                source, quantity = unit_quantity(field.unit), unit_quantity(target_units[target])
+                hint = (f"; {source} and {quantity} are different quantities: declare the property that links them under "
+                        "properties and name it with conversion_property" if source and quantity and source != quantity else "")
+                add(str(exc), name, f"cannot convert {field.unit} to {target_units[target]}{hint}", target)
     return findings
 
 

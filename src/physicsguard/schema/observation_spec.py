@@ -48,6 +48,15 @@ class PhysicalPropertySpec(BaseModel):
             raise ValueError("a declared property needs a unit")
         return value
 
+    @model_validator(mode="after")
+    def _physically_possible(self) -> "PhysicalPropertySpec":
+        from physicsguard.core.units import implausible_property
+
+        problem = implausible_property(self.value, self.unit)
+        if problem is not None:
+            raise ValueError(f"implausible_property: {problem}")
+        return self
+
 
 class ObservedValueSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -57,10 +66,14 @@ class ObservedValueSpec(BaseModel):
     raw_unit: Optional[str] = None
     # Accepted input evidence survives counterfactual model_copy without recomputation.
     _raw_conversion: Optional[str] = PrivateAttr(default=None)
-    # Set by load_observed_values: True when the tool converted the raw value itself (unit
-    # table, or unit table plus a declared property), False when a recorded conversion was
-    # applied or claimed that the tool could not check, None when nothing was converted.
+    # Set by convert_observed_rows: True when the tool converted the raw value itself (unit
+    # table, or unit table plus a declared property) or checked the value against a reading in
+    # external_signal, False when a conversion was applied or recorded that the tool could not
+    # check, None when nothing was converted. _conversion_check says why in one sentence, and
+    # _signal_disagrees marks a value that contradicts the reading in its external_signal.
     _conversion_checked: Optional[bool] = PrivateAttr(default=None)
+    _conversion_check: Optional[str] = PrivateAttr(default=None)
+    _signal_disagrees: bool = PrivateAttr(default=False)
     conversion_property: Optional[str] = None
     unit: Optional[str] = None
     source: Optional[str] = None
