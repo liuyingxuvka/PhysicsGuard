@@ -38,7 +38,7 @@ def test_a_space_without_a_power_is_not_read_as_the_reference_says() -> None:
 
 
 def test_the_separators_allowed_between_whole_readings_are_the_ones_the_reference_names() -> None:
-    from physicsguard.io.observation_loader import WHOLE_SIGNAL_SEPARATORS, _signal_readings
+    from physicsguard.schema.observed_conversion import WHOLE_SIGNAL_SEPARATORS, _signal_readings
 
     named = _quoted("with only\n  brackets, commas", " between them")
     assert sorted(set("".join(named)) | set("()[],")) == sorted(WHOLE_SIGNAL_SEPARATORS)

@@ -320,7 +320,7 @@ class ObservedSeriesSpec(BaseModel):
                     raise ValueError(f"{point.point_id}: {name}: conversion_property {row.conversion_property} "
                                      "is not declared under properties")
         # One route: every point is converted and checked like a snapshot, from a file or built in Python.
-        from physicsguard.io.observation_loader import convert_observed_rows
+        from physicsguard.schema.observed_conversion import convert_observed_rows
 
         for point in self.points:
             convert_observed_rows(point.variables, self.properties)
