@@ -6,8 +6,9 @@ come from tracing each native relation once at the registry's declared initial
 guesses; nothing is solved and no observed value is used unless a snapshot is given
 to colour the verdicts. The picture shows the part under discussion and names what it
 leaves out. Above the readable size it folds sub-blocks into their parent blocks, one
-level at a time; when even the top blocks are too many, it says so in the picture and
-names the blocks to focus on, with the size of each focused picture.
+level at a time, but never into a single box while a finer level has more; when no
+level fits, it draws the smallest level that still has more than one box, says so in
+the picture and names the blocks to focus on, with the size of each focused picture.
 """
 
 from __future__ import annotations
@@ -172,19 +173,19 @@ def _draw(links: dict[tuple[str, str], _Link], shown: set[str], box: Any, level:
 def _fold(links: dict[tuple[str, str], _Link], shown: set[str], keep: set[str],
           chains: dict[str, list[str]]) -> _Drawing:
     """The finest drawing within the readable size: components, then blocks, folding sub-blocks into their parents
-    one level at a time. The components in keep (a focus) stay expanded. When even the top blocks are above the
-    size, the coarsest drawing is returned and the caller says so."""
-    drawing = _draw(links, shown, lambda name: name, "component")
-    if drawing.fits():
-        return drawing
-    for depth in range(max(len(chains[name]) for name in shown) - 1, -1, -1):
-        def box(name: str, depth: int = depth) -> str:
-            return name if name in keep else "block:" + chains[name][min(depth, len(chains[name]) - 1)]
+    one level at a time. The components in keep (a focus) stay expanded. A drawing of one box hides all structure, so
+    it is never chosen while a finer one has more boxes; when no drawing with more than one box fits, the coarsest of
+    them is returned (a single root's children, not the root alone) and the caller says what to focus on."""
+    finest = _draw(links, shown, lambda name: name, "component")
+    drawings = [finest]
+    if not finest.fits():
+        for depth in range(max(len(chains[name]) for name in shown) - 1, -1, -1):
+            def box(name: str, depth: int = depth) -> str:
+                return name if name in keep else "block:" + chains[name][min(depth, len(chains[name]) - 1)]
 
-        drawing = _draw(links, shown, box, "focus" if keep else "block")
-        if drawing.fits():
-            break
-    return drawing
+            drawings.append(_draw(links, shown, box, "focus" if keep else "block"))
+    useful = [drawing for drawing in drawings if len(drawing.nodes) > 1] or drawings[:1]
+    return next((drawing for drawing in useful if drawing.fits()), useful[-1])
 
 
 def _focus_choices(links, shown, focus_components, chains, components, block_of, index) -> list[dict[str, Any]]:

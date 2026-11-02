@@ -211,3 +211,68 @@ def test_a_one_component_focus_with_too_many_neighbours_says_to_keep_one_quantit
     result = run_cli("hierarchy", "flow", str(path), "--focus", "h0")
     note = next(line for line in result.stdout.splitlines() if line.strip().startswith("n_too_large["))
     assert "its one component has many neighbours: keep one quantity with --quantity" in note
+
+
+# Review round 4: a single-root tree must not fold into one empty box, and a picture that still does not fit names
+# what to focus on with the size of each choice.
+
+def _tree_audit(tmp_path, groups, leaves, name="tree"):
+    """Root block plant; groups child blocks under it (none: the leaves hang from plant); leaves blocks under each group,
+    one heater each, chained h0 -> h1 -> ..."""
+    blocks = [{"id": "plant", "name": "plant", "level": 0, "components": []}]
+    components, connections, index = [], [], 0
+    for group in range(groups or 1):
+        parent = f"g{group:02d}" if groups else "plant"
+        if groups:
+            blocks.append({"id": parent, "name": parent, "level": 1, "parent_id": "plant", "components": []})
+        for leaf in range(leaves):
+            blocks.append({"id": f"{parent}c{leaf:02d}", "name": f"leaf {index}", "level": 2 if groups else 1,
+                           "parent_id": parent, "components": [f"h{index}"]})
+            components.append({"id": f"h{index}", "type": "CoolantHeatBalanceModule",
+                               "parameters": {"cp_J_kgK": 4180.0, "residual_scale_W": 10.0}})
+            if index:
+                connections.append({"from_variable": f"h{index - 1}.T_out_K", "to_variable": f"h{index}.T_in_K"})
+            index += 1
+    data = {"audit_name": name, "system": {"system_name": name, "components": components, "connections": connections,
+                                           "boundaries": [], "assumptions": []}, "hierarchy": {"blocks": blocks}}
+    path = tmp_path / f"{name}.yaml"
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+    return path
+
+
+def _note(path, *args):
+    result = run_cli("hierarchy", "flow", str(path), *args)
+    assert result.returncode == 0, result.stderr
+    return next((line for line in result.stdout.splitlines() if line.strip().startswith("n_too_large[")), "")
+
+
+def test_a_single_root_with_more_children_than_fit_is_not_folded_into_one_box(tmp_path) -> None:
+    """Root plant with 13 child blocks: before, one box 'plant (+13 sub-blocks)', 0 arrows and no advice."""
+    path = _tree_audit(tmp_path, None, 13)
+    flow = _flow(path)
+    assert len(flow["nodes"]) == 13 and len(flow["links"]) == 12, [row["id"] for row in flow["nodes"]]
+    assert flow["too_large"] is not None and (flow["too_large"]["boxes"], flow["too_large"]["arrows"]) == (13, 12)
+    note = _note(path)
+    assert "too large to read at once: 13 boxes, 12 arrows" in note and "--focus plantc00 (2 boxes, 1 arrow)" in note
+    assert "--focus plantc01 (3 boxes, 2 arrows)" in note
+
+
+def test_three_hundred_components_in_twenty_groups_show_the_groups_and_what_to_focus_on(tmp_path) -> None:
+    path = _tree_audit(tmp_path, 20, 15, name="big")
+    flow = _flow(path)
+    assert sorted(row["id"] for row in flow["nodes"]) == [f"block:g{group:02d}" for group in range(20)]
+    assert all(row["folds"] for row in flow["nodes"]) and len(flow["links"]) == 19
+    choices = flow["too_large"]["focus_choices"]
+    assert any(choice["readable"] for choice in choices)
+    note = _note(path)
+    assert "too large to read at once: 20 boxes, 19 arrows" in note and "--focus " in note
+
+
+@pytest.mark.parametrize("audit", EXAMPLE_AUDITS, ids=lambda path: path.parent.name + "/" + path.stem)
+def test_no_picture_folds_everything_into_one_box(audit) -> None:
+    for kwargs in ({}, {"quantity": "mass_flow"}, {"quantity": "power"}):
+        flow = _flow(audit, **kwargs)
+        shown = len(flow["nodes"])
+        components = {row["id"] for row in flow["nodes"] if row["kind"] == "component"}
+        folded = sum(1 for row in flow["nodes"] if row["kind"] == "block")
+        assert shown > 1 or len(components) + folded <= 1 and not any(row.get("folds") for row in flow["nodes"]), kwargs
