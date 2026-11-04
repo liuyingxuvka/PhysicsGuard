@@ -28,3 +28,6 @@ openspec/**/run-artifacts/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local flow-check cache
+.flowguard/cache/

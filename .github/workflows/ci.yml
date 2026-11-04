@@ -35,11 +35,7 @@ jobs:
       - name: Full test suite
         run: python -m pytest -q
 
-      - name: Strict FlowGuard map check
-        if: matrix.python == '3.11'
-        run: python -m flowguard map check --root . --strict
-
-      - name: FlowGuard map, lint and models
+      - name: Verify flow and native contracts
         if: matrix.python == '3.11'
         run: python -m flowguard release
 

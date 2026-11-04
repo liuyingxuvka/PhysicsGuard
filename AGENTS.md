@@ -1,13 +1,8 @@
 ## PhysicsGuard Core Repository Rules
 
-Read these model contracts before changes:
-
-- Audit setup: model `core`, rules `no_solve_without_valid_registry`, `no_solve_without_normalized_residuals`, `hierarchy_describe_does_not_solve`.
-- Observed work: model `observed_derivation`, rules `observed_evaluation_does_not_solve`, `unobserved_variables_stay_listed`, `no_residual_from_unobserved_guess`, `derived_relations_are_not_checks`, `comparison_requires_reference_and_observed`, `hierarchy_run_requires_solve`, `diagnostics_after_solver_or_failure`.
-- Assumption cards: model `assumptions`, rules `assumptions_are_reported_in_diagnostics`, `assumption_overrides_are_warned`, `variable_assumptions_are_fixed_residuals`.
-- Solver/audit distinction: model `solver_audit`, rules `audit_pass_and_failure_are_disjoint`, `post_checks_never_block_valid_solver_selection`.
-- Refinement and readback: model `tree_verdicts`, rules `parent_fails_with_child`, `coarse_failure_with_passing_children_is_inconsistent`, `planned_template_is_reported_not_executed`, `tree_view_shows_every_block_verdict`, `verdict_lines_omit_structure`, `hint_shown_in_tree`, `resolution_shown`.
-- CLI: model `cli_exit`, rules `exit_code_follows_audit_pass`, `default_view_is_the_tree`. Installation, generated CSV and native descriptions: models `skill_install`, `heated_tank_generator`, `module_descriptions`.
+Read `docs/development/flow-contracts.md` for the affected rule and its production test before changing code.
+The real assumption-card lifecycle is `.flowguard/flow/assumption_lifecycle.py` with a shared native binding;
+input, report, schema and installation obligations live in independent `tests/flow_migration` unit contracts.
 
 Policies:
 
@@ -26,9 +21,13 @@ Releases:
 - Version numbers: a release that adds features raises the second number (0.16.0 -> 0.17.0); a release with only small fixes raises the third (0.17.0 -> 0.17.1); never skip a number.
 - Maintenance needs FlowGuard at or above the tag in the `test` extra of `pyproject.toml` (install with `python -m pip install -e ".[test]"`; the PyPI package named `flowguard` is a different project). Raise that tag only when this repository starts using a newer FlowGuard feature; a FlowGuard release alone is no reason to change it or to release this repository.
 
+CI runs the full pytest suite on Python 3.11 and 3.13. Python 3.11 also runs `python -m flowguard release`
+for the flow/native contracts and checks a scratch skill installation byte for byte. There is no legacy map check.
+
 # FlowGuard rules for the project agent
 
 1. At the start of a session and after any loss of context, run `python -m flowguard status` before anything else.
 2. When the owner asks for something, store the owner's own words once, as received: `python -m flowguard req add <file|-> --id <id>`. It stores only words the owner wrote, byte for byte: never a plan, a list or text an AI wrote. When a new owner message replaces an earlier one, add `--supersedes <old id>`; never edit `.flowguard/requests/`.
 3. Find code with `python -m flowguard where NAME`; change code and its tests together; run the project's own test command (for example `python -m pytest -q`) and report exactly what you ran and the result.
-4. Commit code and tests together in one commit with a message in your own words; add a line `Request: R<n>` when the change answers a stored owner request. The legacy map, `.flowguard/models/` and the target commands need no upkeep.
+4. Commit code and tests together in one commit with a message in your own words; add a line `Request: R<n>` when the change answers a stored owner request.
+5. When a request adds or changes state values, actions, conditions, settings or endings, change the affected feature's flow model before the code and run `python -m flowguard check`; when discussing a flow, use `python -m flowguard show` pictures.

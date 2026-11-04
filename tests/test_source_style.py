@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_python_sources_have_at_most_two_consecutive_blank_lines() -> None:
     violations: list[str] = []
-    for directory in ("src", "tests", "scripts", "examples", ".flowguard/models"):
+    for directory in ("src", "tests", "scripts", "examples", ".flowguard/flow"):
         for path in sorted((ROOT / directory).rglob("*.py")):
             blank_lines = 0
             for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):

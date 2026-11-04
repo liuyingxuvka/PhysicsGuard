@@ -1,0 +1,1506 @@
+{
+  "schema": "physicsguard.flow-contracts.v1",
+  "baseline": "v0.17.0",
+  "rules": [
+    {
+      "topic": "assumptions",
+      "rule": "assumptions_are_reported_in_diagnostics",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[assumptions:assumptions_are_reported_in_diagnostics]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[assumptions]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_assumption_diagnostics.py:test_normal_diagnostic_json_includes_assumptions_section",
+        "tests/test_assumption_diagnostics.py:test_proposed_assumption_warning_appears_and_not_applied"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "assumptions",
+      "rule": "variable_assumptions_are_fixed_residuals",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[assumptions:variable_assumptions_are_fixed_residuals]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[assumptions]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_assumption_residuals.py:test_variable_assumption_creates_active_assumption_residual"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "assumptions",
+      "rule": "assumption_overrides_are_warned",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[assumptions:assumption_overrides_are_warned]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[assumptions]",
+      "flow": ".flowguard/flow/assumption_lifecycle.py",
+      "original_production_tests": [
+        "tests/test_assumption_manager.py:test_explicit_parameter_override_requires_allow_override_and_warns"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "cli_exit",
+      "rule": "default_view_is_the_tree",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[cli_exit:default_view_is_the_tree]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[cli_exit]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_cli_exit.py:test_validation_run_prints_the_tree"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "cli_exit",
+      "rule": "exit_code_follows_audit_pass",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[cli_exit:exit_code_follows_audit_pass]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[cli_exit]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_cli.py:test_module_cli_lists_registry_and_reports_unknown_type",
+        "tests/test_cli_exit.py:test_cli_exit_codes_follow_the_audit"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "core",
+      "rule": "no_solve_without_valid_registry",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[core:no_solve_without_valid_registry]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[core]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_core.py:test_duplicate_fully_qualified_variables_fail",
+        "tests/test_solver.py:test_bounds_are_respected"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "core",
+      "rule": "no_solve_without_normalized_residuals",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[core:no_solve_without_normalized_residuals]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[core]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_core.py:test_residual_vector_returns_normalized_values"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "core",
+      "rule": "hierarchy_describe_does_not_solve",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[core:hierarchy_describe_does_not_solve]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[core]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_spec.py:test_refines_requires_a_parent_owned_component_and_describe_exposes_it",
+        "tests/test_core.py:test_describe_json_keeps_every_inspect_field"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "clean_input_accepted",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:clean_input_accepted]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_clean_nominal_is_accepted_without_mutating_inputs"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "each_defect_rejected",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:each_defect_rejected]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_each_declared_tank_fault_is_detected_with_direct_block_evidence"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "every_defect_reported",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:every_defect_reported]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_combined_faults_report_every_direct_failure"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "benign_features_neutral",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:benign_features_neutral]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_benign_default_parameter_override_keeps_the_verdict"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "masked_pairs_accepted",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:masked_pairs_accepted]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_masked_pair_is_listed_not_failed"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "undetected_pairs_rejected",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:undetected_pairs_rejected]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_undetected_pair_fails"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "outside_pairs_rejected",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:outside_pairs_rejected]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_failure_outside_the_expected_blocks_fails"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "pairwise_evidence_complete",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:pairwise_evidence_complete]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_pairwise_rows_cover_every_fault_pair"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "model_miss_is_explicit",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:model_miss_is_explicit]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_observed_failure_no_variant_explains_is_a_model_miss"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "unevaluable_remains_explicit",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[fault_variants:unevaluable_remains_explicit]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_fault_variants.py:test_out_of_domain_pair_remains_explicit_without_losing_other_results"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "heated_tank_generator",
+      "rule": "generator_reproduces_committed_csv",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[heated_tank_generator:generator_reproduces_committed_csv]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[heated_tank_generator]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_heated_tank_example.py:test_generator_reproduces_committed_csv"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "one_finding_per_missing_input",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[model_dataset_validation:one_finding_per_missing_input]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[model_dataset_validation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_validation_depth.py:test_missing_declared_series_is_one_finding"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_contracts",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[model_dataset_validation:no_pass_without_contracts]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[model_dataset_validation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_model_dataset_validation.py:test_nonpassing_required_contract_blocks_validation"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_direct_validation",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[model_dataset_validation:no_pass_without_direct_validation]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[model_dataset_validation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_model_dataset_validation.py:test_clean_model_dataset_validation_passes",
+        "tests/test_model_dataset_validation.py:test_conservative_calibration_does_not_turn_direct_failure_into_pass"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_depth_inputs",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[model_dataset_validation:no_pass_without_depth_inputs]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[model_dataset_validation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_validation_depth.py:test_uncertain_required_mapping_blocks_broad_validation",
+        "tests/test_validation_depth.py:test_adequacy_floors_are_warnings_not_failures"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_holdout_and_feedback",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[model_dataset_validation:no_pass_without_holdout_and_feedback]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[model_dataset_validation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_validation_depth.py:test_identical_content_under_different_holdout_label_is_overlap"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "module_descriptions",
+      "rule": "description_never_solves",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[module_descriptions:description_never_solves]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[module_descriptions]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_cli.py:test_every_registered_module_has_a_native_readable_description"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "module_descriptions",
+      "rule": "description_restores_the_profiler",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[module_descriptions:description_restores_the_profiler]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[module_descriptions]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_cli.py:test_module_description_restores_existing_profiler_on_success_and_failure"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "unit_factor_probe_is_read_only_and_bounded",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:unit_factor_probe_is_read_only_and_bounded]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_signal_mapping_ledger.py:test_a_thousandfold_flow_factor_slip_is_named_without_changing_observations"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "unobserved_variables_stay_listed",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:unobserved_variables_stay_listed]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_skips_residuals_that_need_unobserved_variables",
+        "tests/test_core.py:test_hierarchy_evaluate_reports_a_partial_snapshot"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "no_residual_from_unobserved_guess",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:no_residual_from_unobserved_guess]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_runner.py:test_partial_snapshot_does_not_invent_a_zero_product_residual",
+        "tests/test_hierarchy_runner.py:test_partial_snapshot_skips_a_range_check_with_a_flat_local_region",
+        "tests/test_hierarchy_runner.py:test_unclassified_custom_residual_is_not_licensed_by_finite_probes",
+        "tests/test_hierarchy_runner.py:test_partial_sum_tracks_external_reads_when_it_declares_no_variables"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "derived_relations_are_not_checks",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:derived_relations_are_not_checks]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_heated_tank_example.py:test_measured_tank_derivations_are_reported_without_solving",
+        "tests/test_hierarchy_runner.py:test_repeated_connection_names_keep_distinct_producing_and_checked_occurrences"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "observed_evaluation_does_not_solve",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:observed_evaluation_does_not_solve]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_runner.py:test_evaluate_observed_does_not_call_solver",
+        "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_clean_does_not_solve_and_passes"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "hierarchy_run_requires_solve",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:hierarchy_run_requires_solve]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_runner.py:test_clean_hierarchical_example_audit_pass_true",
+        "tests/test_hierarchy_runner.py:test_conflict_hierarchical_example_identifies_top_block_and_refinement"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "comparison_requires_reference_and_observed",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:comparison_requires_reference_and_observed]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_runner.py:test_compare_to_reference_returns_reference_and_observed_variables"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "diagnostics_after_solver_or_failure",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[observed_derivation:diagnostics_after_solver_or_failure]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_diagnostics.py:test_warnings_generated_for_solver_failure",
+        "tests/test_solver.py:test_solver_result_includes_diagnostics_ready_fields"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "skill_install",
+      "rule": "check_and_dry_run_change_nothing",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[skill_install:check_and_dry_run_change_nothing]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[skill_install]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_install_physicsguard_skills.py:test_cli_dry_run_changes_nothing_and_check_fails_until_installed"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "solver_audit",
+      "rule": "audit_pass_and_failure_are_disjoint",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[solver_audit:audit_pass_and_failure_are_disjoint]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[solver_audit]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_diagnostics.py:test_report_distinguishes_optimization_success_from_audit_pass"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "solver_audit",
+      "rule": "post_checks_never_block_valid_solver_selection",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[solver_audit:post_checks_never_block_valid_solver_selection]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[solver_audit]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_solver.py:test_range_check_post_check_does_not_pull_solution",
+        "tests/test_core.py:test_post_check_residuals_are_not_in_solver_vector"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_manifest",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[test_file_contract:no_testfile_claim_without_manifest]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[test_file_contract]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_test_file_contract_core.py:test_bad_contracts_preserve_their_failure_meaning"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_field_roles_and_mappings",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[test_file_contract:no_testfile_claim_without_field_roles_and_mappings]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[test_file_contract]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_test_file_contract_core.py:test_added_manifest_field_blocks_contract"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_mapping_evidence_or_known_targets",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[test_file_contract:no_testfile_claim_without_mapping_evidence_or_known_targets]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[test_file_contract]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_test_file_contract_core.py:test_mapping_without_evidence_does_not_count_as_covered",
+        "tests/test_test_file_contract_core.py:test_unknown_target_blocks_contract"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_contract_pass",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[test_file_contract:no_testfile_claim_without_contract_pass]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[test_file_contract]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_test_file_contract_core.py:test_clean_contract_passes_with_evidence_backed_mappings",
+        "tests/test_test_file_contract_core.py:test_review_required_contract_is_partial_and_not_ok"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "resolution_shown",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[tree_verdicts:resolution_shown]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_tree_view.py:test_resolution_line_names_default_scale",
+        "tests/test_tree_view.py:test_resolution_rederives_values_and_keeps_checked_occurrence_scales",
+        "tests/test_tree_view.py:test_resolution_scale_origin_belongs_to_the_winning_residual",
+        "tests/test_tree_view.py:test_native_lookup_numeric_tables_keep_a_real_resolution",
+        "tests/test_tree_view.py:test_resolution_tree_order_empty_block_and_unknown_scale_source",
+        "tests/test_tree_view.py:test_resolution_is_optional_for_projectors_and_zero_sensitivity_is_unchecked"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "hint_shown_in_tree",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[tree_verdicts:hint_shown_in_tree]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_tree_view.py:test_unit_hint_line",
+        "tests/test_tree_view.py:test_conservation_hint_without_unit_hint"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "verdict_lines_omit_structure",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[tree_verdicts:verdict_lines_omit_structure]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "parent_fails_with_child",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[tree_verdicts:parent_fails_with_child]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores",
+        "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "coarse_failure_with_passing_children_is_inconsistent",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[tree_verdicts:coarse_failure_with_passing_children_is_inconsistent]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "planned_template_is_reported_not_executed",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[tree_verdicts:planned_template_is_reported_not_executed]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "tree_view_shows_every_block_verdict",
+      "independent_test": "tests/flow_migration/test_contracts.py::test_independent_rule[tree_verdicts:tree_view_shows_every_block_verdict]",
+      "native_test": "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]",
+      "flow": null,
+      "original_production_tests": [
+        "tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts"
+      ],
+      "basis": "Preserved independent predicate/current production calls; stateless input and report obligations remain unit contracts."
+    }
+  ],
+  "variants": [
+    {
+      "topic": "assumptions",
+      "variant": "diagnostics_drop_assumptions",
+      "rule": "assumptions_are_reported_in_diagnostics",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[assumptions:diagnostics_drop_assumptions]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "assumptions",
+      "variant": "variable_assumption_not_fixed",
+      "rule": "variable_assumptions_are_fixed_residuals",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[assumptions:variable_assumption_not_fixed]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "assumptions",
+      "variant": "override_not_warned",
+      "rule": "assumption_overrides_are_warned",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[assumptions:override_not_warned]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "cli_exit",
+      "variant": "failed_audit_exits_zero",
+      "rule": "exit_code_follows_audit_pass",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[cli_exit:failed_audit_exits_zero]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "cli_exit",
+      "variant": "validation_prints_json_by_default",
+      "rule": "default_view_is_the_tree",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[cli_exit:validation_prints_json_by_default]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "core",
+      "variant": "invalid_registry_reaches_solver",
+      "rule": "no_solve_without_valid_registry",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[core:invalid_registry_reaches_solver]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "core",
+      "variant": "raw_residual_reaches_solver",
+      "rule": "no_solve_without_normalized_residuals",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[core:raw_residual_reaches_solver]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "core",
+      "variant": "describe_solves",
+      "rule": "hierarchy_describe_does_not_solve",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[core:describe_solves]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "ignores_heater_half",
+      "rule": "each_defect_rejected",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:ignores_heater_half]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "reports_first_defect_only",
+      "rule": "every_defect_reported",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:reports_first_defect_only]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "rejects_outflow_rounding",
+      "rule": "benign_features_neutral",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:rejects_outflow_rounding]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "rejects_masked_pairs",
+      "rule": "masked_pairs_accepted",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:rejects_masked_pairs]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "accepts_undetected_pairs",
+      "rule": "undetected_pairs_rejected",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:accepts_undetected_pairs]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "accepts_outside_pairs",
+      "rule": "outside_pairs_rejected",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:accepts_outside_pairs]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "drops_pairwise_evidence",
+      "rule": "pairwise_evidence_complete",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:drops_pairwise_evidence]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "hides_observed_model_miss",
+      "rule": "model_miss_is_explicit",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:hides_observed_model_miss]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "fault_variants",
+      "variant": "fabricates_unavailable_evidence",
+      "rule": "unevaluable_remains_explicit",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[fault_variants:fabricates_unavailable_evidence]",
+      "declared_in_inventory": false
+    },
+    {
+      "topic": "heated_tank_generator",
+      "variant": "generator_drifts_from_committed_csv",
+      "rule": "generator_reproduces_committed_csv",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[heated_tank_generator:generator_drifts_from_committed_csv]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "model_dataset_validation",
+      "variant": "duplicate_missing_input_finding",
+      "rule": "one_finding_per_missing_input",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[model_dataset_validation:duplicate_missing_input_finding]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "model_dataset_validation",
+      "variant": "hard_depth_gate_ignored",
+      "rule": "no_pass_without_depth_inputs",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[model_dataset_validation:hard_depth_gate_ignored]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "model_dataset_validation",
+      "variant": "failed_holdout_passes",
+      "rule": "no_pass_without_holdout_and_feedback",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[model_dataset_validation:failed_holdout_passes]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "model_dataset_validation",
+      "variant": "failed_contracts_continue",
+      "rule": "no_pass_without_contracts",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[model_dataset_validation:failed_contracts_continue]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "model_dataset_validation",
+      "variant": "direct_validation_skipped",
+      "rule": "no_pass_without_direct_validation",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[model_dataset_validation:direct_validation_skipped]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "module_descriptions",
+      "variant": "description_marks_solver_attempted",
+      "rule": "description_never_solves",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[module_descriptions:description_marks_solver_attempted]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "module_descriptions",
+      "variant": "description_leaves_profiler_installed",
+      "rule": "description_restores_the_profiler",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[module_descriptions:description_leaves_profiler_installed]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "counts_derivations_as_checks",
+      "rule": "derived_relations_are_not_checks",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:counts_derivations_as_checks]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "evaluate_calls_solver",
+      "rule": "observed_evaluation_does_not_solve",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:evaluate_calls_solver]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "partial_snapshot_hides_unobserved",
+      "rule": "unobserved_variables_stay_listed",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:partial_snapshot_hides_unobserved]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "evaluates_from_initial_guess",
+      "rule": "no_residual_from_unobserved_guess",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:evaluates_from_initial_guess]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "diagnostics_without_result",
+      "rule": "diagnostics_after_solver_or_failure",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:diagnostics_without_result]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "comparison_skips_reference",
+      "rule": "comparison_requires_reference_and_observed",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:comparison_skips_reference]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "hierarchy_skips_solve",
+      "rule": "hierarchy_run_requires_solve",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:hierarchy_skips_solve]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "observed_derivation",
+      "variant": "probe_edits_an_observation",
+      "rule": "unit_factor_probe_is_read_only_and_bounded",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[observed_derivation:probe_edits_an_observation]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "skill_install",
+      "variant": "dry_run_writes_the_target",
+      "rule": "check_and_dry_run_change_nothing",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[skill_install:dry_run_writes_the_target]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "solver_audit",
+      "variant": "failed_audit_also_passes",
+      "rule": "audit_pass_and_failure_are_disjoint",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[solver_audit:failed_audit_also_passes]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "solver_audit",
+      "variant": "post_checks_enter_solver",
+      "rule": "post_checks_never_block_valid_solver_selection",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[solver_audit:post_checks_enter_solver]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "test_file_contract",
+      "variant": "claim_without_fresh_manifest",
+      "rule": "no_testfile_claim_without_manifest",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[test_file_contract:claim_without_fresh_manifest]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "test_file_contract",
+      "variant": "claim_with_unclassified_fields",
+      "rule": "no_testfile_claim_without_field_roles_and_mappings",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[test_file_contract:claim_with_unclassified_fields]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "test_file_contract",
+      "variant": "claim_without_mapping_evidence_or_known_targets",
+      "rule": "no_testfile_claim_without_mapping_evidence_or_known_targets",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[test_file_contract:claim_without_mapping_evidence_or_known_targets]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "test_file_contract",
+      "variant": "claim_without_contract_pass",
+      "rule": "no_testfile_claim_without_contract_pass",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[test_file_contract:claim_without_contract_pass]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "tree_verdicts",
+      "variant": "parent_ignores_children",
+      "rule": "parent_fails_with_child",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[tree_verdicts:parent_ignores_children]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "tree_verdicts",
+      "variant": "coarse_failure_reported_consistent",
+      "rule": "coarse_failure_with_passing_children_is_inconsistent",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[tree_verdicts:coarse_failure_reported_consistent]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "tree_verdicts",
+      "variant": "planned_target_loaded",
+      "rule": "planned_template_is_reported_not_executed",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[tree_verdicts:planned_target_loaded]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "tree_verdicts",
+      "variant": "tree_view_hides_a_failing_block",
+      "rule": "tree_view_shows_every_block_verdict",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[tree_verdicts:tree_view_hides_a_failing_block]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "tree_verdicts",
+      "variant": "verdict_lines_repeat_structure",
+      "rule": "verdict_lines_omit_structure",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[tree_verdicts:verdict_lines_repeat_structure]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "tree_verdicts",
+      "variant": "tree_view_hides_hint",
+      "rule": "hint_shown_in_tree",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[tree_verdicts:tree_view_hides_hint]",
+      "declared_in_inventory": true
+    },
+    {
+      "topic": "tree_verdicts",
+      "variant": "tree_view_hides_resolution",
+      "rule": "resolution_shown",
+      "kind": "ABSTRACT_bad_facts",
+      "production_source_mutation": false,
+      "test": "tests/flow_migration/test_contracts.py::test_rejects_original_bad_facts[tree_verdicts:tree_view_hides_resolution]",
+      "declared_in_inventory": true
+    }
+  ],
+  "bindings": [
+    {
+      "topic": "assumptions",
+      "rule": "assumptions_are_reported_in_diagnostics",
+      "binding": "tests/test_assumption_diagnostics.py:test_normal_diagnostic_json_includes_assumptions_section",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "assumptions",
+      "rule": "assumptions_are_reported_in_diagnostics",
+      "binding": "tests/test_assumption_diagnostics.py:test_proposed_assumption_warning_appears_and_not_applied",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "assumptions",
+      "rule": "variable_assumptions_are_fixed_residuals",
+      "binding": "tests/test_assumption_residuals.py:test_variable_assumption_creates_active_assumption_residual",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "assumptions",
+      "rule": "assumption_overrides_are_warned",
+      "binding": "tests/test_assumption_manager.py:test_explicit_parameter_override_requires_allow_override_and_warns",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "cli_exit",
+      "rule": "exit_code_follows_audit_pass",
+      "binding": "tests/test_cli.py:test_module_cli_lists_registry_and_reports_unknown_type",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "cli_exit",
+      "rule": "exit_code_follows_audit_pass",
+      "binding": "tests/test_cli_exit.py:test_cli_exit_codes_follow_the_audit",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "cli_exit",
+      "rule": "default_view_is_the_tree",
+      "binding": "tests/test_cli_exit.py:test_validation_run_prints_the_tree",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "core",
+      "rule": "no_solve_without_valid_registry",
+      "binding": "tests/test_core.py:test_duplicate_fully_qualified_variables_fail",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "core",
+      "rule": "no_solve_without_valid_registry",
+      "binding": "tests/test_solver.py:test_bounds_are_respected",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "core",
+      "rule": "no_solve_without_normalized_residuals",
+      "binding": "tests/test_core.py:test_residual_vector_returns_normalized_values",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "core",
+      "rule": "hierarchy_describe_does_not_solve",
+      "binding": "tests/test_hierarchy_spec.py:test_refines_requires_a_parent_owned_component_and_describe_exposes_it",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "core",
+      "rule": "hierarchy_describe_does_not_solve",
+      "binding": "tests/test_core.py:test_describe_json_keeps_every_inspect_field",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "clean_input_accepted",
+      "binding": "tests/test_fault_variants.py:test_clean_nominal_is_accepted_without_mutating_inputs",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "each_defect_rejected",
+      "binding": "tests/test_fault_variants.py:test_each_declared_tank_fault_is_detected_with_direct_block_evidence",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "every_defect_reported",
+      "binding": "tests/test_fault_variants.py:test_combined_faults_report_every_direct_failure",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "benign_features_neutral",
+      "binding": "tests/test_fault_variants.py:test_benign_default_parameter_override_keeps_the_verdict",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "masked_pairs_accepted",
+      "binding": "tests/test_fault_variants.py:test_masked_pair_is_listed_not_failed",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "undetected_pairs_rejected",
+      "binding": "tests/test_fault_variants.py:test_undetected_pair_fails",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "outside_pairs_rejected",
+      "binding": "tests/test_fault_variants.py:test_failure_outside_the_expected_blocks_fails",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "pairwise_evidence_complete",
+      "binding": "tests/test_fault_variants.py:test_pairwise_rows_cover_every_fault_pair",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "model_miss_is_explicit",
+      "binding": "tests/test_fault_variants.py:test_observed_failure_no_variant_explains_is_a_model_miss",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "fault_variants",
+      "rule": "unevaluable_remains_explicit",
+      "binding": "tests/test_fault_variants.py:test_out_of_domain_pair_remains_explicit_without_losing_other_results",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "heated_tank_generator",
+      "rule": "generator_reproduces_committed_csv",
+      "binding": "tests/test_heated_tank_example.py:test_generator_reproduces_committed_csv",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "one_finding_per_missing_input",
+      "binding": "tests/test_validation_depth.py:test_missing_declared_series_is_one_finding",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_direct_validation",
+      "binding": "tests/test_model_dataset_validation.py:test_clean_model_dataset_validation_passes",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_direct_validation",
+      "binding": "tests/test_model_dataset_validation.py:test_conservative_calibration_does_not_turn_direct_failure_into_pass",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_contracts",
+      "binding": "tests/test_model_dataset_validation.py:test_nonpassing_required_contract_blocks_validation",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_depth_inputs",
+      "binding": "tests/test_validation_depth.py:test_uncertain_required_mapping_blocks_broad_validation",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_depth_inputs",
+      "binding": "tests/test_validation_depth.py:test_adequacy_floors_are_warnings_not_failures",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "model_dataset_validation",
+      "rule": "no_pass_without_holdout_and_feedback",
+      "binding": "tests/test_validation_depth.py:test_identical_content_under_different_holdout_label_is_overlap",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "module_descriptions",
+      "rule": "description_never_solves",
+      "binding": "tests/test_cli.py:test_every_registered_module_has_a_native_readable_description",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "module_descriptions",
+      "rule": "description_restores_the_profiler",
+      "binding": "tests/test_cli.py:test_module_description_restores_existing_profiler_on_success_and_failure",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "unobserved_variables_stay_listed",
+      "binding": "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_skips_residuals_that_need_unobserved_variables",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "unobserved_variables_stay_listed",
+      "binding": "tests/test_core.py:test_hierarchy_evaluate_reports_a_partial_snapshot",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "no_residual_from_unobserved_guess",
+      "binding": "tests/test_hierarchy_runner.py:test_partial_snapshot_does_not_invent_a_zero_product_residual",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "no_residual_from_unobserved_guess",
+      "binding": "tests/test_hierarchy_runner.py:test_partial_snapshot_skips_a_range_check_with_a_flat_local_region",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "no_residual_from_unobserved_guess",
+      "binding": "tests/test_hierarchy_runner.py:test_unclassified_custom_residual_is_not_licensed_by_finite_probes",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "no_residual_from_unobserved_guess",
+      "binding": "tests/test_hierarchy_runner.py:test_partial_sum_tracks_external_reads_when_it_declares_no_variables",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "derived_relations_are_not_checks",
+      "binding": "tests/test_heated_tank_example.py:test_measured_tank_derivations_are_reported_without_solving",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "derived_relations_are_not_checks",
+      "binding": "tests/test_hierarchy_runner.py:test_repeated_connection_names_keep_distinct_producing_and_checked_occurrences",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "observed_evaluation_does_not_solve",
+      "binding": "tests/test_hierarchy_runner.py:test_evaluate_observed_does_not_call_solver",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "observed_evaluation_does_not_solve",
+      "binding": "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_clean_does_not_solve_and_passes",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "hierarchy_run_requires_solve",
+      "binding": "tests/test_hierarchy_runner.py:test_clean_hierarchical_example_audit_pass_true",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "hierarchy_run_requires_solve",
+      "binding": "tests/test_hierarchy_runner.py:test_conflict_hierarchical_example_identifies_top_block_and_refinement",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "comparison_requires_reference_and_observed",
+      "binding": "tests/test_hierarchy_runner.py:test_compare_to_reference_returns_reference_and_observed_variables",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "diagnostics_after_solver_or_failure",
+      "binding": "tests/test_diagnostics.py:test_warnings_generated_for_solver_failure",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "diagnostics_after_solver_or_failure",
+      "binding": "tests/test_solver.py:test_solver_result_includes_diagnostics_ready_fields",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "observed_derivation",
+      "rule": "unit_factor_probe_is_read_only_and_bounded",
+      "binding": "tests/test_signal_mapping_ledger.py:test_a_thousandfold_flow_factor_slip_is_named_without_changing_observations",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "skill_install",
+      "rule": "check_and_dry_run_change_nothing",
+      "binding": "tests/test_install_physicsguard_skills.py:test_cli_dry_run_changes_nothing_and_check_fails_until_installed",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "solver_audit",
+      "rule": "audit_pass_and_failure_are_disjoint",
+      "binding": "tests/test_diagnostics.py:test_report_distinguishes_optimization_success_from_audit_pass",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "solver_audit",
+      "rule": "post_checks_never_block_valid_solver_selection",
+      "binding": "tests/test_solver.py:test_range_check_post_check_does_not_pull_solution",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "solver_audit",
+      "rule": "post_checks_never_block_valid_solver_selection",
+      "binding": "tests/test_core.py:test_post_check_residuals_are_not_in_solver_vector",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_manifest",
+      "binding": "tests/test_test_file_contract_core.py:test_bad_contracts_preserve_their_failure_meaning",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_field_roles_and_mappings",
+      "binding": "tests/test_test_file_contract_core.py:test_added_manifest_field_blocks_contract",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_mapping_evidence_or_known_targets",
+      "binding": "tests/test_test_file_contract_core.py:test_mapping_without_evidence_does_not_count_as_covered",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_mapping_evidence_or_known_targets",
+      "binding": "tests/test_test_file_contract_core.py:test_unknown_target_blocks_contract",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_contract_pass",
+      "binding": "tests/test_test_file_contract_core.py:test_clean_contract_passes_with_evidence_backed_mappings",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "test_file_contract",
+      "rule": "no_testfile_claim_without_contract_pass",
+      "binding": "tests/test_test_file_contract_core.py:test_review_required_contract_is_partial_and_not_ok",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "parent_fails_with_child",
+      "binding": "tests/test_hierarchy_scoring.py:test_real_heater_failure_propagates_through_two_ancestors_without_changing_own_scores",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "parent_fails_with_child",
+      "binding": "tests/test_hierarchy_runner.py:test_hierarchy_evaluate_observed_fault_identifies_block_and_recommends_refinement",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "coarse_failure_with_passing_children_is_inconsistent",
+      "binding": "tests/test_hierarchy_scoring.py:test_refinement_consistency_uses_own_checked_coarse_relations",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "planned_template_is_reported_not_executed",
+      "binding": "tests/test_hierarchy_refinement.py:test_unbuilt_template_is_planned",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "tree_view_shows_every_block_verdict",
+      "binding": "tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "verdict_lines_omit_structure",
+      "binding": "tests/test_core.py:test_evaluate_prints_the_tree_with_verdicts",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "hint_shown_in_tree",
+      "binding": "tests/test_tree_view.py:test_unit_hint_line",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "hint_shown_in_tree",
+      "binding": "tests/test_tree_view.py:test_conservation_hint_without_unit_hint",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "resolution_shown",
+      "binding": "tests/test_tree_view.py:test_resolution_line_names_default_scale",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "resolution_shown",
+      "binding": "tests/test_tree_view.py:test_resolution_rederives_values_and_keeps_checked_occurrence_scales",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "resolution_shown",
+      "binding": "tests/test_tree_view.py:test_resolution_scale_origin_belongs_to_the_winning_residual",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "resolution_shown",
+      "binding": "tests/test_tree_view.py:test_native_lookup_numeric_tables_keep_a_real_resolution",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "resolution_shown",
+      "binding": "tests/test_tree_view.py:test_resolution_tree_order_empty_block_and_unknown_scale_source",
+      "disposition": "Existing production test retained unchanged"
+    },
+    {
+      "topic": "tree_verdicts",
+      "rule": "resolution_shown",
+      "binding": "tests/test_tree_view.py:test_resolution_is_optional_for_projectors_and_zero_sensitivity_is_unchecked",
+      "disposition": "Existing production test retained unchanged"
+    }
+  ],
+  "generated_system": [
+    {
+      "id": "observed_audit",
+      "summary": "Load an audit and evaluate immutable observed values without solving them.",
+      "targets": [
+        "src/physicsguard/cli.py:main",
+        "src/physicsguard/io/hierarchy_loader.py:load_hierarchical_audit_spec",
+        "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed"
+      ],
+      "structural_test": "tests/flow_migration/test_inventory.py::test_original_system_route_targets_exist[observed_audit]",
+      "native_tests": [
+        "tests/flow_migration/test_native_contracts.py::test_native_contract[observed_derivation]",
+        "tests/flow_migration/test_native_contracts.py::test_native_contract[cli_exit]"
+      ],
+      "reason": "Original generated map ownership/existence becomes static AST assertion; actual native tests retain independent behavior without inventing execution order."
+    },
+    {
+      "id": "dataset_validation",
+      "summary": "Validate a contracted dataset with holdout, depth, adequacy and explicit non-run states.",
+      "targets": [
+        "src/physicsguard/cli.py:main",
+        "src/physicsguard/core/model_dataset_validation.py:validate_model_dataset",
+        "src/physicsguard/core/test_file_contract.py:resolve_test_file_contract"
+      ],
+      "structural_test": "tests/flow_migration/test_inventory.py::test_original_system_route_targets_exist[dataset_validation]",
+      "native_tests": [
+        "tests/flow_migration/test_native_contracts.py::test_native_contract[model_dataset_validation]"
+      ],
+      "reason": "Original generated map ownership/existence becomes static AST assertion; actual native tests retain independent behavior without inventing execution order."
+    },
+    {
+      "id": "diagnosis",
+      "summary": "Audit counterfactual device variants and report physical masking, separation and model misses.",
+      "targets": [
+        "src/physicsguard/cli.py:main",
+        "src/physicsguard/core/diagnosability.py:evaluate_fault_variants",
+        "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed"
+      ],
+      "structural_test": "tests/flow_migration/test_inventory.py::test_original_system_route_targets_exist[diagnosis]",
+      "native_tests": [
+        "tests/flow_migration/test_native_contracts.py::test_native_contract[fault_variants]"
+      ],
+      "reason": "Original generated map ownership/existence becomes static AST assertion; actual native tests retain independent behavior without inventing execution order."
+    },
+    {
+      "id": "data_binding",
+      "summary": "Check one data contract, materialize SI snapshots or series and expose their mapping ledger.",
+      "targets": [
+        "src/physicsguard/cli.py:main",
+        "src/physicsguard/core/test_file_contract.py:check_test_file_contract",
+        "src/physicsguard/core/test_file_contract.py:testfile_snapshot",
+        "src/physicsguard/core/test_file_contract.py:testfile_series",
+        "src/physicsguard/core/signal_mapping.py:build_signal_mapping_ledger"
+      ],
+      "structural_test": "tests/flow_migration/test_inventory.py::test_original_system_route_targets_exist[data_binding]",
+      "native_tests": [
+        "tests/flow_migration/test_native_contracts.py::test_native_contract[test_file_contract]",
+        "tests/test_test_file_contract_core.py::test_series_has_120_single_step_points_and_preserves_si_values"
+      ],
+      "reason": "Original generated map ownership/existence becomes static AST assertion; actual native tests retain independent behavior without inventing execution order."
+    },
+    {
+      "id": "growth",
+      "summary": "Report coarse/detail consistency and planned refinements without executing templates.",
+      "targets": [
+        "src/physicsguard/cli.py:main",
+        "src/physicsguard/core/hierarchy.py:HierarchicalAuditRunner.evaluate_observed",
+        "src/physicsguard/core/hierarchy.py:_refinement_checks"
+      ],
+      "structural_test": "tests/flow_migration/test_inventory.py::test_original_system_route_targets_exist[growth]",
+      "native_tests": [
+        "tests/flow_migration/test_native_contracts.py::test_native_contract[tree_verdicts]"
+      ],
+      "reason": "Original generated map ownership/existence becomes static AST assertion; actual native tests retain independent behavior without inventing execution order."
+    }
+  ],
+  "retired_legacy_engine": "No Explorer/Workflow/legacy validator API is retained. The generated map wrapper retires after all these independent destinations exist.",
+  "map_debts": [
+    {
+      "code": "dependency_cycle",
+      "component": "modules",
+      "disposition": "The map cycle diagnostic retires with the map. Actual modules/core import cycle is not claimed fixed; production ownership and tests remain unchanged."
+    },
+    {
+      "code": "large_model",
+      "component": "fault_variants",
+      "disposition": "Legacy large-model diagnostic ends with removal of the model; its ten independent rules and expanded cases remain direct contracts."
+    }
+  ]
+}
