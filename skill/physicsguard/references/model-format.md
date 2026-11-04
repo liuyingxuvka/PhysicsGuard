@@ -164,8 +164,8 @@ way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `
   An agreeing reading leaves a transducer calibration unchecked.
 
 A row whose `external_signal` holds no number followed by a unit candidate (`AI heater power`,
-`T_tank_C@70`) and that records no conversion cannot be checked and is not flagged. The ledger's
-`conversion_check` says why, in one sentence.
+`T_tank_C@70`) and that records no conversion cannot be checked and is not flagged; it has no
+`conversion_check` entry. For a checked or flagged conversion, that entry explains the result.
 
 The tool reads a unit written with the table's symbols, joined by `/` or `*` (or `·`, `⋅`, or `.` between
 two symbols) with `^n` powers, in the spellings it lists: `l`, `liter`, `litre` for `L`; `sec` for `s`;
