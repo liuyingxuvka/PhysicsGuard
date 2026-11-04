@@ -7,8 +7,9 @@ when every path through it ends in a raise, so `if strict: raise` followed by `r
 swallowing handler. A new one fails this test until someone states why it may exist.
 
 The tool's own probes (unit-factor hints, scale replays, resolution samples, bounded root search)
-skip exactly a relation's DomainRefusal; the injection tests below show every other error type
-reaching the caller and the command's exit code.
+skip a relation's DomainRefusal. Bounded root samples also treat division by zero and
+overflow as undefined points, claiming no unique root. The injection tests below show
+other errors reaching the caller and the command's exit code.
 """
 from __future__ import annotations
 
@@ -42,8 +43,8 @@ NON_RAISING_HANDLERS = {
         "a time cell that is not numeric keeps its text value; type inference, not a second route"),
     "src/physicsguard/core/diagnosability.py:_variant_result:_VariantNotEvaluable": (1,
         "the variant is reported with status not_evaluable and the reason"),
-    "src/physicsguard/core/hierarchy.py:_bounded_root:(DomainRefusal, ArithmeticError)": (1,
-        "sampling a relation across a variable's whole bound window meets refusals and divisions by zero; "
+    "src/physicsguard/core/hierarchy.py:_bounded_root:(DomainRefusal, ZeroDivisionError, OverflowError)": (1,
+        "sampling a relation across a variable's whole bound window meets refusals, division by zero and overflow; "
         "then no unique root is claimed and the variable stays listed as unobserved; any other error reaches the caller"),
     "src/physicsguard/core/hierarchy.py:_observed_resolution:DomainRefusal": (2,
         "a finite-difference step the relation refuses gives no sample; without samples the resolution prints unknown"),
@@ -272,7 +273,8 @@ def test_an_error_inside_a_resolution_sample_fails_the_evaluation(monkeypatch, e
         _evaluate("audit.yaml", "observed_ai.yaml")
 
 
-@pytest.mark.parametrize("error", [RuntimeError, KeyError, IndexError, ValueError, TypeError, AttributeError],
+@pytest.mark.parametrize("error", [RuntimeError, KeyError, IndexError, ValueError, TypeError, AttributeError,
+                                 ArithmeticError, FloatingPointError],
                          ids=lambda error: error.__name__)
 def test_an_error_inside_a_root_search_reaches_the_caller(error) -> None:
     from physicsguard.core.hierarchy import _bounded_root

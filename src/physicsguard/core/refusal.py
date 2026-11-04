@@ -7,10 +7,12 @@ class DomainRefusal(ValueError):
 
     Native modules and variable declarations raise it from their range checks (a value
     below a denominator floor, an input outside a table, an efficiency above 1, an
-    initial guess outside its bounds). The tool's own probes (unit-factor hints, scale
-    replays, resolution samples, bounded root search) skip exactly this refusal; any
-    other error reaches the caller, and the command exits 2 with its text. A custom
-    module raises it to refuse a value the same way.
+    initial guess outside its bounds). Unit-factor hints, scale replays and resolution
+    samples skip exactly this refusal; any
+    other error reaches the caller, and the command exits 2 with its text. Bounded
+    root sampling also treats division by zero and overflow at a sample point as
+    undefined, leaving the variable unobserved. Other arithmetic errors propagate.
+    A custom module raises DomainRefusal to refuse a value the same way.
     """
 
 

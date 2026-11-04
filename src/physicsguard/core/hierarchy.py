@@ -1096,7 +1096,7 @@ def _bounded_root(function, variable) -> float | None:
         if not variable.lower_bound <= root <= variable.upper_bound:
             return None
         return root if abs(function(root)) <= 1e-6 else None
-    except (DomainRefusal, ArithmeticError):
+    except (DomainRefusal, ZeroDivisionError, OverflowError):
         # Samples across the whole window meet refusals and divisions by zero: no unique root is
         # claimed and the variable stays unobserved. Any other error is a fault and reaches the caller.
         return None
