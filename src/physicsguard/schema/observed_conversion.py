@@ -379,4 +379,4 @@ def _conversion_disagreement(
     )
 
 
-__all__ = ["ObservedConversionError", "RAW_VALUE_REL_TOL", "WHOLE_SIGNAL_SEPARATORS", "convert_observed_rows"]
+__all__ = ["ObservedConversionError", "RAW_VALUE_REL_TOL", "SIGNAL_DELIMITERS", "convert_observed_rows"]
