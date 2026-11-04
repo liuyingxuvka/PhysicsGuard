@@ -637,14 +637,14 @@
       "code": "dependency_cycle",
       "component": "modules",
       "contains": "modules <-> simulation; imports:",
-      "reason": "Physical modules use the engine variable registry and residual records, while the residual builder creates modules through the module registry. Both owners are in the engine layer; keep these real imports and domain tests.",
-      "expires": "v0.17.0"
+      "reason": "Physical modules import core VariableRegistry and residual records, while core/residual.py imports modules.registry to instantiate the physical modules. Removing this real two-owner cycle would change the core import structure; keep the tested domain ownership until the planned model migration.",
+      "expires": "v0.18.0"
     },
     {
       "code": "large_model",
       "component": "fault_variants",
-      "reason": "one decision table judged through one entry function: there is no composing function to split into steps, and halving the table makes two models replay the same function with no new information",
-      "expires": "v0.16.1"
+      "reason": "Ten rules and their known-bad physical single/pair cases replay one EvaluateFaultVariants entrypoint. Splitting this finite decision table would duplicate the native replay rather than separate composing stages; retain the complete cases until the planned model migration.",
+      "expires": "v0.18.0"
     }
   ],
   "model_digests": {
