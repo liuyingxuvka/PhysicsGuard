@@ -130,9 +130,10 @@ def _signal_readings(text: str | None) -> _SignalText:
     return _SignalText(readings, unreadable)
 
 
-def _reading_routes(reading: _Reading, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None,
-                    properties: dict[str, PhysicalPropertySpec]) -> list[tuple[float, float, str]]:
-    """Each factor, offset and wording that turn a signal reading into the model unit; empty when the tool has none.
+def _conversion_routes(source: str, target: str | None, properties: dict[str, PhysicalPropertySpec], *,
+                       conversion_property: str | None = None, raw_unit: str | None = None,
+                       raw_conversion: tuple[float, float] | None = None) -> list[tuple[float, float, str]]:
+    """Factors, offsets and wording between two actual units; empty when the tool has no route.
 
     A reading of the model unit's quantity goes through the unit table. On a row the tool converted from
     raw_value, a reading of the raw unit's quantity goes through the table to raw_unit and then through the
@@ -140,20 +141,20 @@ def _reading_routes(reading: _Reading, row: ObservedValueSpec, raw_conversion: t
     reading of another quantity goes through a declared property that links it to the model unit: the row's
     conversion_property, or, when the row names none, each declared property that links them.
     """
-    known = known_conversion(reading.unit, row.unit)
+    known = known_conversion(source, target)
     if known is not None:
         return [(known[0], known[1], "through the unit table")]
     if raw_conversion is not None:
-        to_raw = known_conversion(reading.unit, row.raw_unit)
+        to_raw = known_conversion(source, raw_unit)
         if to_raw is not None:
             factor, offset = raw_conversion
             return [(to_raw[0] * factor, to_raw[1] * factor + offset,
-                     f"through the unit table to {row.raw_unit}, then as raw_value")]
-    names = [row.conversion_property] if row.conversion_property is not None else sorted(properties)
+                     f"through the unit table to {raw_unit}, then as raw_value")]
+    names = [conversion_property] if conversion_property is not None else sorted(properties)
     routes = []
     for name in names:
         prop = properties[name]
-        factor = property_link(reading.unit, row.unit, prop.value, prop.unit)
+        factor = property_link(source, target, prop.value, prop.unit)
         if factor is not None:
             routes.append((factor, 0.0, f"through {name} ({prop.value:g} {prop.unit})"))
     return routes
@@ -179,11 +180,11 @@ def _quantity_words(unit: str) -> str:
 def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None,
                           properties: dict[str, PhysicalPropertySpec]) -> None:
     """Every row: compare every reading its external_signal names with the row's value, and with each other,
-    all in the model unit.
+    in the model unit where possible, and independently between every pair of readings.
 
     raw_conversion is the factor and offset the tool applied to raw_value, or None for a row given in its
     model unit (a conversion done outside the tool, whose recorded factor/offset is compared too). A reading
-    of another quantity is converted through a declared property (see _reading_routes); a reading the tool
+    of another quantity is converted through a declared property (see _conversion_routes); a reading the tool
     cannot convert (no declared property links it, or no single property can) leaves the row unchecked with
     why. A numeric-unit candidate the tool cannot read is flagged signal_reading_unreadable. Every
     convertible disagreement stops the run like a raw_value disagreement, regardless of label text.
@@ -210,14 +211,19 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
     compared: list[tuple[_Reading, list[tuple[float, float, float, str]]]] = []
     unusable: list[tuple[_Reading, str | None]] = []
     for reading in signal.readings:
-        routes = _reading_routes(reading, row, raw_conversion, properties)
+        routes = _conversion_routes(reading.unit, row.unit, properties, conversion_property=row.conversion_property,
+                                    raw_unit=row.raw_unit, raw_conversion=raw_conversion)
         if routes:
             compared.append((reading, [(reading.number * factor + offset, factor, offset, how) for factor, offset, how in routes]))
         else:
             unusable.append((reading, linking_quantity(reading.unit, row.unit)))
     problems = _reading_problems(row, compared, raw, origin)
+    by_reading = dict(compared)
+    problems.extend(_pair_problems(row, signal.readings, by_reading, properties))
     if problems:
-        sentence = (f"external_signal reads {' and '.join(_converted_words(reading, routes, row.unit) for reading, routes in compared)}, "
+        words = [_converted_words(reading, by_reading[reading], row.unit) if reading in by_reading else str(reading)
+                 for reading in signal.readings]
+        sentence = (f"external_signal reads {' and '.join(words)}, "
                     f"but {('; ' if len(compared) > 1 else ' and ').join(problems)}")
         remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
                   "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
@@ -258,7 +264,7 @@ def _agreeing_route(row: ObservedValueSpec, routes: list[tuple[float, float, flo
 def _reading_problems(row: ObservedValueSpec, compared: list[tuple[_Reading, list[tuple[float, float, float, str]]]],
                       raw: bool, origin: str) -> list[str]:
     """What disagrees: the row's value with a reading, a recorded factor/offset with every route that matches the
-    value, or two readings with each other."""
+    value."""
     if not compared:
         return []
     problems = []
@@ -281,11 +287,38 @@ def _reading_problems(row: ObservedValueSpec, compared: list[tuple[_Reading, lis
                 problems.append(f"the recorded conversion_factor is {row.conversion_factor:g}")
             if not offset_ok(offset):
                 problems.append(f"the recorded conversion_offset is {row.conversion_offset:g}")
-    for position, (first, first_routes) in enumerate(compared):
-        for second, second_routes in compared[position + 1:]:
-            if not any(_close(a[0], b[0]) for a in first_routes for b in second_routes):
-                problems.append(f"the readings disagree with each other ({first} = {first_routes[0][0]:g} {row.unit}, "
-                                f"{second} = {second_routes[0][0]:g} {row.unit})")
+    return problems
+
+
+def _pair_problems(row: ObservedValueSpec, readings: list[_Reading],
+                   compared: dict[_Reading, list[tuple[float, float, float, str]]],
+                   properties: dict[str, PhysicalPropertySpec]) -> list[str]:
+    """Compare each pair in its own quantity even when neither reading converts to the model unit."""
+    problems = []
+    for position, first in enumerate(readings):
+        for second in readings[position + 1:]:
+            routes = _conversion_routes(first.unit, second.unit, properties)
+            values = [first.number * factor + offset for factor, offset, _how in routes]
+            target = second.number
+            unit = read_unit(second.unit)
+            if unit is not None and unit.offset:
+                # Relative tolerance uses absolute temperature, independent of which spelling is second.
+                values = [value * unit.factor + unit.offset for value in values]
+                target = target * unit.factor + unit.offset
+            pair_disagrees = bool(routes) and not any(_close(value, target) for value in values)
+            first_routes, second_routes = compared.get(first), compared.get(second)
+            model_disagrees = first_routes is not None and second_routes is not None and not any(
+                _close(a[0], b[0]) for a in first_routes for b in second_routes)
+            if model_disagrees:
+                detail = (f"{first} = {first_routes[0][0]:g} {row.unit}, "
+                          f"{second} = {second_routes[0][0]:g} {row.unit}")
+            elif pair_disagrees:
+                factor, offset, how = routes[0]
+                detail = (f"{first} = {first.number * factor + offset:g} {second.unit} {how}, "
+                          f"{second} = {second.number:g} {second.unit}")
+            else:
+                continue
+            problems.append(f"the readings disagree with each other ({detail})")
     return problems
 
 

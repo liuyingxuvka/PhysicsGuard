@@ -161,6 +161,9 @@ way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `
   unreadable candidate, a visible warning rather than a physical refusal;
 - several readings in one text are each compared as above, and with each other (`6 L/min = 6 kg/s`
   disagrees with itself); a recorded factor/offset must match the conversion of one of them.
+  Pairs also compare through the unit table or a file-declared property that links the pair, even when neither
+  converts to the model unit: `6 L/min; 12 L/min` refuses without the density needed to reach kg/s.
+  Agreeing readings such as `6 L/min; 0.1 L/s` still leave that missing-density conversion unchecked.
   An agreeing reading leaves a transducer calibration unchecked.
 
 A row whose `external_signal` holds no number followed by a unit candidate (`AI heater power`,
