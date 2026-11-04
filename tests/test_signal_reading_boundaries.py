@@ -36,3 +36,19 @@ def test_exponent_digits_are_not_mistaken_for_new_readings(tmp_path, signal) -> 
         "value": 0.1, "unit": "kg/s", "external_signal": signal,
     }}, WATER)).variables["pump.flow"]
     assert row._conversion_checked is True and not row._signal_unreadable
+
+
+@pytest.mark.parametrize("signal", ["−6 L/min", "−6e0 L/min", "6e−1 L/min"])
+def test_unicode_minus_readings_are_checked_instead_of_dropped(tmp_path, signal) -> None:
+    path = _write(tmp_path, {"pump.flow": {
+        "value": 6, "unit": "kg/s", "external_signal": signal,
+    }}, WATER)
+    with pytest.raises(ValueError, match="signal_reading_disagrees:pump.flow:"):
+        _load(path)
+
+
+def test_unicode_minus_can_agree_with_a_negative_value(tmp_path) -> None:
+    row = _load(_write(tmp_path, {"pump.flow": {
+        "value": -0.1, "unit": "kg/s", "external_signal": "−6 L/min",
+    }}, WATER)).variables["pump.flow"]
+    assert row._conversion_checked is True and not row._signal_unreadable

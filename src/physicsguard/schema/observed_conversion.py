@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 # Admit rounded recorded factors such as 0.016667, but reject physical value disagreement.
 RAW_VALUE_REL_TOL = 5e-5
 # A number in external_signal, not glued to a name before it (T_tank_C@70 holds no reading).
-_NUMBER = re.compile(r"(?<![\w.^+−-])([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)")
+_NUMBER = re.compile(r"(?<![\w.^+−-])([-+−]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+−]?\d+)?)")
 # Separate observations/prose without guessing which English words are units. A period can occur in l.min-1.
 SIGNAL_DELIMITERS = ",;:=()[]"
 
@@ -124,7 +124,7 @@ def _signal_readings(text: str | None) -> _SignalText:
         if not unit:
             continue
         if read_unit(unit) is not None or is_transducer_output(unit):
-            readings.append(_Reading(float(match.group(1)), unit))
+            readings.append(_Reading(float(match.group(1).replace("−", "-")), unit))
         else:
             unreadable.append(f"{match.group(1)} {unit}")
     return _SignalText(readings, unreadable)
