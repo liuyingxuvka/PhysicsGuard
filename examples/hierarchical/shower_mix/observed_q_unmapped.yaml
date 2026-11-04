@@ -1,0 +1,17 @@
+# PhysicsGuard observed-values snapshot
+# Purpose: unit-factor diagnosis when the numeric heater-power source reading is unavailable.
+# Repository: https://github.com/liuyingxuvka/PhysicsGuard
+# Use with: pair with an audit YAML via python -m physicsguard.cli hierarchy evaluate
+# Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
+observation_name: ai_answer_power_source_unavailable
+properties:
+  water_density: {value: 1.0, unit: kg/L, source: "given in the question: water, 1 kg/L"}
+variables:
+  heater.m_dot_kg_s: {raw_value: 6, raw_unit: L/min, unit: kg/s, conversion_property: water_density, external_signal: 6 L/min, mapping_confidence: high, mapping_status: clean}
+  heater.T_in_K: {raw_value: 15, raw_unit: degC, unit: K, external_signal: 15 C, mapping_confidence: high, mapping_status: clean}
+  heater.T_out_K: {raw_value: 60, raw_unit: degC, unit: K, external_signal: 60 C, mapping_confidence: high, mapping_status: clean}
+  heater.Q_dot_W: {value: 18.837, unit: W, external_signal: AI heater power (numeric source reading unavailable), mapping_confidence: high, mapping_status: clean}
+  mix.m_dot_2_kg_s: {raw_value: 9, raw_unit: L/min, unit: kg/s, conversion_property: water_density, external_signal: 9 L/min, mapping_confidence: high, mapping_status: clean}
+  mix.T_2_K: {raw_value: 15, raw_unit: degC, unit: K, external_signal: 15 C, mapping_confidence: high, mapping_status: clean}
+  mix.m_dot_out_kg_s: {value: 0.25, unit: kg/s, external_signal: AI outlet flow, mapping_confidence: high, mapping_status: clean}
+  mix.T_out_K: {raw_value: 37.5, raw_unit: degC, unit: K, external_signal: AI outlet temperature 37.5 C, mapping_confidence: high, mapping_status: clean}

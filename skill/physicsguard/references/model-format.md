@@ -138,13 +138,10 @@ each to the model unit and compares it with the row's value, and several reading
 through the unit table; on a row with `raw_value`, a reading of the raw unit's quantity is converted the
 way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `6 L/min` disagrees):
 
-- the readings are the whole `external_signal` (`6 kg/min`, `15 degC`, `6 L/min (0.1 kg/s)`, with only
-  brackets, commas, `;`, `:`, `.` or `=` between them): agreement counts as checked, and a value, a recorded
-  factor/offset or another reading that disagrees stops the run with
-  `signal_reading_disagrees:<variable>` (exit 2), the same as a raw-value disagreement;
-- the reading sits inside a longer text (`AI outlet temperature 33 C`): agreement counts as checked; a
-  disagreement is marked `signal_reading_disagrees` and the run continues, because a label can name other
-  numbers. Write the reading alone, or as `raw_value` and `raw_unit`, to have it enforced;
+- every readable, convertible reading is compared, whether it stands alone (`6 kg/min`, `15 degC`),
+  follows a label (`AI outlet temperature 33 C`), or sits beside another reading (`6 L/min (0.1 kg/s)`):
+  agreement counts as checked; a value, a recorded factor/offset or another reading that disagrees stops
+  the run with `signal_reading_disagrees:<variable>` (exit 2), the same as a raw-value disagreement;
 - a reading of another quantity (`6 L/min` beside a kg/s value, or beside `raw_value: 6, raw_unit: kg/s`)
   goes through a declared property: the row's `conversion_property`, or else each property under
   `properties` that links it to the model unit, and is then compared as above, whichever side the model
@@ -152,17 +149,21 @@ way `raw_value` was (so `raw_value: 6, raw_unit: L/s` through a density beside `
   ledger's `missing_property` (and the tree's mapping line) names the property it needs;
 - a reading that neither the unit table nor one declared property turns into the model unit (`6 L`, a
   volume, beside a kg/s value): marked `conversion_unchecked`, with why;
-- a number followed by a word that looks like a unit (it starts with a letter and holds `/`, `^`, `·`, `⋅`,
-  `*` or a superscript, or ends in a power such as `min-1`) that the table cannot read (`6 gallons/min`), or
-  by a unit the table reads only in part because the next word carries it on (a word that starts with a
-  separator or power, a symbol with a negative power, or `per`: `6 L fortnight^-1`): flagged
+- the unit candidate after a number extends to the next reading number or a delimiter: `,`, `;`, `:`,
+  `=`, `(`, `)`, `[` or `]`. Unit powers (the `1` in `min-1` or `3` in `m^3`) are part of the unit,
+  not new readings. Brackets may enclose a unit, as in `6 (L/min)`. The whole candidate must be readable
+  by the unit table (or be a transducer output), never just its first word. An unknown candidate
+  (`6 gpm`, `6 gallons`, `6 °X`, `6 gallons/min`, `6 L fortnight^-1`, `6 L a fortnight`) is flagged
   `signal_reading_unreadable`, and the ledger's `conversion_check` quotes it
-  (`signal_reading_unreadable:<variable>: "6 gallons/min"`); it is not read as a shorter unit;
+  (`signal_reading_unreadable:<variable>: "6 gallons/min"`); it is not dropped or read as a shorter unit.
+  This finite grammar does not guess where prose ends: put labels before readings or separate following
+  prose with punctuation (`inlet 3 m; upstream`). Numbered prose such as `valve 2 open` also leaves an
+  unreadable candidate, a visible warning rather than a physical refusal;
 - several readings in one text are each compared as above, and with each other (`6 L/min = 6 kg/s`
   disagrees with itself); a recorded factor/offset must match the conversion of one of them.
   An agreeing reading leaves a transducer calibration unchecked.
 
-A row whose `external_signal` holds no number followed by a unit (`AI heater power`, `valve 2 open`,
+A row whose `external_signal` holds no number followed by a unit candidate (`AI heater power`,
 `T_tank_C@70`) and that records no conversion cannot be checked and is not flagged. The ledger's
 `conversion_check` says why, in one sentence.
 

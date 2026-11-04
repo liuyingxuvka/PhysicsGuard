@@ -20,8 +20,6 @@ from test_derived_unit_conversions import SHOWER, WATER, _ledger, _load, _trial,
     ("0.1 kg/s", 0.1, []),
     ("6 L/min", 0.1, ["conversion_unchecked"]),
     ("6 litres a minute", 6.0, ["conversion_unchecked"]),  # read as 6 L/min, a volume flow beside a kg/s value
-    # A reading inside a longer label is checked and reported; the whole-reading disagreement stops (below).
-    ("pump 6 kg/min", 6.0, ["signal_reading_disagrees"]),
     ("pump 6 kg/min", 0.1, []),
     ("shower flow 6 L/min", 6.0, ["conversion_unchecked"]),
     ("6 L/min (0.1 kg/s)", 0.1, ["conversion_unchecked"]),
@@ -34,8 +32,7 @@ def test_an_external_signal_that_is_a_reading_is_checked_against_the_value(tmp_p
             if code in {"conversion_unchecked", "signal_reading_disagrees"}] == codes
 
 @pytest.mark.parametrize("signal, offset, codes", [("15 degC", 273.15, []), ("15 degC", None, []),
-                                                   ("inlet 15 degC", 273.15, []),
-                                                   ("inlet 15 degC", 273.0, ["signal_reading_disagrees"])])
+                                                   ("inlet 15 degC", 273.15, [])])
 def test_a_temperature_reading_in_degc_checks_the_recorded_offset(tmp_path, signal, offset, codes) -> None:
     edits = {"heater.T_in_K": {"value": 288.15, "external_signal": signal, "conversion_offset": offset}}
     _report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits)))
@@ -66,21 +63,20 @@ def test_trial_v0_flags_only_the_rows_the_tool_cannot_check(tmp_path) -> None:
     ("heater.m_dot_kg_s", {"value": 6.0, "external_signal": "6 kg/min", "conversion_factor": None, "conversion_note": None}),
     ("heater.T_out_K", {"value": 333.15, "external_signal": "20 degC", "conversion_offset": None}),
     ("heater.T_in_K", {"value": 288.15, "external_signal": "15 degC", "conversion_offset": 273.0}),
-], ids=["kg_per_min_as_kg_per_s", "temperature_mismatch", "recorded_offset_wrong"])
-def test_a_whole_signal_reading_that_disagrees_stops_the_run(tmp_path, variable, update) -> None:
+    ("heater.m_dot_kg_s", {"value": 6.0, "external_signal": "pump 6 kg/min", "conversion_factor": None, "conversion_note": None}),
+    ("heater.T_in_K", {"value": 288.15, "external_signal": "inlet 15 degC", "conversion_offset": 273.0}),
+], ids=["kg_per_min_as_kg_per_s", "temperature_mismatch", "recorded_offset_wrong", "labelled_mass_flow", "labelled_offset"])
+def test_a_signal_reading_that_disagrees_stops_the_run(tmp_path, variable, update) -> None:
     path = _trial(tmp_path, {variable: update})
     with pytest.raises(ValueError, match=rf"signal_reading_disagrees:{re.escape(variable)}: external_signal reads"):
         _load(path)
     result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
     assert result.returncode == 2 and result.stderr.startswith(f"physicsguard error: signal_reading_disagrees:{variable}")
 
-def test_a_reading_inside_free_text_that_disagrees_is_reported_and_the_audit_runs() -> None:
+def test_a_reading_inside_free_text_that_disagrees_stops_the_load() -> None:
     """observed_q_kw: the AI wrote 'AI heater power 18.837 kW' and put 18.837 in the W slot."""
-    report, ledger = _ledger(SHOWER / "audit.yaml", _load(SHOWER / "observed_q_kw.yaml"))
-    row = ledger["heater.Q_dot_W"]
-    assert "signal_reading_disagrees" in row["issue_codes"]
-    assert "18.837 kW = 18837 W" in row["conversion_check"] and "reported, not enforced" in row["conversion_check"]
-    assert report["audit_pass"] is False
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.Q_dot_W:.*18\.837 kW = 18837 W"):
+        _load(SHOWER / "observed_q_kw.yaml")
 
 
 # Review round 3: a row with raw_value/raw_unit is checked against the reading its external_signal names on the
@@ -150,13 +146,10 @@ def test_bypass_b_the_forgotten_sixty_moved_into_raw_unit_stops_the_run(tmp_path
     assert result.returncode == 2 and result.stderr.startswith("physicsguard error: signal_reading_disagrees:heater.m_dot_kg_s")
 
 
-def test_bypass_b_inside_a_longer_label_is_reported_and_the_audit_runs(tmp_path) -> None:
+def test_bypass_b_inside_a_longer_label_stops_the_load(tmp_path) -> None:
     edits = {variable: {**row, "external_signal": f"shower flow {row['raw_value']} L/min"} for variable, row in RAW_B.items()}
-    report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits, WATER_M3)))
-    row = ledger["heater.m_dot_kg_s"]
-    assert "signal_reading_disagrees" in row["issue_codes"] and "reported, not enforced" in row["conversion_check"]
-    assert any(warning.startswith("heater.m_dot_kg_s: signal mapping needs review (signal_reading_disagrees)")
-               for warning in report["warnings"])
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s:.*6 L/min = 0\.1 kg/s"):
+        _load(_trial(tmp_path, edits, WATER_M3))
 
 
 @pytest.mark.parametrize("signal", ["6 L/min", "0.1 kg/s", "given 6 L/min", "pump 360 L/h"])
@@ -192,8 +185,8 @@ def test_a_transducer_reading_is_compared_with_its_signal_before_the_calibration
     assert loaded._conversion_checked is False and not loaded._signal_disagrees  # the calibration stays unchecked
     with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.Q_dot_W"):
         _load(_write(tmp_path, {"heater.Q_dot_W": {**row, "external_signal": "9 V"}}, name="whole.yaml"))
-    label = _load(_write(tmp_path, {"heater.Q_dot_W": {**row, "external_signal": "power transducer 9 V"}}, name="label.yaml"))
-    assert label.variables["heater.Q_dot_W"]._signal_disagrees is True
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.Q_dot_W"):
+        _load(_write(tmp_path, {"heater.Q_dot_W": {**row, "external_signal": "power transducer 9 V"}}, name="label.yaml"))
 
 
 def test_a_series_point_with_a_raw_reading_is_checked_against_its_signal_too() -> None:
@@ -254,6 +247,8 @@ def _mapping_line(path) -> tuple[str, str]:
 
 @pytest.mark.parametrize("signal, fragment", [
     ("6 gallons/min", "6 gallons/min"), ("6 L fortnight^-1", "6 L fortnight^-1"), ("pump 6 lit/min", "6 lit/min"),
+    ("6 gpm", "6 gpm"), ("6 GPM", "6 GPM"), ("6 gallons", "6 gallons"), ("6 °X", "6 °X"),
+    ("6 L min−1", "6 L min−1"), ("6 L a fortnight", "6 L a fortnight"), ("valve 2 open", "2 open"),
 ])
 def test_a_number_followed_by_a_unit_the_tool_cannot_read_is_flagged(tmp_path, signal, fragment) -> None:
     edits = {**MIX_LABEL, "heater.m_dot_kg_s": {**RAW_B["heater.m_dot_kg_s"], "external_signal": signal}}
@@ -266,7 +261,7 @@ def test_a_number_followed_by_a_unit_the_tool_cannot_read_is_flagged(tmp_path, s
     assert head.endswith("mapping 8 rows, 1 with issues") and "heater.m_dot_kg_s signal_reading_unreadable" in mapping
 
 
-@pytest.mark.parametrize("signal", ["6 L", "inlet 3 m upstream"])
+@pytest.mark.parametrize("signal", ["6 L", "inlet 3 m; upstream"])
 def test_a_reading_no_declared_property_relates_to_the_model_unit_is_reported(tmp_path, signal) -> None:
     """A volume (or a length) beside a mass flow: neither the table nor one property turns it into kg/s."""
     edits = {**MIX_LABEL, "heater.m_dot_kg_s": {"external_signal": signal, "conversion_factor": None, "conversion_note": None,
@@ -280,7 +275,7 @@ def test_a_reading_no_declared_property_relates_to_the_model_unit_is_reported(tm
     assert head.endswith("mapping 8 rows, 1 with issues")
 
 
-@pytest.mark.parametrize("signal", ["valve 2 open", "T_tank_C@70", "pump 2 at full speed"])
+@pytest.mark.parametrize("signal", ["T_tank_C@70", "valve 2", "pump at full speed"])
 def test_a_number_without_a_unit_is_not_a_reading(tmp_path, signal) -> None:
     edits = {**MIX_LABEL, "heater.m_dot_kg_s": {"external_signal": signal, "conversion_factor": None, "conversion_note": None}}
     _report, ledger = _ledger(SHOWER / "audit.yaml", _load(_trial(tmp_path, edits)))
@@ -317,12 +312,11 @@ def test_two_readings_that_agree_with_the_value_check_the_row(tmp_path) -> None:
     assert "agrees with external_signal 6 L/min" in row._conversion_check and "0.1 kg/s through the unit table" in row._conversion_check
 
 
-def test_two_readings_inside_a_longer_label_are_reported_when_one_disagrees(tmp_path) -> None:
+def test_two_readings_inside_a_longer_label_stop_the_load_when_one_disagrees(tmp_path) -> None:
     path = _write(tmp_path, {"heater.m_dot_kg_s": {"value": 0.1, "unit": "kg/s",
                                                    "external_signal": "pump flow 6 L/min, about 6 kg/s"}}, WATER)
-    row = _load(path).variables["heater.m_dot_kg_s"]
-    assert row._signal_disagrees is True and "reported, not enforced" in row._conversion_check
-    assert "6 kg/s = 6 kg/s" in row._conversion_check
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s:.*6 kg/s = 6 kg/s"):
+        _load(path)
 
 
 def test_a_second_reading_that_needs_an_undeclared_property_leaves_the_row_unchecked(tmp_path) -> None:
@@ -344,9 +338,8 @@ def test_a_snapshot_built_in_python_is_checked_like_a_loaded_one() -> None:
         ObservedValuesSpec(variables={"heater.m_dot_kg_s": {"value": 6.0, "unit": "kg/s", "external_signal": "6 kg/min"}})
     trial = yaml.safe_load((SHOWER / "observed_unit_err.yaml").read_text(encoding="utf-8"))
     trial["variables"]["heater.m_dot_kg_s"] = {"value": 6.0, "unit": "kg/s", "external_signal": "pump 6 kg/min"}
-    _report, ledger = _ledger(SHOWER / "audit.yaml", ObservedValuesSpec.model_validate(trial))
-    assert "signal_reading_disagrees" in ledger["heater.m_dot_kg_s"]["issue_codes"]
-    assert "conversion_unchecked" in ledger["mix.m_dot_2_kg_s"]["issue_codes"]  # 9 L/min beside 9 kg/s, no density
+    with pytest.raises(ValueError, match=r"signal_reading_disagrees:heater\.m_dot_kg_s"):
+        ObservedValuesSpec.model_validate(trial)
 
 
 def test_a_series_built_in_python_is_checked_like_a_loaded_one() -> None:

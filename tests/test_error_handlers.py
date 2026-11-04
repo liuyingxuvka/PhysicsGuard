@@ -245,7 +245,7 @@ def _resolution_sample(monkeypatch, error):
 def test_an_error_inside_a_unit_factor_trial_fails_the_evaluation(monkeypatch, error) -> None:
     _hint_trial(monkeypatch, error)
     with pytest.raises(error, match="injected failure"):
-        _evaluate("audit.yaml", "observed_q_kw.yaml")
+        _evaluate("audit.yaml", "observed_q_unmapped.yaml")
 
 
 @pytest.mark.parametrize("error", FAULTS, ids=lambda error: error.__name__)
@@ -305,7 +305,7 @@ def test_a_relation_refusal_inside_the_probes_is_skipped_and_the_verdict_stands(
     from physicsguard.modules.base import DomainRefusal
 
     hint = _hint_trial(monkeypatch, DomainRefusal)
-    report = _evaluate("audit.yaml", "observed_q_kw.yaml")
+    report = _evaluate("audit.yaml", "observed_q_unmapped.yaml")
     assert hint["raised"] > 0 and report.audit_pass is False
     assert not any(row.family == "unit_conversion" for row in report.bug_family_followups)
     monkeypatch.undo()
@@ -318,7 +318,7 @@ def test_a_relation_refusal_inside_the_probes_is_skipped_and_the_verdict_stands(
 def test_the_hint_and_the_scale_appear_without_injection() -> None:
     from physicsguard.core.hierarchy import HierarchicalAuditRunner
 
-    report = _evaluate("audit.yaml", "observed_q_kw.yaml")
+    report = _evaluate("audit.yaml", "observed_q_unmapped.yaml")
     assert [row.trigger for row in report.bug_family_followups if row.family == "unit_conversion"] == [
         "Trying heater.Q_dot_W: multiply by 1000 makes every checked residual in hot_branch pass."]
     text = run_cli("hierarchy", "evaluate", str(SHOWER / "audit_default_scales.yaml"), str(SHOWER / "observed_ai_half.yaml"))
@@ -362,7 +362,7 @@ sys.exit(cli.main(sys.argv[1:]))
 
 
 @pytest.mark.parametrize("error", ["RuntimeError", "KeyError", "IndexError", "ZeroDivisionError", "ValueError"])
-@pytest.mark.parametrize("audit, observation", [("audit.yaml", "observed_q_kw.yaml"),
+@pytest.mark.parametrize("audit, observation", [("audit.yaml", "observed_q_unmapped.yaml"),
                                                 ("audit_default_scales.yaml", "observed_ai_half.yaml")],
                          ids=["unit_factor_hint", "scale_replay"])
 def test_an_injected_failure_reaches_the_command_exit_code(tmp_path, error, audit, observation) -> None:
@@ -542,7 +542,7 @@ def test_the_unit_factor_hint_also_runs_on_a_partial_snapshot(tmp_path) -> None:
     audit = tmp_path / "audit.yaml"
     audit.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
     runner = HierarchicalAuditRunner(load_hierarchical_audit_spec(audit), SHOWER)
-    report = runner.evaluate_observed(load_observed_values(SHOWER / "observed_q_kw.yaml"), skip_unobserved=True)
+    report = runner.evaluate_observed(load_observed_values(SHOWER / "observed_q_unmapped.yaml"), skip_unobserved=True)
     assert "unrelated.value" in report.missing_required_variables
     assert [row.trigger for row in report.bug_family_followups if row.family == "unit_conversion"] == [
         "Trying heater.Q_dot_W: multiply by 1000 makes every checked residual in hot_branch pass."]

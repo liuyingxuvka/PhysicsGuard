@@ -48,8 +48,9 @@ warnings: observed audit did not pass; max observed normalized residual exceeds 
 
 The heater block passes; the mixing block fails. Its energy balance is off by 22.5 times the tolerance written in the
 audit: 4.5 K, where the audit allows 0.2 K. The `resolution:` line estimates the local first-order error this check could see at these values,
-so read it when interpreting a pass. Change the `raw_value` of `mix.T_out_K` in
-`observed_ai.yaml` to the flow-weighted answer, 33.0 (°C), and run the same command again:
+so read it when interpreting a pass. In `observed_ai.yaml`, correct both fields of `mix.T_out_K` to the
+flow-weighted answer: `raw_value: 33.0` (°C) and `external_signal: AI outlet temperature 33 C`.
+The signal records the answer being checked, so it must change with that answer. Run the same command again:
 
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
@@ -239,13 +240,16 @@ Five skills, one idea: make structure, relationships and constraints explicit in
   is still the AI's number. The tool checks every row, with or without `raw_value`, from a file or built in Python, against every reading it finds in
   `external_signal` (`6 kg/min`, or `outlet temperature 33 C`), all converted to the model unit; so `raw_value: 6,
   raw_unit: L/s` beside `external_signal: "6 L/min"` stops the run, and so does `"6 L/min (0.1 kg/s)"`: two
-  readings are each compared, and with each other. When the whole `external_signal` is its readings,
-  a disagreement stops the run (`signal_reading_disagrees`); a reading inside a longer label is reported with the
-  same mark and the run continues. A reading of another quantity, such as `6 L/min` beside a kg/s value or a
+  readings are each compared, and with each other. Any readable, convertible reading that disagrees stops the run
+  (`signal_reading_disagrees`), including a reading after a label such as `pump flow 6 L/min`.
+  A reading of another quantity, such as `6 L/min` beside a kg/s value or a
   `raw_unit` of kg/s, is converted through a property the snapshot declares (a density) and compared the same
   way. The row is marked `conversion_unchecked`, naming the property it needs, when no declared property links
-  the reading to the model unit. A number followed by what looks like a unit the tool cannot read (`6 gallons/min`) is flagged
-  `signal_reading_unreadable`, never dropped. A row is also marked `conversion_unchecked` when the snapshot records a
+  the reading to the model unit. A unit after a number is read whole up to the next reading or a comma, semicolon,
+  colon, equals sign or bracket. A candidate the unit table cannot read (`6 gpm`, `6 gallons/min`, `6 L a fortnight`)
+  is flagged `signal_reading_unreadable`; it is never silently dropped or read as a shorter unit.
+  Put labels before readings, or separate following prose with punctuation (`inlet 3 m; upstream`).
+  A row is also marked `conversion_unchecked` when the snapshot records a
   conversion with no reading to check it against (any `conversion_factor`, `conversion_offset` or
   `conversion_note`, a factor of 1.0 included). A row whose `external_signal` holds no number followed by a unit (a label such as
   `AI heater power`) and that records no conversion cannot be checked and is not flagged. A declared density denser than any material

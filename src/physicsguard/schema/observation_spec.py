@@ -71,8 +71,8 @@ class ObservedValueSpec(BaseModel):
     # external_signal, False when a conversion was applied or recorded that the tool could not
     # check (on a row with or without raw_value, a reading of another quantity in external_signal
     # included), None when nothing was converted. _conversion_check says why in one sentence, and
-    # _signal_disagrees marks a value that contradicts a reading found inside a longer external_signal
-    # (when the whole external_signal is the reading, a contradiction stops the load instead).
+    # A contradictory convertible signal reading stops validation, with or without a preceding label.
+    # _signal_disagrees remains part of report state for existing counterfactual copies.
     # _missing_property names the quantity (for example density) of the property a reading in
     # external_signal needs before the tool can compare it, when the snapshot declares none.
     _conversion_checked: Optional[bool] = PrivateAttr(default=None)

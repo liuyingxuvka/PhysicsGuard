@@ -20,17 +20,16 @@ def _shower_report(observation: str):
 
 
 def test_unit_hint_line() -> None:
-    description, report = _shower_report("observed_q_kw.yaml")
+    description, report = _shower_report("observed_q_unmapped.yaml")
     before = copy.deepcopy(report)
     expected = "hint: unit_conversion heater.Q_dot_W multiply by 1000"
     for full in (False, True):
         lines = render_tree_view(description, report=report, full=full).splitlines()
         hints = [line for line in lines if line.startswith("hint:")]
-        assert len(hints) == len(report["bug_family_followups"]) == 3
+        assert len(hints) == len(report["bug_family_followups"]) == 2
         assert hints[-1] == expected
-        # "AI heater power 18.837 kW" beside 18.837 W: the tool reads the kW and reports the contradiction.
-        assert hints[0].startswith("hint: signal_mapping heater.Q_dot_W: ")
-        assert hints[1].startswith("hint: conservation_balance ")
+        # Without a numeric source reading the audit can only suggest a unit-factor hypothesis.
+        assert hints[0].startswith("hint: conservation_balance ")
     assert report == before
 
     # The report can also carry refinement and mapping advice around its hints.

@@ -40,7 +40,7 @@ resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_k
 warnings: observed audit did not pass; max observed normalized residual exceeds audit threshold; max observed normalized residual exceeds 10
 ```
 
-加热器这一块通过，混水这一块不通过：它的能量平衡偏离了审计里写的容差的 22.5 倍，也就是差了 4.5 K，而审计只允许 0.2 K。`resolution:` 这一行给出这些数值处的局部一阶误差分辨率估计，解释“通过”时要一起看。把 `observed_ai.yaml` 里 `mix.T_out_K` 的 `raw_value` 改成按流量加权算出的 33.0（°C），再跑一次同样的命令：
+加热器这一块通过，混水这一块不通过：它的能量平衡偏离了审计里写的容差的 22.5 倍，也就是差了 4.5 K，而审计只允许 0.2 K。`resolution:` 这一行给出这些数值处的局部一阶误差分辨率估计，解释“通过”时要一起看。在 `observed_ai.yaml` 里，把 `mix.T_out_K` 的两个字段一起改成按流量加权算出的答案：`raw_value: 33.0`（°C）和 `external_signal: AI outlet temperature 33 C`。信号文字记录的是正在检查的答案，也要随答案更新。再跑一次同样的命令：
 
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
@@ -192,7 +192,7 @@ flowchart LR
 
 **它仍然可能漏掉的地方。** 下面是上一个版本 `v0.15.25` 在淋浴例子上的真实输出：
 - 检查有多细，取决于残差的尺度。用模块默认的尺度、流量减半时，同样 4.5 K 的错误会通过（`mixer [L1] | own PASS 0.56`）。从 `v0.16.0` 起，`resolution:` 行会写出每项检查的局部一阶误差分辨率估计，用的是默认尺度时标上 `(default scale)`；它不改变结论，所以说一个数“检查过了”之前，先看这一行。
-- 如果 AI 自己换算单位，并把错误一路带下去（把 6 L/min 写成 6 kg/s），所有守恒都闭合，审计照样通过。从 `v0.16.0` 起，可以写 `raw_value` 和 `raw_unit`，让工具去换算；写的值和原始值对不上，命令就停下。工具认得单位的其他写法（`l/min`、`LPM`、`L min^-1`、`kg/sec`、`15 C`）；它读不懂的单位会被拒绝，而不是拿 AI 写的系数去换算。AI 手算换好的数，仍然是 AI 的数。不管有没有写 `raw_value`，也不管快照是从文件读进来的还是在 Python 里直接建的，工具都会在 `external_signal` 里找出每一个读数（比如 `6 kg/min`，或 `outlet temperature 33 C`），把每个读数和这一行的值都换成模型单位再比较，几个读数之间也互相比较；所以 `raw_value: 6, raw_unit: L/s` 旁边写着 `external_signal: "6 L/min"` 或 `"6 L/min (0.1 kg/s)"`，命令都会停下。如果整个 `external_signal` 只由读数组成，对不上就停下（`signal_reading_disagrees`）；如果读数夹在一段更长的文字里，对不上会用同样的标记报出来，但审计照样跑完。读数是另一种物理量（比如 kg/s 的值或 kg/s 的 `raw_unit` 旁边写着 `6 L/min`）时，工具用快照里声明的物理性质（密度）把它换成模型单位，再同样比较；没有声明能连起两者的性质时，这一行会标成 `conversion_unchecked`，并写明缺的是哪个性质。数字后面跟着工具读不懂的单位（比如 `6 gallons/min`）时，这一行标成 `signal_reading_unreadable`，不会被悄悄丢掉。如果快照里记了换算（任何 `conversion_factor`、`conversion_offset` 或 `conversion_note`，系数 1.0 也算）却没有能核对的读数，这一行就会在映射警告里标成 `conversion_unchecked`。什么换算都没记、`external_signal` 里也没有“数字加单位”的行（比如只写了一个名字），工具查不了，也不会标出来。比任何物质都密的密度（比如 60 kg/L）会被拒绝；错但可能存在的物理性质（比如把水的密度写成 2 kg/L）仍然是 AI 的数，只是它写在快照和映射记录里，看得见。
+- 如果 AI 自己换算单位，并把错误一路带下去（把 6 L/min 写成 6 kg/s），所有守恒都闭合，审计照样通过。从 `v0.16.0` 起，可以写 `raw_value` 和 `raw_unit`，让工具去换算；写的值和原始值对不上，命令就停下。工具认得单位的其他写法（`l/min`、`LPM`、`L min^-1`、`kg/sec`、`15 C`）；它读不懂的单位会被拒绝，而不是拿 AI 写的系数去换算。AI 手算换好的数，仍然是 AI 的数。不管有没有写 `raw_value`，也不管快照是从文件读进来的还是在 Python 里直接建的，工具都会在 `external_signal` 里找出每一个读数（比如 `6 kg/min`，或 `outlet temperature 33 C`），把每个读数和这一行的值都换成模型单位再比较，几个读数之间也互相比较；所以 `raw_value: 6, raw_unit: L/s` 旁边写着 `external_signal: "6 L/min"` 或 `"6 L/min (0.1 kg/s)"`，命令都会停下。只要读数的单位能读懂、能换成模型单位，对不上就停下（`signal_reading_disagrees`），包括 `pump flow 6 L/min` 这样带有前置标签的读数。读数是另一种物理量（比如 kg/s 的值或 kg/s 的 `raw_unit` 旁边写着 `6 L/min`）时，工具用快照里声明的物理性质（密度）把它换成模型单位，再同样比较；没有声明能连起两者的性质时，这一行会标成 `conversion_unchecked`，并写明缺的是哪个性质。数字后面的单位一直读到下一个读数，或逗号、分号、冒号、等号、括号；单位表读不懂整段候选文字（比如 `6 gpm`、`6 gallons/min`、`6 L a fortnight`）时，这一行标成 `signal_reading_unreadable`，不会被悄悄丢掉，也不会截短成另一个单位。标签放在读数前面；读数后面还有说明时，用标点分开（比如 `inlet 3 m; upstream`）。如果快照里记了换算（任何 `conversion_factor`、`conversion_offset` 或 `conversion_note`，系数 1.0 也算）却没有能核对的读数，这一行就会在映射警告里标成 `conversion_unchecked`。什么换算都没记、`external_signal` 里也没有“数字加单位”的行（比如只写了一个名字），工具查不了，也不会标出来。比任何物质都密的密度（比如 60 kg/L）会被拒绝；错但可能存在的物理性质（比如把水的密度写成 2 kg/L）仍然是 AI 的数，只是它写在快照和映射记录里，看得见。
 
 
 **量过什么，没量过什么。**

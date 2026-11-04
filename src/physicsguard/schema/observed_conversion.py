@@ -26,15 +26,9 @@ if TYPE_CHECKING:
 # Admit rounded recorded factors such as 0.016667, but reject physical value disagreement.
 RAW_VALUE_REL_TOL = 5e-5
 # A number in external_signal, not glued to a name before it (T_tank_C@70 holds no reading).
-_NUMBER = re.compile(r"(?<![\w.^])([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)")
-# Units are read from up to this many words after the number ("litres per minute").
-_UNIT_WORDS = 3
-# What makes a word after a number look like a unit, so the tool flags it when it cannot read it.
-_MARK_CHARACTERS = "/^·⋅*⁻⁰¹²³⁴⁵⁶⁷⁸⁹"
-_UNIT_MARK = re.compile(r"[/^·⋅*⁻⁰¹²³⁴⁵⁶⁷⁸⁹]|[A-Za-z]-\d+$")
-_NEGATIVE_POWER = re.compile(r"[A-Za-z]+(?:\^?-\d+|⁻[⁰¹²³⁴⁵⁶⁷⁸⁹]+)")
-# An external_signal that is nothing but its readings, with only these (and spaces) between them, is enforced.
-WHOLE_SIGNAL_SEPARATORS = "()[],;:.="
+_NUMBER = re.compile(r"(?<![\w.^+−-])([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)")
+# Separate observations/prose without guessing which English words are units. A period can occur in l.min-1.
+SIGNAL_DELIMITERS = ",;:=()[]"
 
 
 class _Reading(NamedTuple):
@@ -94,79 +88,46 @@ def _convert_raw_row(variable: str, row: ObservedValueSpec,
 
 
 class _SignalText(NamedTuple):
-    """What external_signal holds: its readings, each '<number> <unit>' whose unit the tool cannot read, and
-    whether the text is nothing but its readings (with brackets, commas or '=' between them)."""
+    """The recognized readings and complete numeric-unit candidates the unit table cannot read."""
 
     readings: list[_Reading]
     unreadable: list[str]
-    whole: bool
-
-
-def _looks_like_unit(word: str) -> bool:
-    """A word that starts with a letter and carries a unit mark: '/', '^', '·', '⋅', '*', a superscript, or a
-    trailing negative power such as min-1."""
-    word = word.strip("()[],;:.")
-    return word[:1].isalpha() and _UNIT_MARK.search(word) is not None
-
-
-def _continues_unit(word: str) -> bool:
-    """A word that carries on the unit before it: it starts with a separator or a power, it is a symbol with a
-    negative power (min^-1, min-1, min⁻¹), or it is 'per'."""
-    word = word.strip("()[],;:.")
-    return bool(word) and (word[0] in _MARK_CHARACTERS or _NEGATIVE_POWER.fullmatch(word) is not None
-                           or word.lower() == "per")
 
 
 def _signal_readings(text: str | None) -> _SignalText:
-    """Every '<number> <unit>' in external_signal; none is dropped.
+    """Read complete numeric-unit candidates, bounded by the next number or explicit punctuation.
 
-    A unit counts when the unit table reads it or it is a transducer output (V, mV, A, mA, ohm). A number
-    followed by a word that looks like a unit (_looks_like_unit) the table cannot read, or by a unit the table
-    reads only in part because the next word carries it on (_continues_unit, as in '6 L fortnight^-1'), is
-    listed as unreadable instead of being read as a shorter unit.
+    Labels can precede a number. Prose after a unit needs a delimiter: without it the complete candidate
+    is unreadable, rather than silently shortened to a known prefix. Unit interpretation belongs solely
+    to read_unit (plus declared transducer outputs), with no word allowlist or length limit here.
     """
     text = text or ""
     readings: list[_Reading] = []
     unreadable: list[str] = []
-    spans: list[tuple[int, int]] = []
-    for match in _NUMBER.finditer(text):
-        if spans and match.start() < spans[-1][1]:
-            continue  # a power inside a unit already read, such as the 1 of min-1
-        words = list(re.finditer(r"\S+", text[match.end():]))
-        tokens = [word.group() for word in words]
-        if not tokens:
+    matches = list(_NUMBER.finditer(text))
+    for index, match in enumerate(matches):
+        stop = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        fragment = text[match.end():stop].strip()
+        if not fragment:
             continue
-        read = None
-        for count in range(min(_UNIT_WORDS, len(tokens)), 0, -1):
-            unit = _unit_text(tokens[:count])
-            if read_unit(unit) is not None or is_transducer_output(unit):
-                read = count, unit
-                break
-        if read is not None and not (read[0] < len(tokens) and _continues_unit(tokens[read[0]])):
-            used = read[0]
-            readings.append(_Reading(float(match.group(1)), read[1]))
-        elif read is not None or _looks_like_unit(tokens[0]):
-            used = read[0] + 1 if read is not None else 1
-            unreadable.append(f"{match.group(1)} {_unit_text(tokens[:used])}")
+        # A pair directly around the unit belongs to it. A bracket after a unit separates the next reading.
+        bracket = {"(": ")", "[": "]"}.get(fragment[0])
+        if bracket and bracket in fragment:
+            unit = fragment[:fragment.index(bracket) + 1]
         else:
+            boundary = next((position for position, character in enumerate(fragment)
+                             if character in SIGNAL_DELIMITERS or character in "\r\n"), len(fragment))
+            # An unmatched opening bracket is an unreadable unit, not an empty candidate.
+            if bracket and boundary == 0:
+                boundary = len(fragment)
+            unit = fragment[:boundary].strip().rstrip(".").rstrip()
+        if not unit:
             continue
-        spans.append((match.start(), match.end() + words[used - 1].end()))
-    rest, position = [], 0
-    for start, stop in spans:
-        rest.append(text[position:start])
-        position = stop
-    rest.append(text[position:])
-    whole = bool(readings) and not unreadable and all(
-        character.isspace() or character in WHOLE_SIGNAL_SEPARATORS for character in "".join(rest))
-    return _SignalText(readings, unreadable, whole)
-
-
-def _unit_text(words: list[str]) -> str:
-    """The words after a number as a unit: without trailing punctuation or a closing bracket opened before it."""
-    unit = " ".join(words).rstrip(",;:.")
-    while unit[-1:] in (")", "]") and unit.count(unit[-1]) > unit.count("(" if unit[-1] == ")" else "["):
-        unit = unit[:-1].rstrip(",;:.")
-    return unit
+        if read_unit(unit) is not None or is_transducer_output(unit):
+            readings.append(_Reading(float(match.group(1)), unit))
+        else:
+            unreadable.append(f"{match.group(1)} {unit}")
+    return _SignalText(readings, unreadable)
 
 
 def _reading_routes(reading: _Reading, row: ObservedValueSpec, raw_conversion: tuple[float, float] | None,
@@ -224,9 +185,8 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
     model unit (a conversion done outside the tool, whose recorded factor/offset is compared too). A reading
     of another quantity is converted through a declared property (see _reading_routes); a reading the tool
     cannot convert (no declared property links it, or no single property can) leaves the row unchecked with
-    why. A number followed by a unit the tool cannot read is flagged signal_reading_unreadable. When the
-    whole external_signal is its readings, a disagreement stops the run like a raw_value disagreement; a
-    reading found inside a longer text is reported, because such a text can name other numbers.
+    why. A numeric-unit candidate the tool cannot read is flagged signal_reading_unreadable. Every
+    convertible disagreement stops the run like a raw_value disagreement, regardless of label text.
     """
     raw = raw_conversion is not None
     recorded = [] if raw else [name for name in ("conversion_factor", "conversion_offset", "conversion_note")
@@ -259,17 +219,10 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
     if problems:
         sentence = (f"external_signal reads {' and '.join(_converted_words(reading, routes, row.unit) for reading, routes in compared)}, "
                     f"but {('; ' if len(compared) > 1 else ' and ').join(problems)}")
-        if signal.whole:
-            remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
-                      "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
-                      "converts it")
-            raise ObservedConversionError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
-        unused = f"; external_signal also reads {_unusable_words(row, unusable, properties, origin, raw)}" if unusable else ""
-        _mark_unchecked(row, f"{sentence} (a reading inside a longer external_signal is reported, not enforced; write the "
-                             f"reading alone{'' if raw else ', or as raw_value and raw_unit,'} to have it enforced)"
-                             + unused + tail)
-        row._signal_disagrees = True
-        return
+        remedy = ("correct raw_value and raw_unit or the external_signal, so both name the same reading" if raw else
+                  "correct the value or the external_signal, or give the reading as raw_value and raw_unit so the tool "
+                  "converts it")
+        raise ObservedConversionError(f"signal_reading_disagrees:{variable}: {sentence}; {remedy}")
     agreed = " and ".join(f"{reading} {_agreeing_route(row, routes)}" for reading, routes in compared)
     if raw:
         # The raw conversion keeps its own status: an agreeing reading does not check a transducer calibration.

@@ -26,14 +26,11 @@ LABELS={'growth_coarse_bad_audit': 'coarse_failure_consistency_reported', 'growt
 PORT_VALUES={'growth_coarse_bad_audit': 'FAIL', 'growth_planned_bad_audit': 'FAIL', 'hierarchy_evaluate_partial_tree_view_bad_audit': 'FAIL', 'hierarchy_evaluate_derived_child_bad_audit': 'PASS', 'hierarchy_evaluate_derived_bad_audit': 'FAIL', 'hierarchy_evaluate_partial_unresolved': 'PASS', 'clean': 'PASS', 'converged_bad_audit': 'FAIL', 'bad_schema': 'no checks', 'evaluate_clean': 'PASS', 'evaluate_bad_audit': 'FAIL', 'evaluate_missing_observed': 'PASS', 'compare_bad_audit': 'no checks', 'hierarchy_clean': 'PASS', 'hierarchy_bad_audit': 'FAIL', 'hierarchy_evaluate_clean': 'no checks', 'hierarchy_evaluate_bad_audit': 'no checks', 'hierarchy_evaluate_missing_observed': 'no checks', 'hierarchy_evaluate_zero_product': 'no checks', 'hierarchy_evaluate_partial_snapshot': 'PASS', 'hierarchy_describe': 'no checks', 'assumption_parameter_fill': 'no checks', 'assumption_parameter_override': 'no checks', 'assumption_proposed': 'no checks', 'assumption_rejected': 'no checks', 'assumption_variable_boundary': 'no checks', 'hierarchy_evaluate_partial_tree_view_not_checked': 'not checked'}
 
 
-# Both fixed observations carry conservation advice; only the unit slip carries a unit hint, and its
-# external_signal "AI heater power 18.837 kW" contradicts the 18.837 W value, so it carries mapping advice too.
+# Both fixed observations carry conservation advice; a unit slip without a numeric source reading can
+# reach a unit-factor hypothesis. A contradicted numeric source reading instead refuses at ingestion.
 _CONSERVATION = "Inspect sibling inflow/outflow, loss, storage, and boundary-condition variables before adding deeper component physics."
-_MAPPING = ("Review the same signal family for sign convention, unit conversion, source variable selection, "
-            "and stale mapping notes before refining physics.")
 HINT_ROWS = {
-    'observed_q_kw': (
-        "hint: signal_mapping heater.Q_dot_W: " + _MAPPING,
+    'observed_q_unmapped': (
         "hint: conservation_balance heater.coolant_heat_balance, mix.flow_merge_temperature_balance: " + _CONSERVATION,
         "hint: unit_conversion heater.Q_dot_W multiply by 1000",
     ),
