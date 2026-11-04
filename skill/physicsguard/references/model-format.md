@@ -211,7 +211,7 @@ tool's conversion within `RAW_VALUE_REL_TOL = 5e-5` relative tolerance. This adm
 A disagreement refuses the run with exit 2 and `observed_value_disagrees_with_conversion:<variable>`;
 a pair that cannot be converted uses `unit_not_convertible:<variable>`. Incomplete pairs remain input
 validation errors. Conversion results must be finite. A declared property needs a finite positive
-value and a unit from the table; a density above that of the densest material (osmium, 22.59 g/cm^3) is
+value and a nonblank unit; using it for conversion requires a unit the table reads. A density above that of the densest material (osmium, 22.59 g/cm^3) is
 refused with `implausible_property`, so a 60 kg/L water density stops the run. A wrong but possible
 property (2 kg/L for water) is still the AI's number, visible in the snapshot and the ledger.
 
