@@ -26,7 +26,10 @@ if TYPE_CHECKING:
 # Admit rounded recorded factors such as 0.016667, but reject physical value disagreement.
 RAW_VALUE_REL_TOL = 5e-5
 # A number in external_signal, not glued to a name before it (T_tank_C@70 holds no reading).
-_NUMBER = re.compile(r"(?<![\w.^+−-])([-+−]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+−]?\d+)?)")
+_NUMBER_VALUE = r"[-+−]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+−]?\d+)?"
+_NUMBER = re.compile(rf"(?<![\w.^+−-])({_NUMBER_VALUE})")
+_COMMA_NUMBER = re.compile(rf"(?<![\w.^+−-]){_NUMBER_VALUE}\s*,\s*\d")
+_NUMBER_RANGE = re.compile(rf"(?<![\w.^+−-]){_NUMBER_VALUE}\s*(?:\bto\b|[-–—])\s*{_NUMBER_VALUE}", re.IGNORECASE)
 # Separate observations/prose without guessing which English words are units. A period can occur in l.min-1.
 SIGNAL_DELIMITERS = ",;:=()[]"
 
@@ -192,6 +195,15 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
     raw = raw_conversion is not None
     recorded = [] if raw else [name for name in ("conversion_factor", "conversion_offset", "conversion_note")
                                if getattr(row, name) is not None]
+    text = row.external_signal or ""
+    if _COMMA_NUMBER.search(text):
+        raise ObservedConversionError(
+            f"signal_reading_unreadable:{variable}: external_signal {text!r} contains a number with commas; "
+            "decimal commas and thousands separators are not supported; write one unambiguous number")
+    if _NUMBER_RANGE.search(text):
+        raise ObservedConversionError(
+            f"signal_reading_unreadable:{variable}: external_signal {text!r} contains a numeric range; "
+            "ranges are not supported; supply one measured value")
     signal = _signal_readings(row.external_signal)
     origin = f"raw_value {row.raw_value:g} {row.raw_unit}" if raw else "the value"
     note = ""
