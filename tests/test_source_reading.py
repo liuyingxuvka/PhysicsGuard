@@ -235,3 +235,72 @@ def test_quoted_parameters_do_not_turn_a_snapshot_header_into_a_parameter_catalo
     data = yaml.safe_load((ROOT/'examples/source_reading/observed.yaml').read_text())
     assert data['parameters']
     assert _load_header_script().artifact_kind(data) == 'observed-values snapshot'
+
+
+@pytest.mark.parametrize('parameter, value, unit, colour', [
+    ('unused_input', 5, 'W', 'grey'), ('cp_J_kgK', 4186, 'J/kg/K', 'green')])
+def test_only_parameters_read_by_checked_relations_can_license_a_block(tmp_path, parameter, value, unit, colour):
+    audit = yaml.safe_load((FIXTURES/'first/audit.yaml').read_text())
+    audit['system']['components'][0]['parameters'][parameter] = value
+    values = yaml.safe_load((FIXTURES/'first/q_correct.yaml').read_text())
+    phrase = f'parameter {value} {unit}'
+    values['parameters'] = {'heater.'+parameter: {'unit': unit, 'quote': {'from':'question','text':phrase}}}
+    values['claims'] = []
+    for row in list(values['variables'].values()) + list(values['properties'].values()):
+        row.pop('quote', None)
+    (tmp_path/'question.txt').write_text(phrase)
+    (tmp_path/'audit.yaml').write_text(yaml.safe_dump(audit))
+    (tmp_path/'observed.yaml').write_text(yaml.safe_dump(values))
+    spec = load_hierarchical_audit_spec(tmp_path/'audit.yaml')
+    observed = load_observed_values(tmp_path/'observed.yaml')
+    report = HierarchicalAuditRunner(spec).evaluate_observed(observed, skip_unobserved=True)
+    assert report.audit_pass
+    assert next(row for row in report.block_verdicts if row['block_id']=='hot_branch')['colour'] == colour
+
+
+def _parameter_only_report(tmp_path, module, parameters, variables, parameter, quote, unit):
+    audit = {'audit_name':'parameter_use', 'system': {'system_name':'parameter_use', 'components':[
+        {'id':'part','type':module,'parameters':parameters}], 'connections':[], 'boundaries':[], 'assumptions':[]},
+        'hierarchy': {'blocks':[{'id':'part','name':'Part','level':0,'components':['part']}]}}
+    observed = {'observation_name':'reading', 'sources':{'question':'question.txt'},
+        'parameters':{'part.'+parameter:{'unit':unit,'quote':{'from':'question','text':quote}}},
+        'variables':{'part.'+key:{'value':value} for key,value in variables.items()}}
+    (tmp_path/'question.txt').write_text(quote)
+    (tmp_path/'audit.yaml').write_text(yaml.safe_dump(audit))
+    (tmp_path/'values.yaml').write_text(yaml.safe_dump(observed))
+    spec = load_hierarchical_audit_spec(tmp_path/'audit.yaml')
+    return HierarchicalAuditRunner(spec).evaluate_observed(load_observed_values(tmp_path/'values.yaml'))
+
+
+@pytest.mark.parametrize('initial, command, colour', [(2.,0.,'grey'), (0.,2.,'green')])
+def test_parameter_credit_follows_the_checked_observation_branch_not_the_initial_guess(tmp_path, initial, command, colour):
+    report = _parameter_only_report(tmp_path, 'ActuatorDeadZoneModule',
+        {'dead_zone':1.,'gain':2.,'command_initial_guess':initial},
+        {'command':command,'output':0. if command==0 else 2.}, 'gain','gain 2','1')
+    assert report.audit_pass
+    assert report.block_verdicts[0]['colour'] == colour
+
+
+def test_parameter_attribute_alias_keeps_its_real_constructor_origin(tmp_path):
+    report = _parameter_only_report(tmp_path, 'SensorLowPassFilterStepModule', {'tau_s':2.,'dt_s':1.},
+        {'true_value_current':2.,'measured_previous':0.,'measured_current':1.}, 'tau_s','time constant 2 s','s')
+    assert report.audit_pass
+    assert report.block_verdicts[0]['colour'] == 'green'
+
+
+@pytest.mark.parametrize('input_value, state, colour', [(0., 0., 'grey'), (2., 2., 'green')])
+def test_ternary_parameter_credit_follows_only_the_arm_that_executed(tmp_path, input_value, state, colour):
+    report = _parameter_only_report(tmp_path, 'ThresholdStateCheckModule',
+        {'threshold':1., 'on_value':2., 'off_value':0.}, {'input':input_value, 'state':state},
+        'on_value', 'on value 2', '1')
+    assert report.audit_pass
+    assert report.block_verdicts[0]['colour'] == colour
+
+
+@pytest.mark.parametrize('state, colour', [(0., 'grey'), (1., 'green')])
+def test_short_circuited_parameter_does_not_license_a_block(tmp_path, state, colour):
+    report = _parameter_only_report(tmp_path, 'HysteresisStateCheckModule',
+        {'low_threshold':1., 'high_threshold':2.}, {'input':1.5, 'state':state},
+        'low_threshold', 'low threshold 1', '1')
+    assert report.audit_pass
+    assert report.block_verdicts[0]['colour'] == colour

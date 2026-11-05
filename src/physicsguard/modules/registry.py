@@ -5,9 +5,11 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 from dataclasses import asdict
+import ast
 import inspect
 import re
 import sys
+import textwrap
 
 from physicsguard.modules.base import BaseModule
 
@@ -123,6 +125,49 @@ def instantiate_module_with_parameter_reads(
         return registry.create(module_type, component_id, _DescriptionParameters(values, reads))
     finally:
         sys.setprofile(previous)
+
+
+def native_parameter_attributes(module: BaseModule, reads: dict[str, Any]) -> dict[str, frozenset[str]]:
+    """Constructor origins of native fields, intersected with the actual read set.
+
+    Follow literal dictionary selectors and the native one-key parameter helpers.
+    Ambiguous reassignment and conditional expressions make no origin claim.
+    There is no value-equality guess between unrelated numeric fields.
+    """
+    constructor = type(module).__init__
+    code = getattr(constructor, '__code__', None)
+    if code is None or code.co_argcount < 3:
+        return {}
+    parameter_name = code.co_varnames[2]
+    tree = ast.parse(textwrap.dedent(inspect.getsource(constructor)))
+
+    def parameter_object(node):
+        return (isinstance(node, ast.Name) and node.id == parameter_name or
+                isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
+                and node.value.id == 'self' and node.attr == 'parameters')
+
+    def origins(node):
+        if isinstance(node, (ast.IfExp, ast.BoolOp)):
+            return set()
+        if isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Attribute) and node.func.attr == 'get' and parameter_object(node.func.value):
+                return {node.args[0].value} if node.args and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str) else set()
+            keys = [arg.value for arg in node.args if isinstance(arg, ast.Constant) and isinstance(arg.value, str)]
+            if any(parameter_object(arg) for arg in node.args) and len(keys) == 1:
+                return set(keys)
+        if isinstance(node, ast.Subscript) and parameter_object(node.value):
+            return {node.slice.value} if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str) else set()
+        return set().union(*(origins(child) for child in ast.iter_child_nodes(node) if isinstance(child, ast.expr)))
+
+    assignments = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)) or node.value is None:
+            continue
+        for target in node.targets if isinstance(node, ast.Assign) else [node.target]:
+            if isinstance(target, ast.Attribute) and isinstance(target.value, ast.Name) and target.value.id == 'self':
+                assignments.setdefault(target.attr, []).append(origins(node.value))
+    return {name: frozenset(values[0] & reads.keys()) for name, values in assignments.items()
+            if len(values) == 1 and values[0] & reads.keys()}
 
 
 def describe_module_type(

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import ast
 import dis
+import operator
 from dataclasses import dataclass, field
 from pathlib import Path
 import sys
@@ -28,6 +29,9 @@ _UNKNOWN = object()
 _NUMPY_SCALARS = {"interp": np.interp, "searchsorted": np.searchsorted}
 _NATIVE = Path(__file__).resolve().parents[1] / "modules"
 _PURE = frozenset({"abs", "all", "any", "bool", "enumerate", "float", "int", "len", "list", "max", "min", "range", "round", "str", "sum", "super", "tuple", "zip"})
+_COMPARISONS = {ast.Eq: operator.eq, ast.NotEq: operator.ne, ast.Lt: operator.lt, ast.LtE: operator.le,
+                ast.Gt: operator.gt, ast.GtE: operator.ge, ast.Is: operator.is_, ast.IsNot: operator.is_not}
+_SCALARS = (bool, int, float, str, type(None), np.float64, np.float32, np.int64, np.int32, np.bool_)
 
 
 def _merge(*parts: Dependencies) -> Dependencies:
@@ -74,13 +78,16 @@ class _Frame:
 
 
 class _Capture:
-    def __init__(self, registry: Any, record_type: type, module: Any, vector: Any) -> None:
+    def __init__(self, registry: Any, record_type: type, module: Any, vector: Any, parameter_sources=None) -> None:
         self.registry = registry
         self.record_type = record_type
+        self.module = module
+        self.parameter_sources = parameter_sources or {}
         self.frames: dict[int, _Frame] = {}
         self.sources: dict[str, ast.Module] = {}
         self.records: dict[int, tuple[Any, Dependencies]] = {}
         self.reads: set[str] = set()
+        self.value_sensitive = False
         self.previous = sys.gettrace()
         self.previous_locals: dict[int, Any] = {}
         # Strong references to ordinary numeric constructor fields, not to raw
@@ -298,6 +305,7 @@ class _Capture:
 
     def _branch(self, state: _Frame, node: ast.If, controls: Dependencies) -> None:
         influence = _merge(self._deps(node.test, state), controls)
+        self._control_input(influence)
         state.tests[id(node)] = influence
         # A legal flat branch still depends on the guard: record a conditional
         # reaching definition even when no branch assignment executes.
@@ -312,6 +320,10 @@ class _Capture:
         if any(isinstance(n, (ast.Raise, ast.Return)) for n in ast.walk(node)):
             state.gates = _merge(state.gates, influence)
 
+    def _control_input(self, dependencies: Dependencies) -> None:
+        if dependencies is None or any(not name.startswith('parameter:') for name in dependencies):
+            self.value_sensitive = True
+
     def _deps(self, node: ast.AST | None, state: _Frame) -> Dependencies:
         if node is None:
             return None
@@ -322,6 +334,8 @@ class _Capture:
                 return state.locals[node.id]
             return _EMPTY if node.id in state.frame.f_globals or node.id in _PURE else None
         if isinstance(node, ast.Attribute):
+            if node.attr in self.parameter_sources and self._parameter_value(node.value, state) is self.module:
+                return _merge(self._deps(node.value, state), self.parameter_sources[node.attr])
             return self._deps(node.value, state)
         if isinstance(node, (ast.ListComp, ast.GeneratorExp)):
             return state.calls.get(_key(node))
@@ -337,6 +351,15 @@ class _Capture:
                               *(self._deps(kw.value, state) for kw in node.keywords))
             return None
         if isinstance(node, ast.Subscript):
+            # A registry index selects a fixed variable slot, not an observed
+            # numeric value. Its name/control inputs are checked in _returned.
+            # Other selectors may change the dependency set as values change.
+            registry_index = (isinstance(node.slice, ast.Call)
+                              and isinstance(node.slice.func, ast.Attribute)
+                              and node.slice.func.attr == 'get_index'
+                              and self._parameter_value(node.slice.func.value, state) is self.registry)
+            if not registry_index:
+                self._control_input(self._deps(node.slice, state))
             sources = self._literal_sources(node.value, state)
             if isinstance(sources, dict) and isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str):
                 return sources.get(node.slice.value)
@@ -348,13 +371,27 @@ class _Capture:
             return _merge(base, self._deps(node.slice, state))
         if isinstance(node, ast.IfExp):
             controls = self._deps(node.test, state)
-            condition = self._parameter_value(node.test, state) if controls == _EMPTY else _UNKNOWN
+            self._control_input(controls)
+            condition = self._parameter_value(node.test, state)
             if condition is not _UNKNOWN and type(condition) in (bool, int, float, str, list, tuple, dict, type(None)):
                 return _merge(controls, self._deps(node.body if condition else node.orelse, state))
-            # Preserve the existing conservative, finite source union for observed
-            # guards; an unexecuted/unresolved helper still keeps this unknown.
-            return _merge(controls, self._deps(node.body, state), self._deps(node.orelse, state))
-        if isinstance(node, (ast.BinOp, ast.UnaryOp, ast.Compare, ast.BoolOp,
+            # An unresolved selected arm cannot license a quoted parameter from
+            # either arm merely because the other one could have executed.
+            return None
+        if isinstance(node, ast.BoolOp):
+            dependencies = _EMPTY
+            for index, part in enumerate(node.values):
+                dependencies = _merge(dependencies, self._deps(part, state))
+                if index == len(node.values) - 1:
+                    return dependencies
+                self._control_input(dependencies)
+                value = self._parameter_value(part, state)
+                if type(value) not in _SCALARS:
+                    return None
+                if (isinstance(node.op, ast.And) and not value or
+                        isinstance(node.op, ast.Or) and value):
+                    return dependencies
+        if isinstance(node, (ast.BinOp, ast.UnaryOp, ast.Compare,
                              ast.List, ast.Tuple, ast.Set, ast.Dict, ast.JoinedStr, ast.FormattedValue, ast.Slice)):
             return _merge(*(self._deps(child, state) for child in ast.iter_child_nodes(node)
                             if isinstance(child, ast.expr)))
@@ -384,6 +421,17 @@ class _Capture:
                 return vars(base).get(node.attr, _UNKNOWN)
             except TypeError:
                 pass
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'abs' and len(node.args) == 1 and not node.keywords:
+            value = self._parameter_value(node.args[0], state)
+            if type(value) in (int, float, np.float64, np.float32, np.int64, np.int32):
+                return abs(value)
+        if isinstance(node, ast.Compare) and len(node.ops) == len(node.comparators) == 1:
+            left = self._parameter_value(node.left, state)
+            right = self._parameter_value(node.comparators[0], state)
+            operation = _COMPARISONS.get(type(node.ops[0]))
+            if operation and type(left) in _SCALARS and type(right) in _SCALARS:
+                if type(node.ops[0]) in (ast.Is, ast.IsNot, ast.Eq, ast.NotEq) or type(left) is type(right) or type(left) in (int, float, np.float64, np.float32, np.int64, np.int32) and type(right) in (int, float, np.float64, np.float32, np.int64, np.int32):
+                    return bool(operation(left, right))
         if (isinstance(node, ast.Compare) and len(node.ops) == len(node.comparators) == 1
                 and isinstance(node.ops[0], (ast.Is, ast.IsNot))
                 and isinstance(node.comparators[0], ast.Constant) and node.comparators[0].value is None):
@@ -424,11 +472,13 @@ class _Capture:
         frame = state.frame
         if frame.f_code is self.registry.get_index.__func__.__code__ and frame.f_locals.get("self") is self.registry:
             name = frame.f_locals["name"]
+            self._control_input(_merge(state.locals.get('name'), state.inherited))
             self.reads.add(name)
             return _merge(frozenset({name}), state.locals.get("name"), state.inherited)
         if frame.f_code is self.registry.get_record.__func__.__code__:
             return _merge(state.locals.get("name"), state.inherited)  # selection only, not the observed scalar
         if frame.f_code is self.record_type.__init__.__code__:
+            self._control_input(_merge(*(state.locals.get(name, _EMPTY) for name in ('name', 'source', 'role', 'diagnostic_key'))))
             dependencies = None if state.unsupported else _merge(state.locals.get("value"), state.inherited)
             record = frame.f_locals["self"]
             self.records[id(record)] = (record, dependencies)
@@ -555,7 +605,7 @@ def _trace_inputs(names, vector, registry):
     return tuple((name, _trace_value(vector[registry.get_index(name)])) for name in sorted(names))
 
 
-def module_residual_dependencies(module: Any, vector: Any, registry: Any, record_type: type):
+def module_residual_dependencies(module: Any, vector: Any, registry: Any, record_type: type, *, parameter_sources=None):
     """Run the real method once; pair each actual returned record with its sources.
 
     Private strong references retain constructor identities for this invocation.
@@ -568,6 +618,8 @@ def module_residual_dependencies(module: Any, vector: Any, registry: Any, record
         return records, [None for record in records], False
     cache = _TRACE_REUSE.get()
     key = _trace_key(module, registry, record_type, vector) if cache is not None else None
+    if key is not None and parameter_sources:
+        key = (key, tuple(sorted(parameter_sources.items())))
     if key is not None:
         for previous, dependencies, no_reads in cache.get(key, ()):
             if previous == _trace_inputs((name for name, value in previous), vector, registry):
@@ -577,7 +629,7 @@ def module_residual_dependencies(module: Any, vector: Any, registry: Any, record
                         return records, [None for record in records], no_reads
                     return records, list(dependencies), no_reads
                 break
-    capture = _Capture(registry, record_type, module, vector)
+    capture = _Capture(registry, record_type, module, vector, parameter_sources)
     try:
         sys.settrace(capture.trace)
         records = module.residuals(vector, registry)
@@ -589,6 +641,12 @@ def module_residual_dependencies(module: Any, vector: Any, registry: Any, record
         dependencies.append(entry[1] if entry is not None and entry[0] is record else None)
     if len({id(record) for record in records}) != len(records):
         dependencies = [None for record in records]
-    if key is not None and key == _trace_key(module, registry, record_type, vector):
-        cache.setdefault(key, []).append((_trace_inputs(capture.reads, vector, registry), tuple(dependencies), not capture.reads))
+    current_key = _trace_key(module, registry, record_type, vector) if key is not None else None
+    if current_key is not None and parameter_sources:
+        current_key = (current_key, tuple(sorted(parameter_sources.items())))
+    if key is not None and key == current_key:
+        # Straight-line supported expressions have the same provenance at every
+        # numeric point. Their actual values are still recomputed above on reuse.
+        exact = capture.value_sensitive or any(part is None for part in dependencies)
+        cache.setdefault(key, []).append((_trace_inputs(capture.reads if exact else (), vector, registry), tuple(dependencies), not capture.reads))
     return records, dependencies, not capture.reads

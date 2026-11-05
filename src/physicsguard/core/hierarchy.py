@@ -837,10 +837,18 @@ def _attach_source_report(report, observed, spec, builder, parameter_rows):
     backed = {r['id'] for r in rows if r['colour'] in ('green', 'red') and r.get('source_digest')
               and not r['reason'].startswith('quote_not_in_source')}
     registry = builder.build_registry()
+    vector = registry.initial_vector()
+    registered = set(registry.names())
+    for name, row in observed.variables.items():
+        if name in registered:
+            vector[registry.get_index(name)] = row.value
+    for name, row in report.derived_variables.items():
+        vector[registry.get_index(name)] = row['value']
     traced = []
     # With no source-backed reading there is no provenance claim to establish.
     # Ordinary solves and complete AI-only comparisons keep their existing path.
-    records = builder.diagnostic_residual_records(registry.initial_vector(), _dependencies=traced) if backed else []
+    records = builder.diagnostic_residual_records(vector, _dependencies=traced,
+                                                  _parameter_sources=backed) if backed else []
     deps = {r.name: needs or set() for r, needs in zip(records, traced)}
     for name, info in report.derived_variables.items():
         if set(info.get('dependencies', [])) & backed:
@@ -860,8 +868,7 @@ def _attach_source_report(report, observed, spec, builder, parameter_rows):
     verdicts = []
     for original in report.block_verdicts:
         row = dict(original)
-        sourced = any(set(deps.get(name, ())) & backed or any(
-            p.startswith('parameter:' + by_name[name].source + '.') for p in backed)
+        sourced = any(set(deps.get(name, ())) & backed
             for name in assigned.get(row['block_id'], []) if name in by_name)
         colour = 'red' if row['checked_residual_count'] and not row['own_audit_pass'] else (
             'green' if row['checked_residual_count'] and sourced else 'grey')

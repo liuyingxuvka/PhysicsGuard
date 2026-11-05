@@ -13,7 +13,8 @@ from physicsguard.core.assumptions import AssumptionCard, AssumptionManager, Ass
 from physicsguard.core._residual_dependencies import Dependencies, module_residual_dependencies
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.refusal import DomainRefusal
-from physicsguard.modules.registry import ModuleRegistry, instantiate_module_with_parameter_reads, default_module_registry
+from physicsguard.modules.registry import (ModuleRegistry, instantiate_module_with_parameter_reads,
+                                         native_parameter_attributes, default_module_registry)
 from physicsguard.schema.system_spec import SystemSpec, VariableOverrideSpec
 
 
@@ -120,6 +121,7 @@ class ResidualBuilder:
         _dependencies: list[Dependencies] | None = None,
         _zero_reads: list[str] | None = None,
         _locations: list[tuple[Any, int]] | None = None,
+        _parameter_sources: set[str] | None = None,
     ) -> list[ResidualRecord]:
         registry = self.build_registry()
         vector = self._validate_x(x, registry)
@@ -128,7 +130,17 @@ class ResidualBuilder:
             if _dependencies is None:
                 current = module.residuals(vector, registry)
             else:
-                current, dependencies, no_reads = module_residual_dependencies(module, vector, registry, ResidualRecord)
+                parameters = {}
+                wanted = {name for name in module.parameters
+                          if f'parameter:{module.component_id}.{name}' in (_parameter_sources or ())}
+                if wanted and type(module).__module__.startswith('physicsguard.modules.'):
+                    reads = {}
+                    instantiate_module_with_parameter_reads(self.module_registry, module.module_type,
+                                                           deepcopy(module.parameters), reads, module.component_id)
+                    parameters = {attribute: frozenset(f'parameter:{module.component_id}.{name}' for name in names & wanted)
+                                  for attribute, names in native_parameter_attributes(module, reads).items() if names & wanted}
+                current, dependencies, no_reads = module_residual_dependencies(
+                    module, vector, registry, ResidualRecord, **({'parameter_sources': parameters} if parameters else {}))
                 if no_reads and _zero_reads is not None:
                     _zero_reads.append(module.module_type)
                 # A supported no-read native formula falls back to declared
