@@ -421,6 +421,18 @@ class _Capture:
                 return vars(base).get(node.attr, _UNKNOWN)
             except TypeError:
                 pass
+        if isinstance(node, ast.Subscript):
+            # Guard constants may come from the native constructor's fixed
+            # numeric tables. Never execute selectors on observed containers.
+            base = self._parameter_value(node.value, state)
+            index = node.slice
+            sign = 1
+            if isinstance(index, ast.UnaryOp) and isinstance(index.op, ast.USub):
+                index, sign = index.operand, -1
+            if (id(base) in self.fixed_tables and self.fixed_tables[id(base)] is base
+                    and isinstance(index, ast.Constant) and type(index.value) is int
+                    and -len(base) <= sign * index.value < len(base)):
+                return base[sign * index.value]
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'abs' and len(node.args) == 1 and not node.keywords:
             value = self._parameter_value(node.args[0], state)
             if type(value) in (int, float, np.float64, np.float32, np.int64, np.int32):
