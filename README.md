@@ -8,7 +8,7 @@
 
 | Version | Runtime | Package | License |
 | --- | --- | --- | --- |
-| `v0.17.1` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.18.0` | Python 3.11+ | `physicsguard` | MIT |
 
 [中文说明](./README.zh-CN.md)
 
@@ -143,13 +143,13 @@ to `--json`.
 **1. Install the tool, from the release tag.**
 
 ```bash
-python -m pip install "physicsguard @ git+https://github.com/liuyingxuvka/PhysicsGuard.git@v0.17.1"
+python -m pip install "physicsguard @ git+https://github.com/liuyingxuvka/PhysicsGuard.git@v0.18.0"
 ```
 
 **2. Install the skill for your AI**, from the same tag:
 
 ```bash
-git clone --depth 1 --branch v0.17.1 https://github.com/liuyingxuvka/PhysicsGuard.git
+git clone --depth 1 --branch v0.18.0 https://github.com/liuyingxuvka/PhysicsGuard.git
 python PhysicsGuard/scripts/install_physicsguard_skills.py --target ~/.claude/skills          # Claude Code
 python PhysicsGuard/scripts/install_physicsguard_skills.py --target ~/.codex/skills           # Codex
 python PhysicsGuard/scripts/install_physicsguard_skills.py --target ~/.claude/skills --check  # is the installed copy current?

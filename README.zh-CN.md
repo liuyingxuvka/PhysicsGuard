@@ -8,7 +8,7 @@
 
 | 版本 | 运行环境 | 包名 | 许可证 |
 | --- | --- | --- | --- |
-| `v0.17.1` | Python 3.11+ | `physicsguard` | MIT |
+| `v0.18.0` | Python 3.11+ | `physicsguard` | MIT |
 
 [English](./README.md)
 
@@ -122,13 +122,13 @@ flowchart LR
 **第一步：从发布的 tag 安装工具。**
 
 ```bash
-python -m pip install "physicsguard @ git+https://github.com/liuyingxuvka/PhysicsGuard.git@v0.17.1"
+python -m pip install "physicsguard @ git+https://github.com/liuyingxuvka/PhysicsGuard.git@v0.18.0"
 ```
 
 **第二步：给你的 AI 装技能**，同样用这个 tag：
 
 ```bash
-git clone --depth 1 --branch v0.17.1 https://github.com/liuyingxuvka/PhysicsGuard.git
+git clone --depth 1 --branch v0.18.0 https://github.com/liuyingxuvka/PhysicsGuard.git
 python PhysicsGuard/scripts/install_physicsguard_skills.py --target ~/.claude/skills          # Claude Code
 python PhysicsGuard/scripts/install_physicsguard_skills.py --target ~/.codex/skills           # Codex
 python PhysicsGuard/scripts/install_physicsguard_skills.py --target ~/.claude/skills --check  # 装好的副本是不是最新的？
