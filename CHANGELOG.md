@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.17.1 - 2026-11-05 - Refuse ambiguous numeric readings
+
+- A number containing a comma in `external_signal`, whether a decimal comma or thousands separator, is refused with exit 2 and its original text. A zero-valued audit can no longer pass after `6,0 L/min` is shortened to `0 L/min`; numbers separated by units and a comma remain separate readings.
+- Numeric ranges such as `6 to 7 L/min` are explicitly refused as unsupported ranges instead of being reported as a reading of the final number.
+- Development documentation now distinguishes the model release command's native-conformance `UNKNOWN` (exit 0) from the real assumption-card lifecycle test.
+
 ## v0.17.0 - 2026-11-04 - Declared physical conversions and readable flow diagrams
 
 - An error inside the tool's own probes (the unit-factor hint search, the scale-source replay and the resolution samples) now stops the command with exit 2 and the error text, whatever its type, KeyError, IndexError, ZeroDivisionError and ValueError included; before, it silently dropped the hint, printed the scale as unavailable or dropped a sample. Only a relation's own refusal is skipped there: the range checks of the native modules and of variable declarations (bounds, positive and nonnegative values, efficiencies and fractions, table ranges, denominator floors) now raise `DomainRefusal` (a kind of ValueError, so their messages are unchanged), and a custom module refuses a value by raising `physicsguard.modules.DomainRefusal`. The bounded search that derives unobserved values also stops on such an error; a refusal, a division by zero or an overflow at one of its sample points still means no unique root, and the variable stays unobserved. Other arithmetic errors, including `FloatingPointError`, reach the caller instead of being treated as an undefined sample. Narrowing these handlers exposed one hidden failure: on a snapshot with an unobserved variable the hint search lost every trial that did not go through the derivation, so it could name the wrong variable ("heater.m_dot_kg_s multiply by 0.001" instead of "heater.Q_dot_W multiply by 1000"); every trial now goes through the derivation.
