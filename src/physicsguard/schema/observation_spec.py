@@ -33,6 +33,7 @@ class PhysicalPropertySpec(BaseModel):
     value: float
     unit: str
     source: Optional[str] = None
+    quote: Optional[dict[str, Any]] = None
 
     @field_validator("value")
     @classmethod
@@ -62,6 +63,7 @@ class ObservedValueSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     value: Optional[float] = None
+    quote: Optional[dict[str, Any]] = None
     raw_value: Optional[float] = None
     raw_unit: Optional[str] = None
     # Accepted input evidence survives counterfactual model_copy without recomputation.
@@ -155,9 +157,15 @@ class ObservedValuesSpec(BaseModel):
     properties: dict[str, PhysicalPropertySpec] = Field(default_factory=dict)
     variables: dict[str, ObservedValueSpec]
     metadata: dict[str, Any] = Field(default_factory=dict)
+    sources: dict[str, str] = Field(default_factory=dict)
+    parameters: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    claims: list[dict[str, Any]] = Field(default_factory=list)
+    row_key: Optional[dict[str, Any]] = None
+    _source_readings: list[dict[str, Any]] = PrivateAttr(default_factory=list)
+    _sources: dict[str, Any] = PrivateAttr(default_factory=dict)
 
     @model_validator(mode="after")
-    def _validate_observation(self) -> "ObservedValuesSpec":
+    def _validate_observation(self, info: ValidationInfo) -> "ObservedValuesSpec":
         if not self.variables:
             raise ValueError("observed variables cannot be empty")
         for name, row in self.variables.items():
@@ -176,5 +184,11 @@ class ObservedValuesSpec(BaseModel):
         # One route: a snapshot built in Python is converted and checked exactly like one loaded from a file.
         from physicsguard.schema.observed_conversion import convert_observed_rows
 
-        convert_observed_rows(self.variables, self.properties)
+        from pathlib import Path
+        from physicsguard.io.source_reading import load_sources, prepare_properties, prepare_csv_rows
+        base = Path((info.context or {}).get('source_base', '.'))
+        sources = load_sources(self.sources, base)
+        source_rows = prepare_properties(self, sources)
+        source_rows.extend(prepare_csv_rows(self, sources, base))
+        convert_observed_rows(self.variables, self.properties, source_document=self, sources=sources, source_rows=source_rows)
         return self

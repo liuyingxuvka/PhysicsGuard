@@ -1,0 +1,34 @@
+observation_name: ai_answer
+variables:
+  heater.m_dot_kg_s:
+    value: 6.0
+    unit: kg/s
+    external_signal: m_dot_kg_s from the question
+  heater.T_in_K:
+    value: 288.15
+    unit: K
+    external_signal: T_in_K from the question
+  heater.T_out_K:
+    value: 333.15
+    unit: K
+    external_signal: 60 C
+  heater.Q_dot_W:
+    value: 1130220.0
+    unit: W
+    external_signal: AI heater power
+  mix.m_dot_2_kg_s:
+    value: 9.0
+    unit: kg/s
+    external_signal: m_dot_2_kg_s from the question
+  mix.T_2_K:
+    value: 288.15
+    unit: K
+    external_signal: T_2_K from the question
+  mix.m_dot_out_kg_s:
+    value: 15.0
+    unit: kg/s
+    external_signal: AI outlet flow
+  mix.T_out_K:
+    value: 306.15
+    unit: K
+    external_signal: AI outlet temperature 33 C

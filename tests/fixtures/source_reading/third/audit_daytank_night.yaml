@@ -1,0 +1,14 @@
+audit_name: generator_day_tank
+system:
+  system_name: generator_day_tank
+  components:
+    - id: tank
+      type: LumpedLiquidVolumeStepModule
+      parameters: {dt_s: 4500.0, residual_scale_kg: 0.5}
+  connections: []
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: genset, name: Standby generator, level: 0, components: []}
+    - {id: fuel, name: Day tank, level: 1, parent_id: genset, components: [tank]}

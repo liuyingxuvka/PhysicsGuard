@@ -30,6 +30,10 @@ _NUMBER_VALUE = r"[-+−]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+−]?\d+)?"
 _NUMBER = re.compile(rf"(?<![\w.^+−-])({_NUMBER_VALUE})")
 _COMMA_NUMBER = re.compile(rf"(?<![\w.^+−-]){_NUMBER_VALUE}\s*,\s*\d")
 _NUMBER_RANGE = re.compile(rf"(?<![\w.^+−-]){_NUMBER_VALUE}\s*(?:\bto\b|[-–—])\s*{_NUMBER_VALUE}", re.IGNORECASE)
+_RANGE = re.compile(rf"(?<![\w.^+−-])({_NUMBER_VALUE})\s*(?:\bto\b|[-–—])\s*({_NUMBER_VALUE})", re.IGNORECASE)
+_AMBIGUOUS_GROUP = re.compile(rf"(?<![\w.^+−-]){_NUMBER_VALUE}\s*,\s*\d|(?<![\w.^+−-])\d+[ '’]+\d{{3}}(?!\d)")
+_SI_GROUP = re.compile(r"(?<=\d)[\u00a0\u2009\u202f](?=\d{3}(?:\D|$))")
+_CLOCK = re.compile(r"(?<!\d)([0-2]?\d):([0-5]\d)(?::([0-5]\d))?(?!\d)")
 # Separate observations/prose without guessing which English words are units. A period can occur in l.min-1.
 SIGNAL_DELIMITERS = ",;:=()[]"
 
@@ -46,20 +50,27 @@ class ObservedConversionError(ValueError):
     """A raw reading, or a reading in external_signal, that the tool refuses while an observed spec is validated."""
 
 
-def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: dict[str, PhysicalPropertySpec]) -> None:
+def convert_observed_rows(variables: dict[str, ObservedValueSpec], properties: dict[str, PhysicalPropertySpec], *,
+                          source_document=None, sources: dict | None = None, source_rows: list | None = None) -> None:
     """Convert each raw reading once, then check every row against every reading its external_signal names.
 
     Called by the ObservedValuesSpec and ObservedSeriesSpec validators, so every route to a spec runs it; a
     spec built again from rows already checked checks them again, from a cleared state, with the same result.
     """
     for variable, row in variables.items():
+        if row.quote and source_document is None:
+            raise ObservedConversionError(f'quote_requires_source_document:{variable}: load the complete observed document with its sources')
         row._conversion_checked = None
         row._conversion_check = None
         row._signal_disagrees = False
         row._missing_property = None
         row._signal_unreadable = False
         raw_conversion = _convert_raw_row(variable, row, properties) if row.raw_value is not None else None
-        _check_signal_reading(variable, row, raw_conversion, properties)
+        if not row.quote:
+            _check_signal_reading(variable, row, raw_conversion, properties)
+    if source_document is not None:
+        from physicsguard.io.source_reading import check_source_rows
+        check_source_rows(source_document, sources or {}, source_rows or [])
 
 
 def _convert_raw_row(variable: str, row: ObservedValueSpec,
@@ -105,6 +116,9 @@ def _signal_readings(text: str | None) -> _SignalText:
     to read_unit (plus declared transducer outputs), with no word allowlist or length limit here.
     """
     text = text or ""
+    if _AMBIGUOUS_GROUP.search(text):
+        return _SignalText([], [text])
+    text = _SI_GROUP.sub('', text)
     readings: list[_Reading] = []
     unreadable: list[str] = []
     matches = list(_NUMBER.finditer(text))
@@ -131,6 +145,62 @@ def _signal_readings(text: str | None) -> _SignalText:
         else:
             unreadable.append(f"{match.group(1)} {unit}")
     return _SignalText(readings, unreadable)
+
+
+def read_source_value(text: str, target_unit: str | None = None,
+                      properties: dict | None = None) -> dict:
+    """Read one source span using the sole unit table; never guess an ambiguous span.
+
+    ``value`` and range endpoints are in target_unit; tolerance is 1e-3 of the
+    reading as written after scaling, excluding temperature offsets. Properties
+    are existing PhysicalPropertySpec objects. This API does not establish provenance.
+    """
+    target = target_unit or '1'
+    unreadable = lambda why: {'kind': 'unreadable', 'unit': target_unit, 'reason': why}
+    if _AMBIGUOUS_GROUP.search(text):
+        return unreadable('ambiguous digit grouping in ' + repr(text))
+    span = _SI_GROUP.sub('', text)
+    clocks = _CLOCK.findall(span)
+    if clocks and known_conversion('s', target) is not None:
+        if len(clocks) != 2 or any(int(h) > 23 for h, _, _ in clocks):
+            return unreadable('a duration needs exactly two valid clock times')
+        times = [int(h)*3600 + int(m)*60 + int(s or 0) for h, m, s in clocks]
+        if times[1] <= times[0]:
+            return unreadable('the second clock time is not after the first; midnight is not inferred')
+        factor, offset = known_conversion('s', target)
+        value = (times[1]-times[0])*factor + offset
+        return {'kind': 'value', 'value': value, 'unit': target_unit,
+                'tolerance': max(abs((times[1]-times[0])*factor)*1e-3, 1e-12), 'reason': 'two clock times'}
+    ranged = _RANGE.search(span)
+    if ranged:
+        tail = span[ranged.end():].strip().rstrip('.;,:')
+        if _NUMBER.search(span[:ranged.start()]) or _NUMBER.search(tail) or read_unit(tail) is None:
+            return unreadable('quote one complete numeric range with its unit')
+        routes = _conversion_routes(tail, target, properties or {})
+        if len(routes) != 1:
+            return unreadable('no unique conversion from range to ' + target)
+        factor, offset, how = routes[0]
+        lo, hi = [float(s.replace('−', '-'))*factor+offset for s in ranged.groups()]
+        if lo >= hi:
+            return unreadable('range ends out of order')
+        return {'kind': 'range', 'lower': lo, 'upper': hi, 'unit': target_unit,
+                'tolerance': max(abs(lo-offset), abs(hi-offset), 1e-9)*1e-3, 'reason': how}
+    found = _signal_readings(span)
+    numbers = list(_NUMBER.finditer(span))
+    # One bare number is meaningful only for a dimensionless target.
+    if not found.readings and not found.unreadable and len(numbers) == 1 and known_conversion('1', target):
+        number = float(numbers[0].group(1).replace('−', '-'))
+        return {'kind': 'value', 'value': number, 'unit': target_unit,
+                'tolerance': max(abs(number)*1e-3, 1e-12), 'reason': 'dimensionless reading'}
+    if len(found.readings) != 1 or len(numbers) != 1:
+        return unreadable('quote one reading; other numbers or unreadable units remain in ' + repr(text))
+    reading = found.readings[0]
+    routes = _conversion_routes(reading.unit, target, properties or {})
+    if len(routes) != 1:
+        return unreadable('no unique conversion from ' + reading.unit + ' to ' + target)
+    factor, offset, how = routes[0]
+    return {'kind': 'value', 'value': reading.number*factor+offset, 'unit': target_unit,
+            'tolerance': max(abs(reading.number*factor)*1e-3, 1e-12), 'reason': how}
 
 
 def _conversion_routes(source: str, target: str | None, properties: dict[str, PhysicalPropertySpec], *,
@@ -201,9 +271,16 @@ def _check_signal_reading(variable: str, row: ObservedValueSpec, raw_conversion:
             f"signal_reading_unreadable:{variable}: external_signal {text!r} contains a number with commas; "
             "decimal commas and thousands separators are not supported; write one unambiguous number")
     if _NUMBER_RANGE.search(text):
-        raise ObservedConversionError(
-            f"signal_reading_unreadable:{variable}: external_signal {text!r} contains a numeric range; "
-            "ranges are not supported; supply one measured value")
+        interval = read_source_value(text, row.unit, properties)
+        if interval['kind'] == 'range':
+            if interval['lower']-interval['tolerance'] <= row.value <= interval['upper']+interval['tolerance']:
+                row._conversion_checked = True
+                row._conversion_check = f"{text!r}: inside; the AI chose the point"
+                return
+            raise ObservedConversionError(f"signal_reading_disagrees:{variable}: {text!r}: value {row.value:g} outside the range")
+        row._signal_unreadable = True
+        row._conversion_check = f"signal_reading_unreadable:{variable}: {text!r}: {interval['reason']}"
+        return
     signal = _signal_readings(row.external_signal)
     origin = f"raw_value {row.raw_value:g} {row.raw_unit}" if raw else "the value"
     note = ""

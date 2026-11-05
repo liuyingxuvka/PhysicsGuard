@@ -66,6 +66,8 @@ def _structure_parts(block: dict[str, Any], depth: int, cards: list[str], *, ful
 def _verdict_part(row: dict[str, Any]) -> str:
     """own PASS|FAIL only for a block with checked residuals; never PASS without one."""
     parts = []
+    if row.get('colour'):
+        parts.append(row['colour'] + ': ' + row['source_reason'])
     if row["checked_residual_count"]:
         text = f"own {_flag(row['own_audit_pass'])} {row['max_abs_normalized_residual']:.2f} ({row['checked_residual_count']} checked)"
         top = row.get("top_residual")
@@ -188,6 +190,17 @@ def render_tree_view(description: dict[str, Any], report: dict[str, Any] | None 
     show_structure = full or (audit is None and variants is None)
     if audit is not None:
         lines = [_report_head(description, audit, comparison)]
+        metadata = audit.get('metadata', {})
+        if metadata.get('source_readings'):
+            lines.append('sources: ' + (', '.join(f'{name}={s["path"]} sha256:{s["sha256"]}'
+                         for name, s in metadata.get('sources', {}).items()) or 'none'))
+            readings = metadata['source_readings']
+            lines.append('readings: ' + ', '.join(f'{sum(r["colour"] == c for r in readings)} {c}' for c in ('green','red','grey')))
+            ordered = sorted(readings, key=lambda r: r['colour'] != 'red')
+            shown = ordered if full else ordered[:10]
+            lines.extend(f'  {r["colour"]} {r["id"]}: {r["reason"]}' for r in shown)
+            if len(shown) < len(readings):
+                lines.append(f'  +{len(readings)-len(shown)} readings; --json gives every source status')
     elif variants is not None:
         lines = [f"audit {description['audit_name']} variants: {len(variants['variants'])} variants, "
                  f"{len(variants.get('pairs', []))} pairs"]

@@ -111,6 +111,26 @@ Refinement rules may filter `trigger_roles`, `trigger_diagnostic_keys`, `confide
 
 ## Observed snapshots and freshness
 
+Quote each given number from its original file rather than transcribing a converted value.
+Declare `sources: {question: question.txt}` and attach `quote: {from: question, text: "6 L/min"}`
+to a variable or property; a pipe-table cell is `{from: question, row: "run 3", column: "Flow"}`.
+Quoted physical parameters are keyed `component.parameter` under `parameters` and replace the
+audit parameter when it is evaluated. The [complete example](https://github.com/liuyingxuvka/PhysicsGuard/tree/main/examples/source_reading)
+contains the text, table, property, parameter and known-bad case.
+
+Numbers come from the matched original span, with conversions computed by `core/units.py`.
+An exact numeric quote must end at its unit. A range such as `6 to 7 L/min` checks containment;
+the chosen point remains the AI's. The tolerance is `1e-3` of the reading in its original unit
+times its conversion factor, excluding temperature offsets. Unreadable or ambiguous text and
+unquoted inputs stay grey. A passing block is green only if an actual checked relation used a
+source-backed variable or parameter. JSON keeps the original report's top-level schema;
+`metadata.source_readings` and `metadata.sources` contain every status and original-file hash.
+
+For CSV, `testfile snapshot CONTRACT.yaml --at t_s=90` records `row_key`; without a key the
+selection is grey. Header units are checked against the contract and used to re-read cells.
+Generated snapshots omit physical conversion factors, retaining raw values and units. The
+explicit transducer-calibration exception retains its calibration and remains unchecked.
+
 An observed file has `observation_name` and `variables` keyed by qualified names; optional `source_model` holds only model/tool/version/scenario/export-time context and never changes a verdict:
 
 ```yaml

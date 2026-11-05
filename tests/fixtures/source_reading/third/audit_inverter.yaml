@@ -1,0 +1,19 @@
+audit_name: pv_string_inverter
+system:
+  system_name: pv_string_inverter
+  components:
+    - id: dc
+      type: ElectricalPowerModule
+      parameters: {residual_scale_W: 10.0}
+    - id: inv
+      type: InverterSimpleModule
+      parameters: {residual_scale_power_W: 10.0}
+  connections:
+    - {from_variable: dc.P_W, to_variable: inv.P_dc_W}
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: pv, name: Rooftop PV string, level: 0, components: []}
+    - {id: string, name: DC string, level: 1, parent_id: pv, components: [dc]}
+    - {id: conversion, name: String inverter, level: 1, parent_id: pv, components: [inv]}

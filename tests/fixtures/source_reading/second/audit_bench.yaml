@@ -1,0 +1,19 @@
+audit_name: heater_bench
+system:
+  system_name: heater_bench
+  components:
+    - id: elec
+      type: ElectricalPowerModule
+      parameters: {residual_scale_W: 20.0}
+    - id: heat
+      type: CoolantHeatBalanceModule
+      parameters: {cp_J_kgK: 4186.0, residual_scale_W: 20.0}
+  connections:
+    - {from_variable: elec.P_W, to_variable: heat.Q_dot_W}
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: bench, name: Heater on the bench, level: 0, components: []}
+    - {id: electrical, name: Supply side, level: 1, parent_id: bench, components: [elec]}
+    - {id: water, name: Water side, level: 1, parent_id: bench, components: [heat]}

@@ -1,0 +1,24 @@
+observation_name: pump_answer
+sources: {question: question_pump.txt}
+properties:
+  water_density: {value: 998.0, unit: kg/m^3, quote: {from: question, text: "density 998 kg/m³"}}
+parameters:
+  pump.rho_kg_m3: {unit: kg/m^3, quote: {from: question, text: "density 998 kg/m³"}}
+claims:
+  - {quote: {from: question, text: "What shaft power does the pump need"}, variable: pump.P_shaft_W}
+  - {quote: {from: question, text: "what current does the motor draw?"}, variable: elec.current_A}
+variables:
+  pump.m_dot_kg_s:
+    raw_value: 7.2
+    raw_unit: m^3/h
+    unit: kg/s
+    conversion_property: water_density
+    external_signal: "7.2 m^3/h"
+    quote: {from: question, text: "moves 7.2 m³/h"}
+  pump.p_in_Pa: {raw_value: 1.2, raw_unit: bar, unit: Pa, external_signal: "1.2 bar", quote: {from: question, text: "from 1.2 bar"}}
+  pump.p_out_Pa: {raw_value: 4.7, raw_unit: bar, unit: Pa, external_signal: "4.7 bar", quote: {from: question, text: "to 4.7 bar"}}
+  pump.efficiency: {value: 0.64, external_signal: "pump efficiency 64 %", quote: {from: question, text: "Pump efficiency is 64 %"}}
+  pump.P_shaft_W: {value: 1093.75, unit: W, external_signal: "AI shaft power"}
+  elec.V_V: {value: 230.0, unit: V, external_signal: "230 V", quote: {from: question, text: "fed at 230 V"}}
+  elec.P_W: {value: 1360.0, unit: W, external_signal: "meter 1360 W", quote: {from: question, text: "meter reads 1 360 W"}}
+  elec.current_A: {value: 5.913, unit: A, external_signal: "AI motor current"}

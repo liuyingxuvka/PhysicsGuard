@@ -93,7 +93,7 @@ def quantity_flow(spec: Any, *, focus: str | None = None, quantity: str | None =
 
     links = _links_of(traced, quantity, unit)
     filtered = sum(1 for variable, _target, _label in traced if quantity is not None and not _of_quantity(unit(variable), quantity))
-    verdicts = _block_verdicts(spec, observed) if observed is not None else {}
+    verdicts, source_colours = _block_verdicts(spec, observed) if observed is not None else ({}, {})
     focus_components = _focus_components(focus, verdicts, components, block_of, index)
     if focus_components is not None:
         shown = _neighbourhood(links, focus_components)
@@ -130,13 +130,17 @@ def quantity_flow(spec: Any, *, focus: str | None = None, quantity: str | None =
                      "quantity_choices": quantity_choices, "combined_choices": combined}
     omitted_components = sorted(set(components) - shown)
     failing = sorted(block for block, verdict in verdicts.items() if verdict == "fail")
+    nodes = [_node_row(name, spec, block_of, verdicts, drawing, chains) for name in drawing.nodes]
+    for node in nodes:
+        colours = {source_colours.get(block) for block in [node['block']] + node.get('folds', [])} - {None}
+        node['colour'] = next((c for c in ('red', 'grey', 'green') if c in colours), None)
     return {
         "audit_name": spec.audit_name,
         "level": drawing.level,
         "focus": sorted(focus_components) if focus_components is not None else None,
         "focus_reason": "named" if focus is not None else ("failing blocks " + ", ".join(failing)) if failing and focus_components else None,
         "quantity": quantity,
-        "nodes": [_node_row(name, spec, block_of, verdicts, drawing, chains) for name in drawing.nodes],
+        "nodes": nodes,
         "links": [{"from": link.source, "to": link.target, "quantities": link.labels} for link in drawing.links.values()],
         "omitted": {
             "components": omitted_components,
@@ -264,6 +268,7 @@ def _block_verdicts(spec: Any, observed: Any) -> dict[str, str]:
     report = HierarchicalAuditRunner(spec).evaluate_observed(
         observed, top_n_blocks=len(spec.hierarchy.blocks), _unit_factor_hints=False, _resolution=False)
     owners = {block.id for block in spec.hierarchy.blocks if block.components}
+    source_colours = {row['block_id']: row.get('colour') for row in report.block_verdicts}
     verdicts = {}
     for block in report.top_blocks:
         if block.checked_residuals:
@@ -271,7 +276,7 @@ def _block_verdicts(spec: Any, observed: Any) -> dict[str, str]:
         elif (block.block_id in owners or block.derived_variables or block.unchecked_residuals
               or block.missing_required_variables):
             verdicts[block.block_id] = "unchecked"
-    return verdicts
+    return verdicts, source_colours
 
 
 def _focus_components(focus, verdicts, components, block_of, index) -> set[str] | None:
@@ -354,10 +359,12 @@ def render_quantity_flow_mermaid(flow: dict[str, Any]) -> str:
         lines.append(f"  class {','.join(notes)} omitted")
     for verdict, style in (("fail", "fill:#f8d7da,stroke:#b02a37"), ("unchecked", "fill:#e2e3e5,stroke:#6c757d"),
                            ("pass", "fill:#d1e7dd,stroke:#146c43")):
-        marked = [ids[row["id"]] for row in flow["nodes"] if row["verdict"] == verdict]
+        colours = {'fail': 'red', 'unchecked': 'grey', 'pass': 'green'}
+        marked = [ids[row["id"]] for row in flow["nodes"] if (row.get('colour') == colours[verdict]
+                  if row.get('colour') else row['verdict'] == verdict)]
         if marked:
             lines.append(f"  classDef {verdict} {style}")
-            lines.append(f"  class {','.join(marked)} {verdict}")
+            lines.extend(f"  class {node} {verdict}" for node in marked) if verdict == 'unchecked' else lines.append(f"  class {','.join(marked)} {verdict}")
     return "\n".join(lines)
 
 

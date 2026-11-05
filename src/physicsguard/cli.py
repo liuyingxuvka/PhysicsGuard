@@ -146,7 +146,9 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument('--out', type=Path)
         command.add_argument('--pretty', action='store_true')
         if kind == 'snapshot':
-            command.add_argument('--row', type=int, required=True, help='zero-based source row')
+            selection = command.add_mutually_exclusive_group(required=True)
+            selection.add_argument('--row', type=int, help='zero-based source row')
+            selection.add_argument('--at', help='select the unique source row by FIELD=VALUE')
         else:
             command.add_argument('--rows', help='zero-based A:B, end exclusive; default all usable rows')
 
@@ -578,7 +580,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.testfile_command in {'snapshot', 'series'}:
                 from physicsguard.core.test_file_contract import testfile_snapshot, testfile_series
                 import yaml
-                output = (testfile_snapshot(args.contract, args.row) if args.testfile_command == 'snapshot'
+                output = (testfile_snapshot(args.contract, args.row, at=args.at) if args.testfile_command == 'snapshot'
                           else testfile_series(args.contract, args.rows))
                 if args.out:
                     args.out.parent.mkdir(parents=True, exist_ok=True)

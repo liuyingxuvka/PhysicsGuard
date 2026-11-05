@@ -1,0 +1,11 @@
+observation_name: tank_answer
+sources: {question: question_tank.txt}
+parameters:
+  lvl_prev.area_m2: {unit: m^2, quote: {from: question, text: "floor area of 1.0 m²"}}
+claims:
+  - {quote: {from: question, text: "What is the level at the end of the filling?"}, variable: lvl_cur.level_m}
+variables:
+  lvl_prev.level_m: {raw_value: 0.40, raw_unit: m, unit: m, external_signal: "0.40 m at the start", quote: {from: question, text: "The level was 0.40 m"}}
+  vol.V_dot_in_m3_s: {raw_value: 12.0, raw_unit: L/min, unit: m^3/s, external_signal: "pump 12 L/min", quote: {from: question, text: "pump at 12 L/min"}}
+  vol.V_dot_out_m3_s: {value: 0.0, unit: m^3/s, external_signal: "outlet closed"}
+  lvl_cur.level_m: {value: 0.868, unit: m, external_signal: "AI end level"}

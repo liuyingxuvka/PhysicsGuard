@@ -1,0 +1,11 @@
+observation_name: fan_answer
+sources: {question: question_fan.txt}
+claims:
+  - {quote: {from: question, text: "What torque does the shaft carry"}, variable: shaft.torque_Nm}
+  - {quote: {from: question, text: "what is the motor efficiency?"}, variable: motor.efficiency}
+variables:
+  shaft.omega_rad_s: {value: 161.3, unit: rad/s, external_signal: "fan speed from the question", quote: {from: question, text: "its shaft turns at 1540 rpm"}}
+  shaft.P_W: {raw_value: 2.2, raw_unit: kW, unit: W, external_signal: "fan shaft power", quote: {from: question, text: "the fan takes 2.2 kW"}}
+  shaft.torque_Nm: {value: 13.64, unit: N*m, external_signal: "AI shaft torque"}
+  motor.input_power_W: {raw_value: 2.62, raw_unit: kW, unit: W, external_signal: "motor supply meter", quote: {from: question, text: "motor reads 2.62 kW"}}
+  motor.efficiency: {value: 0.84, external_signal: "AI motor efficiency"}

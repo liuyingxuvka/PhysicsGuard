@@ -1,0 +1,19 @@
+audit_name: inline_heater
+system:
+  system_name: inline_heater
+  components:
+    - id: elec
+      type: ElectricalPowerModule
+      parameters: {residual_scale_W: 20.0}
+    - id: heat
+      type: CoolantHeatBalanceModule
+      parameters: {cp_J_kgK: 4186.0, residual_scale_W: 20.0}
+  connections:
+    - {from_variable: elec.P_W, to_variable: heat.Q_dot_W}
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: heater, name: Inline heater H-30, level: 0, components: []}
+    - {id: electrical, name: Supply side, level: 1, parent_id: heater, components: [elec]}
+    - {id: water, name: Water side, level: 1, parent_id: heater, components: [heat]}

@@ -79,8 +79,9 @@ def test_snapshot_matches_existing_tank_values(contract,prefix,row):
     actual = snapshot(TANK/contract,row)
     stored = yaml.safe_load((TANK/f'{prefix}_k{row}.yaml').read_text())
     assert {k:v['value'] for k,v in actual['variables'].items()} == {k:v['value'] for k,v in stored['variables'].items()}
-    assert actual['variables']['inflow_mass.V_dot_m3_s']['conversion_factor'] == .001
-    assert actual['variables']['heat.T_previous_K']['conversion_offset'] == 273.15
+    assert actual['variables']['inflow_mass.V_dot_m3_s']['raw_unit'] == 'L/s'
+    assert actual['variables']['heat.T_previous_K']['raw_unit'] == 'degC'
+    assert all('conversion_factor' not in item and 'conversion_offset' not in item for item in actual['variables'].values())
     assert actual['variables']['heat.T_current_K']['external_signal'] == f'T_tank_C@{row+1}'
 
 

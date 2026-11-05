@@ -1,0 +1,11 @@
+observation_name: day_tank_answer
+sources: {question: question_daytank.txt}
+parameters:
+  tank.dt_s: {unit: s, quote: {from: question, text: "which lasted 9:40–10:25"}}
+claims:
+  - {quote: {from: question, text: "How much diesel was in the day tank at the end of the run?"}, variable: tank.mass_current_kg}
+variables:
+  tank.mass_previous_kg: {raw_value: 412.0, raw_unit: kg, unit: kg, external_signal: "tank contents at the start", quote: {from: question, text: "day tank held 412 kg"}}
+  tank.m_dot_in_kg_s: {raw_value: 180.0, raw_unit: kg/h, unit: kg/s, external_signal: "transfer pump", quote: {from: question, text: "fed the tank at 180 kg/h"}}
+  tank.m_dot_out_kg_s: {raw_value: 95.0, raw_unit: kg/h, unit: kg/s, external_signal: "engine consumption", quote: {from: question, text: "engine burned 95 kg/h"}}
+  tank.mass_current_kg: {value: 475.75, unit: kg, external_signal: "AI end mass"}

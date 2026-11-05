@@ -1,0 +1,12 @@
+observation_name: chiller_answer
+sources: {question: question_chiller.txt, datasheet: datasheet_chiller.md}
+claims:
+  - {quote: {from: question, text: "What water flow does the loop need"}, variable: loop.m_dot_kg_s}
+  - {quote: {from: question, text: "what electrical power does the chiller draw?"}, variable: chiller.P_electric_W}
+variables:
+  chiller.Q_cooling_W: {raw_value: 56.0, raw_unit: kW, unit: W, external_signal: "datasheet KX-55 cooling", quote: {from: datasheet, row: "KX-55", column: "Cooling [kW]"}}
+  chiller.P_electric_W: {raw_value: 17.9, raw_unit: kW, unit: W, external_signal: "datasheet KX-55 power input", quote: {from: datasheet, row: "KX-55", column: "Power input [kW]"}}
+  chiller.COP: {value: 3.13, external_signal: "datasheet KX-55 COP", quote: {from: datasheet, row: "KX-55", column: "COP"}}
+  loop.T_in_K: {raw_value: 6.8, raw_unit: degC, unit: K, external_signal: "chilled water supply", quote: {from: question, text: "leaves the chiller at 6.8 °C"}}
+  loop.T_out_K: {raw_value: 12.5, raw_unit: degC, unit: K, external_signal: "chilled water return", quote: {from: question, text: "process at 12.5 °C"}}
+  loop.m_dot_kg_s: {value: 2.345, unit: kg/s, external_signal: "AI water flow"}

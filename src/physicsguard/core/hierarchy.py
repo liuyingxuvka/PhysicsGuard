@@ -118,6 +118,8 @@ class HierarchicalAuditReport:
     refinement_checks: list[dict[str, Any]] = field(default_factory=list)
     block_verdicts: list[dict[str, Any]] = field(default_factory=list)
     resolution: dict[str, dict[str, Any] | None] | None = None
+    source_readings: list[dict[str, Any]] = field(default_factory=list)
+    sources: dict[str, dict[str, str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -484,6 +486,8 @@ class HierarchicalAuditRunner:
         skip_unobserved: bool = False,
         _unit_factor_hints: bool = True,
         _resolution: bool = True,
+        _source_parameters_applied: bool = False,
+        _source_parameter_rows: list[dict] | None = None,
     ) -> HierarchicalAuditReport:
         """Evaluate external observed values directly and roll residuals up by block.
 
@@ -498,6 +502,13 @@ class HierarchicalAuditRunner:
         unknown provenance stays unchecked rather than licensed from an initial guess.
         """
 
+        if observed.parameters and not _source_parameters_applied:
+            from physicsguard.io.source_reading import source_parameters
+            source_spec, rows = source_parameters(observed, self.spec)
+            return HierarchicalAuditRunner(source_spec, self.base_dir).evaluate_observed(
+                observed, top_n_residuals, top_n_blocks, skip_unobserved=skip_unobserved,
+                _unit_factor_hints=_unit_factor_hints, _resolution=_resolution,
+                _source_parameters_applied=True, _source_parameter_rows=rows)
         builder = ResidualBuilder(self.spec.system)
         registry = builder.build_registry()
         values, missing, unknown = _observed_values_for_registry(observed, registry)
@@ -586,7 +597,7 @@ class HierarchicalAuditRunner:
             report = replace(report, resolution=_observed_resolution(
                 self.spec, builder, registry, observed, values, records, locations, report,
             ))
-        return report
+        return _attach_source_report(report, observed, self.spec, builder, _source_parameter_rows)
 
     def compare_observed(
         self,
@@ -801,6 +812,9 @@ class HierarchicalAuditRunner:
     def to_dict(self, report: Any) -> dict[str, Any]:
         data = asdict(report)
         audit = data.get("observed_hierarchy", data)
+        readings, sources = audit.pop('source_readings', []), audit.pop('sources', {})
+        if readings or sources:
+            audit['metadata'].update(source_readings=readings, sources=sources)
         if audit.get("resolution") is None:
             audit.pop("resolution", None)
         for row in audit.get("signal_mapping_ledger", []):
@@ -812,6 +826,60 @@ class HierarchicalAuditRunner:
 
     def to_json(self, report: HierarchicalAuditReport, pretty: bool = False) -> str:
         return json.dumps(self.to_dict(report), indent=2 if pretty else None, sort_keys=True)
+
+
+def _attach_source_report(report, observed, spec, builder, parameter_rows):
+    from physicsguard.io.source_reading import source_parameters
+    rows = [dict(row) for row in observed._source_readings]
+    if parameter_rows is None:
+        _, parameter_rows = source_parameters(observed, spec)
+    rows.extend(parameter_rows)
+    backed = {r['id'] for r in rows if r['colour'] in ('green', 'red') and r.get('source_digest')
+              and not r['reason'].startswith('quote_not_in_source')}
+    registry = builder.build_registry()
+    traced = []
+    # With no source-backed reading there is no provenance claim to establish.
+    # Ordinary solves and complete AI-only comparisons keep their existing path.
+    records = builder.diagnostic_residual_records(registry.initial_vector(), _dependencies=traced) if backed else []
+    deps = {r.name: needs or set() for r, needs in zip(records, traced)}
+    for name, info in report.derived_variables.items():
+        if set(info.get('dependencies', [])) & backed:
+            backed.add(name)
+        parents = [r for r in rows if r['id'] in info.get('dependencies', [])]
+        digests = sorted({d for r in parents for d in ([r['source_digest']] if r.get('source_digest') else r.get('source_digests', []))})
+        sourced = len(parents) == len(info.get('dependencies', [])) and all(r['colour'] == 'green' for r in parents)
+        rows.append({'id': name, 'colour': 'green' if sourced and digests else 'grey',
+                     'reason': 'derived by tool from source readings' if sourced and digests else 'derived with AI values or unchecked inputs',
+                     'value': info['value'], 'unit': registry.get_record(name).unit, 'tolerance': None,
+                     'source_digest': digests[0] if len(digests) == 1 else None, 'source_digests': digests})
+    assigned = {}
+    for item in report.block_assignments:
+        if item.residual_name in report.checked_residuals:
+            assigned.setdefault(item.block_id, []).append(item.residual_name)
+    by_name = {r.name: r for r in records}
+    verdicts = []
+    for original in report.block_verdicts:
+        row = dict(original)
+        sourced = any(set(deps.get(name, ())) & backed or any(
+            p.startswith('parameter:' + by_name[name].source + '.') for p in backed)
+            for name in assigned.get(row['block_id'], []) if name in by_name)
+        colour = 'red' if row['checked_residual_count'] and not row['own_audit_pass'] else (
+            'green' if row['checked_residual_count'] and sourced else 'grey')
+        reason = ('source-backed checks pass' if colour == 'green' else 'physical checks disagree' if colour == 'red' else
+                  'passes on AI values only' if row['checked_residual_count'] else 'no checks')
+        row.update(colour=colour, source_reason=reason)
+        verdicts.append(row)
+    from physicsguard.io.source_reading import find_quote
+    index = BlockIndex(spec.hierarchy, spec.system)
+    for i, claim in enumerate(observed.claims):
+        _, digest, problem = find_quote(claim.get('quote', {}), observed._sources)
+        block = index.block_for_variable(claim['variable'])
+        colour = next((r['colour'] for r in verdicts if r['block_id'] == block), 'grey')
+        rows.append({'id': f'claim:{i}', 'colour': 'red' if problem else colour,
+                     'reason': problem or f'question -> {claim["variable"]} -> block {block}', 'source_digest': digest})
+    sources = {name: {'path': s['path'], 'sha256': s['digest']} for name, s in observed._sources.items()}
+    return replace(report, audit_pass=report.audit_pass and not any(r['colour'] == 'red' for r in rows),
+                   source_readings=rows, sources=sources, block_verdicts=verdicts)
 
 
 def _block_verdict(block: BlockDiagnostic) -> dict[str, Any]:

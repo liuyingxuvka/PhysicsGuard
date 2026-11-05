@@ -1,0 +1,14 @@
+observation_name: heater_answer
+sources: {question: question_heater_b.txt, datasheet: datasheet_heater.md}
+properties:
+  water_density: {value: 1.0, unit: kg/L, quote: {from: question, text: "water: 1 kg/L"}}
+claims:
+  - {quote: {from: question, text: "What current does it draw"}, variable: elec.current_A}
+  - {quote: {from: question, text: "what is the outlet temperature at rated power?"}, variable: heat.T_out_K}
+variables:
+  elec.V_V: {value: 230.0, unit: V, external_signal: "230 V supply", quote: {from: question, text: "on a 230 V supply"}}
+  elec.P_W: {raw_value: 3.0, raw_unit: kW, unit: W, external_signal: "datasheet H-30 rated power", quote: {from: datasheet, row: "H-30", column: "Power (kW)"}}
+  elec.current_A: {value: 13.0, unit: A, external_signal: "datasheet H-30 rated current", quote: {from: datasheet, row: "H-30", column: "Current (A)"}}
+  heat.m_dot_kg_s: {raw_value: 3.0, raw_unit: L/min, unit: kg/s, conversion_property: water_density, external_signal: "datasheet H-30 lowest flow", quote: {from: datasheet, row: "H-30", column: "min (L/min)"}}
+  heat.T_in_K: {raw_value: 12.46, raw_unit: degC, unit: K, external_signal: "12.46 °C", quote: {from: question, text: "at 12.46 °C"}}
+  heat.T_out_K: {value: 299.943, unit: K, external_signal: "AI outlet temperature"}

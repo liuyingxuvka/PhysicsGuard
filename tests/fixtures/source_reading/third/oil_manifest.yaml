@@ -1,0 +1,73 @@
+manifest_id: oil_log
+source_file:
+  path: oil_log.csv
+  content_hash: 57f0c64ebe5b74d293e029898cc164dcbd7337bae53bd300730c7598bd1e4558
+  size_bytes: 458
+format:
+  kind: csv
+  delimiter: ','
+  encoding: utf-8
+  header_rows: 1
+  metadata: {}
+shape:
+  field_count: 5
+  row_count: 16
+  sample_count: 16
+time:
+  time_column: t_s
+  start_time: 0.0
+  end_time: 300.0
+  duration_s: 300.0
+  nominal_sample_rate_hz: 0.05
+  sampling_mode: time_series
+  continuity: continuous
+  gap_count: 0
+  metadata:
+    maximum_gap_s: 20.0
+    start_time_s: 0.0
+    end_time_s: 300.0
+    penultimate_time_s: 280.0
+fields:
+- name: t_s
+  data_type: integer
+  non_null_count: 16
+  null_count: 0
+  min_value: 0.0
+  max_value: 300.0
+  metadata: {}
+- name: oil_flow_LPM
+  data_type: float
+  non_null_count: 16
+  null_count: 0
+  min_value: 36.5
+  max_value: 38.0
+  metadata: {}
+- name: T_oil_in_degF
+  data_type: float
+  non_null_count: 16
+  null_count: 0
+  min_value: 104.0
+  max_value: 136.8
+  metadata: {}
+- name: T_oil_out_degF
+  data_type: float
+  non_null_count: 16
+  null_count: 0
+  min_value: 104.0
+  max_value: 120.6
+  metadata: {}
+- name: fan_rpm
+  data_type: integer
+  non_null_count: 16
+  null_count: 0
+  min_value: 0.0
+  max_value: 1450.0
+  metadata: {}
+extractor:
+  script: physicsguard.core.data_file_manifest.generate_delimited_manifest
+  script_hash: f044f0d365e77f51c7ec31b1a8adf8dc5f87dd9350c99c47785b3d8a140c9f16
+  generated_at: '2026-11-05T21:39:10.418958+00:00'
+  version: '1'
+  metadata: {}
+field_signature_hash: ef740452b70ba8e592fca01acf3bd516d903055ec84f05362d0055daa1fbfa46
+metadata: {}

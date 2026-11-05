@@ -1,0 +1,14 @@
+audit_name: cold_store_envelope
+system:
+  system_name: cold_store_envelope
+  components:
+    - id: walls
+      type: AmbientHeatLossModule
+      parameters: {UA_W_K: 58.0, residual_scale_W: 20.0}
+  connections: []
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: store, name: Cold store CS-2, level: 0, components: []}
+    - {id: envelope, name: Insulated envelope, level: 1, parent_id: store, components: [walls]}

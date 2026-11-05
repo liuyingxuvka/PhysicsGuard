@@ -1,58 +1,40 @@
 ---
 name: physicsguard
-description: "Use for engineering-simulation results and test data, and also for a physics or engineering calculation you make yourself (units, balances, conversions): low-fidelity physics residual audits that localize the faulty block, signal mapping, test-file contracts and model-vs-dataset validation. Not for software code behavior, including a simulation's code; use flowguard."
+description: "Use for engineering-simulation results and test data, and for a physics or engineering calculation you make yourself (units, balances, conversions): low-fidelity residual audits, signal mapping, test-file contracts and model-vs-dataset validation. Software code behavior belongs to flowguard."
 ---
 
 # PhysicsGuard
 
-## Start from the model
+## Start with the requested blocks
 
-1. Find this system's audit file (the path you were given, or `grep -rl "^hierarchy:" --include=*.yaml .`) and run `python -m physicsguard.cli hierarchy describe AUDIT.yaml` (add `--observed SNAPSHOT.yaml` when a snapshot exists). Name the blocks the request is about; keep the discussion on those blocks.
-2. No audit yet: build a coarse balance from `references/templates/audit_model.yaml` and read it back with `hierarchy describe` before any evaluation.
-3. After evaluating or comparing causes, read the verdicts on the same tree (the default output of `hierarchy evaluate|variants`).
-4. A refinement that is not built yet shows as `(planned)` on the tree: that is the target; once built it shows as `(block)`.
-5. When one block of the audit tree gets too big to localize a fault, refine it into a finer block tree (a child block names the coarse components it refines with refines; a refinement not built yet shows as (planned)), and keep the work on the blocks the request names.
+1. Find the supplied audit file and run `python -m physicsguard.cli hierarchy describe AUDIT.yaml` (`--observed SNAPSHOT.yaml` when supplied). Name the blocks the question concerns.
+2. No audit: choose coarse relations with `modules list --find WORDS` and `modules describe TYPE`, then build from `references/templates/audit_model.yaml`. A standalone component needs nonempty declared variables; a reference-only balance needs their owning components. Read the audit back before evaluating it.
+3. Refine only a block too broad to localize the problem. A proposed template is `(planned)`; a built child block names its coarse components with `refines`.
 
-## Quick check of your own calculation
+## Check a calculation against its original
 
-1. Find coarse relations with `python -m physicsguard.cli modules list --find WORDS` (replace WORDS with terms from the question), inspect a candidate with `python -m physicsguard.cli modules describe TYPE`, and choose a self-contained component with nonempty declared `variables` for a standalone check; a reference-only balance needs those variables' owning components. Write `audit.yaml` from `references/templates/audit_model.yaml` with the requested blocks and tolerable residual scales.
-2. Write `observed.yaml` from `references/templates/observed_snapshot.yaml`: preserve given inputs in their original units as paired `raw_value` and `raw_unit`; if the answer also claims a converted input, retain it as `value` so the loader checks agreement. Preserve claimed answer outputs as raw quantities too. Use unit names the tool reads (for example `degC` for Celsius; it refuses a unit it cannot read, and only a transducer output in V, mV, A, mA or ohm takes a calibration factor you write) and declare each target `unit`. When the quantity changes (L/min to kg/s), declare the property that links them under `properties` (for example `water_density: {value: 1.0, unit: kg/L}`) and name it with `conversion_property`: the tool computes the factor from its unit table and refuses a cross-quantity factor you wrote yourself. Inspect the supplied values with `cat observed.yaml`.
-3. Read back the audit and mappings without solving: `python -m physicsguard.cli hierarchy describe audit.yaml --observed observed.yaml`.
-4. Check the supplied answer with `python -m physicsguard.cli hierarchy evaluate audit.yaml observed.yaml > check.txt`. Exit 1 means a checked failure; keep its output for the next steps.
-5. Read `cat check.txt`: locate `own FAIL`, its hint and local resolution, and retain all non-pass states and mapping warnings.
-6. State only the conclusion supported by the saved result, name its checked boundary, and keep any unresolved parts visible.
+1. Write `observed.yaml`: **quote each given number from the question file; do not convert it yourself and then fill it in.** Declare `sources: {question: question.txt}` and, on a variable or property, `quote: {from: question, text: "6 L/min"}`. End a numeric quote at its unit. A pipe-table cell uses `quote: {from: question, row: "run 3", column: "Flow"}`. See `references/model-format.md` and `examples/source_reading/` in the repository.
+2. Retain the answer's claimed SI `value` and target `unit`; the tool reads the matching original span and compares them. For a change of quantity (L/min to kg/s), declare the linking property once under `properties`, with its own quote, and name it using `conversion_property`. The only unit table is the tool's; an unsupported or ambiguous reading stays grey. A transducer calibration is explicitly unchecked. An original numeric range checks containment and retains the AI's chosen point.
+3. Quoted physical parameters go under `parameters`, keyed `component.parameter`, and replace the audit parameter for evaluation. For CSV, `testfile snapshot CONTRACT.yaml --at t_s=90` records the selection key; a row without a key is grey. CSV units come from column headers, never a stored conversion factor. Example commands and the quote/cell/key forms are in the repository example.
+4. Read the mappings with `hierarchy describe audit.yaml --observed observed.yaml`. Then run `hierarchy evaluate audit.yaml observed.yaml > check.txt` and read the saved tree, `sources:` summary, hints and resolution. Exit 1 is a checked failure; exit 2 means the command could not run. Do not replace a red or grey result with a narration of success.
+5. A passing block is source-backed green only when its actual check used at least one sourced variable or parameter; otherwise it is grey `passes on AI values only`. A derived value is not an external observation. Choose residual scales as tolerable errors, read their local resolution, and state only the checked boundary.
 
-## Choose a route
+## One route per task
 
-Pick one route, then load only its file.
+Load only the matching route file.
 
-| The request | Route file |
+| Request | Route |
 |---|---|
-| A simulation result looks wrong: localize the faulty block, compare hypotheses, ask for the next signals, or build a candidate model from a validated hierarchy (default) | `references/routes/ai-debugging.md` |
-| Understand an external model's boundary, inventory, units and stop conditions before a non-trivial audit | `references/routes/model-understanding-preflight.md` |
-| Check how external signals or parameters map into PhysicsGuard variables: identity, unit, conversion, confidence, timing | `references/routes/signal-mapping-review.md` |
-| Concrete test-data files need a file and field contract before analysis | `references/routes/test-file-contract-review.md` |
-| Check a model against a contracted dataset: no-fit residuals, envelopes, calibration with holdout, validation depth | `references/routes/model-dataset-validation.md` |
+| Localize a simulation's faulty block, compare causes or ask for the next signals (default) | `references/routes/ai-debugging.md` |
+| Establish an external model's boundary, inventory, units and stop conditions | `references/routes/model-understanding-preflight.md` |
+| Check signal/parameter identities, units, conversion, confidence and timing | `references/routes/signal-mapping-review.md` |
+| Review concrete data-file and field contracts | `references/routes/test-file-contract-review.md` |
+| Check a contracted dataset, holdout, depth and adequacy | `references/routes/model-dataset-validation.md` |
 
-## Rules for every route
+## Read the same tree
 
-- Node: a block in `hierarchy.blocks` (components, connections, children); a failing block shows its counterexample: the checked residuals with their sign.
-- Parent: `parent_id`; a finer block names the coarse components it refines with `refines`.
-- Known-bad: `fault_variants` in the audit file; each one must fail in its `expect_blocks`, and a `benign` one must stay neutral (`hierarchy variants`).
-- Real binding: observed snapshots and series written by `testfile snapshot|series` from one test-file contract.
-- Test binding: `validation run` checks the audit against a contracted dataset (holdout, depth, adequacy).
-- Readback: `hierarchy describe` (text; `--observed`, `--json`, `--mermaid`); `hierarchy run|evaluate|compare|variants` print the same tree with verdicts, the `hint:` lines and the `resolution:` lines (`--json` for the full report).
-- Discussion: when you analyse or discuss a set-up with the owner (a failing block, how a quantity reaches a balance, a design option), put the picture from `python -m physicsguard.cli hierarchy flow AUDIT.yaml` (with `--observed SNAPSHOT.yaml`, `--focus BLOCK` or `--quantity mass_flow`) in your reply as a Mermaid block; it is computed from the audit, draws only that part and names what it left out. If its note says the picture is too large to read, draw what it names instead (`--focus`, `--quantity`, or both); if it says nothing fits, read the links with `--json`. Routine edits need no picture.
-- Current vs target: the audit file is the current model; a refinement whose next template is not built yet is `planned`, the target, and once built the refined tree replaces the coarse one in the same file.
-
-Choose a residual scale as the error you can tolerate in the residual's unit; read the resolution line before you state a number as checked.
-Read it with `python -m physicsguard.cli hierarchy describe audit.yaml`: default text, `--observed SNAPSHOT.yaml` for signal counts, `--json` for the full structure or `--mermaid` for a diagram. No solve or observed audit is performed.
-
-Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
-
-- If `python -m physicsguard.cli --help` fails, install the engine once with `python -m pip install -e <PhysicsGuard checkout>`; there is no version gate.
-- For audit YAML, observed snapshots and model growth, load `references/model-format.md`.
-- Keep non-pass states and unknowns visible.
-- AI narration, inventories and template previews are not evidence; only PhysicsGuard command output is.
-- Keep pointwise consistency distinct from stateful prediction and keep every claim inside the exact checked boundary.
-- A hand-off names another route: load that route file. Templates are in `references/templates/`.
+- Nodes are `hierarchy.blocks`; `parent_id` links them. `hierarchy run|evaluate|compare|variants` print their verdicts; `describe` reads the structure without solving (`--json` for detail).
+- `fault_variants` must fail their declared `expect_blocks`; a `benign` case must stay neutral. `testfile snapshot|series` binds real data; `validation run` checks the contracted dataset.
+- When discussing a set-up, show the Mermaid output of `hierarchy flow AUDIT.yaml` with the relevant `--observed`, `--focus BLOCK` or `--quantity mass_flow`. It comes from real relations and says what it omits. If too large, use a smaller choice it names; if none fits, read `--json`. Routine edits need no picture.
+- Source text, mappings and model assumptions have different limits. Preserve unknowns; pointwise consistency does not prove stateful prediction or physical truth. See `references/model-format.md` for YAML, snapshots and growth.
+- If the engine is absent, install it once with `python -m pip install -e <PhysicsGuard checkout>`. No version gate. A handoff names another route: load that route file.

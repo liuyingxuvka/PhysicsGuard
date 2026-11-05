@@ -1,0 +1,72 @@
+observation_name: bench_run_step_4
+sources:
+  question: question_bench.txt
+row_key:
+  file: bench_log.csv
+  field: t_s
+  quote:
+    from: question
+    text: at t = 90 s
+claims:
+- quote:
+    from: question
+    text: What outlet temperature should the heater give
+  variable: heat.T_out_K
+properties:
+  water_density:
+    source: question_bench.txt
+    unit: kg/L
+    value: 1.0
+    quote:
+      from: question
+      text: 'water: 1 kg/L'
+variables:
+  elec.V_V:
+    conversion_factor: 1.0
+    conversion_offset: 0.0
+    description: Supply voltmeter
+    external_signal: U_V@4
+    mapping_confidence: high
+    raw_unit: V
+    raw_value: 229.5
+    source: bench_log.csv
+    unit: V
+    value: 229.5
+  elec.current_A:
+    conversion_factor: 1.0
+    conversion_offset: 0.0
+    description: Heater ammeter
+    external_signal: I_A@4
+    mapping_confidence: high
+    raw_unit: A
+    raw_value: 13.0
+    source: bench_log.csv
+    unit: A
+    value: 13.0
+  heat.T_in_K:
+    conversion_factor: 1.0
+    conversion_offset: 273.15
+    description: Inlet thermometer
+    external_signal: T_in_C@4
+    mapping_confidence: high
+    raw_unit: degC
+    raw_value: 12.1
+    source: bench_log.csv
+    unit: K
+    value: 285.25
+  heat.m_dot_kg_s:
+    conversion_factor: 0.016666666666666666
+    conversion_offset: 0.0
+    conversion_property: water_density
+    description: Flow meter
+    external_signal: flow_lpm@4
+    mapping_confidence: high
+    raw_unit: L/min
+    raw_value: 3.0
+    source: bench_log.csv
+    unit: kg/s
+    value: 0.05
+  heat.T_out_K:
+    value: 299.505
+    unit: K
+    external_signal: AI outlet temperature

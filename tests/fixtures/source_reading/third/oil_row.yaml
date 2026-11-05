@@ -1,0 +1,61 @@
+observation_name: hpu2_cooler_run_step_4
+sources:
+  question: question_oilcooler.txt
+row_key:
+  file: oil_log.csv
+  field: t_s
+  quote:
+    from: question
+    text: at t = 4 min
+claims:
+- quote:
+    from: question
+    text: How much heat does the cooler take out of the oil at that moment?
+  variable: oil.Q_dot_W
+properties:
+  oil_density:
+    value: 0.87
+    unit: kg/L
+    source: question_oilcooler.txt
+    quote:
+      from: question
+      text: 'oil: 0.87 kg/L'
+variables:
+  oil.m_dot_kg_s:
+    value: 0.551
+    raw_value: 38.0
+    raw_unit: L/min
+    unit: kg/s
+    source: oil_log.csv
+    external_signal: oil_flow_LPM@4
+    conversion_factor: 0.0145
+    conversion_offset: 0.0
+    mapping_confidence: high
+    description: Oil flow meter
+    conversion_property: oil_density
+  oil.T_in_K:
+    value: 321.76111111111106
+    raw_value: 119.5
+    raw_unit: degF
+    unit: K
+    source: oil_log.csv
+    external_signal: T_oil_in_degF@4
+    conversion_factor: 0.5555555555555556
+    conversion_offset: 255.3722222222222
+    mapping_confidence: high
+    description: Cooler inlet thermometer
+  oil.T_out_K:
+    value: 316.2055555555555
+    raw_value: 109.5
+    raw_unit: degF
+    unit: K
+    source: oil_log.csv
+    external_signal: T_oil_out_degF@4
+    conversion_factor: 0.5555555555555556
+    conversion_offset: 255.3722222222222
+    mapping_confidence: high
+    description: Cooler outlet thermometer
+  oil.Q_dot_W:
+    value: -6030.4
+    unit: W
+    external_signal: AI heat taken out of the oil

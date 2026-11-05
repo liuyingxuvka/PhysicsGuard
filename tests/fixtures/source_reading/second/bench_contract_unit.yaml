@@ -1,0 +1,13 @@
+contract_id: bench_run
+data_file: bench_log.csv
+manifest: bench_manifest.yaml
+model: audit_bench.yaml
+time_column: t_s
+properties:
+  water_density: {value: 1.0, unit: kg/L, source: question_bench.txt}
+fields:
+  t_s: {unit: s, role: ignored, reason: Series clock}
+  U_V: {unit: V, role: measured, target: elec.V_V, confidence: high, evidence: Supply voltmeter}
+  I_A: {unit: A, role: measured, target: elec.current_A, confidence: high, evidence: Heater ammeter}
+  flow_lpm: {unit: L/s, role: measured, target: heat.m_dot_kg_s, conversion_property: water_density, confidence: high, evidence: Flow meter}
+  T_in_C: {unit: degC, role: measured, target: heat.T_in_K, confidence: high, evidence: Inlet thermometer}

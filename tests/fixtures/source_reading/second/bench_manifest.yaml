@@ -1,0 +1,73 @@
+manifest_id: bench_log
+source_file:
+  path: bench_log.csv
+  content_hash: 888c66536941186d49f5fa1c85d50f12dddc62fd2703efdbc37e068096c9952e
+  size_bytes: 166
+format:
+  kind: csv
+  delimiter: ','
+  encoding: utf-8
+  header_rows: 1
+  metadata: {}
+shape:
+  field_count: 5
+  row_count: 6
+  sample_count: 6
+time:
+  time_column: t_s
+  start_time: 0.0
+  end_time: 150.0
+  duration_s: 150.0
+  nominal_sample_rate_hz: 0.03333333333333333
+  sampling_mode: time_series
+  continuity: continuous
+  gap_count: 0
+  metadata:
+    maximum_gap_s: 30.0
+    start_time_s: 0.0
+    end_time_s: 150.0
+    penultimate_time_s: 120.0
+fields:
+- name: t_s
+  data_type: integer
+  non_null_count: 6
+  null_count: 0
+  min_value: 0.0
+  max_value: 150.0
+  metadata: {}
+- name: U_V
+  data_type: float
+  non_null_count: 6
+  null_count: 0
+  min_value: 229.0
+  max_value: 230.5
+  metadata: {}
+- name: I_A
+  data_type: float
+  non_null_count: 6
+  null_count: 0
+  min_value: 0.0
+  max_value: 13.1
+  metadata: {}
+- name: flow_lpm
+  data_type: float
+  non_null_count: 6
+  null_count: 0
+  min_value: 3.0
+  max_value: 4.0
+  metadata: {}
+- name: T_in_C
+  data_type: float
+  non_null_count: 6
+  null_count: 0
+  min_value: 12.0
+  max_value: 12.1
+  metadata: {}
+extractor:
+  script: physicsguard.core.data_file_manifest.generate_delimited_manifest
+  script_hash: f044f0d365e77f51c7ec31b1a8adf8dc5f87dd9350c99c47785b3d8a140c9f16
+  generated_at: '2026-11-05T15:52:48.858441+00:00'
+  version: '1'
+  metadata: {}
+field_signature_hash: 3553c1b8a86b5cc9f97028038c3e0d559a51be5881b024493140f4200edb8ae3
+metadata: {}

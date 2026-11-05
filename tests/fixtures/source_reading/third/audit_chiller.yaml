@@ -1,0 +1,19 @@
+audit_name: process_chiller
+system:
+  system_name: process_chiller
+  components:
+    - id: chiller
+      type: ChillerSimpleModule
+      parameters: {residual_scale_W: 100.0}
+    - id: loop
+      type: CoolantHeatBalanceModule
+      parameters: {cp_J_kgK: 4190.0, residual_scale_W: 200.0}
+  connections:
+    - {from_variable: chiller.Q_cooling_W, to_variable: loop.Q_dot_W}
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: plant, name: Process cooling plant, level: 0, components: []}
+    - {id: unit, name: Chiller KX-55, level: 1, parent_id: plant, components: [chiller]}
+    - {id: water, name: Chilled water loop, level: 1, parent_id: plant, components: [loop]}

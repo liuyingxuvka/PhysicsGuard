@@ -1,0 +1,11 @@
+observation_name: panel_answer
+sources: {question: question_panel.txt}
+parameters:
+  panel.area_m2: {unit: m^2, quote: {from: question, text: "panel measuring 1200 cm²"}}
+  panel.h_W_m2K: {unit: W/m^2/K, quote: {from: question, text: "convective coefficient of 9.5 W/(m²·K)"}}
+claims:
+  - {quote: {from: question, text: "How much heat does the face give to the air by convection?"}, variable: panel.Q_dot_W}
+variables:
+  panel.T_surface_K: {raw_value: 65.0, raw_unit: degC, unit: K, external_signal: "panel face", quote: {from: question, text: "face runs at 65 °C"}}
+  panel.T_fluid_K: {raw_value: 18.0, raw_unit: degC, unit: K, external_signal: "workshop air", quote: {from: question, text: "in air at 18 °C"}}
+  panel.Q_dot_W: {value: 535.8, unit: W, external_signal: "AI convective heat"}

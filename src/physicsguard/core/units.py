@@ -28,12 +28,19 @@ from typing import NamedTuple
 
 # Symbol: (exponents of kg, m, s, K, rad; factor to SI).
 SYMBOLS = {
+    'one': ((0, 0, 0, 0, 0), 1.0),
     'kg': ((1, 0, 0, 0, 0), 1.0), 'g': ((1, 0, 0, 0, 0), 1e-3),
+    't': ((1, 0, 0, 0, 0), 1000.0),
     'm': ((0, 1, 0, 0, 0), 1.0), 'mm': ((0, 1, 0, 0, 0), 1e-3), 'cm': ((0, 1, 0, 0, 0), 1e-2),
     'dm': ((0, 1, 0, 0, 0), 1e-1), 'km': ((0, 1, 0, 0, 0), 1e3),
     'L': ((0, 3, 0, 0, 0), 1e-3), 'mL': ((0, 3, 0, 0, 0), 1e-6),
+    'Ml': ((0, 3, 0, 0, 0), 1e3), 'ML': ((0, 3, 0, 0, 0), 1e3),
     's': ((0, 0, 1, 0, 0), 1.0), 'min': ((0, 0, 1, 0, 0), 60.0), 'h': ((0, 0, 1, 0, 0), 3600.0),
+    'd': ((0, 0, 1, 0, 0), 86400.0),
     'W': ((1, 2, -3, 0, 0), 1.0), 'kW': ((1, 2, -3, 0, 0), 1e3), 'MW': ((1, 2, -3, 0, 0), 1e6),
+    'J': ((1, 2, -2, 0, 0), 1.0), 'kJ': ((1, 2, -2, 0, 0), 1e3), 'MJ': ((1, 2, -2, 0, 0), 1e6),
+    'Wh': ((1, 2, -2, 0, 0), 3600.0), 'kWh': ((1, 2, -2, 0, 0), 3.6e6),
+    'MWh': ((1, 2, -2, 0, 0), 3.6e9), 'GWh': ((1, 2, -2, 0, 0), 3.6e12),
     'Pa': ((1, -1, -2, 0, 0), 1.0), 'kPa': ((1, -1, -2, 0, 0), 1e3), 'MPa': ((1, -1, -2, 0, 0), 1e6),
     'bar': ((1, -1, -2, 0, 0), 1e5),
     'K': ((0, 0, 0, 1, 0), 1.0),
@@ -41,12 +48,22 @@ SYMBOLS = {
 }
 # Other spellings of a symbol.
 SPELLINGS = {
+    'kilogram': 'kg', 'kilograms': 'kg', 'gram': 'g', 'grams': 'g',
+    'tonne': 't', 'tonnes': 't', 'kilometre': 'km', 'kilometres': 'km', 'kilometer': 'km', 'kilometers': 'km',
+    'kilowatt': 'kW', 'kilowatts': 'kW', 'metre': 'm', 'metres': 'm', 'meter': 'm', 'meters': 'm',
+    'joule': 'J', 'joules': 'J', 'kilojoule': 'kJ', 'kilojoules': 'kJ', 'megajoule': 'MJ', 'megajoules': 'MJ',
+    'megalitre': 'ML', 'megalitres': 'ML', 'megaliter': 'ML', 'megaliters': 'ML',
     'l': 'L', 'liter': 'L', 'litre': 'L', 'liters': 'L', 'litres': 'L', 'ml': 'mL',
     'sec': 's', 'secs': 's', 'second': 's', 'seconds': 's',
     'mins': 'min', 'minute': 'min', 'minutes': 'min',
     'hr': 'h', 'hrs': 'h', 'hour': 'h', 'hours': 'h',
+    'day': 'd', 'days': 'd',
     'kelvin': 'K', 'watt': 'W', 'watts': 'W',
 }
+# Natural compound energy names are spellings of the same symbols, including in a quotient.
+SPELLINGS.update({name + joiner + suffix: symbol
+                  for name, symbol in [('watt', 'Wh'), ('kilowatt', 'kWh'), ('megawatt', 'MWh'), ('gigawatt', 'GWh')]
+                  for joiner in ('-', ' ') for suffix in ('hour', 'hours')})
 # Whole units written as one word.
 SHORTHANDS = {'rpm': 'rev/min', 'RPM': 'rev/min', 'LPM': 'L/min', 'lpm': 'L/min'}
 # Units with an offset from SI: (factor, offset) to K. They stand alone, never inside a compound unit.
@@ -101,6 +118,12 @@ def _label(unit):
 def read_unit(unit) -> Unit | None:
     """The unit's exponents, factor and offset computed from the table, or None for a unit the tool cannot read."""
     label = _label(unit)
+    if label in ('1', 'dimensionless'):
+        return Unit((0, 0, 0, 0, 0), 1.0)
+    if label in ('%', 'percent'):
+        return Unit((0, 0, 0, 0, 0), 0.01)
+    label = {'degrees Celsius': 'degC', 'degree Celsius': 'degC',
+             'degrees Fahrenheit': 'degF', 'degree Fahrenheit': 'degF'}.get(label, label)
     if not label:
         return None
     label = re.sub(r"^deg\s+([CF])$", r"deg\1", label)
@@ -108,6 +131,11 @@ def read_unit(unit) -> Unit | None:
         factor, offset = OFFSET_UNITS[label]
         return Unit(QUANTITY_EXPONENTS['temperature'], factor, offset)
     label = SHORTHANDS.get(label, label)
+    for spelling, symbol in SPELLINGS.items():
+        if not spelling.isalpha():
+            label = re.sub(r'(?<!\w)' + re.escape(spelling) + r'(?!\w)', symbol, label)
+    label = re.sub(r'\b(square|cubic)\s+([A-Za-z]+)\b',
+                   lambda m: m[2] + ('^2' if m[1] == 'square' else '^3'), label)
     label = re.sub(r"\s+(?:per|an?)\s+", "/", label)
     label = re.sub(r"(?<=[A-Za-z0-9])\.(?=[A-Za-z])", "*", label)
     label = re.sub(r"\s*([/*·⋅])\s*", r"\1", label)

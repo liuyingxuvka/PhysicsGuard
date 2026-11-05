@@ -1,0 +1,18 @@
+audit_name: booster_pump
+system:
+  system_name: booster_pump
+  components:
+    - id: pump
+      type: PumpSimpleModule
+      parameters: {rho_kg_m3: 998.0, residual_scale_power_W: 5.0}
+    - id: elec
+      type: ElectricalPowerModule
+      parameters: {residual_scale_W: 5.0}
+  connections: []
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: booster, name: Rooftop booster, level: 0, components: []}
+    - {id: hydraulics, name: Pump hydraulics, level: 1, parent_id: booster, components: [pump]}
+    - {id: feed, name: Motor feed, level: 1, parent_id: booster, components: [elec]}

@@ -1,0 +1,14 @@
+audit_name: hpu_oil_cooler
+system:
+  system_name: hpu_oil_cooler
+  components:
+    - id: oil
+      type: CoolantHeatBalanceModule
+      parameters: {cp_J_kgK: 1970.0, residual_scale_W: 50.0}
+  connections: []
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: hpu, name: Hydraulic power unit HPU-2, level: 0, components: []}
+    - {id: cooler, name: Oil cooler, level: 1, parent_id: hpu, components: [oil]}

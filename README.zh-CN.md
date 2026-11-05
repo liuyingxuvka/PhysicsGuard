@@ -30,9 +30,22 @@ PhysicsGuard 是一个 Python 工具，也是一个给 AI 用的技能（Claude 
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
 audit shower_mix on ai_answer: FAIL; 4 checked, 0 unchecked, 2 derived; mapping 8 rows, 0 with issues
-supply [L0] | own PASS 0.00 (1 checked)
-  hot_branch [L1] | own PASS 0.00 (1 checked)
-  mixer [L1] | own FAIL 22.50 (2 checked): mix.flow_merge_temperature_balance 22.50
+sources: none
+readings: 0 green, 0 red, 12 grey
+  grey property:water_density: AI value unchecked: no source quote
+  grey heater.m_dot_kg_s: AI value unchecked: no source quote
+  grey heater.T_in_K: AI value unchecked: no source quote
+  grey heater.T_out_K: AI value unchecked: no source quote
+  grey heater.Q_dot_W: AI value unchecked: no source quote
+  grey mix.m_dot_2_kg_s: AI value unchecked: no source quote
+  grey mix.T_2_K: AI value unchecked: no source quote
+  grey mix.m_dot_out_kg_s: AI value unchecked: no source quote
+  grey mix.T_out_K: AI value unchecked: no source quote
+  grey parameter:heater.cp_J_kgK: AI value unchecked: no source quote
+  +2 readings; --json gives every source status
+supply [L0] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  hot_branch [L1] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  mixer [L1] | red: physical checks disagree | own FAIL 22.50 (2 checked): mix.flow_merge_temperature_balance 22.50
 hint: conservation_balance mix.flow_merge_temperature_balance: Inspect sibling inflow/outflow, loss, storage, and boundary-condition variables before adding deeper component physics.
 resolution: supply no observed variables
 resolution: heater.m_dot_kg_s +-0.00053 kg/s, heater.T_in_K +-0.24 K, heater.T_out_K +-0.24 K, heater.Q_dot_W +-1e+02 W
@@ -45,15 +58,28 @@ warnings: observed audit did not pass; max observed normalized residual exceeds 
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
 audit shower_mix on ai_answer: PASS; 4 checked, 0 unchecked, 2 derived; mapping 8 rows, 0 with issues
-supply [L0] | own PASS 0.00 (1 checked)
-  hot_branch [L1] | own PASS 0.00 (1 checked)
-  mixer [L1] | own PASS 0.00 (2 checked)
+sources: none
+readings: 0 green, 0 red, 12 grey
+  grey property:water_density: AI value unchecked: no source quote
+  grey heater.m_dot_kg_s: AI value unchecked: no source quote
+  grey heater.T_in_K: AI value unchecked: no source quote
+  grey heater.T_out_K: AI value unchecked: no source quote
+  grey heater.Q_dot_W: AI value unchecked: no source quote
+  grey mix.m_dot_2_kg_s: AI value unchecked: no source quote
+  grey mix.T_2_K: AI value unchecked: no source quote
+  grey mix.m_dot_out_kg_s: AI value unchecked: no source quote
+  grey mix.T_out_K: AI value unchecked: no source quote
+  grey parameter:heater.cp_J_kgK: AI value unchecked: no source quote
+  +2 readings; --json gives every source status
+supply [L0] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  hot_branch [L1] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  mixer [L1] | grey: passes on AI values only | own PASS 0.00 (2 checked)
 resolution: supply no observed variables
 resolution: heater.m_dot_kg_s +-0.00053 kg/s, heater.T_in_K +-0.24 K, heater.T_out_K +-0.24 K, heater.Q_dot_W +-1e+02 W
 resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_kg_s +-0.00016 kg/s, mix.T_out_K +-0.2 K
 ```
 
-退出码：0 通过，1 检查了但没通过，2 没法运行。
+退出码：0 通过，1 检查了但没通过，2 没法运行。灰色表示检查仍依赖 AI 填的数值；[读原件例子](examples/source_reading/README.md)说明如何引用题目的原句和表格格。
 
 ## 讨论时看图
 

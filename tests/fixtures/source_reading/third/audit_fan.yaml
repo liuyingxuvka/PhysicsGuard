@@ -1,0 +1,19 @@
+audit_name: kitchen_extract_fan
+system:
+  system_name: kitchen_extract_fan
+  components:
+    - id: shaft
+      type: TorqueSpeedPowerModule
+      parameters: {residual_scale_W: 10.0}
+    - id: motor
+      type: EfficiencyModule
+      parameters: {residual_scale: 0.005}
+  connections:
+    - {from_variable: shaft.P_W, to_variable: motor.useful_output_power_W}
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: fan, name: Extract fan EF-3, level: 0, components: []}
+    - {id: drive, name: Fan shaft, level: 1, parent_id: fan, components: [shaft]}
+    - {id: motor_side, name: Fan motor, level: 1, parent_id: fan, components: [motor]}

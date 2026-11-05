@@ -1,0 +1,10 @@
+observation_name: inverter_answer
+sources: {question: question_inverter.txt}
+claims:
+  - {quote: {from: question, text: "What AC power does the inverter deliver?"}, variable: inv.P_ac_W}
+variables:
+  dc.V_V: {value: 412.0, unit: V, external_signal: "string voltage", quote: {from: question, text: "string delivered 412 V"}}
+  dc.current_A: {value: 11.6, unit: A, external_signal: "string current", quote: {from: question, text: "at 11.6 A"}}
+  dc.P_W: {value: 4779.2, unit: W, external_signal: "AI DC power"}
+  inv.efficiency: {value: 0.971, external_signal: "peak efficiency", quote: {from: question, text: "peak efficiency of 97.1 percent"}}
+  inv.P_ac_W: {value: 4640.6, unit: W, external_signal: "AI AC power"}

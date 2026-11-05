@@ -1,0 +1,22 @@
+audit_name: rain_tank
+system:
+  system_name: rain_tank
+  components:
+    - id: lvl_prev
+      type: TankLevelVolumeModule
+      parameters: {area_m2: 1.0, residual_scale_m3: 0.001}
+    - id: lvl_cur
+      type: TankLevelVolumeModule
+      parameters: {area_m2: 1.0, residual_scale_m3: 0.001}
+    - id: vol
+      type: TankVolumeRateModule
+      parameters: {dt_s: 1800.0, residual_scale_m3: 0.001}
+  connections:
+    - {from_variable: lvl_prev.volume_m3, to_variable: vol.volume_previous_m3}
+    - {from_variable: lvl_cur.volume_m3, to_variable: vol.volume_current_m3}
+  boundaries: []
+  assumptions: []
+hierarchy:
+  blocks:
+    - {id: tank, name: Rainwater tank, level: 0, components: []}
+    - {id: filling, name: Filling step, level: 1, parent_id: tank, components: [lvl_prev, lvl_cur, vol]}

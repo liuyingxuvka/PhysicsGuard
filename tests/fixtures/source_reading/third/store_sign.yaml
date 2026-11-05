@@ -1,0 +1,10 @@
+observation_name: envelope_answer
+sources: {question: question_coldstore.txt}
+parameters:
+  walls.UA_W_K: {unit: W/K, quote: {from: question, text: "UA of 85 W/K"}}
+claims:
+  - {quote: {from: question, text: "What heat flows through the envelope at the coldest setting?"}, variable: walls.Q_loss_W}
+variables:
+  walls.T_body_K: {value: 295.15, unit: K, external_signal: "coldest room setting", quote: {from: question, text: "held at −22 to −18 °C"}}
+  walls.T_ambient_K: {raw_value: 24.0, raw_unit: degC, unit: K, external_signal: "yard temperature", quote: {from: question, text: "outside is at 24 °C"}}
+  walls.Q_loss_W: {value: -170.0, unit: W, external_signal: "AI envelope heat flow"}

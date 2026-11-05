@@ -8,7 +8,8 @@ from physicsguard.core.data_file_manifest import sha256_file, field_signature_ha
 from physicsguard.core.parameter_coverage import (ContractFinding, ContractReview, contract_status, contract_next_actions,
                                                 check_field_mappings, confidence_value, field_targets)
 from physicsguard.core.residual import ResidualBuilder
-from physicsguard.core.units import property_conversion, unit_conversion
+from physicsguard.core.units import is_transducer_output, known_conversion, property_conversion, unit_conversion
+from physicsguard.io.source_reading import header_unit
 from physicsguard.io.hierarchy_loader import load_hierarchical_audit_spec
 from physicsguard.io.test_file_contract_loader import load_test_file_contract, load_data_file_manifest
 from physicsguard.schema.parameter_coverage import ParameterRoleMatrixSpec, RoleAssignmentSpec, MappingEdgeSpec
@@ -96,6 +97,14 @@ def check_test_file_contract(path):
             units = {}
             findings.append(ContractFinding('error', 'model_load_failed', str(exc)))
     findings.extend(check_field_mappings(contract, resolved.manifest.value, units))
+    for name, field in contract.fields.items():
+        named = header_unit(name)
+        calibration = is_transducer_output(field.unit) and field.conversion is not None
+        # The existing transducer exception is checked as an unchecked calibration
+        # at ingestion; a column label cannot independently establish that calibration.
+        if named and field.unit and not calibration and known_conversion(named, field.unit) != (1.0, 0.0):
+            findings.append(ContractFinding('error', 'header_unit_disagrees',
+                f'header unit {named} differs from field unit {field.unit}', target=name))
     if contract.time_column and contract.time_column not in {f.name for f in resolved.manifest.value.fields}:
         findings.append(ContractFinding('error', 'time_column_missing', 'declared time column is absent'))
     for segment in contract.segments:
@@ -184,10 +193,13 @@ def _snapshot(resolved, rows, units, row):
             # The raw reading travels with the converted value so the loader converts and checks it again.
             variables[target] = dict(value=number, raw_value=raw, raw_unit=field.unit,
                 unit=units[target], source=resolved.contract.data_file,
-                external_signal=f'{name}@{index}', conversion_factor=factor, conversion_offset=offset,
+                external_signal=f'{name}@{index}',
                 mapping_confidence=field.confidence, description=field.evidence)
             if field.conversion_property is not None:
                 variables[target]['conversion_property'] = field.conversion_property
+            elif is_transducer_output(field.unit) and field.conversion is not None:
+                # A transducer calibration is not a physical unit factor; the table cannot recover it.
+                variables[target].update(conversion_factor=factor, conversion_offset=offset)
     snapshot = dict(observation_name=f'{resolved.contract.contract_id}_step_{row}', variables=variables)
     if resolved.contract.properties:
         snapshot['properties'] = _declared_properties(resolved.contract)
@@ -200,9 +212,28 @@ def _declared_properties(contract):
     return {name: prop.model_dump(mode='json', exclude_none=True) for name, prop in contract.properties.items()}
 
 
-def testfile_snapshot(path, row):
+def testfile_snapshot(path, row=None, *, at=None):
     resolved, rows, units = _read_ready_contract(path)
-    return _snapshot(resolved, rows, units, row)
+    key = None
+    if at is not None:
+        if row is not None or '=' not in at:
+            raise ValueError('supply --row or --at FIELD=VALUE')
+        field, text = at.split('=', 1)
+        try:
+            value = float(text)
+            hits = [i for i, record in enumerate(rows) if float(record[field]) == value]
+        except (KeyError, ValueError) as exc:
+            raise ValueError('--at requires a numeric value in a named column') from exc
+        if len(hits) != 1:
+            raise ValueError(f'--at {at}: found {len(hits)} matching rows; exactly one is required')
+        row = hits[0]
+        key = dict(file=resolved.contract.data_file, field=field, value=value)
+    if row is None:
+        raise ValueError('supply --row or --at FIELD=VALUE')
+    snapshot = _snapshot(resolved, rows, units, row)
+    if key:
+        snapshot['row_key'] = key
+    return snapshot
 
 
 def testfile_series(path, row_range=None):

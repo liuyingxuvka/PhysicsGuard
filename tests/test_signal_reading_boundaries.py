@@ -75,13 +75,16 @@ def test_comma_numbers_are_refused_without_guessing_a_fragment(signal, mistaken_
     assert "commas" in str(caught.value)
 
 
-@pytest.mark.parametrize("signal", ["6 to 7 L/min", "6-7 L/min", "6–7 L/min", "-6 to -7 L/min"])
-def test_numeric_ranges_are_explicitly_refused_instead_of_reading_the_last_number(signal) -> None:
-    with pytest.raises(ValueError, match="signal_reading_unreadable:pump.flow:") as caught:
-        ObservedValuesSpec(variables={"pump.flow": {"value": 7, "unit": "L/min", "external_signal": signal}})
-    assert signal in str(caught.value)
-    assert "ranges are not supported" in str(caught.value)
-    assert "reads 7 L/min" not in str(caught.value)
+@pytest.mark.parametrize("signal, lower, upper", [("6 to 7 L/min", 6, 7), ("6-7 L/min", 6, 7),
+    ("6–7 L/min", 6, 7), ("-7 to -6 L/min", -7, -6)])
+def test_numeric_ranges_check_both_bounds_instead_of_reading_the_last_number(signal, lower, upper) -> None:
+    for point in (lower, (lower+upper)/2, upper):
+        row = ObservedValuesSpec(variables={"pump.flow": {
+            "value": point, "unit": "L/min", "external_signal": signal}}).variables['pump.flow']
+        assert row._conversion_checked is True and 'AI chose the point' in row._conversion_check
+    for point in (lower-1, upper+1):
+        with pytest.raises(ValueError, match='outside the range'):
+            ObservedValuesSpec(variables={"pump.flow": {"value": point, "unit": "L/min", "external_signal": signal}})
 
 
 @pytest.mark.parametrize("signal", ["6,0 L/min", "6,000 L/min"])

@@ -35,7 +35,7 @@ def load_observed_values(path: str | Path) -> ObservedValuesSpec:
     if "variables" not in data:
         raise ValueError(f"observed values YAML missing variables: {yaml_path}")
     try:
-        return ObservedValuesSpec.model_validate(data, context={"raw_snapshot_ingestion": True})
+        return ObservedValuesSpec.model_validate(data, context={"raw_snapshot_ingestion": True, "source_base": yaml_path.parent})
     except ValidationError as exc:
         refusal = _conversion_refusal(exc)
         if refusal is not None:

@@ -36,9 +36,22 @@ heater and a mixing tee). Both files ship in `examples/hierarchical/shower_mix/`
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
 audit shower_mix on ai_answer: FAIL; 4 checked, 0 unchecked, 2 derived; mapping 8 rows, 0 with issues
-supply [L0] | own PASS 0.00 (1 checked)
-  hot_branch [L1] | own PASS 0.00 (1 checked)
-  mixer [L1] | own FAIL 22.50 (2 checked): mix.flow_merge_temperature_balance 22.50
+sources: none
+readings: 0 green, 0 red, 12 grey
+  grey property:water_density: AI value unchecked: no source quote
+  grey heater.m_dot_kg_s: AI value unchecked: no source quote
+  grey heater.T_in_K: AI value unchecked: no source quote
+  grey heater.T_out_K: AI value unchecked: no source quote
+  grey heater.Q_dot_W: AI value unchecked: no source quote
+  grey mix.m_dot_2_kg_s: AI value unchecked: no source quote
+  grey mix.T_2_K: AI value unchecked: no source quote
+  grey mix.m_dot_out_kg_s: AI value unchecked: no source quote
+  grey mix.T_out_K: AI value unchecked: no source quote
+  grey parameter:heater.cp_J_kgK: AI value unchecked: no source quote
+  +2 readings; --json gives every source status
+supply [L0] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  hot_branch [L1] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  mixer [L1] | red: physical checks disagree | own FAIL 22.50 (2 checked): mix.flow_merge_temperature_balance 22.50
 hint: conservation_balance mix.flow_merge_temperature_balance: Inspect sibling inflow/outflow, loss, storage, and boundary-condition variables before adding deeper component physics.
 resolution: supply no observed variables
 resolution: heater.m_dot_kg_s +-0.00053 kg/s, heater.T_in_K +-0.24 K, heater.T_out_K +-0.24 K, heater.Q_dot_W +-1e+02 W
@@ -55,15 +68,28 @@ The signal records the answer being checked, so it must change with that answer.
 ```console
 $ python -m physicsguard.cli hierarchy evaluate examples/hierarchical/shower_mix/audit.yaml examples/hierarchical/shower_mix/observed_ai.yaml
 audit shower_mix on ai_answer: PASS; 4 checked, 0 unchecked, 2 derived; mapping 8 rows, 0 with issues
-supply [L0] | own PASS 0.00 (1 checked)
-  hot_branch [L1] | own PASS 0.00 (1 checked)
-  mixer [L1] | own PASS 0.00 (2 checked)
+sources: none
+readings: 0 green, 0 red, 12 grey
+  grey property:water_density: AI value unchecked: no source quote
+  grey heater.m_dot_kg_s: AI value unchecked: no source quote
+  grey heater.T_in_K: AI value unchecked: no source quote
+  grey heater.T_out_K: AI value unchecked: no source quote
+  grey heater.Q_dot_W: AI value unchecked: no source quote
+  grey mix.m_dot_2_kg_s: AI value unchecked: no source quote
+  grey mix.T_2_K: AI value unchecked: no source quote
+  grey mix.m_dot_out_kg_s: AI value unchecked: no source quote
+  grey mix.T_out_K: AI value unchecked: no source quote
+  grey parameter:heater.cp_J_kgK: AI value unchecked: no source quote
+  +2 readings; --json gives every source status
+supply [L0] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  hot_branch [L1] | grey: passes on AI values only | own PASS 0.00 (1 checked)
+  mixer [L1] | grey: passes on AI values only | own PASS 0.00 (2 checked)
 resolution: supply no observed variables
 resolution: heater.m_dot_kg_s +-0.00053 kg/s, heater.T_in_K +-0.24 K, heater.T_out_K +-0.24 K, heater.Q_dot_W +-1e+02 W
 resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_kg_s +-0.00016 kg/s, mix.T_out_K +-0.2 K
 ```
 
-Exit codes: 0 passed, 1 checked and not passed, 2 could not run.
+Exit codes: 0 passed, 1 checked and not passed, 2 could not run. Grey means the numerical check still relies on AI values. Quote the original question as shown in [the source-reading example](examples/source_reading/README.md).
 
 ## Discuss it with a picture
 
@@ -215,7 +241,7 @@ Five skills, one idea: make structure, relationships and constraints explicit in
 | Skill | The AI weakness it makes up for | Use it when | Works with the others |
 |---|---|---|---|
 | [FlowGuard](https://github.com/liuyingxuvka/FlowGuard) | It changes one part of the software and does not see what that broke elsewhere; it rebuilds what already exists, or puts new code in the wrong place | you change, extend, refactor or audit software code, including the code of a simulation | Sends calculation results to PhysicsGuard, causal claims to ResearchGuard, story or plan consistency to WorldGuard, long texts to LogicWriting. The other four Guards are developed with FlowGuard |
-| [PhysicsGuard](https://github.com/liuyingxuvka/PhysicsGuard) | It does physics in its head and is confidently wrong about units, signs and balances | a number comes from physics: a simulation result, test data, or a calculation the AI made itself | Sends the simulation's code to FlowGuard. No other Guard reads its reports |
+| [PhysicsGuard](https://github.com/liuyingxuvka/PhysicsGuard) | It does physics in its head and is confidently wrong about units, signs and balances | a number comes from physics: a simulation result, test data, or a calculation the AI made itself | Sends simulation code to FlowGuard; LogicWriting reads its source status rows and digests |
 | [ResearchGuard](https://github.com/liuyingxuvka/ResearchGuard) | It tells a confident causal story that its sources do not support | before a causal or evidential conclusion is stated: claims, sources, timelines, competing explanations | LogicWriting reads its saved status report. Sends the writing of the finished report to LogicWriting |
 | [WorldGuard](https://github.com/liuyingxuvka/WorldGuard) | Across chapters, days or steps it forgets who holds what and who is where, and writes events that cannot happen | a story, trip, plan or process must stay consistent from step to step | LogicWriting reads its saved check report. Sends software code to FlowGuard |
 | [LogicWriting](https://github.com/liuyingxuvka/LogicWriting) | In a long text it drifts away from its own plan and evidence | you need a finished piece for real readers: an investigation report, a paper, fiction or a story plan, a travel guide | Reads the saved reports of ResearchGuard and WorldGuard. Sends the checking of claims on their own to ResearchGuard |
