@@ -1,7 +1,7 @@
 # PhysicsGuard hierarchical audit model
 # Purpose: shower mix.
 # Repository: https://github.com/liuyingxuvka/PhysicsGuard
-# Use with: python -m physicsguard.cli hierarchy run examples/hierarchical/shower_mix/audit.yaml --pretty
+# Use with: python -m physicsguard.cli hierarchy run examples/source_reading/audit.yaml --pretty
 # Boundary: Low-fidelity SI-unit residual audit only; not a high-fidelity solver, commercial-tool adapter, or reverse-engineered model.
 audit_name: shower_mix
 system:

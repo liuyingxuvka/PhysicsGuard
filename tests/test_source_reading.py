@@ -228,3 +228,10 @@ def test_documented_example_cli_preserves_report_schema_and_exposes_source_rows(
             assert any(row['colour'] == 'red' and 'x60' in row['reason'] for row in rows)
         else:
             assert not any(row['colour'] == 'red' for row in rows)
+
+
+def test_quoted_parameters_do_not_turn_a_snapshot_header_into_a_parameter_catalog():
+    from test_portable_model_headers import _load_header_script
+    data = yaml.safe_load((ROOT/'examples/source_reading/observed.yaml').read_text())
+    assert data['parameters']
+    assert _load_header_script().artifact_kind(data) == 'observed-values snapshot'

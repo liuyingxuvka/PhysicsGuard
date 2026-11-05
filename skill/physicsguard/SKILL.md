@@ -5,7 +5,7 @@ description: "Use for engineering-simulation results and test data, and for a ph
 
 # PhysicsGuard
 
-## Start with the requested blocks
+## Start from the model
 
 1. Find the supplied audit file and run `python -m physicsguard.cli hierarchy describe AUDIT.yaml` (`--observed SNAPSHOT.yaml` when supplied). Name the blocks the question concerns.
 2. No audit: choose coarse relations with `modules list --find WORDS` and `modules describe TYPE`, then build from `references/templates/audit_model.yaml`. A standalone component needs nonempty declared variables; a reference-only balance needs their owning components. Read the audit back before evaluating it.
@@ -21,7 +21,7 @@ description: "Use for engineering-simulation results and test data, and for a ph
 
 ## One route per task
 
-Load only the matching route file.
+Pick one route; load only its file.
 
 | Request | Route |
 |---|---|
@@ -31,10 +31,15 @@ Load only the matching route file.
 | Review concrete data-file and field contracts | `references/routes/test-file-contract-review.md` |
 | Check a contracted dataset, holdout, depth and adequacy | `references/routes/model-dataset-validation.md` |
 
-## Read the same tree
+## Rules for every route
 
-- Nodes are `hierarchy.blocks`; `parent_id` links them. `hierarchy run|evaluate|compare|variants` print their verdicts; `describe` reads the structure without solving (`--json` for detail).
-- `fault_variants` must fail their declared `expect_blocks`; a `benign` case must stay neutral. `testfile snapshot|series` binds real data; `validation run` checks the contracted dataset.
+- Node: a block in `hierarchy.blocks`, with components, connections and children.
+- Parent: `parent_id` links blocks; a finer block names its coarse components with `refines`.
+- Known-bad: `fault_variants` must fail their `expect_blocks`; a `benign` case stays neutral (`hierarchy variants`).
+- Real binding: `testfile snapshot|series` binds real observations from the data contract.
+- Test binding: `validation run` checks the contracted dataset, holdout, depth and adequacy.
+- Readback: `hierarchy run|evaluate|compare|variants` print verdicts on the same tree; `describe` reads structure without solving (`--json` for detail).
+- Current vs target: the audit file is current; a proposed template is `(planned)` until a built refinement replaces its coarse block.
 - When discussing a set-up, show the Mermaid output of `hierarchy flow AUDIT.yaml` with the relevant `--observed`, `--focus BLOCK` or `--quantity mass_flow`. It comes from real relations and says what it omits. If too large, use a smaller choice it names; if none fits, read `--json`. Routine edits need no picture.
 - Source text, mappings and model assumptions have different limits. Preserve unknowns; pointwise consistency does not prove stateful prediction or physical truth. See `references/model-format.md` for YAML, snapshots and growth.
 - If the engine is absent, install it once with `python -m pip install -e <PhysicsGuard checkout>`. No version gate. A handoff names another route: load that route file.

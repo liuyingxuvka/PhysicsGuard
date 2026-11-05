@@ -48,6 +48,8 @@ def artifact_kind(data: dict[str, Any]) -> str:
         return "testbench profile"
     if "profile_id" in data:
         return "test-file extractor profile"
+    if "observation_name" in data:
+        return "observed-values snapshot"
     if "parameters" in data:
         return "parameter catalog"
     if "roles" in data:
@@ -58,8 +60,6 @@ def artifact_kind(data: dict[str, Any]) -> str:
         return "parameter coverage policy"
     if "hierarchy" in data:
         return "hierarchical audit model"
-    if "observation_name" in data:
-        return "observed-values snapshot"
     return "system audit model"
 
 
