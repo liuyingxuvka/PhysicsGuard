@@ -1,7 +1,9 @@
 ## PhysicsGuard Core Repository Rules
 
 Read `docs/development/flow-contracts.md` for the affected rule and its production test before changing code.
-The real assumption-card lifecycle is `.flowguard/flow/assumption_lifecycle.py` with a shared native binding;
+The assumption-card lifecycle model is `.flowguard/flow/assumption_lifecycle.py`; `python -m flowguard release`
+reports native conformance as `UNKNOWN`. Real apply/reset calls through its shared native binding are checked
+by `tests/flow_migration/test_native_lifecycle.py`;
 input, report, schema and installation obligations live in independent `tests/flow_migration` unit contracts.
 
 Policies:
@@ -21,8 +23,9 @@ Releases:
 - Version numbers: a release that adds features raises the second number (0.16.0 -> 0.17.0); a release with only small fixes raises the third (0.17.0 -> 0.17.1); never skip a number.
 - Maintenance needs FlowGuard at or above the tag in the `test` extra of `pyproject.toml` (install with `python -m pip install -e ".[test]"`; the PyPI package named `flowguard` is a different project). Raise that tag only when this repository starts using a newer FlowGuard feature; a FlowGuard release alone is no reason to change it or to release this repository.
 
-CI runs the full pytest suite on Python 3.11 and 3.13. Python 3.11 also runs `python -m flowguard release`
-for the flow/native contracts and checks a scratch skill installation byte for byte. There is no legacy map check.
+CI runs the full pytest suite, including `tests/flow_migration/test_native_lifecycle.py`, on Python 3.11 and 3.13.
+Python 3.11 also runs `python -m flowguard release` for model checks; its native-conformance result is `UNKNOWN`
+and its exit code is 0. CI checks a scratch skill installation byte for byte. There is no legacy map check.
 
 # FlowGuard rules for the project agent
 

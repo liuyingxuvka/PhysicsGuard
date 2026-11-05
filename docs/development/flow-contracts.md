@@ -1,9 +1,11 @@
 # Development contracts
 
 FlowGuard 1.0 is the development-only dependency in the test extra. `python -m pytest -q`
-runs every production test and the independent migration contracts; `python -m flowguard release`
-checks the real assumption-card flow through the shared native adapter. Neither is a physical
-correctness certificate outside these declared cases.
+runs every production test and the independent migration contracts. `python -m flowguard release`
+checks the model but reports `UNKNOWN: native conformance unavailable: assumption_lifecycle` and exits 0;
+that command does not establish native conformance. Real assumption-card apply/reset calls through the shared
+native adapter are checked by `tests/flow_migration/test_native_lifecycle.py`. Neither the model nor those
+finite tests are a physical correctness certificate outside their declared cases.
 
 The former twelve legacy models' 48 independent predicates and 72 production-test bindings
 are retained in `tests/flow_migration/coverage.json`. It names a destination for every rule,
@@ -32,7 +34,7 @@ The model-only `no_data` case licenses no physical data claim and is labelled as
 
 The assumption-card model covers actual apply, repeat, fresh or repeated reset, and reapply behavior.
 Its small fixture delegates to the real AssumptionManager; it is neither a validator nor
-a copied model executor. Native comparison uses FlowGuard's shared capture/adapter owner.
+a copied model executor. The native lifecycle test uses FlowGuard's shared capture/adapter owner.
 Reset constructs a new manager even when the previous one is fresh; the model adds no artificial
 refusal. Its postcondition checks the fresh card, unapplied flag and empty override warning.
 Invalid schema and parameter refusals remain in the independent production unit contracts.
