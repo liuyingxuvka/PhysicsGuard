@@ -1,11 +1,12 @@
 # Changelog
 
-## v0.18.0 - 2026-11-05 - Read original observations
+## v0.18.0 - 2026-11-06 - Read original observations
 
 - Observed snapshots can name original files under `sources` and quote text or pipe-table cells on variables, physical properties and parameters. Readings come from the matching original span, are converted through the sole unit table and are compared with the AI's values. Missing quotes remain grey; a changed quote or a numerical disagreement is red and includes its source hash and reason. Quoted parameters replace the audit's parameters for evaluation.
 - Readers support dimensionless values and percentages, unambiguous no-break digit groups, numeric ranges and differences between two clock times. A range checks containment instead of silently selecting its last number; ambiguous comma or plain-space grouping and unreadable prose remain explicit. Comparison tolerances use the original reading before temperature offsets.
 - CSV units are read from column headers and checked against the contract. `testfile snapshot --at FIELD=VALUE` records a selection key; snapshots retain raw values and units instead of physical conversion factors. Explicit transducer calibrations are retained and remain unchecked.
 - Trees and quantity-flow pictures distinguish source-backed passes from `passes on AI values only`. Complete status rows and file digests live in the existing JSON report metadata, preserving its top-level schema. The skill instructions are shorter and include a runnable text/table example. LogicWriting can consume the saved source statuses without rerunning the audit.
+- A source-backed parameter makes a passing block green only when its checked native relation actually reads it at the observed values. Unused inputs, unexecuted conditional arms and short-circuited parameters receive no credit; native parameter aliases retain their real origin. Dependency shapes can be reused within one command, while numeric residuals and verdicts are recomputed.
 - The shared unit table adds metric tonnes, long-form metric lengths, energy units and their spellings, square/cubic length names and megalitres per day; unsupported or ambiguous units are still not guessed.
 
 ## v0.17.1 - 2026-11-05 - Refuse ambiguous numeric readings
