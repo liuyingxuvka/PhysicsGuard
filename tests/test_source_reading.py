@@ -53,7 +53,7 @@ SECOND = [
  ('pump_ok', None), ('pump_h36', 'pump.m_dot_kg_s'), ('pump_pct', 'pump.efficiency'), ('pump_thin', 'elec.P_W'),
  ('tab_ok', None), ('tab_row', 'elec.P_W'), ('tab_col', 'heat.m_dot_kg_s'), ('tab_dec_ok', None), ('tab_decimal', 'heat.T_in_K'),
  ('log_ok', None), ('log_row', 'row:bench_log.csv'), ('log_unit', 'heat.m_dot_kg_s'),
- ('mix_range', None), ('mix_swap', None), ('mix_round', 'mix.m_dot_1_kg_s'),
+ ('mix_range', None), ('mix_swap', 'mix.m_dot_1_kg_s'), ('mix_round', 'mix.m_dot_1_kg_s'),
  ('tank_ok', None), ('tank_clock', 'parameter:vol.dt_s'), ('tank_words', None), ('tank_dt_unquoted', None),
 ]
 THIRD = [
@@ -75,7 +75,7 @@ def test_every_public_seed_has_its_stated_outcome(folder, name, fault):
     if fault:
         assert report['audit_pass'] is False, name
         assert rows[fault]['colour'] == 'red', (name, rows[fault])
-        assert any(code in rows[fault]['reason'] for code in ('source_reading_disagrees', 'quote_not_in_source', 'header unit', 'row_key')), name
+        assert any(code in rows[fault]['reason'] for code in ('source_reading_disagrees', 'source_role_disagrees', 'quote_not_in_source', 'header unit', 'row_key')), name
     else:
         assert report['audit_pass'] is True, name
         assert not any(r['colour'] == 'red' for r in rows.values()), name
@@ -185,8 +185,8 @@ def test_shared_table_is_the_only_spelling_owner(source,target,factor):
     assert read_unit('ton') is None and read_unit('tons') is None
 
 
-def test_known_numeric_role_swap_and_unquoted_parameter_remain_explicit_limits():
-    for folder,name,grey in [('second','mix_swap',None), ('third','day_swap',None),
+def test_remaining_numeric_role_swap_and_unquoted_parameter_are_explicit_limits():
+    for folder,name,grey in [('third','day_swap',None),
                              ('third','store_ua_unquoted','parameter:walls.UA_W_K'),
                              ('third','day_midnight','parameter:tank.dt_s')]:
         _, _, report = evaluate(folder,name)

@@ -97,6 +97,12 @@ path, file content, and case id. PhysicsGuard compares the externally generated
 trajectory (alignment, error, lag, drift, stability); it does not turn a
 pointwise relation into a simulator.
 The rollout declares initial state, step size/unit, horizon, declared signals/scales and project-sourced thresholds; optional `producer_id` identifies the trajectory-producing run.
+The comparator does not execute that model or authenticate the producer. `model_identity.status: current`
+means the file is present, not that its contents produced these predictions. Results explicitly report
+`evidence_scope: external_trajectory_comparison` and `model_execution_verified: false`; a pass concerns
+the supplied trajectories. A changed model with an unchanged old prediction can still pass this comparison.
+Use the actual producer's evidence for the model-to-trajectory link, rather than treating `producer_id`
+or matching files as proof of execution.
 
 ## Calibration Boundary
 

@@ -66,11 +66,105 @@ def find_quote(quote: dict, sources: dict) -> tuple[str | None, str | None, str]
     text = quote.get('text')
     if not isinstance(text, str) or not text.strip():
         return None, source['digest'], 'quote_not_in_source: a nonempty text quote is required'
-    pattern = r'\s+'.join(re.escape(token) for token in text.split())
-    matched = re.search(pattern, source['text'])
-    if matched is None:
+    matches = _quote_matches(text, source['text'])
+    if not matches:
         return None, source['digest'], f'quote_not_in_source: {text!r}'
-    return matched.group(), source['digest'], ''
+    return matches[0].group(), source['digest'], ''
+
+
+def _quote_matches(quote: str, text: str) -> list:
+    pattern = r'\s+'.join(re.escape(token) for token in quote.split())
+    return list(re.finditer(pattern, text))
+
+
+def _inlet_contexts(text: str, properties: dict) -> list[tuple[int, int, str]]:
+    """Finite explicit inlet clauses; numeric syntax stays with the unit reader."""
+    starts = list(re.finditer(r'\bInlet\s+([A-Za-z0-9_-]+)\s+(?:brings|carries|supplies)\s+', text, re.I))
+    contexts = []
+    for index, match in enumerate(starts):
+        end = starts[index + 1].start() if index + 1 < len(starts) else len(text)
+        stop = re.search(r';|(?<!\d)\.(?=\s|$)', text[match.end():end])
+        if stop:
+            end = match.end() + stop.start()
+        body = re.sub(r'\([^)]*\)', '', text[match.end():end]).strip()
+        parts = re.split(r'\s+at\s+', body, flags=re.I)
+        if len(parts) != 2:
+            continue
+        flow = re.sub(r'\s+of\s+water\s*$', '', parts[0], flags=re.I)
+        readings = (read_source_value(flow, 'kg/s', properties), read_source_value(parts[1], 'K'))
+        if all(reading['kind'] in ('value', 'range') for reading in readings):
+            contexts.append((match.start(), end, 'Inlet ' + match[1]))
+    return contexts
+
+
+def _source_entities(quote: dict | None, sources: dict, contexts: dict) -> set[tuple[str, str]]:
+    if not quote or quote.get('from') not in sources:
+        return set()
+    source = quote['from']
+    if 'row' in quote:
+        span, _, problem = find_quote(quote, sources)
+        return {(source, 'row ' + str(quote['row']))} if span is not None and not problem else set()
+    text = quote.get('text')
+    if not isinstance(text, str) or not text.strip():
+        return set()
+    found = []
+    for match in _quote_matches(text, sources[source]['text']):
+        matching = [entity for start, end, entity in contexts[source]
+                    if start <= match.start() and match.end() <= end]
+        if len(matching) != 1:
+            return set()
+        found.extend(matching)
+    # A repeated description of the same inlet may be from a different time.
+    return {(source, entity) for entity in found
+            if sum(item[2] == entity for item in contexts[source]) == 1}
+
+
+def check_input_roles(rows: list[dict], observed, modules) -> dict[str, dict]:
+    """Bind native physical input groups to actual source clauses, never AI labels."""
+    modules = [module for module in modules if getattr(module, 'source_input_groups', ())]
+    if not observed._sources or not modules:
+        return {}
+    contexts = {name: _inlet_contexts(source['text'], observed.properties)
+                for name, source in observed._sources.items()}
+    by_id = {row['id']: row for row in rows}
+    results = {}
+    for module in modules:
+        groups = []
+        for label, fields in module.source_input_groups:
+            names = [module.component_id + '.' + field for field in fields]
+            current = [by_id[name] for name in names if name in by_id]
+            candidates = [_source_entities(observed.variables[name].quote, observed._sources, contexts)
+                          if name in observed.variables else set() for name in names]
+            unique = [next(iter(items)) if len(items) == 1 else None for items in candidates]
+            colour, reason, identity = 'grey', 'source role unchecked: inlet readings are not uniquely bound', None
+            if any(row['colour'] == 'red' for row in current):
+                colour, reason = 'red', 'source inlet contains a reading that disagrees'
+            elif all(item is not None for item in unique):
+                if len({item[0] for item in unique}) != 1:
+                    reason = 'source role unchecked: inlet identity across source files is not established'
+                elif len(set(unique)) != 1:
+                    colour, reason = 'red', 'source_role_disagrees: one inlet combines different source entities'
+                else:
+                    colour, reason, identity = 'green', 'source inlet binding checked', unique[0]
+            for name, item in zip(names, unique):
+                if name not in by_id:
+                    continue
+                row = by_id[name]
+                row['input_group'] = module.component_id + '.' + label
+                if item is not None:
+                    row['source_entity'] = item[1]
+            groups.append((current, colour, reason, identity))
+        identities = [identity for _, colour, _, identity in groups if colour == 'green']
+        for current, colour, reason, identity in groups:
+            if identity is not None and identities.count(identity) > 1:
+                colour, reason = 'red', 'source_role_disagrees: the same source inlet is counted as two inlets'
+            for row in current:
+                if colour != 'green' and row['colour'] != 'red':
+                    row.update(colour=colour, reason=reason)
+            old = results.get(module.component_id)
+            if old is None or ('green', 'grey', 'red').index(colour) > ('green', 'grey', 'red').index(old['colour']):
+                results[module.component_id] = {'colour': colour, 'reason': reason}
+    return results
 
 
 def source_row(identifier: str, quote: dict | None, ai_value: float | None,

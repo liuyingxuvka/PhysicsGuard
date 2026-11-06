@@ -12,6 +12,9 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 
 
 class BaseModule(ABC):
+    # Physical input groups whose readings must refer to one distinct source entity.
+    source_input_groups: tuple[tuple[str, tuple[str, ...]], ...] = ()
+
     def __init__(
         self,
         component_id: str,

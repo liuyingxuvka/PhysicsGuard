@@ -91,6 +91,12 @@ resolution: mix.m_dot_2_kg_s +-0.00017 kg/s, mix.T_2_K +-0.33 K, mix.m_dot_out_k
 
 Exit codes: 0 passed, 1 checked and not passed, 2 could not run. Grey means the numerical check still relies on AI values. Quote the original question as shown in [the source-reading example](examples/source_reading/README.md).
 
+For a two-stream merge, a flow and temperature must refer to the same source inlet;
+the finite explicit-inlet and table-row forms are described in the model format. Swapped
+individual readings are red, while an ambiguous role stays grey and can still be calculated.
+The block's source coverage names what was checked; it does not require a quote for a computed
+answer. A question reference alone does not evaluate the answer's threshold or predicate.
+
 ## Discuss it with a picture
 
 When you and the AI talk about a set-up, ask for the picture of how its quantities flow. It is drawn from the

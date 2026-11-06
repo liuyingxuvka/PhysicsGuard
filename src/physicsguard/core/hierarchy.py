@@ -829,11 +829,12 @@ class HierarchicalAuditRunner:
 
 
 def _attach_source_report(report, observed, spec, builder, parameter_rows):
-    from physicsguard.io.source_reading import source_parameters
+    from physicsguard.io.source_reading import source_parameters, check_input_roles
     rows = [dict(row) for row in observed._source_readings]
     if parameter_rows is None:
         _, parameter_rows = source_parameters(observed, spec)
     rows.extend(parameter_rows)
+    input_roles = check_input_roles(rows, observed, builder.build_modules())
     backed = {r['id'] for r in rows if r['colour'] in ('green', 'red') and r.get('source_digest')
               and not r['reason'].startswith('quote_not_in_source')}
     registry = builder.build_registry()
@@ -868,13 +869,33 @@ def _attach_source_report(report, observed, spec, builder, parameter_rows):
     verdicts = []
     for original in report.block_verdicts:
         row = dict(original)
-        sourced = any(set(deps.get(name, ())) & backed
-            for name in assigned.get(row['block_id'], []) if name in by_name)
-        colour = 'red' if row['checked_residual_count'] and not row['own_audit_pass'] else (
-            'green' if row['checked_residual_count'] and sourced else 'grey')
-        reason = ('source-backed checks pass' if colour == 'green' else 'physical checks disagree' if colour == 'red' else
-                  'passes on AI values only' if row['checked_residual_count'] else 'no checks')
-        row.update(colour=colour, source_reason=reason)
+        names = [name for name in assigned.get(row['block_id'], []) if name in by_name]
+        used = set().union(*(deps.get(name, set()) for name in names))
+        sourced = used & backed
+        components = {by_name[name].source for name in names}
+        roles = [input_roles[name] for name in components if name in input_roles]
+        role_problem = next((item for item in roles if item['colour'] == 'red'), None) or next(
+            (item for item in roles if item['colour'] == 'grey'), None)
+        coverage = {
+            'backed_dependencies': sorted(used & {r['id'] for r in rows if r['colour'] == 'green'}),
+            'other_variable_dependencies': sorted(name for name in used - backed if not name.startswith('parameter:')),
+            'unverified_parameters': sorted(r['id'] for r in rows if r['id'].startswith('parameter:')
+                and r['id'].split(':', 1)[1].split('.', 1)[0] in components and r['colour'] != 'green'),
+            'scope': 'resolved checked reads; unquoted parameters are not verified or claimed to have executed',
+        }
+        if row['checked_residual_count'] and not row['own_audit_pass']:
+            colour, reason = 'red', 'physical checks disagree'
+        elif role_problem:
+            colour, reason = role_problem['colour'], role_problem['reason']
+        elif row['checked_residual_count'] and sourced:
+            colour = 'green'
+            reason = ('checks pass; partial source coverage: '
+                      f"{len(coverage['backed_dependencies'])} backed, {len(coverage['other_variable_dependencies'])} other variable reads; "
+                      f"{len(coverage['unverified_parameters'])} parameters not source-verified")
+        else:
+            colour = 'grey'
+            reason = 'passes on AI values only' if row['checked_residual_count'] else 'no checks'
+        row.update(colour=colour, source_reason=reason, source_coverage=coverage)
         verdicts.append(row)
     from physicsguard.io.source_reading import find_quote
     index = BlockIndex(spec.hierarchy, spec.system)
@@ -882,8 +903,9 @@ def _attach_source_report(report, observed, spec, builder, parameter_rows):
         _, digest, problem = find_quote(claim.get('quote', {}), observed._sources)
         block = index.block_for_variable(claim['variable'])
         colour = next((r['colour'] for r in verdicts if r['block_id'] == block), 'grey')
-        rows.append({'id': f'claim:{i}', 'colour': 'red' if problem else colour,
-                     'reason': problem or f'question -> {claim["variable"]} -> block {block}', 'source_digest': digest})
+        rows.append({'id': f'claim:{i}', 'colour': 'red' if problem or colour == 'red' else 'grey',
+                     'reason': problem or f'question reference -> {claim["variable"]} -> block {block} ({colour}); question predicate not evaluated',
+                     'source_digest': digest, 'evidence_scope': 'question_reference'})
     sources = {name: {'path': s['path'], 'sha256': s['digest']} for name, s in observed._sources.items()}
     return replace(report, audit_pass=report.audit_pass and not any(r['colour'] == 'red' for r in rows),
                    source_readings=rows, sources=sources, block_verdicts=verdicts)

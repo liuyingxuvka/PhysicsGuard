@@ -200,3 +200,24 @@ def test_native_results_have_no_output_version():
     result = evaluate_predictive_rollout('stateful_dynamic', _plan(), base_dir=PUMP).result
     assert result['artifact_kind'] == 'physicsguard_predictive_rollout_result'
     assert 'output_version' not in result
+
+
+def test_native_producer_is_real_but_comparison_does_not_certify_its_execution(tmp_path):
+    from _predictive_native_probe import run_native_rollout_probe
+
+    probe = run_native_rollout_probe(tmp_path)
+    assert probe['actual_native_solver_runs'] == 9
+    assert probe['normal_values'] == pytest.approx([1., 1.5, 1.75])
+    assert probe['initial_model_sha256'] != probe['changed_model_sha256']
+    good, stale = probe['normal'], probe['model_changed_old_prediction']
+    assert good['status'] == stale['status'] == 'pass'
+    assert good['metrics'] == stale['metrics']
+    for result in (good, stale):
+        assert result['evidence_scope'] == 'external_trajectory_comparison'
+        assert result['model_execution_verified'] is False
+        assert 'model-to-trajectory linkage are not verified' in result['claim_boundary']
+        assert 'prediction is authorized' not in result['claim_boundary']
+    assert probe['changed_parameter']['status'] == 'blocked'
+    assert probe['changed_parameter']['metrics']['worst_step_normalized_error'] == pytest.approx(.625)
+    assert probe['changed_step']['status'] == 'blocked'
+    assert 'predictive_alignment_failed' in probe['changed_step']['finding_codes']

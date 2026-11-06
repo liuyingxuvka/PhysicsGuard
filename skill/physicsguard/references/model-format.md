@@ -126,6 +126,17 @@ unquoted inputs stay grey. A passing block is green only if an actual checked re
 source-backed variable or parameter. JSON keeps the original report's top-level schema;
 `metadata.source_readings` and `metadata.sources` contain every status and original-file hash.
 
+For FlowMergeTemperatureModule, flow and temperature on each inlet must also refer to one
+source inlet, with different source inlets for the two ports. The finite text form is
+`Inlet <id> brings/carries/supplies <flow> [of water] at <temperature or range>`; existing
+pipe-table quotes can bind both readings to the same row. Full inlet pairs may be swapped.
+Mixed identities are red; repeated, cross-document or unsupported role bindings stay grey,
+without preventing numerical calculation. Bound rows expose `input_group` and `source_entity`.
+Block `source_coverage` names backed dependencies, other variable reads and parameters not
+source-verified; it does not require a source quote for a computed answer. Question pointers
+have `evidence_scope: question_reference` and stay grey unless an error makes them red: finding
+the question does not evaluate its predicate. Use native relations for a finite threshold claim.
+
 For CSV, `testfile snapshot CONTRACT.yaml --at t_s=90` records `row_key`; without a key the
 selection is grey. Header units are checked against the contract and used to re-read cells.
 Generated snapshots omit physical conversion factors, retaining raw values and units. The

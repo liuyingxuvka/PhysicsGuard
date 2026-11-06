@@ -192,6 +192,11 @@ class FlowSplitModule(BaseModule):
 class FlowMergeTemperatureModule(BaseModule):
     """Low-fidelity two-stream merge (mixing tee) mass and temperature audit."""
 
+    source_input_groups = (
+        ("inlet_1", ("m_dot_1_kg_s", "T_1_K")),
+        ("inlet_2", ("m_dot_2_kg_s", "T_2_K")),
+    )
+
     def __init__(self, component_id: str, parameters: dict[str, Any]) -> None:
         super().__init__(component_id, "FlowMergeTemperatureModule", parameters)
         self.mass_scale = positive_float(parameters.get("mass_residual_scale_kg_s", 0.01), "mass_residual_scale_kg_s")

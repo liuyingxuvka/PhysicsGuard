@@ -68,3 +68,13 @@ ordinary passed behavior. Static skip declarations and import aliases remain pro
 These finite contracts do not certify physical truth beyond their inputs. Static route
 checks establish target existence, not call order. No artificial execution order or second
 physical simulator is introduced. The modules/core dependency cycle is not claimed repaired.
+
+Source inlet roles are native physical metadata, not a second formula: FlowMergeTemperatureModule
+declares its two flow/temperature groups. The source owner binds each to a unique explicit
+`Inlet <id> brings/carries/supplies ... at ...` clause or a verified pipe-table row. Different
+entities in one port, or counting one entity as two ports, is red; unsupported/ambiguous roles
+stay grey while numerical evaluation remains available. Whole-pair port swaps remain valid.
+Block `source_coverage` lists actual backed reads, other variable reads and parameters not
+source-verified; unquoted output values need no external quotation. Free-form question links
+are labelled `question_reference`, not evaluated answer predicates. The finite 40 C control
+uses the existing native ThresholdStateCheckModule instead of a question-language engine.

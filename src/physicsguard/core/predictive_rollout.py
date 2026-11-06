@@ -112,6 +112,8 @@ def evaluate_predictive_rollout(
         "alignment_gaps": alignment_gaps,
         "metrics": metrics,
         "metrics_status": "not_run" if missing_paths or predicted is None or holdout is None else "evaluated",
+        "evidence_scope": "not_run" if predicted is None or holdout is None else "external_trajectory_comparison",
+        "model_execution_verified": False,
         "finding_codes": sorted({item["type"] for item in findings}),
         "covered_horizon": {
             "training_end_time": rollout.training_end_time,
@@ -123,9 +125,10 @@ def evaluate_predictive_rollout(
             "threshold_source": rollout.threshold_source,
         },
         "claim_boundary": (
-            "prediction is authorized only for the exact model, "
-            + ("producer identity, " if rollout.producer_id else "")
-            + "initial state, step, future holdout, targets, horizon, scales, and thresholds in this result"
+            "only the supplied prediction and future-holdout trajectories are compared under the declared "
+            "step, targets, horizon, scales, and thresholds; model identity checks file presence only, "
+            "but model execution and model-to-trajectory linkage are not verified"
+            + ("; producer identity is caller-declared" if rollout.producer_id else "")
         ),
     }
     return PredictiveRolloutEvaluation(result=_complete_predictive_result(result), findings=findings)
@@ -306,4 +309,4 @@ __all__ = [
 
 
 def _complete_predictive_result(payload):
-    return {**{'rollout_id': None, 'producer_id': None, 'model_identity': None, 'training': [], 'prediction_series': None, 'future_holdout_series': None, 'overlapping_paths': [], 'overlapping_contents': [], 'overlapping_case_ids': [], 'alignment_gaps': [], 'finding_codes': [], 'covered_horizon': {}}, **payload}
+    return {**{'rollout_id': None, 'producer_id': None, 'model_identity': None, 'training': [], 'prediction_series': None, 'future_holdout_series': None, 'overlapping_paths': [], 'overlapping_contents': [], 'overlapping_case_ids': [], 'alignment_gaps': [], 'finding_codes': [], 'covered_horizon': {}, 'evidence_scope': 'not_run', 'model_execution_verified': False}, **payload}
