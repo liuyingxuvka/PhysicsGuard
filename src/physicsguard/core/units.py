@@ -267,3 +267,19 @@ def property_conversion(source, target, property_value, property_unit):
         raise ValueError(f'a {describe_quantity(property_unit)} ({property_unit}) does not turn '
                          f'{describe_quantity(source)} ({source}) into {describe_quantity(target)} ({target})')
     return factor, 0.0
+
+
+def unit_error_hypotheses() -> tuple[tuple[float, float], ...]:
+    """Finite diagnostic transformations, computed from the sole unit table.
+
+    These are counterfactual scale/offset trials, not a conversion or an inference
+    of the observation's actual source unit. Labels keep the original diagnostic
+    order; the numeric factors and temperature offsets belong only to this table.
+    """
+    pairs = (("W", "kW"), ("kW", "W"), ("mL", "m^3"), ("m^3", "mL"),
+             ("h", "s"), ("s", "h"), ("min", "s"), ("s", "min"),
+             ("Pa", "bar"), ("bar", "Pa"), ("rad/s", "rpm"), ("rpm", "rad/s"),
+             ("degC", "K"), ("K", "degC"))
+    transformations = tuple(known_conversion(source, target) for source, target in pairs)
+    assert all(value is not None for value in transformations), "diagnostic unit pairs must be readable"
+    return transformations

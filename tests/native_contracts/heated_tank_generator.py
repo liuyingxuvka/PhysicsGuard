@@ -1,23 +1,7 @@
-"""Independent heated tank generator domain facts and production contracts."""
-from dataclasses import dataclass, replace
+"""Preserved direct heated tank generator contracts."""
 from ._audit_cases import ROOT
-MUTATIONS = {'generator_drifts_from_committed_csv': 'generator_reproduces_committed_csv'}
 CASES = ('generate',)
 
-@dataclass(frozen=True)
-class State:
-    done: bool = False
-    import_clean: bool = True
-    identical: bool = True
-
-def expected(request, state, mutation=''):
-    result = State(True, True, mutation != 'generator_drifts_from_committed_csv')
-    return result
-
-def generator_reproduces_committed_csv(state, trace):
-    return False if state.done and (not state.import_clean or not state.identical) else True
-RULE_NAMES = ('generator_reproduces_committed_csv',)
-RULES = (generator_reproduces_committed_csv,)
 
 def assert_native_contract():
     mismatches = []
@@ -43,3 +27,4 @@ def assert_native_contract():
         if code != 0 or output.read_bytes() != (source.parent / 'tank_run.csv').read_bytes():
             mismatches.append('CSV generation drifted')
     assert not mismatches, mismatches
+

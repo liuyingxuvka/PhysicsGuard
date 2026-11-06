@@ -1,37 +1,12 @@
-"""Native audit fixtures and pure stage facts; this file is not an executable model."""
+"""Real audit fixtures and captured production reports; no simulated state."""
 from __future__ import annotations
-from dataclasses import dataclass, replace
 from contextlib import contextmanager
 from pathlib import Path
-import sys
 import dataclasses
 ROOT = Path(__file__).resolve().parents[2]
 
-@dataclass(frozen=True)
-class AuditInput:
-    case_id: str
-    valid_schema: bool
-    finite_bounded_variables: bool
-    known_references: bool
-    normalized_residuals: bool
-    solver_converges: bool
-    residual_within_threshold: bool
-    has_post_check_residuals: bool = False
-    post_check_enters_solver: bool = False
-    mode: str = 'hierarchy_run'
-    observed_values_complete: bool = True
-    has_assumptions: bool = False
-    parameter_assumption: bool = False
-    variable_assumption: bool = False
-    assumption_override: bool = False
-    proposed_assumption: bool = False
-    rejected_assumption: bool = False
-    assumption_as_free_variable: bool = False
-    unobserved_zero_product: bool = False
 ASSUMPTION_LABELS = {'parameter_fill': 'parameter_assumption_filled', 'parameter_override': 'assumption_override_warned', 'not_applied_proposed': 'proposed_assumption_not_applied', 'not_applied_rejected': 'rejected_assumption_not_applied', 'boundary_residual': 'variable_assumption_boundary_ready'}
 PITCH = 'examples/hierarchical/observed_debugging'
-EXTERNAL_INPUTS = (AuditInput('clean', True, True, True, True, True, True), AuditInput('converged_bad_audit', True, True, True, True, True, False), AuditInput('bad_bounds', True, False, True, True, True, True), AuditInput('unknown_ref', True, True, False, True, True, True), AuditInput('raw_residual', True, True, True, False, True, True), AuditInput('post_check_diagnostic_only', True, True, True, True, True, True, True, False), AuditInput('post_check_bad_selection', True, True, True, True, True, True, True, True), AuditInput('evaluate_clean', True, True, True, True, True, True, False, False, 'hierarchy_evaluate', True), AuditInput('evaluate_bad_audit', True, True, True, True, True, False, False, False, 'hierarchy_evaluate', True), AuditInput('evaluate_missing_observed', True, True, True, True, True, True, False, False, 'hierarchy_evaluate', False), AuditInput('compare_bad_audit', True, True, True, True, True, False, False, False, 'hierarchy_compare', True), AuditInput('hierarchy_clean', True, True, True, True, True, True, False, False, 'hierarchy_run', True), AuditInput('hierarchy_bad_audit', True, True, True, True, True, False, False, False, 'hierarchy_run', True), AuditInput('hierarchy_evaluate_clean', True, True, True, True, True, True, False, False, 'hierarchy_evaluate', True), AuditInput('hierarchy_evaluate_bad_audit', True, True, True, True, True, False, False, False, 'hierarchy_evaluate', True), AuditInput('hierarchy_evaluate_missing_observed', True, True, True, True, True, True, False, False, 'hierarchy_evaluate', False), AuditInput('hierarchy_evaluate_derived_bad_audit', True, True, True, True, True, False, mode='hierarchy_evaluate', observed_values_complete=False), AuditInput('hierarchy_evaluate_derived_child_bad_audit', True, True, True, True, True, False, mode='hierarchy_evaluate', observed_values_complete=False), AuditInput('hierarchy_evaluate_partial_unresolved', True, True, True, True, True, True, mode='hierarchy_evaluate', observed_values_complete=False), AuditInput('hierarchy_evaluate_partial_snapshot', True, True, True, True, True, True, False, False, 'hierarchy_evaluate', False), AuditInput('hierarchy_evaluate_zero_product', True, True, True, True, True, True, mode='hierarchy_evaluate', observed_values_complete=False, unobserved_zero_product=True), AuditInput('hierarchy_compare_bad_audit', True, True, True, True, True, False, False, False, 'hierarchy_compare', True), AuditInput('hierarchy_describe', True, True, True, True, True, True, False, False, 'hierarchy_describe', True), AuditInput('assumption_parameter_fill', True, True, True, True, True, True, has_assumptions=True, parameter_assumption=True), AuditInput('assumption_variable_boundary', True, True, True, True, True, True, has_assumptions=True, variable_assumption=True), AuditInput('assumption_parameter_override', True, True, True, True, True, True, has_assumptions=True, parameter_assumption=True, assumption_override=True), AuditInput('assumption_proposed', True, True, True, True, True, True, has_assumptions=True, proposed_assumption=True), AuditInput('assumption_rejected', True, True, True, True, True, True, has_assumptions=True, rejected_assumption=True), AuditInput('assumption_context', True, True, True, True, True, True, has_assumptions=True), AuditInput('assumption_free_variable', True, True, True, True, True, True, has_assumptions=True, assumption_as_free_variable=True), AuditInput('no_converge', True, True, True, True, False, True), AuditInput('bad_schema', False, True, True, True, True, True), AuditInput('growth_coarse_bad_audit', True, True, True, True, True, False, mode='hierarchy_evaluate'), AuditInput('growth_planned_bad_audit', True, True, True, True, True, False, mode='hierarchy_evaluate'), AuditInput('hierarchy_evaluate_partial_tree_view_bad_audit', True, True, True, True, True, False, mode='hierarchy_evaluate', observed_values_complete=False))
-EXTERNAL_INPUTS += (AuditInput('hierarchy_evaluate_partial_tree_view_not_checked', True, True, True, True, True, True, mode='hierarchy_evaluate', observed_values_complete=False),)
 
 @contextmanager
 def _solver_counted():
@@ -336,19 +311,6 @@ def _root_not_checked():
     return ('tree_view_rendered_with_block_verdicts', report.audit_pass)
 REAL_CASES['hierarchy_evaluate_partial_tree_view_not_checked'] = _root_not_checked
 
-def stage_facts(case):
-    """Only coarse pipeline markers, computed from the declared AuditInput."""
-    key = case.case_id
-    schema = case.valid_schema
-    registry = schema and 'bad_bounds' not in key and (not case.assumption_as_free_variable)
-    partial = case.mode == 'hierarchy_evaluate' and (not case.observed_values_complete) and ('partial' in key or 'derived' in key or key == 'evaluate_missing_observed')
-    missing = case.mode in ('hierarchy_evaluate', 'hierarchy_compare') and (not case.observed_values_complete) and (not partial)
-    assembled = registry and 'unknown_ref' not in key and ('raw_residual' not in key) and (not case.post_check_enters_solver) and (not missing)
-    described = assembled and case.mode == 'hierarchy_describe'
-    normalized = assembled and (not described)
-    executed = assembled and case.mode in ('hierarchy_evaluate', 'hierarchy_compare', 'hierarchy_run')
-    values = {'schema_valid': schema, 'registry_valid': registry, 'residuals_normalized': normalized, 'solve_attempted': executed and case.mode != 'hierarchy_evaluate', 'comparisons': executed and case.mode == 'hierarchy_compare', 'hierarchy_reports': executed, 'hierarchy_descriptions': described, 'diagnostics_emitted': executed or described, 'failures': not assembled}
-    return {name: (key,) if value else () for name, value in values.items()}
 
 def _plain(value):
     if hasattr(value, 'model_dump'):
@@ -413,3 +375,7 @@ def replay_assumption_report(case_id):
     report = DiagnosticReporter().generate(spec, builder, BoundedSolver(builder, spec.solver).solve())
     assert {card.id for card in cards} == {card.id for card in report.assumptions.cards}
     return report
+
+# Independent expectations retained from the original input declarations.
+EXPECTED_AUDIT = {'clean': True, 'converged_bad_audit': False, 'bad_bounds': True, 'unknown_ref': True, 'raw_residual': True, 'post_check_diagnostic_only': True, 'post_check_bad_selection': True, 'evaluate_clean': True, 'evaluate_bad_audit': False, 'evaluate_missing_observed': True, 'compare_bad_audit': False, 'hierarchy_clean': True, 'hierarchy_bad_audit': False, 'hierarchy_evaluate_clean': True, 'hierarchy_evaluate_bad_audit': False, 'hierarchy_evaluate_missing_observed': True, 'hierarchy_evaluate_derived_bad_audit': False, 'hierarchy_evaluate_derived_child_bad_audit': False, 'hierarchy_evaluate_partial_unresolved': True, 'hierarchy_evaluate_partial_snapshot': True, 'hierarchy_evaluate_zero_product': True, 'hierarchy_compare_bad_audit': False, 'hierarchy_describe': True, 'assumption_parameter_fill': True, 'assumption_variable_boundary': True, 'assumption_parameter_override': True, 'assumption_proposed': True, 'assumption_rejected': True, 'assumption_context': True, 'assumption_free_variable': True, 'no_converge': True, 'bad_schema': True, 'growth_coarse_bad_audit': False, 'growth_planned_bad_audit': False, 'hierarchy_evaluate_partial_tree_view_bad_audit': False, 'hierarchy_evaluate_partial_tree_view_not_checked': True}
+LABELS = {'growth_coarse_bad_audit': 'coarse_failure_consistency_reported', 'growth_planned_bad_audit': 'planned_template_reported_not_executed', 'hierarchy_evaluate_partial_tree_view_bad_audit': 'tree_view_rendered_with_block_verdicts', 'hierarchy_evaluate_derived_child_bad_audit': 'child_failure_propagated', 'hierarchy_evaluate_derived_bad_audit': 'derived_relations_excluded_from_checks', 'hierarchy_evaluate_partial_unresolved': 'unobserved_residuals_skipped', 'clean': 'hierarchy_run_solved_and_reported', 'converged_bad_audit': 'optimizer_converged_audit_failed', 'bad_schema': 'schema_failed', 'evaluate_clean': 'hierarchy_observed_evaluated_without_solver', 'evaluate_bad_audit': 'hierarchy_observed_evaluated_without_solver', 'evaluate_missing_observed': 'derived_relations_excluded_from_checks', 'compare_bad_audit': 'hierarchy_compare_solved_and_evaluated', 'hierarchy_clean': 'hierarchy_run_solved_and_reported', 'hierarchy_bad_audit': 'optimizer_converged_audit_failed', 'hierarchy_evaluate_clean': 'hierarchy_observed_evaluated_without_solver', 'hierarchy_evaluate_bad_audit': 'hierarchy_observed_evaluated_without_solver', 'hierarchy_evaluate_missing_observed': 'no_independent_observed_check_failed', 'hierarchy_evaluate_zero_product': 'no_independent_observed_check_failed', 'hierarchy_evaluate_partial_snapshot': 'unobserved_values_derived', 'hierarchy_describe': 'hierarchy_described_without_solver', 'assumption_parameter_fill': 'parameter_assumption_filled', 'assumption_parameter_override': 'assumption_override_warned', 'assumption_proposed': 'proposed_assumption_not_applied', 'assumption_rejected': 'rejected_assumption_not_applied', 'assumption_variable_boundary': 'variable_assumption_boundary_ready', 'hierarchy_evaluate_partial_tree_view_not_checked': 'tree_view_rendered_with_block_verdicts'}

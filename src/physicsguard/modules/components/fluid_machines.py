@@ -10,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
+    extrapolation_allowed,
     bilinear_interp,
     bounded_record,
     component_metadata,
@@ -135,7 +136,7 @@ class CompressorMapSimpleModule(BaseModule):
             cols=len(self.speed_points),
         )
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.cp_J_kgK = positive_float(parameters.get("cp_J_kgK", 1005.0), "cp_J_kgK")
         self.gamma = positive_float(parameters.get("gamma", 1.4), "gamma")
@@ -336,7 +337,7 @@ class PumpMapSimpleModule(BaseModule):
             cols=len(self.speed_points),
         )
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.rho_kg_m3 = positive_float(parameters.get("rho_kg_m3", 997.0), "rho_kg_m3")
         self.residual_scale_pressure_Pa = positive_float(

@@ -10,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
 from physicsguard.modules.components._common import (
+    extrapolation_allowed,
     bilinear_interp,
     bounded_record,
     check_denominator,
@@ -41,7 +42,7 @@ class EngineTorqueMapModule(BaseModule):
         self.load_points = strictly_increasing_axis(parameters, "load_points")
         self.torque_values = finite_grid(parameters, "torque_values_Nm", rows=len(self.load_points), cols=len(self.speed_points))
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.scale = positive_float(parameters.get("residual_scale_Nm", 10.0), "residual_scale_Nm")
         self.records = [

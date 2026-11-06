@@ -1540,8 +1540,9 @@ def _unit_factor_followups(report, observed, builder, registry, threshold):
         return set().union(*(ancestors(ref,seen|{name}) for ref in derived[name].get('dependencies',[])))
 
     candidates = sorted(set().union(*(ancestors(ref) for name in failed for ref in dependencies[name])))[:20]
-    transformations = [(factor,0.) for factor in (1e-3,1e3,1e-6,1e6,3600.,1/3600,60.,1/60,1e-5,1e5,30/math.pi,math.pi/30)]
-    transformations += [(1.,273.15),(1.,-273.15)]
+    from physicsguard.core.units import unit_error_hypotheses
+
+    transformations = unit_error_hypotheses()
     for variable in candidates:
         affected = {name for name in derived if variable in ancestors(name)}
         seed = {**measured, **{name:item['value'] for name,item in derived.items() if name not in affected}}

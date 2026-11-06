@@ -60,6 +60,15 @@ def finite_grid(parameters: dict[str, Any], name: str, rows: int, cols: int) -> 
     return grid
 
 
+def extrapolation_allowed(mode: str, *, linear: bool = False) -> bool:
+    """Map modes: error/hold everywhere; linear only for the explicit 1D owner."""
+    if mode in {"error", "hold"}:
+        return True
+    if linear:
+        return mode == "linear"
+    return False
+
+
 def one_d_interp(
     x: float,
     x_points: list[float],
@@ -87,7 +96,7 @@ def bilinear_interp(
     extrapolation: str,
     component_id: str,
 ) -> float:
-    if extrapolation not in {"error", "hold"}:
+    if not extrapolation_allowed(extrapolation):
         raise ValueError("extrapolation must be 'error' or 'hold'")
     if x < x_points[0] or x > x_points[-1] or y < y_points[0] or y > y_points[-1]:
         if extrapolation == "error":

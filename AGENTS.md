@@ -1,10 +1,9 @@
 ## PhysicsGuard Core Repository Rules
 
 Read `docs/development/flow-contracts.md` for the affected rule and its production test before changing code.
-The assumption-card lifecycle model is `.flowguard/flow/assumption_lifecycle.py`; `python -m flowguard release`
-reports native conformance as `UNKNOWN`. Real apply/reset calls through its shared native binding are checked
-by `tests/flow_migration/test_native_lifecycle.py`;
-input, report, schema and installation obligations live in independent `tests/flow_migration` unit contracts.
+The former model DSL is retired. Real apply/reset chains, reports, schemas, CLI boundaries and
+installation obligations live in `tests/native_contracts`; one shared cross-session decision
+uses `tests/intent/policies.py`. Recheck affected intent and real tests with `python -m flowguard check`.
 
 Policies:
 
@@ -15,7 +14,7 @@ Policies:
 - Do not invent or silently apply assumptions, mappings, units or parameters. Record uncertainty explicitly; confidence and block scores are heuristics, not probability or proof. Never present a solved reference as an external observation.
 - No commercial reverse engineering or external simulation-tool dependencies. Use documented, official or user-provided interfaces; keep adapters future work unless explicitly requested.
 - Lookup/map modules document axes, units and extrapolation. Piecewise diagnostic checks default to post_check unless they intentionally define the solved reference; rate limits remain single-step without an explicit series request.
-- One route per function: when a step fails, the error reaches the caller. A relation refuses a value only by raising `DomainRefusal`, and the tool's probes skip that refusal. Bounded root samples also treat division by zero and overflow as undefined points and claim no unique root; other errors reach the caller. An exception handler that can finish without raising is listed with its reason in `tests/test_error_handlers.py`, and no test or test file may end skipped (`tests/no_skips.py` turns a skip into a failure).
+- One route per function: when a step fails, the error reaches the caller. A relation refuses a value only by raising `DomainRefusal`, and the tool's probes skip that refusal. Bounded root samples also treat division by zero and overflow as undefined points and claim no unique root; other errors reach the caller. An exception handler that can finish without raising is listed with its reason in `tests/test_error_handlers.py`, and no test or test file may end skipped (`skip_policy = "no_skip"` in pyproject.toml turns skips into failures; XPASS stays passed).
 - Proceed coarse-to-fine from a visible symptom to the next discriminating signals. Recommend refinement; no silent template execution/auto-refinement, universal bug-finding or commercial equivalence claims.
 
 Releases:
@@ -23,14 +22,17 @@ Releases:
 - Version numbers: a release that adds features raises the second number (0.16.0 -> 0.17.0); a release with only small fixes raises the third (0.17.0 -> 0.17.1); never skip a number.
 - Maintenance needs FlowGuard at or above the tag in the `test` extra of `pyproject.toml` (install with `python -m pip install -e ".[test]"`; the PyPI package named `flowguard` is a different project). Raise that tag only when this repository starts using a newer FlowGuard feature; a FlowGuard release alone is no reason to change it or to release this repository.
 
-CI runs the full pytest suite, including `tests/flow_migration/test_native_lifecycle.py`, on Python 3.11 and 3.13.
-Python 3.11 also runs `python -m flowguard release` for model checks; its native-conformance result is `UNKNOWN`
-and its exit code is 0. CI checks a scratch skill installation byte for byte. There is no legacy map check.
+CI runs the full pytest suite on Python 3.11 and 3.13, checks the current intent evidence,
+and checks a scratch skill installation byte for byte. Migration of development tooling
+alone does not require a PhysicsGuard release.
 
-# FlowGuard rules for the project agent
+# FlowGuard for maintenance
 
-1. At the start of a session and after any loss of context, run `python -m flowguard status` before anything else.
-2. When the owner asks for something, store the owner's own words once, as received: `python -m flowguard req add <file|-> --id <id>`. It stores only words the owner wrote, byte for byte: never a plan, a list or text an AI wrote. When a new owner message replaces an earlier one, add `--supersedes <old id>`; never edit `.flowguard/requests/`.
-3. Find code with `python -m flowguard where NAME`; change code and its tests together; run the project's own test command (for example `python -m pytest -q`) and report exactly what you ran and the result, plus any inherited technical work still open.
-4. Commit code and tests together in one commit with a message in your own words; add a line `Request: R<n>` when the change answers a stored owner request.
-5. When a request adds or changes state values, actions, conditions, settings or endings, change the affected feature's flow model before the code and run `python -m flowguard check`. For code claims, follow the installed `flowguard/flow/HOWTO.md` and bind only the affected actions to real public calls. When explaining a flow, embed the `python -m flowguard show` picture as `![Flow](PATH)` using its returned path.
+- Save only the owner's own words once with `python -m flowguard req add <file|-> --id <id>`;
+  never replace words in `.flowguard/requests/` with an AI's interpretation.
+- Use `python -m flowguard show TEXT` when they help locate
+  an existing decision. Keep one production owner for the same judgment. Use a small rule
+  only for a necessary copy or an important correction worth preserving across sessions.
+- Change code and its real tests together. Run `python -m pytest -q` and report actual results;
+  `python -m flowguard check` rechecks affected rules and tests. Commit messages cite the saved
+  request with `Request: <id>` when the change answers it.

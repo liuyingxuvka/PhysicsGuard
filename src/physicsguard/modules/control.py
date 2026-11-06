@@ -9,7 +9,7 @@ import numpy as np
 from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule, DomainRefusal
-from physicsguard.modules.components._common import finite_list
+from physicsguard.modules.components._common import extrapolation_allowed, finite_list
 from physicsguard.modules.physical._common import (
     finite_float,
     positive_float,
@@ -524,7 +524,7 @@ class LookupTable1DModule(BaseModule):
         if any(right <= left for left, right in zip(self.x_points, self.x_points[1:])):
             raise ValueError("x_points must be strictly increasing")
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold", "linear"}:
+        if not extrapolation_allowed(self.extrapolation, linear=True):
             raise ValueError("extrapolation must be 'error', 'hold', or 'linear'")
         self.role = _role(parameters.get("role_override", "equation"))
         self.residual_scale = positive_float(

@@ -10,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule
 from physicsguard.modules.components._common import (
+    extrapolation_allowed,
     bilinear_interp,
     bounded_record,
     component_metadata,
@@ -36,7 +37,7 @@ class LookupTable2DModule(BaseModule):
             cols=len(self.x_points),
         )
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.role = role(parameters.get("role_override"))
         self.residual_scale = positive_float(parameters.get("residual_scale", 1.0), "residual_scale")
@@ -103,7 +104,7 @@ class EfficiencyMap2DModule(BaseModule):
             cols=len(self.x_points),
         )
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.residual_scale = positive_float(parameters.get("residual_scale", 0.01), "residual_scale")
         self.records = [

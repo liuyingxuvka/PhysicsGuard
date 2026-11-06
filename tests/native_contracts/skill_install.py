@@ -1,24 +1,7 @@
-"""Independent skill install domain facts and production contracts."""
-from dataclasses import dataclass, replace
+"""Preserved direct skill install contracts."""
 from ._audit_cases import ROOT
-MUTATIONS = {'dry_run_writes_the_target': 'check_and_dry_run_change_nothing'}
 CASES = ('install',)
 
-@dataclass(frozen=True)
-class State:
-    done: bool = False
-    dry_clean: bool = True
-    before_code: int = 1
-    after_code: int = 0
-
-def expected(request, state, mutation=''):
-    result = State(True, mutation != 'dry_run_writes_the_target', 1, 0)
-    return result
-
-def check_and_dry_run_change_nothing(state, trace):
-    return False if state.done and (not state.dry_clean or state.before_code != 1 or state.after_code != 0) else True
-RULE_NAMES = ('check_and_dry_run_change_nothing',)
-RULES = (check_and_dry_run_change_nothing,)
 
 def assert_native_contract():
     mismatches = []
@@ -48,3 +31,4 @@ def assert_native_contract():
         if installed != 0 or after != 0:
             mismatches.append('fresh installation does not check current')
     assert not mismatches, mismatches
+

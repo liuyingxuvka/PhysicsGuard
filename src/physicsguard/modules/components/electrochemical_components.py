@@ -10,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
+    extrapolation_allowed,
     bounded_record,
     component_metadata,
     finite_list,
@@ -108,7 +109,7 @@ class FuelCellPolarizationMapModule(BaseModule):
         if len(self.current_density_points) != len(self.V_cell_points):
             raise ValueError("V_cell_points_V length must match current_density_points_A_m2")
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.residual_scale_V = positive_float(parameters.get("residual_scale_V", 0.02), "residual_scale_V")
         self.records = _polarization_records(component_id, parameters)
@@ -223,7 +224,7 @@ class ElectrolyzerPolarizationMapModule(BaseModule):
         if len(self.current_density_points) != len(self.V_cell_points):
             raise ValueError("V_cell_points_V length must match current_density_points_A_m2")
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.residual_scale_V = positive_float(parameters.get("residual_scale_V", 0.02), "residual_scale_V")
         self.records = _polarization_records(component_id, parameters)

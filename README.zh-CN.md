@@ -228,7 +228,7 @@ flowchart LR
 
 ## 开发 PhysicsGuard
 
-要跑仓库自己的测试，装 `test` 这一组依赖（`python -m pip install -e ".[test]"`）。它会装上 pytest 和 FlowGuard，PhysicsGuard 用 FlowGuard 维护自己；FlowGuard 只从它的 git tag 安装（`git+https://github.com/liuyingxuvka/FlowGuard.git@v1.0.0`），因为 PyPI 上同名的包是另一个项目。平常使用 PhysicsGuard 不需要 FlowGuard。
+要跑仓库自己的测试，装 `test` 这一组依赖（`python -m pip install -e ".[test]"`）。它会装上 pytest 和 FlowGuard，PhysicsGuard 用 FlowGuard 维护自己；FlowGuard 只从它的 git tag 安装（`git+https://github.com/liuyingxuvka/FlowGuard.git@v2.0.0`），因为 PyPI 上同名的包是另一个项目。平常使用 PhysicsGuard 不需要 FlowGuard。
 
 ## 链接
 

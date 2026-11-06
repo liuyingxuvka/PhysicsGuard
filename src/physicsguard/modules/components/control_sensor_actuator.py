@@ -10,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
+    extrapolation_allowed,
     bounded_record,
     component_metadata,
     finite_float,
@@ -41,7 +42,7 @@ class GainScheduledPIDModule(BaseModule):
         same_length(self.kd_points, len(self.schedule_points), "Kd_points")
         self.bias = finite_float(parameters.get("bias", 0.0), "bias")
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.error_scale = positive_float(parameters.get("residual_scale_error", 1.0), "residual_scale_error")
         self.output_scale = positive_float(parameters.get("residual_scale_output", 1.0), "residual_scale_output")

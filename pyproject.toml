@@ -20,7 +20,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest>=8.0",
-    "flowguard @ git+https://github.com/liuyingxuvka/FlowGuard.git@v1.0.0",
+    "flowguard @ git+https://github.com/liuyingxuvka/FlowGuard.git@v2.0.0",
 ]
 
 [project.scripts]
@@ -37,3 +37,9 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "-p flowguard.intent.plugin"
+
+[tool.flowguard]
+roots = ["src", "scripts", "tests"]
+authority_docs = ["docs/development/flow-contracts.md"]
+skip_policy = "no_skip"

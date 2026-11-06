@@ -13,7 +13,6 @@ other errors reaching the caller and the command's exit code.
 """
 from __future__ import annotations
 
-import ast
 import os
 import subprocess
 import sys
@@ -78,74 +77,18 @@ NON_RAISING_HANDLERS = {
 }
 
 
-def _outcome(statements, in_loop=False):
-    """(can finish normally, can leave by return/break/continue) for a statement list."""
-    falls, leaves = True, False
-    for statement in statements:
-        if not falls:
-            break
-        statement_falls, statement_leaves = _statement_outcome(statement, in_loop)
-        leaves |= statement_leaves
-        falls = statement_falls
-    return falls, leaves
-
-
-def _statement_outcome(node, in_loop):
-    if isinstance(node, ast.Raise):
-        return False, False
-    if isinstance(node, ast.Return):
-        return False, True
-    if isinstance(node, (ast.Break, ast.Continue)):
-        return False, not in_loop
-    if isinstance(node, ast.If):
-        (body_falls, body_leaves), (else_falls, else_leaves) = _outcome(node.body, in_loop), _outcome(node.orelse, in_loop)
-        return body_falls or else_falls, body_leaves or else_leaves
-    if isinstance(node, (ast.With, ast.AsyncWith)):
-        return _outcome(node.body, in_loop)
-    if isinstance(node, (ast.For, ast.AsyncFor, ast.While)):
-        # The body may run zero times; break/continue inside it stay inside the loop.
-        _falls, body_leaves = _outcome(node.body, True)
-        _else_falls, else_leaves = _outcome(node.orelse, in_loop)
-        return True, body_leaves or else_leaves
-    if isinstance(node, (ast.Try, getattr(ast, "TryStar", ast.Try))):
-        (body_falls, body_leaves), (else_falls, else_leaves) = _outcome(node.body, in_loop), _outcome(node.orelse, in_loop)
-        falls, leaves = body_falls and else_falls, body_leaves or else_leaves
-        for handler in node.handlers:
-            handler_falls, handler_leaves = _outcome(handler.body, in_loop)
-            falls, leaves = falls or handler_falls, leaves or handler_leaves
-        if node.finalbody:
-            final_falls, final_leaves = _outcome(node.finalbody, in_loop)
-            falls, leaves = falls and final_falls, leaves or final_leaves
-        return falls, leaves
-    if isinstance(node, ast.Match):
-        return True, any(_outcome(case.body, in_loop)[1] for case in node.cases)
-    # Plain statements, and nested def/class bodies, which do not run here.
-    return True, False
-
-
-def reraises_on_every_path(handler: ast.ExceptHandler) -> bool:
-    return _outcome(handler.body) == (False, False)
-
-
 def _non_raising_handlers() -> dict[str, int]:
+    # Map owns syntax/control-flow extraction. This file owns PG's exceptions and reasons.
+    from contextlib import closing
+    from flowguard.structure import build
+
     found: dict[str, int] = {}
-    paths = sorted((ROOT / "src" / "physicsguard").rglob("*.py")) + sorted((ROOT / "scripts").rglob("*.py"))
-    for path in paths:
-        relative = path.relative_to(ROOT).as_posix()
-
-        def visit(node, names):
-            for child in ast.iter_child_nodes(node):
-                if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                    visit(child, names + [child.name])
-                    continue
-                if isinstance(child, ast.ExceptHandler):
-                    if not reraises_on_every_path(child):
-                        caught = ast.unparse(child.type) if child.type else "BARE"
-                        key = f"{relative}:{'.'.join(names) or '<module>'}:{caught}"
-                        found[key] = found.get(key, 0) + 1
-                visit(child, names)
-
-        visit(ast.parse(path.read_text(encoding="utf-8")), [])
+    with closing(build(ROOT, roots=["src", "scripts", "tests"])) as source:
+        for row in source.handlers():
+            if row["file"].startswith(("src/", "scripts/")) and row["non_raising"]:
+                owner = row["node"].partition(":")[2] or "<module>"
+                key = f"{row['file']}:{owner}:{row['type'] or 'BARE'}"
+                found[key] = found.get(key, 0) + 1
     return found
 
 
@@ -157,11 +100,6 @@ def test_every_non_raising_handler_is_listed_with_a_reason() -> None:
     counts = {key: sites for key, (sites, _reason) in NON_RAISING_HANDLERS.items()}
     assert found == counts, "a listed function gained or lost a handler that does not re-raise"
     assert all(reason.strip() for _sites, reason in NON_RAISING_HANDLERS.values())
-
-
-def _handler(text):
-    source = "for item in items:\n    try:\n        work()\n" + textwrap.indent(textwrap.dedent(text).strip(), "    ") + "\n"
-    return next(node for node in ast.walk(ast.parse(source)) if isinstance(node, ast.ExceptHandler))
 
 
 @pytest.mark.parametrize("text, reraises", [
@@ -178,8 +116,15 @@ def _handler(text):
     ("except KeyError:\n    with lock:\n        return None", False),
     ("except KeyError:\n    with lock:\n        raise", True),
 ])
-def test_a_handler_reraises_only_when_every_path_raises(text, reraises) -> None:
-    assert reraises_on_every_path(_handler(text)) is reraises
+def test_a_handler_reraises_only_when_every_path_raises(tmp_path, text, reraises) -> None:
+    from contextlib import closing
+    from flowguard.structure import build
+
+    source = "for item in items:\n    try:\n        work()\n" + textwrap.indent(textwrap.dedent(text).strip(), "    ") + "\n"
+    (tmp_path / "sample.py").write_text(source)
+    with closing(build(tmp_path, roots=["."])) as source_map:
+        handler, = [row for row in source_map.handlers() if row["type"] == "KeyError"]
+        assert handler["non_raising"] is (not reraises)
 
 
 # Every error type a programming fault commonly raises; none of them is a relation's refusal.
@@ -396,25 +341,36 @@ SKIP_NAMES = {"skip", "skipif", "xfail", "importorskip", "skipTest", "skipIf", "
               "SkipTest", "collect_ignore", "collect_ignore_glob", "pytest_ignore_collect"}
 
 
-def _declared_skips(path):
-    offenders = []
-    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
-        names = []
-        if isinstance(node, ast.Attribute):
-            names = [node.attr]
-        elif isinstance(node, ast.Name):
-            names = [node.id]
-        elif isinstance(node, (ast.ImportFrom, ast.Import)):
-            names = [alias.name.rsplit(".", 1)[-1] for alias in node.names]
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            names = [node.name]
-        offenders += [f"{path.name}:{node.lineno} {name}" for name in names if name in SKIP_NAMES]
-    return offenders
+def _declared_skips(*paths):
+    from contextlib import closing
+    from flowguard.structure import build
+
+    paths = [path.resolve() for path in paths]
+    root = ROOT if all(path.is_relative_to(ROOT) for path in paths) else paths[0].parent
+    files = {path.relative_to(root).as_posix(): path.name for path in paths}
+    offenders = set()
+
+    def note(row, name):
+        name = name.rsplit(":", 1)[-1].rsplit(".", 1)[-1]
+        if row["file"] in files and name in SKIP_NAMES:
+            offenders.add(f"{files[row['file']]}:{row['line']} {name}")
+
+    roots = ["src", "scripts", "tests"] if root == ROOT else ["."]
+    with closing(build(root, roots=roots)) as source:
+        for row in source.imports(declarations=True):
+            note(row, row.get("name") or row.get("module", ""))
+        for row in source.calls(include_reads=True):
+            note(row, row["resolved"] or row["text"])
+        for row in source.nodes():
+            note(row, row["qual"])
+        for row in source.assignments(include_unknown=True):
+            note(row, row["field"])
+    return sorted(offenders)
 
 
 def test_no_test_declares_a_skip() -> None:
-    offenders = [item for path in sorted((ROOT / "tests").glob("*.py")) if path.name != "test_error_handlers.py"
-                 for item in _declared_skips(path)]
+    paths = [path for path in sorted((ROOT / "tests").glob("*.py")) if path.name != "test_error_handlers.py"]
+    offenders = _declared_skips(*paths)
     assert offenders == []
 
 
@@ -424,6 +380,9 @@ def test_no_test_declares_a_skip() -> None:
     "from pytest import skip as later\n",
     "import unittest\nclass T(unittest.TestCase):\n    def test_x(self):\n        self.skipTest('no input')\n",
     "collect_ignore = ['test_other.py']\n",
+    "import pytest\ndeferred = pytest.skip\n",
+    "def pytest_ignore_collect(path):\n    return True\n",
+    "collect_ignore_glob = choose_files()\n",
 ])
 def test_the_static_scan_sees_every_way_to_declare_a_skip(tmp_path, source) -> None:
     path = tmp_path / "test_sample.py"
@@ -433,8 +392,9 @@ def test_the_static_scan_sees_every_way_to_declare_a_skip(tmp_path, source) -> N
 
 def _run_hidden(tmp_path, source):
     (tmp_path / "test_hidden.py").write_text(textwrap.dedent(source), encoding="utf-8")
-    env = {**os.environ, "PYTHONPATH": str(ROOT / "tests") + os.pathsep + os.environ.get("PYTHONPATH", "")}
-    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-p", "no_skips",
+    (tmp_path / "pyproject.toml").write_text('[tool.flowguard]\nskip_policy = "no_skip"\n')
+    env = dict(os.environ)
+    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-p", "flowguard.intent.plugin",
                            str(tmp_path / "test_hidden.py")], capture_output=True, text=True, env=env, cwd=tmp_path)
 
 
@@ -548,3 +508,24 @@ def test_the_unit_factor_hint_also_runs_on_a_partial_snapshot(tmp_path) -> None:
     assert "unrelated.value" in report.missing_required_variables
     assert [row.trigger for row in report.bug_family_followups if row.family == "unit_conversion"] == [
         "Trying heater.Q_dot_W: multiply by 1000 makes every checked residual in hot_branch pass."]
+
+
+@pytest.mark.parametrize(('source', 'exit_code', 'summary'), [
+    ("import pytest\n@pytest.mark.xfail(reason='declared expected failure')\ndef test_case():\n    assert False\n", 1, 'failed'),
+    ("import pytest\n@pytest.mark.xfail(reason='unexpected success remains passed')\ndef test_case():\n    assert True\n", 0, 'xpassed'),
+])
+def test_shared_no_skip_policy_preserves_expected_failure_and_xpass_semantics(tmp_path, source, exit_code, summary):
+    result = _run_hidden(tmp_path, source)
+    assert result.returncode == exit_code, result.stdout + result.stderr
+    assert summary in result.stdout.splitlines()[-1], result.stdout
+
+
+@pytest.mark.parametrize("source", [
+    "reason = 'pytest.skip and collect_ignore are only words here'\n",
+    "from pytest import fixture as setup\n",
+    "def skip_reading_noise():\n    return 'skipTest'\n",
+])
+def test_shared_skip_facts_do_not_turn_ordinary_names_or_strings_into_declarations(tmp_path, source):
+    path = tmp_path / "test_sample.py"
+    path.write_text(source, encoding="utf-8")
+    assert _declared_skips(path) == []

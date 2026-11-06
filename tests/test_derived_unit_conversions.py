@@ -429,3 +429,15 @@ def test_an_observed_unit_that_is_not_the_model_unit_stops_the_evaluation(tmp_pa
         _ledger(SHOWER / "audit.yaml", _load(path))
     result = run_cli("hierarchy", "evaluate", str(SHOWER / "audit.yaml"), str(path))
     assert result.returncode == 2 and "observed_unit_not_model_unit" in result.stderr
+
+
+def test_diagnostic_unit_hypotheses_read_the_single_table(monkeypatch):
+    from physicsguard.core import units
+
+    exponents, _factor = units.SYMBOLS['kW']
+    monkeypatch.setitem(units.SYMBOLS, 'kW', (exponents, 2000.0))
+    monkeypatch.setitem(units.OFFSET_UNITS, 'degC', (1.0, 300.0))
+    trials = units.unit_error_hypotheses()
+    assert len(trials) == 14
+    assert trials[0] == (0.0005, 0.0) and trials[1] == (2000.0, 0.0)
+    assert trials[-2:] == ((1.0, 300.0), (1.0, -300.0))

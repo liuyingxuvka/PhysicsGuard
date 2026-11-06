@@ -10,6 +10,7 @@ from physicsguard.core.registry import VariableRecord, VariableRegistry
 from physicsguard.core.residual import ResidualRecord
 from physicsguard.modules.base import BaseModule, DomainRefusal
 from physicsguard.modules.components._common import (
+    extrapolation_allowed,
     bounded_record,
     check_denominator,
     component_metadata,
@@ -78,7 +79,7 @@ class BatteryOCVMapModule(BaseModule):
         self.ocv_points = finite_list(parameters, "OCV_points_V")
         same_length(self.ocv_points, len(self.soc_points), "OCV_points_V")
         self.extrapolation = parameters.get("extrapolation", "error")
-        if self.extrapolation not in {"error", "hold"}:
+        if not extrapolation_allowed(self.extrapolation):
             raise ValueError("extrapolation must be 'error' or 'hold'")
         self.scale = positive_float(parameters.get("residual_scale_V", 0.01), "residual_scale_V")
         self.records = [
