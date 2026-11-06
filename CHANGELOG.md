@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.18.1 - 2026-11-06 - Correct source-role and evidence boundaries
+
+- A two-stream merge no longer treats independently quoted flow and temperature values from different inlets as one source-backed input. The native inlet groups bind to unique explicit inlet clauses or pipe-table rows; mismatched or duplicated inlets are red, ambiguous or unsupported role bindings stay grey, and whole-pair port swaps remain valid.
+- Passing blocks show which checked dependencies have source evidence and which variables or parameters remain unchecked. Computed answers still need no external quotation. A free-form question reference is explicitly separate from an evaluated answer predicate.
+- Future-rollout results preserve the external-trajectory comparator and its alignment/error checks, but no longer describe matching supplied files as proof that the declared model or producer ran. The result states its comparison scope and that model execution is unverified.
+
 ## v0.18.0 - 2026-11-06 - Read original observations
 
 - Observed snapshots can name original files under `sources` and quote text or pipe-table cells on variables, physical properties and parameters. Readings come from the matching original span, are converted through the sole unit table and are compared with the AI's values. Missing quotes remain grey; a changed quote or a numerical disagreement is red and includes its source hash and reason. Quoted parameters replace the audit's parameters for evaluation.
