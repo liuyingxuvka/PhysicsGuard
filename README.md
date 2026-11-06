@@ -301,9 +301,8 @@ Five skills, one idea: make structure, relationships and constraints explicit in
 ## Developing PhysicsGuard
 
 For the repository's own tests install the `test` extra (`python -m pip install -e ".[test]"`). It adds pytest and
-FlowGuard, which PhysicsGuard uses to maintain itself; FlowGuard is installed only from its git tag
-(`git+https://github.com/liuyingxuvka/FlowGuard.git@v2.0.0`), because the package with that name on PyPI is a different
-project. Ordinary use of PhysicsGuard does not need FlowGuard.
+FlowGuard, which PhysicsGuard uses to maintain itself. Its required git tag is declared in the `test` extra
+of `pyproject.toml`; the package with that name on PyPI is a different project. Ordinary use of PhysicsGuard does not need FlowGuard.
 
 ## Links
 

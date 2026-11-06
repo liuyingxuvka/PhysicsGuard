@@ -19,8 +19,16 @@ Policies:
 
 Releases:
 
-- Version numbers: a release that adds features raises the second number (0.16.0 -> 0.17.0); a release with only small fixes raises the third (0.17.0 -> 0.17.1); never skip a number.
-- Maintenance needs FlowGuard at or above the tag in the `test` extra of `pyproject.toml` (install with `python -m pip install -e ".[test]"`; the PyPI package named `flowguard` is a different project). Raise that tag only when this repository starts using a newer FlowGuard feature; a FlowGuard release alone is no reason to change it or to release this repository.
+Version numbers are independent for each project; use the same MAJOR.MINOR.PATCH rules:
+
+- At 1.0 and later, incompatible changes to a supported public CLI, skill id, SDK or saved input format raise MAJOR; backward-compatible features raise MINOR; corrections within the existing contract raise PATCH. Internal code volume or a dependency's version is not a version criterion. Never skip a number.
+- Before 1.0, keep the unstable status explicit: incompatible public changes raise MINOR and describe migration. Publish 1.0 when declaring a stable contract, not merely because the implementation changed.
+- A format consumed by a documented command remains a contract even when generated. Distinguish it from disposable caches. A new required field or changed supported meaning needs a compatibility decision; do not silently reinterpret old material.
+- For a changed public surface, retain a small existing valid example and a real counterexample. Explain a corrected old bug separately from a new requirement. Give rejected old material a rebuild path from original inputs; never invent verified results, source digests or evidence fields to make it load.
+- Record the release classification and migration in the existing CHANGELOG. Preserve historical commits, tags and releases; append corrections instead of renumbering them. Changes limited to repository policy or maintenance tooling do not by themselves require a product release. Raise a maintenance dependency only for a capability actually used or an evidenced correctness fix required by that workflow, not merely because a new tag exists.
+
+Public saved inputs include documented physical models, observations, source references, units and declared properties. Audit and rollout reports are results for the inputs and scope they name; reading an old report never proves a new model execution.
+- Maintenance needs FlowGuard at or above the tag in the `test` extra of `pyproject.toml` (install with `python -m pip install -e ".[test]"`; the PyPI package named `flowguard` is a different project). Raise that tag only when this repository uses a newer FlowGuard capability or needs a demonstrated correctness fix in its maintenance workflow; a FlowGuard release alone is no reason to change it or to release this repository.
 
 CI runs the full pytest suite on Python 3.11 and 3.13, checks the current intent evidence,
 and checks a scratch skill installation byte for byte. Migration of development tooling
@@ -33,6 +41,8 @@ alone does not require a PhysicsGuard release.
 - Use `python -m flowguard show TEXT` when they help locate
   an existing decision. Keep one production owner for the same judgment. Use a small rule
   only for a necessary copy or an important correction worth preserving across sessions.
-- Change code and its real tests together. Run `python -m pytest -q` and report actual results;
-  `python -m flowguard check` rechecks affected rules and tests. Commit messages cite the saved
+- Change code and its real tests together; run affected tests during development and report actual results.
+  Before a product release, freeze the source and run the complete native suite once through
+  `python -m flowguard check --all` from an environment outside the project; it includes pytest.
+  Require complete CI on the exact main commit being published. `python -m flowguard check` rechecks affected rules and tests. Commit messages cite the saved
   request with `Request: <id>` when the change answers it.
